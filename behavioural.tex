@@ -1,0 +1,131 @@
+\section{Observational Semantics}
+
+\subsection{Labelled Transition Semantics}
+
+\[
+	\begin{array}{rcl}
+		\lambda &\bnfis& \tau \bnfbar \bactout{s}{\abs{x} P} \bnfbar \bactinp{s}{\abs{x} P} \bnfbar \bactsel{s}{l} \bnfbar \bactbra{s}{l} \bnfbar o\\
+		o &\bnfis& \news{s} \bactout{s}{\abs{x} P} \bnfbar \news{s} o
+	\end{array}
+\]
+
+\[
+	\begin{array}{c}
+		\fn{\bactsel{s}{l}} = \fn{\bactbra{s}{l}} = \set{s} \qquad \fn{\tau} = \es \\ 
+		\fn{\bactout{s}{\abs{x} P}} = \fn{\bactout{s}{\abs{x} P}} = \set{s} \cup \fn{\abs{x} P}\\
+		\bn{\tau} = \bn{\bactsel{s}{l}} = \bn{\bactbra{s}{l}} = \bn{\bactinp{s}{\abs{x} P}} = \es\\
+		\bn{\news{\tilde{s}} \bactout{s}{\abs{x} P}} = \tilde{s}
+	\end{array}
+\]
+
+\[
+	\bactsel{s}{l} \asymp \bactbra{s}{l} \qquad \news{\tilde{s}} \bactout{s}{\abs{x} P} \asymp \bactinp{s}{\abs{x} P}
+\]
+
+
+\[
+\begin{array}{ccc}
+	\bout{s}{\abs{x}{Q}} P \by{\bactout{s}{\abs{x}{Q}}} P
+	&\qquad&
+	\binp{s}{X} P \by{\bactinp{s}{\abs{x}Q}} P\subst{\abs{x}Q}{X}
+	\\
+
+	\bsel{s}{l}{P} \by{\bactsel{s}{l}} P
+	&&
+	\bbra{s}{l_i:P_i}_{i \in I} \by{\bactbra{s}{l_k}} P_k \quad k \in I
+	\\[4mm]
+
+	\tree{
+		P \by{\lambda} P' \quad s \notin \fn{\lambda}
+	}{
+		\news{s} P \by{\lambda} \news{s} P' 
+	}
+	&&
+	\tree{
+		P \by{\news{\tilde{s}} \bactout{s}{\abs{x} Q}} P' \quad s' \in \fn{\abs{x} Q}
+	}{
+		\news{s'} P \by{\news{s'\cat\tilde{s}} \bactout{s}{\abs{x} Q}} P'
+	}
+	\\[7mm]
+
+	\tree{
+		P \by{\lambda} P' \quad \bn{\lambda} \cap \fn{Q} = \es
+	}{
+		P \Par Q \by{\lambda} P' \Par Q
+	}
+	&&
+	\tree{
+		Q \by{\lambda} Q' \quad \bn{\lambda} \cap \fn{P} = \es
+	}{
+		P \Par Q \by{\lambda} P \Par Q'
+	}
+	\\[7mm]
+
+	\tree{
+		P \by{\lambda_1} P' \qquad Q \by{\lambda_2} Q'
+	}{
+		P \Par Q \by{\tau} \newsp{\bn{\lambda_1} \cup \bn{\lambda_2}}{P' \Par Q'}
+	}
+	&&
+	\tree{
+		P \scong_\alpha P'' \quad P'' \by{\lambda} P'
+	}{
+		P \by{\lambda} P'
+	}
+\end{array}
+\]
+
+\subsection{LTS for Types}
+
+\dk{Define $(\Gamma, \Delta) \by{\lambda} (\Gamma', \Delta')$}
+
+\dk{Define $\Gtprocess{P}{\Delta} \by{\lambda} \noGtprocess{P}{\Delta'}$}
+
+\subsection{Bisimulation}
+
+\begin{definition}[Barbed congruence]\rm
+	Let relation $\mathcal{R}$ such that $\Gtprocess{P_1}{\Delta} \mathcal{R} \noGtprocess{Q_1}{\Delta}$.
+	$\mathcal{R}$ is a barbed congruence if whenever:
+	\begin{itemize}
+		\item	$\forall \news{\tilde{s}} \bactout{s}{\abs{x} P}$ such that $\Gtprocess{P_1}{\Delta} \by{\news{\tilde{s}} \bactout{s}{\abs{x} P}} \noGtprocess{P_2}{\Delta'}, \exists
+			Q_2$ such that $\Gtprocess{Q_1}{\Delta} \by{\news{\tilde{s}} \bactout{s}{\abs{x} P}} \noGtprocess{Q_2}{\Delta'}$ and
+			$\forall C, s'$ such that $\Gtprocess{\newsp{\tilde{s}}{P_2 \Par \context{C}{P \subst{s'}{x}}}}{\Delta''}$ and
+			$\Gtprocess{\newsp{\tilde{s}}{Q_2 \Par \context{C}{P \subst{s'}{x}}}}{\Delta''}$ then
+			$\Gtprocess{\newsp{\tilde{s}}{P_2 \Par \context{C}{P \subst{s'}{x}}}}{\Delta''} \mathcal{R} \noGtprocess{\newsp{\tilde{s}}{Q_2 \Par \context{C}{P \subst{s'}{x}}}}{\Delta''}$.
+
+		\item	$\forall \lambda \not= \news{\tilde{s}} \bactout{s}{\abs{x} P}$ such that $\Gtprocess{P_1}{\Delta} \by{\lambda} \noGtprocess{P_2}{\Delta'}, \exists
+			Q_2$ such that $\Gtprocess{Q_1}{\Delta} \by{\lambda} \noGtprocess{Q_2}{\Delta'}$ and
+			$\Gtprocess{P_2}{\Delta'} \mathcal{R} \noGtprocess{Q_2}{\Delta'}$.
+
+		\item	The symmetric cases of 1 and 2.
+	\end{itemize}
+	The largest barbed congruence is denoted by $\wb^c$.
+\end{definition}
+
+
+\begin{definition}[Bisimulation]\rm
+	Let relation $\mathcal{R}$ such that $\Gtprocess{P_1}{\Delta} \mathcal{R} \noGtprocess{Q_1}{\Delta}$.
+	$\mathcal{R}$ is a bisimulation if whenever:
+	\begin{itemize}
+		\item	$\forall \news{\tilde{s}} \bactout{s}{\abs{x} P}$ such that $\Gtprocess{P_1}{\Delta} \by{\news{\tilde{s}} \bactout{s}{\abs{x} P}} \noGtprocess{P_2}{\Delta'}, \exists
+			Q_2$ such that $\Gtprocess{Q_1}{\Delta} \by{\news{\tilde{s}} \bactout{s}{\abs{x} P}} \noGtprocess{Q_2}{\Delta'}$ and
+			$s'$ such that $\Gtprocess{\newsp{\tilde{s}}{P_2 \Par P \subst{s'}{x}}}{\Delta''}$ and
+			$\Gtprocess{\newsp{\tilde{s}}{Q_2 \Par P \subst{s'}{x}}}{\Delta''}$ then
+			$\Gtprocess{\newsp{\tilde{s}}{P_2 \Par P \subst{s'}{x}}}{\Delta''} \mathcal{R} \noGtprocess{\newsp{\tilde{s}}{Q_2 \Par P \subst{s'}{x}}}{\Delta''}$.
+
+		\item	$\forall \lambda \not= \news{\tilde{s}} \bactout{s}{\abs{x} P}$ such that $\Gtprocess{P_1}{\Delta} \by{\lambda} \noGtprocess{P_2}{\Delta'}, \exists
+			Q_2$ such that $\Gtprocess{Q_1}{\Delta} \by{\lambda} \noGtprocess{Q_2}{\Delta'}$ and
+			$\Gtprocess{P_2}{\Delta'} \mathcal{R} \noGtprocess{Q_2}{\Delta'}$.
+
+		\item	The symmetric cases of 1 and 2.
+	\end{itemize}
+	The largest barbed congruence is denoted by $\wb$.
+\end{definition}
+
+\begin{theorem}
+	\begin{itemize}
+		\item	$\wb^c$ is a congruence.
+		\item	$\cong$ implies $\wb^c$
+		\item	$\wb^c = \wb$
+	\end{itemize}
+\end{theorem}
