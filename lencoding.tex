@@ -1,0 +1,82 @@
+\section{Encode the $\lambda$-calculus}
+
+\[
+\begin{array}{rcl}
+	\map{x} &\defeq& \abs{z} (\appl{X}{z})\\
+	\map{\labs{x}{M}}^w &\defeq& \abs{z}{\binp{z}{X} \appl{\map{M}}{w}}\\
+	\map{M N} &\defeq& \abs{z}{\newsp{s}{ \appl{\map{M}^z}{s} \Par \bout{\dual{s}}{\map{N}} \inact }}\\
+	\appl{\map{M}}{z} &\defeq& \newsp{s}{ \binp{s}{X} \appl{X}{z} \Par \bout{\dual{s}}{\map{M}} \inact}
+\end{array}
+\]
+\[
+	\appl{\map{(\labs{x}{(\labs{x}{x})x}) y }}{w}
+\]
+
+\[
+\begin{array}{ll}
+	\defeq&
+	\newsp{s_1}{ \binp{s_1}{X} \appl{X}{w} \Par \bout{\dual{s_1}}{\map{(\labs{x}{(\labs{x}{x})x}) y }} \inact}\\
+	\defeq&
+	\newsp{s_1}{ \binp{s_1}{X} \appl{X}{w} \Par \bout{\dual{s_1}}{\abs{z_1}{\newsp{s_2}{\appl{\map{(\labs{x}{(\labs{x}{x})x}}^{z_1}}{s_2} \Par \bout{\dual{s_2}}{\map{y}}\inact }}} \inact}\\
+	\defeq&
+	\newsp{s_1}{ \binp{s_1}{X} \appl{X}{w} \Par \bout{\dual{s_1}}{\abs{z_1}{\newsp{s_2}{\newsp{s_3}{ \binp{s_3}{X} \appl{X}{s_2} \Par \bout{\dual{s_3}}{\map{(\labs{x}{(\labs{x}{x})x}}^{z_1}} \inact} \Par \bout{\dual{s_2}}{\map{y}}\inact }}} \inact}\\
+	\defeq&
+	\newsp{s_1}{ \binp{s_1}{X} \appl{X}{w} \Par \bout{\dual{s_1}}{\abs{z_1}{\newsp{s_2}{\newsp{s_3}{ \binp{s_3}{X} \appl{X}{s_2} \Par \bout{\dual{s_3}}{\abs{z_2}{\binp{z_2}{X} \appl{\map{(\labs{x}{x})x}}{z_1}}} \inact} \Par \bout{\dual{s_2}}{\map{y}}\inact }}} \inact}\\
+	\defeq&
+	\newsp{s_1}{ \binp{s_1}{X} \appl{X}{w} \Par \bout{\dual{s_1}}{\abs{z_1}{\newsp{s_2}{\newsp{s_3}{ \binp{s_3}{X} \appl{X}{s_2} \Par \\
+	& \bout{\dual{s_3}}{\abs{z_2}{\binp{z_2}{X} \newsp{s_4}{ \binp{s_4}{X} \appl{X}{z_1} \Par \bout{\dual{s_4}}{\map{(\labs{x}{x})x}} \inact}}} \inact} \Par \bout{\dual{s_2}}{\map{y}}\inact }}} \inact}
+	\\
+	\defeq&
+	\newsp{s_1}{ \binp{s_1}{X} \appl{X}{w} \Par \bout{\dual{s_1}}{\abs{z_1}{\newsp{s_2}{\newsp{s_3}{ \binp{s_3}{X} \appl{X}{s_2} \Par \\
+	& \bout{\dual{s_3}}{\abs{z_2}{\binp{z_2}{X} \newsp{s_4}{ \binp{s_4}{X} \appl{X}{z_1} \Par \bout{\dual{s_4}}{\abs{z_3}{\newsp{s_5}{ \appl{\map{(\labs{x}{x})}^{z_3}}{s_5} \Par \bout{\dual{s_5}}{\map{x}} \inact }}} \inact}}} \inact} \Par \bout{\dual{s_2}}{\map{y}}\inact }}} \inact}\\
+	\defeq&
+	\newsp{s_1}{ \binp{s_1}{X} \appl{X}{w} \Par \bout{\dual{s_1}}{\abs{z_1}{\newsp{s_2}{\newsp{s_3}{ \binp{s_3}{X} \appl{X}{s_2} \Par \\
+	& \bout{\dual{s_3}}{\abs{z_2}{\binp{z_2}{X} \newsp{s_4}{ \binp{s_4}{X} \appl{X}{z_1} \Par \bout{\dual{s_4}}{\abs{z_3}{\newsp{s_5}{ \newsp{s_6}{ \binp{s_6}{X} \appl{X}{s_5} \Par \bout{\dual{s_6}}{\map{(\labs{x}{x})}^{z_3}} \inact} \Par\\
+	&\bout{\dual{s_5}}{\map{x}} \inact }}} \inact}}} \inact} \Par \bout{\dual{s_2}}{\map{y}}\inact }}} \inact}\\
+	\defeq&
+	\newsp{s_1}{ \binp{s_1}{X} \appl{X}{w} \Par \bout{\dual{s_1}}{\abs{z_1}{\newsp{s_2}{\newsp{s_3}{ \binp{s_3}{X} \appl{X}{s_2} \Par \\
+	& \bout{\dual{s_3}}{\abs{z_2}{\binp{z_2}{X} \newsp{s_4}{ \binp{s_4}{X} \appl{X}{z_1} \Par \bout{\dual{s_4}}{\abs{z_3}{\newsp{s_5}{ \newsp{s_6}{ \binp{s_6}{X} \appl{X}{s_5} \Par \\
+	& \bout{\dual{s_6}}{\abs{z_4}{\binp{z_4}{X} \appl{\map{x}}{z_3}}} \inact} \Par\\
+	&\bout{\dual{s_5}}{\map{x}} \inact }}} \inact}}} \inact} \Par \bout{\dual{s_2}}{\map{y}}\inact }}} \inact}\\
+	\defeq &
+	\newsp{s_1}{ \binp{s_1}{X} \appl{X}{w} \Par \bout{\dual{s_1}}{\abs{z_1}{\newsp{s_2}{\newsp{s_3}{ \binp{s_3}{X} \appl{X}{s_2} \Par \\
+	& \bout{\dual{s_3}}{\abs{z_2}{\binp{z_2}{X} \newsp{s_4}{ \binp{s_4}{X} \appl{X}{z_1} \Par \bout{\dual{s_4}}{\abs{z_3}{\newsp{s_5}{ \newsp{s_6}{ \binp{s_6}{X} \appl{X}{s_5} \Par \\
+	& \bout{\dual{s_6}}{\abs{z_4}{\binp{z_4}{X} \newsp{s_7}{ \binp{s_7}{X} \appl{X}{z_3} \Par \bout{\dual{s_7}}{\map{x}} \inact}}} \inact} \Par\\
+	&\bout{\dual{s_5}}{\map{x}} \inact }}} \inact}}} \inact} \Par \bout{\dual{s_2}}{\map{y}}\inact }}} \inact}\\
+	\defeq &
+	\newsp{s_1}{ \binp{s_1}{X} \appl{X}{w} \Par \bout{\dual{s_1}}{\abs{z_1}{\newsp{s_2}{\newsp{s_3}{ \binp{s_3}{X} \appl{X}{s_2} \Par \\
+	& \bout{\dual{s_3}}{\abs{z_2}{\binp{z_2}{X} \newsp{s_4}{ \binp{s_4}{X} \appl{X}{z_1} \Par \bout{\dual{s_4}}{\abs{z_3}{\newsp{s_5}{ \newsp{s_6}{ \binp{s_6}{X} \appl{X}{s_5} \Par \\
+	& \bout{\dual{s_6}}{\abs{z_4}{\binp{z_4}{X} \newsp{s_7}{ \binp{s_7}{X} \appl{X}{z_3} \Par \bout{\dual{s_7}}{\abs{z_5} (\appl{X}{z_5})} \inact}}} \inact} \Par\\
+	&\bout{\dual{s_5}}{\abs{z_6} (\appl{X}{z_6})} \inact }}} \inact}}} \inact} \Par \bout{\dual{s_2}}{\abs{z_7} (\appl{Y}{z_7})}\inact }}} \inact}\\
+\end{array}
+\]
+
+\[
+\begin{array}{ll}
+	& \newsp{s_1}{ \binp{s_1}{X} \appl{X}{w} \Par \bout{\dual{s_1}}{\abs{z_1}{\newsp{s_2}{\newsp{s_3}{ \binp{s_3}{X} \appl{X}{s_2} \Par \\
+	& \bout{\dual{s_3}}{\abs{z_2}{\binp{z_2}{X} \newsp{s_4}{ \binp{s_4}{X} \appl{X}{z_1} \Par \bout{\dual{s_4}}{\abs{z_3}{\newsp{s_5}{ \newsp{s_6}{ \binp{s_6}{X} \appl{X}{s_5} \Par \\
+	& \bout{\dual{s_6}}{\abs{z_4}{\binp{z_4}{X} \newsp{s_7}{ \binp{s_7}{X} \appl{X}{z_3} \Par \bout{\dual{s_7}}{\abs{z_5} (\appl{X}{z_5})} \inact}}} \inact} \Par\\
+	&\bout{\dual{s_5}}{\abs{z_6} (\appl{X}{z_6})} \inact }}} \inact}}} \inact} \Par \bout{\dual{s_2}}{\abs{z_7} (\appl{Y}{z_7})}\inact }}} \inact}\\
+
+	\red &
+	\newsp{s_2}{\newsp{s_3}{ \binp{s_3}{X} \appl{X}{s_2} \Par \\
+	& \bout{\dual{s_3}}{\abs{z_2}{\binp{z_2}{X} \newsp{s_4}{ \binp{s_4}{X} \appl{X}{w} \Par \bout{\dual{s_4}}{\abs{z_3}{\newsp{s_5}{ \newsp{s_6}{ \binp{s_6}{X} \appl{X}{s_5} \Par \\
+	& \bout{\dual{s_6}}{\abs{z_4}{\binp{z_4}{X} \newsp{s_7}{ \binp{s_7}{X} \appl{X}{z_3} \Par \bout{\dual{s_7}}{\abs{z_5} (\appl{X}{z_5})} \inact}}} \inact} \Par\\
+	&\bout{\dual{s_5}}{\abs{z_6} (\appl{X}{z_6})} \inact }}} \inact}}} \inact} \Par \bout{\dual{s_2}}{\abs{z_7} (\appl{Y}{z_7})}\inact }\\
+
+	\red & \newsp{s_4}{\binp{s_4}{X} \appl{X}{w} \Par \bout{\dual{s_4}}{ \abs{z_3}{\newsp{s_5}{\newsp{s_6}{ \binp{s_6}{X} \appl{X}{s_5} \Par \\
+	& \bout{\dual{s_6}}{\abs{z_4}{\binp{z_4}{X} \newsp{s_7}{ \binp{s_7}{X} \appl{X}{z_3} \Par\bout{\dual{s_7}}{\abs{z_5} (\appl{X}{z_5})} \inact}}} \inact} \Par\\
+	& \bout{\dual{s_5}}{\abs{z_6} (\appl{Y}{z_6})} \inact }}} \inact}\\
+
+	\red & \newsp{s_5}{\newsp{s_6}{ \binp{s_6}{X} \appl{X}{s_5} \Par \\
+	& \bout{\dual{s_6}}{\abs{z_4}{\binp{z_4}{X} \newsp{s_7}{ \binp{s_7}{X} \appl{X}{w} \Par\bout{\dual{s_7}}{\abs{z_5} (\appl{X}{z_5})} \inact}}} \inact} \Par\\
+	& \bout{\dual{s_5}}{\abs{z_6} (\appl{Y}{z_6})} \inact }\\
+
+	\red & \newsp{s_5}{\binp{s_5}{X} \newsp{s_7}{ \binp{s_7}{X} \appl{X}{w} \Par\bout{\dual{s_7}}{\abs{z_5} (\appl{X}{z_5})} \inact} \Par\\
+	& \bout{\dual{s_5}}{\abs{z_6} (\appl{Y}{z_6})} \inact }\\
+
+	\red & \newsp{s_7}{ \binp{s_7}{X} \appl{X}{w} \Par\bout{\dual{s_7}}{\abs{z_5} (\appl{Y}{z_5})} \inact}\\
+
+	\red & \appl{Y}{w}
+\end{array}
+\]
