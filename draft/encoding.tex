@@ -1,5 +1,24 @@
 \section{Encoding}
 
+Before we proceed with encodings we define some properties
+that encodings may respect:
+\begin{definition}
+	Given a mapping $\map{\cdot}: L_1 \longrightarrow L_2$ we
+	define the following:
+	\begin{enumerate}
+		\item	Operational Correspondence.
+			\begin{itemize}
+				\item	$P \red Q$ implies $\map{P} \red^* \map{Q}$.
+				\item	$\map{P} \red R$ implies $\exists Q$ such that $P \red Q$ and $R \red^* \map{Q}$.	
+			\end{itemize}
+		\item	Typability. If $\Gamma \proves P \hastype \Delta$ then $\Gamma \proves \map{P} \hastype \Delta'$.
+
+		\item	$\Par$-preservation. $\map{P \Par Q} = \map{P} \Par \map{Q}$.
+
+		\item	Full Abstraction. $P \cong Q$ if and only if $\map{P} \cong \map{Q}$.
+	\end{enumerate}
+\end{definition}
+
 \subsection{Encode the non-recursive $\ppi$ into $\pHO$}
 In this section provide an encoding of the
 $\ppi$ with no recursion into the $\pHO$.
@@ -178,6 +197,32 @@ We are ready now to encode Recursion.
 \end{array}
 \]
 %
+
+A different process constructor for recursion is the constructor of replication:
+\[
+	\repl{} P
+\]
+with
+\[
+	\repl{} P \scong P \Par \repl{} P
+\]
+
+We show that process constructors $\recp{r}{P}$ can encode process constructor $\repl{} P$.
+\[
+\begin{array}{rcl}
+	\map{\repl{} P} \defeq \recp{r}{\map{P} \Par r}.
+\end{array}
+\]
+
+The other direction is encodable when $P$ is guarded on a shared input:
+\[
+\begin{array}{rcl}
+	\map{\recp{r} \binp{a}{x} P} \defeq \repl{} \binp{a}{x} \map{\context{C}{\bout{a}{x} \inact}}\
+\end{array}
+\]
+where $C$ being the context that results by replacing the recursive variable $r$
+with a $\hole$ in $P$.
+
 \subsection{Properties of the Encodings}
 
 \begin{proposition}[Operational Correspondence]
@@ -474,8 +519,111 @@ to represent shared abstractions.
 \end{array}
 \]
 
+\subsubsection{Operational Correspondence}
 
+\dk{TODO}
 
+\subsection{Negative Result}
+
+A good encoding of the $\spi$ calculus to the $\pHO$ calculus
+should respect the represenation of race conditions over shared
+channels. This represantation can be captured by the $\Par$-preservation
+property.
+
+In this section we prove that the $\pHO$ calculus cannot represent
+$\spi$ processes that model race conditions.
+
+First we prove an auxiliary result:
+
+\begin{lemma}
+	\label{lem:unique_red}
+	Let $P \Par Q$ a $\pHO$ process with
+	$\Gamma \proves P \Par Q \hastype \Delta$ and
+	$\Delta$ well typed.
+	If $P \Par P' \red P' \Par Q'$ and
+	$P \Par Q \red P' \Par Q''$ then
+	$Q' \scong Q''$.
+\end{lemma}
+
+\begin{proof}
+	We write $P \Par Q$ using the normal form (Proposition~\ref{prop:normal_form}).
+	\[
+		P \Par Q \scong \newsp{\tilde{s}}{P_1 \Par \dots \Par P_n} \Par \newsp{\tilde{s'}}{Q_1 \Par \dots \Par Q_m} 
+	\]
+	We do a case analysis on the possible reductions:
+
+	\Case{}
+%
+	\begin{eqnarray*}
+		\newsp{\tilde{s}}{P_1 \Par \dots P_i \Par \dots \Par P_j \Par \dots \Par P_n} \Par Q
+		&\red&
+		\newsp{\tilde{s}}{P_1 \Par \dots P_i' \Par \dots \Par P_j' \Par \dots \Par P_n} \Par Q\\
+		\newsp{\tilde{s}}{P_1 \Par \dots P_i \Par \dots \Par P_j \Par \dots \Par P_n} \Par Q
+		&\red&
+		\newsp{\tilde{s}}{P_1 \Par \dots P_i' \Par \dots \Par P_j' \Par \dots \Par P_n} \Par Q
+	\end{eqnarray*}
+	The proof is trivial.
+
+	\Case{}
+%
+	\begin{eqnarray*}
+		\newsp{\tilde{s}}{P_1 \Par \dots P_i \Par \dots \Par P_n} \Par \newsp{\tilde{s'}}{Q_1 \Par \dots \Par Q_j \Par \dots \Par Q_m} 
+		&\red&
+		\newsp{\tilde{s}}{P_1 \Par \dots P_i' \Par \dots \Par P_n} \Par \newsp{\tilde{s'}}{Q_1 \Par \dots \Par Q_j' \Par \dots \Par Q_m} \\
+		\newsp{\tilde{s}}{P_1 \Par \dots P_i \Par \dots \Par P_n} \Par \newsp{\tilde{s'}}{Q_1 \Par \dots \Par Q_k \Par \dots \Par Q_m} 
+		&\red&
+		\newsp{\tilde{s}}{P_1 \Par \dots P_i' \Par \dots \Par P_n} \Par \newsp{\tilde{s'}}{Q_1 \Par \dots \Par Q_k' \Par \dots \Par Q_m} \\
+	\end{eqnarray*}
+
+	By normalisation (Lemma~\ref{prop:normal_form}) we get that $P_i$ and $Q_j$ are session prefixed, so we can assume that
+	they are prefixed on session $s$. By the well typeness condition of $\Delta$ we get that $s, \dual{s} \in \dom{\Delta}$,
+	with $\Gamma \proves P_i \hastype \Delta \cat \dual{s}: T_i$
+	If we assume that $k \not= j$ then $\Gamma \proves Q_j \hastype \Delta_j \cat s: T_j$ and $\Gamma \proves Q_k \hastype \Delta_k \cat s: T_k$,
+	because the two processes should interact with endpoint $\dual{s}$ in process $P_i$.
+	Furthermore typing rule $\trule{Par}$ cannot be applied to type $Q_j \Par Q_k$ because $\Delta_j$ and $\Delta_k$ are not disjoint.
+	So it has to be that $k = j$ that results to:
+	\[
+		\newsp{\tilde{s'}}{Q_1 \Par \dots \Par Q_j' \Par \dots \Par Q_m} \scong \newsp{\tilde{s'}}{Q_1 \Par \dots \Par Q_k' \Par \dots \Par Q_m}
+	\]
+	as required.
+\end{proof}
+
+\begin{theorem}
+	Mapping $\map{\cdot}: \pHO \longrightarrow \spi$ that enjoys
+	operational correspondence and $\Par$-preservation does not
+	exist.
+\end{theorem}
+
+\begin{proof}
+	Let $\map{\cdot}: \pHO \longrightarrow \spi$ that respects
+	operational correspondence and $\Par$-preservation and
+	$\pHO$ process:
+	$P = \bout{a}{s} P_1 \Par \binp{a}{x} P_2 \Par \binp{a}{x} P_3$
+	with $P_1 \not\scong P_2$ and $\Gamma \proves P \hastype \Delta$.
+
+	$\Par$-preservation implies
+	\[
+		\map{P} \defeq \map{\bout{a}{s} P_1} \Par \map{\binp{a}{x} P_2} \Par \map{\binp{a}{x} P_3}
+	\]
+%
+	and operational correspondence implies
+%
+	\begin{eqnarray}
+		P &\red& P_1 \Par P_2 \subst{s}{x} \Par \binp{a}{x} P_3 \Rightarrow \map{P} \red \map{P_1 \Par P_2 \subst{s}{x} \Par \binp{a}{x} P_3} \\
+		P &\red& P_1 \Par \binp{a}{x} P_1 \Par P_3 \subst{s}{x} \Rightarrow \map{P} \red \map{P_1 \Par \binp{a}{x} P_2 \Par P_3 \subst{s}{x}}
+	\end{eqnarray}
+%
+	By the $\Par$-preservation property we get that
+%
+	\begin{eqnarray}
+		\map{\bout{a}{s} P_1} \Par \map{\binp{a}{x} P_2} \Par \map{\binp{a}{x} P_3} &\red& \map{P_1} \Par \map{P_2 \subst{s}{x}} \Par \map{\binp{a}{x} P_3} \\
+		\map{\bout{a}{s} P_1} \Par \map{\binp{a}{x} P_2} \Par \map{\binp{a}{x} P_3} &\red& \map{P_1} \Par \map{\binp{a}{x} P_2} \Par \map{P_3 \subst{s}{x}}
+	\end{eqnarray}
+%
+	By Lemma~\ref{lem:unique_red} we get that
+	$\map{P_1} \Par \map{P_2 \subst{s}{x}} \Par \map{\binp{a}{x} P_3} \scong \map{P_1} \Par \map{\binp{a}{x} P_2} \Par \map{P_3 \subst{s}{x}}$
+	which implies contradiction since $P_1 \subst{s}{x} \not\scong P_2 \subst{s}{x}$.
+\end{proof}
 \begin{comment}
 \[
 	\begin{array}{rcl}
