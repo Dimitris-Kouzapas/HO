@@ -1,0 +1,931 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Contents
+% --------
+
+% 1.  Formating
+% 2.  Maths - Theorems
+% 3.  The pi Calculus
+% 4.  Session Syntax
+% 5.  Subject Reduction
+% 6.  Global Session Types
+% 7.  Global Session Types Equivalence
+% 8.  Projection
+% 9.  Local Session Types
+% 10. Behavioural Theory
+% 11. Typed Transitions - Reductions
+% 12. Typed Relations
+% 13. Confluence Determinacy
+% 14. Mapping
+% 15. pi Constructs
+% 16. LN Transform
+% 17. General Types Processes Names Sessions ETC
+% 18. Misc
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                                       FORMATING
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Symbols
+\newcommand{\semicolon}{:}
+%\newcommand{\colon}{;}
+\newcommand{\lrangle}[1]{\langle #1 \rangle}
+
+%Tags
+\newcommand{\parenthtext}[1]{(\textrm{\small #1})}
+\newcommand{\brtext}[1]{[\textrm{\small #1}]}
+\newcommand{\textinmath}[1]{\textrm{#1}}
+\newcommand{\srule}[1]{\parenthtext{#1}}
+\newcommand{\strule}[1]{\textrm{#1}}
+\newcommand{\stypes}[1]{{\footnotesize \parenthtext{#1}}}
+\newcommand{\ltsrule}[1]{{\footnotesize \lrangle{\textrm{#1}}}}
+\newcommand{\eltsrule}[1]{{\footnotesize [\textrm{#1}]}}
+\newcommand{\trule}[1]{{\footnotesize\brtext{#1}}}
+\newcommand{\orule}[1]{{\footnotesize{\brtext{#1}}}}
+\newcommand{\mrule}[1]{{\footnotesize{\parenthtext{#1}}}}
+
+\newcommand{\iftag}{{\textrm{if }}}
+
+% General
+\newcommand{\noi}{\noindent}
+\newcommand{\Hline}{\rule{\linewidth}{.5pt}}
+\newcommand{\myparagraph}[1]{\paragraph{\textbf{#1}}}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                                       MATHS - THEOREMS
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% BNF form
+\newcommand{\bnfis}{\;\;::=\;\;}
+\newcommand{\bnfbar}{\;\;\;|\;\;\;}
+
+% Proof
+\newcommand{\Case}[1]{\noi {\bf Case: }#1\\}
+\newcommand{\proofend}{\qed}
+%\newcommand{\proofend}{}
+\newcommand{\Proof}{\noi {\bf Proof: }}
+
+% Logic
+\newcommand{\LogAnd}{\texttt{ and }}
+\newcommand{\LogOr}{\texttt{ or }}
+
+% Induction
+
+\newcommand{\basic}{\noi {\bf Basic Step:}\\}
+\newcommand{\inductive}{\noi {\bf Inductive Hypothesis:}\\}
+\newcommand{\induction}{\noi {\bf Induction Step:}\\}
+
+% Tree
+
+\newcommand{\tree}[2]{
+\ensuremath{\displaystyle
+		\frac
+		{
+			%%\raisebox{0.0mm}{$\displaystyle{#1}$}
+			#1
+			%\vspace{0mm}
+		}{
+			%\vspace{2mm}
+			%#2
+			\raisebox{-0.4mm}{$\displaystyle{#2}$}
+		}
+	}
+}
+
+
+%\newcommand{\tree}[2]{
+%\begin{prooftree}
+%	#1
+%	\justifies
+%	#2
+%\end{prooftree}
+%}
+
+\newcommand{\treeusing}[3]{
+\begin{prooftree}
+	#1
+	\justifies
+	#2
+	\using
+	#3
+\end{prooftree}}
+
+% Vectors
+\newcommand{\vect}[1]{\tilde{#1}}
+
+% Functions - Set theory
+\newcommand{\set}[1]{\{#1\}}
+\newcommand{\es}{\emptyset}
+\newcommand{\maxset}[1]{\max(#1)}
+\newcommand{\setbar}{\ \ |\ \ }
+\newcommand{\tuple}[2]{(#1, #2)}
+\newcommand{\suchthat}{\cdot}
+\newcommand{\powerset}[1]{\mathcal{P}(#1)}
+\newcommand{\product}{\times}
+
+\newcommand{\eval}{\downarrow}
+
+\newcommand{\setsubtr}[2]{#1 \backslash #2}
+
+\newcommand{\func}[2]{#1(#2)}
+\newcommand{\dom}[1]{\mathtt{dom}(#1)}
+\newcommand{\codom}[1]{\mathtt{codom}(#1)}
+
+\newcommand{\funcbr}[2]{#1\lrangle{#2}}
+
+\newcommand{\entails}{\text{implies}}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                                        pi - CALCULUS
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Free-Bound notation
+\newcommand{\freev}[1]{\lrangle{#1}}
+\newcommand{\boundv}[1]{(#1)}
+
+% General pi calculus Syntax
+\newcommand{\send}[1]{\overline{#1}}
+\newcommand{\ol}[1]{\overline{#1}}
+\newcommand{\receive}[1]{#1.}
+\newcommand{\inact}{\mathbf{0}}
+\newcommand{\If}{\sessionfont{if}\ }
+\newcommand{\Then}{\sessionfont{then}\ }
+\newcommand{\Else}{\sessionfont{else}\ }
+\newcommand{\ifthen}[2]{\If #1\ \Then #2\ }
+\newcommand{\ifthenelse}[3]{\ifthen{#1}{#2} \Else #3}
+\newcommand{\Par}{\;|\;}
+\newcommand{\news}[1]{(\nu\ #1)}
+\newcommand{\newsp}[2]{(\nu\ #1)(#2)}
+\newcommand{\varp}[1]{#1}
+\newcommand{\rec}[2]{\mu \varp{#1}. #2}
+\newcommand{\recp}[2]{\mu \varp{#1}. #2}
+
+\newcommand{\Def}{\sessionfont{def}\ }
+
+\newcommand{\defeq}{\stackrel{\Def}{=}}
+
+\newcommand{\repl}{\ast\,}
+\newcommand{\parcomp}[2]{\prod_{#1}{#2}}
+
+% Free-Bound-Names sets
+\newcommand{\bn}[1]{\mathtt{bn}(#1)}
+\newcommand{\fn}[1]{\mathtt{fn}(#1)}
+\newcommand{\fv}[1]{\mathtt{fv}(#1)}
+\newcommand{\bv}[1]{\mathtt{bv}(#1)}
+\newcommand{\fs}[1]{\mathtt{fs}(#1)}
+\newcommand{\fpv}[1]{\mathtt{fpv}(#1)}
+\newcommand{\nam}[1]{\mathtt{n}(#1)}
+
+%Subject - Object
+\newcommand{\subj}[1]{\mathtt{subj}(#1)}
+\newcommand{\obj}[1]{\mathtt{obj}(#1)}
+
+% Relations
+\newcommand{\relfont}[1]{\mathcal{#1}}
+\newcommand{\rel}[3]{#1\ \relfont{#2}\ #3}
+
+\newcommand{\scong}{\equiv}
+\newcommand{\acong}{\scong_{\alpha}}
+\newcommand{\wb}{\approx}
+\newcommand{\swb}{\approx^{s}}
+
+\newcommand{\red}{\longrightarrow}
+\newcommand{\Red}{\rightarrow\!\!\!\!\!\rightarrow}
+\newcommand{\Redleft}{\leftarrow\!\!\!\!\!\leftarrow}
+
+\newcommand{\subst}[2]{\set{#1/#2 }}
+
+% Context
+\newcommand{\hole}{-}
+\newcommand{\context}[2]{#1[#2]}
+\newcommand{\Ccontext}[1]{\C[#1]}
+
+% Expression Context
+\newcommand{\Econtext}[1]{\E[#1]}
+
+% Barbs
+\newcommand{\barb}[1]{\downarrow_{#1}}
+\newcommand{\Barb}[1]{\Downarrow_{#1}}
+
+% General
+%\newcommand{\ESP}{\ensuremath{\mathbf{ESP}}}
+\newcommand{\ESP}{\text{ESP}}
+\newcommand{\ESPsel}{\ESP^+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                                        SESSION SYNTAX
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Session font
+\newcommand{\sessionfont}[1]{\mathtt{#1}}
+\newcommand{\vart}[1]{\mathsf{#1}}
+
+% General Session symbols
+\newcommand{\ssep}{;}
+\newcommand{\shsep}{.}
+\newcommand{\outses}{!}
+\newcommand{\inpses}{?}
+\newcommand{\selses}{\triangleleft}
+\newcommand{\brases}{\triangleright}
+\newcommand{\dual}[1]{\overline{#1}}
+\newcommand{\cat}{\cdot}
+
+\newcommand{\allstypes}{\mathcal{S}}
+
+% Binary Session Syntax
+
+
+\newcommand{\bacc}[2]{#1 \boundv{#2} \shsep}
+\newcommand{\breq}[2]{\send{#1} \freev{#2} \shsep}
+\newcommand{\bareq}[2]{\send{#1} \freev{#2}}
+
+\newcommand{\breqt}[3]{\send{#1} \boundv{#2:#3} \shsep}
+\newcommand{\bacct}[3]{#1 \boundv{#2:#3} \shsep}
+
+\newcommand{\bout}[2]{#1 \outses \freev{#2} \ssep}
+\newcommand{\binp}[2]{#1 \inpses \boundv{#2} \ssep}
+\newcommand{\bsel}[2]{#1 \selses #2 \ssep}
+\newcommand{\bbra}[2]{#1 \brases \set{#2}}
+\newcommand{\bbras}[2]{#1 \brases #2}
+\newcommand{\bbraP}[1]{#1 \brases \lPi}
+
+% Multiparty Session syntax
+
+\newcommand{\role}[1]{[#1]}
+
+\newcommand{\srole}[2]{#1\role{#2}}
+\newcommand{\sqrole}[2]{#1^{[]}\role{#2}}
+
+\newcommand{\fromto}[2]{\role{#1} \role{#2}}
+\newcommand{\sfromto}[3]{#1\fromto{#2}{#3}}
+
+\newcommand{\sout}[3]{\srole{#1}{#2} \outses \freev{#3} \ssep}
+\newcommand{\sinp}[3]{\srole{#1}{#2} \inpses \boundv{#3} \ssep}
+\newcommand{\sdel}[4]{\srole{#1}{#2} \outses \freev{\srole{#3}{#4}} \ssep}
+\newcommand{\ssel}[3]{\srole{#1}{#2} \selses #3 \ssep}
+\newcommand{\sbra}[3]{\srole{#1}{#2} \brases \set{#3}}
+\newcommand{\sbras}[3]{\srole{#1}{#2} \brases #3}
+\newcommand{\sbraP}[2]{\srole{#1}{#2} \brases \lPi}
+
+\newcommand{\acc}[3]{#1 \role{#2} \boundv{#3} \shsep}
+\newcommand{\req}[3]{\send{#1} \role{#2} \boundv{#3} \shsep}
+\newcommand{\areq}[3]{\send{#1} \role{#2} \freev{#3}}
+
+\newcommand{\out}[4]{\sfromto{#1}{#2}{#3} \outses \freev{#4} \ssep}
+\newcommand{\inp}[4]{\sfromto{#1}{#2}{#3} \inpses \boundv{#4} \ssep}
+\newcommand{\del}[5]{\sfromto{#1}{#2}{#3} \outses \freev{\srole{#4}{#5}} \ssep}
+\newcommand{\sel}[4]{\sfromto{#1}{#2}{#3} \selses #4 \ssep}
+\newcommand{\bra}[4]{\sfromto{#1}{#2}{#3} \brases \set{#4}}
+\newcommand{\bras}[4]{\sfromto{#1}{#2}{#3} \brases #4}
+\newcommand{\braP}[3]{\sfromto{#1}{#2}{#3} \brases \lPi}
+
+% Arrive construct
+\newcommand{\arrivetext}{\mathtt{arrive}}
+\newcommand{\arrive}[1]{\arrivetext\ #1}
+\newcommand{\arrivem}[2]{\arrivetext\ #1\ #2}
+
+% Typecase construct
+\newcommand{\typecasetext}{\mathtt{typecase}}
+\newcommand{\oftext}{\mathtt{of}}
+\newcommand{\typecase}[2]{\typecasetext\ #1\ \oftext\ \set{#2}}
+
+% IO symbols
+\newcommand{\inputsym}{\mathtt{i}}
+\newcommand{\outputsym}{\mathtt{o}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                                      SUBJECT REDUCTION
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% typing reduction
+\newcommand{\typingred}{\red}
+\newcommand{\typingRed}{\Red}
+
+\newcommand{\wellconf}[1]{\mathtt{wc}(#1)}
+\newcommand{\cohses}[2]{\mathtt{co}(#1(#2))}
+\newcommand{\coherent}[1]{\mathtt{co}(#1)}
+\newcommand{\fcoherent}[1]{\mathtt{fco}(#1)}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                                      SESSION ENDPOINTS
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Asynchronous syntax
+%\newcommand{\mareq}[4]{\newsp{\srole{#2}{#3}, \dots, \srole{#2}{#4}}{\send{#1}[#3] \freev{#2} \Par \dots \Par \send{#1}[#4]\freev{#2}}}
+
+%\newcommand{\areqs}[3]{\send{#1}[\set{#2}] \freev{#3}}
+
+% Queues
+\newcommand{\emp}{\epsilon}
+\newcommand{\squeue}[3]{\srole{#1}{#2}:#3}
+\newcommand{\srqueue}[4]{\srole{#1}{#2}[\inputsym: #3, \outputsym: #4]}
+\newcommand{\srqueuei}[3]{\srole{#1}{#2}[\inputsym: #3]}
+\newcommand{\srqueueo}[3]{\srole{#1}{#2}[\outputsym: #3]}
+\newcommand{\srqueueio}[4]{\srole{#1}{#2}[\inputsym: #3, \outputsym: #4]}
+\newcommand{\sgqueue}[2]{\srole{#1}:#2}
+
+% Shared Names Queues
+\newcommand{\shqueue}[2]{#1[#2]}
+%\newcommand{\shqueuet}[3]{#1[#2, #3]}
+
+% IO Queues
+\newcommand{\squeueio}[3]{#1[\inputsym: #2, \outputsym: #3]}
+\newcommand{\squeuei}[2]{#1[\inputsym: #2]}
+\newcommand{\squeueo}[2]{#1[\outputsym: #2]}
+
+\newcommand{\squeuetio}[4]{#1[#2, \inputsym: #3, \outputsym: #4]}
+\newcommand{\squeueto}[3]{#1[#2, \outputsym: #3]}
+\newcommand{\squeueti}[3]{#1[#2, \inputsym: #3]}
+\newcommand{\squeuet}[2]{#1[#2]}
+
+% Queue Values
+
+\newcommand{\queuev}[2]{\role{#1}(#2)}
+\newcommand{\queuel}[2]{\role{#1} #2}
+\newcommand{\queues}[3]{\role{#1}(\srole{#2}{#3})}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                                        GLOBAL SESSION TYPES
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newcommand{\gtfont}[1]{\mathtt{#1}}
+\newcommand{\gsep}{.}
+
+\newcommand{\globaltype}[1]{\lrangle{#1}}
+\newcommand{\parties}[1]{\mathtt{\p}(#1)}
+\newcommand{\roles}[1]{\mathtt{roles}(#1)}
+
+\newcommand{\fromtogt}[2]{#1 \rightarrow #2 \semicolon}
+
+\newcommand{\valuegt}[3]{\fromtogt{#1}{#2} \lrangle{#3} \gsep}
+\newcommand{\selgt}[3]{\fromtogt{#1}{#2} \set{#3}}
+\newcommand{\selgtG}[2]{\fromtogt{#1}{#2} \lGi}
+\newcommand{\recgt}[2]{\mu \vart{#1}. #2}
+\newcommand{\vargt}[1]{\vart{#1}}
+\newcommand{\inactgt}{\gtfont{end}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                              GLOBAL SESSION TYPES EQUIVALENCE
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newcommand{\projset}[1]{\mathtt{proj}(#1)}
+\newcommand{\aprojset}[1]{\mathtt{aproj}\ #1 }
+\newcommand{\gcong}{\equiv}
+\newcommand{\govcong}{\cong_g}
+\newcommand{\gperm}{\simeq}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                                        PROJECTION
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newcommand{\projsymb}{\lceil}
+\newcommand{\proj}[2]{#1 \projsymb #2}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                                        LOCAL SESSION TYPES
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newcommand{\tfont}[1]{\mathtt{#1}}
+\newcommand{\tsep}{;}
+
+\newcommand{\chtype}[1]{\lrangle{#1}}
+\newcommand{\chtypei}[1]{\inputsym \lrangle{#1}}
+\newcommand{\chtypeo}[1]{\outputsym \lrangle{#1}}
+\newcommand{\chtypeio}[1]{\inputsym \outputsym \lrangle{#1}}
+
+\newcommand{\outtype}{\outses}
+\newcommand{\inptype}{\inpses}
+\newcommand{\seltype}{\selses}
+\newcommand{\bratype}{\brases}
+
+\newcommand{\trec}[2]{\mu\vart{#1}.#2}
+\newcommand{\tvar}[1]{\vart{#1}}
+%\newcommand{\settype}[1]{\set{#1}}
+\newcommand{\tset}[1]{\set{#1}}
+\newcommand{\tinact}{\tfont{end}}
+
+%\newcommand{\sminus}[1]{#1^-}
+\newcommand{\sminus}[1]{#1^{\text{--}}}
+
+\newcommand{\subt}{\leq}
+\newcommand{\supt}{\geq}
+
+% Multiparty Local Session Types
+\newcommand{\tout}[2]{\role{#1} \outtype \lrangle{#2} \tsep}
+\newcommand{\tinp}[2]{\role{#1} \inptype (#2) \tsep}
+\newcommand{\tsel}[2]{\role{#1} \seltype \set{#2}}
+\newcommand{\tsels}[2]{\role{#1} \seltype #2}
+\newcommand{\tselT}[1]{\role{#1} \seltype \lTi}
+\newcommand{\tbra}[2]{\role{#1} \bratype \set{#2}}
+\newcommand{\tbras}[2]{\role{#1} \bratype #2}
+\newcommand{\tbraT}[1]{\role{#1} \bratype \lTi}
+
+% Binary Session Types
+\newcommand{\btout}[1]{\outtype \lrangle{#1} \tsep}
+\newcommand{\btinp}[1]{\inptype (#1) \tsep}
+\newcommand{\btsel}[1]{\seltype \set{#1}}
+\newcommand{\btselS}{\seltype \lSi}
+\newcommand{\btbra}[1]{\bratype \set{#1}}
+\newcommand{\btbraS}{\bratype \lSi}
+
+% Queue Typing
+
+\newcommand{\mtout}[2]{\role{#1} \outtype \lrangle{#2}}
+\newcommand{\mtinp}[2]{\role{#1} \inptype (#2)}
+\newcommand{\mtsel}[2]{\role{#1} \seltype #2}
+\newcommand{\mtbra}[2]{\role{#1} \bratype #2}
+
+
+% Binary Queue Typing
+
+\newcommand{\bmtout}[1]{\outtype \lrangle{#1}}
+\newcommand{\bmtinp}[1]{\inptype (#1)}
+\newcommand{\bmtsel}[1]{\seltype #1}
+\newcommand{\bmtbra}[1]{\bratype #1}
+
+% Message concatanation
+\newcommand{\mcat}{\;*\;}
+\newcommand{\icat}{\;\circ\;}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                                        TYPED PROCESSES
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newcommand{\Ga}{\Gamma}
+\newcommand{\De}{\Delta}
+\newcommand{\proves}{\vdash}
+\newcommand{\hastype}{\triangleright}
+
+\newcommand{\Decat}[1]{\De \cat #1}
+\newcommand{\Gacat}[1]{\Ga \cat #1}
+
+\newcommand{\tcat}{\circ}
+
+\newcommand{\typed}[1]{#1:}
+\newcommand{\typedrole}[2]{\typed{\srole{#1}{#2}}}
+%\newcommand{\typedqrole}[2]{\typed{\srole{#1^{[]}}{#2}}}
+
+\newcommand{\typedprocess}[3]{#1 \proves #2 \hastype #3}
+
+\newcommand{\Eproves}[3]{#1 \proves \typed{#2} #3}
+\newcommand{\Gproves}[2]{\Eproves{\Ga}{#1}{#2}}
+
+\newcommand{\tprocess}[3]{#1 \proves #2 \hastype #3}
+\newcommand{\Gtprocess}[2]{\tprocess{\Ga}{#1}{#2}}
+\newcommand{\Gptprocess}[2]{\tprocess{\Ga'}{#1}{#2}}
+
+\newcommand{\noGtprocess}[2]{#1 \hastype #2}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                                    MULTIPARTY TYPED THEORY
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newcommand{\globalenv}[1]{\set{#1}}
+%\newcommand{\globalenvI}{\set{\typed{s_i} \G_i}_{i \in I}}
+\newcommand{\globalenvI}{E}
+\newcommand{\globalenvJ}{\set{\typed{s_j} \G_j}_{j \in J}}
+
+\newcommand{\Gltprocess}[4]{\tprocess{#1}{#2}{#3, #4}}
+
+\newcommand{\geI}{\globalenvI}
+\newcommand{\geJ}{\globalenvJ}
+
+\newcommand{\Stprocess}[3]{\tprocess{\geI, #1}{#2}{#3}}
+\newcommand{\SGtprocess}[2]{\Gtprocess{#1}{#2, \globalenvI}}
+\newcommand{\SJGtprocess}[2]{\globalenvJ, \Gtprocess{#1}{#2}}
+
+\newcommand{\Observer}[2]{\mathsf{Observer}(#1, #2)}
+\newcommand{\ObserverG}[1]{\mathsf{Observer}(\globalenvI, #1)}
+
+\newcommand{\Obs}{\ensuremath{\mathsf{Obs}}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                                        BEHAVIOURAL THEORY
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newcommand{\fromtolts}[2]{\fromto{#1}{#2}}
+
+\newcommand{\outlts}{\outses}
+\newcommand{\inplts}{\inpses}
+\newcommand{\sellts}{\selses}
+\newcommand{\bralts}{\brases}
+
+% Multiparty Labels
+\newcommand{\actreq}[3]{\send{#1} \role{#2} \boundv{#3}}
+%\newcommand{\actbreq}[3]{\send{#1} \role{#2} \boundv{#3}}
+
+\newcommand{\actreqs}[3]{\send{#1} \role{\set{#2}} \boundv{#3}}
+%\newcommand{\actbreqs}[3]{\send{#1} \role{\set{#2}} \boundv{#3}}
+
+\newcommand{\actacc}[3]{#1 \role{#2} \boundv{#3}}
+\newcommand{\actaccs}[3]{#1 \role{\set{#2}} \boundv{#3}}
+
+\newcommand{\actout}[4]{#1 \fromtolts{#2}{#3} \outlts \freev{#4}}
+\newcommand{\actqout}[4]{#1^{[]} \fromtolts{#2}{#3} \outlts \freev{#4}}
+\newcommand{\actbout}[4]{#1 \fromtolts{#2}{#3} \outlts \boundv{#4}}
+
+\newcommand{\actdel}[5]{#1 \fromtolts{#2}{#3} \outlts \freev{\srole{#4}{#5}}}
+\newcommand{\actbdel}[5]{#1 \fromtolts{#2}{#3} \outlts \boundv{\srole{#4}{#5}}}
+\newcommand{\actqdel}[5]{#1^{[]} \fromtolts{#2}{#3} \outlts \boundv{\srole{#4}{#5}}}
+
+\newcommand{\actinp}[4]{#1 \fromtolts{#2}{#3} \inplts \freev{#4}}
+\newcommand{\actqinp}[4]{#1^{[]} \fromtolts{#2}{#3} \inplts \freev{#4}}
+
+\newcommand{\actsel}[4]{#1 \fromtolts{#2}{#3} \sellts #4}
+\newcommand{\actqsel}[4]{#1^{[]} \fromtolts{#2}{#3} \sellts #4}
+
+\newcommand{\actbra}[4]{#1 \fromtolts{#2}{#3} \bralts #4}
+\newcommand{\actqbra}[4]{#1^{[]} \fromtolts{#2}{#3} \bralts #4}
+
+\newcommand{\actval}[4]{#1: #2 \rightarrow #3:#4}
+\newcommand{\actgsel}[4]{#1: #2 \rightarrow #3:#4}
+
+% Binary Labels
+\newcommand{\bactreq}[2]{\send{#1} \freev{#2}}
+\newcommand{\bactbreq}[2]{\send{#1} \boundv{#2}}
+\newcommand{\bactacc}[2]{#1 \freev{#2}}
+
+\newcommand{\bactout}[2]{#1 \outlts \freev{#2}}
+\newcommand{\bactbout}[2]{#1\outlts \boundv{#2}}
+\newcommand{\bactinp}[2]{#1 \inplts \freev{#2}}
+\newcommand{\bactsel}[2]{#1 \sellts #2}
+\newcommand{\bactbra}[2]{#1 \bralts #2}
+
+% Labelled transition relations
+\newcommand{\by}[1]{\stackrel{#1}{\longrightarrow}}
+\newcommand{\By}[1]{\stackrel{#1}{\Longrightarrow}}
+
+% Session barbs
+\newcommand{\barbreq}[1]{\barb{#1}}
+%\newcommand{\barbacc}[2]{\barb{#1\role{\set{#2}}}}
+\newcommand{\barbout}[3]{\barb{\sfromto{#1}{#2}{#3}}}
+%\newcommand{\barbinp}[3]{\barb{#1\fromto{#2}{#3}\inpses}}
+
+\newcommand{\Barbreq}[2]{\Barb{\send{#1}\role{#2}}}
+%\newcommand{\Barbacc}[2]{\Barb{#1\role{\set{#2}}}}
+%\newcommand{\Barbout}[3]{\Barb{\sfromto{#1}{#2}{#3}\outses}}
+\newcommand{\Barbout}[3]{\Barb{\sfromto{#1}{#2}{#3}}}
+%\newcommand{\Barbinp}[3]{\Barb{#1\fromto{#2}{#3}\inpses}}
+
+% Binary Session barbs
+\newcommand{\bbarbreq}[1]{\barb{#1}}
+%\newcommand{\bbarbacc}[1]{\barb{#1}}
+\newcommand{\bbarbout}[1]{\barb{#1}}
+%\newcommand{\bbarbinp}[1]{\barb{#1\inpses}}
+
+\newcommand{\bBarbreq}[1]{\Barb{\send{#1}}}
+%\newcommand{\bBarbacc}[2]{\Barb{#1}}
+\newcommand{\bBarbout}[1]{\Barb{#1\outses}}
+%\newcommand{\bBarbinp}[1]{\Barb{#1\inpses}}
+
+\newcommand{\comp}{\asymp}
+\newcommand{\coh}{\asymp}
+\newcommand{\bistyp}{\rightleftharpoons}
+
+\newcommand{\typingbeh}{\leftrightarrow}
+
+\newcommand{\bufrel}{\succ}
+
+\newcommand{\ordercup}{\bowtie}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                                TYPED TRANSITIONS - REDUCTIONS
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Environment Transitions
+\newcommand{\envtrans}[1]{\by{#1}}
+\newcommand{\envTrans}[1]{\by{#1}}
+\newcommand{\typedtrans}[1]{\by{#1}}
+\newcommand{\typedTrans}[1]{\By{#1}}
+\newcommand{\typedred}{\red}
+\newcommand{\typedRed}{\Red}
+
+% Typed Environment Transitions - Binary case
+\newcommand{\benv}[2]{(#1, #2)}
+\newcommand{\bGenv}[1]{\benv{\Ga}{#1}}
+\newcommand{\bGDenv}{\envtyp{\Ga}{\De}}
+
+\newcommand{\envby}[5]{\benv{#1}{#2} \envtrans{#3} \benv{#4}{#5}}
+\newcommand{\Genvby}[3]{\envby{\Ga}{#1}{#2}{\Ga}{#3}}
+
+% Typed Environment Transitions - Multiparty case
+
+\newcommand{\env}[3]{(#1, #2, #3)}
+\newcommand{\Genv}[2]{\env{\globalenvI}{#1}{#2}}
+\newcommand{\GGenv}[1]{\env{\globalenvI}{\Ga}{#1}}
+\newcommand{\GGDenv}{\env{\globalenvI}{\Ga}{\De}}
+
+% Typed Process Transitions - Binary case
+
+\newcommand{\ftby}[7]{\tprocess{#1}{#2}{#3} \typedtrans{#4} \tprocess{#5}{#6}{#7}}
+\newcommand{\ftBy}[7]{\tprocess{#1}{#2}{#3} \typedTrans{#4} \tprocess{#5}{#6}{#7}}
+
+\newcommand{\tpby}[6]{\tprocess{#1}{#2}{#3} \typedtrans{#4} \noGtprocess{#5}{#6}}
+\newcommand{\tpBy}[6]{\tprocess{#1}{#2}{#3} \typedTrans{#4} \noGtprocess{#5}{#6}}
+\newcommand{\Gtpby}[5]{\Gtprocess{#1}{#2} \typedtrans{#3} \noGtprocess{#4}{#5}}
+\newcommand{\GtpBy}[5]{\Gtprocess{#1}{#2} \typedTrans{#3} \noGtprocess{#4}{#5}}
+
+\newcommand{\GGtpby}[5]{\tprocess{\globalenvI, \Ga}{#1}{#2} \typedtrans{#3} \noGtprocess{#4}{#5}}
+\newcommand{\GGtpBy}[5]{\tprocess{\globalenvI, \Ga}{#1}{#2} \typedTrans{#3} \noGtprocess{#4}{#5}}
+
+% Typed Reductions - Binary case
+
+\newcommand{\ftpred}[6]{\tprocess{#1}{#2}{#3} \typedred \tprocess{#4}{#5}{#6}}
+\newcommand{\ftpRed}[6]{\tprocess{#1}{#2}{#3} \typedRed \tprocess{#4}{#5}{#6}}
+
+\newcommand{\tpred}[5]{\tprocess{#1}{#2}{#3} \typedred \noGtprocess{#4}{#5}}
+\newcommand{\tpRed}[5]{\tprocess{#1}{#2}{#3} \typedRed \noGtprocess{#4}{#5}}
+\newcommand{\Gtpred}[4]{\Gtprocess{#1}{#2} \typedred \noGtprocess{#3}{#4}}
+\newcommand{\GtpRed}[4]{\Gtprocess{#1}{#2} \typedRed \noGtprocess{#3}{#4}}
+
+% Observer Reductions
+
+\newcommand{\obsred}{\red_{obs}}
+\newcommand{\obsRed}{\Red_{obs}}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                                    TYPED RELATIONS
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Typed Relations
+\newcommand{\fulltrel}[7]{\rel{\typedprocess{#1}{#2}{#3}}{#4}{\typedprocess{#5}{#6}{#7}}}
+\newcommand{\treld}[6]{\rel{\typedprocess{#1}{#2}{#3}}{#4}{\noGtypedprocess{#5}{#6}}}
+\newcommand{\trel}[5]{\rel{#1 \proves #2}{#3}{\noGtypedprocess{#4}{#5}}}
+
+\newcommand{\tcong}{\cong}
+\newcommand{\twb}{\approx}
+\newcommand{\govwb}{\approx_g}
+\newcommand{\tequiv}{\approx}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                                    CONFIGURATION THEORY
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newcommand{\confpair}[2]{(#1, #2)}
+\newcommand{\uptoconfpair}[2]{[#1, #2]}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                                   CONFLUENCE DETERMINACY
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newcommand{\sesstrans}[1]{\stackrel{#1}{\longrightarrow_{s}}}
+\newcommand{\sessTrans}[1]{\stackrel{#1}{\Longrightarrow_{s}}}
+
+\newcommand{\fulltypedsesstrans}[7]{\typedprocess{#1}{#2}{#3} \sesstrans{#4} \typedprocess{#5}{#6}{#7}}
+\newcommand{\fulltypedsessTrans}[7]{\typedprocess{#1}{#2}{#3} \sessTrans{#4} \typedprocess{#5}{#6}{#7}}
+
+\newcommand{\typedsesstrans}[6]{\typedprocess{#1}{#2}{#3} \sesstrans{#4} \noGtypedprocess{#5}{#6}}
+\newcommand{\typedsessTrans}[6]{\typedprocess{#1}{#2}{#3} \sessTrans{#4} \noGtypedprocess{#5}{#6}}
+\newcommand{\Gtypedsesstrans}[5]{\Gtypedprocess{#1}{#2} \sesstrans{#3} \noGtypedprocess{#4}{#5}}
+\newcommand{\GtypedsessTrans}[5]{\Gtypedprocess{#1}{#2} \sessTrans{#3} \noGtypedprocess{#4}{#5}}
+
+% Actions
+\newcommand{\confact}[2]{#1 \lfloor #2}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                                    MAPPING
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newcommand{\map}[1]{[\!\![#1]\!\!]}
+\newcommand{\namemap}[2]{#1\map{#2}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                                    PI CONSTRUCTS
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newcommand{\constrtype}[1]{\mathtt{#1}}
+
+
+\newcommand{\Let}{\constrtype{let}\ }
+\newcommand{\In}{\constrtype{in}\ }
+\newcommand{\To}{\constrtype{to}\ }
+\newcommand{\new}{\constrtype{new}\ }
+\newcommand{\from}{\constrtype{from}\ }
+\newcommand{\select}{\constrtype{select}\ }
+\newcommand{\register}{\constrtype{register}\ }
+\newcommand{\Update}{\constrtype{update}\ }
+
+\newcommand{\selectfrom}[2]{\select #1\ \from #2\ \In}
+\newcommand{\registerto}[2]{\register #1\ \To #2\ \In}
+
+\newcommand{\newselector}[1]{\new \constrtype{sel}\ #1\ \In}
+\newcommand{\newselectorT}[2]{\new \constrtype{sel}\lrangle{#2}\ #1\ \In}
+\newcommand{\selecttype}[1]{\dual{\constrtype{sel}}\lrangle{#1}}
+\newcommand{\sselecttype}[1]{\constrtype{sel}\lrangle{#1}}
+
+\newcommand{\update}[3]{\Update(#1, #2, #3)\ \In}
+
+\newcommand{\newenv}[1]{\new \mathtt{env}\ #1\ \In\ }
+\newcommand{\Letin}[2]{\Let #1 = #2\ \In}
+
+\newcommand{\selqueue}[2]{#1\lrangle{#2}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                                    DUALITY
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\dualof}{\ \mathsf{dual}\ }
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                                        lambda - CALCULUS
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newcommand{\labs}[2]{\lambda #1. #2}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                                    HIGHER ORDER SESSION PI
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\pHO}{\mathsf{pure\ HO}}
+\newcommand{\HO}{\mathsf{HO}}
+\newcommand{\pHOp}{\pHO^+}
+
+\newcommand{\ppi}{\mathsf{pure\ session\ }\pi}
+\newcommand{\spi}{\mathsf{session\ }\pi}
+
+\newcommand{\appl}[2]{#1\lrangle{#2}}
+\newcommand{\abs}[2]{(#1)#2}
+
+\newcommand{\lollipop}{\multimap}
+\newcommand{\sharedop}{\rightarrow}
+\newcommand{\logicop}{\multimapdot}
+
+\newcommand{\lhot}[1]{#1 \lollipop \diamond}
+\newcommand{\shot}[1]{#1 \sharedop \diamond}
+\newcommand{\hot}[1]{#1 \logicop \diamond}
+
+%\newcommand{\absmap}[1]{}
+\newcommand{\vmap}[1]{(\!|\!|#1|\!|\!)^v}
+\newcommand{\smap}[1]{(\!|\!|#1|\!|\!)^s}
+\newcommand{\svmap}[1]{(\!|\!|#1|\!|\!)^{s\rightarrow v}}
+\newcommand{\amap}[1]{\mathcal{A}\map{#1}}
+\newcommand{\absmap}[2]{\mathcal{A}\map{#1}^{#2}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                                    LN TRANSFORM
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newcommand{\Loop}{\mathsf{Loop}}
+\newcommand{\CodeBlocks}{\mathsf{CodeBlocks}}
+
+\newcommand{\lnmap}[1]{\namemap{LN}{#1}}
+\newcommand{\lnrmap}[1]{\namemap{LNR}{#1}}
+\newcommand{\lnblockmap}[1]{\namemap{\mathcal{B}}{#1}}
+\newcommand{\lnnonblockmap}[2]{\map{#1, #2}}
+
+\newcommand{\mapenv}[2]{\map{#1}_{#2}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                                        GENERAL TYPES
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Values
+\newcommand{\true}{\sessionfont{tt}}
+\newcommand{\false}{\sessionfont{ff}}
+
+% Typed
+\newcommand{\bool}{\sessionfont{bool}}
+\newcommand{\nat}{\sessionfont{nat}}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                                        PROCESSES NAMES SESSIONS ETC
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Processes
+\newcommand{\PP}{\ensuremath{P}}
+\newcommand{\Q}{\ensuremath{Q}}
+\newcommand{\R}{\ensuremath{R}}
+\newcommand{\OP}{\ensuremath{\mathsf{O}}}
+
+% Global environments
+\newcommand{\En}{\ensuremath{En}}
+
+% Session channels
+\newcommand{\s}{\ensuremath{s}}
+\newcommand{\ds}{\ensuremath{\dual{s}}}
+%\newcommand{\Ms}[2]{\ensuremath{s}\role{#1}\role{#2}}
+
+%Dummy channels
+\newcommand{\sd}{\mathtt{sd}}
+\newcommand{\shd}{\mathtt{shd}}
+
+% Names
+\newcommand{\Ia}{\ensuremath{a}}
+\newcommand{\Iu}{\ensuremath{u}}
+
+% Variables, values, expressions
+\newcommand{\x}{\ensuremath{x}}
+\newcommand{\y}{\ensuremath{y}}
+\newcommand{\ks}{\ensuremath{k}}
+\newcommand{\cc}{\ensuremath{c}}
+\newcommand{\va}{\ensuremath{v}}
+\newcommand{\e}{\ensuremath{e}}
+\newcommand{\n}{\ensuremath{n}}
+
+% Process Variables
+
+\newcommand{\X}{\varp{X}}
+\newcommand{\Y}{\varp{Y}}
+
+% Roles
+\newcommand{\p}{\ensuremath{\mathtt{p}}}
+\newcommand{\q}{\ensuremath{\mathtt{q}}}
+\newcommand{\A}{\ensuremath{A}}
+
+% Types
+\newcommand{\G}{\ensuremath{G}}
+\newcommand{\gG}{\globaltype{\G}}
+\newcommand{\U}{\ensuremath{U}}
+\newcommand{\So}{\ensuremath{S}}
+\newcommand{\T}{\ensuremath{T}}
+
+% Queue Types
+\newcommand{\M}{\ensuremath{M}}
+\newcommand{\I}{\ensuremath{M_\inputsym}}
+\newcommand{\Om}{\ensuremath{M_\outputsym}}
+\newcommand{\Typ}{\ensuremath{\mathsf{T}}}
+
+% Queues values
+\newcommand{\h}{\ensuremath{h}}
+
+%barbs
+\newcommand{\m}{\ensuremath{\mu}}
+
+% Contexts
+\newcommand{\C}{\ensuremath{C}}
+\newcommand{\E}{\ensuremath{E}}
+
+% Congruence completness - Definibility
+\newcommand{\TT}{\ensuremath{T}}
+\newcommand{\suc}{\textrm{succ}}
+\newcommand{\fail}{\textrm{fail}}
+
+
+% Set selection labels
+\newcommand{\lPi}{\set{l_i:\PP_i}_{i \in I}}
+\newcommand{\lGi}{\set{l_i:\G_i}_{i \in I}}
+\newcommand{\lTi}{\set{l_i:\T_i}_{i \in I}}
+\newcommand{\lSi}{\set{l_i:\So_i}_{i \in I}}
+
+% Selector proof
+
+\newcommand{\SEL}{P_\mathit{Sel}}
+\newcommand{\DSEL}{P_\mathit{DSel}}
+\newcommand{\Sel}{\mathsf{Sel}}
+\newcommand{\IfSel}{\mathsf{IfSel}}
+\newcommand{\DSel}{\mathsf{DSel}}
+\newcommand{\PSel}{\mathsf{PermSel}}
+\newcommand{\PIfSel}{\mathsf{PermIfSel}}
+\newcommand{\PDSel}{\mathsf{PermDSel}}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                                        MISC
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\Appendix}[1]{Appendix \ref{#1}}
+
+\newcommand{\dimcom}[1]{{\bf Comment: #1 \\}}
+
+\newcommand{\hintcom}[1]{{\bf Hint: #1 \\}}
+
+
+
+\newif\ifny\nyfalse
+%\nytrue
+\newcommand{\NY}[1]
+{\ifny{\color{purple}{#1}}\else{#1}\fi}
+
+\newcommand{\KH}[1]
+{\ifny{\color{brown}{#1}}\else{#1}\fi}
+
+\newif\ifdm\dmtrue
+%\dmfalse
+\newcommand{\dk}[1]
+{\ifdm{\color{blue}{#1}}\else{#1}\fi}
+
+\newif\ifrhu\rhutrue
+%\rhufalse
+\newcommand{\rh}[1]
+{\ifdm{\color{red}{#1}}\else{#1}\fi}
+
+
+
+\newcommand{\ENCan}[1]{\langle #1 \rangle}
+\newcommand{\NI}{\noindent}
+
+
+\newcommand{\syntaxvspace}{\\[1mm]}
+
+\newcommand{\TO}[2]{#1\to #2}
+\newcommand{\GS}[3]{\TO{#1}{#2}\colon \!\ENCan{#3}}
+
+\newcommand{\ASET}[1]{\{#1\}}
+\newcommand{\participant}[1]{\mathtt{#1}}
+\newcommand{\CODE}[1]{{\tt #1}}

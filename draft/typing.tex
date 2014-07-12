@@ -1,0 +1,158 @@
+\section{Types}
+
+\subsection{Session Types}
+
+\[
+	\begin{array}{rcl}
+		H &\bnfis&	\lhot{T} \bnfbar \shot{T} \\
+		U &\bnfis&	H \bnfbar T \bnfbar \chtype{T} \\
+		T &\bnfis&	\tinact \bnfbar \trec{t}{T} \bnfbar \vart{t} \bnfbar \btout{U} T \bnfbar \btinp{U} T
+		\bnfbar		\btsel{l_i:T_i}_{i \in I} \bnfbar \btbra{l_i:T_i}_{i \in I}
+	\end{array}
+\]\
+
+%We let $\logicop \in \set{\lollipop, \sharedop}$.
+
+\subsection{Subtyping}
+
+
+%\begin{definition}
+%	Let $\lollipop\ <\ \sharedop$ to define $\subt\ =\ <^*$.
+%\end{definition}
+
+\begin{definition}[Session Subtyping]
+Let $\mathcal{T}$ to be the set of all session types.
+Define the monotone function $F: \mathcal{T} \longrightarrow \mathcal{T}$:
+%
+\[
+	\begin{array}{rcl}
+		F(R)	& = &	\set{\tinact, \tinact}
+			\cup	\set{\chtype{T_1}, \chtype{T_2} \bnfbar T_1\ R\ T_2}\\
+			&\cup&	\set{(T_1 \sharedop \diamond, T_2 \sharedop \diamond) \setbar T_1\ R\ T_2}
+			\cup	\set{(T_1 \lollipop \diamond, T_2 \lollipop \diamond) \setbar T_1\ R\ T_2}\\
+			&\cup&	\set{(T_1 \lollipop \diamond, T_2 \sharedop \diamond) \setbar T_1\ R\ T_2}\\
+			&\cup&	\set{(\btout{U_1} T_1, \btout{U_2} T_2) \setbar T_1\ R\ T_2, U_2\ R\ U_1}\\
+			&\cup&	\set{(\btinp{U_1} T_1, \btinp{U_2} T_2) \setbar T_1\ R\ T_2, U_1\ R\ U_2}\\
+			&\cup&	\set{(\btsel{l_i: T_i}_{i \in I}, \btsel{l_i: T'_i}_{i \in I}) \setbar \forall k \in I, T_k\ R\ T'_k}\\
+			&\cup&	\set{(\btbra{l_i: T_i}_{i \in I}, \btbra{l_i: T'_i}_{i \in I}) \setbar \forall k \in I, T_k\ R\ T'_k}\\
+			&\cup&	\set{(\trec{t} T_1, \trec{t} T_2) \setbar T_1\ R\ T_2}\\
+			&\cup&	\set{(T_1\subst{\trec{t} T_1}{t}, \trec{t}{T_2}) \setbar T_1\ R\ \trec{t} T_2}
+			\cup	\set{(\trec{t}{T_1}, T_2\subst{\trec{t} T_2}{t}) \setbar \trec{t} T_1\ R\ T_2}\\
+	\end{array}
+\]
+%
+$\subt = \nu R.F(R)$.
+\end{definition}
+
+\subsection{Duality}
+
+\begin{definition}[Session Duality]
+%Let $\mathcal{T}$ to be the set of all session types.
+Define the monotone function $F: \mathcal{T} \longrightarrow \mathcal{T}$:
+%
+\[
+	\begin{array}{rcl}
+		F(R)	& = &	\set{\tinact, \tinact}
+			\cup	\set{\chtype{T_1}, \chtype{T_2} \bnfbar T_1\ R\ T_2}\\
+			&\cup&	\set{(T_1 \sharedop \diamond, T_2 \sharedop \diamond) \setbar T_1\ R\ T_2}
+			\cup	\set{(T_1 \lollipop \diamond, T_2 \lollipop \diamond) \setbar T_1\ R\ T_2}\\
+			&\cup&	\set{(T_1 \lollipop \diamond, T_2 \sharedop \diamond) \setbar T_1\ R\ T_2}\\
+			&\cup&	\set{(\btout{U_1} T_1, \btinp{U_2} T_2) \setbar T_1\ R\ T_2, U_2\ R\ U_1}\\
+			&\cup&	\set{(\btinp{U_1} T_1, \btout{U_2} T_2) \setbar T_1\ R\ T_2, U_1\ R\ U_2}\\
+			&\cup&	\set{(\btsel{l_i: T_i}_{i \in I}, \btbra{l_i: T'_i}_{i \in I}) \setbar \forall k \in I, T_k\ R\ T'_k}\\
+			&\cup&	\set{(\btbra{l_i: T_i}_{i \in I}, \btsel{l_i: T'_i}_{i \in I}) \setbar \forall k \in I, T_k\ R\ T'_k}\\
+			&\cup&	\set{(\trec{t} T_1, \trec{t} T_2) \setbar T_1\ R\ T_2}\\
+			&\cup&	\set{(T_1\subst{\trec{t} T_1}{t}, \trec{t}{T_2}) \setbar T_1\ R\ \trec{t} T_2}
+			\cup	\set{(\trec{t}{T_1}, T_2\subst{\trec{t} T_2}{t}) \setbar \trec{t} T_1\ R\ T_2}\\
+	\end{array}
+\]
+%
+$\dualof = \nu R.F(R)$.
+\end{definition}
+
+\subsection{Typing System}
+
+\[
+	\Gamma \bnfis \Gamma \cat \X: H \bnfbar \Gamma \cat r:\Delta \bnfbar \es
+\]
+
+\[
+	\Delta \bnfis \Delta \cat k:T \bnfbar \Delta \cat k: \chtype{T} \bnfbar \Delta \cat X \bnfbar \es
+\]
+
+\[
+	\Gtprocess{P}{\Delta}
+\]
+
+\input{figures/fig-typing}
+%\input{figures/fig-typing}
+
+\begin{definition}[$\ppi$]
+	Let $P$ be a $\spi$ process with $\Gamma \proves P \hastype \Delta$.
+	If the typing derivation does not contain the type $\chtype{T}$ then
+	$P$ is a $\ppi$ process.
+\end{definition}
+
+\subsection{Examples}
+
+\begin{example}
+\label{ex:linear_abstraction}
+\[
+	P = \binp{s}{\X} (\appl{\X}{s_1} \Par \appl{\X}{s_2})
+\]
+is untypable under environment $\Gamma = \X: \lhot{T}$, since:
+\[
+	\Gtprocess{\appl{\X}{s_1}}{s_1 : T \cat \X} \quad \Gtprocess{\appl{\X}{s_2}}{s_2 : T \cat \X}
+\]
+We cannot apply rule $\trule{Par}$ to get:
+\[
+	\Gtprocess{\appl{\X}{s_1} \Par \appl{\X}{s_2}}{s_1:T \cat s_2:T}
+\]
+because $\dom{s_1 : T \cat \X} \cap \dom{s_2 : T \cat \X} = \X$.
+
+It is though typable under environment $\Gamma = \X: \shot{T}$, since:
+\[
+	\tree{
+		\tree{
+			\Gtprocess{\appl{\X}{s_1}}{s_1 : T} \quad \Gtprocess{\appl{\X}{s_2}}{s_2 : T} \quad \dom{s_1 : T} \cup \dom{s_2 : T} = \es
+		}{
+			\Gtprocess{\appl{\X}{s_1} \Par \appl{\X}{s_2}}{s_1 : T \cat s_2 : T}
+		}
+	}{
+		\tprocess{}{\binp{s}{X} (\appl{\X}{s_1} \Par \appl{\X}{s_2})}{s: \btinp{\shot{T}} \tinact \cat s_1 : T \cat s_2 : T}
+	}
+\]
+
+Now let
+\[
+	\begin{array}{rcl}
+		Q_1 &=& \bout{\dual{s}}{\abs{x}{\bout{x}{\inact} \inact}} \inact\\
+		Q_2 &=& \bout{\dual{s}}{\abs{x}{\bout{x}{\inact} \bout{s'}{\inact} \inact}} \inact
+	\end{array}
+\]
+
+Process $\newsp{s}{Q_1 \Par P}$ is typable, whereas $\newsp{s}{Q_2 \Par P}$ is not.
+This is due to the fact that abstraction $\abs{x}{\bout{x}{\inact} \bout{s'}{\inact} \inact}$
+contains linear session $s'$ and should not be duplicated:
+\[
+P \Par Q_2 \red \bout{s_1}{\inact} \bout{s'}{\inact} \inact \Par \bout{s_2}{\inact} \bout{s'}{\inact} \inact
+\]
+The last process should not be typable because name $s'$ is appeared twice.
+
+The type system avoids the above situation on rule $\trule{Out}$ and the duality relation:
+%
+\[
+	\tree{
+		\tprocess{}{\bout{x}{\inact} \bout{s'}{\inact} \inact}{x: T \cat s':T'} \tprocess{}{\inact}{\dual{s}:\tinact}
+	}{
+		\tprocess{}{Q_2}{s':T' \cat \dual{s}:\btout{\lhot{T}} \tinact}
+	}
+\]
+
+We then apply rule $\trule{Par}$ to get:
+\[
+	\tprocess{}{P \Par Q_2}{s':T' \cat \dual{s}:\btout{\lhot{T}} \tinact \cat s: \btinp{\shot{T}} \inact s_1 : T \cat s_2 : T}
+\]
+On this typing node, rule $\trule{Res}$ is not applicable since
+$\btout{\lhot{T}} \tinact$ is not dual with $\btinp{\shot{T}} \inact$.
+\end{example}
