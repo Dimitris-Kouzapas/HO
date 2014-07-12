@@ -1,5 +1,7 @@
 \section{Observational Semantics}
 
+We give the observational semantics for the $\pHO$.
+
 \subsection{Labelled Transition Semantics}
 
 \[
@@ -77,9 +79,106 @@
 
 \subsection{LTS for Types}
 
-\dk{Define $(\Gamma, \Delta) \by{\lambda} (\Gamma', \Delta')$}
+\[
+\begin{array}{c}
+	\tree{
+		\dual{s} \notin \dom{\Delta} \quad \Gamma \proves P \hastype \Delta' \cat x: T' \quad H = \shot{T'} \vee H = \lhot{T'}
+	}{
+		(\Gamma, \Delta \cat s: \btout{H} T) \by{\bactout{s}{\abs{x}{P}}} (\Gamma, \Delta \cat s: T)
+	}
+	\\[6mm]
+	\tree{
+		\dual{s} \notin \dom{\Delta} \quad  \Gamma \proves P \hastype \Delta' \cat x: T' \quad H = \shot{T'} \vee H = \lhot{T'}
+	}{
+		(\Gamma, \Delta \cat s: \btinp{H} T) \by{\bactinp{s}{\abs{x}{P}}} (\Gamma, \Delta \cat s:T)
+	}
+	\\[6mm]
+	\tree{
+		\dual{s} \notin \dom{\Delta} \quad k \in I
+	}{
+		(\Gamma, \Delta \cat s: \btsel{l_i: T_i}_{i \in I}) \by{\bactsel{s}{l_k}} (\Gamma, \Delta \cat s:T_k)
+	}
+	\quad
+	\tree{
+		\dual{s} \notin \dom{\Delta} \quad k \in I
+	}{
+		(\Gamma, \Delta \cat s: \btbra{l_i: T_i}_{i \in I}) \by{\bactbra{s}{l_k}} (\Gamma, \Delta \cat s:T_k)
+	}
+	\\[6mm]
 
-\dk{Define $\Gtprocess{P}{\Delta} \by{\lambda} \noGtprocess{P}{\Delta'}$}
+	\tree{
+		(\Gamma, \Delta) \by{\news{\tilde{s}} \bactout{s}{\abs{x} P}} (\Gamma, \Delta')	\quad \Gamma \proves P \hastype \Delta'' \cat s': T	
+	}{
+		(\Gamma, \Delta) \by{\news{s' \cat \tilde{s'}} \bactout{s}{\abs{x} P}} (\Gamma, \Delta \cat s': T)
+	}
+	\quad
+	\tree{
+		\Delta \red \Delta' \ \dk{\textrm{define } \red\ \textrm{for } \Delta}
+	}{
+		(\Gamma, \Delta) \by{\tau} (\Gamma,\Delta')
+	}
+\end{array}
+\]
+
+\begin{definition}[Typed Transition]
+	We define
+	\[
+		\Gamma \proves P \hastype \Delta \by{\lambda} P' \hastype \Delta'
+	\]
+	if
+	\begin{enumerate}
+		\item	$P \by\lambda P'$
+		\item	$(\Gamma, \Delta) \by\lambda (\Gamma, \Delta')$
+	\end{enumerate}
+\end{definition}
+
+\subsection{Barbed Congruence}
+
+\begin{definition}[Barbs]
+	Let \dk{$\pHO$} process $P$.
+	\begin{enumerate}
+		\item	We write $P \barb{s}$ if $P \scong \newsp{\tilde{s}}{\bout{s}{\abs{x} P_1} P_2 \Par P_3}, s \notin \tilde{s}$.
+			We write $P \Barb{s}$ if $P \red^* \barb{s}$.
+
+		\item	We write $\Gamma \proves P \hastype \Delta \barb{s}$ if $P \barb{s}$ and $\dual{s} \notin \Delta$.
+			We write $\Gamma \proves P \hastype \Delta \Barb{s}$ if $\Gamma \proves P \hastype \Delta \By{} P' \hastype \Delta' \barb{s}$.			
+	\end{enumerate}
+\end{definition}
+
+\begin{definition}[Context]
+	$C$ is a context defined on the grammar:
+
+	\begin{tabular}{rcl}
+		$C$ &$=$& $\hole \bnfbar P \bnfbar \bout{k}{\abs{x}P} C \bnfbar \binp{k}{X} C \bnfbar \news{s} C \bnfbar C \Par C \bnfbar \bsel{k}{l} C \bnfbar \bbra{k}{l_i:C_i}_{i \in I}$
+	\end{tabular}
+	Notation $\context{C}{P}$ replaces every $\hole$ in $C$ with $P$.
+\end{definition}
+
+\begin{definition}[Typed Congruence]
+	Relation $\Gamma \proves P_1 	\hastype \Delta_1\ R\ P_2 \hastype \Delta_2$ is a typed congruence if
+	$\forall C$ such that $\Gamma \proves \context{C}{P_1} \hastype \Delta_1'$ and
+	$\Gamma \proves \context{C}{P_2} \hastype \Delta_1'$ then
+	$\Gamma \proves \context{C}{P_1} \Delta_1'\ R\ \context{C}{P_2} \hastype \Delta_2'$.
+\end{definition}
+
+\begin{definition}[Barbed Congruence]
+	Relation $\Gamma \proves P_1 \hastype \Delta_1\ R\ P_2 \hastype \Delta_2$ is a barbed congruence
+	whenever:
+	\begin{enumerate}
+		\item
+		\begin{itemize}
+			\item	If $P_1 \red P_1'$ then $\exists P_2', P_2 \red^* P_1'$ and $\Gamma \proves P_1' \hastype \Delta_1'\ R\ P_2' \hastype \Delta_2'$.
+			\item	If $P_2 \red P_2'$ then $\exists P_1', P_1 \red^* P_1'$ and $\Gamma \proves P_1' \hastype \Delta_1'\ R\ P_2' \hastype \Delta_2'$.
+		\end{itemize}
+		\item
+		\begin{itemize}
+			\item	If $\Gamma \proves P_1 \hastype \Delta_1 \barb{s}$ then $\Gamma \proves P_2 \hastype \Delta_2 \Barb{s}$.
+			\item	If $\Gamma \proves P_2 \hastype \Delta_2 \barb{s}$ then $\Gamma \proves P_1 \hastype \Delta_1 \Barb{s}$.
+		\end{itemize}
+		\item	$R$ is a typed congruence.
+	\end{enumerate}
+	The largest such congruence is denote with $\cong$.
+\end{definition}
 
 \subsection{Bisimulation}
 
@@ -88,10 +187,10 @@
 	$\mathcal{R}$ is a barbed congruence if whenever:
 	\begin{itemize}
 		\item	$\forall \news{\tilde{s}} \bactout{s}{\abs{x} P}$ such that $\Gtprocess{P_1}{\Delta} \by{\news{\tilde{s}} \bactout{s}{\abs{x} P}} \noGtprocess{P_2}{\Delta'}, \exists
-			Q_2$ such that $\Gtprocess{Q_1}{\Delta} \by{\news{\tilde{s}} \bactout{s}{\abs{x} P}} \noGtprocess{Q_2}{\Delta'}$ and
+			Q_2$ such that $\Gtprocess{Q_1}{\Delta} \by{\news{\tilde{s}} \bactout{s}{\abs{x} Q}} \noGtprocess{Q_2}{\Delta'}$ and
 			$\forall C, s'$ such that $\Gtprocess{\newsp{\tilde{s}}{P_2 \Par \context{C}{P \subst{s'}{x}}}}{\Delta''}$ and
-			$\Gtprocess{\newsp{\tilde{s}}{Q_2 \Par \context{C}{P \subst{s'}{x}}}}{\Delta''}$ then
-			$\Gtprocess{\newsp{\tilde{s}}{P_2 \Par \context{C}{P \subst{s'}{x}}}}{\Delta''} \mathcal{R} \noGtprocess{\newsp{\tilde{s}}{Q_2 \Par \context{C}{P \subst{s'}{x}}}}{\Delta''}$.
+			$\Gtprocess{\newsp{\tilde{s}}{Q_2 \Par \context{C}{Q \subst{s'}{x}}}}{\Delta''}$ then
+			$\Gtprocess{\newsp{\tilde{s}}{P_2 \Par \context{C}{P \subst{s'}{x}}}}{\Delta''} \mathcal{R} \noGtprocess{\newsp{\tilde{s}}{Q_2 \Par \context{C}{Q \subst{s'}{x}}}}{\Delta''}$.
 
 		\item	$\forall \lambda \not= \news{\tilde{s}} \bactout{s}{\abs{x} P}$ such that $\Gtprocess{P_1}{\Delta} \by{\lambda} \noGtprocess{P_2}{\Delta'}, \exists
 			Q_2$ such that $\Gtprocess{Q_1}{\Delta} \by{\lambda} \noGtprocess{Q_2}{\Delta'}$ and
@@ -108,10 +207,10 @@
 	$\mathcal{R}$ is a bisimulation if whenever:
 	\begin{itemize}
 		\item	$\forall \news{\tilde{s}} \bactout{s}{\abs{x} P}$ such that $\Gtprocess{P_1}{\Delta} \by{\news{\tilde{s}} \bactout{s}{\abs{x} P}} \noGtprocess{P_2}{\Delta'}, \exists
-			Q_2$ such that $\Gtprocess{Q_1}{\Delta} \by{\news{\tilde{s}} \bactout{s}{\abs{x} P}} \noGtprocess{Q_2}{\Delta'}$ and
+			Q_2$ such that $\Gtprocess{Q_1}{\Delta} \by{\news{\tilde{s}} \bactout{s}{\abs{x} Q}} \noGtprocess{Q_2}{\Delta'}$ and
 			$s'$ such that $\Gtprocess{\newsp{\tilde{s}}{P_2 \Par P \subst{s'}{x}}}{\Delta''}$ and
-			$\Gtprocess{\newsp{\tilde{s}}{Q_2 \Par P \subst{s'}{x}}}{\Delta''}$ then
-			$\Gtprocess{\newsp{\tilde{s}}{P_2 \Par P \subst{s'}{x}}}{\Delta''} \mathcal{R} \noGtprocess{\newsp{\tilde{s}}{Q_2 \Par P \subst{s'}{x}}}{\Delta''}$.
+			$\Gtprocess{\newsp{\tilde{s}}{Q_2 \Par Q \subst{s'}{x}}}{\Delta''}$ then
+			$\Gtprocess{\newsp{\tilde{s}}{P_2 \Par P \subst{s'}{x}}}{\Delta''} \mathcal{R} \noGtprocess{\newsp{\tilde{s}}{Q_2 \Par Q \subst{s'}{x}}}{\Delta''}$.
 
 		\item	$\forall \lambda \not= \news{\tilde{s}} \bactout{s}{\abs{x} P}$ such that $\Gtprocess{P_1}{\Delta} \by{\lambda} \noGtprocess{P_2}{\Delta'}, \exists
 			Q_2$ such that $\Gtprocess{Q_1}{\Delta} \by{\lambda} \noGtprocess{Q_2}{\Delta'}$ and
