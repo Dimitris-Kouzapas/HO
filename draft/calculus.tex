@@ -1,3 +1,4 @@
+% !TEX root = main.tex
 \section{A Higher Order Session Calculus}
 
 We define a session calculus augmented with higher order semantics.
@@ -30,6 +31,7 @@ The syntax of processes follows:
 	$P$	&$\bnfis$&	$ \bout{k}{k'} P \bnfbar \binp{k}{x} P$\\
 %		&$\bnfbar$&	$\breq{s}{s'} P \bnfbar \bacc{s}{x} P$\\
 		&$\bnfbar$&	$\bout{k}{\abs{x} Q} P \bnfbar \binp{k}{X}P$\\
+		&$\bnfbar$&	$\appl{X}{k}$ \\ 
 		&$\bnfbar$&	$\bsel{s}{l} P \bnfbar \bbra{s}{l_i:P_i}_{i \in I} \bnfbar 
 				P_1 \Par P_2 \bnfbar \news{s} P \bnfbar \inact \bnfbar \varp{r} \bnfbar \recp{r}{P}$
 \end{tabular}
@@ -49,14 +51,14 @@ The syntax of processes follows:
 \subsubsection{Process Variable Substitution}
 \[
 	\begin{array}{rclcrcl}
+			\appl{X}{k} \subst{\abs{x}{Q}}{\X} & = & Q \subst{k}{x} \\
 		(\bout{s}{\abs{y}{P_1}} P_2) \subst{\abs{x}{Q}}{\X} &=& \bout{s}{\abs{y}{P_1 \subst{\abs{x}{Q}}{\X}}} (P_2 \subst{\abs{x}{Q}}{\X}) \\
 		(\binp{s}{\Y} P) \subst{\abs{x}{Q}}{\X} &=& \binp{s}{\Y} (P \subst{\abs{x}{Q}}{\X}) \\
 		(\bsel{s}{l} P) \subst{\abs{x}{Q}}{\X} &=& \bsel{s}{l} (P \subst{\abs{x}{Q}}{\X})\\
 		(\bbra{s}{l_i : P_i}_{i \in I}) \subst{\abs{x}{Q}}{\X} &=& \bbra{s}{l_i : P_i \subst{\abs{x}{Q}}{\X}}_{i \in I}\\
 		(P_1 \Par P_2) \subst{\abs{x}{Q}}{\X} & = & P_1 \subst{\abs{x}{Q}}{\X} \Par P_2 \subst{\abs{x}{Q}}{\X}\\
 		(\news{s} P) \subst{\abs{x}{Q}}{\X} & = & \news{s} (P \subst{\abs{x}{Q}}{\X})\\
-		\inact \subst{\abs{x}{Q}}{\X} & = & \inact\\
-		\appl{X}{k} \subst{\abs{x}{Q}}{\X} & = & Q \subst{k}{x}
+		\inact \subst{\abs{x}{Q}}{\X} & = & \inact
 	\end{array}
 \]
 
