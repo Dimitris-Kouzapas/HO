@@ -1,0 +1,88 @@
+% !TEX root = main.tex
+
+\newcommand{\Proc}{\ensuremath{\diamond}}
+\newcommand{\Unit}{\ensuremath{\mathsf{unit}}}
+\newcommand{\UnitV}{\ensuremath{()}}
+
+\section{Higher-Order Session Types}
+
+We recall the typed framework for higher-order session communication (as proposed by Mostrous and Yoshida), adapted to our setting.
+
+\subsection{Types}
+
+\[
+\begin{array}{lcl}
+\text{Terms} & T ::= & U  \bnfbar  \Proc\\
+\text{Values} & U ::= & \Unit  \bnfbar  \lhot{S} \bnfbar \shot{S} \bnfbar \chtype{S} \bnfbar S \\
+\text{Sessions} \quad & S ::= &  \btout{U} S \bnfbar \btinp{U} S
+		\bnfbar		\btsel{l_i:S_i}_{i \in I} \bnfbar \btbra{l_i:S_i}_{i \in I} \bnfbar \trec{t}{S} \bnfbar \vart{t}  \bnfbar \tinact 
+\end{array}
+\]
+
+\subsection{Environments and Judgment}
+\[
+\begin{array}{lcl}
+\text{Shared} & \Gamma :: = & \emptyset \bnfbar \Gamma, \, u{:}\Unit \bnfbar \Gamma,\, u{:}\shot{S} \bnfbar \Gamma, \,u{:}\chtype{S} \\
+\text{Linear} & \Lambda :: = & \emptyset \bnfbar \Lambda,\, X{:}\lhot{S}  \\
+\text{Session} \quad & \Sigma :: = & \emptyset \bnfbar \Sigma,\, k{:}S  
+\end{array}
+\]
+
+
+With these environments the shape of judgments is as follows:
+\[
+\Gamma; \Lambda ; \Sigma \vdash P \hastype T
+\]
+As expected, weakening, contraction, and exchange principles apply to $\Gamma$; environments $\Lambda$ and $\Sigma$ behave linearly, and are only subject to exchange.
+We focus on \emph{well-formed} judgments, which do not share elements in their domains.
+
+
+\subsection{Typing Rules}
+
+\begin{figure}[!t]
+\[
+	\begin{array}{crccr}
+	\displaystyle \frac{ }{\Gamma ; \emptyset; \emptyset \vdash \UnitV \hastype \Unit} & \trule{Unit} & 
+	\quad & 
+	\displaystyle \frac{ }{\Gamma, \, u{:}U ; \emptyset; \emptyset \vdash u \hastype U} & \trule{Shared} 
+	\vspace{2mm}
+	\\
+	\displaystyle \frac{ }{\Gamma ; \{X{:}\lhot{S}\}; \emptyset \vdash X \hastype \lhot{S}} & \trule{LVar} & 
+	\quad & 
+	\displaystyle \frac{ }{\Gamma ; \emptyset ; \{k{:}S\} \vdash k \hastype S} & \trule{Session} 
+	\vspace{2mm}
+	\\
+	\displaystyle \frac{\Gamma ; \emptyset; \emptyset \vdash P \hastype \lhot{S} }{\Gamma ; \emptyset; \emptyset \vdash P \hastype \shot{S}} & \trule{Prom} & 
+	\quad & 
+	\displaystyle \frac{ \Gamma ; \Lambda ,\, X{:}\lhot{S}; \Sigma \vdash P \hastype T }{ \Gamma,\, X{:}\lhot{S}; \Lambda ; \Sigma \vdash P \hastype T} & \trule{Derelic} 
+	\vspace{2mm}
+	\\
+	\displaystyle \frac{\Gamma ; \Lambda; \Sigma \vdash P \hastype T  \quad \Sigma \subt \Sigma' \quad T \subt T'}{\Gamma ; \Lambda; \Sigma' \vdash P \hastype T'} & \trule{Subt} & 
+	\quad & 
+	\displaystyle \frac{ \Gamma ; \Lambda; \Sigma,\, x{:} S \vdash P \hastype \Proc }{ \Gamma ; \Lambda; \Sigma \vdash (x)P \hastype \lhot{S}} & \trule{Abs} 
+	\vspace{2mm}
+	\\
+	\displaystyle \frac{(T = \lhot{S}) \lor (T = \shot{S}) \quad \Gamma ; \Lambda_1; \Sigma_1 \vdash X \hastype T  \quad \Gamma ; \Lambda_2; \Sigma_2 \vdash k \hastype S}{\Gamma ; \Lambda_1, \Lambda_2; \Sigma_1, \Sigma_2 \vdash \appl{X}{k} \hastype \Proc} & \trule{App} & 
+	\quad & 
+	-  & - 
+	\vspace{2mm}
+	\\
+	\displaystyle \frac{\Gamma ; \Lambda_1; \Sigma_1 \vdash P \hastype \Proc  \quad \Gamma ; \Lambda_2; \Sigma_2 \vdash V \hastype U  \quad (k{:}S \in \Sigma_1) \lor (k{:}S \in \Sigma_2) }{\Gamma ; \Lambda_1, \Lambda_2; (\Sigma_1, \Sigma_2)-\{k{:}S\}, k{:}\btout{U} S \vdash \bout{k}{V} P \hastype \Proc} & \trule{Send} & 
+	\quad & 
+	-  & - 
+	\vspace{2mm}
+	\\
+	\displaystyle \frac{\Gamma ; \Lambda; \Sigma, \, x{:}S \vdash P \hastype \Proc  \quad \Gamma ; \emptyset; \emptyset \vdash u \hastype \chtype{S} }{\Gamma ; \Lambda; \Sigma \vdash \binp{u}{x} P \hastype \Proc} & \trule{Conn} & 
+	\quad & 
+	-  & - 
+	\vspace{2mm}
+	\\
+	\displaystyle \frac{\Gamma ; \Lambda; \Sigma, \, x{:}S_1 \vdash P \hastype \Proc  \quad \Gamma ; \emptyset; \emptyset \vdash u \hastype \chtype{S_2} \quad dual(S_1, S_2)}{\Gamma ; \Lambda; \Sigma \vdash \bout{u}{x} P \hastype \Proc} & \trule{ConnDual}& \quad &
+	\displaystyle \frac{\Gamma, \, a{:}\chtype{S} ; \Lambda; \Sigma \vdash P \hastype \Proc  }{\Gamma ; \Lambda; \Sigma \vdash \news{a{:}\chtype{S}} P \hastype \Proc}  & \trule{New} 
+	\vspace{2mm}
+	\\
+	\end{array}
+\]
+\caption{Typing Rules (Mostrous and Yoshida)}
+\end{figure}
+	
