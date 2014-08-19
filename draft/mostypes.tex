@@ -1,0 +1,138 @@
+% !TEX root = main.tex
+
+\newcommand{\Proc}{\ensuremath{\diamond}}
+\newcommand{\Unit}{\ensuremath{\mathsf{unit}}}
+\newcommand{\UnitV}{\ensuremath{()}}
+
+\section{Higher-Order Session Types (Mostrous and Yoshida)}
+
+We recall the typed framework for higher-order session communication (as proposed by Mostrous and Yoshida), adapted to our setting.
+
+\subsection{Types}
+The type structure that we consider here is a subset of the type syntax considered by Mostrous and Yoshida.
+The only (but fundamental) differences are in the types for values: we focus on having 
+$\shot{S}$ and $\lhot{S}$, whereas Mostrous and Yoshida handle the more general functions $U \sharedop T$ and 
+$U \lollipop T$.
+\[
+\begin{array}{lcl}
+\text{Terms} & T ::= & U  \bnfbar  \Proc\\
+\text{Values} & U ::= & \Unit  \bnfbar  \lhot{S} \bnfbar \shot{S} \bnfbar \chtype{S} \bnfbar S \\
+\text{Sessions} \quad & S ::= &  \btout{U} S \bnfbar \btinp{U} S
+		\bnfbar		\btsel{l_i:S_i}_{i \in I} \bnfbar \btbra{l_i:S_i}_{i \in I} \bnfbar \trec{t}{S} \bnfbar \vart{t}  \bnfbar \tinact 
+\end{array}
+\]
+
+\subsection{Environments and Judgment}
+Following our design decision of focusing on functions $\shot{S}$ and $\lhot{S}$, our environments are also simpler (the only difference wrt M\&Y is the in the `Shared' group):
+\[
+\begin{array}{lcl}
+\text{Shared} & \Gamma :: = & \emptyset \bnfbar \Gamma, \, u{:}\Unit \bnfbar \Gamma,\, u{:}\shot{S} \bnfbar \Gamma, \,u{:}\chtype{S} \\
+\text{Linear} & \Lambda :: = & \emptyset \bnfbar \Lambda,\, X{:}\lhot{S}  \\
+\text{Session} \quad & \Sigma :: = & \emptyset \bnfbar \Sigma,\, k{:}S  
+\end{array}
+\]
+With these environments the shape of judgments is exactly the same as in Mostrous and Yoshida's system:
+\[
+\Gamma; \Lambda ; \Sigma \vdash P \hastype T
+\]
+As expected, weakening, contraction, and exchange principles apply to $\Gamma$; environments $\Lambda$ and $\Sigma$ behave linearly, and are only subject to exchange.
+We focus on \emph{well-formed} judgments, which do not share elements in their domains.
+
+
+\subsection{Typing Rules}
+
+%\newcommand{\jrule}[3]{\displaystyle \frac{#1 }{#2} & \trule{#3}}
+\newcommand{\jrule}[3]{\displaystyle \trule{#3}~~\frac{#1 }{#2}}
+\newcommand{\addenv}{\circ}
+
+The typing rules for our system are in Fig.~\ref{fig:typerulesmy}. 
+They are essentially the rules proposed in Mostrous and Yoshida's system, but adapted to our simpler type structure.
+We have two rules for reception, one for receiving sessions, another for receiving abstractions. 
+We retain structural rules (notably, the promotion rule which enables us to get a `linear copy' of an unrestricted function $\shot{S}$) and the rule for output, which in Mostrous and Yoshida's system admits a rather compact formulation.
+
+\begin{figure}[!t]
+\[
+	\begin{array}{c}
+	\jrule{ }{\Gamma ; \emptyset; \emptyset \vdash \UnitV \hastype \Unit}{Unit} 
+	 \qquad\quad  
+	\jrule{ }{\Gamma, \, u{:}U ; \emptyset; \emptyset \vdash u \hastype U}{Shared} 
+	\vspace{2mm}
+	\\
+	\jrule{ }{\Gamma ; \{X{:}\lhot{S}\}; \emptyset \vdash X \hastype \lhot{S}}{LVar} 
+	 \qquad\quad 
+	\jrule{ }{\Gamma ; \emptyset ; \{k{:}S\} \vdash k \hastype S}{Session} 
+	\vspace{2mm}
+	\\
+	\jrule{\Gamma ; \emptyset; \emptyset \vdash P \hastype \lhot{S} }{\Gamma ; \emptyset; \emptyset \vdash P \hastype \shot{S}}{Prom} 
+	 \qquad\quad  
+	\jrule{ \Gamma ; \Lambda ,\, X{:}\lhot{S}; \Sigma \vdash P \hastype T }{ \Gamma,\, X{:}\lhot{S}; \Lambda ; \Sigma \vdash P \hastype T}{Derelic} 
+	\vspace{2mm}
+	\\
+	\jrule{\Gamma ; \Lambda; \Sigma \vdash P \hastype T  \quad \Sigma \subt \Sigma' \quad T \subt T'}{\Gamma ; \Lambda; \Sigma' \vdash P \hastype T'}{Subt} 
+	\qquad\quad  
+	\jrule{ \Gamma ; \Lambda; \Sigma,\, x{:} S \vdash P \hastype \Proc }{ \Gamma ; \Lambda; \Sigma \vdash (x)P \hastype \lhot{S}}{Abs} 
+	\vspace{2mm}
+	\\
+	\jrule{(T = \lhot{S}) \lor (T = \shot{S}) \quad \Gamma ; \Lambda_1; \Sigma_1 \vdash X \hastype T  \quad \Gamma ; \Lambda_2; \Sigma_2 \vdash k \hastype S}{\Gamma ; \Lambda_1, \Lambda_2; \Sigma_1, \Sigma_2 \vdash \appl{X}{k} \hastype \Proc}{App} 
+	\vspace{2mm}
+	\\
+	\jrule{\Gamma ; \Lambda_1; \Sigma_1 \vdash P \hastype \Proc  \quad \Gamma ; \Lambda_2; \Sigma_2 \vdash V \hastype U  \quad (k{:}S \in \Sigma_1) \lor (k{:}S \in \Sigma_2) }{\Gamma ; \Lambda_1, \Lambda_2; (\Sigma_1, \Sigma_2)-\{k{:}S\}, k{:}\btout{U} S \vdash \bout{k}{V} P \hastype \Proc}{Send} 
+	\qquad\quad 
+	\vspace{2mm}
+	\\
+	\jrule{\Gamma ; \Lambda; \Sigma, \, x{:}S \vdash P \hastype \Proc  \quad \Gamma ; \emptyset; \emptyset \vdash u \hastype \chtype{S} }{\Gamma ; \Lambda; \Sigma \vdash \binp{u}{x} P \hastype \Proc}{Conn} 
+	\qquad\quad  
+	\vspace{2mm}
+	\\
+	\jrule{\Gamma ; \Lambda; \Sigma, \, x{:}S_1 \vdash P \hastype \Proc  \quad \Gamma ; \emptyset; \emptyset \vdash u \hastype \chtype{S_2} \quad dual(S_1, S_2)}{\Gamma ; \Lambda; \Sigma \vdash \bout{u}{x} P \hastype \Proc}{ConnDual}
+	\qquad\quad 
+	\jrule{\Gamma, \, a{:}\chtype{S} ; \Lambda; \Sigma \vdash P \hastype \Proc  }{\Gamma ; \Lambda; \Sigma \vdash \news{a{:}\chtype{S}} P \hastype \Proc}{New} 
+	\vspace{2mm}
+	\\
+	\jrule{\Gamma ; \Lambda; \Sigma, k{:} S_1, x{:} S_2 \vdash P \hastype \Proc }{ \Gamma ; \Lambda; \Sigma, k{:}\btinp{S_1}S_2  \vdash \binp{k}{x}P \hastype \Proc}{RecvS}
+	\qquad\quad 
+	\jrule{\Gamma ; \Lambda, X{:} \lhot{S}; \Sigma, k{:} S_1  \vdash P \hastype \Proc }{ \Gamma ; \Lambda; \Sigma, k{:}\btinp{\lhot{S}}S_1  \vdash \binp{k}{X}P \hastype \Proc}{RecvA}
+     \vspace{2mm}
+	\\
+	\jrule{}{\Gamma ; \emptyset; \emptyset \vdash \inact \hastype \Proc}{Nil}
+     \vspace{2mm}
+	\\
+	\jrule{\Gamma ; \Lambda_{1,2}; \Sigma_{1,2} \vdash P_{1,2} \hastype \Proc}{\Gamma ; \Lambda_{1,2}; \Sigma_{1,2} \vdash P_1 \Par P_2 \hastype \Proc}{Par}
+	 \qquad\quad  
+	 \jrule{\Gamma ; \Lambda ; \Sigma  \vdash P \hastype T \quad k \not\in dom(\Gamma, \Lambda,\Sigma )}{\Gamma ; \Lambda ; \Sigma, k{:}\tinact  \vdash P \hastype T}{Close}
+     \vspace{2mm}
+	\\
+	\jrule{\Gamma ; \Lambda ; \Sigma, k{:}S_i \vdash P_{i} \hastype \Proc \quad (\forall i \in I)}{\Gamma ; \Lambda ; \Sigma, k{:}\btbra{l_i:S_i}_{i \in I} \vdash \bbra{k}{l_i:P_i}_{i \in I}\hastype \Proc}{Bra}
+	 \qquad\quad 
+	 \jrule{\Gamma ; \Lambda ; \Sigma, k{:}S_j  \vdash P \hastype \Proc \quad j \in I}{\Gamma ; \Lambda ; \Sigma, k{:}\btsel{l_i:S_i}_{i \in I} \vdash \bsel{s}{l_j} P \hastype T}{Sel}
+	\end{array}
+\]
+\caption{Typing Rules (Mostrous and Yoshida)\label{fig:typerulesmy}}
+\end{figure}
+
+\subsection{Main Results}
+We state results for type safety: we report instances of more general statements already proved by Mostrous and Yoshida in the asynchronous case.
+
+\begin{lemma}[Substitution Lemma - Lemma C.10 in M\&Y]
+\begin{enumerate}[1.]
+\item Suppose $\Gamma, x{:}U ; \Lambda ; \Sigma  \vdash P \hastype T$ and $\Gamma; \emptyset ; \emptyset  \vdash V \hastype U$.
+		Then $\Gamma ; \Lambda ; \Sigma  \vdash P\subst{V}{x} \hastype T$. 
+\item Assume $\Gamma ; \Lambda_1, X{:}\lhot{S} ; \Sigma_1  \vdash P \hastype T$ 
+		and $\Gamma ; \Lambda_2  ; \Sigma_2  \vdash V \hastype \lhot{S}$ with $ \Lambda_1, \Lambda_2$ and $\Sigma_1, \Sigma_2$ defined.  
+		Then $\Gamma ; \Lambda_1, \Lambda_2 ; \Sigma_1, \Sigma_2  \vdash P\subst{V}{X} \hastype T$.
+\item Suppose $\Gamma ; \Lambda ; \Sigma, x{:}S  \vdash P \hastype T$ and $k \not\in dom(\Gamma, \Lambda, \Sigma)$. 
+		Then $\Gamma ; \Lambda ; \Sigma, k{:}S  \vdash P\subst{k}{x} \hastype T$.
+\end{enumerate}
+\end{lemma}
+
+We now state the instance of type soundness that we can derived from the Mostrous and Yoshida system. It is worth noticing that M\&Y have a slightly richer definition of structural congruence. Also, their statement for subject reduction relies on an ordering on typings associated to queues and other runtime elements (such extended typings are denoted $\Delta$ by M\&Y). Since we are synchronous we can omit such an ordering. 
+
+\begin{theorem}[Type Soundness - Theorem 7.3 in M\&Y]
+\begin{enumerate}[1.]
+\item (Subject Congruence) Suppose $\Gamma; \Lambda ; \Sigma  \vdash P \hastype \Proc$. Then $ P \scong P'$ implies $\Gamma; \Lambda ; \Sigma  \vdash P' \hastype \Proc$
+\item (Subject Reduction) Suppose $\Gamma; \emptyset ; \Sigma  \vdash P \hastype T$ with $\mathsf{balanced}(\Sigma)$. 
+		Then $P \red P'$ implies $\Gamma; \emptyset ; \Sigma  \vdash P' \hastype T$.
+\end{enumerate}
+\end{theorem}
+
+	
