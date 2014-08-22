@@ -1,0 +1,108 @@
+% !TEX root = main.tex
+\section{A Higher Order Session Calculus}
+
+We define a session calculus augmented with higher order semantics.
+
+\subsection{Syntax}
+
+We assume the countable sets:
+
+\begin{tabular}{rcllcrcll}
+	$S$ &$=$& $\set{s, s_1, \dots}$ & Sessions
+	&$\qquad$&
+	$\dual{S}$ &$=$& $\set{\dual{s} \setbar s \in S}$ & Dual Sessions
+	\\
+
+	Var &$=$& $\set{x,y,z, \dots}$ & Variables
+	&$\qquad$&
+	PVar &$=$& $\set{\varp{X}, \varp{Y}, \varp{Z}, \dots}$ & Process Variables\\
+
+	$\mathcal{R}$ &$=$& $\set{\varp{r}, \varp{r_1}, \dots}$ & Recursive Variables
+	&$\qquad$&
+	Abs &$=$& $\set{\abs{x}{P} \setbar P \textrm{ is a process}}$
+\end{tabular}
+
+with the set of names $\mathcal{N} = S \cup \dual{S}$ and let $k \in \mathcal{N} \cup Var$,
+$V \in \mathcal{V} \cup PVar \cup Abs$.
+Also for convenience we sometimes denote shared names with $a, b, \dots$ although $a,b,\dots \in N$.
+
+\paragraph{Processes}
+
+The syntax of processes follows:
+
+\begin{tabular}{rcl}
+	$P$	&$\bnfis$&	$\bout{k}{k'} P \bnfbar \binp{k}{x} P \bnfbar \varp{r} \bnfbar \recp{r}{P}$\\
+		&$\bnfbar$&	$\bout{k}{\abs{x} Q} P \bnfbar \binp{k}{X}P \bnfbar \appl{X}{k}$\\ 
+		&$\bnfbar$&	$\bsel{s}{l} P \bnfbar \bbra{s}{l_i:P_i}_{i \in I} \bnfbar 
+				P_1 \Par P_2 \bnfbar \news{s} P \bnfbar \inact$
+\end{tabular}
+
+
+\subsection{Reduction Relation}
+
+\subsubsection{Structural Congruence}
+\[
+	\begin{array}{c}
+		P \Par \inact \scong P \qquad P_1 \Par P_2 \scong P_2 \Par P_1 \qquad P_1 \Par (P_2 \Par P_3)
+		\qquad (P_1 \Par P_2) \Par P_3 \qquad \news{s} \inact \scong \inact\\
+		s \notin \fn{P_1} \Rightarrow P_1 \Par \news{s} P_2 \scong \news{s}(P_1 \Par P_2)
+		\qquad \rec{r}{P} \scong P\subst{\rec{r}{P}}{r}
+	\end{array}
+\]
+
+\subsubsection{Process Variable Substitution}
+\[
+	\begin{array}{rclcrcl}
+			\appl{X}{k} \subst{\abs{x}{Q}}{\X} & = & Q \subst{k}{x} \\
+		(\bout{s}{\abs{y}{P_1}} P_2) \subst{\abs{x}{Q}}{\X} &=& \bout{s}{\abs{y}{P_1 \subst{\abs{x}{Q}}{\X}}} (P_2 \subst{\abs{x}{Q}}{\X}) \\
+		(\binp{s}{\Y} P) \subst{\abs{x}{Q}}{\X} &=& \binp{s}{\Y} (P \subst{\abs{x}{Q}}{\X}) \\
+		(\bsel{s}{l} P) \subst{\abs{x}{Q}}{\X} &=& \bsel{s}{l} (P \subst{\abs{x}{Q}}{\X})\\
+		(\bbra{s}{l_i : P_i}_{i \in I}) \subst{\abs{x}{Q}}{\X} &=& \bbra{s}{l_i : P_i \subst{\abs{x}{Q}}{\X}}_{i \in I}\\
+		(P_1 \Par P_2) \subst{\abs{x}{Q}}{\X} & = & P_1 \subst{\abs{x}{Q}}{\X} \Par P_2 \subst{\abs{x}{Q}}{\X}\\
+		(\news{s} P) \subst{\abs{x}{Q}}{\X} & = & \news{s} (P \subst{\abs{x}{Q}}{\X})\\
+		\inact \subst{\abs{x}{Q}}{\X} & = & \inact
+	\end{array}
+\]
+
+\subsubsection{Operational Semantics}
+\[
+	\begin{array}{rcl}
+%		\spi & \breq{a}{s} P_1 \Par \bacc{a}{x} P_2 &\red& P_1 \Par P_2 \subst{s}{x}
+	\end{array}
+\]
+\[
+	\begin{array}{rclcrcl}
+		&& && \bout{s}{\abs{x}{P}} P_1 \Par \binp{s}{\X} P_2 &\red& P_1 \Par P_2 \subst{\abs{x}{P}}{\X} \\
+		&& && \bout{s}{s'} P_1 \Par \binp{s}{x} P_2 &\red& P_1 \Par P_2 \subst{s'}{x}\\
+		&& && \bsel{s}{l_k} P \Par \bbra{s}{l_i : P_i}_{i \in I} &\red& P \Par P_k \qquad k \in I \\
+		P_1 &\red& P_1' &\Rightarrow& P_1 \Par P_2 &\red& P_1' \Par P_2\\
+		P &\red& P' &\Rightarrow& \news{s} P &\red& \news{s} P'\\
+		P &\scong \red \scong& P'&\Rightarrow& P &\red& P' 		
+	\end{array}
+\]
+
+\subsection{Subcalculi}
+
+We identify two subcalculi of the Higher Order Session Calculus:
+\begin{enumerate}
+	\item	$\pHO$ uses only the semantics that allow abstraction passing
+		(i.e.\ is not using the syntax in the first line of the definition of $P$).
+	\item	$\spi$ uses only the semantics that allow name passing
+		(i.e.\ is not using the syntax in the second line of the definition of $P$).
+\end{enumerate}
+
+Later in this paper we will identify a third typed subcalculi derived
+from $\spi$ that is defined on the non-usage of shared sessions.
+
+\begin{proposition}[Normalisation]
+	\label{prop:normal_form}
+	Let $P$ a Higher Orser Session Calculus process, then
+	$P \scong \newsp{\tilde{s}}{P_1 \Par \dots \Par P_n}$ with
+	$P_1, \dots, P_n$ session prefixed processes
+	%\dk{recursion $\recp{r}{P}$}
+	or application process $\appl{X}{k}$.
+\end{proposition}
+
+\begin{proof}
+	The proof is a simple induction on the syntax of $P$.
+\end{proof}

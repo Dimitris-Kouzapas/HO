@@ -1,0 +1,122 @@
+\begin{figure}
+\[
+\begin{array}{crccr}
+	\Gtprocess{\inact}{\es} & \trule{Inact}
+	&\qquad&
+	\tree{
+		\Gtprocess{P}{\Delta} \quad k \notin \dom{\Delta}
+	}{
+		\Gtprocess{P}{\Delta \cat k:\tinact}
+	} & \trule{Comp}
+	\\[4mm]
+
+	\tprocess{\Gamma \cat \X: \lhot{T}}{\appl{X}{k}}{k:T \cat X} & \trule{LAppl}
+	& &
+	\tprocess{\Gamma \cat \X: \shot{T}}{\appl{X}{k}}{k:T} & \trule{SAppl}
+	\\[4mm]
+
+	\tree{
+		\Gtprocess{P}{\Delta \cat k: T'} \quad T' \subt T
+	}{
+		\Gtprocess{P}{\Delta \cat k: T}
+	} & \trule{Subs}
+	\\[4mm]
+
+%	\multicolumn{5}{c}{
+%		\tree{
+%			\begin{array}{l}
+%				\Gtprocess{Q}{\Delta_1 \cat x:T'} \quad \Gtprocess{P}{\Delta_2 \cat k:T} \quad
+%				\dom{\Delta_1} \cap \dom{\Delta_2} = \es \\
+%				\Delta_1 = \es \Rightarrow \logicop = \sharedop \wedge \Delta_1 \not= \es \Rightarrow \logicop = \lollipop
+%			\end{array}
+%		}{
+%			\Gtprocess{\bout{k}{\abs{x} Q} P}{\Delta_1 \cat \Delta_2 \cat k: \btout{\hot{T'}} T}
+%		}
+%	\ \ \trule{Out}
+%	}
+%	\\[7mm]
+
+	\multicolumn{5}{c}{
+		\tree{
+			\Gtprocess{Q}{\cat x:T'} \quad \Gtprocess{P}{\Delta \cat k:T}
+		}{
+			\Gtprocess{\bout{k}{\abs{x} Q} P}{\Delta \cat k: \btout{\shot{T'}} T}
+		}
+	\ \ \trule{SOut}
+	}
+	\\[7mm]
+
+	\multicolumn{5}{c}{
+		\tree{
+			\Gtprocess{Q}{\Delta_1 \cat x:T'} \quad \Gtprocess{P}{\Delta_2 \cat k:T}
+			\quad
+			\Delta_1 \not= \es
+			\quad
+			\dom{\Delta_1} \cap \dom{\Delta_2 \cat k:T} = \es
+		}{
+			\Gtprocess{\bout{k}{\abs{x} Q} P}{\Delta_1 \cat \Delta_2 \cat k: \btout{\lhot{T'}} T}
+		}
+	\ \ \trule{LOut}
+	}
+	\\[7mm]
+
+
+
+%	\multicolumn{5}{c}{
+%		\tree{
+%			\tprocess{\Gamma \cat \X: \hot{T'}}{P}{\Delta \cat k: T} \quad \logicop = \lollipop \Rightarrow X \in \Delta
+%		}{
+%			\tprocess{\Gamma}{\binp{k}{\X} P}{\setsubtr{\Delta}{\X} \cat k: \btinp{\hot{T'}} T}
+%		}\ \ \trule{In}
+%	}
+%	\\[7mm]
+
+	\multicolumn{5}{c}{
+		\tree{
+			\tprocess{\Gamma \cat \X: \shot{T'}}{P}{\Delta \cat k: T} \quad \X \notin \Delta
+		}{
+			\tprocess{\Gamma}{\binp{k}{\X} P}{\Delta \cat k: \btinp{\shot{T'}} T}
+		}\ \ \trule{SIn}
+	}
+	\\[7mm]
+
+	\multicolumn{5}{c}{
+		\tree{
+			\tprocess{\Gamma \cat \X: \lhot{T'}}{P}{\Delta \cat k: T \cat X}
+		}{
+			\tprocess{\Gamma}{\binp{k}{\X} P}{\Delta \cat k: \btinp{\lhot{T'}} T}
+		}\ \ \trule{LIn}
+	}
+	\\[7mm]
+
+
+	\tree{
+		\Gtprocess{P}{\Delta \cat s:T_1 \cat \dual{s}:T_2} \quad T_1 \dualof T_2
+	}{
+		\Gtprocess{\news{s} P}{\Delta}
+	} & \trule{Res}
+	& &
+	\tree{
+		\begin{array}{l}
+			\Gtprocess{P_1}{\Delta_1} \quad \Gtprocess{P_2}{\Delta_2} \\
+			\dom{\Delta_1} \cap \dom{\Delta_2} = \es
+		\end{array}
+	}{
+		\Gtprocess{P_1 \Par P_2}{\Delta_1 \cat \Delta_2}
+	} & \trule{Par}
+	\\[7mm]
+
+	\tree{
+		\Gtprocess{P}{\Delta \cat k: T}
+	}{
+		\Gtprocess{P}{\Delta \cat k: \btsel{l:T}}
+	} & \trule{Sel}
+	& &
+	\tree{
+		\forall i \in I, \Gtprocess{P_i}{\Delta \cat k: T_i}
+	}{
+		\Gtprocess{\bbra{k}{l_i:P_i}_{i \in I}}{\Delta \cat k: \btbra{l_i:T_i}_{i \in I}}
+	} & \trule{Bra}
+\end{array}
+\]
+\end{figure}
