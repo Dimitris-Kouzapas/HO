@@ -9,7 +9,7 @@ that encodings may respect:
 		\item	Operational Correspondence.
 			\begin{itemize}
 				\item	$P \red Q$ implies $\map{P} \red^* \map{Q}$.
-				\item	$\map{P} \red R$ implies $\exists Q$ such that $P \red Q$ and $R \red^* \map{Q}$.	
+				\item	$\map{P} \red R$ implies $\exists Q$ such that $P \red Q$ and $R \cong \map{Q}$.	
 			\end{itemize}
 		\item	Typability. If $\Gamma \proves P \hastype \Delta$ then $\Gamma \proves \map{P} \hastype \Delta'$.
 
@@ -523,6 +523,121 @@ to represent shared abstractions.
 
 \dk{TODO}
 
+\subsection{Non Encodability}
+
+We prove an auxiliary result:
+
+\begin{lemma}[\dk{$\tau$-inert}]
+	\label{lem:tau_inert}
+	Let $P$ a pure HO process
+	and $\Gamma; \Lambda; \Sigma \proves P \hastype \Proc$
+	If $P \red^* P'$ then
+	$\Gamma; \Lambda; \Sigma \proves P \wbc \Gamma'; \Lambda'; \Sigma' \proves P' \hastype \Proc$.
+\end{lemma}
+
+\begin{proof}
+	The proof is a double induction first on the length and then on the structure of $\red$.
+	Induction on the length of $\red$.
+
+	The basic step is trivial
+	Induction hypothesis:
+	If $P \red^* P''$ then
+	$\Gamma; \Lambda; \Sigma \proves P \wbc \Gamma''; \Lambda''; \Sigma'' \proves P'' \hastype \Proc$.
+
+	Induction step:
+	Let $P'' \red P'$. We do an induction on the structure of $\red$
+	to show that $\Gamma'; \Lambda'; \Sigma' \proves P'' \wbc \Gamma'; \Lambda'; \Sigma' \proves P' \hastype \Proc$.
+
+	Basic step:
+
+	\Case{$P'' = \bout{s}{V} P_1 \Par \binp{\dual{s}}{X} P_2$}
+	\[
+		\Gamma''; \Lambda''; \Sigma'' \proves \bout{s}{V} P_1 \Par \binp{\dual{s}}{X} P_2 \red \Gamma'; \Lambda'; \Sigma' \proves P_1 \Par P_2 \subst{V}{X} \hastype \Proc
+	\]
+	The proof follows from the fact that we can only observe a $\tau$
+	action on typed process
+	$\Gamma'; \Lambda'; \Sigma \proves P''$.
+	Actions $\bactout{s}{V}$ and $\bactinp{\dual{s}}{V}$
+	are forbiden by the environment LTS.
+
+	We can conclude then that $P'' \wbc P'$.
+
+	\Case{$P'' = \bsel{s}{l} P_1 \Par \bbra{\dual{s}}{l_i: P_i}_{i \in I}$}
+
+	Similar arguments as the previous case.
+
+	Induction hypothesis:
+	If $P_1 \red P_2$ then
+	$\Gamma_1; \Lambda_1; \Sigma_1 \proves P_1 \wbc \Gamma_2; \Lambda_2; \Sigma_2 \proves P_2 \hastype \Proc$.
+
+	Induction Step:
+
+	\Case{$P'' = \news{s} P_1$}
+	\[
+		\Gamma''; \Lambda''; \Sigma'' \proves \news{s}{P_1} \red \Gamma'; \Lambda'; \Sigma' \proves \news{s} P_2 \hastype \Proc
+	\]
+	From the induction hypothesis and the fact that bisimulation is a congruence
+	we get that $P'' \wbc P'$.
+
+	\Case{$P'' = P_1 \Par P_3$}
+
+	\[
+		\Gamma''; \Lambda''; \Sigma'' \proves P_1 \Par P_3 \red \Gamma'; \Lambda'; \Sigma' \proves P_2 \Par P_3 \hastype \Proc
+	\]
+	From the induction hypothesis and the fact that bisimulation is a congruence
+	we get that $P'' \wbc P'$.
+
+	\Case{$P'' \scong P_1$}
+
+	From the induction hypothesis and the facts that bisimulation is a congruence
+	and structural congruence preserves $\wbc$
+	we get that $P'' \wbc P'$.
+
+	We can now conclude that
+	$P \wbc P'$ because $P \wbc P''$ and $P'' \wbc P'$.
+\end{proof}
+
+\begin{theorem}
+	Mapping $\map{\cdot}: \pHO \longrightarrow \spi$ that enjoys
+	operational correspondence and full abstraction does not exist. 
+\end{theorem}
+
+\begin{proof}
+	Let $\Gamma_1; \Lambda_1; \Sigma_1 \proves P_1 \cong \Gamma_2; \Lambda_2; \Sigma_2 \proves P_2 \hastype \Proc$
+	with $P = \breq{a}{s} \inact \Par \bacc{a}{x} P_1 \Par \bacc{a}{x} P_2$ and
+	let $\Gamma; \Lambda; \Sigma \proves P \hastype \Proc$. Assume also a mapping
+	$\map{\cdot}: \pHO \longrightarrow \spi$ that enjoys
+	operational correspondence and full abstraction.
+
+	From operational correspondence we get that:
+	\begin{eqnarray*}
+		R \red P_1 \Par \bacc{a}{x} P_2 &\textrm{implies}& \map{R} \red \map{P_1 \Par \bacc{a}{x} P_2}\\
+		R \red P_2 \Par \bacc{a}{x} P_1 &\textrm{implies}& \map{R} \red \map{P_2 \Par \bacc{a}{x} P_1}
+	\end{eqnarray*}
+
+	From the fact that
+	$\Gamma_1; \Lambda_1; \Sigma_1 \proves P_1 \cong \Gamma_2; \Lambda_2; \Sigma_2 \proves P_2 \hastype \Proc$
+	we can derive that
+	\[
+		\Gamma_1'; \Lambda_1'; \Sigma_1' \proves P_1 \Par \bacc{a}{x} P_2 \cong \Gamma_2'; \Lambda_2'; \Sigma_2' \proves P_2 \Par \bacc{a}{x} P_1 \hastype \Proc
+	\]
+
+	From Lemma~\ref{lem:tau_inert} we know that
+	\begin{eqnarray*}
+		\map{R} &\cong& \map{P_1 \Par \bacc{a}{x} P_2}\\
+		\map{R} &\cong& \map{P_2 \Par \bacc{a}{x} P_1}
+	\end{eqnarray*}
+	\noi thus
+	\[
+		\map{P_1 \Par \bacc{a}{x} P_2} \cong \map{P_2 \Par \bacc{a}{x} P_1}
+	\]
+	From here we conclude that the full abstraction property does not hold,
+	so there is no mapping $\map{\cdot}: \pHO \longrightarrow \spi$ that enjoys
+	the operational correspondence and full abstraction properties.
+\end{proof}
+
+
+\begin{comment}
 \subsection{Negative Result}
 
 A good encoding of the $\spi$ calculus to the $\pHO$ calculus
@@ -624,6 +739,8 @@ First we prove an auxiliary result:
 	$\map{P_1} \Par \map{P_2 \subst{s}{x}} \Par \map{\binp{a}{x} P_3} \scong \map{P_1} \Par \map{\binp{a}{x} P_2} \Par \map{P_3 \subst{s}{x}}$
 	which implies contradiction since $P_1 \subst{s}{x} \not\scong P_2 \subst{s}{x}$.
 \end{proof}
+\end{comment}
+
 \begin{comment}
 \[
 	\begin{array}{rcl}
