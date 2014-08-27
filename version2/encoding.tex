@@ -1,4 +1,7 @@
+% !TEX root = main.tex
 \section{Encoding}
+
+\jp{Here we need to define first the notion of translation, and then the notion of encoding (translation+properties). A notion of translation on typing environments is also required inside the definition.}
 
 Before we proceed with encodings we define some properties
 that encodings may respect:
@@ -8,16 +11,19 @@ that encodings may respect:
 	\begin{enumerate}
 		\item	Operational Correspondence.
 			\begin{itemize}
-				\item	$P \red Q$ implies $\map{P} \red^* \map{Q}$.
-				\item	$\map{P} \red R$ implies $\exists Q$ such that $P \red Q$ and $R \cong \map{Q}$.	
+				\item	$P \red Q$ implies $\map{P} \red^* \map{Q}$. \\ \jp{Relaxed version: $P \red^* Q$ implies $\map{P} \red^* \wb \map{Q}$}
+				\item	$\map{P} \red R$ implies $\exists Q$ such that $P \red Q$ and $R \cong \map{Q}$.	 \\
+				\jp{Relaxed: $\map{P} \red^* R$ implies $\exists Q$ such that $P \red^* Q$ and $R \red^*\wb \map{Q}$. }
 			\end{itemize}
 		\item	Typability. If $\Gamma \proves P \hastype \Delta$ then $\Gamma \proves \map{P} \hastype \Delta'$.
 
-		\item	$\Par$-preservation. $\map{P \Par Q} = \map{P} \Par \map{Q}$.
+		\item	$\Par$-preservation. $\map{P \Par Q} = \map{P} \Par \map{Q}$. \jp{This can also be relaxed, using contexts.}
 
 		\item	Full Abstraction. $P \cong Q$ if and only if $\map{P} \cong \map{Q}$.
 	\end{enumerate}
 \end{definition}
+
+\jp{We should check if the above notion of operational correspondence, based on reductions, is better than (or preferable to)  a notion based on labeled transitions. It could be useful to try to add criteria with typing environments (e.g., stating "typed operational correspondence"). Preservation of divergence may also play a role. Also need to check encoding composability.}
 
 \subsection{Encode the non-recursive $\ppi$ into $\pHO$}
 In this section provide an encoding of the
@@ -50,6 +56,7 @@ We can also encode the polyadic version of the send and receive primitives.
 Unlike the classic $\pi$ calculus we do not need to create a new channel because typable terms
 quarranty no race conditions on the two session endpoints.
 
+\jp{We need to show the encoding for types.}
 \subsection{Extend the $\pHO$}
 
 We extend the $\pHO$ with process variable abstraction and process variable application,
@@ -98,6 +105,8 @@ i.e.~as we have seen in Example~\ref{ex:linear_abstraction} a process:
 
 with $\fs{P} \not= \es$ is not typable, since abstraction $\abs{}{P}$
 can only be applied in a linear way.
+
+\jp{Also here we must add how the encoding affects types.}
 
 \subsubsection{Encode linear $\pHO$ processes into non-linear $\pHO$ abstractions.}
 
@@ -192,8 +201,8 @@ We are ready now to encode Recursion.
 %
 \[
 \begin{array}{rcl}
-	\map{\rec{r}{P}} &=& \newsp{s}{\binp{s}{\X} \map{P} \Par \bout{\dual{s}}{\abs{z \cat \vmap{\fn{P}}}{\binp{z}{\X} \absmap{P}{\es}}} \inact}\\
-	\map{\varp{r}} &=& \newsp{s}{\appl{\X}{s \cat \smap{\fn{P}}} \Par \bout{\dual{s}}{ \abs{z \cat \vmap{\fn{P}}}{\appl{X}{z \cat \vmap{\fn{P}}}}} \inact}
+	\map{\rec{X}{P}} &=& \newsp{s}{\binp{s}{\X} \map{P} \Par \bout{\dual{s}}{\abs{z \cat \vmap{\fn{P}}}{\binp{z}{\X} \absmap{P}{\es}}} \inact}\\
+	\map{\rvar{X}} &=& \newsp{s}{\appl{\X}{s \cat \smap{\fn{P}}} \Par \bout{\dual{s}}{ \abs{z \cat \vmap{\fn{P}}}{\appl{X}{z \cat \vmap{\fn{P}}}}} \inact}
 \end{array}
 \]
 %
@@ -207,20 +216,20 @@ with
 	\repl{} P \scong P \Par \repl{} P
 \]
 
-We show that process constructors $\recp{r}{P}$ can encode process constructor $\repl{} P$.
+We show that process constructors $\recp{X}{P}$ can encode process constructor $\repl{} P$.
 \[
 \begin{array}{rcl}
-	\map{\repl{} P} \defeq \recp{r}{\map{P} \Par r}.
+	\map{\repl{} P} \defeq \recp{X}{\map{P} \Par \rvar{X}}.
 \end{array}
 \]
 
 The other direction is encodable when $P$ is guarded on a shared input:
 \[
 \begin{array}{rcl}
-	\map{\recp{r} \binp{a}{x} P} \defeq \repl{} \binp{a}{x} \map{\context{C}{\bout{a}{x} \inact}}\
+	\map{\recp{X} \binp{a}{x} P} \defeq \repl{} \binp{a}{x} \map{\context{C}{\bout{a}{x} \inact}}\
 \end{array}
 \]
-where $C$ being the context that results by replacing the recursive variable $r$
+where $C$ being the context that results by replacing the recursive variable $\rvar{X}$
 with a $\hole$ in $P$.
 
 \subsection{Properties of the Encodings}
@@ -369,7 +378,7 @@ An important result is that of the typability of the encodings.
 		}
 	\]
 
-	\item	$\rec{\varp{r}}{P}$
+	\item	$\rec{X}{P}$
 
 
 	\[
@@ -407,7 +416,7 @@ An important result is that of the typability of the encodings.
 		}
 	\]
 
-	\item	$\map{\varp{r}}$
+	\item	$\map{\rvar{X}}$
 
 \end{enumerate}
 \end{proof}
@@ -598,15 +607,16 @@ We prove an auxiliary result:
 \end{proof}
 
 \begin{theorem}
-	Mapping $\map{\cdot}: \pHO \longrightarrow \spi$ that enjoys
-	operational correspondence and full abstraction does not exist. 
+    There is no encoding 
+$\map{\cdot}: \spi \longrightarrow  \pHO $ that enjoys
+	operational correspondence and full abstraction. 
 \end{theorem}
 
 \begin{proof}
 	Let $\Gamma_1; \Lambda_1; \Sigma_1 \proves P_1 \not\cong \Gamma_2; \Lambda_2; \Sigma_2 \proves P_2 \hastype \Proc$
 	with $P = \breq{a}{s} \inact \Par \bacc{a}{x} P_1 \Par \bacc{a}{x} P_2$ and
 	let $\Gamma; \Lambda; \Sigma \proves P \hastype \Proc$. Assume also a mapping
-	$\map{\cdot}: \pHO \longrightarrow \spi$ that enjoys
+	$\map{\cdot}: \spi \longrightarrow  \pHO $ that enjoys
 	operational correspondence and full abstraction.
 
 	From operational correspondence we get that:

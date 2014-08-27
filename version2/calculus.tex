@@ -17,7 +17,7 @@ We assume the countable sets:
 	&$\qquad$&
 	PVar &$=$& $\set{\varp{X}, \varp{Y}, \varp{Z}, \dots}$ & Process Variables\\
 
-	$\mathcal{R}$ &$=$& $\set{\varp{r}, \varp{r_1}, \dots}$ & Recursive Variables
+	RVar &$=$& $\set{\rvar{X}, \rvar{Y}, \dots}$ & Recursive Variables
 	&$\qquad$&
 	Abs &$=$& $\set{\abs{x}{P} \setbar P \textrm{ is a process}}$
 \end{tabular}
@@ -26,19 +26,20 @@ with the set of names $\mathcal{N} = S \cup \dual{S}$ and let $k \in \mathcal{N}
 $V \in \mathcal{V} \cup PVar \cup Abs$.
 Also for convenience we sometimes denote shared names with $a, b, \dots$ although $a,b,\dots \in N$.
 
-\paragraph{Processes}
+\paragraph{Processes.}
 
 The syntax of processes follows:
 
 \begin{tabular}{rcl}
-	$P$	&$\bnfis$&	$\bout{k}{k'} P \bnfbar \binp{k}{x} P \bnfbar \varp{r} \bnfbar \recp{r}{P}$\\
+	$P$	&$\bnfis$&	$\bout{k}{k'} P \bnfbar \binp{k}{x} P \bnfbar \rvar{X} \bnfbar \recp{X}{P}$\\
 		&$\bnfbar$&	$\bout{k}{\abs{x} Q} P \bnfbar \binp{k}{X}P \bnfbar \appl{X}{k}$\\ 
 		&$\bnfbar$&	$\bsel{s}{l} P \bnfbar \bbra{s}{l_i:P_i}_{i \in I} \bnfbar 
 				P_1 \Par P_2 \bnfbar \news{s} P \bnfbar \inact$
 \end{tabular}
 
-We say that processes are program if they contain
-no free variables or free process variables.
+We rely on usual assumptions for guarded recursive processes.
+We say that a process is a \emph{program} if it contains
+no free variables or free process/recursive variables.
 
 \subsection{Reduction Relation}
 
@@ -48,7 +49,7 @@ no free variables or free process variables.
 		P \Par \inact \scong P \qquad P_1 \Par P_2 \scong P_2 \Par P_1 \qquad P_1 \Par (P_2 \Par P_3)
 		\qquad (P_1 \Par P_2) \Par P_3 \qquad \news{s} \inact \scong \inact\\
 		s \notin \fn{P_1} \Rightarrow P_1 \Par \news{s} P_2 \scong \news{s}(P_1 \Par P_2)
-		\qquad \rec{r}{P} \scong P\subst{\rec{r}{P}}{r}
+		\qquad \rec{X}{P} \scong P\subst{\rec{X}{P}}{\rvar{X}}
 	\end{array}
 \]
 

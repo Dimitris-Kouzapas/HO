@@ -29,7 +29,7 @@ Following our design decision of focusing on functions $\shot{S}$ and $\lhot{S}$
 our environments are also simpler (the only difference wrt M\&Y is the in the `Shared' group):
 \[
 	\begin{array}{lcl}
-		\text{Shared} & \Gamma \bnfis & \emptyset \bnfbar \Gamma \cat \varp{X}: \shot{S} \bnfbar \Gamma \cat k: \chtype{S} \\
+		\text{Shared} & \Gamma \bnfis & \emptyset \bnfbar \Gamma \cat \varp{X}: \shot{S} \bnfbar \Gamma \cat k: \chtype{S} \bnfbar \Gamma \cat \rvar{X}: \Sigma \\
 		\text{Linear} & \Lambda \bnfis & \emptyset \bnfbar \Lambda \cat \varp{X}: \lhot{S}  \\
 		\text{Session} \quad & \Sigma \bnfis & \emptyset \bnfbar \Sigma \cat k:S  
 	\end{array}
@@ -187,6 +187,19 @@ an unrestricted function $\shot{S}$) and the rule for output, which in Mostrous 
 		}{
 			\Gamma; \Lambda; \Sigma \cat k:\btsel{l_i:S_i}_{i \in I} \proves \bsel{s}{l_j} P \hastype T
 		}
+		\\[4mm]
+		\trule{Var}~~\tree{
+	
+		}{
+			\Gamma \cat \rvar{X}: \Sigma; \emptyset; \emptyset  \proves \rvar{X} \hastype \Proc
+		}
+		\qquad\quad 
+	 	\trule{Rec}~~\tree{
+			\Gamma \cat \rvar{X}: \Sigma; \emptyset; \emptyset  \proves P \hastype \Proc
+		}{
+			\Gamma ; \emptyset; \emptyset  \proves \recp{X}{P} \hastype \Proc
+		}
+
 	\end{array}
 \]
 \caption{Typing Rules (Mostrous and Yoshida)\label{fig:typerulesmy}}
