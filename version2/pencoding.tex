@@ -1,0 +1,88 @@
+% !TEX root = main.tex
+
+\section{Positive Expressiveness Results}
+In the following we write $\pmap{\cdot}{i}$ for an encoding of processes, and $\tmap{\cdot}{i}$ to denote its associated encoding of types.
+
+\subsection{Encoding session passing into abstraction passing}
+
+\begin{definition}
+The encoding of processes, denoted $\pmap{\cdot}{1}$, is defined as 
+\[
+	\begin{array}{rcl}
+		\pmap{\bout{k}{k'} P}{1}	&\defeq&	\bbout{k}{ \abs{z}{\,\binp{z}{X} \appl{X}{k'}} } \pmap{P}{1} \\
+		\pmap{\binp{k}{x} P}{1}	&\defeq&	\binp{k}{X} \newsp{s}{\appl{X}{s} \Par \bbout{\dual{s}}{\abs{x} \map{P}{1}} \inact}
+	\end{array}
+\]
+and as an homomorphism for the remaining operators. The encoding of types is defined as:
+\[
+	\begin{array}{rcl}
+		\tmap{\btout{S_1} {S} }{1}	&\defeq&	\btout{\lhot{\btinp{\lhot{\tmap{S_1}{1}}}\tinact}} \tmap{S}{1}  \\
+		\tmap{\btinp{S_1} S }{1}	&\defeq&	\btinp{\lhot{\btinp{\lhot{\tmap{S_1}{1}}}\tinact}} \tmap{S}{1} 
+	\end{array}
+\]
+and as an homomorphism for the remaining constructs.
+\end{definition}
+
+An important result is that of the typability of the encodings.
+
+\begin{proposition}[Encoding \pmap{\cdot}{1} is typable]
+	Let $P$ be a $\ppi$ process without recursion and such that $\Gamma \proves P \hastype \Proc$. 
+	Then $\Gamma' \proves \pmap{P}{1} \hastype \Proc$
+	for some environment $\Gamma'$.
+\end{proposition}
+
+\begin{proof} TO DO!
+\begin{enumerate}
+	\item	$\bout{s}{k} P$
+
+	\[
+		\tree{
+			\Gamma \proves \map{P} \hastype \Delta \cat s: T
+			\qquad
+			\tree{
+				\tree{
+					\Gamma \cat \X: \lhot{T'} \proves \appl{\X}{k} \hastype k:T' \cat X
+				}{
+					\Gamma \cat \X: \lhot{T'} \proves \appl{\X}{k} \hastype k:T' \cat X \cat z: \tinact
+				}
+			}{
+				\Gamma \proves \binp{z}{\X} \appl{\X}{k} \hastype z: \btinp{\lhot{T'}} \tinact
+			}
+		}{
+			\Gamma \proves \bout{s}{\abs{z}{\binp{z}{\X} \appl{\X}{k}}} \map{P} \hastype s: \Delta \cat s: \btout{\lhot{\btinp{\lhot{T'}} \tinact}} T
+		}
+	\]
+
+	\item	$\binp{s}{x} P$ with $\Gamma' = \Gamma \cat X : \btinp{\lhot{T'}} \tinact$
+
+
+		\[
+			\tree{
+				\tree{
+					\tree{
+						\Gamma' \proves \appl{\X}{s'} \hastype s': \btinp{\lhot{T'}} \tinact \cat X
+						\quad
+						\tree{
+							\tree{
+								\Gamma' \proves \inact \hastype \es
+							}{
+								\Gamma' \proves \inact \hastype \dual{s'}: \tinact
+							}
+							\quad
+							\Gamma' \proves \map{P} \hastype \Delta \cat x:T' \cat s: T
+						}{
+							\Gamma' \proves \bout{\dual{s'}}{\abs{x} \map{P}} \inact \hastype \Delta \cat \dual{s'}: \btout{\lhot{T'}} \tinact \cat s: T
+						}
+					}{
+							\Gamma' \proves \appl{\X}{s'} \Par \bout{\dual{s'}}{\abs{x} \map{P}} \inact \hastype \Delta \cat s': \btinp{\lhot{T'}} \tinact \cat \dual{s'}: \btout{\lhot{T'}} \tinact \cat s: T \cat X
+					}
+				}{
+					\Gamma' \proves \newsp{s'}{\appl{\X}{s'} \Par \bout{\dual{s'}}{\abs{x} \map{P}} \inact} \hastype  \Delta \cat s: T \cat X
+				}
+			}{
+				\Gamma \proves \binp{s}{X} \newsp{s'}{\appl{\X}{s'} \Par \bout{\dual{s'}}{\abs{x} \map{P}} \inact} \hastype  \Delta \cat s: \btinp{\lhot{\btinp{\lhot{T'}} \tinact}} T
+			}
+		\]
+
+\end{enumerate}
+\end{proof}
