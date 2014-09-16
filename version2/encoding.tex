@@ -1,0 +1,806 @@
+% !TEX root = main.tex
+\section{Encoding}
+
+\jp{Here we need to define first the notion of translation, and then the notion of encoding (translation+properties). A notion of translation on typing environments is also required inside the definition.}
+
+Before we proceed with encodings we define some properties
+that encodings may respect:
+\begin{definition}
+	Given a mapping $\map{\cdot}: L_1 \longrightarrow L_2$ we
+	define the following:
+	\begin{enumerate}
+		\item	Operational Correspondence.
+			\begin{itemize}
+				\item	$P \red Q$ implies $\map{P} \red^* \map{Q}$. \\ \jp{Relaxed version: $P \red^* Q$ implies $\map{P} \red^* \wb \map{Q}$}
+				\item	$\map{P} \red R$ implies $\exists Q$ such that $P \red Q$ and $R \cong \map{Q}$.	 \\
+				\jp{Relaxed: $\map{P} \red^* R$ implies $\exists Q$ such that $P \red^* Q$ and $R \red^*\wb \map{Q}$. }
+			\end{itemize}
+		\item	Typability. If $\Gamma \proves P \hastype \Delta$ then $\Gamma \proves \map{P} \hastype \Delta'$.
+
+		\item	$\Par$-preservation. $\map{P \Par Q} = \map{P} \Par \map{Q}$. \jp{This can also be relaxed, using contexts.}
+
+		\item	Full Abstraction. $P \cong Q$ if and only if $\map{P} \cong \map{Q}$.
+	\end{enumerate}
+\end{definition}
+
+\jp{We should check if the above notion of operational correspondence, based on reductions, is better than (or preferable to)  a notion based on labeled transitions. It could be useful to try to add criteria with typing environments (e.g., stating "typed operational correspondence"). Preservation of divergence may also play a role. Also need to check encoding composability.}
+
+\subsection{Encode the non-recursive $\ppi$ into $\pHO$ \label{ss:encnr}}
+In this section provide an encoding of the
+$\ppi$ with no recursion into the $\pHO$.
+%
+\[
+	\begin{array}{rcl}
+		\map{\bout{k}{k'} P}	&\defeq&	\bout{k}{ \abs{z}{\binp{z}{X} \appl{X}{k'}} } \map{P} \\
+		\map{\binp{k}{x} P}	&\defeq&	\binp{k}{X} \newsp{s}{\appl{X}{s} \Par \bout{\dual{s}}{\abs{x} \map{P}} \inact}\\
+	\end{array}
+\]
+%
+The rest of the operators, except the recursive constructs, are encoded in an isomorphic way:
+\[
+	\begin{array}{c}
+		\map{\inact} \defeq \inact \qquad \map{P\Par Q} \defeq \map{P} \Par \map{Q} \qquad \map{\news{s} P} \defeq \news{s} \map{P}\\
+		\map{\bsel{k}{l} P} \defeq \bsel{k}{l} \map{P} \qquad \quad \map{\bbra{k}{l_i:P_i}_{i \in I}} \defeq \bbra{k}{l_i: \map{P_i}}_{i \in I}
+	\end{array}
+\]
+%s
+\subsection{Extend the $\pHO$ with  polyadicity \label{ss:encpp}}
+We can also encode the polyadic version of the send and receive primitives.
+%
+\[
+	\begin{array}{rcl}
+		\map{\bout{k}{k' \cat \tilde{k}} P}	&\defeq&	\map{\bout{k}{k'} \bout{k}{\tilde{k}} P}\\
+		\map{\binp{k}{x \cat \tilde{x}} P}	&\defeq&	\map{\binp{k}{x} \binp{k}{\tilde{x}} P}\\
+	\end{array}
+\]
+%
+Unlike the classic $\pi$ calculus we do not need to create a new channel because typable terms
+quarranty no race conditions on the two session endpoints.
+
+\subsection{Extend the $\pHO$ with process abstraction\label{ss:encpa}}
+
+We extend the $\pHO$ with process variable abstraction and process variable application,
+as well as polyadic abstractions and polyadic applications to define the
+$\pHOp$ (pure Higher Order plus) calculus. We show that all of the
+constructs are encodable in the $\pHO$.
+%
+\[
+	\begin{array}{rclcl}
+		P &\bnfis&	\bout{k}{\abs{\X} P_1} P_2 & & \textrm{Process Abstraction}\\
+		&\bnfbar&	\appl{X}{\abs{x}{P}} & & \textrm{Process Application} \\
+		&\bnfbar&	\bout{k}{\abs{\tilde{x}}{P_1}} P_2 & & \textrm{Polyadic Abstraction}\\
+		&\bnfbar&	\appl{X}{\tilde{k}} & & \textrm{Polyadic Application}\\
+	\end{array}
+\]
+\subsubsection{Operational Semantics}
+In order to define the operational semantics of the $\pHOp$,
+we extend the operational semantics of $\pHO$ with the rules:
+%
+\[
+	\begin{array}{rcl}
+		\bout{s}{\abs{\Y} P} P_1 \Par \binp{s}{\X} \appl{\X}{\abs{x}{P_2}} &\red& P_1 \Par P \subst{\abs{x}{P_2}}{\Y}\\
+		\bout{s}{\abs{\tilde{x}} P_1} P_2 \Par \binp{s}{\X} \appl{\X}{\tilde{k}} &\red& P_2 \Par P_1\subst{\tilde{k}}{\tilde{x}}
+	\end{array}
+\]
+%
+\subsubsection{Encoding of $\pHOp$ to $\pHO$}
+%
+\[
+	\begin{array}{rcl}
+		\map{\bout{k}{\abs{\X} Q} P}	&\defeq&	\bout{k}{\abs{z} \binp{z}{\X} \map{Q}} \map{P}\\
+		\map{\appl{X}{\abs{x} P}}	&\defeq&	\newsp{s}{\appl{X}{s} \Par \bout{\dual{s}}{\abs{x}{\map{P}}} \inact}\\
+
+		\map{\bout{k}{\abs{\tilde{x}}{P_1}} P_2}	&\defeq&	\bout{k}{ \abs{z}{ \map{ \binp{z}{\tilde{x}} P_1} } } \map{P_2}\\
+		\map{\appl{\X}{\tilde{k}}}			&\defeq&	\newsp{s}{\appl{\X}{s} \Par \map{\bout{\dual{s}}{\tilde{k}} \inact}}\\
+	\end{array}
+\]
+
+\subsection{Encoding of Recursion \label{ss:encrec}}
+\paragraph{Preliminaries}
+We are not ready yet to encode recursion. In an iterative process we require
+subject abstractions to be non-linear due to the fact that the receiver should
+apply an abstraction more than once to achieve iteration,
+i.e.~as we have seen in Example~\ref{ex:linear_abstraction} a process:
+\[
+	\bout{s}{\abs{}{P}} P_1 \Par \binp{s}{\X} (\appl{\X}{} \Par \appl{\X}{})
+\]
+
+with $\fs{P} \not= \es$ is not typable, since abstraction $\abs{}{P}$
+can only be applied in a linear way.
+
+\jp{Also here we must add how the encoding affects types.}
+
+\subsubsection{Encode linear $\pHO$ processes into non-linear $\pHO$ abstractions.}
+
+Therefore it is convenient to have an encoding from a process to an abstraction
+with no free names, that can be used a shared value:
+
+\[
+	\amap{\cdot} : \mathcal{P} \longrightarrow \mathcal{V}
+\]
+\[
+	\amap{P} \bnfis \abs{\vmap{\fn{P}}}{\absmap{P}{\es}}
+\]
+
+where
+
+Function $\smap{\cdot}: 2^{\mathcal{N}} \longrightarrow \mathcal{N}^\omega$
+orders lexicographically a set of names, function 
+$\vmap{\cdot}: 2^{\mathcal{N}} \longrightarrow \mathcal{V}^\omega$
+maps a set of names to variables:
+\[
+	\begin{array}{rcl}
+		\vmap{\set{s_i}_{i \in I}} &=& \svmap{\smap{\set{s_i}_{i \in I}}}\\
+		\svmap{s \cat \tilde{s}} &=& x_s \cat \svmap{\tilde{s}}\\
+		\svmap{s} & = & x_s
+	\end{array}
+\]
+
+\[
+	\begin{array}{rcll}
+		\absmap{\bout{s}{\abs{x} P'} P}{\sigma} &\bnfis&
+		\left\{
+		\begin{array}{rl}
+			\bout{x_s}{\abs{\vmap{x}{P}} \absmap{P'}{\es}} \absmap{P}{\sigma} & s \notin \sigma\\
+			\bout{s}{\abs{\vmap{x}{P}} \absmap{P'}{\es}} \absmap{P}{\sigma} & s \in \sigma
+		\end{array}
+		\right.
+		\\
+		\absmap{\binp{s}{X} P}{\sigma} &\bnfis&
+		\left\{
+		\begin{array}{rl}
+			\binp{x_s}{X} \absmap{P}{\sigma} & s \notin \sigma\\
+			\binp{s}{X} \absmap{P}{\sigma} & s \in \sigma
+		\end{array}
+		\right.
+		\\
+		\absmap{\bsel{s}{l} P}{\sigma} &\bnfis&
+		\left\{
+		\begin{array}{rl}
+			\bsel{x_s}{l} \absmap{P}{\sigma} & s \notin \sigma\\
+			\bsel{s}{l} \absmap{P}{\sigma} & s \in \sigma
+		\end{array}
+		\right.
+		\\
+
+		\absmap{\bbra{s}{l_i: P_i}_{i \in I}}{\sigma} &\bnfis&
+		\left\{
+		\begin{array}{rl}
+			\bbra{x_s}{l_i: \absmap{P_i}{\sigma}}_{i \in I} & s \notin \sigma\\
+			\bbra{s}{l_i: \absmap{P_i}{\sigma}}_{i \in I} & s \in \sigma\\
+		\end{array}
+		\right.
+		\\
+
+		\absmap{P_1 \Par P_2}{\sigma} &\bnfis& \absmap{P_1}{\sigma} \Par \absmap{P_2}{\sigma} & s \notin \sigma\\
+		\absmap{\news{s} P}{\sigma} &\bnfis& \news{s} \absmap{P}{\sigma\cat s}\\
+		\absmap{\inact}{\sigma} &\bnfis& \inact\\
+		\absmap{\appl{\X}{s}}{\sigma} &\bnfis&
+		\left\{
+		\begin{array}{rl}
+			\appl{\X}{x_s} & s \notin \sigma\\
+			\appl{\X}{s} & s \in \sigma\\
+		\end{array}
+		\right.
+	\end{array}
+\]
+
+A basic property of the $\amap{\cdot}$ function
+is the restoration of the original process when we
+apply its free names to the resulting abstraction.
+
+\begin{proposition}
+	Let $P$ be a $\pHO$ process, then
+	\[
+		\newsp{s}{\binp{s}{X} \appl{\X}{\smap{P}} \Par \bout{\dual{s}}{\amap{P}}\inact} \red P
+	\]
+\end{proposition}
+
+\dk{\proof doit}
+
+\subsubsection{Encode Recursion}
+We are ready now to encode Recursion.
+%
+\[
+\begin{array}{rcl}
+	\map{\rec{X}{P}} &=& \newsp{s}{\binp{s}{\X} \map{P} \Par \bout{\dual{s}}{\abs{z \cat \vmap{\fn{P}}}{\binp{z}{\X} \absmap{P}{\es}}} \inact}\\
+	\map{\rvar{X}} &=& \newsp{s}{\appl{\X}{s \cat \smap{\fn{P}}} \Par \bout{\dual{s}}{ \abs{z \cat \vmap{\fn{P}}}{\appl{X}{z \cat \vmap{\fn{P}}}}} \inact}
+\end{array}
+\]
+%
+
+A different process constructor for recursion is the constructor of replication:
+\[
+	\repl{} P
+\]
+with
+\[
+	\repl{} P \scong P \Par \repl{} P
+\]
+
+We show that process constructors $\recp{X}{P}$ can encode process constructor $\repl{} P$.
+\[
+\begin{array}{rcl}
+	\map{\repl{} P} \defeq \recp{X}{\map{P} \Par \rvar{X}}.
+\end{array}
+\]
+
+The other direction is encodable when $P$ is guarded on a shared input:
+\[
+\begin{array}{rcl}
+	\map{\recp{X} \binp{a}{x} P} \defeq \repl{} \binp{a}{x} \map{\context{C}{\bout{a}{x} \inact}}\
+\end{array}
+\]
+where $C$ being the context that results by replacing the recursive variable $\rvar{X}$
+with a $\hole$ in $P$.
+
+\subsection{Properties of the Encodings}
+
+\jp{Try to use alternative (more relaxed) forms of Operational Correspondence?}
+\begin{proposition}[Operational Correspondence]
+	Let $P$ $\ppi$ or a $\pHOp$ process.
+	\begin{enumerate}
+		\item	If $P \red Q$ then $\map{P} \red^* \map{Q}$.
+		\item	If $\map{P} \red R$ then $\exists Q$ such that $P \red Q$ and $R \red^* \map{Q}$.
+	\end{enumerate}
+\end{proposition}
+
+\begin{proof}
+Part 1 is proved by induction on the reduction rules. The basic step consider 
+all leaf reductions.
+\[
+	\begin{array}{rcl}
+		\map{\bout{s}{k'} P_1 \Par \binp{s}{x} P_2} &\bnfis& \bout{s}{ \abs{z}{\binp{z}{X} \appl{X}{k'}} } \map{P_1} \Par \binp{s}{X} \newsp{s'}{\appl{X}{s'} \Par \bout{\dual{s'}}{\abs{x} \map{P_2}} \inact}\\
+		&\red& \map{P_1} \Par \newsp{s'}{\binp{s}{X} \appl{X}{k'} \Par \bout{\dual{s'}}{\abs{x} \map{P_2}} \inact}\\
+		&\red& \map{P_1} \Par \map{P_2}\subst{k'}{x}
+		\\
+		\\
+
+		\map{\bout{s}{\abs{\Y} P} P_1 \Par \binp{s}{X} \appl{X}{\abs{x}{P_2}}} &\bnfis& \bout{s}{\abs{z} \binp{z}{\Y} \map{P}} \map{P_1} \Par \binp{s}{X} \newsp{s'}{\appl{X}{s'} \Par \bout{\dual{s'}}{\abs{x}{\map{P_2}}} \inact}\\
+		&\red& \map{P_1} \Par \newsp{s'}{\binp{s'}{\Y} \map{P} \Par \bout{\dual{s'}}{\abs{x}{\map{P_2}}} \inact}\\
+		&\red& \map{P_1} \Par \map{P} \subst{\abs{x} \map{P_2}}{\Y}
+		\\
+		\\
+
+		\map{\bout{s}{\abs{\tilde{x}}{P_1}} P_2 \Par \binp{s}{\X} \appl{\X}{\tilde{k}}} &\bnfis& \bout{s}{\abs{z}{\map{\binp{z}{\tilde{x}} P_1}}} \map{P_2} \Par \binp{s}{\X} \newsp{s'}{\appl{\X}{s'} \Par \map{\bout{\dual{s}}{\tilde{k}} \inact}} \\
+		&\red& \map{P_2} \Par \newsp{s'}{\map{\binp{s'}{\tilde{x}} P_1} \Par \map{\bout{\dual{s}}{\tilde{k}} \inact}}\\
+		&\red^*& \map{P_2} \Par \map{P_1} \subst{\tilde{k}}{\tilde{x}}
+	\end{array}
+\]
+\dk{Operational Correspondence for Recursion TODO}
+
+The inductive step is trivial since the rest of the reduction cases make
+use of the isomorphic encoding rules.
+
+\dk{Part 2 TODO}
+\end{proof}
+
+An important result is that of the typability of the encodings.
+
+\begin{proposition}[Typable Encodings]
+	Let $P$ be a $\ppi$ or $\pHOp$ process and $\Gamma \proves P \hastype \Delta$, then $\Gamma \proves \map{P} \hastype \Delta$
+	for some environments $\Gamma$ and $\Delta$.
+\end{proposition}
+
+\begin{proof}
+\begin{enumerate}
+	\item	$\bout{s}{k} P$
+
+	\[
+		\tree{
+			\Gamma \proves \map{P} \hastype \Delta \cat s: T
+			\qquad
+			\tree{
+				\tree{
+					\Gamma \cat \X: \lhot{T'} \proves \appl{\X}{k} \hastype k:T' \cat X
+				}{
+					\Gamma \cat \X: \lhot{T'} \proves \appl{\X}{k} \hastype k:T' \cat X \cat z: \tinact
+				}
+			}{
+				\Gamma \proves \binp{z}{\X} \appl{\X}{k} \hastype z: \btinp{\lhot{T'}} \tinact
+			}
+		}{
+			\Gamma \proves \bout{s}{\abs{z}{\binp{z}{\X} \appl{\X}{k}}} \map{P} \hastype s: \Delta \cat s: \btout{\lhot{\btinp{\lhot{T'}} \tinact}} T
+		}
+	\]
+
+	\item	$\binp{s}{x} P$ with $\Gamma' = \Gamma \cat X : \btinp{\lhot{T'}} \tinact$
+
+
+		\[
+			\tree{
+				\tree{
+					\tree{
+						\Gamma' \proves \appl{\X}{s'} \hastype s': \btinp{\lhot{T'}} \tinact \cat X
+						\quad
+						\tree{
+							\tree{
+								\Gamma' \proves \inact \hastype \es
+							}{
+								\Gamma' \proves \inact \hastype \dual{s'}: \tinact
+							}
+							\quad
+							\Gamma' \proves \map{P} \hastype \Delta \cat x:T' \cat s: T
+						}{
+							\Gamma' \proves \bout{\dual{s'}}{\abs{x} \map{P}} \inact \hastype \Delta \cat \dual{s'}: \btout{\lhot{T'}} \tinact \cat s: T
+						}
+					}{
+							\Gamma' \proves \appl{\X}{s'} \Par \bout{\dual{s'}}{\abs{x} \map{P}} \inact \hastype \Delta \cat s': \btinp{\lhot{T'}} \tinact \cat \dual{s'}: \btout{\lhot{T'}} \tinact \cat s: T \cat X
+					}
+				}{
+					\Gamma' \proves \newsp{s'}{\appl{\X}{s'} \Par \bout{\dual{s'}}{\abs{x} \map{P}} \inact} \hastype  \Delta \cat s: T \cat X
+				}
+			}{
+				\Gamma \proves \binp{s}{X} \newsp{s'}{\appl{\X}{s'} \Par \bout{\dual{s'}}{\abs{x} \map{P}} \inact} \hastype  \Delta \cat s: \btinp{\lhot{\btinp{\lhot{T'}} \tinact}} T
+			}
+		\]
+
+	\item	$\bout{s}{\abs{\Y} P_2} P_1$
+
+	\[
+		\tree{
+			\Gamma \proves \map{P_1} \hastype \Delta_1 \cat s:T
+			\qquad
+			\tree{
+				\tree{
+					\Gamma \cat \Y: \hot{T'} \proves \map{P_2} \hastype \Delta_2
+				}{
+					\Gamma \cat \Y: \hot{T'} \proves \map{P_2} \hastype \Delta_2 \cat z : \tinact
+				}
+			}{
+				\Gamma \proves \binp{z}{\Y} \map{P_2} \hastype \Delta_2\backslash\Y \cat z: \btinp{\hot{T'}} \tinact
+			}
+		}{
+			\Gamma \proves \bout{s}{ \abs{z}{ \binp{z}{\Y} \map{P_2} } } \map{P_1} \hastype \Delta_1 \cat \Delta_2\backslash\Y \cat z: \btout{\hot{\btinp{\hot{T'}} \tinact }} T
+		}
+	\]
+
+	\item	$\appl{\X}{\abs{x} P}$
+
+	\[
+		\tree{
+			\tree{
+				\Gamma \cat \X: \hot{\btinp{\hot{T'}} \inact} \proves \appl{\X}{s} \hastype \Delta_1 \cat s: \btinp{\hot{T'}} \inact
+				\quad
+				\tree{
+					\Gamma' \proves \map{P} \hastype \Delta_2 \cat x: T'
+					\quad
+					\tree{
+						\Gamma' \proves \inact \hastype \es
+					}{
+						\Gamma' \proves \inact \hastype \dual{s'}: \tinact
+					}
+				}{
+					\Gamma' \proves \bout{\dual{s}}{\abs{x} P} \inact \hastype \Delta_2 \cat \dual{s}: \btout{\hot{T'}} \tinact
+				}
+			}{
+				\Gamma \cat \X: \hot{\btinp{\hot{T'}} \inact} \proves \appl{X}{s} \Par \bout{\dual{s}}{\abs{x} P} \inact \hastype \Delta_1 \cat \Delta_2 \cat s: \btinp{\hot{T'}} \inact \cat \dual{s}: \btout{\hot{T'}} \tinact
+			}
+		}{
+			\Gamma \cat \X: \hot{\btinp{\hot{T'}} \inact} \proves \newsp{s}{\appl{X}{s} \Par \bout{\dual{s}}{\abs{x} P} \inact} \hastype \Delta_1 \cat \Delta_2
+		}
+	\]
+
+	\item	$\rec{X}{P}$
+
+
+	\[
+		\tree{
+			\tree{
+				\begin{array}{c}
+					\tree{
+						\Gamma \cat \X: \shot{\btinp{\shot{T'}} \tinact} \proves \map{P} \hastype \Delta \cat s: T
+					}{
+						\Gamma \proves \binp{s}{\X} \map{P} \hastype \Delta \cat s: \btinp{\shot{\btinp{\shot{T'}} \tinact}} T
+					}
+					\\
+					\\
+					\tree{
+						\tree{
+							\Gamma \cat \X: \shot{T'} \proves \absmap{P}{\es} \hastype z: \tinact \cat \tilde{y}: \tilde{T}
+						}{
+							\Gamma \proves \binp{z}{\X} \absmap{P}{\es} \hastype z: \btinp{\shot{T'}} \tinact \cat \tilde{y}: \tilde{T}
+						}
+						\qquad
+						\tree{
+							\Gamma \proves \inact \hastype \es
+						}{
+							\Gamma \proves \inact \hastype \dual{s} : \tinact
+						}
+					}{
+						\Gamma \proves \bout{\dual{s}}{\abs{z\tilde{y}}{ \binp{z}{\X} \absmap{P}{s}}} \inact \hastype \dual{s}: \btout{\shot{\btinp{\shot{T'}} \tinact}} \tinact
+					}
+				\end{array}
+			}{
+				\Gamma \proves \binp{s}{\X} \map{P} \Par \bout{\dual{s}}{\abs{z\tilde{y}}{ \binp{z}{\X} \absmap{P}{s}}} \inact \hastype \Delta \cat s: \btinp{\shot{\btinp{\shot{T'}} \tinact}} T \cat \dual{s}: \btout{\shot{\btinp{\shot{T'}} \tinact}} \tinact
+			}
+		}{
+			\Gamma \proves \newsp{s}{\binp{s}{\X} \map{P} \Par \bout{\dual{s}}{\abs{z\tilde{y}}{ \binp{z}{\X} \absmap{P}{s}}} \inact} \hastype \Delta
+		}
+	\]
+
+	\item	$\map{\rvar{X}}$
+
+\end{enumerate}
+\end{proof}
+
+\subsection{Encode $\pHO$ processes into $\ppi$.}
+
+\subsubsection{First Approach}
+
+\[
+\begin{array}{rcl}
+	\map{\binp{k}{\X} P} &\defeq& \binp{k}{x} \map{P}\\
+	\map{\appl{\X}{k}} &\defeq& \bout{x}{k} \inact\\
+	\map{\bout{k}{\abs{x} Q} P} &\defeq& \newsp{s}{\bout{k}{s} \map{P} \Par \binp{\dual{s}}{x} \map{Q}}
+\end{array}
+\]
+
+\begin{proposition}
+	Let $P$ be a $\pHO$ process with $\Gamma \proves P \hastype \Delta$ and
+	with the typing derivation to contain only linear abstractions. $\map{P}$
+	\begin{itemize}
+		\item	is typable.
+		\item	enjoys operational correspondence.
+	\end{itemize}
+
+\end{proposition}
+
+\begin{proof}
+	\dk{TODO}
+\end{proof}
+
+Nevertheless the above encoding is not typable and does not respect
+operational correspondence for processes that require
+shared abstractions.
+
+\begin{proposition}
+	Let $P$ be a $\pHO$ process with $\Gamma \proves P \hastype \Delta$ and
+	with the typing derivation to contain shared abstractions. $\map{P}$
+	\begin{itemize}
+		\item	is not typable.
+		\item	does not enjoy operational correspondence.
+	\end{itemize}
+\end{proposition}
+
+\begin{proof}
+	Let process $P = \bout{\dual{s}}{\abs{} \inact} \inact \Par \binp{s}{\X} (\appl{\X}{} \Par \appl{\X}{})$.
+	The typing of such process requires in its derivation to check process variable $\X$ against a
+	shared type.
+%
+	We get
+	\[
+		\map{P} \defeq \newsp{s'}{\bout{\dual{s}}{s'} \inact \Par \binp{\dual{s'}{}} \inact} \Par \binp{s}{x} (\bout{x}{} \inact \Par \bout{x}{} \inact)
+	\]
+
+	The derivation on the subprocess $\bout{x}{} \inact \Par \bout{x}{} \inact$
+	uses the $\trule{Par}$ rule which in turn checks for the disjointness of
+	the two linear environemnts. But both environments contain variable $x$
+	making the mapping untypable.
+
+	Furthermore in the untyped setting
+%
+	\[
+		\begin{array}{rcl}
+			\map{P} \red^* \inact \Par \bout{x}{} \inact
+		\end{array}
+	\]
+	when
+	\[
+		P \red \inact
+	\]
+	providing evidence for no operational correspondence.
+\end{proof}
+
+As a consequence of the last two proposition the provided encoding
+allows only for a limited set of processes (namely purely linear processes)
+to be encoded in a sound way.
+
+Nevertheless we claim that there is a sound encoding from
+$\pHO$ to $\ppi$, although its definition should be complicated.
+We give the basic intuition through an example.
+
+\begin{example}
+	Let process 
+	\[
+		P = \bout{\dual{s}}{\abs{} \inact} \inact \Par \binp{s}{\X} (\recp{r}{\appl{\X}{} \Par r} \Par \appl{\X}{})
+	\]
+
+	A sound mapping for this process should be
+
+	\[
+		\map{P} \defeq \newsp{s_1, s_2}{\bout{\dual{s}}{s_1, s_2} \inact \Par \recp{r}{(\binp{\dual{s_1}}{} r)} \Par \binp{\dual{s_2}}{} \inact} \Par \binp{s}{x_1, x_2} (\recp{r}{(\bout{x_1}{} r)} \Par \bout{x_2}{} \inact)
+	\]
+\end{example}
+
+To formalise the above intuition we should use a mapping with
+complex side conditions that tracks the entire structure of the
+process.
+
+\subsection{Encode $\pHO$ processes into $\spi$.}
+
+However we can easily provide a sound encoding for $\pHO$
+process into $\spi$ processes, by exploiting shared channels
+to represent shared abstractions.
+
+\[
+\begin{array}{rcl}
+	\map{\binp{k}{\X} P} &\defeq& \binp{k}{x} \map{P}\\
+	\map{\appl{\X}{k}} &\defeq& \newsp{s}{\bout{x}{s} \bout{\dual{s}}{k} \inact}\\
+	\map{\bout{k}{\abs{x} Q} P} &\defeq& \newsp{a}{\bout{k}{a} \map{P} \Par \repl{} \binp{a}{y} \binp{\dual{y}}{x} \map{Q}}
+\end{array}
+\]
+
+\subsubsection{Operational Correspondence}
+
+\dk{TODO}
+
+\subsection{Non Encodability}
+
+\jp{This result needs to be split two handle only a single reduction step.}
+
+We prove an auxiliary result:
+
+\begin{lemma}[\dk{$\tau$-inert}]
+	\label{lem:tau_inert}
+	Let $P$ a pure HO process
+	and $\Gamma; \Lambda; \Sigma \proves P \hastype \Proc$
+	If $P \red^* P'$ then
+	$\Gamma; \Lambda; \Sigma \proves P \wbc \Gamma'; \Lambda'; \Sigma' \proves P' \hastype \Proc$.
+\end{lemma}
+
+\begin{proof}
+	The proof is a double induction first on the length and then on the structure of $\red$.
+	Induction on the length of $\red$.
+
+	The basic step is trivial
+	Induction hypothesis:
+	If $P \red^* P''$ then
+	$\Gamma; \Lambda; \Sigma \proves P \wbc \Gamma''; \Lambda''; \Sigma'' \proves P'' \hastype \Proc$.
+
+	Induction step:
+	Let $P'' \red P'$. We do an induction on the structure of $\red$
+	to show that $\Gamma'; \Lambda'; \Sigma' \proves P'' \wbc \Gamma'; \Lambda'; \Sigma' \proves P' \hastype \Proc$.
+
+	Basic step:
+
+	\Case{$P'' = \bout{s}{V} P_1 \Par \binp{\dual{s}}{X} P_2$}
+	\[
+		\Gamma''; \Lambda''; \Sigma'' \proves \bout{s}{V} P_1 \Par \binp{\dual{s}}{X} P_2 \red \Gamma'; \Lambda'; \Sigma' \proves P_1 \Par P_2 \subst{V}{X} \hastype \Proc
+	\]
+	The proof follows from the fact that we can only observe a $\tau$
+	action on typed process
+	$\Gamma'; \Lambda'; \Sigma \proves P''$.
+	Actions $\bactout{s}{V}$ and $\bactinp{\dual{s}}{V}$
+	are forbiden by the environment LTS.
+
+	We can conclude then that $P'' \wbc P'$.
+
+	\Case{$P'' = \bsel{s}{l} P_1 \Par \bbra{\dual{s}}{l_i: P_i}_{i \in I}$}
+
+	Similar arguments as the previous case.
+
+	Induction hypothesis:
+	If $P_1 \red P_2$ then
+	$\Gamma_1; \Lambda_1; \Sigma_1 \proves P_1 \wbc \Gamma_2; \Lambda_2; \Sigma_2 \proves P_2 \hastype \Proc$.
+
+	Induction Step:
+
+	\Case{$P'' = \news{s} P_1$}
+	\[
+		\Gamma''; \Lambda''; \Sigma'' \proves \news{s}{P_1} \red \Gamma'; \Lambda'; \Sigma' \proves \news{s} P_2 \hastype \Proc
+	\]
+	From the induction hypothesis and the fact that bisimulation is a congruence
+	we get that $P'' \wbc P'$.
+
+	\Case{$P'' = P_1 \Par P_3$}
+
+	\[
+		\Gamma''; \Lambda''; \Sigma'' \proves P_1 \Par P_3 \red \Gamma'; \Lambda'; \Sigma' \proves P_2 \Par P_3 \hastype \Proc
+	\]
+	From the induction hypothesis and the fact that bisimulation is a congruence
+	we get that $P'' \wbc P'$.
+
+	\Case{$P'' \scong P_1$}
+
+	From the induction hypothesis and the facts that bisimulation is a congruence
+	and structural congruence preserves $\wbc$
+	we get that $P'' \wbc P'$.
+
+	We can now conclude that
+	$P \wbc P'$ because $P \wbc P''$ and $P'' \wbc P'$.
+\end{proof}
+
+\begin{theorem}
+    There is no encoding 
+$\map{\cdot}: \spi \longrightarrow  \pHO $ that enjoys
+	operational correspondence and full abstraction. 
+\end{theorem}
+
+\begin{proof}
+	Let $\Gamma_1; \Lambda_1; \Sigma_1 \proves P_1 \not\cong \Gamma_2; \Lambda_2; \Sigma_2 \proves P_2 \hastype \Proc$
+	with $P = \breq{a}{s} \inact \Par \bacc{a}{x} P_1 \Par \bacc{a}{x} P_2$ and
+	let $\Gamma; \Lambda; \Sigma \proves P \hastype \Proc$. Assume also a mapping
+	$\map{\cdot}: \spi \longrightarrow  \pHO $ that enjoys
+	operational correspondence and full abstraction.
+
+	From operational correspondence we get that:
+	\begin{eqnarray*}
+		R \red P_1 \Par \bacc{a}{x} P_2 &\textrm{implies}& \map{R} \red \map{P_1 \Par \bacc{a}{x} P_2}\\
+		R \red P_2 \Par \bacc{a}{x} P_1 &\textrm{implies}& \map{R} \red \map{P_2 \Par \bacc{a}{x} P_1}
+	\end{eqnarray*}
+
+	From the fact that
+	$\Gamma_1; \Lambda_1; \Sigma_1 \proves P_1 \not\cong \Gamma_2; \Lambda_2; \Sigma_2 \proves P_2 \hastype \Proc$
+	we can derive that
+	\[
+		\Gamma_1'; \Lambda_1'; \Sigma_1' \proves P_1 \Par \bacc{a}{x} P_2 \not\cong \Gamma_2'; \Lambda_2'; \Sigma_2' \proves P_2 \Par \bacc{a}{x} P_1 \hastype \Proc
+	\]
+
+	From Lemma~\ref{lem:tau_inert} we know that
+	\begin{eqnarray*}
+		\map{R} &\cong& \map{P_1 \Par \bacc{a}{x} P_2}\\
+		\map{R} &\cong& \map{P_2 \Par \bacc{a}{x} P_1}
+	\end{eqnarray*}
+	\noi thus
+	\[
+		\map{P_1 \Par \bacc{a}{x} P_2} \cong \map{P_2 \Par \bacc{a}{x} P_1}
+	\]
+	From here we conclude that the full abstraction property does not hold,
+	so there is no mapping $\map{\cdot}: \pHO \longrightarrow \spi$ that enjoys
+	the operational correspondence and full abstraction properties.
+\end{proof}
+
+\jp{
+Full abstraction can be divided in two parts: (i) if $P \wb Q$ then $\map{P} \wb \map{Q}$ ("adequacy") and
+(ii) if $\map{P} \wb \map{Q}$ then $P \wb Q$ ("soundness"?).
+Notice that strictly speaking the reasoning in the above sketch only requires this second half. This is important, because we should try to state these results with the least criteria possible.}
+
+\begin{comment}
+\subsection{Negative Result}
+
+A good encoding of the $\spi$ calculus to the $\pHO$ calculus
+should respect the represenation of race conditions over shared
+channels. This represantation can be captured by the $\Par$-preservation
+property.
+
+In this section we prove that the $\pHO$ calculus cannot represent
+$\spi$ processes that model race conditions.
+
+First we prove an auxiliary result:
+
+\begin{lemma}
+	\label{lem:unique_red}
+	Let $P \Par Q$ a $\pHO$ process with
+	$\Gamma \proves P \Par Q \hastype \Delta$ and
+	$\Delta$ well typed.
+	If $P \Par P' \red P' \Par Q'$ and
+	$P \Par Q \red P' \Par Q''$ then
+	$Q' \scong Q''$.
+\end{lemma}
+
+\begin{proof}
+	We write $P \Par Q$ using the normal form (Proposition~\ref{prop:normal_form}).
+	\[
+		P \Par Q \scong \newsp{\tilde{s}}{P_1 \Par \dots \Par P_n} \Par \newsp{\tilde{s'}}{Q_1 \Par \dots \Par Q_m} 
+	\]
+	We do a case analysis on the possible reductions:
+
+	\Case{}
+%
+	\begin{eqnarray*}
+		\newsp{\tilde{s}}{P_1 \Par \dots P_i \Par \dots \Par P_j \Par \dots \Par P_n} \Par Q
+		&\red&
+		\newsp{\tilde{s}}{P_1 \Par \dots P_i' \Par \dots \Par P_j' \Par \dots \Par P_n} \Par Q\\
+		\newsp{\tilde{s}}{P_1 \Par \dots P_i \Par \dots \Par P_j \Par \dots \Par P_n} \Par Q
+		&\red&
+		\newsp{\tilde{s}}{P_1 \Par \dots P_i' \Par \dots \Par P_j' \Par \dots \Par P_n} \Par Q
+	\end{eqnarray*}
+	The proof is trivial.
+
+	\Case{}
+%
+	\begin{eqnarray*}
+		\newsp{\tilde{s}}{P_1 \Par \dots P_i \Par \dots \Par P_n} \Par \newsp{\tilde{s'}}{Q_1 \Par \dots \Par Q_j \Par \dots \Par Q_m} 
+		&\red&
+		\newsp{\tilde{s}}{P_1 \Par \dots P_i' \Par \dots \Par P_n} \Par \newsp{\tilde{s'}}{Q_1 \Par \dots \Par Q_j' \Par \dots \Par Q_m} \\
+		\newsp{\tilde{s}}{P_1 \Par \dots P_i \Par \dots \Par P_n} \Par \newsp{\tilde{s'}}{Q_1 \Par \dots \Par Q_k \Par \dots \Par Q_m} 
+		&\red&
+		\newsp{\tilde{s}}{P_1 \Par \dots P_i' \Par \dots \Par P_n} \Par \newsp{\tilde{s'}}{Q_1 \Par \dots \Par Q_k' \Par \dots \Par Q_m} \\
+	\end{eqnarray*}
+
+	By normalisation (Lemma~\ref{prop:normal_form}) we get that $P_i$ and $Q_j$ are session prefixed, so we can assume that
+	they are prefixed on session $s$. By the well typeness condition of $\Delta$ we get that $s, \dual{s} \in \dom{\Delta}$,
+	with $\Gamma \proves P_i \hastype \Delta \cat \dual{s}: T_i$
+	If we assume that $k \not= j$ then $\Gamma \proves Q_j \hastype \Delta_j \cat s: T_j$ and $\Gamma \proves Q_k \hastype \Delta_k \cat s: T_k$,
+	because the two processes should interact with endpoint $\dual{s}$ in process $P_i$.
+	Furthermore typing rule $\trule{Par}$ cannot be applied to type $Q_j \Par Q_k$ because $\Delta_j$ and $\Delta_k$ are not disjoint.
+	So it has to be that $k = j$ that results to:
+	\[
+		\newsp{\tilde{s'}}{Q_1 \Par \dots \Par Q_j' \Par \dots \Par Q_m} \scong \newsp{\tilde{s'}}{Q_1 \Par \dots \Par Q_k' \Par \dots \Par Q_m}
+	\]
+	as required.
+\end{proof}
+
+\begin{theorem}
+	Mapping $\map{\cdot}: \pHO \longrightarrow \spi$ that enjoys
+	operational correspondence and $\Par$-preservation does not
+	exist.
+\end{theorem}
+
+\begin{proof}
+	Let $\map{\cdot}: \pHO \longrightarrow \spi$ that respects
+	operational correspondence and $\Par$-preservation and
+	$\pHO$ process:
+	$P = \bout{a}{s} P_1 \Par \binp{a}{x} P_2 \Par \binp{a}{x} P_3$
+	with $P_1 \not\scong P_2$ and $\Gamma \proves P \hastype \Delta$.
+
+	$\Par$-preservation implies
+	\[
+		\map{P} \defeq \map{\bout{a}{s} P_1} \Par \map{\binp{a}{x} P_2} \Par \map{\binp{a}{x} P_3}
+	\]
+%
+	and operational correspondence implies
+%
+	\begin{eqnarray}
+		P &\red& P_1 \Par P_2 \subst{s}{x} \Par \binp{a}{x} P_3 \Rightarrow \map{P} \red \map{P_1 \Par P_2 \subst{s}{x} \Par \binp{a}{x} P_3} \\
+		P &\red& P_1 \Par \binp{a}{x} P_1 \Par P_3 \subst{s}{x} \Rightarrow \map{P} \red \map{P_1 \Par \binp{a}{x} P_2 \Par P_3 \subst{s}{x}}
+	\end{eqnarray}
+%
+	By the $\Par$-preservation property we get that
+%
+	\begin{eqnarray}
+		\map{\bout{a}{s} P_1} \Par \map{\binp{a}{x} P_2} \Par \map{\binp{a}{x} P_3} &\red& \map{P_1} \Par \map{P_2 \subst{s}{x}} \Par \map{\binp{a}{x} P_3} \\
+		\map{\bout{a}{s} P_1} \Par \map{\binp{a}{x} P_2} \Par \map{\binp{a}{x} P_3} &\red& \map{P_1} \Par \map{\binp{a}{x} P_2} \Par \map{P_3 \subst{s}{x}}
+	\end{eqnarray}
+%
+	By Lemma~\ref{lem:unique_red} we get that
+	$\map{P_1} \Par \map{P_2 \subst{s}{x}} \Par \map{\binp{a}{x} P_3} \scong \map{P_1} \Par \map{\binp{a}{x} P_2} \Par \map{P_3 \subst{s}{x}}$
+	which implies contradiction since $P_1 \subst{s}{x} \not\scong P_2 \subst{s}{x}$.
+\end{proof}
+\end{comment}
+
+\begin{comment}
+\[
+	\begin{array}{rcl}
+		\vmap{\tilde{x}}{\inact} &\bnfis& \tilde{x}\\
+		\vmap{\tilde{x}}{\bout{s}{\abs{x} P'} P} &\bnfis&
+		\left\{
+		\begin{array}{ll}
+			\vmap{\tilde{x}\cat x_s}{P} & x_s \notin \tilde{x}\\
+			\vmap{\tilde{x}}{P} & x_s \in \tilde{x}
+		\end{array}
+		\right.
+		\\
+		\vmap{\tilde{x}}{\binp{s}{X} P} &\bnfis&
+		\left\{
+		\begin{array}{ll}
+			\vmap{\tilde{x}\cat x_s}{P} & x_s \notin \tilde{x}\\
+			\vmap{\tilde{x}}{P} & x_s \in \tilde{x}
+		\end{array}
+		\right.
+		\\
+		\vmap{\tilde{x}}{\bsel{s}{l} P} &\bnfis&
+		\left\{
+		\begin{array}{ll}
+			\vmap{\tilde{x}\cat x_s}{P} & x_s \notin \tilde{x}\\
+			\vmap{\tilde{x}}{P} & x_s \in \tilde{x}
+		\end{array}
+		\right.
+		\\
+
+
+	\end{array}
+\]
+\end{comment}
+
+%Specifically if:
+%\[
+%	\absmap{P} \bnfis \abs{\tilde{x}} P'
+%\]
+%we require the property:
+%\[
+%	P = P' \subst{\fn{P}}{\tilde{x}}
+%\]
+
+

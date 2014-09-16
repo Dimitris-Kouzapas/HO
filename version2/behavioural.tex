@@ -1,0 +1,565 @@
+% !TEX root = main.tex
+\section{Observational Semantics}
+
+We give the observational semantics for the $\pHO$.
+
+\subsection{Labelled Transition Semantics}
+
+\[
+	\begin{array}{rcl}
+		\lambda &\bnfis& \tau \bnfbar \bactout{s}{s'} \bnfbar \bactout{s}{\abs{x} P} \bnfbar \bactinp{s}{k} \bnfbar \bactinp{s}{\abs{x} P} \\
+		&	\bnfbar & \bactsel{s}{l} \bnfbar \bactbra{s}{l} \bnfbar \news{\tilde{s}} \bactout{s}{s'} \bnfbar \news{\tilde{s}} \bactout{s}{\abs{x} P}\\
+%		o &\bnfis& \news{s} \bactout{s}{\abs{x} P} \bnfbar \news{s} o
+	\end{array}
+\]
+
+\[
+	\begin{array}{c}
+		\fn{\bactsel{s}{l}} = \fn{\bactbra{s}{l}} = \set{s} \qquad \fn{\tau} = \es \\ 
+		\fn{\bactout{s}{\abs{x} P}} = \fn{\bactout{s}{\abs{x} P}} = \set{s} \cup \fn{\abs{x} P}\\
+		\bn{\tau} = \bn{\bactsel{s}{l}} = \bn{\bactbra{s}{l}} = \bn{\bactinp{s}{\abs{x} P}} = \es\\
+		\bn{\news{\tilde{s}} \bactout{s}{\abs{x} P}} = \tilde{s}
+	\end{array}
+\]
+
+\[
+	\bactsel{s}{l} \asymp \bactbra{s}{l} \qquad \news{\tilde{s}} \bactout{s}{\abs{x} P} \asymp \bactinp{s}{\abs{x} P} \qquad \bactout{s}{s'} \asymp \bactinp{s}{s'}
+\]
+
+
+\[
+\begin{array}{ccc}
+	\bout{s}{s'} P \by{\bactout{s}{s'}} P
+	&\qquad&
+	\binp{s}{x} P \by{\bactinp{s}{s'}} P\subst{s'}{x}
+	\\
+	
+
+	\bout{s}{\abs{x}{Q}} P \by{\bactout{s}{\abs{x}{Q}}} P
+	&\qquad&
+	\binp{s}{X} P \by{\bactinp{s}{\abs{x}Q}} P\subst{\abs{x}Q}{X}
+	\\
+
+	\bsel{s}{l}{P} \by{\bactsel{s}{l}} P
+	&&
+	\bbra{s}{l_i:P_i}_{i \in I} \by{\bactbra{s}{l_k}} P_k \quad k \in I
+	\\[4mm]
+
+	\tree{
+		P \by{\lambda} P' \quad s \notin \fn{\lambda}
+	}{
+		\news{s} P \by{\lambda} \news{s} P' 
+	}
+	&&
+	\tree{
+		P \by{\news{\tilde{s}} \bactout{s}{V}} P' \quad s' \in \fn{\abs{x} Q}
+	}{
+		\news{s'} P \by{\news{s'\cat\tilde{s}} \bactout{s}{V}} P'
+	}
+	\\[7mm]
+
+	\tree{
+		P \by{\lambda} P' \quad \bn{\lambda} \cap \fn{Q} = \es
+	}{
+		P \Par Q \by{\lambda} P' \Par Q
+	}
+	&&
+	\tree{
+		Q \by{\lambda} Q' \quad \bn{\lambda} \cap \fn{P} = \es
+	}{
+		P \Par Q \by{\lambda} P \Par Q'
+	}
+	\\[7mm]
+
+	\tree{
+		P \by{\lambda_1} P' \qquad Q \by{\lambda_2} Q'
+	}{
+		P \Par Q \by{\tau} \newsp{\bn{\lambda_1} \cup \bn{\lambda_2}}{P' \Par Q'}
+	}
+	&&
+	\tree{
+		P \scong_\alpha P'' \quad P'' \by{\lambda} P'
+	}{
+		P \by{\lambda} P'
+	}
+\end{array}
+\]
+
+\subsection{LTS for Types}
+
+\[
+\begin{array}{c}
+	\tree{
+		\dual{s} \notin \dom{\Sigma} \quad \Gamma; \Lambda_1; \Sigma_1 \proves V \hastype U \quad \Sigma_1 \subseteq \Sigma \quad \Lambda_1 \subseteq \Lambda
+	}{
+		(\Gamma; \Lambda; \Sigma \cat s: \btout{U} S) \by{\bactout{s}{V}} (\Gamma; \Lambda\backslash\Lambda_1; \Sigma\backslash\Sigma_1 \cat s: S)
+	}
+	\\[6mm]
+	\tree{
+		\dual{s} \notin \dom{\Sigma} \quad  \Gamma; \Lambda_1; \Sigma_1 \proves V \hastype U
+	}{
+		(\Gamma; \Lambda; \Sigma \cat s: \btinp{U} S) \by{\bactinp{s}{U}} (\Gamma; \Lambda \cup \Lambda_1; \Sigma \cup \Sigma_1 \cat s: S)
+	}
+	\\[6mm]
+	\tree{
+		\dual{s} \notin \dom{\Sigma} \quad k \in I
+	}{
+		(\Gamma; \Lambda; \Sigma \cat s: \btsel{l_i: S_i}_{i \in I}) \by{\bactsel{s}{l_k}} (\Gamma; \Lambda; \Sigma \cat s:S_k)
+	}
+	\quad
+	\tree{
+		\dual{s} \notin \dom{\Sigma} \quad k \in I
+	}{
+		(\Gamma; \Lambda; \Sigma \cat s: \btbra{l_i: T_i}_{i \in I}) \by{\bactbra{s}{l_k}} (\Gamma; \Lambda; \Sigma \cat s:S_k)
+	}
+	\\[6mm]
+
+	\tree{
+		(\Gamma; \Lambda_1; \Sigma_1) \by{\news{\tilde{s}} \bactout{s}{V}} (\Gamma; \Lambda_2; \Sigma_2)
+%		\quad S_1 \dualof S_2
+	}{
+		(\Gamma; \Lambda_1; \Sigma_1) \by{\news{s' \cat \tilde{s'}} \bactout{s}{V}} (\Gamma; \Lambda_2; \Sigma_2 \cat \dual{s'}: S)
+	}
+	\quad
+	\tree{
+		\Sigma \red \Sigma'
+	}{
+		(\Gamma; \Lambda; \Sigma) \by{\tau} (\Gamma; \Lambda; \Sigma')
+	}
+\end{array}
+\]
+
+\begin{definition}
+	We denote $\Sigma_1 \bistyp \Sigma_2$ whenever $\exists \Sigma$ such that
+	$\Sigma_1 \red^* \Sigma$ and $\Sigma_2 \red^* \Sigma$.
+\end{definition}
+
+\jp{The following definition is a bit too "loose". Need to add conditions on $\Sigma_1,\Sigma_2$, and a better notation not involving the empty $\Lambda$.}
+
+\begin{definition}[Typed Relation]
+	We say that
+	$\Gamma; \emptyset; \Sigma_1 \proves P_1 \hastype \Proc\ R\ \Gamma; \emptyset; \Sigma_2 \proves P_2 \hastype \Proc$
+	is a typed relation whenever
+	\begin{itemize}
+		\item	$P_1$ and $P_2$ are programs.
+		\item	$\Sigma_1$ and $\Sigma_2$ are well typed.
+		\item	$\Sigma_1 \bistyp \Sigma_2$.
+	\end{itemize}
+\end{definition}
+
+We sometimes write $\Gamma; \emptyset; \Sigma_1 \proves P_1\ R\ \Gamma; \emptyset; \Sigma_2 \proves P_2 \hastype \Proc$
+for expressing a typed relation.
+
+
+\begin{lemma}[Invariant]
+	\begin{itemize}
+		\item	If $\Gamma; \emptyset; \Sigma_1 \proves P_1 \hastype \Proc$ and
+			$P_1 \by{\lambda} P_2$ and $(\Gamma; \emptyset; \Sigma_1) \by{\lambda} (\Gamma; \emptyset; \Sigma_2)$
+			then $\Gamma; \emptyset; \Sigma_2 \proves P_2 \hastype \Proc$.
+	\end{itemize}
+\end{lemma}
+
+\begin{proof}
+	An induction on the structure of $\red$ for programs.
+	\dk{Do the proof}
+\end{proof}
+
+\begin{definition}[Typed Transition]
+	A typed transition is a typed relation denoted $\red$ and it is defined as:
+	$
+		\Gamma; \emptyset; \Sigma_1 \proves P_1 \by{\lambda} \Gamma; \emptyset; \Sigma_2 \proves P_2 \hastype \Proc
+	$
+	if
+	\begin{enumerate}
+		\item	$P_1 \by\lambda P_2$
+		\item	$(\Gamma; \emptyset; \Sigma_1) \by\lambda (\Gamma, \emptyset; \Sigma_2)$
+	\end{enumerate}
+\end{definition}
+
+We extend to $\By{}$ and $\By{\hat{\lambda}}$ in the \dk{standard way}.
+
+\subsection{Barbed Congruence}
+
+\begin{definition}[Barbs]
+	Let program $P$.
+	\begin{enumerate}
+%		\item	We write $P \barb{s}$ if $P \scong \newsp{\tilde{s}}{\bout{s}{\abs{x} P_1} P_2 \Par P_3}, s \notin \tilde{s}$.
+%			We write $P \Barb{s}$ if $P \red^* \barb{s}$.
+
+		\item	We write $P \barb{s}$ if $P \scong \newsp{\tilde{s}}{\bout{s}{V} P_2 \Par P_3}, s \notin \tilde{s}$.
+			We write $P \Barb{s}$ if $P \red^* \barb{s}$.
+
+		\item	We write $\Gamma; \emptyset; \Sigma \proves P \hastype \Proc \barb{s}$ if $P \barb{s}$ and $\dual{s} \notin \Sigma$.
+			We write $\Gamma; \emptyset; \Sigma \proves P \hastype \Proc \Barb{s}$ if $\Gamma; \emptyset; \Sigma \proves P \hastype \Proc \By{} \Gamma; \emptyset; \Sigma' \proves P' \hastype \Proc \barb{s}$.			
+	\end{enumerate}
+\end{definition}
+
+\begin{definition}[Context]
+	$C$ is a context defined on the grammar:
+
+	\begin{tabular}{rcl}
+		$C$ &$=$& $\hole \bnfbar P \bnfbar \bout{k}{V} C \bnfbar \binp{k}{X} C \bnfbar \binp{k}{x} C \bnfbar \news{s} C \bnfbar C \Par C \bnfbar \bsel{k}{l} C \bnfbar \bbra{k}{l_i:C_i}_{i \in I}$
+	\end{tabular}
+	Notation $\context{C}{P}$ replaces every $\hole$ in $C$ with $P$.
+\end{definition}
+
+\begin{definition}[Typed Congruence]
+	A typed relation $\Gamma;\emptyset;\Sigma_1 \proves P_1\ R\ \Gamma; \emptyset; \Sigma_2 \proves P_2 \hastype \Proc$
+	is a typed congruence if
+	$\forall C$ such that $\Gamma;\emptyset;\Sigma_1' \proves \context{C}{P_1} \hastype \Proc$ and
+	$\Gamma;\emptyset;\Sigma_2' \proves \context{C}{P_2} \hastype \Proc$ then
+	$\Gamma;\emptyset;\Sigma_1' \proves \context{C}{P_1}\ R\ \Gamma; \emptyset; \Sigma_2' \proves \context{C}{P_2} \hastype \Proc$.
+\end{definition}
+
+\begin{definition}[Barbed Congruence]
+	Typed relation $\Gamma; \emptyset; \Sigma_1 \proves P_1 \ R\ \Gamma; \emptyset; \Sigma_2 \proves P_2 \hastype \Proc$ is a barbed congruence
+	whenever:
+	\begin{enumerate}
+		\item
+		\begin{itemize}
+			\item	If $P_1 \red P_1'$ then $\exists P_2', P_2 \red^* P_1'$ and $\Gamma; \emptyset; \Sigma_1' \proves P_1'\ R\ \Gamma; \emptyset; \Sigma_2' \proves P_2' \hastype \Proc$.
+			\item	If $P_2 \red P_2'$ then $\exists P_1', P_1 \red^* P_1'$ and $\Gamma; \emptyset; \Sigma_1' \proves P_1'\ R\ \Gamma; \emptyset; \Sigma_2' \proves P_2' \hastype \Proc$.
+		\end{itemize}
+		\item
+		\begin{itemize}
+			\item	If $\Gamma;\emptyset;\Sigma \proves P_1 \hastype \Proc \barb{s}$ then $\Gamma;\emptyset;\Sigma \proves P_2 \hastype \Proc \Barb{s}$.
+			\item	If $\Gamma;\emptyset;\Sigma \proves P_2 \hastype \Proc \barb{s}$ then $\Gamma;\emptyset;\Sigma \proves P_1 \hastype \Proc \Barb{s}$.
+		\end{itemize}
+		\item	$R$ is a typed congruence.
+	\end{enumerate}
+	The largest such congruence is denoted with $\cong$.
+\end{definition}
+
+\subsection{Bisimulation}
+
+\begin{definition}[Bisimulation Congruence]\rm
+	Let typed relation $\mathcal{R}$ such that $\Gamma; \emptyset; \Sigma_1 \proves P_1\ \mathcal{R}\ \Gamma; \emptyset; \Sigma_2 \proves Q_1 \hastype \Proc$.
+	$\mathcal{R}$ is a {\em bisimulation congruence} whenever:
+	\begin{enumerate}
+		\item	$\forall \news{\tilde{s}} \bactout{s}{\abs{x} P}$ such that
+			\[
+				\Gamma; \emptyset; \Sigma_1 \proves P_1 \by{\news{\tilde{s}} \bactout{s}{\abs{x} P}} \Gamma; \emptyset; \Sigma_1' \proves P_2 \hastype \Proc
+			\]
+			$\exists Q_2, \abs{x}{Q}$ such that
+			\[
+				\Gamma; \emptyset; \Sigma_2 \proves Q_1 \By{\news{\tilde{s}} \bactout{s}{\abs{x} Q}} \Gamma; \emptyset; \Sigma_2' \proves Q_2 \hastype \Proc
+			\]
+			and $\forall C, s'$ such that
+			\begin{eqnarray*}
+				\Gamma; \emptyset; \Sigma_1'' \proves \newsp{\tilde{s}}{P_2 \Par \context{C}{P \subst{s'}{x}}} \hastype \Proc \\
+				\Gamma; \emptyset; \Sigma_2'' \proves \newsp{\tilde{s}}{Q_2 \Par \context{C}{Q \subst{s'}{x}}} \hastype \Proc
+			\end{eqnarray*}
+			then
+			\[
+				\Gamma; \emptyset; \Sigma_1'' \proves \newsp{\tilde{s}}{P_2 \Par \context{C}{P \subst{s'}{x}}}\ \mathcal{R}\ 
+				\Gamma; \emptyset; \Sigma_2'' \proves \newsp{\tilde{s}}{Q_2 \Par \context{C}{Q \subst{s'}{x}}} \hastype \Proc
+			\]
+
+		\item	$\forall \lambda \not= \news{\tilde{s}} \bactout{s}{\abs{x} P}$ such that
+			\[
+				\Gamma; \emptyset; \Sigma_1 \proves P_1 \by{\lambda} \Gamma; \emptyset; \Sigma_2' \proves P_2 \hastype \Proc
+			\]
+			$\exists Q_2$ such that 
+			\[
+				\Gamma; \emptyset; \Sigma_2 \proves Q_1 \By{\hat{\lambda}} \Gamma; \emptyset; \Sigma_2' \proves Q_2 \hastype \Proc
+			\]
+			and
+			$\Gtprocess{P_2}{\Delta'} \mathcal{R} \noGtprocess{Q_2}{\Delta'}$.
+
+		\item	The symmetric case of 1 
+		\item	The symmetric case of 2.
+	\end{enumerate}
+	The Knaster Tarski theorem ensures that the largest bisimulation congruence exists and is denoted by $\wb^c$.
+\end{definition}
+
+
+\begin{definition}[Bisimulation]\rm
+	Let relation $\mathcal{R}$ such that $\Gamma; \emptyset; \Sigma_1 \proves P_1\ \mathcal{R}\ \Gamma; \emptyset; \Sigma_2 \proves Q_1 \hastype \Proc$.
+	$\mathcal{R}$ is a bisimulation whenever:
+	\begin{enumerate}
+		\item	$\forall \news{\tilde{s}} \bactout{s}{\abs{x} P}$ such that
+			\[
+				\Gamma; \emptyset; \Sigma_1 \proves P_1 \by{\news{\tilde{s}} \bactout{s}{\abs{x} P}} \Gamma; \emptyset; \Sigma_1' \proves P_2 \hastype \Proc
+			\]
+			$\exists Q_2, \abs{x}{Q}$ such that
+			\[
+				\Gamma; \emptyset; \Sigma_2 \proves Q_1 \By{\news{\tilde{s}} \bactout{s}{\abs{x} Q}} \Gamma; \emptyset; \Sigma_2' \proves Q_2 \hastype \Proc
+			\]
+			and $\forall s'$
+			such that
+			\begin{eqnarray*}
+				\Gamma; \emptyset; \Sigma_1'' \proves \newsp{\tilde{s}}{P_2 \Par P \subst{s'}{x}} \hastype \Proc \\
+				\Gamma; \emptyset; \Sigma_2'' \proves \newsp{\tilde{s}}{Q_2 \Par Q \subst{s'}{x}} \hastype \Proc
+			\end{eqnarray*}
+			then
+			\[
+				\Gamma; \emptyset; \Sigma_1'' \proves \newsp{\tilde{s}}{P_2 \Par P \subst{s'}{x}}\ \mathcal{R}\ 
+				\Gamma; \emptyset; \Sigma_2'' \proves \newsp{\tilde{s}}{Q_2 \Par Q \subst{s'}{x}} \hastype \Proc
+			\]
+
+		\item	$\forall \lambda \not= \news{\tilde{s}} \bactout{s}{\abs{x} P}$ such that
+			\[
+				\Gamma; \emptyset; \Sigma_1 \proves P_1 \by{\lambda} \Gamma; \emptyset; \Sigma_2' \proves P_2 \hastype \Proc
+			\]
+			$\exists Q_2$ such that 
+			\[
+				\Gamma; \emptyset; \Sigma_2 \proves Q_1 \By{\hat{\lambda}} \Gamma; \emptyset; \Sigma_2' \proves Q_2 \hastype \Proc
+			\]
+			and
+			$\Gtprocess{P_2}{\Delta'} \mathcal{R} \noGtprocess{Q_2}{\Delta'}$.
+
+		\item	The symmetric case of 1 
+		\item	The symmetric case of 2.
+	\end{enumerate}
+	The Knaster Tarski theorem ensures that the largest bisimulation, called bisimilarity, exists and is denoted by $\wb$.
+\end{definition}
+
+\begin{theorem}[Soundness and Completness]
+	\begin{enumerate}
+		\item	$\wbc\ =\ \cong$.
+		\item	$\wbc\ =\ \wb$
+	\end{enumerate}
+\end{theorem}
+
+\begin{proof}
+	\dk{Sketch Proof for part 2}
+
+	For the proof of part two we use the stratified definitions of the two bisimulation relations:
+
+	\begin{itemize}
+		\item	$R_0 = \bigcup_{\forall R} R, R$ is a typed relation.
+		\item	If $\Gamma; \emptyset; \Sigma_1 \proves P_1\ R_n\ \Gamma; \emptyset; \Sigma_2 \proves P_2 \hastype \Proc$
+			whenever
+			\begin{itemize}
+				\item	$\forall \news{\tilde{s}} \bactout{s}{\abs{x} P}$ such that
+					\[
+						\Gamma; \emptyset; \Sigma_1 \proves P_1 \by{\news{\tilde{s}} \bactout{s}{\abs{x} P}} \Gamma; \emptyset; \Sigma_1' \proves P_2 \hastype \Proc
+					\]
+					$\exists Q_2, \abs{x}{Q}$ such that
+					\[
+						\Gamma; \emptyset; \Sigma_2 \proves Q_1 \By{\news{\tilde{s}} \bactout{s}{\abs{x} Q}} \Gamma; \emptyset; \Sigma_2' \proves Q_2 \hastype \Proc
+					\]
+					and $\forall s'$
+					such that
+					\begin{eqnarray*}
+						\Gamma; \emptyset; \Sigma_1'' \proves \newsp{\tilde{s}}{P_2 \Par P \subst{s'}{x}} \hastype \Proc \\
+						\Gamma; \emptyset; \Sigma_2'' \proves \newsp{\tilde{s}}{Q_2 \Par Q \subst{s'}{x}} \hastype \Proc
+					\end{eqnarray*}
+					then
+					\[
+						\Gamma; \emptyset; \Sigma_1'' \proves \newsp{\tilde{s}}{P_2 \Par P \subst{s'}{x}}\ R_{n-1}\ 
+						\Gamma; \emptyset; \Sigma_2'' \proves \newsp{\tilde{s}}{Q_2 \Par Q \subst{s'}{x}} \hastype \Proc
+					\]
+
+				\item	$\forall \lambda \not= \news{\tilde{s}} \bactout{s}{\abs{x} P}$ such that
+					\[
+						\Gamma; \emptyset; \Sigma_1 \proves P_1 \by{\lambda} \Gamma; \emptyset; \Sigma_2' \proves P_2 \hastype \Proc
+					\]
+					$\exists Q_2$ such that 
+					\[
+						\Gamma; \emptyset; \Sigma_2 \proves Q_1 \By{\hat{\lambda}} \Gamma; \emptyset; \Sigma_2' \proves Q_2 \hastype \Proc
+					\]
+					and
+					$\Gtprocess{P_2}{\Delta'} R_{n-1} \noGtprocess{Q_2}{\Delta'}$.
+
+				\item	The symmetric case of 1.
+				\item	The symmetric case of 2.
+			\end{itemize}
+	\end{itemize}
+	\noi The above function is monotone and the Knaster-Tarski theorem ensures that a lattice is define
+	with the largest $R_n$ to be denote as $\wb_n$ and the largest fix-point is equal to the bisimulation relation $\wb = \bigcap_{i \geq 0} \wb_i$.
+
+	Similarly the stratified definition for $\wbc$ is:
+
+	\begin{itemize}
+		\item	$R^c_0 = \bigcup R, R$ is a typed relation.
+		\item	If $\Gamma; \emptyset; \Sigma_1 \proves P_1\ R^c_n\ \Gamma; \emptyset; \Sigma_2 \proves P_2 \hastype \Proc$
+			whenever
+			\begin{itemize}
+				\item	$\forall \news{\tilde{s}} \bactout{s}{\abs{x} P}$ such that
+					\[
+						\Gamma; \emptyset; \Sigma_1 \proves P_1 \by{\news{\tilde{s}} \bactout{s}{\abs{x} P}} \Gamma; \emptyset; \Sigma_1' \proves P_2 \hastype \Proc
+					\]
+					$\exists Q_2, \abs{x}{Q}$ such that
+					\[
+						\Gamma; \emptyset; \Sigma_2 \proves Q_1 \By{\news{\tilde{s}} \bactout{s}{\abs{x} Q}} \Gamma; \emptyset; \Sigma_2' \proves Q_2 \hastype \Proc
+					\]
+					and $\forall C, s'$
+					such that
+					\begin{eqnarray*}
+						\Gamma; \emptyset; \Sigma_1'' \proves \newsp{\tilde{s}}{\context{C}{P_2 \Par P \subst{s'}{x}}} \hastype \Proc \\
+						\Gamma; \emptyset; \Sigma_2'' \proves \newsp{\tilde{s}}{\context{C}{Q_2 \Par Q \subst{s'}{x}}} \hastype \Proc
+					\end{eqnarray*}
+					then
+					\[
+						\Gamma; \emptyset; \Sigma_1'' \proves \newsp{\tilde{s}}{\context{C}{P_2 \Par P \subst{s'}{x}}}\ R^c_{n-1}\ 
+						\Gamma; \emptyset; \Sigma_2'' \proves \newsp{\tilde{s}}{\context{C}{Q_2 \Par Q \subst{s'}{x}}} \hastype \Proc
+					\]
+
+				\item	$\forall \lambda \not= \news{\tilde{s}} \bactout{s}{\abs{x} P}$ such that
+					\[
+						\Gamma; \emptyset; \Sigma_1 \proves P_1 \by{\lambda} \Gamma; \emptyset; \Sigma_2'\proves P_2 \hastype \Proc
+					\]
+					$\exists Q_2$ such that 
+					\[
+						\Gamma; \emptyset; \Sigma_2 \proves Q_1 \By{\hat{\lambda}} \Gamma; \emptyset; \Sigma_2' \proves Q_2 \hastype \Proc
+					\]
+					and
+					$\Gtprocess{P_2}{\Delta'} R^c_{n-1} \noGtprocess{Q_2}{\Delta'}$.
+
+				\item	The symmetric case of 1.
+				\item	The symmetric case of 2.
+			\end{itemize}
+	\end{itemize}
+	The above function is monotone and the Knaster-Tarski theorem ensures that a lattice is define
+	with the largest $R^c_n$ to be denote as $\wbc_n$ and the largest fix-point is equal to the bisimulation relation $\wbc = \bigcap_{i \geq 0} \wb_i$.
+
+	We proof the direction $\wbc \subseteq \wb$.
+	The latter statement is equivalent to the statement $\forall n, \wbc_n \subseteq \wb_n$.
+	The proof is done using induction.
+
+	Basic step: From the definitions of $\wbc_0$ and $\wb_0$ we get that $\wbc_0 = \wb_0$.
+
+	Induction hypothesis: $\wbc_n \subseteq \wb_n$.
+
+	Induction step: Let $\Gamma; \emptyset; \Sigma_1 \proves P\ \wbc_{n+1}\ \Gamma; \emptyset; \Sigma_2 \proves Q \hastype \Proc$.
+	We perform a case analysis on transition $\by\lambda$.
+
+	\Case{$\lambda \not= \news{\tilde{s}} \bactout{s}{\abs{x} P}$}
+
+	If $\Gamma; \emptyset; \Sigma_1 \proves P \by{\lambda} \Gamma; \emptyset; \Sigma_1' \proves P' \hastype \Proc$ then
+	$\exists Q'$ such that
+	$\Gamma; \emptyset; \Sigma_2 \proves Q \by{\lambda} \Gamma; \emptyset; \Sigma_2' \proves Q' \hastype \Proc$
+	and
+	$\Gamma; \emptyset; \Sigma_1' \proves P'\ \wbc_n\ \Gamma; \emptyset; \Sigma_2' \proves Q' \hastype \Proc$.
+
+	From the induction hypothesis we get that
+	\begin{eqnarray}
+		\Gamma; \emptyset; \Sigma_1' \proves P'\ \wb_n\ \Gamma; \emptyset; \Sigma_2' \proves Q' \hastype \Proc \label{pr:biscong_is_bis2}
+	\end{eqnarray}
+
+	Assume $R_{n+1} = \set{\Gamma; \emptyset; \Sigma_1 \proves P \hastype \Proc, \Gamma; \emptyset; \Sigma_2 \proves Q \hastype \Proc}$.
+
+	$R_{n+1}$ satisfies the condition for the stratified definition for relations $R_{n+1}$ because of the fact that
+	if $\Gamma; \emptyset; \Sigma_1 \proves P \by{\lambda} \Gamma; \emptyset; \Sigma_1' \proves P' \hastype \Proc$ then
+	$\exists Q'$ such that
+	$\Gamma; \emptyset; \Sigma_2 \proves Q \by{\lambda} \Gamma; \emptyset; \Sigma_2' \proves Q' \hastype \Proc$
+	and \ref{pr:biscong_is_bis2}.
+
+	Because $\wb_{n+1}$ is the largest relation we get that $R_{n+1} \subseteq \wb_{n+1}$ as required.
+
+	\Case{$\lambda = \news{\tilde{s}} \bactout{s}{\abs{x} P}$}
+
+	If $\Gamma; \emptyset; \Sigma_1 \proves P \by{\news{\tilde{s}} \bactout{s}{\abs{x} P}} \Gamma; \emptyset; \Sigma_1' \proves P' \hastype \Proc$ then
+	$\exists Q', \abs{x}{Q}$ such that
+	$\Gamma; \emptyset; \Sigma_2 \proves Q \by{\news{\tilde{s}} \bactout{s}{\abs{x} Q}} \Gamma; \emptyset; \Sigma_2' \proves Q' \hastype \Proc$
+	and $\forall C, s'$
+	such that
+	\begin{eqnarray*}
+		\Gamma; \emptyset; \Sigma_1'' \proves \newsp{\tilde{s}}{\context{C}{P_2 \Par P \subst{s'}{x}}} \hastype \Proc \\
+		\Gamma; \emptyset; \Sigma_2'' \proves \newsp{\tilde{s}}{\context{C}{Q_2 \Par Q \subst{s'}{x}}} \hastype \Proc
+	\end{eqnarray*}
+	then
+	\[
+		\Gamma; \emptyset; \Sigma_1'' \proves \newsp{\tilde{s}}{\context{C}{P_2 \Par P \subst{s'}{x}}}\ \wbc_{n}\ 
+		\Gamma; \emptyset; \Sigma_2'' \proves \newsp{\tilde{s}}{\context{C}{Q_2 \Par Q \subst{s'}{x}}} \hastype \Proc
+	\]
+	For $C = \hole$ we have that 
+	\[
+		\Gamma; \emptyset; \Sigma_1'' \proves \newsp{\tilde{s}}{P_2 \Par P \subst{s'}{x}}\ \wbc_{n}\ 
+		\Gamma; \emptyset; \Sigma_2'' \proves \newsp{\tilde{s}}{Q_2 \Par Q \subst{s'}{x}} \hastype \Proc
+	\]
+	\dk{(prove that it is typable)}
+
+
+	From the induction hypothesis we get that
+	\begin{eqnarray}
+		\Gamma; \emptyset; \Sigma_1'' \proves \newsp{\tilde{s}}{P_2 \Par P \subst{s'}{x}}\ \wb_{n}\ 
+		\Gamma; \emptyset; \Sigma_2'' \proves \newsp{\tilde{s}}{Q_2 \Par Q \subst{s'}{x}} \hastype \Proc
+		\label{pr:biscong_is_bis2}
+	\end{eqnarray}
+
+	Assume $R_{n+1} = \set{\Gamma; \emptyset; \Sigma_1 \proves P \hastype \Proc, \Gamma; \emptyset; \Sigma_2 \proves Q \hastype \Proc}$.
+
+	$R_{n+1}$ satisfies the condition for the stratified definition for relations $R_{n+1}$ because of the fact that
+	if $\Gamma; \emptyset; \Sigma_1 \proves P \by{\news{\tilde{s}} \bactout{s}{\abs{x} P}} \Gamma; \emptyset; \Sigma_1' \proves P' \hastype \Proc$ then
+	$\exists Q', \abs{x}{Q}$ such that
+	$\Gamma; \emptyset; \Sigma_2 \proves Q \by{\news{\tilde{s}} \bactout{s}{\abs{x} Q}} \Gamma; \emptyset; \Sigma_2' \proves Q' \hastype \Proc$
+	and \ref{pr:biscong_is_bis2}.
+
+	Because $\wb_{n+1}$ is the largest relation we get that $R_{n+1} \subseteq \wb_{n+1}$ as required.	
+\end{proof}
+
+
+
+
+
+
+\begin{comment}
+\begin{proof}[Sketch]
+
+	Give the sketch proof for Part 2.
+	For the proof of Part 2 we use the alternative definition
+	of barbed congruence and bisimilarity.
+
+	\begin{itemize}
+		\item	$\wbc_0 = \mathcal{P} \times \mathcal{P}$ \dk{($\mathcal{P}$ is the set of all typed process - $\mathcal{P} \times \mathcal{P}$ is the largest typed relation)}
+		\item	$\wbc_{n+1} = \set{\newsp{\tilde{s}}{P_2 \Par \context{C}{P \subst{s'}{x}}}, \newsp{\tilde{s}}{Q_2 \Par \context{C}{P \subst{s'}{x}}} \setbar \dk{\dots
+			P \wbc_n Q, \forall C,s',  }}$
+	\end{itemize}
+
+	Prove that $\wb \subseteq \wbc$. The latter statement is equivalent (through Knaster-Tarski)
+	with the statement $\forall n, \wb_n \subseteq \wbc_n$. We use induction on $n$.
+
+	Basic step: Trivial.
+
+	Inductive hypothesis: $\wb \subseteq \wbc$.
+
+	Inductive step:
+
+	For $P \wbc_n Q$ we have that
+	\begin{eqnarray*}
+		\wbc_{n+1} &=&	\set{\Gamma; \emptyset; \Sigma_1' \proves P' \hastype \Proc,  \Gamma; \emptyset; \Sigma_2' \proves Q' \hastype \Proc \setbar
+				P \by{\lambda} P' \textrm{ implies } Q \By{\hat\lambda} Q', \lambda \not= \news{\tilde{s}} \bactout{s}{\abs{x} P}}\\
+			&\cup&	\set{\Gamma; \emptyset; \Sigma_1'' \proves \newsp{\tilde{s}}{P_2 \Par \context{C}{P \subst{s'}{x}}} \hastype \Proc, 
+				\Gamma; \emptyset; \Sigma_2'' \newsp{\tilde{s}}{Q_2 \Par \context{C}{Q \subst{s'}{x}}} \hastype \Proc \setbar \dk{\dots \forall C, s}}
+	\end{eqnarray*}
+	and
+	For $P \wbc_n Q$ we have that
+	\begin{eqnarray*}
+		\wb_{n+1} &=&	\set{\Gamma; \emptyset; \Sigma_1' \proves P' \hastype \Proc,  \Gamma; \emptyset; \Sigma_2' \proves Q' \hastype \Proc \setbar
+				P \by{\lambda} P' \textrm{ implies } Q \By{\hat\lambda} Q', \lambda \not= \news{\tilde{s}} \bactout{s}{\abs{x} P}}\\
+			&\cup&	\set{\Gamma; \emptyset; \Sigma_1'' \proves P_2 \Par P \subst{s'}{x} \hastype \Proc, 
+				\Gamma; \emptyset; \Sigma_2'' Q_2 \Par Q \subst{s'}{x} \hastype \Proc \setbar \dk{\dots}}
+	\end{eqnarray*}
+
+	We conclude that 
+	\begin{eqnarray*}
+		\set{\Gamma; \emptyset; \Sigma_1'' \proves \newsp{\tilde{s}}{P_2 \Par \context{C}{P \subst{s'}{x}}} \hastype \Proc, 
+		\Gamma; \emptyset; \Sigma_2'' \newsp{\tilde{s}}{Q_2 \Par \context{C}{Q \subst{s'}{x}}} \hastype \Proc \setbar \dk{\dots \forall C, s}}
+		&\subseteq&\\
+		\set{\Gamma; \emptyset; \Sigma_1'' \proves P_2 \Par P \subst{s'}{x} \hastype \Proc, 
+		\Gamma; \emptyset; \Sigma_2'' Q_2 \Par Q \subst{s'}{x} \hastype \Proc \setbar \dk{\dots}}
+	\end{eqnarray*}
+	so $\wb_{n+1} \subseteq \wbc_{n+1}$ as required.
+
+	Prove that $\wbc \subseteq \wb$. The latter statement is equivalent (through Knaster-Tarski)
+	with the statement $\forall n, \wbc_n \subseteq \wb_n$. We use induction on $n$.
+
+	Basic step: Trivial.
+
+	Inductive hypothesis: $\wb \subseteq \wbc$.
+
+	Inductive step:
+
+	Let 
+	\begin{eqnarray*}
+		\mathcal{C} = \set{P^{Cs'}, Q^{Cs'} \setbar P \wb_n Q, \textrm{if } P \by{\bactout{s}{V}} P' \textrm{ then } Q \by{\bactout{s}{V}} Q' \textrm{ and }
+		\forall C, s', P^{Cs'} \by{\bactout{s}{\context{C}{V \subst{s'}{s}}}} P', Q^{Cs'} \By{\bactout{s}{\context{C}{V \subst{s'}{s}}}} Q' }
+	\end{eqnarray*}
+
+	If $\mathcal{C} \subseteq \wb_n$ then $\wbc_{n+1} \subseteq \wb_{n+1}$,
+	because from the process defined in $\mathcal{C}$ we can derive the processes
+	in $\wb_{n+1}$ that also are included in $\wbc_{n+1}$.
+\end{proof}
+\end{comment}
