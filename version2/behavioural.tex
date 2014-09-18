@@ -232,9 +232,9 @@ We extend to $\By{}$ and $\By{\hat{\lambda}}$ in the \dk{standard way}.
 
 \subsection{Bisimulation}
 
-\begin{definition}[Bisimulation Congruence]\rm
+\begin{definition}[Contextual Bisimulation]\rm
 	Let typed relation $\mathcal{R}$ such that $\Gamma; \emptyset; \Sigma_1 \proves P_1\ \mathcal{R}\ \Gamma; \emptyset; \Sigma_2 \proves Q_1 \hastype \Proc$.
-	$\mathcal{R}$ is a {\em bisimulation congruence} whenever:
+	$\mathcal{R}$ is a {\em contextual bisimulation} whenever:
 	\begin{enumerate}
 		\item	$\forall \news{\tilde{s}} \bactout{s}{\abs{x} P}$ such that
 			\[
@@ -269,7 +269,7 @@ We extend to $\By{}$ and $\By{\hat{\lambda}}$ in the \dk{standard way}.
 		\item	The symmetric case of 1 
 		\item	The symmetric case of 2.
 	\end{enumerate}
-	The Knaster Tarski theorem ensures that the largest bisimulation congruence exists and is denoted by $\wb^c$.
+	The Knaster Tarski theorem ensures that the largest contextual bisimulation exists and is denoted by $\wb^c$.
 \end{definition}
 
 
@@ -326,6 +326,8 @@ We extend to $\By{}$ and $\By{\hat{\lambda}}$ in the \dk{standard way}.
 
 	For the proof of part two we use the stratified definitions of the two bisimulation relations:
 
+	The stratified definition for bisimulation is:
+
 	\begin{itemize}
 		\item	$R_0 = \bigcup_{\forall R} R, R$ is a typed relation.
 		\item	If $\Gamma; \emptyset; \Sigma_1 \proves P_1\ R_n\ \Gamma; \emptyset; \Sigma_2 \proves P_2 \hastype \Proc$
@@ -369,7 +371,7 @@ We extend to $\By{}$ and $\By{\hat{\lambda}}$ in the \dk{standard way}.
 	\noi The above function is monotone and the Knaster-Tarski theorem ensures that a lattice is define
 	with the largest $R_n$ to be denote as $\wb_n$ and the largest fix-point is equal to the bisimulation relation $\wb = \bigcap_{i \geq 0} \wb_i$.
 
-	Similarly the stratified definition for $\wbc$ is:
+	Similarly the stratified definition for the contextual bisimulation is:
 
 	\begin{itemize}
 		\item	$R^c_0 = \bigcup R, R$ is a typed relation.
@@ -413,6 +415,7 @@ We extend to $\By{}$ and $\By{\hat{\lambda}}$ in the \dk{standard way}.
 	\end{itemize}
 	The above function is monotone and the Knaster-Tarski theorem ensures that a lattice is define
 	with the largest $R^c_n$ to be denote as $\wbc_n$ and the largest fix-point is equal to the bisimulation relation $\wbc = \bigcap_{i \geq 0} \wb_i$.
+	\vspace{3mm}
 
 	We proof the direction $\wbc \subseteq \wb$.
 	The latter statement is equivalent to the statement $\forall n, \wbc_n \subseteq \wb_n$.
@@ -422,7 +425,7 @@ We extend to $\By{}$ and $\By{\hat{\lambda}}$ in the \dk{standard way}.
 
 	Induction hypothesis: $\wbc_n \subseteq \wb_n$.
 
-	Induction step: Let $\Gamma; \emptyset; \Sigma_1 \proves P\ \wbc_{n+1}\ \Gamma; \emptyset; \Sigma_2 \proves Q \hastype \Proc$.
+	Inductive step: Let $\Gamma; \emptyset; \Sigma_1 \proves P\ \wbc_{n+1}\ \Gamma; \emptyset; \Sigma_2 \proves Q \hastype \Proc$.
 	We perform a case analysis on transition $\by\lambda$.
 
 	\Case{$\lambda \not= \news{\tilde{s}} \bactout{s}{\abs{x} P}$}
@@ -456,26 +459,26 @@ We extend to $\By{}$ and $\By{\hat{\lambda}}$ in the \dk{standard way}.
 	and $\forall C, s'$
 	such that
 	\begin{eqnarray*}
-		\Gamma; \emptyset; \Sigma_1'' \proves \newsp{\tilde{s}}{\context{C}{P_2 \Par P \subst{s'}{x}}} \hastype \Proc \\
-		\Gamma; \emptyset; \Sigma_2'' \proves \newsp{\tilde{s}}{\context{C}{Q_2 \Par Q \subst{s'}{x}}} \hastype \Proc
+		\Gamma; \emptyset; \Sigma_1'' \proves \newsp{\tilde{s}}{\context{C}{P' \Par P \subst{s'}{x}}} \hastype \Proc \\
+		\Gamma; \emptyset; \Sigma_2'' \proves \newsp{\tilde{s}}{\context{C}{Q' \Par Q \subst{s'}{x}}} \hastype \Proc
 	\end{eqnarray*}
 	then
 	\[
-		\Gamma; \emptyset; \Sigma_1'' \proves \newsp{\tilde{s}}{\context{C}{P_2 \Par P \subst{s'}{x}}}\ \wbc_{n}\ 
-		\Gamma; \emptyset; \Sigma_2'' \proves \newsp{\tilde{s}}{\context{C}{Q_2 \Par Q \subst{s'}{x}}} \hastype \Proc
+		\Gamma; \emptyset; \Sigma_1'' \proves \newsp{\tilde{s}}{\context{C}{P' \Par P \subst{s'}{x}}}\ \wbc_{n}\ 
+		\Gamma; \emptyset; \Sigma_2'' \proves \newsp{\tilde{s}}{\context{C}{Q' \Par Q \subst{s'}{x}}} \hastype \Proc
 	\]
 	For $C = \hole$ we have that 
 	\[
-		\Gamma; \emptyset; \Sigma_1'' \proves \newsp{\tilde{s}}{P_2 \Par P \subst{s'}{x}}\ \wbc_{n}\ 
-		\Gamma; \emptyset; \Sigma_2'' \proves \newsp{\tilde{s}}{Q_2 \Par Q \subst{s'}{x}} \hastype \Proc
+		\Gamma; \emptyset; \Sigma_1'' \proves \newsp{\tilde{s}}{P' \Par P \subst{s'}{x}}\ \wbc_{n}\ 
+		\Gamma; \emptyset; \Sigma_2'' \proves \newsp{\tilde{s}}{Q' \Par Q \subst{s'}{x}} \hastype \Proc
 	\]
 	\dk{(prove that it is typable)}
 
 
 	From the induction hypothesis we get that
 	\begin{eqnarray}
-		\Gamma; \emptyset; \Sigma_1'' \proves \newsp{\tilde{s}}{P_2 \Par P \subst{s'}{x}}\ \wb_{n}\ 
-		\Gamma; \emptyset; \Sigma_2'' \proves \newsp{\tilde{s}}{Q_2 \Par Q \subst{s'}{x}} \hastype \Proc
+		\Gamma; \emptyset; \Sigma_1'' \proves \newsp{\tilde{s}}{P' \Par P \subst{s'}{x}}\ \wb_{n}\ 
+		\Gamma; \emptyset; \Sigma_2'' \proves \newsp{\tilde{s}}{Q' \Par Q \subst{s'}{x}} \hastype \Proc
 		\label{pr:biscong_is_bis2}
 	\end{eqnarray}
 
@@ -487,7 +490,94 @@ We extend to $\By{}$ and $\By{\hat{\lambda}}$ in the \dk{standard way}.
 	$\Gamma; \emptyset; \Sigma_2 \proves Q \by{\news{\tilde{s}} \bactout{s}{\abs{x} Q}} \Gamma; \emptyset; \Sigma_2' \proves Q' \hastype \Proc$
 	and \ref{pr:biscong_is_bis2}.
 
-	Because $\wb_{n+1}$ is the largest relation we get that $R_{n+1} \subseteq \wb_{n+1}$ as required.	
+	Because $\wb_{n+1}$ is the largest relation we get that $R_{n+1} \subseteq \wb_{n+1}$ as required.
+	\vspace{3mm}
+
+	We proof the direction $\wb \subseteq \wbc$.
+	The latter statement is equivalent to the statement $\forall n, \wb_n \subseteq \wbc_n$.
+	The proof is done using induction.
+
+	Basic step: From the definitions of $\wbc_0$ and $\wb_0$ we get that $\wbc_0 = \wb_0$.
+
+	Induction hypothesis: $\wb_n \subseteq \wbc_n$.
+
+	Inductive step: Let $\Gamma; \emptyset; \Sigma_1 \proves P\ \wb_{n+1}\ \Gamma; \emptyset; \Sigma_2 \proves Q \hastype \Proc$.
+	We perform a case analysis on transition $\by\lambda$.
+
+	\Case{$\lambda \not= \news{\tilde{s}} \bactout{s}{\abs{x} P}$}
+	Same arguments with the same case of the direction $\wbc \subseteq \wb$
+
+	\Case{$\lambda = \news{\tilde{s}} \bactout{s}{\abs{x} P}$}
+
+	If $\Gamma; \emptyset; \Sigma_1 \proves P \by{\news{\tilde{s}} \bactout{s}{\abs{x} P}} \Gamma; \emptyset; \Sigma_1' \proves P' \hastype \Proc$ then
+	$\exists Q', \abs{x}{Q}$ such that
+	$\Gamma; \emptyset; \Sigma_2 \proves Q \by{\news{\tilde{s}} \bactout{s}{\abs{x} Q}} \Gamma; \emptyset; \Sigma_2' \proves Q' \hastype \Proc$
+	and $s'$
+	such that
+	\begin{eqnarray*}
+		\Gamma; \emptyset; \Sigma_1'' \proves \newsp{\tilde{s}}{P' \Par P \subst{s'}{x}} \hastype \Proc \\
+		\Gamma; \emptyset; \Sigma_2'' \proves \newsp{\tilde{s}}{Q' \Par Q \subst{s'}{x}} \hastype \Proc
+	\end{eqnarray*}
+	then
+	\[
+		\Gamma; \emptyset; \Sigma_1'' \proves \newsp{\tilde{s}}{P' \Par P \subst{s'}{x}}\ \wb_{n}\ 
+		\Gamma; \emptyset; \Sigma_2'' \proves \newsp{\tilde{s}}{Q' \Par Q \subst{s'}{x}} \hastype \Proc
+	\]
+
+	Let
+	\[
+		\begin{array}{rcl}
+			R_{n + 1} &=& \set{	(\Gamma; \emptyset; \Sigma_1 \proves \newsp{\tilde{s_1}}{\bout{s}{\abs{x}{\context{C}{P}}} P''} \hastype \Proc,
+						\Gamma; \emptyset; \Sigma_2 \proves \newsp{\tilde{s_2}}{\bout{s}{\abs{x}{\context{C}{P}}} Q''} \hastype \Proc) \setbar\\
+				& &		\forall C, P' \scong \news{\tilde{s_1}} P'', Q' \scong \news{\tilde{s_2}} Q''}
+		\end{array}
+	\]
+
+	\dk{prove that $R_{n+1}$ is typable}
+
+	$R_{n+1}$ satisfies the stratified definition for bisimulation and furthermore we can deduce that
+	$\forall C, s'$
+	such that
+	\begin{eqnarray*}
+		\Gamma; \emptyset; \Sigma_1'' \proves \newsp{\tilde{s}}{\context{C}{P' \Par P \subst{s'}{x}}} \hastype \Proc \\
+		\Gamma; \emptyset; \Sigma_2'' \proves \newsp{\tilde{s}}{\context{C}{Q' \Par Q \subst{s'}{x}}} \hastype \Proc
+	\end{eqnarray*}
+	then
+	\[
+		\Gamma; \emptyset; \Sigma_1'' \proves \newsp{\tilde{s}}{\context{C}{P' \Par P \subst{s'}{x}}}\ \wb_{n}\ 
+		\Gamma; \emptyset; \Sigma_2'' \proves \newsp{\tilde{s}}{\context{C}{Q' \Par Q \subst{s'}{x}}} \hastype \Proc
+	\]
+
+	From the induction hypothesis we get that
+	$\forall C, s'$
+	such that
+	\begin{eqnarray*}
+		\Gamma; \emptyset; \Sigma_1'' \proves \newsp{\tilde{s}}{\context{C}{P' \Par P \subst{s'}{x}}} \hastype \Proc \\
+		\Gamma; \emptyset; \Sigma_2'' \proves \newsp{\tilde{s}}{\context{C}{Q' \Par Q \subst{s'}{x}}} \hastype \Proc
+	\end{eqnarray*}
+	then
+	\begin{eqnarray}
+		\Gamma; \emptyset; \Sigma_1'' \proves \newsp{\tilde{s}}{\context{C}{P' \Par P \subst{s'}{x}}}\ \wbc_{n}\ 
+		\Gamma; \emptyset; \Sigma_2'' \proves \newsp{\tilde{s}}{\context{C}{Q' \Par Q \subst{s'}{x}}} \hastype \Proc
+		\label{pr:bis_is_contextbis}
+	\end{eqnarray}
+
+%	For $C = \hole$ we have that 
+%	\[
+%		\Gamma; \emptyset; \Sigma_1'' \proves \newsp{\tilde{s}}{P_2 \Par P \subst{s'}{x}}\ \wbc_{n}\ 
+%		\Gamma; \emptyset; \Sigma_2'' \proves \newsp{\tilde{s}}{Q_2 \Par Q \subst{s'}{x}} \hastype \Proc
+%	\]
+
+	Assume $R^c_{n+1} = \set{\Gamma; \emptyset; \Sigma_1 \proves P \hastype \Proc, \Gamma; \emptyset; \Sigma_2 \proves Q \hastype \Proc}$.
+
+	$R^c_{n+1}$ satisfies the condition for the stratified definition of the contextual bisimulation because of the fact that
+	if $\Gamma; \emptyset; \Sigma_1 \proves P \by{\news{\tilde{s}} \bactout{s}{\abs{x} P}} \Gamma; \emptyset; \Sigma_1' \proves P' \hastype \Proc$ then
+	$\exists Q', \abs{x}{Q}$ such that
+	$\Gamma; \emptyset; \Sigma_2 \proves Q \by{\news{\tilde{s}} \bactout{s}{\abs{x} Q}} \Gamma; \emptyset; \Sigma_2' \proves Q' \hastype \Proc$
+	and \ref{pr:bis_is_contextbis}.
+
+	Because $\wbc_{n+1}$ is the largest relation we get that $R^c_{n+1} \subseteq \wb_{n+1}$ as required.
+	
 \end{proof}
 
 
