@@ -1,0 +1,90 @@
+\section{Full Higher Order Session $\pi$}
+
+We present the syntax and operational semantics for the
+{\em Full Higher Order Session $\pi$} calculus or \fHOp.
+\fHOp is a simpler version of the higher order calculus developed
+in \cite{tlca07}, that name and process abstraction application, as
+well as implicit application of abstractions. We believe that
+the higher order semantics of the calculus are small, yet expressive
+enough to capture in a straightforward way the principles of
+session types.
+
+\subsection{\fHOp Syntax}
+
+The syntax for \fHOp is defined in Figure~\ref{fig:syntax}.
+We assume a set of names $S$ that range over $s, s_1, \dots$
+and a dual set of $S$, $\dual{S}$ that ranges over $\dual{s}, \dual{s_1}, \dots$.
+Both sets $S$ and $\dual{S}$ constitude the set of names $N$.
+Name variables $x, y, z, \dots$ are taken from set $\mathsf{Var}$ and
+process variable $X, Y, Z, \dots$ from set $\mathsf{PVar}$. 
+Set $\mathsf{RVar}$ is the set of recursive 
+variables that range over $\rvar{X}, \rvar{Y}, \dots$.
+Abstactions, written $\abs{x}{P}$, are processes $P$ with a bound parameter $x$.
+The set for abstractions is $\mathsf{Abs}$.
+We denote either names or name variables with $k, k_1, \dots$.
+Names, name variables, process variables, recursive variables or abstractions
+are denoted by symbol $V, V_1 \dots$.
+Note that set $N$ includes session and shared names.
+We sometimes denote shared names with $a,b, c, \dots$, although $a, b, c, \dots \in S$.
+
+Processes include the standard $\pi$-calculus prefixes for sending and receiving names.
+Prefix $\bout{k}{k'} P$ denotes the sending of name $k$ over channel $k$ and then
+continuing as $P$ whereas prefix $\binp{k}{x} P$ denotes the reception of a value
+on channel $k$ over variable $x$ and then continue as $P$. Recursion is expressed
+on the primitive recursor $\recp{X}{P}$ that binds the recursive variable/process
+$\rvar{X}$ in the structure of $P$.
+
+Higher order syntax is composed by the sending prefix $\bout{k}{\abs{x}{Q}} P$ that
+denotes the sending of abstraction $\abs{x}{Q}$ over channel $k$ and then continuing
+as $P$. On the receiving side prefix $\binp{k}{X} P$ denotes the reception of an abstraction
+on channel $k$ and over the process variable $\X$. Process $\appl{X}{k}$ is the application
+process which is used to bind channel $k$ on the process substituting process variable $\X$.
+
+We assume the standard session syntax for selection and branching. Process
+$\bsel{k}{l} P$ selects label $l$ on channel $k$ and then behaves as $P$. Process 
+$\bbra{k}{l_i:P_i}_{i \in I}$ offers a choice on labels $l_i, i \in I$ with
+corresponding continuations the processes $P_i, i \in I$.
+The calculus is completed with the standard processes for parallel composition $P_1 \Par P_2$,
+name restriction $\news{s} P$ and the inactive process $\inact$.
+
+A well formed process relies on the assumptions for guarded recursive processes.
+We say that a process is a \emph{program} if it contain 
+no free variables or free process/recursive variables.
+
+\input{figures/fig-syntax}
+
+We identify two important sub-calculi of the \fHOp that will form
+the basis of the study in this paper, i) The calculus defined by the lines 1 and 3 of the
+process syntax in Figure~\ref{fig:syntax}, and ii) The calculus defined by the lines 2 and 3
+of the process syntax in Figure~\ref{fig:syntax}. The first calculus is the standard
+session $\pi$ calculus or \sesp as defined in the bibliography~\cite{}. The second
+calculus allows only for abstraction passing and abstraction application as well 
+as selecting and branching and it is called Higher Order session calculus or $\HO$.
+
+\paragraph{Structural Congruence}
+
+We define structural congruence as the least congruence that satisfies the commutative monoid $(\Par, \inact)$
+and the rules:
+
+\begin{tabular}{c}
+%	P \Par \inact \scong P \qquad P_1 \Par P_2 \scong P_2 \Par P_1 \qquad P_1 \Par (P_2 \Par P_3)
+%	\qquad (P_1 \Par P_2) \Par P_3 \qquad
+	$\news{s} \inact \scong \inact \qquad
+	s \notin \fn{P_1}$ implies $P_1 \Par \news{s} P_2 \scong \news{s}(P_1 \Par P_2)
+	\qquad \rec{X}{P} \scong P\subst{\rec{X}{P}}{\rvar{X}}$
+\end{tabular}
+
+\subsection{Operational Semantics}
+
+We define the reduction semantics in Figure~\ref{fig:reduction}.
+Figure~\ref{fig:reduction} first describes the process variable
+substitution through the semantics
+of name substitution. Substitution of application process $\appl{X}{k}$
+over abstraction $\abs{x} Q$ substitutes free variable
+$x$ in $Q$ with $k$ and replaces $X$ with the resulting process.
+There is no effect on variable substitution for the inactive process.
+In all the other cases process variable substitution is homorphic 
+on the structure of the process.
+
+
+\input{figures/fig-reduction}
