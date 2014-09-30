@@ -1,17 +1,17 @@
 \section{Full Higher Order Session $\pi$}
 
 We present the syntax and operational semantics for the
-{\em Full Higher Order Session $\pi$} calculus or \fHOp.
-\fHOp is a simpler version of the higher order calculus developed
+{\em Full Higher Order Session $\pi$} calculus or $\HOp$.
+$\HOp$ is a simpler version of the higher order calculus developed
 in \cite{tlca07}, that name and process abstraction application, as
 well as implicit application of abstractions. We believe that
 the higher order semantics of the calculus are small, yet expressive
 enough to capture in a straightforward way the principles of
 session types.
 
-\subsection{\fHOp Syntax}
+\subsection{$\HOp$ Syntax}
 
-The syntax for \fHOp is defined in Figure~\ref{fig:syntax}.
+The syntax for $\HOp$ is defined in Figure~\ref{fig:syntax}.
 We assume a set of names $S$ that range over $s, s_1, \dots$
 and a dual set of $S$, $\dual{S}$ that ranges over $\dual{s}, \dual{s_1}, \dots$.
 Both sets $S$ and $\dual{S}$ constitude the set of names $N$.
@@ -53,13 +53,16 @@ no free variables or free process/recursive variables.
 
 \input{figures/fig-syntax}
 
-We identify two important sub-calculi of the \fHOp that will form
+We identify two important sub-calculi of the $\HOp$ that will form
 the basis of the study in this paper, i) The calculus defined by the lines 1 and 3 of the
 process syntax in Figure~\ref{fig:syntax}, and ii) The calculus defined by the lines 2 and 3
 of the process syntax in Figure~\ref{fig:syntax}. The first calculus is the standard
 session $\pi$ calculus or \sesp as defined in the bibliography~\cite{}. The second
 calculus allows only for abstraction passing and abstraction application as well 
 as selecting and branching and it is called Higher Order session calculus or $\HO$.
+
+
+\subsection{Operational Semantics}
 
 \paragraph{Structural Congruence}
 
@@ -69,12 +72,11 @@ and the rules:
 \begin{tabular}{c}
 %	P \Par \inact \scong P \qquad P_1 \Par P_2 \scong P_2 \Par P_1 \qquad P_1 \Par (P_2 \Par P_3)
 %	\qquad (P_1 \Par P_2) \Par P_3 \qquad
-	$\news{s} \inact \scong \inact \qquad
+	$\news{s} \inact \scong \inact \quad
 	s \notin \fn{P_1}$ implies $P_1 \Par \news{s} P_2 \scong \news{s}(P_1 \Par P_2)
-	\qquad \rec{X}{P} \scong P\subst{\rec{X}{P}}{\rvar{X}}$
+	\quad \rec{X}{P} \scong P\subst{\rec{X}{P}}{\rvar{X}}$
 \end{tabular}
 
-\subsection{Operational Semantics}
 
 We define the reduction semantics in Figure~\ref{fig:reduction}.
 Figure~\ref{fig:reduction} first describes the process variable
@@ -86,5 +88,26 @@ There is no effect on variable substitution for the inactive process.
 In all the other cases process variable substitution is homorphic 
 on the structure of the process.
 
-
 \input{figures/fig-reduction}
+
+There are three communication rules for the $\HOp$. The name passing
+rule, $\orule{NPass}$ where a send prefix on channel $s$ sends
+channel $s'$ to be received by parallel receive prefixed process
+on the dual endpoint $\dual{s}$. After the reduction the continuation of the 
+latter process substitutes $s'$ on the receive prefix object $x$.
+The second communication axiom, $\orule{APass}$, describes
+abstraction passing. An abstraction is sent on a send prefixed process
+over channel $s$ and it is being received by a parallel $\dual{s}$-received
+prefixed process. The latter process follows a process variable
+substitution.
+The third axiom is the standard select/branch action where
+a process select label $l_k, k \in I$ on channel $s$ over a set of
+labels $\set{l_i}_{i \in I}$ that are offered from a parallel process
+on the dual session endpoint $\dual{s}$. The continuation of the latter
+process is the corresponding process $P_k$.
+The last three rules are congruence rules that preserve reduction
+on the parallel, rule $\orule{Par}$ and name restriction, rule $\orule{Ses}$,
+operators as well as reduction is closed under structural congruence, rule $\orule{Cong}$.
+
+
+
