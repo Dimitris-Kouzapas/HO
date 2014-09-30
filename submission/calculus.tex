@@ -1,29 +1,30 @@
-\section{Full Higher Order Session $\pi$}
+\section{The Full Higher-Order Session $\pi$-Calculus}
 
 We present the syntax and operational semantics for the
-{\em Full Higher Order Session $\pi$} calculus or $\HOp$.
-$\HOp$ is a simpler version of the higher order calculus developed
-in \cite{tlca07}, that name and process abstraction application, as
+{\em Full Higher-Order Session $\pi$-calculus} or $\HOp$.
+$\HOp$ is a simpler version of the higher-order calculus developed
+in~\cite{tlca07}, that name and process abstraction application, as
 well as implicit application of abstractions. We believe that
-the higher order semantics of the calculus are small, yet expressive
-enough to capture in a straightforward way the principles of
+the higher-order semantics of the calculus is small and yet expressive
+enough to capture in a simple way the principles of
 session types.
 
 \subsection{$\HOp$ Syntax}
 
-The syntax for $\HOp$ is defined in Figure~\ref{fig:syntax}.
+The syntax for $\HOp$ processes is given in Figure~\ref{fig:syntax}.
 We assume a set of names $S$ that range over $s, s_1, \dots$
 and a dual set of $S$, $\dual{S}$ that ranges over $\dual{s}, \dual{s_1}, \dots$.
-Both sets $S$ and $\dual{S}$ constitude the set of names $N$.
+Intuitively, $s$ and $\dual{s}$ are dual \emph{endpoints}.
+Both sets $S$ and $\dual{S}$ constitute the set of names $N$.
 Name variables $x, y, z, \dots$ are taken from set $\mathsf{Var}$ and
 process variable $X, Y, Z, \dots$ from set $\mathsf{PVar}$. 
 Set $\mathsf{RVar}$ is the set of recursive 
 variables that range over $\rvar{X}, \rvar{Y}, \dots$.
-Abstactions, written $\abs{x}{P}$, are processes $P$ with a bound parameter $x$.
-The set for abstractions is $\mathsf{Abs}$.
+Abstractions, written $\abs{x}{P}$, are processes $P$ with a bound parameter $x$;
+the set of all abstractions is denoted $\mathsf{Abs}$.
 We denote either names or name variables with $k, k_1, \dots$.
-Names, name variables, process variables, recursive variables or abstractions
-are denoted by symbol $V, V_1 \dots$.
+We write $V, V', \ldots$ to denote name variables, process variables, recursive variables, or abstractions.
+Intuitively, these are transmittable \emph{values}.
 Note that set $N$ includes session and shared names.
 We sometimes denote shared names with $a,b, c, \dots$, although $a, b, c, \dots \in S$.
 
@@ -34,32 +35,37 @@ on channel $k$ over variable $x$ and then continue as $P$. Recursion is expresse
 on the primitive recursor $\recp{X}{P}$ that binds the recursive variable/process
 $\rvar{X}$ in the structure of $P$.
 
-Higher order syntax is composed by the sending prefix $\bout{k}{\abs{x}{Q}} P$ that
+Higher-order syntax is composed by the sending prefix $\bout{k}{\abs{x}{Q}} P$ that
 denotes the sending of abstraction $\abs{x}{Q}$ over channel $k$ and then continuing
 as $P$. On the receiving side prefix $\binp{k}{X} P$ denotes the reception of an abstraction
 on channel $k$ and over the process variable $\X$. Process $\appl{X}{k}$ is the application
 process which is used to bind channel $k$ on the process substituting process variable $\X$.
 
 We assume the standard session syntax for selection and branching. Process
-$\bsel{k}{l} P$ selects label $l$ on channel $k$ and then behaves as $P$. Process 
-$\bbra{k}{l_i:P_i}_{i \in I}$ offers a choice on labels $l_i, i \in I$ with
-corresponding continuations the processes $P_i, i \in I$.
-The calculus is completed with the standard processes for parallel composition $P_1 \Par P_2$,
-name restriction $\news{s} P$ and the inactive process $\inact$.
+$\bsel{k}{l} P$ selects label $l$ on channel $k$ and then behaves as $P$. 
+Given $i \in I$, 
+process 
+$\bbra{k}{l_i:P_i}_{i \in I}$ offers a choice on labels $l_i$ with
+corresponding continuation $P_i$.
+The calculus is completed with the standard constructs for 
+inaction $\inact$, 
+parallel composition $P_1 \Par P_2$, and 
+name restriction $\news{s} P$, which simultaneously binds endpoints $s$ and $\dual{s}$ in $P$.
 
-A well formed process relies on the assumptions for guarded recursive processes.
-We say that a process is a \emph{program} if it contain 
-no free variables or free process/recursive variables.
+A well-formed process relies on assumptions for guarded recursive processes.
+A process is called a \emph{program} if it contains 
+no free recursion variables nor free name/process variables.
 
 \input{figures/fig-syntax}
 
-We identify two important sub-calculi of the $\HOp$ that will form
-the basis of the study in this paper, i) The calculus defined by the lines 1 and 3 of the
-process syntax in Figure~\ref{fig:syntax}, and ii) The calculus defined by the lines 2 and 3
-of the process syntax in Figure~\ref{fig:syntax}. The first calculus is the standard
-session $\pi$ calculus or \sesp as defined in the bibliography~\cite{}. The second
-calculus allows only for abstraction passing and abstraction application as well 
-as selecting and branching and it is called Higher Order session calculus or $\HO$.
+Two significant sub-calculi of $\HOp$ will form the basis of our study.
+The first sub-calculus involves name-passing but no process-passing constructs; it is 
+defined by lines 1 and 3 of the syntax in Figure~\ref{fig:syntax}.
+This is essentially a standard session $\pi$-calculus 
+or \sesp as defined in the bibliography~\cite{}.
+The second sub-calculus features abstraction passing and application but no name-passing; 
+it is defined by lines 2 and 3 of the same syntax. This language 
+calculus is called the higher-order session calculus or $\HO$.
 
 
 \subsection{Operational Semantics}

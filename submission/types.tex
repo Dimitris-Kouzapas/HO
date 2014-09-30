@@ -1,19 +1,17 @@
 \section{Types for $\HOp$}
 
-We define a session type system for $\HOp$.
-The type system is based on the type system developed by Mostrous
+We define a session type system for $\HOp$, which is based on the type system developed by Mostrous
 and Yoshida in~\cite{tlca07}.
 
 \subsection{Session Types}
-
-The type structure that we consider here is a subset of the type syntax considered by Mostrous and Yoshida.
+We consider a minimal type structure, a fragment of that defined in~\cite{tlca07}.
 The only (but fundamental) differences are in the types for values: we focus on having 
-$\shot{S}$ and $\lhot{S}$, whereas Mostrous and Yoshida handle the more general functions $U \sharedop T$ and 
+$\shot{S}$ and $\lhot{S}$, whereas the structure in~\cite{tlca07} supports general functions $U \sharedop T$ and 
 $U \lollipop T$.
 \[
 	\begin{array}{lcl}
-		\text{Values} & U ::= & S \bnfbar \lhot{S} \bnfbar \shot{S} \bnfbar \chtype{S} \qquad \quad \text{Terms} \quad T ::= U  \bnfbar  \Proc\\
-		\text{Sessions} \ & S ::= &  \btout{U} S \bnfbar \btinp{U} S
+		\text{\emph{Values}} & U ::= & S \bnfbar \lhot{S} \bnfbar \shot{S} \bnfbar \chtype{S} \qquad \quad \text{\emph{Terms}} \quad T ::= U  \bnfbar  \Proc\\
+		\text{\emph{Sessions}} \ & S ::= &  \btout{U} S \bnfbar \btinp{U} S
 		\bnfbar		\btsel{l_i:S_i}_{i \in I} \bnfbar \btbra{l_i:S_i}_{i \in I} \bnfbar \trec{t}{S} \bnfbar \vart{t}  \bnfbar \tinact 
 	\end{array}
 \]
@@ -22,7 +20,7 @@ There are four different value types $U$; session value $S$, linear higher order
 shared higher order value $\shot{S}$; shared channel $\chtype{S}$. Terms can either have a
 value type $U$ or a process type $\Proc$.
 
-Sessions types follow the standard binary session types syntax \cite{}. Session send prefix $\btout{U} S$ 
+Session types follow the standard binary session types syntax \cite{}. Session send prefix $\btout{U} S$ 
 denotes a session type that sends a value of type $U$ and continues as $S$. Dually receive prefix $\btinp{U} S$
 denotes a session type that receives a value of type $U$ and continues as $S$. 
 Set $\mathsf{ST}$ is the space of all session types.
@@ -41,3 +39,35 @@ Set $\mathsf{ST}$ is the space of all session types.
 	Standard arguments ensure that $F$ is monotone, thus the greatest fix point
 	of $F$ exists and let duality defined as $\dualof = \nu X. F(X)$.
 \end{definition}
+
+
+Following our decision of focusing on functions $\shot{S}$ and $\lhot{S}$,
+our environments are also simpler than those in~\cite{tlca07}:
+\[
+	\begin{array}{lcl}
+		\text{Shared} & \Gamma \bnfis & \emptyset \bnfbar \Gamma \cat \varp{X}: \shot{S} \bnfbar \Gamma \cat k: \chtype{S} \bnfbar \Gamma \cat \rvar{X}: \Sigma \\
+		\text{Linear} & \Lambda \bnfis & \emptyset \bnfbar \Lambda \cat \varp{X}: \lhot{S}  \\
+		\text{Session} \quad & \Sigma \bnfis & \emptyset \bnfbar \Sigma \cat k:S  
+	\end{array}
+\]
+
+
+With these environments the shape of judgments is exactly the same as in Mostrous and Yoshida's system:
+\[
+	\begin{array}{c}
+		\Gamma; \Lambda ; \Sigma \proves P \hastype T
+%		\Gamma; \Lambda; \Sigma \proves V \hastype U
+	\end{array}
+\]
+As expected, weakening, contraction, and exchange principles apply to $\Gamma$;
+environments $\Lambda$ and $\Sigma$ behave linearly, and are only subject to exchange.
+We require that the domains of $\Gamma, \Lambda$ and $\Sigma$ are pairwise distinct.
+%We focus on \emph{well-formed} judgments, which do not share elements in their domains.
+%\newcommand{\jrule}[3]{\displaystyle \frac{#1 }{#2} & \trule{#3}}
+\newcommand{\jrule}[3]{\displaystyle \trule{#3}~~\frac{#1 }{#2}}
+\newcommand{\addenv}{\circ}
+
+\input{figures/fig-types}
+
+
+The typing rules for our system are in Fig.~\ref{fig:typerulesmy}. 
