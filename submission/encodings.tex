@@ -70,32 +70,81 @@ Encoding composition is closed on the above properties.
 	Straightforward application of the definition of each property.
 \end{proof}
 
-\subsection{Encoding from \sesp to $\HOp$}
+\subsection{Encoding from $\sesp$ to $\HOp$}
 
 The semantics of the $\HOp$ are powerfull enough to
-express the semantics of the standard \sesp calculus.
+express the semantics of the standard $\sesp$ calculus.
 
-\paragraph{Encoding from \sesp without recursion to $\HOp$:}
+The name passing semantics of $\sesp$ have a rather straightforward
+encoding from to $\HOp$.
+On the other hand to achieve the encoding of the recursion semantic
+of $\sesp$, we need to extend
+to the polyadic version of $\sesp$ as an intermediate step in order
+to give a sound encoding of the recursion semantics to $\HOp$.
 
 We first encode the name passing semantics:
 
-\begin{tabular}{ll}
-\begin{tabular}{l}
-	$\map{\bout{k}{k'} P} \defeq \bout{k}{ \abs{z}{\binp{z}{X} \appl{X}{k'}} } \map{P}$
-	\\
-	$\map{\binp{k}{x} P} \defeq \binp{k}{X} \newsp{s}{\appl{X}{s} \Par \bout{\dual{s}}{\abs{x} \map{P}} \inact}$
-\end{tabular}
-&
-\begin{tabular}{l}
-	 $\mapt{\btout{S_1} S_2} \defeq \btout{\dk{todo}} \mapt{S_2}$\\
-	 $\mapt{\btinp{S_1} S_2} \defeq \btinp{\dk{todo}} \mapt{S_2}$
-\end{tabular}
-\end{tabular}
+\begin{definition}[Encoding from $\sesp$ without recursion to $\HOp$]
+	We write \dk{$\encod{\cdot}{\cdot}{1}: \sesp \longrightarrow \HOp$} whenever
 
+	\begin{tabular}{ll}
+		\begin{tabular}{l}
+			$\map{\bout{k}{k'} P}^1 \defeq \bout{k}{ \abs{z}{\binp{z}{X} \appl{X}{k'}} } \map{P}^1$
+			\\
+			$\map{\binp{k}{x} P}^1 \defeq \binp{k}{X} \newsp{s}{\appl{X}{s} \Par \bout{\dual{s}}{\abs{x} \map{P}^1} \inact}$
+		\end{tabular}
+		&
+		\begin{tabular}{l}
+			$\tmap{\btout{S_1} S_2}{1} \defeq \btout{\dk{todo}} \tmap{S_2}{1}$
+			\\
+			$\tmap{\btinp{S_1} S_2}{1} \defeq \btinp{\dk{todo}} \tmap{S_2}{1}$
+		\end{tabular}
+	\end{tabular}
+\end{definition}
 
+In the higher-order setting, a name $k$ is being passed as an input
+guarded abstraction. The input prefix receives an abstraction and
+continues with the application of $k$ over the received abstraction.
+On the reception side $\binp{s}{x} P$ 
+the encoding develops a mechanism that will receive
+the input guarded abstraction, apply it on a fresh endpoint $s$ and use
+the dual endpoint $\dual{s}$ to send the continuation $P$ as the abstraction
+$\abs{x}{P}$. Name substitution is then achieved as application.
 
+The encoding from polyadic $\sesp$ to $\sesp$ is easier than the
+encoding of polyadic $\pi$-calculus in the $\pi$-calculus because
+we have linear session endpoints.
 
+\begin{definition}[Encoding from polyadic $\sesp$ to $\sesp$]
+	We write \dk{$\encod{\cdot}{\cdot}{2}:$ polyadic $\sesp \longrightarrow \HOp$} whenever
 
+	\begin{tabular}{lcl}
+		\begin{tabular}{l}
+			$\map{\bout{k}{k' \cat \tilde{k}} P}^{2} \defeq \bout{k}{k'} \map{\bout{k}{\tilde{k}} P}$\\
+			$\map{\binp{k}{x \cat \tilde{x}} P}^{2} \defeq \binp{k}{x} \map{\binp{k}{\tilde{x}} P}$
+		\end{tabular}
+		& \quad &
+		\begin{tabular}{l}
+			$\tmap{\btout{S_1 \cat \tilde{S}} S}{2} \defeq \btout{S_1} \tmap{\btout{\tilde{S}} S}{2}$\\
+			$\tmap{\btinp{S_1 \cat \tilde{S}} S}{2} \defeq \btinp{S_1} \tmap{\btinp{\tilde{S}} S}{2}$
+		\end{tabular}
+	\end{tabular}
+\end{definition}
+
+Polyadic name sending (resp.\ receive) is encoded as sequence of
+send (resp.\ receive) operations. Linearity of session endpoints
+ensures no race conditions, thus the encoding is sound.
+
+The encoding of the polyadic $\sesp$ semantics is as simple as the
+composition of the two former encodings.
+
+\begin{definition}[Encoding from polyadic $\sesp$ without recursion to $\HOp$]
+	We define $\encod{\cdot}{\cdot}{3}: $ polyadic $\sesp \longrightarrow \HOp$
+	as $\encod{\cdot}{\cdot}{3} = \encod{\cdot}{\cdot}{1} \cat \encod{\cdot}{\cdot}{2}$.	
+\end{definition}
+
+Encoding the $\sesp$ recursive operation requires to follow the fundamental
+principle of copying the process that needs to exhibit recursive behaviour.
 
 
 
