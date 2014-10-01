@@ -71,3 +71,69 @@ We require that the domains of $\Gamma, \Lambda$ and $\Sigma$ are pairwise disti
 
 
 The typing rules for our system are in Fig.~\ref{fig:typerulesmy}. 
+
+\subsection{Type Soundness}
+We state results for type safety:
+we report instances of more general statements already proved by Mostrous and Yoshida in the asynchronous case.
+
+\begin{lemma}[Substitution Lemma - Lemma C.10 in M\&Y]
+	\begin{enumerate}[1.]
+		\item	Suppose $\Gamma \cat X:\shot{S}; \Lambda; \Sigma  \proves P \hastype T$ and
+			$\Gamma; \emptyset ; \emptyset  \proves V \hastype \shot{S}$.
+			Then $\Gamma; \Lambda; \Sigma  \proves P\subst{V}{x} \hastype T$.
+	 
+		\item	Assume $\Gamma; \Lambda_1 \cat X:\lhot{S}; \Sigma_1  \proves P \hastype T$ 
+			and $\Gamma; \Lambda_2; \Sigma_2  \proves V \hastype \lhot{S}$ with 
+			$\Lambda_1, \Lambda_2$ and $\Sigma_1, \Sigma_2$ defined.  
+			Then $\Gamma; \Lambda_1 \cup \Lambda_2; \Sigma_1 \cup \Sigma_2  \proves P\subst{V}{X} \hastype T$.
+
+		\item	Suppose $\Gamma; \Lambda; \Sigma \cat x:S  \proves P \hastype T$ and
+			$k \not\in \dom{\Gamma, \Lambda, \Sigma}$. 
+			Then $\Gamma; \Lambda; \Sigma \cat k:S  \vdash P\subst{k}{x} \hastype T$.
+			
+		\item	Suppose $\Gamma \cat x:\chtype{S}; \Lambda; \Sigma \proves P \hastype T$ and
+			$k \not\in \dom{\Gamma, \Lambda, \Sigma}$. 
+			Then $\Gamma \cat k:\chtype{S}; \Lambda; \Sigma   \vdash P\subst{k}{x} \hastype T$.
+	\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+In all four parts, we proceed by induction on the typing for $P$, with a case analysis on the last applied rule. Interesting parts are (1) and (2), where the definition of substitution in Fig.~\ref{fig:reduction} and strengthening are required. (TBC)
+\qed
+\end{proof}
+
+\begin{definition}[Well-typed Session Environment]
+	Let $\Sigma$ a session environment.
+	We say that $\Sigma$ is {\em well-typed} if whenever
+	$s: S_1, \dual{s}: S_2 \in \Sigma$ then $S_1 \dualof S_2$.
+\end{definition}
+
+\begin{definition}[Session Environment Reduction]
+	We define relation $\red$ on session environments as:
+	\begin{itemize}
+		\item	$\Sigma \cat s: \btout{U} S_1 \cat \dual{s}: \btinp{U} S_2 \red \Sigma \cat s: S_1 \cat \dual{s}: S_2$
+		\item	$\Sigma \cat s: \btsel{l_i: S_i}_{i \in I} \cat \dual{s}: \btbra{l_i: S_i'}_{i \in I} \red \Sigma \cat s: S_k \cat \dual{s}: S_k', \quad k \in I$.
+	\end{itemize}
+\end{definition}
+
+We now state the instance of type soundness that we can derived from the Mostrous and Yoshida system.
+It is worth noticing that M\&Y have a slightly richer definition of structural congruence.
+Also, their statement for subject reduction relies on an ordering on typings associated to queues and other 
+runtime elements (such extended typings are denoted $\Delta$ by M\&Y).
+Since we are synchronous we can omit such an ordering.
+
+\begin{theorem}[Type Soundness - Theorem 7.3 in M\&Y]
+	\begin{enumerate}[1.]
+		\item	(Subject Congruence) Suppose $\Gamma; \Lambda; \Sigma \proves P \hastype \Proc$.
+			Then $P \scong P'$ implies $\Gamma; \Lambda; \Sigma \proves P' \hastype \Proc$.
+
+		\item	(Subject Reduction) Suppose $\Gamma; \emptyset; \Sigma \proves P \hastype T$
+			with
+%			$\mathsf{balanced}(\Sigma)$. 
+			well-typed $\Sigma$.
+			Then $P \red P'$ implies $\Gamma; \emptyset; \Sigma_2  \proves P' \hastype T$
+			and $\Sigma_1 \red \Sigma_2$ or $\Sigma_1 = \Sigma_2$.
+	\end{enumerate}
+\end{theorem}
+
+
