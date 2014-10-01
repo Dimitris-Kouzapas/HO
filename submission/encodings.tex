@@ -1,0 +1,101 @@
+\newcommand{\enc}[2]{\lrangle{\map{#1}, \mapt{#2}}}
+\newcommand{\encod}[3]{\lrangle{\map{#1}^{#3}, \mapt{#2}^{#3}}}
+
+\newcommand{\calc}[2]{\lrangle{#1, #2}}
+
+\section{Encodings}
+
+In this section we present a study of the expressiveness 
+of the sub-calculi of $\HOp$.
+
+We first define what is an encoding over typed calculus.
+
+\begin{definition}
+	Let $\calc{L_1}{T_1}$ be the calculus with process set $L_1$ and
+	session type set $T_1$ and
+	$\calc{L_2}{T_2}$ the calculus with process set $L_2$ and
+	session type set $T_2$.
+	Assuming mappings $\map{\cdot}: L_1 \longrightarrow L_2$ and
+	$\mapt{\cdot}: T_1 \longrightarrow T_2$
+	we write $\enc{\cdot}{\cdot}: \calc{L_1}{T_1} \longrightarrow \calc{L_2}{T_2}$
+	for the encoding from
+	$\calc{L_1}{T_1}$ to $\calc{L_2}{T_2}$.
+\end{definition}
+
+\subsection{Encoding Properties}
+
+We require that a {\em good} encoding should 
+transform preserve not only the syntax but
+also the operational, typing and behavioural
+semantics. Formally:
+
+\begin{definition}[Encoding Properties]
+	\label{def:ep}
+	Let $\Gamma; \emptyset; \Sigma \proves P \hastype \Proc$ 
+	a process from calculus $\calc{L_1}{T_1}$
+	and an encoding 
+	$\enc{\cdot}{\cdot}: \calc{L_1}{T_1} \longrightarrow \calc{L_2}{T_2}$.
+	Then
+	\begin{enumerate}
+		\item	$\enc{\cdot}{\cdot}$ is type preservering whenever
+			$\Gamma; \emptyset; \Sigma \proves P \hastype \Proc$ implies $\mapt{\Gamma}; \emptyset; \mapt{\Sigma} \proves \map{P} \hastype \Proc$
+
+		\item	$\enc{\cdot}{\cdot}$ satisfies operational correspondence whenever
+		\begin{itemize}
+			\item	If $P \red P'$ then
+				$\map{P} \Red \map{P'}$ and
+				$\mapt{\Gamma}; \emptyset; \mapt{\Sigma'} \proves \map{P'} \hastype \Proc$.
+			\item	If $\map{P} \red \map{Q}$ then
+				$\exists P'$ such that $P \red P'$ and 
+				$\mapt{\Gamma};\emptyset; \mapt{\Sigma_1} \proves \map{Q} \wb \Sigma_2 \proves P' \hastype \Proc$.
+		\end{itemize}
+		
+		\item	$\enc{\cdot}{\cdot}$ is fully abstract whenever
+			$\Gamma; \emptyset; \Sigma_1 \proves P_1 \wb \Sigma_2 \proves P_2 \hastype \Proc$ if and only if
+			$\mapt{\Gamma}; \emptyset; \mapt{\Sigma_1} \proves \map{P_1} \wb \mapt{\Sigma_2} \proves \map{P_2} \hastype \Proc$.
+	\end{enumerate}
+\end{definition}
+
+Encoding composition is closed on the above properties.
+
+\begin{proposition}
+	Let $\encod{\cdot}{\cdot}{1}: \calc{L_1}{T_1} \longrightarrow \calc{L_2}{T_2}$ and 
+	$\encod{\cdot}{\cdot}{2}: \calc{L_2}{T_2} \longrightarrow \calc{L_3}{T_3}$
+	encodings that respect the properties of definition~\ref{def:ep}.
+	Then $\encod{\cdot}{\cdot}{1} \cdot \encod{\cdot}{\cdot}{2}$
+	also respect the properties of definition~\ref{def:ep}.
+\end{proposition}
+
+\begin{proof}
+	Straightforward application of the definition of each property.
+\end{proof}
+
+\subsection{Encoding from \sesp to $\HOp$}
+
+The semantics of the $\HOp$ are powerfull enough to
+express the semantics of the standard \sesp calculus.
+
+\paragraph{Encoding from \sesp without recursion to $\HOp$:}
+
+We first encode the name passing semantics:
+
+\begin{tabular}{ll}
+\begin{tabular}{l}
+	$\map{\bout{k}{k'} P} \defeq \bout{k}{ \abs{z}{\binp{z}{X} \appl{X}{k'}} } \map{P}$
+	\\
+	$\map{\binp{k}{x} P} \defeq \binp{k}{X} \newsp{s}{\appl{X}{s} \Par \bout{\dual{s}}{\abs{x} \map{P}} \inact}$
+\end{tabular}
+&
+\begin{tabular}{l}
+	 $\mapt{\btout{S_1} S_2} \defeq \btout{\dk{todo}} \mapt{S_2}$\\
+	 $\mapt{\btinp{S_1} S_2} \defeq \btinp{\dk{todo}} \mapt{S_2}$
+\end{tabular}
+\end{tabular}
+
+
+
+
+
+
+
+
