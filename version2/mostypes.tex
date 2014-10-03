@@ -63,11 +63,11 @@ an unrestricted function $\shot{S}$) and the rule for output, which in Mostrous 
 	\begin{array}{c}
 %		\jrule{ }{\Gamma ; \emptyset; \emptyset \vdash \UnitV \hastype \Unit}{Unit} 
 %		\qquad\quad  
-		\trule{Shared}~~\Gamma \cat V:U; \emptyset; \emptyset \proves V \hastype U
-		\qquad\quad
+		\trule{Shared}~~\Gamma \cat k : \chtype{S}; \emptyset; \emptyset \proves k \hastype \chtype{S}
+		\qquad
 		\trule{LVar}~~\Gamma; \set{X: \lhot{S}}; \emptyset \proves X \hastype \lhot{S} 
-		\\[2mm]
-
+%		\\[2mm]
+		\qquad 
 		\trule{Session}~~\Gamma; \emptyset; \set{k:S} \proves k \hastype S 
 		\\[2mm]
 
@@ -123,12 +123,12 @@ an unrestricted function $\shot{S}$) and the rule for output, which in Mostrous 
 %		}
 %		\\[4mm]
 
-\dk{		\trule{ConnDual}~~\tree{
-			\Gamma; \Lambda; \Sigma \proves P \hastype \Proc  \quad \Gamma; \emptyset; \emptyset \proves k \hastype \chtype{S_2} \quad S_1 \dualof S_2
+		\trule{ConnDual}~~\tree{
+			\Gamma; \Lambda; \Sigma \cat \dual{s}: S_1 \proves P \hastype \Proc  \quad \Gamma; \emptyset; \emptyset \proves k \hastype \chtype{S_2} \quad S_1 \dualof S_2
 		}{
-			\Gamma; \Lambda; \Sigma \cat s: S_1 \proves \bout{k}{s} P \hastype \Proc
+			\Gamma; \Lambda; \Sigma  \proves \bout{k}{\dual{s}} P \hastype \Proc
 		}
-}
+
 		\\[4mm]
 
 		\trule{NewSh}~~\tree{
@@ -146,7 +146,7 @@ an unrestricted function $\shot{S}$) and the rule for output, which in Mostrous 
 		\trule{RecvS}~~\tree{
 			\Gamma; \Lambda; \Sigma \cat k: S_1 \cat x: S_2 \proves P \hastype \Proc
 		}{
-			\Gamma; \Lambda; \Sigma, k: \btinp{S_1} S_2  \vdash \binp{k}{x}P \hastype \Proc
+			\Gamma; \Lambda; \Sigma, k: \btinp{S_2} S_1  \vdash \binp{k}{x}P \hastype \Proc
 		}
 		\qquad\quad 
 		\trule{RecvL}~~\tree{
@@ -157,17 +157,17 @@ an unrestricted function $\shot{S}$) and the rule for output, which in Mostrous 
 		\\[4mm]
 
 		\trule{RecvSh}~~\tree{
-			\Gamma \cat X: U; \Lambda; \Sigma \cat k: S_1  \proves P \hastype \Proc
+			\Gamma \cat X: \shot{S}; \Lambda; \Sigma \cat k: S_1  \proves P \hastype \Proc
 		}{
-			\Gamma; \Lambda; \Sigma \cat k:\btinp{U}S_1  \proves \binp{k}{X}P \hastype \Proc
+			\Gamma; \Lambda; \Sigma \cat k:\btinp{\shot{S}}S_1  \proves \binp{k}{X}P \hastype \Proc
 		}
 		\qquad \quad
-\dk{		\trule{RecvShN}~~\tree{
-			\Gamma \cat x: U; \Lambda; \Sigma \cat k: S_1  \proves P \hastype \Proc
+		\trule{RecvShN}~~\tree{
+			\Gamma \cat x: \chtype{S}; \Lambda; \Sigma \cat k: S_1  \proves P \hastype \Proc
 		}{
-			\Gamma; \Lambda; \Sigma \cat k:\btinp{U}S_1  \proves \binp{k}{x}P \hastype \Proc
+			\Gamma; \Lambda; \Sigma \cat k:\btinp{\chtype{S}}S_1  \proves \binp{k}{x}P \hastype \Proc
 		}
-}		\\[4mm]
+		\\[4mm]
 
 		\trule{Nil}~~\Gamma; \emptyset; \emptyset \proves \inact \hastype \Proc
 		\\[4mm]
@@ -219,8 +219,10 @@ an unrestricted function $\shot{S}$) and the rule for output, which in Mostrous 
 
 	\end{array}
 \]
-\caption{Typing Rules (Mostrous and Yoshida)\label{fig:typerulesmy}}
+\caption{Typing Rules for $\HOp$\label{fig:typerulesmy}}
 \end{figure}
+
+\newpage
 
 \subsection{Type Soudness}
 We state results for type safety:
@@ -228,20 +230,29 @@ we report instances of more general statements already proved by Mostrous and Yo
 
 \begin{lemma}[Substitution Lemma - Lemma C.10 in M\&Y]
 	\begin{enumerate}[1.]
-		\item	Suppose $\Gamma \cat x:U; \Lambda; \Sigma  \proves P \hastype T$ and
-			$\Gamma; \emptyset ; \emptyset  \proves V \hastype U$.
-			Then $\Gamma; \Lambda; \Sigma  \proves P\subst{V}{x} \hastype T$.
-	 
+		\item	Suppose $\Gamma; \Lambda; \Sigma \cat x:S  \proves P \hastype T$ and
+			$k \not\in \dom{\Gamma, \Lambda, \Sigma}$. 
+			Then $\Gamma; \Lambda; \Sigma \cat k:S  \vdash P\subst{k}{x} \hastype T$.
+
+		\item	Suppose $\Gamma \cat x:\chtype{S}; \Lambda; \Sigma \proves P \hastype T$ and
+			$k \not\in \dom{\Gamma, \Lambda, \Sigma}$. 
+			Then $\Gamma \cat k:\chtype{S}; \Lambda; \Sigma   \vdash P\subst{k}{x} \hastype T$.
+
 		\item	Assume $\Gamma; \Lambda_1 \cat X:\lhot{S}; \Sigma_1  \proves P \hastype T$ 
 			and $\Gamma; \Lambda_2; \Sigma_2  \proves V \hastype \lhot{S}$ with 
 			$\Lambda_1, \Lambda_2$ and $\Sigma_1, \Sigma_2$ defined.  
 			Then $\Gamma; \Lambda_1 \cup \Lambda_2; \Sigma_1 \cup \Sigma_2  \proves P\subst{V}{X} \hastype T$.
 
-		\item	Suppose $\Gamma; \Lambda; \Sigma \cat x:S  \proves P \hastype T$ and
-			$k \not\in \dom{\Gamma, \Lambda, \Sigma}$. 
-			Then $\Gamma; \Lambda; \Sigma \cat k:S  \vdash P\subst{k}{x} \hastype T$.
-	\end{enumerate}
+		\item	Suppose $\Gamma \cat X:\shot{S}; \Lambda; \Sigma  \proves P \hastype T$ and
+			$\Gamma; \emptyset ; \emptyset  \proves V \hastype \shot{S}$.
+			Then $\Gamma; \Lambda; \Sigma  \proves P\subst{V}{x} \hastype T$.
+		\end{enumerate}
 \end{lemma}
+
+\begin{proof}
+In all four parts, we proceed by induction on the typing for $P$, with a case analysis on the last applied rule. Interesting parts are (1) and (2), where the definition of substitution in Fig.~\ref{fig:reduction} and strengthening are required. (TBC)
+\qed
+\end{proof}
 
 \begin{definition}[Well-typed Session Environment]
 	Let $\Sigma$ a session environment.
