@@ -320,7 +320,28 @@ Since we are synchronous we can omit such an ordering.
 \end{theorem}
 
 \begin{proof}
-Part (1) is standard. Part (2) proceeds by induction on the last reduction rule used.
+Part (1) is standard, using weakening and strengthening lemmas. Part (2) proceeds by induction on the last reduction rule used:
+\begin{enumerate}[$-$]
+\item Case \orule{NPass}: Then there are two sub-cases, depending on whether the communicated name is a shared name or a channel, that is, i.e., $U = S$ or $U = \chtype{S}$. The proof is standard, using appropriate rules for typing reception of a name: when $U = S$ we use typing 
+rule~\trule{RecvS} and Lemma~\ref{l:subst}(1); when $U = \chtype{S}$ we use typing 
+rule~\trule{RecvShN} and Lemma~\ref{l:subst}(2). The session environment reduces.
+
+\item Case \orule{APass}: Then there are two sub-cases, depending on whether the communicated process abstraction is a shared or linear, that is, i.e., $U = \shot{S}$ or $U = \lhot{S}$. The proof is standard, using appropriate rules for typing reception of a process abstraction: 
+when $U = \lhot{S}$ we use typing rule~\trule{RecvL} and Lemma~\ref{l:subst}(3); 
+when $U = \shot{S}$ we use typing rule~\trule{RecvSh} and Lemma~\ref{l:subst}(4). The session environment reduces.
+
+\item Case \orule{Sel}: The proof is standard, the session environment reduces.
+
+\item Case \orule{Sess}:  The proof is standard, exploiting induction hypothesis. The session environment may remain invariant (channel restriction)  or reduce (name restriction).
+
+\item Case \orule{Par}:
+The proof is standard, exploiting induction hypothesis. 
+
+\item Case \orule{Cong}: follows from Theorem~\ref{t:sr}\,(1).
+
+
+
+\end{enumerate}
 \qed
 \end{proof}
 	

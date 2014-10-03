@@ -3,24 +3,22 @@
 	\begin{array}{c}
 %		\jrule{ }{\Gamma ; \emptyset; \emptyset \vdash \UnitV \hastype \Unit}{Unit} 
 %		\qquad\quad  
-		\trule{Shared}~~\Gamma \cat k : \chtype{S}; \emptyset; \emptyset \proves k \hastype \chtype{S}
-		\qquad
-		\trule{LVar}~~\Gamma; \set{X: \lhot{S}}; \emptyset \proves X \hastype \lhot{S} 
-%		\\[2mm]
-		\qquad 
 		\trule{Session}~~\Gamma; \emptyset; \set{k:S} \proves k \hastype S 
 		\\[2mm]
-
+		\trule{Shared}~~\Gamma \cat a : \chtype{S}; \emptyset; \emptyset \proves a \hastype \chtype{S}
+		\qquad
+		\trule{LVar}~~\Gamma; \set{X: \lhot{S}}; \emptyset \proves X \hastype \lhot{S} 
+		\\[2mm]
 		\trule{Prom}~~\tree{
-			\Gamma; \emptyset; \emptyset \proves P \hastype \lhot{S}
+			\Gamma; \emptyset; \emptyset \proves V \hastype \lhot{S}
 		}{
-			\Gamma; \emptyset; \emptyset \proves P \hastype \shot{S}
+			\Gamma; \emptyset; \emptyset \proves V \hastype \shot{S}
 		} 
 		\qquad\quad  
 		\trule{Derelic}~~\tree{
-			\Gamma; \Lambda \cat X{:}\lhot{S}; \Sigma \proves P \hastype T
+			\Gamma; \Lambda \cat X{:}\lhot{S}; \Sigma \proves P \hastype \Proc
 		}{
-			\Gamma \cat X:\shot{S}; \Lambda; \Sigma \proves P \hastype T
+			\Gamma \cat X:\shot{S}; \Lambda; \Sigma \proves P \hastype \Proc
 		} 
 		\\[4mm]
 %		\trule{Subt}~~\tree{
@@ -51,9 +49,9 @@
 
 		\\[4mm]
 		\trule{Conn}~~\tree{
-			\Gamma; \Lambda; \Sigma \cat x:S \proves P \hastype \Proc  \quad \Gamma; \emptyset; \emptyset \proves k \hastype \chtype{S}
+			\Gamma; \Lambda; \Sigma \cat x:S \proves P \hastype \Proc  \quad \Gamma; \emptyset; \emptyset \proves a \hastype \chtype{S}
 		}{
-			\Gamma; \Lambda; \Sigma \proves \binp{k}{x} P \hastype \Proc
+			\Gamma; \Lambda; \Sigma \proves \binp{a}{x} P \hastype \Proc
 		}
 		\\[4mm]
 %		\trule{ConnDual}~~\tree{
@@ -64,17 +62,17 @@
 %		\\[4mm]
 
 		\trule{ConnDual}~~\tree{
-			\Gamma; \Lambda; \Sigma \cat \dual{s}: S_1 \proves P \hastype \Proc  \quad \Gamma; \emptyset; \emptyset \proves k \hastype \chtype{S_2} \quad S_1 \dualof S_2
+			\Gamma; \Lambda; \Sigma \cat \dual{s}: S_1 \proves P \hastype \Proc  \quad \Gamma; \emptyset; \emptyset \proves a \hastype \chtype{S_2} \quad S_1 \dualof S_2
 		}{
-			\Gamma; \Lambda; \Sigma  \proves \bout{k}{\dual{s}} P \hastype \Proc
+			\Gamma; \Lambda; \Sigma  \proves \bout{a}{\dual{s}} P \hastype \Proc
 		}
 
 		\\[4mm]
 
 		\trule{NewSh}~~\tree{
-			\Gamma\cat s:\chtype{S} ; \Lambda; \Sigma \proves P \hastype \Proc
+			\Gamma\cat a:\chtype{S} ; \Lambda; \Sigma \proves P \hastype \Proc
 		}{
-			\Gamma; \Lambda; \Sigma \proves \news{s} P \hastype \Proc}
+			\Gamma; \Lambda; \Sigma \proves \news{a} P \hastype \Proc}
 		\qquad\quad
 		\trule{NewSes}~~\tree{
 			\Gamma; \Lambda; \Sigma \cat s:S_1 \cat \dual{s}: S_2 \proves P \hastype \Proc \quad S_1 \dualof S_2
@@ -88,7 +86,7 @@
 		}{
 			\Gamma; \Lambda; \Sigma, k: \btinp{S_2} S_1  \vdash \binp{k}{x}P \hastype \Proc
 		}
-		\qquad\quad 
+		\quad\quad 
 		\trule{RecvL}~~\tree{
 			\Gamma; \Lambda \cat X: \lhot{S}; \Sigma \cat k: S_1  \proves P \hastype \Proc
 		}{
@@ -101,17 +99,13 @@
 		}{
 			\Gamma; \Lambda; \Sigma \cat k:\btinp{\shot{S}}S_1  \proves \binp{k}{X}P \hastype \Proc
 		}
-		\qquad \quad
+		\quad ~~
 		\trule{RecvShN}~~\tree{
 			\Gamma \cat x: \chtype{S}; \Lambda; \Sigma \cat k: S_1  \proves P \hastype \Proc
 		}{
 			\Gamma; \Lambda; \Sigma \cat k:\btinp{\chtype{S}}S_1  \proves \binp{k}{x}P \hastype \Proc
 		}
 		\\[4mm]
-
-		\trule{Nil}~~\Gamma; \emptyset; \emptyset \proves \inact \hastype \Proc
-		\\[4mm]
-
 		\trule{Par}~~\tree{
 			\Gamma; \Lambda_{1}; \Sigma_{1} \proves P_{1} \hastype \Proc \quad \Gamma; \Lambda_{2}; \Sigma_{2} \proves P_{2} \hastype \Proc
 		}{
@@ -121,7 +115,7 @@
 		\trule{Close}~~\tree{
 			\Gamma; \Lambda; \Sigma  \proves P \hastype T \quad k \not\in \dom{\Gamma, \Lambda,\Sigma}
 		}{
-			\Gamma; \Lambda; \Sigma \cat k: \tinact  \proves P \hastype T
+			\Gamma; \Lambda; \Sigma \cat k: \tinact  \proves P \hastype \Proc
 		}
 		\\[4mm]
 		\trule{Bra}~~\tree{
@@ -133,10 +127,12 @@
 	 	\trule{Sel}~~\tree{
 			\Gamma; \Lambda; \Sigma \cat k: S_j  \proves P \hastype \Proc \quad j \in I
 		}{
-			\Gamma; \Lambda; \Sigma \cat k:\btsel{l_i:S_i}_{i \in I} \proves \bsel{s}{l_j} P \hastype T
+			\Gamma; \Lambda; \Sigma \cat k:\btsel{l_i:S_i}_{i \in I} \proves \bsel{s}{l_j} P \hastype \Proc
 		}
 		\\[4mm]
 
+		\trule{Nil}~~\Gamma; \emptyset; \emptyset \proves \inact \hastype \Proc
+\qquad \quad
 		\trule{Var}~~\tree{
 	
 		}{
