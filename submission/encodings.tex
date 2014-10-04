@@ -75,13 +75,16 @@ $
 
 		\item \emph{Operational Correspondence}: If $\Gamma; \emptyset; \Sigma \proves_1 P \hastype \Proc$ then
 		\begin{enumerate}[-]
-			\item	If $P \red_1 P'$ then $\exists \Sigma'$ s.t.
+			\item	Completeness: If $P \red_1 P'$ then $\exists \Sigma'$ s.t.
 				$\map{P} \Red_2 \map{P'}$ and
 				$\mapt{\Gamma}; \emptyset; \mapt{\Sigma'} \proves_2 \map{P'} \hastype \Proc$.
-			\item	If $\map{P} \red_2 \map{Q}$ then
-				$\exists P'$ s.t. $P \red_1 P'$ and 
+			\item Soundness (1): If $\map{P} \red_2 Q$ then
+				$\exists P'$ s.t. $P \red_1 P'$ and \\
 				%$\mapt{\Gamma};\emptyset; \mapt{\Sigma_1} \proves_2 \map{Q} \wb_2 \Sigma_2 \proves P' \hastype \Proc$.
-				$\mapt{\Gamma}; \mapt{\Sigma_1} \circ \mapt{\Sigma_2} \proves_2 \map{P'} \wb_2 \map{Q}$.
+				$\mapt{\Gamma}; \mapt{\Sigma_1} \circ \mapt{\Sigma_2} \proves_2 \map{P'} \wb_2 Q$.
+			\item Soundness (2): If $\map{P} \red_2 Q$ then
+				$\exists P', Q'$ s.t. $P \red_1 P'$, $Q \Red_2 Q'$ and \\
+				$\mapt{\Gamma}; \mapt{\Sigma_1} \circ \mapt{\Sigma_2} \proves_2 \map{P'} \wb_2 Q'$.
 		\end{enumerate}
 		
 		\item \emph{Full Abstraction:} %whenever:		\\
@@ -139,16 +142,18 @@ of $\sesp$, we need to extend
 to the polyadic version of $\sesp$ as an intermediate step in order
 to give a sound encoding of the recursion semantics to $\HOp$.
 
-We first encode the name passing semantics:
+We first encode the name passing semantics. Below, we use $n$ to stand for either a linear channel $k'$ or a shared name $a$.
 
 \begin{definition}[\sespnr  into \HOp]
     Define $\encod{\cdot}{\cdot}{1}: \sespnr \to \HOp$  as follows:
 \[
 	\begin{array}{rcl}
-		\pmap{\bout{k}{k'} P}{1}	&\defeq&	\bbout{k}{ \abs{z}{\,\binp{z}{X} \appl{X}{k'}} } \pmap{P}{1} \\
+		\pmap{\bout{k}{n} P}{1}	&\defeq&	\bbout{k}{ \abs{z}{\,\binp{z}{X} \appl{X}{n}} } \pmap{P}{1} \\
 		\pmap{\binp{k}{x} Q}{1}	&\defeq&	\binp{k}{X} \newsp{s}{\appl{X}{s} \Par \bbout{\dual{s}}{\abs{x} \pmap{Q}{1}} \inact} \\
 		\tmap{\btout{S_1} {S} }{1}	&\defeq&	\bbtout{\lhot{\btinp{\lhot{\tmap{S_1}{1}}}\tinact}} \tmap{S}{1}  \\
-		\tmap{\btinp{S_1} S }{1}	&\defeq&	\bbtinp{\lhot{\btinp{\lhot{\tmap{S_1}{1}}}\tinact}} \tmap{S}{1} 
+		\tmap{\btinp{S_1} S }{1}	&\defeq&	\bbtinp{\lhot{\btinp{\lhot{\tmap{S_1}{1}}}\tinact}} \tmap{S}{1} \\
+		\tmap{\bbtout{\chtype{S_1}} {S} }{1}	&\defeq&	\bbtout{\shot{\btinp{\shot{\chtype{\tmap{S_1}{1}}}}\tinact}} \tmap{S}{1}  \\
+		\tmap{\bbtinp{\chtype{S_1}} {S} }{1}	&\defeq&	\bbtinp{\shot{\btinp{\shot{\chtype{\tmap{S_1}{1}}}}\tinact}} \tmap{S}{1} 
 	\end{array}
 \]
 where $\pmap{\cdot}{1}$ (resp. $\tmap{\cdot}{1}$) is an 
@@ -183,21 +188,20 @@ Encoding $\encod{\cdot}{\cdot}{1}: \sespnr \to \HOp$  is type-preserving (cf. De
 \end{proposition}
 
 \begin{proof}
-By induction on the structure of \sesp process $P$. \\
-We write $U_1$ to stand for $\lhot{\btinp{\lhot{\tmap{S_1}{1}}}\tinact}$
-
+By induction on the structure of \sesp process $P$. 
 \begin{enumerate}[1.]
 
-	\item Case $P = \bout{k}{k'}P'$.
-	We have the following typing in the source language:
+%%%% Output of (linear) channel
+	\item Case $P = \bout{k}{n}P'$. There are two sub-cases. In the first sub-case $n = k'$ (output of a linear channel). Then  
+	we have the following typing in the source language:
 	{\small
 	\[
 		\tree{
-			\Gamma; \emptyset; \Sigma \cat k:S  \proves  P' \hastype \Proc \quad \Gamma ; \emptyset ; \{k' : S\} \proves  k' \hastype S_1}{
+			\Gamma; \emptyset; \Sigma \cat k:S  \proves  P' \hastype \Proc \quad \Gamma ; \emptyset ; \{k' : S_1\} \proves  k' \hastype S_1}{
 			\Gamma; \emptyset; \Sigma \cat k':S_1 \cat k:\btout{S_1}S \proves  \bout{k}{k'} P' \hastype \Proc}
 	\]
 	}
-	We have the following typing in the target language:
+	The corresponding typing in the target language is as follows --- we write $U_1$ to stand for $\lhot{\btinp{\lhot{\tmap{S_1}{1}}}\tinact}$:
 	{\small
 	\[
 		\tree{
@@ -222,8 +226,20 @@ We write $U_1$ to stand for $\lhot{\btinp{\lhot{\tmap{S_1}{1}}}\tinact}$
 	\]
 	}
 	
-	\item Case $P = \binp{k}{x}Q$.
-	We have the following typing in the source language:
+	In the second sub-case, we have $n = a$ (output of a shared name). Then  
+	we have the following typing in the source language:
+	{\small
+	\[
+		\tree{
+			\Gamma \cat a:\chtype{S_1}; \emptyset; \Sigma \cat k:S  \proves  P' \hastype \Proc \quad \Gamma \cat a:\chtype{S_1} ; \emptyset ; \emptyset \proves  a \hastype S_1}{
+			\Gamma \cat a:\chtype{S_1} ; \emptyset; \Sigma  \cat k:\bbtout{\chtype{S_1}}S \proves  \bout{k}{a} P' \hastype \Proc}
+	\]
+	}
+	The typing in the target language is derived similarly as in the first sub-case. \\
+	
+	%%%% Input of (linear) channel 
+	\item Case $P = \binp{k}{x}Q$. We have two sub-cases, depending on the type of $x$. In the first case, $x$ stands for a linear channel.
+	Then we have the following typing in the source language:
 	{\small
 	\[
 	 \tree{
@@ -232,7 +248,7 @@ We write $U_1$ to stand for $\lhot{\btinp{\lhot{\tmap{S_1}{1}}}\tinact}$
 		\Gamma; \emptyset; \Sigma  \cat k:\btinp{S_1}S \proves  \binp{k}{x} Q \hastype \Proc}
 	 \]
 	 }
-	 We have the following typing in the target language:
+	 The corresponding typing in the target language is as follows --- we write $U_1$ to stand for $\lhot{\btinp{\lhot{\tmap{S_1}{1}}}\tinact}$:
 	{\small  
 	\[
 	 \tree{
@@ -270,10 +286,47 @@ We write $U_1$ to stand for $\lhot{\btinp{\lhot{\tmap{S_1}{1}}}\tinact}$
 		}
 	 \]
 	 }
+	 
+	 In the second sub-case, $x$ stands for a shared name. Then we have the following typing in the source language:
+	{\small
+	\[
+	 \tree{
+		 \Gamma \cat x:\chtype{S_1} ; \emptyset; \Sigma  \cat k:S \proves   Q \hastype \Proc
+	 	}{
+		\Gamma ; \emptyset; \Sigma  \cat k:\btinp{\chtype{S_1}}S \proves  \binp{k}{x} Q \hastype \Proc}
+	 \]
+	 }
+	 The typing in the target language is derived similarly as in the first sub-case. 
+	 
+	 
+
+	
 \end{enumerate}
 \qed
 \end{proof}
 
+
+\begin{proposition}
+Encoding $\encod{\cdot}{\cdot}{1}: \sespnr \to \HOp$  enjoys operational correspondence (cf. Def.~\ref{def:ep}\,(2)).
+\end{proposition}
+
+\begin{proof}[Sketch]
+Consider source process $P_0 = \bout{k}{k'} P \Par \binp{k}{x} Q$. We have that
+\[
+P_0 \red P \Par Q\subst{k'}{x}.
+\]
+By the definition of encoding we have:
+\begin{eqnarray*}
+\pmap{P_0}{1} & = & \bbout{k}{ \abs{z}{\,\binp{z}{X} \appl{X}{k'}} } \pmap{P}{1} \Par \binp{k}{X} \newsp{s}{\appl{X}{s} \Par \bbout{\dual{s}}{\abs{x} \pmap{Q}{1}} \inact}  \\
+& \red & \pmap{P}{1} \Par \newsp{s}{\appl{X}{s} \subst{\abs{z}{\,\binp{z}{X} \appl{X}{k'}}}{X} \Par \bbout{\dual{s}}{\abs{x} \pmap{Q}{1}} \inact} \\
+& = & \pmap{P}{1} \Par \newsp{s}{\,\binp{s}{X} \appl{X}{k'} \Par \bbout{\dual{s}}{\abs{x} \pmap{Q}{1}} \inact} \\
+& \red & \pmap{P}{1} \Par \appl{X}{k'} \subst{\abs{x} \pmap{Q}{1}}{X} \Par \inact \\
+& \scong & \pmap{P}{1} \Par \pmap{Q}{1}\subst{k'}{x}  
+\end{eqnarray*}
+\qed
+\end{proof}
+
+\subsection{Polyadic Into Monadic}
 The encoding from polyadic $\sesp$ to $\sesp$ is easier than the
 encoding of polyadic $\pi$-calculus in the $\pi$-calculus because
 we have linear session endpoints.
