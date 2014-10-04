@@ -117,7 +117,7 @@ We consider the following variants of \HOp:
 \begin{enumerate}[-]
 \item \sesp: the first and third lines of the syntax of processes in Fig.~\ref{fig:syntax} (first-order, monadic communication).
 \item \HO: the second and third lines of the syntax of processes in Fig.~\ref{fig:syntax} (pure higher-order, monadic communication).
-\item \sespnr: the finite sub-calculus of \sesp, i.e., without recursion.
+\item \sespnr: the finite sub-calculus of \sesp, i.e., name passing without recursion.
 \item \psesp: the variant of \sesp with polyadic communication.
 \end{enumerate}
 \noindent
@@ -188,34 +188,98 @@ We write $U_1$ to stand for $\lhot{\btinp{\lhot{\tmap{S_1}{1}}}\tinact}$
 
 \begin{enumerate}[1.]
 
-	\item Case $P = \bout{k}{k'}P'$, with $\Gamma; \emptyset; \Sigma \cat k':S \cat k:\btout{S}S_1 \proves  \bout{k}{k'} P' \hastype \Proc$.
-
+	\item Case $P = \bout{k}{k'}P'$.
+	We have the following typing in the source language:
+	{\small
 	\[
 		\tree{
-			\Gamma; \emptyset ; \Sigma \cat k:S_1 \proves \pmap{P'}{1} \hastype \Proc
-			\qquad
+			\Gamma; \emptyset; \Sigma \cat k:S  \proves  P' \hastype \Proc \quad \Gamma ; \emptyset ; \{k' : S\} \proves  k' \hastype S_1}{
+			\Gamma; \emptyset; \Sigma \cat k':S_1 \cat k:\btout{S_1}S \proves  \bout{k}{k'} P' \hastype \Proc}
+	\]
+	}
+	We have the following typing in the target language:
+	{\small
+	\[
+		\tree{
+			\tree{}{\tmap{\Gamma}{1}; \emptyset ; \tmap{\Sigma}{1} \cat k:\tmap{S}{1} \proves \pmap{P'}{1} \hastype \Proc}
+			~~
 			\tree{
 				\tree{
-					\Gamma; \emptyset; \cat \X: \lhot{T'} \proves \appl{\X}{k} \hastype k:T' \cat X
+					\tree{
+						\tree{
+							\tree{}{\tmap{\Gamma}{1} ; \{X : \lhot{\tmap{S_1}{1}}\} ; \emptyset \proves \X  \hastype \lhot{\tmap{S_1}{1}}} 
+							\quad 
+							\tree{}{\tmap{\Gamma}{1} ; \emptyset ; \{k' : \tmap{S_1}{1}\} \proves  k' \hastype \tmap{S_1}{1}}}{\tmap{\Gamma}{1} ; \{X : \lhot{\tmap{S_1}{1}}\} ; k' : \tmap{S_1}{1} \proves \appl{\X}{k'} \hastype \Proc}}{\tmap{\Gamma}{1} ; \{X : \lhot{\tmap{S_1}{1}}\} ; k' : 	\tmap{S_1}{1} \cat z:\tinact \proves \appl{\X}{k'} \hastype \Proc}
 				}{
-					\Gamma \cat here \X: \lhot{T'} \proves \appl{\X}{k} \hastype k:T' \cat X \cat z: \tinact
+					\tmap{\Gamma}{1} ; \emptyset; k' : \tmap{S_1}{1} \cat z:\btinp{\lhot{\tmap{S_1}{1}}}\tinact \proves \binp{z}{X} \appl{\X}{k'} \hastype \Proc
 				}
 			}{
-				\Gamma ; \emptyset; k' : S \proves \abs{z}{\binp{z}{X} \appl{\X}{k'}} \hastype U_1
+				\tmap{\Gamma}{1} ; \emptyset; k' : \tmap{S_1}{1} \proves \abs{z}{\binp{z}{X} \appl{\X}{k'}} \hastype U_1
 			}
 		}{
-		\Gamma; \emptyset; \Sigma \cat k':S \cat k:\btout{U}S_1 \proves  \bbout{k}{\abs{z}{\binp{z}{X} \appl{\X}{k'}}} \pmap{P'}{1} \hastype \Proc
+		\tmap{\Gamma}{1}; \emptyset; \tmap{\Sigma}{1} \cat k':\tmap{S_1}{1} \cat k:\btout{U_1}\tmap{S}{1} \proves  \bbout{k}{\abs{z}{\binp{z}{X} \appl{\X}{k'}}} \pmap{P'}{1} \hastype \Proc
 		}
 	\]
+	}
+	
+	\item Case $P = \binp{k}{x}Q$.
+	We have the following typing in the source language:
+	{\small
+	\[
+	 \tree{
+		 \Gamma; \emptyset; \Sigma  \cat k:S \cat x:S_1 \proves   Q \hastype \Proc
+	 	}{
+		\Gamma; \emptyset; \Sigma  \cat k:\btinp{S_1}S \proves  \binp{k}{x} Q \hastype \Proc}
+	 \]
+	 }
+	 We have the following typing in the target language:
+	{\small  
+	\[
+	 \tree{
+		 \tree{
+		 	\tree{
+			\tree{
+			\begin{array}{c}
+			\tmap{\Gamma}{1}; \{X: U_1\};   \emptyset \proves X \hastype U_1 \\
+			\tmap{\Gamma}{1}; \emptyset;   \cat s: \btinp{\lhot{\tmap{S_1}{1}}}\tinact \ \proves s \, \hastype  \btinp{\lhot{\tmap{S_1}{1}}}
+			\tinact 
+			\end{array}
+			}{
+			\tmap{\Gamma}{1}; \{X: U_1\};   \cat s: \btinp{\lhot{\tmap{S_1}{1}}}\tinact \ \proves \appl{X}{s}  \hastype \Proc
+			} \quad 
+			\tree{
+			\tree{
+			\tmap{\Gamma}{1}; \emptyset;  \emptyset \proves   \inact  \hastype \Proc}{
+			\tmap{\Gamma}{1}; \emptyset;  \dual{s}: \tinact\proves   \inact  \hastype \Proc
+			}
+			\quad 
+			\tree{
+			\tmap{\Gamma}{1}; \emptyset;  \tmap{\Sigma}{1} \cat k:\tmap{S}{1}  x:\tmap{S_1}{1} \proves \pmap{Q}{1}   \hastype \Proc	 }{
+			\tmap{\Gamma}{1}; \emptyset;  \tmap{\Sigma}{1} \cat k:\tmap{S}{1}   \proves \abs{x} \pmap{Q}{1}   \hastype \lhot{\tmap{S_1}{1}}			}
+			}{
+			\tmap{\Gamma}{1}; \emptyset;  \tmap{\Sigma}{1} \cat k:\tmap{S}{1}  \cat \dual{s}: \btout{\lhot{\tmap{S_1}{1}}}\tinact\proves  \bbout{\dual{s}}{\abs{x} \pmap{Q}{1}} \inact  \hastype \Proc
+			}
+			}{
+			\tmap{\Gamma}{1}; \{X: U_1\};  \tmap{\Sigma}{1} \cat k:\tmap{S}{1} \cat s: \btinp{\lhot{\tmap{S_1}{1}}}\tinact \cat \dual{s}: \btout{\lhot{\tmap{S_1}{1}}}\tinact\proves \appl{X}{s} \Par \bbout{\dual{s}}{\abs{x} \pmap{Q}{1}} \inact  \hastype \Proc
+			}
+			}{
+		 \tmap{\Gamma}{1}; \{X: U_1\};  \tmap{\Sigma}{1} \cat k:\tmap{S}{1} \proves \newsp{s}{\appl{X}{s} \Par \bbout{\dual{s}}{\abs{x} \pmap{Q}{1}} \inact}  \hastype \Proc
+		 }
+		 }{
+		\tmap{\Gamma}{1}; \emptyset; \tmap{\Sigma}{1}  \cat k:\btinp{U_1}\tmap{S}{1} \proves  \binp{k}{X} \newsp{s}{\appl{X}{s} \Par \bbout{\dual{s}}{\abs{x} \pmap{Q}{1}} \inact}  \hastype \Proc
+		}
+	 \]
+	 }
 \end{enumerate}
+\qed
 \end{proof}
 
 The encoding from polyadic $\sesp$ to $\sesp$ is easier than the
 encoding of polyadic $\pi$-calculus in the $\pi$-calculus because
 we have linear session endpoints.
 
-\begin{definition}[Encoding from polyadic $\sesp$ to $\sesp$]
-	We write \dk{$\encod{\cdot}{\cdot}{2}:$ polyadic $\sesp \longrightarrow \HOp$} whenever
+\begin{definition}[$\psesp$ to $\sesp$]
+	We write \dk{$\encod{\cdot}{\cdot}{2}:\psesp \to \HOp$} whenever
 
 	\begin{tabular}{lcl}
 		\begin{tabular}{l}
