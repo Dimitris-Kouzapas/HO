@@ -110,9 +110,26 @@ Encoding composition is closed on the above properties.
 	Straightforward application of the definition of each property.
 \end{proof}
 
-\subsection{Encoding from $\sesp$ to $\HOp$}
+\section{Positive Expressiveness Results}
 
-The semantics of the $\HOp$ are powerfull enough to
+\subsection{List of Languages Under Consideration}
+We consider the following variants of \HOp:
+\begin{enumerate}[-]
+\item \sesp: the first and third lines of the syntax of processes in Fig.~\ref{fig:syntax} (first-order, monadic communication).
+\item \HO: the second and third lines of the syntax of processes in Fig.~\ref{fig:syntax} (pure higher-order, monadic communication).
+\item \sespnr: the finite sub-calculus of \sesp, i.e., without recursion.
+\item \psesp: the variant of \sesp with polyadic communication.
+\end{enumerate}
+\noindent
+In the following we write $\pmap{\cdot}{i}$
+and $\tmap{\cdot}{i}$ 
+for mappings of processes and types, respectively.
+Since we always consider variants and fragments of \HOp, the 
+ reduction semantics $\red$, the typed behavioral equivalence $\wb$, and the type system $\proves$ are the same for all languages.
+
+\subsection{Encoding \sespnr  into \HOp}
+
+The semantics of the $\HOp$ are powerful enough to
 express the semantics of the standard $\sesp$ calculus.
 
 The name passing semantics of $\sesp$ have a rather straightforward
@@ -124,22 +141,32 @@ to give a sound encoding of the recursion semantics to $\HOp$.
 
 We first encode the name passing semantics:
 
-\begin{definition}[Encoding from $\sesp$ without recursion to $\HOp$]
-	We write \dk{$\encod{\cdot}{\cdot}{1}: \sesp \longrightarrow \HOp$} whenever
-
-	\begin{tabular}{ll}
-		\begin{tabular}{l}
-			$\map{\bout{k}{k'} P}^1 \defeq \bout{k}{ \abs{z}{\binp{z}{X} \appl{X}{k'}} } \map{P}^1$
-			\\
-			$\map{\binp{k}{x} P}^1 \defeq \binp{k}{X} \newsp{s}{\appl{X}{s} \Par \bout{\dual{s}}{\abs{x} \map{P}^1} \inact}$
-		\end{tabular}
-		&
-		\begin{tabular}{l}
-			$\tmap{\btout{S_1} S_2}{1} \defeq \btout{\dk{todo}} \tmap{S_2}{1}$
-			\\
-			$\tmap{\btinp{S_1} S_2}{1} \defeq \btinp{\dk{todo}} \tmap{S_2}{1}$
-		\end{tabular}
-	\end{tabular}
+\begin{definition}[\sespnr  into \HOp]
+    Define $\encod{\cdot}{\cdot}{1}: \sespnr \to \HOp$  as follows:
+\[
+	\begin{array}{rcl}
+		\pmap{\bout{k}{k'} P}{1}	&\defeq&	\bbout{k}{ \abs{z}{\,\binp{z}{X} \appl{X}{k'}} } \pmap{P}{1} \\
+		\pmap{\binp{k}{x} Q}{1}	&\defeq&	\binp{k}{X} \newsp{s}{\appl{X}{s} \Par \bbout{\dual{s}}{\abs{x} \pmap{Q}{1}} \inact} \\
+		\tmap{\btout{S_1} {S} }{1}	&\defeq&	\bbtout{\lhot{\btinp{\lhot{\tmap{S_1}{1}}}\tinact}} \tmap{S}{1}  \\
+		\tmap{\btinp{S_1} S }{1}	&\defeq&	\bbtinp{\lhot{\btinp{\lhot{\tmap{S_1}{1}}}\tinact}} \tmap{S}{1} 
+	\end{array}
+\]
+where $\pmap{\cdot}{1}$ (resp. $\tmap{\cdot}{1}$) is an 
+homomorphism for the other process (resp. type) constructs.
+   	%We write \dk{$\encod{\cdot}{\cdot}{1}: \sespnr \to \HOp$} whenever
+%	\begin{tabular}{ll}
+%		\begin{tabular}{l}
+%			$\map{\bout{k}{k'} P}^1 \defeq \bout{k}{ \abs{z}{\binp{z}{X} \appl{X}{k'}} } \map{P}^1$
+%			\\
+%			$\map{\binp{k}{x} P}^1 \defeq \binp{k}{X} \newsp{s}{\appl{X}{s} \Par \bout{\dual{s}}{\abs{x} \map{P}^1} \inact}$
+%		\end{tabular}
+%		&
+%		\begin{tabular}{l}
+%			$\tmap{\btout{S_1} S_2}{1} \defeq \btout{\dk{todo}} \tmap{S_2}{1}$
+%			\\
+%			$\tmap{\btinp{S_1} S_2}{1} \defeq \btinp{\dk{todo}} \tmap{S_2}{1}$
+%		\end{tabular}
+%	\end{tabular}
 \end{definition}
 
 In the higher-order setting, a name $k$ is being passed as an input
@@ -150,6 +177,38 @@ the encoding develops a mechanism that will receive
 the input guarded abstraction, apply it on a fresh endpoint $s$ and use
 the dual endpoint $\dual{s}$ to send the continuation $P$ as the abstraction
 $\abs{x}{P}$. Name substitution is then achieved as application.
+
+\begin{proposition}
+Encoding $\encod{\cdot}{\cdot}{1}: \sespnr \to \HOp$  is type-preserving (cf. Def.~\ref{def:ep}\,(1)).
+\end{proposition}
+
+\begin{proof}
+By induction on the structure of \sesp process $P$. \\
+We write $U_1$ to stand for $\lhot{\btinp{\lhot{\tmap{S_1}{1}}}\tinact}$
+
+\begin{enumerate}[1.]
+
+	\item Case $P = \bout{k}{k'}P'$, with $\Gamma; \emptyset; \Sigma \cat k':S \cat k:\btout{S}S_1 \proves  \bout{k}{k'} P' \hastype \Proc$.
+
+	\[
+		\tree{
+			\Gamma; \emptyset ; \Sigma \cat k:S_1 \proves \pmap{P'}{1} \hastype \Proc
+			\qquad
+			\tree{
+				\tree{
+					\Gamma; \emptyset; \cat \X: \lhot{T'} \proves \appl{\X}{k} \hastype k:T' \cat X
+				}{
+					\Gamma \cat here \X: \lhot{T'} \proves \appl{\X}{k} \hastype k:T' \cat X \cat z: \tinact
+				}
+			}{
+				\Gamma ; \emptyset; k' : S \proves \abs{z}{\binp{z}{X} \appl{\X}{k'}} \hastype U_1
+			}
+		}{
+		\Gamma; \emptyset; \Sigma \cat k':S \cat k:\btout{U}S_1 \proves  \bbout{k}{\abs{z}{\binp{z}{X} \appl{\X}{k'}}} \pmap{P'}{1} \hastype \Proc
+		}
+	\]
+\end{enumerate}
+\end{proof}
 
 The encoding from polyadic $\sesp$ to $\sesp$ is easier than the
 encoding of polyadic $\pi$-calculus in the $\pi$-calculus because
