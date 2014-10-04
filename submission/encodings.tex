@@ -78,13 +78,13 @@ $
 			\item	Completeness: If $P \red_1 P'$ then $\exists \Sigma'$ s.t.
 				$\map{P} \Red_2 \map{P'}$ and
 				$\mapt{\Gamma}; \emptyset; \mapt{\Sigma'} \proves_2 \map{P'} \hastype \Proc$.
-			\item Soundness (1): If $\map{P} \red_2 Q$ then
+			\item Soundness : If $\map{P} \red_2 Q$ then
 				$\exists P'$ s.t. $P \red_1 P'$ and \\
 				%$\mapt{\Gamma};\emptyset; \mapt{\Sigma_1} \proves_2 \map{Q} \wb_2 \Sigma_2 \proves P' \hastype \Proc$.
 				$\mapt{\Gamma}; \mapt{\Sigma_1} \circ \mapt{\Sigma_2} \proves_2 \map{P'} \wb_2 Q$.
-			\item Soundness (2): If $\map{P} \red_2 Q$ then
-				$\exists P', Q'$ s.t. $P \red_1 P'$, $Q \Red_2 Q'$ and \\
-				$\mapt{\Gamma}; \mapt{\Sigma_1} \circ \mapt{\Sigma_2} \proves_2 \map{P'} \wb_2 Q'$.
+%			\item Soundness (2): If $\map{P} \red_2 Q$ then
+%				$\exists P', Q'$ s.t. $P \red_1 P'$, $Q \Red_2 Q'$ and \\
+%				$\mapt{\Gamma}; \mapt{\Sigma_1} \circ \mapt{\Sigma_2} \proves_2 \map{P'} \wb_2 Q'$.
 		\end{enumerate}
 		
 		\item \emph{Full Abstraction:} %whenever:		\\
@@ -311,7 +311,8 @@ Encoding $\encod{\cdot}{\cdot}{1}: \sespnr \to \HOp$  enjoys operational corresp
 \end{proposition}
 
 \begin{proof}[Sketch]
-Consider source process $P_0 = \bout{k}{k'} P \Par \binp{k}{x} Q$. We have that
+We must show completeness and soundness properties. 
+For completeness, it suffices to consider source process $P_0 = \bout{k}{k'} P \Par \binp{k}{x} Q$. We have that
 \[
 P_0 \red P \Par Q\subst{k'}{x}.
 \]
@@ -323,6 +324,7 @@ By the definition of encoding we have:
 & \red & \pmap{P}{1} \Par \appl{X}{k'} \subst{\abs{x} \pmap{Q}{1}}{X} \Par \inact \\
 & \scong & \pmap{P}{1} \Par \pmap{Q}{1}\subst{k'}{x}  
 \end{eqnarray*}
+For soundness, it suffices to notice that the encoding does not add new visible actions: the additional synchronizations induced by the encoding always occur on private (fresh) names. We assume weak bisimilarities, which abstract from internal actions used by the encoding, and so  constructing a relation witnessing behavioral equivalence is easy.
 \qed
 \end{proof}
 
