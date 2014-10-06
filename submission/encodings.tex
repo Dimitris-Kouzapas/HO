@@ -130,22 +130,22 @@ for mappings of processes and types, respectively.
 Since we always consider variants and fragments of \HOp, the 
  reduction semantics $\red$, the typed behavioral equivalence $\wb$, and the type system $\proves$ are the same for all languages.
 
-\subsection{Encoding \sespnr  into \HOp}
+\subsection{Encoding \sespnr  into \HO}
 
-The semantics of the $\HOp$ are powerful enough to
+The semantics of the $\HO$ are powerful enough to
 express the semantics of the standard $\sesp$ calculus.
 
 The name passing semantics of $\sesp$ have a rather straightforward
-encoding from to $\HOp$.
+encoding from to $\HO$.
 On the other hand to achieve the encoding of the recursion semantic
 of $\sesp$, we need to extend
 to the polyadic version of $\sesp$ as an intermediate step in order
-to give a sound encoding of the recursion semantics to $\HOp$.
+to give a sound encoding of the recursion semantics to $\HO$.
 
 We first encode the name passing semantics. Below, we use $n$ to stand for either a linear channel $k'$ or a shared name $a$.
 
-\begin{definition}[\sespnr  into \HOp]
-    Define $\encod{\cdot}{\cdot}{1}: \sespnr \to \HOp$  as follows:
+\begin{definition}[\sespnr  into \HO]
+    Define $\encod{\cdot}{\cdot}{1}: \sespnr \to \HO$  as follows:
 \[
 	\begin{array}{rcl}
 		\pmap{\bout{k}{n} P}{1}	&\defeq&	\bbout{k}{ \abs{z}{\,\binp{z}{X} \appl{X}{n}} } \pmap{P}{1} \\
@@ -184,7 +184,7 @@ the dual endpoint $\dual{s}$ to send the continuation $P$ as the abstraction
 $\abs{x}{P}$. Name substitution is then achieved as application.
 
 \begin{proposition}
-Encoding $\encod{\cdot}{\cdot}{1}: \sespnr \to \HOp$  is type-preserving (cf. Def.~\ref{def:ep}\,(1)).
+Encoding $\encod{\cdot}{\cdot}{1}: \sespnr \to \HO$  is type-preserving (cf. Def.~\ref{def:ep}\,(1)).
 \end{proposition}
 
 \begin{proof}
@@ -307,7 +307,7 @@ By induction on the structure of \sesp process $P$.
 
 
 \begin{proposition}
-Encoding $\encod{\cdot}{\cdot}{1}: \sespnr \to \HOp$  enjoys operational correspondence (cf. Def.~\ref{def:ep}\,(2)).
+Encoding $\encod{\cdot}{\cdot}{1}: \sespnr \to \HO$  enjoys operational correspondence (cf. Def.~\ref{def:ep}\,(2)).
 \end{proposition}
 
 \begin{proof}[Sketch]
@@ -329,12 +329,12 @@ For soundness, it suffices to notice that the encoding does not add new visible 
 \end{proof}
 
 \subsection{Polyadic Into Monadic}
-The encoding from polyadic $\sesp$ to $\sesp$ is easier than the
+The encoding from $\psesp$ to $\sesp$ is easier than the
 encoding of polyadic $\pi$-calculus in the $\pi$-calculus because
 we have linear session endpoints.
 
 \begin{definition}[$\psesp$ to $\sesp$]
-	We write \dk{$\encod{\cdot}{\cdot}{2}:\psesp \to \HOp$} whenever
+	We write $\encod{\cdot}{\cdot}{2}:\psesp \to \sesp$ whenever
 
 	\begin{tabular}{lcl}
 		\begin{tabular}{l}
@@ -356,9 +356,29 @@ ensures no race conditions, thus the encoding is sound.
 The encoding of the polyadic $\sesp$ semantics is as simple as the
 composition of the two former encodings.
 
-\begin{definition}[Encoding from polyadic $\sesp$ without recursion to $\HOp$]
-	We define $\encod{\cdot}{\cdot}{3}: $ polyadic $\sesp \longrightarrow \HOp$
+\begin{definition}[Encoding from $\sesp^{p-\mu}$ to $\HO$]
+	We define $\encod{\cdot}{\cdot}{3}: \sesp^{p-\mu} \longrightarrow \HO$
 	as $\encod{\cdot}{\cdot}{3} = \encod{\cdot}{\cdot}{1} \cat \encod{\cdot}{\cdot}{2}$.	
+\end{definition}
+
+Next we give the encoding from $\HOp$ with polyadic abstraction to
+$\HOp^{p}$.
+
+\begin{definition}[Encoding from $\HOp^{pa-\mu}$ to $\HO^{p}$]
+
+	\begin{tabular}{lcl}
+		$\map{\bout{k}{\abs{\tilde{x}} P_1} P_2}^4$ &$\defeq$& $\bout{k}{\abs{z} \binp{z}{\tilde{x}} \map{P_1}^4} \map{P_2}^4$\\
+		$\map{\appl{X}{\tilde{k}}}$ &$\defeq$& $\newsp{s}{\appl{X}{s} \Par \bout{\dual{s}}{\tilde{k}} \inact}$
+	\end{tabular}
+\end{definition}
+
+We compose the latter encoding with the generalisation $\map{\cdot}^3 : \HOp^{p-\mu} \longrightarrow \HO$
+of the encoding $\map{\cdot}^3 : \sesp^{p-\mu} \longrightarrow \HO$ to get a translation
+of $\HOp^{pa-\mu}$ to $\HO$.
+
+\begin{definition}[Encoding from $\HOp^{pa-\mu}$ to $\HO$]
+	We define $\encod{\cdot}{\cdot}{5}: \HOp^{pa-\mu} \longrightarrow \HO$
+	as $\encod{\cdot}{\cdot}{5} = \encod{\cdot}{\cdot}{4} \cat \encod{\cdot}{\cdot}{5}$.	
 \end{definition}
 
 Encoding the $\sesp$ recursive operation requires to follow the fundamental
@@ -369,4 +389,90 @@ as continuations, e.g:
 	\recp{X}{\bout{s}{v} \rvar{X}} \scong \bout{s}{v} \recp{X}{\bout{s}{v} \rvar{X}}
 \]
 In the above example the scope of name $s$ includes the entire process so
-the type system would be 
+the type for $s$ would be recursive. An alternative representation
+of the above process would be:
+\[
+	\bout{a}{s} \inact \Par \recp{X}{\binp{a}{x} (\bout{x}{v} \bout{a}{x} \inact \Par X)} 
+\]
+Endpoint $s$ is being passed sequentialy on copies of the 
+same process to achieve the effect of infinite sending of value $v$.
+If we apply the same principles on higher order semantics we get:
+\[
+	\bout{s'}{() \bout{s}{v} \binp{s'}{Y} (\appl{Y}{} \Par \binp{\dual{s'}}{\appl{Y}{}} \inact)} \inact \Par \binp{\dual{s'}}{X} (\appl{X}{} \Par \bout{\dual{s'}}{\appl{X}{}} \inact )
+\]
+
+\dk{put the recursive encodings}
+
+
+
+\subsection{From $\HO$ to $\sesp$}
+
+We follow the other direction to encode the semantics of the
+higher order calculus that allows only abstraction passing
+to the semantics that allow only name passing semantics.
+The techniques presented in this paper were originally developed
+by Sangiorgi in \cite{}. In this work we show that
+the same ideas can be applied in a session type setting.
+Following the principles of session types we furthermore
+study the limits on such encodings when it comes to the linearity
+of session endpoints.
+
+In \cite{} Sangiorgi used the idea of triggers to activate
+copies of the a process. Trigers were input guarded replicated
+processes and instead of passing processes a process is
+passing around the name of the input subject of the corresponding trigger.
+
+In the context of session types a session name cannot be replicated.
+If in our encoding approach we use non replicated session input guarded
+processes we end up with the following naive encoding:
+
+\begin{definition}[From $\HO$ to $\sesp$. Naive approach]
+
+	\begin{tabular}{lcl}
+		$\map{\bout{k}{\abs{x} P_1} P_2}^{8}$ &$\defeq$& $ \newsp{s}{\bout{k}{s} (\map{P_2}^8 \Par \binp{\dual{s}}{x} \map{P_1}^8)} $\\
+		$\map{\binp{k}{X} P}^{8}$ &$\defeq$& $\binp{s}{x} \map{P}^8$\\
+		$\map{\appl{X}{k}}^8$ &$\defeq$& $\bout{x}{k} \inact$
+	\end{tabular}
+\end{definition}
+
+\begin{proposition}
+	Let $\Gamma;\emptyset;\Sigma \proves P \hastype \Proc$ with
+	the typing derivation to use only linear session types. Then
+	$\map{P}^8$ respects the properties of definition~\ref{def:ep}.
+\end{proposition}
+
+\begin{proof}
+\dk{TODO}
+\end{proof}
+
+This approach although it captures the correct semantics when
+dealing with systems that allow only linear process variables,
+it suffers from non-typability in the presence
+of shared process variables. For example:
+\[
+	\map{\bout{s}{\abs{x}{\bout{x}{v}\inact}} \inact \Par \binp{\dual{s}}{X} (\appl{X}{s_1} \Par \appl{X}{s_2})}^8 \defeq
+	\newsp{s'}{\bout{s}{s'} \binp{\dual{s'}}{x} \bout{x}{v} \inact \Par \binp{\dual{s}}{x} (\bout{x}{s_1} \inact \Par \bout{x}{s_2} \inact)}
+\]
+The above process is non typable since processes $(\bout{x}{s_1} \inact$ and $\bout{x}{s_2} \inact)$
+cannot be put in parallel because they do not have disjoint environments.
+
+The correct approach would be to use replicated shared names
+as triggers instead of session names. 
+
+\begin{definition}[From $\HO$ to $\sesp$]
+
+	\begin{tabular}{lcl}
+		$\map{\bout{k}{\abs{x} P_1} P_2}^{9}$ &$\defeq$& $ \newsp{a}{\bout{k}{a} (\map{P_2}^9 \Par \repl{} \binp{a}{x}  \map{P_1}^9)} $\\
+		$\map{\binp{k}{X} P}^{9}$ &$\defeq$& $\binp{s}{x} \map{P}^9$\\
+		$\map{\appl{X}{k}}^9$ &$\defeq$& $\bout{x}{k} \inact$
+	\end{tabular}
+\end{definition}
+
+At this point an open open question would be if
+we could find an encoding that maps
+session names to session names without the creation
+of shared names.
+
+\dk{give intuition}
+
+

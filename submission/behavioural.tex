@@ -372,4 +372,95 @@ coincide with reduction closed, barbed congruence.
 	$\wb\ =\ \wbc$ and $\cong\ =\ \wbc$.
 \end{theorem}
 
+\begin{proof}
+	\dk{add sketch}
+\end{proof}
+
+
+Session types are inherintly $\tau$-inert.
+
+\jp{This result needs to be split two handle only a single reduction step.}
+
+We prove an auxiliary result:
+
+\begin{lemma}[$\tau$-inertness]
+	\label{lem:tau_inert}
+	Let $P$ an $\HOp$ process
+	and $\Gamma; \emptyset; \Sigma \proves P \hastype \Proc$
+	\begin{enumerate}
+		\item	If $P \red P'$ then $\Gamma; \empty; \Sigma \wb \Sigma' \proves P \wb P'$.
+		\item	If $P \red^* P'$ then $\Gamma; \empty; \Sigma \wb \Sigma' \proves P \wb P'$.
+	\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+	The proof for part 1 is done by induction on the structure of $\red$.
+
+
+%	The proof is a double induction first on the length and then on the structure of $\red$.
+%	Induction on the length of $\red$.
+
+%	The basic step is trivial
+%	Induction hypothesis:
+%	If $P \red^* P''$ then
+%	$\Gamma; \Lambda; \Sigma \proves P \wbc \Gamma''; \Lambda''; \Sigma'' \proves P'' \hastype \Proc$.
+%
+%	Induction step:
+%	Let $P'' \red P'$. We do an induction on the structure of $\red$
+%	to show that $\Gamma'; \Lambda'; \Sigma' \proves P'' \wbc \Gamma'; \Lambda'; \Sigma' \proves P' \hastype \Proc$.
+%
+	Basic step:
+
+	\Case{$P = \bout{s}{V} P_1 \Par \binp{\dual{s}}{X} P_2$}
+	\[
+		\Gamma; \emptyset; \Sigma \red \Sigma' \proves \bout{s}{V} P_1 \Par \binp{\dual{s}}{X} P_2 \red P_1 \Par P_2
+	\]
+	The proof follows from the fact that we can only observe a $\tau$
+	action on typed process
+	$\Gamma; \emptyset; \Sigma \proves P \hastype \Proc$.
+	Actions $\bactout{s}{V}$ and $\bactinp{\dual{s}}{V}$
+	are forbiden by the LTS for typed environments.
+
+	It is easy to conclude then that $\Gamma; \emptyset; \Sigma \wb \Sigma' \proves P \wb P'$.
+
+	\Case{$P = \bsel{s}{l} P_1 \Par \bbra{\dual{s}}{l_i: P_i}_{i \in I}$}
+
+	Similar arguments as the previous case.
+
+	Induction hypothesis:
+	If $P_1 \red P_2$ then
+	$\Gamma_1; \emptyset; \Sigma_1 \wb \Sigma_2 \proves P_1 \wb P_2$.
+
+	Induction Step:
+
+	\Case{$P = \news{s} P_1$}
+	\[
+		\Gamma; \emptyset; \Sigma \red \Sigma' \proves \news{s}{P_1} \red \news{s} P_2
+	\]
+	From the induction hypothesis and the fact that bisimulation is a congruence
+	we get that $\Gamma; \emptyset; \Sigma \wb \Sigma' \proves P \wb P'$.
+
+	\Case{$P = P_1 \Par P_3$}
+
+	\[
+		\Gamma; \emptyset; \Sigma \red \Sigma' \proves P_1 \Par P_3 \red P_2 \Par P_3
+	\]
+	From the induction hypothesis and the fact that bisimulation is a congruence
+	we get that $\Gamma; \emptyset; \Sigma \wb \Sigma' \proves P \wb P'$.
+
+	\Case{$P \scong P_1$}
+
+	From the induction hypothesis and the facts that bisimulation is a congruence
+	and structural congruence preserves $\wb$
+	we get that $\Gamma; \emptyset; \Sigma \wb \Sigma' \proves P \wb P'$.
+
+
+	The proof for part two is an induction on the length of $\red^*$.
+	The basic step is trivial and the inductive step
+	deploys part 1 of this lemma and the fact that bisimulation is
+	transitive to conclude.
+%	We can now conclude that
+%	$P \wbc P'$ because $P \wbc P''$ and $P'' \wbc P'$.
+\end{proof}
+
 
