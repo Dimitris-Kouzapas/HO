@@ -210,17 +210,36 @@ between two related processes.
 
 We can use a session type to define the simplest process that is typed
 under the given session type.
-\begin{definition}[Simple Process]
-	Let session type $S$ then we define a process $\map{S}^{x}$:
+\begin{definition}[Simple Process]\rm
+	Let type $U = S$ or $U = \chtype{S}$ and name $k$; then we define a process $\map{U}^{k}$:
 	\[
-	\begin{array}{l}
-		\map{\tinact}^{x} = \inact \qquad \map{\btinp{S'} S}^{x} = \binp{x}{y} (\map{S}^{x} \Par \map{S'}^{y}) \qquad
-		\map{\btout{U} S}^{x} = \binp{x}{\dk{\map{U}}} \map{S}^{x}\\
-		\map{\btsel{l : S}}^{x} = \bsel{x}{l} \map{S}^{x} \qquad \map{\btbra{l_i: S_i}_{i \in I}}^{x} = \bbra{x}{l_i: \map{S_i}^{x}}_{i \in I}\\
-		\map{\tvar{t}}^{x} = \rvar{T} \qquad \map{\trec{t}{S}}^{x} = \recp{T}{\map{S}^{x}}
+	\begin{array}{rcl}
+		\map{\tinact}^{k} &=& \inact \\
+		\map{\btinp{S'} S}^{k} &=& \binp{k}{x} (\map{S}^{k} \Par \map{S'}^{x}) \\
+		\map{\btout{U} S}^{k} &=& \binp{k}{s} \map{S}^{k} \quad s\textrm{ fresh}\\
+		\map{\btsel{l : S}}^{k} &=& \bsel{k}{l} \map{S}^{k} \\
+		\map{\btbra{l_i: S_i}_{i \in I}}^{k} &=& \bbra{k}{l_i: \map{S_i}^{k}}_{i \in I}\\
+		\map{\tvar{t}}^{k} &=& \rvar{T} \\
+		\map{\trec{t}{S}}^{k} &=& \recp{T}{\map{S}^{k}}\\
+		\map{\btout{\lhot{S'}} S}^{k} &=& \bout{k}{\abs{x} \map{S'}^x} \map{S}^k\\
+		\map{\btinp{\lhot{S'}} S}^{k} &=& \binp{k}{X} (\map{S}^k \Par \appl{X}{s}) \quad s\textrm{ fresh}\\
+		\map{\btout{\chtype{S}} S}^{k} &=& \bout{k}{a} \map{S}^k  \quad a\textrm{ fresh}\\
+		\map{\btinp{\chtype{S}} S}^{k} &=& \binp{k}{x} (\map{S}^k \Par \map{\chtype{S}}^y)\\
+		\map{\chtype{S}}^{k} &=& \binp{k}{x} \map{S}^x
 	\end{array}
 	\] 
 \end{definition}
+
+\begin{proposition}\rm
+	\begin{itemize}
+		\item	$\Gamma; \emptyset; \Sigma \cat k:S \proves \map{S}^k \hastype \Proc$
+		\item	$\Gamma \cat k:\chtype{S}; \emptyset; \Sigma \proves \map{\chtype{S}}^k \hastype \Proc$
+	\end{itemize}
+\end{proposition}
+
+\begin{proof}
+	By induction on the definition $\map{S}^k$ and $\map{\chtype{S}}^k$.
+\end{proof}
 
 The second equivalent relation is a bisimulation relation called
 contextual bisimulation:
@@ -278,6 +297,79 @@ contextual bisimulation:
 
 		\item	The symmetric cases of 1, 2 and 3.
 	\end{enumerate}
-	The Knaster Tarski theorem ensures that the largest contextual bisimulation exists and is denoted by $\wb^c$.
+	The Knaster Tarski theorem ensures that the largest contextual bisimulation exists, it is called contextual bisimilarity and is denoted by $\wb^c$.
 \end{definition}
+
+The contextual bisimulation in the general case is a hard relation to be computed
+since it is quantified over every context and every process in the case of 
+$\bactout{s}{\abs{x} P}$ and $\bactout{s}{s'}$ respectively. The next definition
+of a bisimulation relation avoids these two universal quantifiers.
+
+
+\begin{definition}[Bisimulation]\rm
+	Let typed relation $\mathcal{R}$ such that $\Gamma; \emptyset; \Sigma_1\ \mathcal{R}\ \Sigma_2 \proves P_1\ \mathcal{R}\ Q_1$.
+	$\mathcal{R}$ is a {\em bisimulation} whenever:
+	\begin{enumerate}
+		\item	$\forall \news{\tilde{s}} \bactout{s}{\abs{x} P}$ such that
+			\[
+				\Gamma; \emptyset; \Sigma_1 \by{\news{\tilde{s}} \bactout{s}{\abs{x} P}} \Sigma_1' \proves P_1 \by{\news{\tilde{s}} \bactout{s}{\abs{x} P}} P_2
+			\]
+			$\exists Q_2, \abs{x}{Q}$ such that
+			\[
+				\Gamma; \emptyset; \Sigma_2 \By{\news{\tilde{s'}} \bactout{s}{\abs{x} Q}} \Sigma_2' \proves Q_1 \By{\news{\tilde{s'}} \bactout{s}{\abs{x} Q}} Q_2
+			\]
+			and $\forall s'$, %such that
+%			\begin{eqnarray*}
+%				\Gamma; \emptyset; \Sigma_1'' \proves \newsp{\tilde{s}}{P_2 \Par \context{C}{P \subst{s'}{x}}} \hastype \Proc \\
+%				\Gamma; \emptyset; \Sigma_2'' \proves \newsp{\tilde{s}}{Q_2 \Par \context{C}{Q \subst{s'}{x}}} \hastype \Proc
+%			\end{eqnarray*}
+			then
+			\[
+				\Gamma; \emptyset; \Sigma_1''\ \mathcal{R}\ \Sigma_2'' \proves \newsp{\tilde{s}}{P_2 \Par P \subst{s'}{x}}\ \mathcal{R}\ 
+				\newsp{\tilde{s'}}{Q_2 \Par Q \subst{s'}{x}}
+			\]
+		\item	$\forall \news{\tilde{s}} \bactout{s}{s_1}$ such that
+			\[
+				\Gamma; \emptyset; \Sigma_1 \dk{\cat s_1: S_1} \by{\news{\tilde{s}} \bactout{s}{s_1}} \Sigma_1' \proves P_1 \by{\news{\tilde{s}} \bactout{s}{s_1}} P_2
+			\]
+			$\exists Q_2, s_2$ such that
+			\[
+				\Gamma; \emptyset; \Sigma_2 \dk{\cat s_1: S_2} \By{\news{\tilde{s'}} \bactout{s}{s_2}} \Sigma_2' \proves Q_1 \By{\news{\tilde{s'}} \bactout{s}{s_2}} Q_2
+			\]
+			%such that
+%			\begin{eqnarray*}
+%				\Gamma; \emptyset; \Sigma_1'' \proves \newsp{\tilde{s}}{P_2 \Par \context{C}{P \subst{s'}{x}}} \hastype \Proc \\
+%				\Gamma; \emptyset; \Sigma_2'' \proves \newsp{\tilde{s}}{Q_2 \Par \context{C}{Q \subst{s'}{x}}} \hastype \Proc
+%			\end{eqnarray*}
+			and
+			\[
+				\Gamma; \emptyset; \Sigma_1''\ \mathcal{R}\ \Sigma_2'' \proves \newsp{\tilde{s}}{P_2 \Par \map{S_1}^{s_1}}\ \mathcal{R}\ 
+				\newsp{\tilde{s'}}{Q_2 \Par \map{S_2}^{s_2}}
+			\]
+
+		\item	$\forall \lambda \notin \set{\news{\tilde{s}} \bactout{s}{s'}, \news{\tilde{s}} \bactout{s}{\abs{x} P}}s$ such that
+			\[
+				\Gamma; \emptyset; \Sigma_1 \by{\lambda} \Sigma_1' \proves P_1 \by{\lambda} P_2
+			\]
+			$\exists Q_2$ such that 
+			\[
+				\Gamma; \emptyset; \Sigma_2 \by{\lambda} \Sigma_2' \proves Q_1 \By{\hat{\lambda}} Q_2
+			\]
+			and
+			$\Gamma; \emptyset; \Sigma_1\ \mathcal{R}\ \Sigma_2 \proves P_2\ \mathcal{R}\ Q_2$.
+
+		\item	The symmetric cases of 1, 2 and 3.
+	\end{enumerate}
+	The Knaster Tarski theorem ensures that the largest bisimulation exists, it is called bisimilarity and is denoted by $\wb$.
+\end{definition}
+
+The next theorem justifies our definition choices
+for both of the bisimulation relations, since
+they coincide between them and they also
+coincide with reduction closed, barbed congruence.
+
+\begin{theorem}[Coincidence]\rm
+	$\wb\ =\ \wbc$ and $\cong\ =\ \wbc$.
+\end{theorem}
+
 
