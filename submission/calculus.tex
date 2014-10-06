@@ -55,6 +55,13 @@ inaction $\inact$,
 parallel composition $P_1 \Par P_2$, and 
 name restriction $\news{s} P$, which simultaneously binds endpoints $s$ and $\dual{s}$ in $P$.
 
+The calculus is extended with the standard polyadic name passing where
+we allow list of names to be sent and received as messages. 
+The calculus is also extended with polyadic abstractions and applications,
+where we allow for a process to be abstracted on a list of
+bound variables and dualy we can apply a list of names
+over a polyadic abstraction.
+
 A well-formed process relies on assumptions for guarded recursive processes.
 A process is called a \emph{program} if it contains 
 no free recursion variables nor free name/process variables.
@@ -93,6 +100,9 @@ substitution through the semantics
 of name substitution. Substitution of application process $\appl{X}{k}$
 over abstraction $\abs{x} Q$ substitutes free variable
 $x$ in $Q$ with $k$ and replaces $X$ with the resulting process.
+The same intuition holds for polyadic substitution of the polyadic
+application process $\appl{X}{\tilde{k}}$ where the list of names
+$\tilde{k}$ substitutes a list of variables $\tilde{x}$.
 There is no effect on variable substitution for the inactive process.
 In all the other cases process variable substitution is homorphic 
 on the structure of the process.
@@ -104,11 +114,15 @@ rule, $\orule{NPass}$ where a send prefix on channel $s$ sends
 channel $s'$ to be received by parallel receive prefixed process
 on the dual endpoint $\dual{s}$. After the reduction the continuation of the 
 latter process substitutes $s'$ on the receive prefix object $x$.
+For clarity reasons we use the separate axiom, $\orule{PolPass}$
+to extend name passing to the polyadic polyadic name passing.
 The second communication axiom, $\orule{APass}$, describes
 abstraction passing. An abstraction is sent on a send prefixed process
 over channel $s$ and it is being received by a parallel $\dual{s}$-received
 prefixed process. The latter process follows a process variable
 substitution.
+Again we have a separate axiom, $\orule{PolAbs}$
+to extend to polyadic abstraction passing.
 The third axiom is the standard select/branch action where
 a process select label $l_j, j \in I$ on channel $s$ over a set of
 labels $\set{l_i}_{i \in I}$ that are offered from a parallel process

@@ -1,0 +1,283 @@
+\section{Behavioral Semantics}
+
+In this section we define a theory for observational equivalence over
+session typed $\HOp$ processes. The theory follows the principles
+laid by the previous work of the authors
+\cite{DBLP:conf/forte/KouzapasYH11,KY13,dkphdthesis}.
+We require a bisimulation relation over typed processes that
+is also characterised by the corresponding typed, reduction-closed,
+barbed congruence relation.
+
+\dk{(Jorge, I think you have a paper we can cite over session typed bisimulations)}
+
+\subsection{Labelled Transition Semantics}
+
+We define a relation $(P_1, \lambda, P_2) \in R$ over
+(untyped) processes, that allows us to follow how a process may
+interact with a process in its enviroment. The interaction
+is defined on action $\lambda$:
+
+\begin{tabular}{rcl}
+		$\lambda$ &$\bnfis$& $\tau \bnfbar \bactout{s}{s'} \bnfbar \bactout{s}{\abs{x} P} \bnfbar\bactinp{s}{s} \bnfbar \bactinp{s}{\abs{x} P}$ \\
+		&	$\bnfbar$ & $\bactsel{s}{l} \bnfbar \bactbra{s}{l} \bnfbar \news{\tilde{s}} \bactout{s}{s'} \bnfbar \news{\tilde{s}} \bactout{s}{\abs{x} P}$\\
+		&$\bnfbar$ &	\dk{$\bactout{s}{\tilde{s}} \bnfbar \bactout{s}{\abs{\tilde{x}} P} \bactinp{s}{\tilde{s'}} \bnfbar \bactinp{s}{\abs{\tilde{x}} P}$}
+\end{tabular}
+
+The internal action is defined on label $\tau$.
+Action $\bactout{s}{s'}$ denotes the sending of name $s'$ over channel $s$.
+Similarly action $\bactout{s}{\abs{x}{P}}$ is the sending of abstraction $\abs{x}{P}$
+over channel $s$. Dually actions for the reception of names and abstractions are
+$\bactinp{s}{s'}$ and $\bactinp{s}{\abs{x}{P}}$ respectively. We also defined
+actions for selecting a label $l$, $\bactsel{s}{l}$ and branching on a label
+$l$, $\bactbra{s}{l}$. When output actions carry name restrictions a scope
+opening is implied.
+
+We define the notion of dual actions as the symmetric relation $\asymp$, that satisfies the rules:
+\[
+	\bactsel{s}{l} \asymp \bactbra{\dual{s}}{l} \qquad \news{\tilde{s}} \bactout{s}{\abs{x} P} \asymp \bactinp{\dual{s}}{\abs{x} P} \qquad \bactout{s}{s'} \asymp \bactinp{\dual{s}}{s'}
+\]
+
+Dual actions happen on subjects that are dual between them; they carry the same
+object; and furthermore output action is dual with input action and 
+select action is dual with branch action.
+
+\paragraph{Untyped Labelled Transition System}
+
+\input{figures/fig-unLTS}
+
+The labelled transition system, LTS, is defined in Figure~\ref{fig:untyped_LTS}.
+A process with a send prefix can interact with the environment with a send
+action that carries a name $s'$ or an abstraction $\abs{x}{Q}$. Dually
+on a received prefixed process we can observe a receive action of a name or
+an abstraction. Select and branch prefixed processes can trigger select
+and branch actions respectively. The LTS is closed under the name creation
+operator provided that the restricted name does not occur free in the LTS action.
+If the restricted name occurs free in the LTS action then we observe a bound name
+action and the continuation process performs scope opening. Similarly the LTS 
+is closed on the parallel operator provided that the LTS action does not shared
+any bound names with parallel processes. If two parallale processes can perform
+dual actions then the two actions can synchronise to observe an internal transition.
+Finally the LTS is closed under structural congruence.
+
+
+\paragraph{Labeled Transition System for Typed Environments}
+
+We define a relation
+$((\Gamma, \Lambda_1, \Sigma_1), \lambda, (\Gamma, \Lambda_2, \Sigma_2)) \in R$
+over type tuples, that allows us to follow the progress of types over actions $\lambda$.
+
+\input{figures/fig-envLTS}
+
+\dk{describe env LTS}
+
+\paragraph{Typed Transition System}
+
+The transition system over processes is defined as a combination
+of the untyped LTS and the LTS for typed environments:
+
+\begin{definition}[Typed Transition System]\rm
+	We write $\Gamma; \emptyset; \Sigma_1 \proves P_1 \hastype \Proc \by{\lambda} \Gamma; \emptyset; \Sigma_1 \proves P_2 \hastype \Proc$
+	whenever:
+	\begin{itemize}
+		\item	$P_1 \by{\lambda} P_2$.
+		\item	$(\Gamma, \emptyset, \Sigma_1) \by{\lambda} (\Gamma, \emptyset, \Sigma_2)$.
+	\end{itemize}
+\end{definition}
+
+For notational convenience we can write
+$\Gamma; \emptyset; \Sigma_1 \by{\lambda} \Sigma_2 \proves P_1 \by{\lambda} P_2$,
+instead of $\Gamma; \emptyset; \Sigma_1 \proves P_1 \hastype \Proc \by{\lambda} \Gamma; \emptyset; \Sigma_1 \proves P_2 \hastype \Proc$.
+We extend to $\By{}$ and $\By{\hat{\lambda}}$ in the \dk{standard way}.
+
+The next invariant clarifies the soundness of the
+typed transition system.
+
+\begin{lemma}[Invariant]
+	\begin{itemize}
+		\item	If $\Gamma; \emptyset; \Sigma_1 \proves P_1 \hastype \Proc$ and
+			$P_1 \by{\lambda} P_2$ and $(\Gamma; \emptyset; \Sigma_1) \by{\lambda} (\Gamma; \emptyset; \Sigma_2)$
+			then $\Gamma; \emptyset; \Sigma_2 \proves P_2 \hastype \Proc$.
+	\end{itemize}
+\end{lemma}
+
+\begin{proof}
+	\dk{TODO}
+\end{proof}
+
+\subsection{Behavioural Semantics}
+
+We use the typed labelled transition semantics to define
+a set of relations over typed processes that allow us to compare
+typed processes over a notion of observational equivalence.
+
+
+We begin with a definition of a notion of confluence
+over session environments $\Sigma$:
+\begin{definition}[Session Environment Confluence]\rm
+	We denote $\Sigma_1 \bistyp \Sigma_2$ whenever $\exists \Sigma$ such that
+	$\Sigma_1 \red^* \Sigma$ and $\Sigma_2 \red^* \Sigma$.
+\end{definition}
+
+%\jp{The following definition is a bit too "loose". Need to add conditions on $\Sigma_1,\Sigma_2$, and a better notation not involving the empty $\Lambda$.}
+
+A typed relation is a relation over typed programs:
+
+\begin{definition}[Typed Relation]\rm
+	We say that
+	$\Gamma; \emptyset; \Sigma_1 \proves P_1 \hastype \Proc\ R\ \Gamma; \emptyset; \Sigma_2 \proves P_2 \hastype \Proc$
+	is a typed relation whenever
+	\begin{itemize}
+		\item	$P_1$ and $P_2$ are programs.
+		\item	$\Sigma_1$ and $\Sigma_2$ are well typed.
+		\item	$\Sigma_1 \bistyp \Sigma_2$.
+	\end{itemize}
+\end{definition}
+
+We require that relate only programs (i.e.\ processes with no free variables) with
+well typed session environments and furthermore we require that two related processes
+have confluent session environments.
+
+For notational convenience we write $\Gamma; \emptyset; \Sigma_1\ R\ \Sigma_2 \proves P_1\ R\ P_2$
+for expressing the typed relation $\Gamma; \emptyset; \Sigma_1 \proves P_1 \hastype \Proc\ R\ \Gamma; \emptyset; \Sigma_2 \proves P_2 \hastype \Proc$.
+
+We define the notions of barb and typed barb.
+
+\begin{definition}[Barbs]\rm
+	Let program $P$.
+	\begin{enumerate}
+%		\item	We write $P \barb{s}$ if $P \scong \newsp{\tilde{s}}{\bout{s}{\abs{x} P_1} P_2 \Par P_3}, s \notin \tilde{s}$.
+%			We write $P \Barb{s}$ if $P \red^* \barb{s}$.
+
+		\item	We write $P \barb{s}$ if $P \scong \newsp{\tilde{s}}{\bout{s}{V} P_2 \Par P_3}, s \notin \tilde{s}$.
+			We write $P \Barb{s}$ if $P \red^* \barb{s}$.
+
+		\item	We write $\Gamma; \emptyset; \Sigma \proves P \barb{s}$ if
+			$\Gamma; \emptyset; \Sigma \proves P \hastype \Proc$ with $P \barb{s}$ and $\dual{s} \notin \Sigma$.
+			We write $\Gamma; \emptyset; \Sigma \proves P \Barb{s}$ if $P \red^* P'$ and
+			$\Gamma; \emptyset; \Sigma' \proves P' \barb{s}$.			
+	\end{enumerate}
+\end{definition}
+
+A barb $\barb{s}$ is an observable on an output prefix with subject $s$.
+Similarly a weak barb $\Barb{s}$ is a barb after a number of reduction steps.
+Typed barbs $\barb{s}$ (resp.\ $\Barb{s}$)
+happen on typed processes $\Gamma; \emptyset; \Sigma \proves P \hastype \Proc$
+where we require that the corresponding dual endpoint $\dual{s}$ is not present
+in the session type $\Sigma$.
+
+We define the notion of the context:
+
+\begin{definition}[Context]\rm
+	$C$ is a context defined on the grammar:
+
+	\begin{tabular}{rcl}
+		$C$ &$=$& $\hole \bnfbar P \bnfbar \bout{k}{V} C \bnfbar \binp{k}{X} C \bnfbar \binp{k}{x} C \bnfbar \news{s} C \bnfbar C \Par C \bnfbar \bsel{k}{l} C \bnfbar \bbra{k}{l_i:C_i}_{i \in I}$
+	\end{tabular}
+	Notation $\context{C}{P}$ replaces every $\hole$ in $C$ with $P$.
+\end{definition}
+
+A context is a function that takes a process and returns a new process
+according to the above syntax.
+
+%We extend the notion of context to the notion of typed context:
+%\begin{definition}[Typed Context]
+%	Let program $\Gamma; \emptyset; \Sigma \proves P \hastype \Proc$ then	
+%\end{definition}
+
+The first equivalence relation we define is reduction-closed, barbed congruence:
+\begin{definition}[Reduction-closed, Barbed Congruence]\rm
+	Typed relation $\Gamma; \emptyset; \Sigma_1\ R\ \Sigma \proves P_1 \ R\ P_2$ is a barbed congruence
+	whenever:
+	\begin{enumerate}
+		\item
+		\begin{itemize}
+			\item	If $P_1 \red P_1'$ then $\exists P_2', P_2 \red^* P_1'$ and $\Gamma; \emptyset; \Sigma_1' \proves P_1'\ R\ \Gamma; \emptyset; \Sigma_2' \proves P_2' \hastype \Proc$.
+			\item	If $P_2 \red P_2'$ then $\exists P_1', P_1 \red^* P_1'$ and $\Gamma; \emptyset; \Sigma_1' \proves P_1'\ R\ \Gamma; \emptyset; \Sigma_2' \proves P_2' \hastype \Proc$.
+		\end{itemize}
+		\item
+		\begin{itemize}
+			\item	If $\Gamma;\emptyset;\Sigma \proves P_1 \barb{s}$ then $\Gamma;\emptyset;\Sigma \proves P_2 \Barb{s}$.
+			\item	If $\Gamma;\emptyset;\Sigma \proves P_2 \barb{s}$ then $\Gamma;\emptyset;\Sigma \proves P_1 \Barb{s}$.
+		\end{itemize}
+		\item	$\forall C, \Gamma; \emptyset; \Sigma_1'\ R\ \Sigma_2' \proves \context{C}{P_1}\ R\ \context{C}{P_2}$.
+	\end{enumerate}
+	The largest such congruence is denoted with $\cong$.
+\end{definition}
+
+Reduction-closed, barbed congruence has closed reduction semantics and 
+preserves barbs under any context. In a sense no barb observer can distinguish
+between two related processes.
+
+We can use a session type to define the simplest process that is typed
+under the given session type.
+\begin{definition}[Simple Process]
+	Let session type $S$ then we define a process $\map{S}^{x}$:
+	\[
+	\begin{array}{l}
+		\map{\tinact}^{x} = \inact \qquad \map{\btinp{S'} S}^{x} = \binp{x}{y} (\map{S}^{x} \Par \map{S'}^{y}) \qquad
+		\map{\btout{U} S}^{x} = \binp{x}{\dk{\map{U}}} \map{S}^{x}\\
+		\map{\btsel{l : S}}^{x} = \bsel{x}{l} \map{S}^{x} \qquad \map{\btbra{l_i: S_i}_{i \in I}}^{x} = \bbra{x}{l_i: \map{S_i}^{x}}_{i \in I}\\
+		\map{\tvar{t}}^{x} = \rvar{T} \qquad \map{\trec{t}{S}}^{x} = \recp{T}{\map{S}^{x}}
+	\end{array}
+	\] 
+\end{definition}
+
+The second equivalent relation is a bisimulation relation called
+contextual bisimulation:
+\begin{definition}[Contextual Bisimulation]\rm
+	Let typed relation $\mathcal{R}$ such that $\Gamma; \emptyset; \Sigma_1\ \mathcal{R}\ \Sigma_2 \proves P_1\ \mathcal{R}\ Q_1$.
+	$\mathcal{R}$ is a {\em contextual bisimulation} whenever:
+	\begin{enumerate}
+		\item	$\forall \news{\tilde{s}} \bactout{s}{\abs{x} P}$ such that
+			\[
+				\Gamma; \emptyset; \Sigma_1 \by{\news{\tilde{s}} \bactout{s}{\abs{x} P}} \Sigma_1' \proves P_1 \by{\news{\tilde{s}} \bactout{s}{\abs{x} P}} P_2
+			\]
+			$\exists Q_2, \abs{x}{Q}$ such that
+			\[
+				\Gamma; \emptyset; \Sigma_2 \By{\news{\tilde{s'}} \bactout{s}{\abs{x} Q}} \Sigma_2' \proves Q_1 \By{\news{\tilde{s'}} \bactout{s}{\abs{x} Q}} Q_2
+			\]
+			and $\forall C, s'$, %such that
+%			\begin{eqnarray*}
+%				\Gamma; \emptyset; \Sigma_1'' \proves \newsp{\tilde{s}}{P_2 \Par \context{C}{P \subst{s'}{x}}} \hastype \Proc \\
+%				\Gamma; \emptyset; \Sigma_2'' \proves \newsp{\tilde{s}}{Q_2 \Par \context{C}{Q \subst{s'}{x}}} \hastype \Proc
+%			\end{eqnarray*}
+			then
+			\[
+				\Gamma; \emptyset; \Sigma_1''\ \mathcal{R}\ \Sigma_2'' \proves \newsp{\tilde{s}}{P_2 \Par \context{C}{P \subst{s'}{x}}}\ \mathcal{R}\ 
+				\newsp{\tilde{s'}}{Q_2 \Par \context{C}{Q \subst{s'}{x}}}
+			\]
+		\item	$\forall \news{\tilde{s}} \bactout{s}{s_1}$ such that
+			\[
+				\Gamma; \emptyset; \Sigma_1 \by{\news{\tilde{s}} \bactout{s}{s_1}} \Sigma_1' \proves P_1 \by{\news{\tilde{s}} \bactout{s}{s_1}} P_2
+			\]
+			$\exists Q_2, s_2$ such that
+			\[
+				\Gamma; \emptyset; \Sigma_2 \By{\news{\tilde{s'}} \bactout{s}{s_2}} \Sigma_2' \proves Q_1 \By{\news{\tilde{s'}} \bactout{s}{s_2}} Q_2
+			\]
+			and $\forall R$ with $\set{x} = \fn{R}$, %such that
+%			\begin{eqnarray*}
+%				\Gamma; \emptyset; \Sigma_1'' \proves \newsp{\tilde{s}}{P_2 \Par \context{C}{P \subst{s'}{x}}} \hastype \Proc \\
+%				\Gamma; \emptyset; \Sigma_2'' \proves \newsp{\tilde{s}}{Q_2 \Par \context{C}{Q \subst{s'}{x}}} \hastype \Proc
+%			\end{eqnarray*}
+			then
+			\[
+				\Gamma; \emptyset; \Sigma_1''\ \mathcal{R}\ \Sigma_2'' \proves \newsp{\tilde{s}}{P_2 \Par R \subst{s_1}{x}}\ \mathcal{R}\ 
+				\newsp{\tilde{s'}}{Q_2 \Par R \subst{s_2}{x}}
+			\]
+
+		\item	$\forall \lambda \notin \set{\news{\tilde{s}} \bactout{s}{s'}, \news{\tilde{s}} \bactout{s}{\abs{x} P}}s$ such that
+			\[
+				\Gamma; \emptyset; \Sigma_1 \by{\lambda} \Sigma_1' \proves P_1 \by{\lambda} P_2
+			\]
+			$\exists Q_2$ such that 
+			\[
+				\Gamma; \emptyset; \Sigma_2 \by{\lambda} \Sigma_2' \proves Q_1 \By{\hat{\lambda}} Q_2
+			\]
+			and
+			$\Gamma; \emptyset; \Sigma_1\ \mathcal{R}\ \Sigma_2 \proves P_2\ \mathcal{R}\ Q_2$.
+
+		\item	The symmetric cases of 1, 2 and 3.
+	\end{enumerate}
+	The Knaster Tarski theorem ensures that the largest contextual bisimulation exists and is denoted by $\wb^c$.
+\end{definition}
+
