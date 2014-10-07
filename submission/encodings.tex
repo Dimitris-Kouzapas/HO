@@ -118,10 +118,13 @@ Encoding composition is closed on the above properties.
 \subsection{List of Languages Under Consideration}
 We consider the following variants of \HOp:
 \begin{enumerate}[-]
+\item \pHOp: \HOp with polyadicity (name passing and name abstraction/application).
+\item \pHOpnr: the finite variant of \pHOp 
 \item \sesp: the first and third lines of the syntax of processes in Fig.~\ref{fig:syntax} (first-order, monadic communication).
 \item \HO: the second and third lines of the syntax of processes in Fig.~\ref{fig:syntax} (pure higher-order, monadic communication).
 \item \sespnr: the finite sub-calculus of \sesp, i.e., name passing without recursion.
 \item \psesp: the variant of \sesp with polyadic communication.
+\item \psespnr: the finite variant of \psesp with polyadic communication.
 \end{enumerate}
 \noindent
 In the following we write $\pmap{\cdot}{i}$
@@ -359,15 +362,17 @@ ensures no race conditions, thus the encoding is sound.
 The encoding of the polyadic $\sesp$ semantics is as simple as the
 composition of the two former encodings.
 
-\begin{definition}[Encoding from $\sesp^{p-\mu}$ to $\HO$]
-	We define $\encod{\cdot}{\cdot}{3}: \sesp^{p-\mu} \longrightarrow \HO$
+\begin{definition}[Encoding from $\psespnr$ to $\HO$]
+	We define $\encod{\cdot}{\cdot}{3}: \psespnr \longrightarrow \HO$
 	as $\encod{\cdot}{\cdot}{3} = \encod{\cdot}{\cdot}{1} \cat \encod{\cdot}{\cdot}{2}$.	
 \end{definition}
 
-Next we give the encoding from $\HOp$ with polyadic abstraction to
-$\HOp^{p}$.
+So far we have consider name abstractions and applications which are \emph{monadic}.
+We now consider the \emph{polyadic} extension of these constructs, %name abstractions and applications.
+written $\abs{x_1, \ldots, x_n} P$ and $\appl{X}{k_1, \ldots, k_n}$, respectively.
+Next we give the encoding from $\HOp$ with polyadic name abstraction to $\HOp^{p}$.
 
-\begin{definition}[Encoding from $\HOp^{pa-\mu}$ to $\HO^{p}$]
+\begin{definition}[Encoding from $\pHOpnr$ to $\pHOp$]
 
 	\begin{tabular}{lcl}
 		$\map{\bout{k}{\abs{\tilde{x}} P_1} P_2}^4$ &$\defeq$& $\bout{k}{\abs{z} \binp{z}{\tilde{x}} \map{P_1}^4} \map{P_2}^4$\\
@@ -381,7 +386,7 @@ of $\HOp^{pa-\mu}$ to $\HO$.
 
 \begin{definition}[Encoding from $\HOp^{pa-\mu}$ to $\HO$]
 	We define $\encod{\cdot}{\cdot}{5}: \HOp^{pa-\mu} \longrightarrow \HO$
-	as $\encod{\cdot}{\cdot}{5} = \encod{\cdot}{\cdot}{4} \cat \encod{\cdot}{\cdot}{5}$.	
+	as $\encod{\cdot}{\cdot}{5} = \encod{\cdot}{\cdot}{4} \cat \encod{\cdot}{\cdot}{3}$.	
 \end{definition}
 
 Encoding the $\sesp$ recursive operation requires to follow the fundamental
