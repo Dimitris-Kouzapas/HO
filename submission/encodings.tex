@@ -134,59 +134,6 @@ for mappings of processes and types, respectively.
 Since we always consider variants and fragments of \HOp, the 
  reduction semantics $\red$, the typed behavioral equivalence $\wb$, and the type system $\proves$ are the same for all languages.
 
-\subsection{Polyadic Variances}
-
-Polyadicity is one of the first extensions that were proposed
-for the $\pi$-calculus \dk{\cite{}}. A polyadic semantics is convenient because it allow us to pass 
-a tuple of messages (rather than a single message) in each synchronization.
-In \HOp, polyadicity shows up in intra-session (linear) communication, but also in abstractions/applications. 
-Polyadicity is shown to be encodable in the monadic case and it is broadly studied
-and established as a sound semantic approach.
-In the context of session types polyadic communication
-has an {\em easier} encoding than in the $\pi$-calculus,
-due to the linearity of the session endpoints, \cite{VascoFun}.
-
-We are going to use the fact that polyadicity is well established
-to simplify our presentation in the rest of the paper.
-Below we define polyadicity as a syntax transformation (rather than as a typed encoding) since we have not
-formally introduced syntax, semantics, and types for $\HOp$ with polyadic communication.\footnote{
-The definition of the semantics for polyadicity would add a complication
-factor to the presentation of this paper which is not our intention,
-although they would add clarity to the results presented.
-Instead we are relying our results on the fact that polyadic semantics are well
-studied and established}
-Because of this transformation, we are able to focus our theory on monadic processes, and rely on polyadic constructs simply as syntactic sugar.
-
-\begin{definition}[Polyadic mapping]
-We define the mapping $\auxmap{\cdot}{\mathsf{p}}:\pHOp \to \HOp$ as
-\[
-	\begin{array}{rcl}
-			\auxmap{\bout{k}{k'_1, \cdots, k'_n} P}{\mathsf{p}} &\defeq& \bout{k}{k'_1} \cdots ;  \bout{k}{k'_n} \auxmap{P}{\mathsf{p}}\\
-			\auxmap{\binp{k}{x_1, \cdots, x_n} P}{\mathsf{p}} &\defeq& \binp{k}{x_1} \cdots ; \binp{k}{x_n}  \auxmap{P}{\mathsf{p}} \\
-%			\map{\bout{k}{\abs{\tilde{x}} P_1} P_2}^{p} &\defeq& \bbout{k}{\abs{z}\map{\binp{z}{\tilde{x}} P_1}^{p}} \map{P_2}^{p}\\
-%			\map{\appl{X}{\tilde{k}}}^{p}  &\defeq& \newsp{s}{\appl{X}{s} \Par \map{\bout{\dual{s}}{\tilde{k}} \inact}^{p}} \\
-			\auxmap{\bbout{k}{\abs{x_1, \cdots, x_n} Q} P}{\mathsf{p}} &\defeq& \bbout{k}{\abs{z}\binp{z}{x_1} \cdots ; \binp{z}{x_n}\auxmap{Q}{\mathsf{p}}} \auxmap{P}{\mathsf{p}}\\
-			\auxmap{\appl{X}{k_1, \cdots, k_n}}{\mathsf{p}}  &\defeq& \newsp{s}{\appl{X}{s} \Par \bout{\dual{s}}{k_1} \cdots ; \bout{\dual{s}}{k_n} \inact}^{p}
-	\end{array}
-	\]
-	and as an homomorphism for the remaining constructs in \pHOp. 
-	%\jp{I prefer to be explicit in the encoding of polyadic abstraction/applications. Previous version is commented.}
-\end{definition}
-
-Passing a list of names over session channels is established
-with a corresponding list of sequential send (resp. receive) prefixes.
-When we are dealing with an abstraction over a list of bound variables,
-then we create a new abstraction name and we use it to receive in a polyadic
-way the list of names on the abstraction. Similarly application will instantiate
-the abstraction subject with a new session name and will use it 
-to send the list of names that are going to be applied on the abstraction.
-Note that we do not allow polyadic mapping on shared names.
-The polyadic mapping, as presented here, is sound only on session names.
-The semantics might break if we apply this mapping on shared names.
-
-%\begin{proposition}
-%	$\Gamma; \emptyset; \Sigma \proves \map{P}^{p} \hastype \Proc$
-%\end{proposition}
 
 
 \subsection{Encoding \sespnr  into \HO}
@@ -444,6 +391,61 @@ For soundness, it suffices to notice that the encoding does not add new visible 
 %	as $\encod{\cdot}{\cdot}{5} = \encod{\cdot}{\cdot}{4} \cat \encod{\cdot}{\cdot}{3}$.	
 %\end{definition}
 
+\subsection{ \HOp with Polyadic Communication (\pHOp)}
+In the extension of \HOp with 
+polyadic
+communication, denoted \pHOp, 
+%ity is one of the first extensions that were proposed
+%for the $\pi$-calculus \dk{\cite{}}. A polyadic semantics 
+one may pass in each synchronization 
+a tuple of values of length $n$, rather than a just single value.
+Thus, e.g., for $n = 2$ one would have 
+\begin{eqnarray*}
+\bout{s}{s_1, s_2} P \Par \binp{\dual{s}}{x_1,x_2} Q  & \red &  P \Par Q \subst{s_1, s_2}{x_1,x_2} \\
+\bout{s}{\abs{x_1, x_2}{P_1}} P \Par \binp{\dual{s}}{\X} Q & \red & P \Par Q \subst{\abs{x_1,x_2}{P_1}}{\X}
+\end{eqnarray*}
+with $\appl{X}{k_1,k_2} \subst{\abs{x_1,x_2}{Q}}{\X}  =  Q \subst{k_1,k_2}{x_1,x_2} $.
+Thus, 
+\pHOp features tuple passing in intra-session (linear) communication, but also in abstractions/applications. 
+In the untyped $\pi$-calculus, polyadic communication can be encoded into monadic name passing 
+simply by performing $n$ monadic synchronizations on a fresh channel. 
+In session-typed $\pi$-calculi this encoding is even simpler, 
+thanks to the linearity of session endpoints~\cite{VascoFun}.
+The extension of the (monadic) session type system given in Section X to handle polyadic communication is straightforward and follow expected lines. For this reason, we do not present a typing system for \pHOp in full detail; rather, we shall define a syntactic transformation of \pHOp into \HOp, rather than as a typed encoding.\footnote{The definition of a polyadic semantics would only add visual clutter to our presentation, as all results extend easily from monadic to polyadic communication.}
+Because of this transformation, denoted  $\auxmap{\cdot}{\mathsf{p}}$, we are able to focus on monadic session processes, and rely on polyadic constructs simply as convenient syntactic sugar. In fact, we shall rely on polyadicity to encode recursive behaviors.
+
+\begin{definition}[Polyadic Into Monadic]Define the mapping $\auxmap{\cdot}{\mathsf{p}}:\pHOp \to \HOp$ as
+\[
+	\begin{array}{rcl}
+			\auxmap{\bout{k}{k'_1, \cdots, k'_n} P}{\mathsf{p}} &\defeq& \bout{k}{k'_1} \cdots ;  \bout{k}{k'_n} \auxmap{P}{\mathsf{p}}\\
+			\auxmap{\binp{k}{x_1, \cdots, x_n} P}{\mathsf{p}} &\defeq& \binp{k}{x_1} \cdots ; \binp{k}{x_n}  \auxmap{P}{\mathsf{p}} \\
+%			\map{\bout{k}{\abs{\tilde{x}} P_1} P_2}^{p} &\defeq& \bbout{k}{\abs{z}\map{\binp{z}{\tilde{x}} P_1}^{p}} \map{P_2}^{p}\\
+%			\map{\appl{X}{\tilde{k}}}^{p}  &\defeq& \newsp{s}{\appl{X}{s} \Par \map{\bout{\dual{s}}{\tilde{k}} \inact}^{p}} \\
+			\auxmap{\bbout{k}{\abs{x_1, \cdots, x_n} Q} P}{\mathsf{p}} &\defeq& \bbout{k}{\abs{z}\binp{z}{x_1} \cdots ; \binp{z}{x_n}\auxmap{Q}{\mathsf{p}}} \auxmap{P}{\mathsf{p}}\\
+			\auxmap{\appl{X}{k_1, \cdots, k_n}}{\mathsf{p}}  &\defeq& \newsp{s}{\appl{X}{s} \Par \bout{\dual{s}}{k_1} \cdots ; \bout{\dual{s}}{k_n} \inact}
+	\end{array}
+	\]
+	and as an homomorphism for the remaining constructs in \pHOp. 
+	%\jp{I prefer to be explicit in the encoding of polyadic abstraction/applications. Previous version is commented.}
+\end{definition}
+
+Passing a list of names over session channels is established
+with a corresponding list of sequential send (resp. receive) prefixes.
+When we are dealing with an abstraction over a list of bound variables,
+then we create a new abstraction name and we use it to receive in a polyadic
+way the list of names on the abstraction. Similarly application will instantiate
+the abstraction subject with a new session name and will use it 
+to send the list of names that are going to be applied on the abstraction.
+Note that we do not allow polyadic mapping on shared names.
+The polyadic mapping, as presented here, is sound only on session names.
+%The semantics might break if we apply this mapping on shared names.
+
+%\begin{proposition}
+%	$\Gamma; \emptyset; \Sigma \proves \map{P}^{p} \hastype \Proc$
+%\end{proposition}
+
+
+
 \subsection{Encoding Recursion}
 Encoding the $\sesp$ recursive operation requires to follow the fundamental
 principle of copying the process that needs to exhibit recursive behaviour.
@@ -458,7 +460,7 @@ of the above process would be:
 \[
 	\bout{a}{s} \inact \Par \recp{X}{\binp{a}{x} \bout{x}{v} (\bout{a}{x} \inact \Par \rvar{X})} \red \bout{s}{v} (\bout{a}{s} \inact \Par \recp{X}{\binp{a}{x} \bout{x}{v} (\bout{a}{x} \inact \Par \rvar{X}))}
 \]
-Endpoint $s$ is being passed sequentialy on copies of the 
+Endpoint $s$ is being passed sequentially on copies of the 
 same process to achieve the effect of infinite sending of value $v$.
 If we apply the same principles on higher order semantics we get:
 \[
@@ -472,7 +474,7 @@ If we apply the same principles on higher order semantics we get:
 \]
 In the above encoding the abstraction
 $$(z) \bout{s}{v} \binp{z}{X} \newsp{s_2}{\appl{X}{s_2} \Par \bout{\dual{s_2}}{(z) \appl{X}{z} } \inact}$$
-has a linear type due to the free occurence of the session channel $s$.
+has a linear type due to the free occurrence of the session channel $s$.
 But when passed, the latter abstraction is applied in a shared manner, i.e.\ two
 copies of the abstraction are instantiated, thus the whole
 encoding is untypable. The untypability problem would not exist
@@ -640,9 +642,9 @@ processes we end up with the following naive encoding:
 \begin{definition}[From $\HO$ to $\sesp$. Naive approach]
 
 	\begin{tabular}{lcl}
-		$\map{\bout{k}{\abs{x} P_1} P_2}^{8}$ &$\defeq$& $ \newsp{s}{\bout{k}{s} (\map{P_2}^8 \Par \binp{\dual{s}}{x} \map{P_1}^8)} $\\
-		$\map{\binp{k}{X} P}^{8}$ &$\defeq$& $\binp{s}{x} \map{P}^8$\\
-		$\map{\appl{X}{k}}^8$ &$\defeq$& $\bout{x}{k} \inact$
+		$\map{\bout{k}{\abs{x} P_1} P_2}^{3}$ &$\defeq$& $ \newsp{s}{\bout{k}{s} (\map{P_2}^3 \Par \binp{\dual{s}}{x} \map{P_1}^3)} $\\
+		$\map{\binp{k}{X} P}^{3}$ &$\defeq$& $\binp{s}{x} \map{P}^3$\\
+		$\map{\appl{X}{k}}^3$ &$\defeq$& $\bout{x}{k} \inact$
 	\end{tabular}
 \end{definition}
 
