@@ -137,14 +137,13 @@ Since we always consider variants and fragments of \HOp, the
 \subsection{Polyadic Variances}
 
 Polyadicity is one of the first extensions that were proposed
-for the $\pi$-calculus, \dk{\cite{}}. We call polyadic semantics,
-the semantics of a $\pi$-calculus that allow us to pass as a
-message, a list of names rather than a single name.
-Polyadicity is shown to be
-encodable in the monadic case and it is broadly studied
+for the $\pi$-calculus \dk{\cite{}}. A polyadic semantics is convenient because it allow us to pass 
+a tuple of messages (rather than a single message) in each synchronization.
+In \HOp, polyadicity shows up in intra-session (linear) communication, but also in abstractions/applications. 
+Polyadicity is shown to be encodable in the monadic case and it is broadly studied
 and established as a sound semantic approach.
 In the context of session types polyadic communication
-has an {\em easier} encoding than in $\pi$-calculus,
+has an {\em easier} encoding than in the $\pi$-calculus,
 due to the linearity of the session endpoints, \cite{VascoFun}.
 
 We are going to use the fact that polyadicity is well established
@@ -158,23 +157,18 @@ Instead we are relying our results on the fact that polyadic semantics are well
 studied and established}:
 
 \begin{definition}[Polyadic mapping]
-	We write $\map{\cdot}^{p}:\pHOp \to \HOp$ whenever
-
-	\begin{tabular}{rcl}
-%		\begin{tabular}{l}
-			$\map{\bout{k}{k'_1, \cdots, k'_n} P}^{p}$ &$\defeq$& $\bout{k}{k'_1} \cdots ;  \bout{k}{k'_n} \pmap{P}{p}$\\
-			$\map{\binp{k}{x_1, \cdots, x_n} P}^{p}$ &$\defeq$& $\binp{k}{x_1} \cdots ; \binp{k}{x_n}  \pmap{P}{p}$ \\
-			$\map{\bout{k}{\abs{\tilde{x}} P_1} P_2}^{p}$ &$\defeq$& $\bout{k}{\abs{z}\map{\binp{z}{\tilde{x}} P_1}^{p}} \map{P_2}^{p}$\\
-			$\map{\appl{X}{\tilde{k}}}^{p}$ &$\defeq$& $\newsp{s}{\appl{X}{s} \Par \map{\bout{\dual{s}}{\tilde{k}} \inact}^{p}}$
-%			$\tmap{\btout{S_1, \cdots, S_n} S}{2} \defeq \bbtout{\tmap{S_1}{2}} \cdots; \bbtout{\tmap{S_n}{2}} \tmap{S}{2}$\\
-%			$\tmap{\btinp{S_1, \cdots, S_n} S}{2} \defeq \bbtinp{\tmap{S_1}{2}} \cdots; \bbtinp{\tmap{S_n}{2}} \tmap{S}{2}$
-%		\end{tabular}
-%		& \quad &
-%		\begin{tabular}{l}
-%			$\tmap{\btout{S_1 \cat \tilde{S}} S}{2} \defeq \btout{S_1} \tmap{\btout{\tilde{S}} S}{2}$\\
-%			$\tmap{\btinp{S_1 \cat \tilde{S}} S}{2} \defeq \btinp{S_1} \tmap{\btinp{\tilde{S}} S}{2}$
-%		\end{tabular}
-	\end{tabular}
+We define the mapping $\map{\cdot}^{p}:\pHOp \to \HOp$ as
+\[
+	\begin{array}{rcl}
+			\map{\bout{k}{k'_1, \cdots, k'_n} P}^{p} &\defeq& \bout{k}{k'_1} \cdots ;  \bout{k}{k'_n} \pmap{P}{p}\\
+			\map{\binp{k}{x_1, \cdots, x_n} P}^{p} &\defeq& \binp{k}{x_1} \cdots ; \binp{k}{x_n}  \pmap{P}{p} \\
+%			\map{\bout{k}{\abs{\tilde{x}} P_1} P_2}^{p} &\defeq& \bbout{k}{\abs{z}\map{\binp{z}{\tilde{x}} P_1}^{p}} \map{P_2}^{p}\\
+%			\map{\appl{X}{\tilde{k}}}^{p}  &\defeq& \newsp{s}{\appl{X}{s} \Par \map{\bout{\dual{s}}{\tilde{k}} \inact}^{p}} \\
+			\map{\bbout{k}{\abs{x_1, \cdots, x_n} Q} P}^{p} &\defeq& \bbout{k}{\abs{z}\binp{z}{x_1} \cdots ; \binp{z}{x_n}\map{Q}^{p}} \map{P}^{p}\\
+			\map{\appl{X}{k_1, \cdots, k_n}}^{p}  &\defeq& \newsp{s}{\appl{X}{s} \Par \bout{\dual{s}}{k_1} \cdots ; \bout{\dual{s}}{k_n} \inact}^{p}
+	\end{array}
+	\]
+	and as an homomorphism for the remaining constructs in \pHOp. \jp{I prefer to be explicit in the encoding of polyadic abstraction/applications. Previous version is commented.}
 \end{definition}
 
 Passing a list of names over session channels is established
@@ -448,6 +442,7 @@ For soundness, it suffices to notice that the encoding does not add new visible 
 %	as $\encod{\cdot}{\cdot}{5} = \encod{\cdot}{\cdot}{4} \cat \encod{\cdot}{\cdot}{3}$.	
 %\end{definition}
 
+\subsection{Encoding Recursion}
 Encoding the $\sesp$ recursive operation requires to follow the fundamental
 principle of copying the process that needs to exhibit recursive behaviour.
 The primitive recursor operation creates copies of a process and uses them
@@ -466,7 +461,7 @@ same process to achieve the effect of infinite sending of value $v$.
 If we apply the same principles on higher order semantics we get:
 \[
 	\begin{array}{l}
-	\newsp{s_1}{\bout{s_1}{(z) \bout{s}{v} \binp{z}{X} \newsp{s_2}{\appl{X}{s_2} \Par \bout{\dual{s_2}}{(z) \appl{X}{z} } \inact} } \inact \Par \binp{\dual{s_1}}{X} \newsp{s_3}{\appl{X}{s_3} \Par \bout{\dual{s_3}}{(z) \appl{X}{z}} \inact } }
+	\newsp{s_1}{\bbout{s_1}{(z) \bout{s}{v} \binp{z}{X} \newsp{s_2}{\appl{X}{s_2} \Par \bout{\dual{s_2}}{(z) \appl{X}{z} } \inact} } \inact \Par \binp{\dual{s_1}}{X} \newsp{s_3}{\appl{X}{s_3} \Par \bout{\dual{s_3}}{(z) \appl{X}{z}} \inact } }
 		\\
 		\red
 		\\
@@ -501,16 +496,32 @@ principle as the name passing discipline.
 
 A preliminary tool to encode the $\sesp$ recursion primitives would be to
 provide a mapping from processes to processes with no free names.
-%
-\begin{definition}
+We require some auxiliary definitions. 
+Let $\vmap{\cdot}: 2^{\mathcal{N}} \longrightarrow \mathcal{V}^\omega$
+be a map of names to variables. 
+Also, let 
+$\smap{\cdot}: 2^{\mathcal{N}} \longrightarrow \mathcal{N}^\omega$ be a map which 
+orders lexicographically a set of names. 
+We define $\vmap{\cdot}$ and $\smap{\cdot}$ as follows:
+\[
+	\begin{array}{rcl}
+		\vmap{s} & = & x_s \\
+		\vmap{s \cat \tilde{s}} &=& x_s \cat \vmap{\tilde{s}}\\
+		\smap{\set{s_i}_{i \in I}} &=& \svmap{\smap{\set{s_i}_{i \in I}}}
+	\end{array}
+\]
+Intuitively, the following process mapping rewrites free session names into variables for abstractions:
+\jp{Not sure the ordering mapping is properly defined - I have messed up some command name. Below, what are $L_{\HOp}$, $L_{\HOp}$??}
+\begin{definition}\label{d:trabs}
+   Let $\sigma$ be a set of session names.
 	Define $\map{\cdot}^{\sigma}: L_{\HOp} \to L_{\HOp}$  as follows
 	\[
 	\begin{array}{rcll}
 		\map{\bout{s}{\abs{x} P'} P}^{\sigma} &\bnfis&
 		\left\{
 		\begin{array}{rl}
-			\bout{x_s}{\abs{\vmap{x, \fn{P}}} \map{P'}^{\es}} \map{P}^{\sigma} & s \notin \sigma\\
-			\bout{s}{\abs{\vmap{x, \fn{P}}} \map{P'}^{\es}} \map{P}^{\sigma} & s \in \sigma
+			\bbout{x_s}{\abs{\vmap{x, \fn{P}}} \map{P'}^{\es}} \map{P}^{\sigma} & s \notin \sigma\\
+			\bbout{s}{\abs{\vmap{x, \fn{P}}} \map{P'}^{\es}} \map{P}^{\sigma} & s \in \sigma
 		\end{array}
 		\right.
 		\\
@@ -539,7 +550,6 @@ provide a mapping from processes to processes with no free names.
 		\end{array}
 		\right.
 		\\
-
 		\map{P_1 \Par P_2}^{\sigma} &\bnfis& \map{P_1}^{\sigma} \Par \map{P_2}^{\sigma} \\%& s \notin \sigma\\
 		\map{\news{s} P}^{\sigma} &\bnfis& \news{s} \map{P}^{\sigma\cat s}\\
 		\map{\inact}^{\sigma} &\bnfis& \inact\\
@@ -552,22 +562,20 @@ provide a mapping from processes to processes with no free names.
 		\right.
 	\end{array}
 \]
-where map $\smap{\cdot}: 2^{\mathcal{N}} \longrightarrow \mathcal{N}^\omega$
-orders lexicographically a set of names and map 
-$\vmap{\cdot}: 2^{\mathcal{N}} \longrightarrow \mathcal{V}^\omega$
-maps a set of names to variables:
-\[
-	\begin{array}{rcl}
-		\vmap{\set{s_i}_{i \in I}} &=& \svmap{\smap{\set{s_i}_{i \in I}}}\\
-		\svmap{s \cat \tilde{s}} &=& x_s \cat \svmap{\tilde{s}}\\
-		\svmap{s} & = & x_s
-	\end{array}
-\]
+
 \end{definition}
 
-
+\jp{Please check the following.} \\
+We may undo the transformation above by means of abstraction and application.
 \begin{proposition}
-	$\appl{X}{\smap{\fn{P}}} \subst{(\vmap{\fn{P}}) \map{P}^{\emptyset}}{X} \scong P$
+Let $P$ be a \HOp process with $N_P = \smap{\fn{P}}$.
+Let $A_P$ be the polyadic abstraction $\abs{\vmap{N_P}}\pmap{P}{\emptyset}$, where 
+$\pmap{P}{\emptyset}$ is obtained following Def.~\ref{d:trabs}.
+Then we have:
+$$
+P \scong \appl{X}{N_P}\subst{A_P}{X}
+$$
+%	$\appl{X}{\smap{\fn{P}}} \subst{(\vmap{\fn{P}}) \map{P}^{\emptyset}}{X} \scong P$
 \end{proposition}
 
 \begin{proof}
@@ -577,8 +585,8 @@ maps a set of names to variables:
 
 We are now ready to define the encoding of the $\sesp$ recursive
 operators:
-
-\begin{definition}[From $\sesp$ to $\HO$]
+\jp{Notice that this needs to be parametric on a set of names, $N$.}
+\begin{definition}[From $\sesp$ to $\pHOp$]
 	We define $\encod{\cdot}{\cdot}{2}: \sesp \to \HO$:
 \[
 \begin{array}{rcl}
