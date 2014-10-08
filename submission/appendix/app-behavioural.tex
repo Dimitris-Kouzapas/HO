@@ -155,6 +155,70 @@ We give the stratified  definitions:
 	bisimilarity relation $\wb = \bigcap_{i \geq 0} \wb_i$.
 \end{definition}
 
+We develop an auxiliary lemma used to prove
+the requirements of Theorem~\ref{the:coincidence}.
+
+\begin{lemma}\rm
+	\label{lem:aux}
+%	\begin{enumerate}
+		\item
+%		$\Gamma; \emptyset; \Sigma_1 \by{\bactout{s}{(x) P}} \Sigma_2 \proves P_1 \by{\bactout{s}{(x) P}} P_2$
+		implies that $\exists s'$ such that $\Gamma; \emptyset; \Sigma_1 \cat s': S \proves P_2 \Par P \subst{s'}{x}$
+%	\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+%	\noi Proof for part 1.
+
+	\noi We do an induction on the labelled transition system
+	to derivation for action $\bactout{s}{(x) P}$.
+	{\bf Basic Step: }
+
+	\noi $\bout{s}{(x) P} P_2 \by{\bactout{s}{(x) P}} P_2$ and
+	\[
+		\Gamma; \emptyset; \Sigma_1 \proves \bout{s}{(x) P} P_2 \hastype \Proc
+	\]
+	\noi Type rule $\trule{Send}$ implies
+	\begin{eqnarray}
+		\Gamma; \emptyset; \Sigma_1' &\proves& P_2 \hastype \Proc \label{lem:aux1}\\
+		\Gamma; \emptyset; \Sigma_1'' &\proves& (x) P \hastype U \label{lem:aux2} \\
+		\Sigma_1 &=& (\Sigma_1' \cup \Sigma_1'')\backslash s \cup \set{s: \btout{U} S}
+	\end{eqnarray}
+	\noi Rule $\trule{Abs}$ implies that from~\ref{lem:aux2} we get
+	\begin{eqnarray*}
+		\Gamma; \emptyset; \Sigma_1'' \cat x: S' \proves P \hastype \Proc
+	\end{eqnarray*}
+	\noi we apply the Substitution Lemma~\ref{aaa} to get that for fresh $s'$
+	\begin{eqnarray*}
+		\Gamma; \emptyset; \Sigma_1'' \cat s': S' \proves P\subst{s'}{x} \hastype \Proc
+	\end{eqnarray*}
+	\noi Finally we apply rule $\trule{Par}$ to~\ref{lem:aux1} and the latter judgement to get
+	\begin{eqnarray*}
+		\Gamma; \emptyset; \Sigma_1' \cup \Sigma_1'' \cat s': S' \proves P_2 \Par P\subst{s'}{x} \hastype \Proc
+	\end{eqnarray*}
+
+	\noi {\bf Induction step:}
+
+	\noi - Case: $Q \Par R \by{\bactout{s}{(x) P}} Q' \Par R$ and
+	\[
+		\Gamma; \emptyset; \Sigma_1 \proves Q \Par R \hastype \Proc
+	\]
+	\noi Type rule $\trule{Par}$ implies
+	\begin{eqnarray}
+		\Gamma; \emptyset; \Sigma_1' &\proves& Q \hastype \Proc\\
+		\Gamma; \emptyset; \Sigma_1'' &\proves& R \hastype \Proc \label{lem:aux3}
+	\end{eqnarray}
+	\noi From the induction hypothesis we get that 
+	\begin{eqnarray*}
+		\Gamma; \emptyset; \Sigma_2' \proves Q' \Par P \hastype \Proc
+	\end{eqnarray*}
+	we apply rule $\trule{Par}$ to the latter judgement and judgement~\ref{lem:aux3} to get
+	\begin{eqnarray*}
+		\Gamma; \emptyset; \Sigma_2' \cup \Sigma'' \proves Q' \Par R \Par P \hastype \Proc
+	\end{eqnarray*}
+
+	The rest of the cases enjoy similar argumentation.
+\end{proof}
 
 \begin{lemma}\rm
 	$\wbc\ \subseteq\ \wb$
@@ -247,7 +311,7 @@ We give the stratified  definitions:
 		\newsp{\tilde{s}}{Q' \Par Q_2 \subst{s'}{x}}
 	\end{eqnarray*}
 %
-	\dk{(prove that it is typable)}
+	\noi Lemma~\ref{lem:aux} ensures for the validity of the latter statement.
 
 	\noi If we apply the induction hypothesis to the latter statement we get
 %
@@ -330,79 +394,463 @@ We give the stratified  definitions:
 
 	\noi Same arguments with the same case of the direction $\wbc \subseteq \wb$
 
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 	\noi - Case: $\lambda = \news{\tilde{s}} \bactout{s}{\abs{x} P}$
 %
+	\begin{eqnarray}
+		\Gamma; \emptyset; \Sigma_1 \by{\news{\tilde{s}} \bactout{s}{\abs{x} P}} \Sigma_1' \proves P_1 \by{\news{\tilde{s}} \bactout{s}{\abs{x} P}} P_2 \label{lem:wb_is_wbc1}
+	\end{eqnarray}
+%
+	\noi implies that
+	$\exists Q_2, \abs{x}{Q}$ such that
+	\begin{eqnarray}
+		\Gamma; \emptyset; \Sigma_2 \By{\news{\tilde{s'}} \bactout{s}{\abs{x} Q}} \Sigma_2' \proves Q_1 \By{\news{\tilde{s'}} \bactout{s}{\abs{x} Q}} Q_2 \label{lem:wb_is_wbc2}
+	\end{eqnarray}
+%
+	\noi and $\forall s'$
+%	such that
+%	\begin{eqnarray*}
+%		\Gamma; \emptyset; \Sigma_1'' \proves \newsp{\tilde{s}}{P' \Par P \subst{s'}{x}} \hastype \Proc \\
+%		\Gamma; \emptyset; \Sigma_2'' \proves \newsp{\tilde{s}}{Q' \Par Q \subst{s'}{x}} \hastype \Proc
+%	\end{eqnarray*}
+%	then
 	\begin{eqnarray*}
-		\Gamma; \emptyset; \Sigma_1 \by{\news{\tilde{s}} \bactout{s}{\abs{x} P}} \Sigma_1' \proves P_1 \by{\news{\tilde{s}} \bactout{s}{\abs{x} P}} P_2
+		\Gamma; \emptyset; \Sigma_1''\ \wb_{n}\ \Sigma_2'' \proves \newsp{\tilde{s}}{P' \Par P \subst{s'}{x}}\ \wb_{n}\ 
+		\newsp{\tilde{s'}}{Q' \Par Q \subst{s'}{x}}
+	\end{eqnarray*}
+%
+	\noi Set
+%
+	\begin{eqnarray*}
+		\mathcal{R}_{n + 1} &=& \set{	(\Gamma; \emptyset; \Sigma_1 \proves \newsp{\tilde{s}}{\bout{s}{\abs{x}{\context{C}{P}}} P_2} \hastype \Proc,
+						\Gamma; \emptyset; \Sigma_2 \proves \newsp{\tilde{s'}}{\bout{s}{\abs{x}{\context{C}{Q}}} Q_2} \hastype \Proc) \setbar \forall C}
+	\end{eqnarray*}
+%
+	\dk{prove that $R_{n+1}$ is typable}
+
+	\noi $\mathcal{R}_{n+1}$ satisfies the stratified definition for the bisimulation 
+	because $\forall \news{\tilde{s}} \bactout{s}{(x) \context{C}{P}} $
+%
+	\begin{eqnarray*}
+		\Gamma; \emptyset; \Sigma_1 \by{\news{\tilde{s}} \bactbout{s}{(x) \context{C}{P}}} \Sigma_2'' \proves \newsp{\tilde{s}}{\bout{s}{\abs{x}{\context{C}{P}}} P_2} \by{\news{\tilde{s}} \bactbout{s}{(x) \context{C}{P}}} P_2
+	\end{eqnarray*}
+%
+	implies that $\exists Q_2, \context{C}{Q}$ such that
+%
+	\begin{eqnarray*}
+		\Gamma; \emptyset; \Sigma_1 \by{\news{\tilde{s'}} \bactbout{s}{(x) \context{C}{Q}}} \Sigma_2'' \proves \newsp{\tilde{s'}}{\bout{s}{\abs{x}{\context{C}{Q}}} Q_2} \by{\news{\tilde{s}} \bactbout{s}{(x) \context{C}{P}}} Q_2
+	\end{eqnarray*}
+%
+	\noi and $\forall s'$
+%	$\forall C, s'$
+%	such that
+%	\begin{eqnarray*}
+%		\Gamma; \emptyset; \Sigma_1'' \proves \newsp{\tilde{s}}{\context{C}{P' \Par P \subst{s'}{x}}} \hastype \Proc \\
+%		\Gamma; \emptyset; \Sigma_2'' \proves \newsp{\tilde{s}}{\context{C}{Q' \Par Q \subst{s'}{x}}} \hastype \Proc
+%	\end{eqnarray*}
+%	then
+	\begin{eqnarray*}
+		\Gamma; \emptyset; \Sigma_1'' \ \wb_{n}\ \Sigma_2'' \proves \newsp{\tilde{s}}{P' \Par \context{C}{P \subst{s'}{x}}}\ \wb_{n}\ 
+		\newsp{\tilde{s'}}{Q' \Par \context{C}{Q \subst{s'}{x}}}
+	\end{eqnarray*}
+	\dk{the latter statement is wrong... Need to prove that it holds through induction on $n$}
+
+%
+	\noi We apply the induction hypothesis to get that
+	$\forall C, s'$
+%	such that
+%	\begin{eqnarray*}
+%		\Gamma; \emptyset; \Sigma_1'' \proves \newsp{\tilde{s}}{\context{C}{P' \Par P \subst{s'}{x}}} \hastype \Proc \\
+%		\Gamma; \emptyset; \Sigma_2'' \proves \newsp{\tilde{s}}{\context{C}{Q' \Par Q \subst{s'}{x}}} \hastype \Proc
+%	\end{eqnarray*}
+%	then
+	\begin{eqnarray}
+		\Gamma; \emptyset; \Sigma_1'' \ \wbc_{n}\ \Sigma_2'' \proves \newsp{\tilde{s}}{P' \Par \context{C}{P \subst{s'}{x}}}\ \wbc_{n}\ 
+		\newsp{\tilde{s'}}{Q' \Par \context{C}{Q \subst{s'}{x}}} \label{lem:wb_is_wbc3}
+	\end{eqnarray}
+%
+	\noi Set $\mathcal{R}^c_{n+1} = \set{\Gamma; \emptyset; \Sigma_1 \proves P \hastype \Proc, \Gamma; \emptyset; \Sigma_2 \proves Q \hastype \Proc}$.
+
+	\noi $\mathcal{R}^c_{n+1}$ satisfies the condition for the stratified definition of the contextual bisimulation because
+	statement~\ref{lem:wb_is_wbc1} implies $\exists Q_2, Q$ such that statement~\ref{lem:wb_is_wbc2} holds
+	and furthermore statement~\ref{lem:wb_is_wbc3} holds.
+%	if $\Gamma; \emptyset; \Sigma_1 \proves P \by{\news{\tilde{s}} \bactout{s}{\abs{x} P}} \Gamma; \emptyset; \Sigma_1' \proves P' \hastype \Proc$ then
+%	$\exists Q', \abs{x}{Q}$ such that
+%	$\Gamma; \emptyset; \Sigma_2 \proves Q \by{\news{\tilde{s}} \bactout{s}{\abs{x} Q}} \Gamma; \emptyset; \Sigma_2' \proves Q' \hastype \Proc$
+%	and \ref{pr:bis_is_contextbis}.
+
+	\noi Because $\wbc_{n+1}$ is the largest $n$-th contextual bisimulation we get that $R^c_{n+1} \subseteq \wb_{n+1}$ as required.
+
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+	\noi - Case: $\lambda = \news{\tilde{s}} \bactout{s}{s_1}$
+%
+	\begin{eqnarray}
+		\Gamma; \emptyset; \Sigma_1 \by{\news{\tilde{s}} \bactout{s}{s_1}} \Sigma_1' \proves P_1 \by{\news{\tilde{s}} \bactout{s}{s_1}} P_2 \label{lem:wb_is_wbc4}
+	\end{eqnarray}
+%
+	\noi with $s_1: S \in \Sigma_1 \vee (\dual{s_1}: S' \in \Sigma_1' \wedge S \dualof S')$ implies that
+	$\exists Q', s_2$ such that
+	\begin{eqnarray}
+		\Gamma; \emptyset; \Sigma_2 \By{\news{\tilde{s'}} \bactout{s}{s_2}} \Sigma_2' \proves Q_1 \By{\news{\tilde{s'}} \bactout{s}{s_2}} Q_2 \label{lem:wb_is_wbc5}
+	\end{eqnarray}
+	and
+%	such that
+%	\begin{eqnarray*}
+%		\Gamma; \emptyset; \Sigma_1'' \proves \newsp{\tilde{s}}{\context{C}{P' \Par P \subst{s'}{x}}} \hastype \Proc \\
+%		\Gamma; \emptyset; \Sigma_2'' \proves \newsp{\tilde{s}}{\context{C}{Q' \Par Q \subst{s'}{x}}} \hastype \Proc
+%	\end{eqnarray*}
+%	then
+%
+	\begin{eqnarray*}
+		\Gamma; \emptyset; \Sigma_1''\ \wb_{n}\ \Sigma_2'' \proves \newsp{\tilde{s}}{P_2 \Par \map{S}^{x} \subst{s_1}{x}}\ \wb_{n}\ 
+		\newsp{\tilde{s'}}{Q_2 \Par \map{S}^{x} \subst{s_2}{x}}
+	\end{eqnarray*}
+%
+	\noi Set
+%
+	\begin{eqnarray*}
+		\mathcal{R}_{n + 1} &=& \set{	(\Gamma; \emptyset; \Sigma_1 \proves \newsp{\tilde{s}}{\bout{s}{\abs{x}{R}} P_2} \hastype \Proc,
+						\Gamma; \emptyset; \Sigma_2 \proves \newsp{\tilde{s'}}{\bout{s}{\abs{x}{R}} Q_2} \hastype \Proc) \setbar \forall R}
+	\end{eqnarray*}
+%
+	\dk{prove that $R_{n+1}$ is typable}
+
+	\noi $\mathcal{R}_{n+1}$ satisfies the stratified definition for the bisimulation 
+	because $\forall \news{\tilde{s}} \bactout{s}{(x) R} $
+%
+	\begin{eqnarray*}
+		\Gamma; \emptyset; \Sigma_1 \by{\news{\tilde{s}} \bactbout{s}{(x) R}} \Sigma_2'' \proves \newsp{\tilde{s}}{\bout{s}{\abs{x}{R}} P_2} \by{\news{\tilde{s}} \bactbout{s}{(x) R}} P_2
+	\end{eqnarray*}
+%
+	implies that $\exists Q_2, R$ such that
+%
+	\begin{eqnarray*}
+		\Gamma; \emptyset; \Sigma_1 \by{\news{\tilde{s}} \bactbout{s}{(x) R}} \Sigma_2'' \proves \newsp{\tilde{s}}{\bout{s}{\abs{x}{R}} Q_2} \by{\news{\tilde{s}} \bactbout{s}{(x) R}} Q_2
+	\end{eqnarray*}
+%
+	\noi and $\forall s'$
+%
+	\begin{eqnarray*}
+		\Gamma; \emptyset; \Sigma_1'' \ \wb_{n}\ \Sigma_2'' \proves \newsp{\tilde{s}}{P' \Par R \subst{s'}{x}}\ \wb_{n}\ 
+		\newsp{\tilde{s}}{Q' \Par R \subst{s'}{x}}
+	\end{eqnarray*}
+%
+\dk{continue from here}
+\begin{comment}
+	\noi We apply the induction hypothesis to get that
+	$\forall C, s'$
+%
+	\begin{eqnarray}
+		\Gamma; \emptyset; \Sigma_1'' \ \wbc_{n}\ \Sigma_2'' \proves \newsp{\tilde{s}}{\context{C}{P' \Par P \subst{s'}{x}}}\ \wbc_{n}\ 
+		\newsp{\tilde{s}}{\context{C}{Q' \Par Q \subst{s'}{x}}} \label{lem:wb_is_wbc3}
+	\end{eqnarray}
+%%
+	\noi Assume $\mathcal{R}_{n+1} = \set{\Gamma; \emptyset; \Sigma_1 \proves P_1 \hastype \Proc, \Gamma; \emptyset; \Sigma_2 \proves Q_1 \hastype \Proc}$.
+
+	\noi $\mathcal{R}_{n+1}$ satisfies the condition for the stratified definition for bisimulation
+	because statement~\ref{lem:wbc_is_wb7} implies that
+	$\exists Q', s_2$ such that
+	statement~\ref{lem:wbc_is_wb8} holds and furthemore statement~\ref{lem:wbc_is_wb9} holds.
+\end{comment}
+\end{proof}
+
+
+\begin{lemma}
+	$\wbc \subseteq \cong$.
+\end{lemma}
+
+
+\begin{proof}
+	\noi We prove that $\wbc$ satisfies the defining properties of $\cong$. Let 
+%
+	\[
+		\Gamma; \emptyset; \Sigma_1 \wbc \Sigma_2 \proves P_1 \wbc P_2
+	\]
+%
+	{\bf Reduction Closed:}
+
+	\begin{eqnarray*}
+		\Gamma; \emptyset; \Sigma_1 \by{} \Sigma_1' \proves P_1 \by{} P_1'
+	\end{eqnarray*}
+%
+	\noi implies that 
+	$\exists P_2'$ such that 
+%
+	\begin{eqnarray*}
+		\Gamma; \emptyset; \Sigma_2 \By{} \Sigma_2' &\proves& P_2 \By{} P_2'\\
+		\Gamma; \emptyset; \Sigma_1' \wbc \Sigma_2' &\proves& P_1' \wbc P_2'
+	\end{eqnarray*}
+
+	\noi Same argument hold for the symmetric case, thus $\wbc$ is reduction closed.
+
+	\noi {\bf Barb Preservation:}
+%
+	\begin{eqnarray*}
+		\Gamma; \emptyset; \Sigma_1 \proves P_1 \hastype \Proc \barb{s}
 	\end{eqnarray*}
 %
 	implies that
-	$\exists Q_2, \abs{x}{Q}$ such that
-	$\Gamma; \emptyset; \Sigma_2 \proves Q \by{\news{\tilde{s}} \bactout{s}{\abs{x} Q}} \Gamma; \emptyset; \Sigma_2' \proves Q' \hastype \Proc$
-	and $s'$
-	such that
 	\begin{eqnarray*}
-		\Gamma; \emptyset; \Sigma_1'' \proves \newsp{\tilde{s}}{P' \Par P \subst{s'}{x}} \hastype \Proc \\
-		\Gamma; \emptyset; \Sigma_2'' \proves \newsp{\tilde{s}}{Q' \Par Q \subst{s'}{x}} \hastype \Proc
+		P &\cong& \newsp{\tilde{s}}{\bout{s}{V_1} P_3 \Par P_4}\\
+		\dual{s} &\notin& \Sigma_1
 	\end{eqnarray*}
-	then
+%
+	\noi From the definition of $\wbc$ we get that
+%
+	\begin{eqnarray*}
+		\Gamma; \emptyset; \Sigma_1 \by{\news{s_1} \bactout{s}{V_1}} \Sigma_1' \proves \newsp{\tilde{s}}{\bout{s}{V_1} P_3 \Par P_4} \by{\news{s_1} \bactout{s}{V_1}} \newsp{\tilde{s'}}{P_3 \Par P_4}
+	\end{eqnarray*}
+%
+	\noi implies
+%
+	\begin{eqnarray*}
+		\Gamma; \emptyset; \Sigma_2 \By{\news{s_2} \bactout{s}{V_2}} \Sigma_2' \proves P_2 \By{\news{s_2} \bactout{s}{V_2}} \proves P_2'
+	\end{eqnarray*}
+%
+	\noi From the last result we get that
+%
+	\begin{eqnarray*}
+		\Gamma; \emptyset; \Sigma_2 \proves P_2 \hastype \Proc \Barb{s}
+	\end{eqnarray*}
+%
+	\noi as required.
+
+	\noi {\bf Congruence:}
+
+	\noi The congruence property requires that we check that $\wbc$ is preserved under any context.
+	The most interesting context case is parallel composition.
+
+	\noi We construct a congruence relation. Let
 	\[
-		\Gamma; \emptyset; \Sigma_1'' \proves \newsp{\tilde{s}}{P' \Par P \subst{s'}{x}}\ \wb_{n}\ 
-		\Gamma; \emptyset; \Sigma_2'' \proves \newsp{\tilde{s}}{Q' \Par Q \subst{s'}{x}} \hastype \Proc
+	\begin{array}{rcl}
+		\mathcal{S} &=&	\set{(\Gamma; \emptyset; \Sigma_1 \cup \Sigma_3 \proves \newsp{\tilde{s_1}}{P_1 \Par R} \hastype \Proc, \Gamma; \emptyset; \Sigma_2 \cup \Sigma_3 \proves \newsp{\tilde{s_2}}{P_2 \Par R}) \setbar \\
+		& &	\Gamma;\emptyset;\Sigma_1 \wbc \Sigma_2 \proves P_1 \wbc P_2, \forall \Gamma; \emptyset; \Sigma_3 \proves R \hastype \Proc}
+	\end{array}
+	\]
+	\noi We need to show that the above congruence is a bisimulation.
+	To show that $\mathcal{S}$ is a bisimulation we do a case analysis on the structure
+	of the $\by{\lambda}$ transition.
+
+	%%%%%%%%%%%%%%%
+	% Case 1
+	%%%%%%%%%%%%%%%
+
+	\noi - Case: 
+	\[
+		\Gamma; \emptyset; \Sigma_1 \cup \Sigma_3 \by{\lambda} \Sigma_1' \cup \Sigma_3 \proves \newsp{\tilde{s_1}}{P_1 \Par R} \by{\lambda} \newsp{\tilde{s_1'}}{P_1' \Par R}
 	\]
 
-	Let
+	\noi The case is divided into three subcases:
+
+	\noi Subcase i: $\lambda \notin \set{\news{\tilde{s}} \bactout{s}{Q}, \news{\tilde{s}} \bactout{s}{s_1}}$
+
+	\noi From the definition of typed transition we get
 	\[
-		\begin{array}{rcl}
-			R_{n + 1} &=& \set{	(\Gamma; \emptyset; \Sigma_1 \proves \newsp{\tilde{s_1}}{\bout{s}{\abs{x}{\context{C}{P}}} P''} \hastype \Proc,
-						\Gamma; \emptyset; \Sigma_2 \proves \newsp{\tilde{s_2}}{\bout{s}{\abs{x}{\context{C}{P}}} Q''} \hastype \Proc) \setbar\\
-				& &		\forall C, P' \scong \news{\tilde{s_1}} P'', Q' \scong \news{\tilde{s_2}} Q''}
-		\end{array}
+		\Gamma; \emptyset; \Sigma_1 \by{\lambda} \Sigma_1' \proves P_1 \by{\lambda} P_1'
 	\]
-
-	\dk{prove that $R_{n+1}$ is typable}
-
-	$R_{n+1}$ satisfies the stratified definition for bisimulation and furthermore we can deduce that
-	$\forall C, s'$
-	such that
-	\begin{eqnarray*}
-		\Gamma; \emptyset; \Sigma_1'' \proves \newsp{\tilde{s}}{\context{C}{P' \Par P \subst{s'}{x}}} \hastype \Proc \\
-		\Gamma; \emptyset; \Sigma_2'' \proves \newsp{\tilde{s}}{\context{C}{Q' \Par Q \subst{s'}{x}}} \hastype \Proc
-	\end{eqnarray*}
-	then
-	\[
-		\Gamma; \emptyset; \Sigma_1'' \proves \newsp{\tilde{s}}{\context{C}{P' \Par P \subst{s'}{x}}}\ \wb_{n}\ 
-		\Gamma; \emptyset; \Sigma_2'' \proves \newsp{\tilde{s}}{\context{C}{Q' \Par Q \subst{s'}{x}}} \hastype \Proc
-	\]
-
-	From the induction hypothesis we get that
-	$\forall C, s'$
-	such that
-	\begin{eqnarray*}
-		\Gamma; \emptyset; \Sigma_1'' \proves \newsp{\tilde{s}}{\context{C}{P' \Par P \subst{s'}{x}}} \hastype \Proc \\
-		\Gamma; \emptyset; \Sigma_2'' \proves \newsp{\tilde{s}}{\context{C}{Q' \Par Q \subst{s'}{x}}} \hastype \Proc
-	\end{eqnarray*}
-	then
+	\noi which implies that
+%
 	\begin{eqnarray}
-		\Gamma; \emptyset; \Sigma_1'' \proves \newsp{\tilde{s}}{\context{C}{P' \Par P \subst{s'}{x}}}\ \wbc_{n}\ 
-		\Gamma; \emptyset; \Sigma_2'' \proves \newsp{\tilde{s}}{\context{C}{Q' \Par Q \subst{s'}{x}}} \hastype \Proc
-		\label{pr:bis_is_contextbis}
+		\Gamma; \emptyset; \Sigma_1 \By{\lambda} \Sigma_2' \proves P_2 \By{\lambda} P_2' \label{lem:wbc_is_cong1}\\
+		\Gamma; \emptyset; \Sigma_1' \wbc \Sigma_2'' \proves P_1' \wbc \Sigma_2'' P_2' \label{lem:wbc_is_cong2}
+	\end{eqnarray}
+%
+	\noi From transition~\ref{lem:wbc_is_cong1} we conclude that 
+	\[
+		\Gamma;\emptyset; \Sigma_2 \cup \Sigma_3 \By{\lambda} \Sigma_2' \cup \Sigma_3 \proves \newsp{\tilde{s_2}}{P_2 \Par R} \By{\lambda} \newsp{\tilde{s_2'}}{P_2' \Par R}
+	\]
+%
+	\noi Furthermore from~\ref{lem:wbc_is_cong2} and the definition of $\mathcal{S}$ we conlude that
+	\[
+		\Gamma; \emptyset; \Sigma_1' \cup \Sigma_3\ \mathcal{S}\ \Sigma_2' \cup \Sigma_3 \proves \newsp{\tilde{s_1'}}{P_1' \Par R}\ \mathcal{S}\ \newsp{\tilde{s_2'}}{P_2' \Par R}
+	\]
+
+	\noi Subcase ii: $\lambda_2 = \news{\tilde{s_3}} \bactout{s}{\abs{x}{Q_1}}$
+
+	\noi From the definition of typed transition we get
+	\[
+		\Gamma; \emptyset; \Sigma_1 \by{\news{\tilde{s_3}} \bactout{s}{\abs{x}{Q_1}}} \Sigma_1' \proves P_1 \by{\news{\tilde{s_3}} \bactout{s}{\abs{x}{Q_1}}} P_1'
+	\]
+	\noi which implies that
+%
+	\begin{eqnarray}
+		&& \Gamma; \emptyset; \Sigma_1 \By{\news{\tilde{s_4}} \bactout{s}{\abs{x}{Q_2}}} \Sigma_2' \proves P_2 \By{\news{\tilde{s_4}} \bactout{s}{\abs{x}{Q_2}}} P_2' \label{lem:wbc_is_cong3}\\
+		\forall C, s &&
+		\Gamma; \emptyset; \Sigma_1'' \wbc \Sigma_2'' \proves \newsp{\tilde{s_1''}}{P_1' \Par \context{C}{Q_1 \subst{s}{x}}}\ \wbc\ \newsp{\tilde{s_2''}}{P_2' \Par \context{C}{Q_2\subst{s}{x}}} \label{lem:wbc_is_cong4}
+	\end{eqnarray}
+%
+	\noi From transition~\ref{lem:wbc_is_cong3} conclude that 
+	\[
+		\Gamma;\emptyset; \Sigma_2 \cup \Sigma_3 \By{\news{\tilde{s_4}} \bactout{s}{\abs{x}{Q_2}}} \Sigma_2' \cup \Sigma_3 \proves \newsp{\tilde{s_2}}{P_2 \Par R} \By{\news{\tilde{s_4}} \bactout{s}{\abs{x}{Q_2}}} \proves \newsp{\tilde{s_2'}}{P_2' \Par R}
+	\]
+%
+	\noi Furthermore from~\ref{lem:wbc_is_cong3} we conlude that $\forall C, s$
+%
+	\[
+		\Gamma; \emptyset; \Sigma_1'' \cup \Sigma_3\ \mathcal{S}\ \Sigma_2'' \cup \Sigma_3 \proves \newsp{\tilde{s_1''}}{P_1' \Par \context{C}{Q_1\subst{s}{x}} \Par R}\ \mathcal{S}\ \newsp{\tilde{s_2''}}{P_2' \Par \context{C}{Q_2\subst{s}{x}} \Par R}
+	\]
+%
+	- Subcase iii: $\lambda = \news{\tilde{s}} \bactout{s}{s_1}$
+
+	\noi From the definition of typed transition we get that
+	\[
+		\Gamma; \emptyset; \Sigma_1 \by{\news{\tilde{s}} \bactout{s}{s_1}} \Sigma_1' \proves P_1 \by{\news{\tilde{s}} \bactout{s}{s_1}} P_1'
+	\]
+	\noi which implies that $\exists P_2', s_2$ such that
+%
+	\begin{eqnarray}
+		&& \Gamma; \emptyset; \Sigma_1 \By{\news{\tilde{s'}} \bactout{s}{s_2}} \Sigma_2' \proves P_2 \By{\news{\tilde{s'}} \bactout{s}{s_2}} P_2' \label{lem:wbc_is_cong5}\\
+		\forall Q, x = \fn{Q}  &&
+		\Gamma; \emptyset; \Sigma_1''\ \wbc\ \Sigma_2'' \proves \newsp{\tilde{s}}{P_1' \Par Q \subst{s_1}{x}}\ \wbc\ \newsp{\tilde{s'}}{P_2' \Par Q \subst{s_2}{x}} \label{lem:wbc_is_cong6}
 	\end{eqnarray}
 
-%	For $C = \hole$ we have that 
-%	\[
-%		\Gamma; \emptyset; \Sigma_1'' \proves \newsp{\tilde{s}}{P_2 \Par P \subst{s'}{x}}\ \wbc_{n}\ 
-%		\Gamma; \emptyset; \Sigma_2'' \proves \newsp{\tilde{s}}{Q_2 \Par Q \subst{s'}{x}} \hastype \Proc
-%	\]
+%
+	\noi From transition~\ref{lem:wbc_is_cong5} conclude that 
+	\[
+		\Gamma;\emptyset; \Sigma_2 \cup \Sigma_3 \By{\news{\tilde{s'}} \bactout{s}{s_2}} \Sigma_2' \cup \Sigma_3 \proves \newsp{\tilde{s_2}}{P_2 \Par R} \By{\news{\tilde{s'}} \bactout{s}{s_2}} \proves \newsp{\tilde{s_2'}}{P_2' \Par R}
+	\]
+%
+	\noi Furthermore from~\ref{lem:wbc_is_cong6} we conlude that $\forall Q, x = \fn{Q}$
+%
+	\[
+		\Gamma; \emptyset; \Sigma_1'' \cup \Sigma_3\ \mathcal{S}\ \Sigma_2'' \cup \Sigma_3 \proves \newsp{\tilde{s_1''}}{P_1' \Par Q \subst{s_1}{x} \Par R}\ \mathcal{S}\ \newsp{\tilde{s_2''}}{P_2' \Par Q \subst{s_2}{x} \Par R}
+	\]
+%
 
-	Assume $R^c_{n+1} = \set{\Gamma; \emptyset; \Sigma_1 \proves P \hastype \Proc, \Gamma; \emptyset; \Sigma_2 \proves Q \hastype \Proc}$.
+	%%%%%%%%%%%%%%%
+	% Case 2
+	%%%%%%%%%%%%%%%
 
-	$R^c_{n+1}$ satisfies the condition for the stratified definition of the contextual bisimulation because of the fact that
-	if $\Gamma; \emptyset; \Sigma_1 \proves P \by{\news{\tilde{s}} \bactout{s}{\abs{x} P}} \Gamma; \emptyset; \Sigma_1' \proves P' \hastype \Proc$ then
-	$\exists Q', \abs{x}{Q}$ such that
-	$\Gamma; \emptyset; \Sigma_2 \proves Q \by{\news{\tilde{s}} \bactout{s}{\abs{x} Q}} \Gamma; \emptyset; \Sigma_2' \proves Q' \hastype \Proc$
-	and \ref{pr:bis_is_contextbis}.
+	\noi - Case:
+%
+	\[
+		\Gamma; \emptyset; \Sigma_1 \cup \Sigma_3 \by{\lambda} \Sigma_1 \cup \Sigma_3' \proves \newsp{\tilde{s_1}}{P_1 \Par R} \by{\lambda} \newsp{\tilde{s_1'}}{P_1 \Par R'}
+	\]
+%
+	\noi This case is divided into three subcases:
 
-	Because $\wbc_{n+1}$ is the largest relation we get that $R^c_{n+1} \subseteq \wb_{n+1}$ as required.
+	\noi Subcase i: $\lambda \notin \set{\news{\tilde{s}} \bactout{s}{\abs{x}{Q}}, \news{\tilde{s}} \bactout{s}{\s_1}}$
+
+	\noi From the LTS we get that:
+	\[
+		\Gamma; \emptyset; \Sigma_3 \by{\lambda} \Sigma_3' \proves R \by{\lambda} R' %\label{lem:}
+	\]
+%
+	\noi Which in turn implies
+	\begin{eqnarray*}
+		\Gamma; \emptyset; \Sigma_2 \cup \Sigma_3 \by{\lambda} \Sigma_2 \cup \Sigma_3' \proves \newsp{\tilde{s_2}}{P_2 \Par R} \by{\lambda} \newsp{\tilde{s_2'}}{P_2 \Par R'}
+	\end{eqnarray*}
+%
+	\noi From the definition of $\mathcal{S}$ we conclude that
+	\[
+		\Gamma; \emptyset; \Sigma_1 \cup \Sigma_3'\ \mathcal{S}\ \Sigma_2 \cup \Sigma_3'' \proves \newsp{\tilde{s_1'}}{P_1 \Par R'}\ \mathcal{S}\ \newsp{\tilde{s_2'}}{P_2 \Par R'}
+	\]
+	\noi as required.
+
+	\noi Subcase ii: $\lambda = \news{\tilde{s}} \bactout{s}{\abs{x}{Q}}$
+
+	\noi From the LTS we get that:
+	\begin{eqnarray}
+		& &	\Gamma; \emptyset; \Sigma_3 \by{\lambda} \Sigma_3' \proves R \by{\lambda} R' \label{lem:wbc_is_cong7}\\
+		\forall C, s& &	\Gamma; \emptyset; \Sigma_3'' \proves \newsp{\tilde{s'}}{R' \Par \context{C}{Q \subst{s}{x}}} \hastype \Proc \label{lem:wbc_is_cong8}
+	\end{eqnarray}
+%
+	\noi From~\ref{lem:wbc_is_cong7} we get that
+	\[
+		\Gamma; \emptyset; \Sigma_2 \cup \Sigma_3 \by{\lambda} \Sigma_2 \cup \Sigma_3' \proves \newsp{\tilde{s_2}}{P_2 \Par R} \by{\lambda} \newsp{\tilde{s_2}}{P_2 \Par R'}
+	\]
+	\noi Furthermore from~\ref{lem:wbc_is_cong8} and the definition of $\mathcal{S}$ we conclude that
+	$\forall C,s$
+	\[
+		\Gamma; \emptyset; \Sigma_1 \cup \Sigma_3''\ \mathcal{S}\ \Sigma_2 \cup \Sigma_3'' \proves \newsp{\tilde{s_1}}{P_1 \Par \newsp{\tilde{s'}}{R' \Par \context{C}{Q \subst{s}{x}}}}\ \mathcal{S}\ \newsp{\tilde{s_2}}{P_2 \Par \newsp{\tilde{s'}}{R' \Par \context{C}{Q \subst{s}{x}}}}
+	\]
+	\noi as required.
+
+	\noi Subcase iii: $\lambda = \news{\tilde{s}} \bactout{s}{s'}$
+
+	\noi From the LTS we get that:
+	\begin{eqnarray}
+		& &	\Gamma; \emptyset; \Sigma_3 \by{\lambda} \Sigma_3' \proves R \by{\lambda} R' \label{lem:wbc_is_cong9}\\
+		\forall Q, x = \fn{Q} & & \Gamma; \emptyset; \Sigma_3'' \proves \newsp{\tilde{s'}}{R' \Par Q \subst{s'}{x}} \hastype \Proc \label{lem:wbc_is_cong10}
+	\end{eqnarray}
+%
+	\noi From~\ref{lem:wbc_is_cong9} we get that
+	\[
+		\Gamma; \emptyset; \Sigma_2 \cup \Sigma_3 \by{\lambda} \Sigma_2 \cup \Sigma_3' \proves \newsp{\tilde{s_2}}{P_2 \Par R} \by{\lambda} \newsp{\tilde{s_2}}{P_2 \Par R'}
+	\]
+	\noi Furthermore from~\ref{lem:wbc_is_cong10} and the definition of $\mathcal{S}$ we conclude that
+	$\forall Q, x = \fn{Q}$
+	\[
+		\Gamma; \emptyset; \Sigma_1 \cup \Sigma_3''\ \mathcal{S}\ \Sigma_2 \cup \Sigma_3'' \proves \newsp{\tilde{s_1}}{P_1 \Par \newsp{\tilde{s'}}{R' \Par Q \subst{s}{x}}}\ \mathcal{S}\ \newsp{\tilde{s_2}}{P_2 \Par \newsp{\tilde{s'}}{R' \Par Q \subst{s}{x}}}
+	\]
+	\noi as required.
+
+
+	%%%%%%%%%%%%%%%
+	% Case 3
+	%%%%%%%%%%%%%%%
+
+	\noi - Case:
+	\[
+		\Gamma; \emptyset; \Sigma_1 \cup \Sigma_3 \by{} \Sigma_1' \cup \Sigma_3' \proves \newsp{\tilde{s_1}}{P_1 \Par R} \by{} \proves \newsp{\tilde{s_1'}}{P_1' \Par R'}
+	\]
+
+	\noi This case is divided into three subcases:
+
+	\noi Subcase i: $\Gamma; \emptyset; \Sigma_1 \by{\lambda} \Sigma_1' \proves P_1 \by{\lambda} P_1'$
+	and $\lambda \not= \news{\tilde{s}} \bactout{s}{\abs{x}{Q}}$ implies
+%
+	\begin{eqnarray}
+		\Gamma; \emptyset; \Sigma_3 \by{\dual{\lambda}} \Sigma_3 \proves R \by{\dual{\lambda}} R' \label{lem:wbc_is_cong11} \\
+		\Gamma; \emptyset; \Sigma_2 \By{\hat{\lambda}} \Sigma_2' \proves P_2 \By{\hat{\lambda}} P_2' \label{lem:wbc_is_cong12}\\
+		\Gamma; \emptyset; \Sigma_1' \wbc \Sigma_2' \proves P_1' \wbc P_2' \label{lem:wbc_is_cong13}
+	\end{eqnarray}
+%
+	\noi From~\ref{lem:wbc_is_cong11} and~\ref{lem:wbc_is_cong12} we get
+	\[
+		\Gamma; \emptyset; \Sigma_2 \cup \Sigma_3 \By{} \Sigma_2' \cup \Sigma_3' \proves \newsp{\tilde{s_2}}{P_2 \Par R} \By{} \newsp{\tilde{s_2'}}{P_2' \Par R'}
+	\]
+%
+	\noi From~\ref{lem:wbc_is_cong13} and the definition of $\mathcal{S}$ we get that
+	\[
+		\Gamma; \emptyset; \Sigma_1' \cup \Sigma_3'\ \mathcal{S}\ \Sigma_2' \cup \Sigma_3 \proves \newsp{\tilde{s_1'}}{P_1' \Par R'}\ \mathcal{S}\ \newsp{\tilde{s_2'}}{P_2' \Par R'}
+	\]
+	\noi as required.
+
+	\noi Subcase ii: $\Gamma; \emptyset; \Sigma_1 \proves P_1 \by{\news{\tilde{s_3}} \bactout{s}{\abs{x}{Q_1}}} \Sigma_1' \proves P_1' \hastype \Proc$ implies
+%
+	\begin{eqnarray}
+		& & \Gamma; \emptyset; \Sigma_3 \by{\bactinp{s}{\abs{x} {Q_1}}} \Sigma_3' \proves R \by{\bactinp{s}{\abs{x} {Q_1}}} R' \subst{\abs{x}{Q_1}}{X} \label{lem:wbc_is_cong14}\\
+		& & \Gamma; \emptyset; \Sigma_1 \cup \Sigma_3 \by{} \Sigma_1' \cup \Sigma_3' \proves \newsp{\tilde{s_1}}{P_1 \Par R} \by{} \newsp{\tilde{s_1''}}{P_1' \Par R' \subst{\abs{x}{Q_1}}{X}}\\
+		& & \Gamma; \emptyset; \Sigma_2\By{\news{\tilde{s_4}} \bactout{s}{\abs{x}{Q_2}}} \Sigma_2' \proves P_2 \By{\news{\tilde{s_4}} \bactout{s}{\abs{x}{Q_2}}} P_2' \label{lem:wbc_is_cong15}\\
+		\forall C, s' & & \Gamma; \emptyset; \Sigma_1''\ \wbc\ \Sigma_2'' \proves \newsp{\tilde{s_1'}}{P_1' \Par \context{C}{Q_1 \subst{s'}{x}}}\ \wbc\ \newsp{\tilde{s_2'}}{P_2' \Par \context{C}{Q_2 \subst{s'}{x}}} \label{lem:wbc_is_cong16}
+	\end{eqnarray}
+%
+	From~\ref{lem:wbc_is_cong14} and the Substitution Lemma~\ref{aaa} we get that
+	\[
+		\Gamma; \emptyset; \Sigma_3 \by{\bactinp{s}{\abs{x} {Q_2}}} \Sigma_3'' \proves R \by{\bactinp{s}{\abs{x} {Q_2}}} R' \subst{\abs{x}{Q_2}}{X}
+	\]
+	%\dk{(prove that $\forall V, R \by{\bactinp{s}{V}} R'\subst{V}{X}$)}
+	\noi to combine with~\ref{lem:wbc_is_cong15} and get
+	\[
+		\Gamma; \emptyset; \Sigma_2 \cup \Sigma_3 \By{} \Sigma_2' \cup \Sigma_3'' \proves \newsp{\tilde{s_2}}{P_2 \Par R} \By{} \newsp{\tilde{s_2''}}{P_2' \Par R' \subst{\abs{x}{Q_2}}{X}}
+	\]
+%
+	\noi Set context $C'$ by replacing every application
+	$\appl{X}{k}$ in $R'$ with $ \newsp{s}{ \bout{s}{k} \inact \Par \binp{\dual{s}}{x} \hole}$,
+	such that
+%
+	\begin{eqnarray*}
+		\context{C'}{Q_1} = R' \subst{\abs{x}{Q_1}}{X}\\
+		\context{C'}{Q_2} = R' \subst{\abs{x}{Q_2}}{X}
+	\end{eqnarray*}
+	\dk{prove it. Smth is going wrong here}
+
+%
+	\noi From~\ref{lem:wbc_is_cong16} and the definition of $\mathcal{S}$ we get that
+	\[
+		\Gamma; \emptyset; \Sigma_1''\ \mathcal{S} \Sigma_2'' \proves \newsp{\tilde{s_1'}}{P_1' \Par \context{C'}{Q_1 \subst{s'}{x}}}\ \mathcal{S}\ \newsp{\tilde{s_2'}}{P_2' \Par \context{C'}{Q_2 \subst{s'}{x}}}
+	\]
 \end{proof}
-
