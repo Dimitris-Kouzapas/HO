@@ -1,59 +1,70 @@
 \begin{figure}
 	\[
-	\begin{array}{ccc}
-		\bout{s}{s'} P \by{\bactout{s}{s'}} P
-		&\qquad&
-		\binp{s}{x} P \by{\bactinp{s}{s'}} P\subst{s'}{x}
-		\\
-	
+	\begin{array}{c}
+		\bout{s}{s'} P \by{\bactout{s}{s'}} P\ \ltsrule{OutN}
+		\qquad
+		\binp{s}{x} P \by{\bactinp{s}{s'}} P\subst{s'}{x}\ \ltsrule{InN}
+		\qquad
+		\bout{s}{\abs{x}{Q}} P \by{\bactout{s}{\abs{x}{Q}}} P\ \ltsrule{OutA}
+		\\[2mm]
 
-		\bout{s}{\abs{x}{Q}} P \by{\bactout{s}{\abs{x}{Q}}} P
-		&\qquad&
-		\binp{s}{X} P \by{\bactinp{s}{\abs{x}Q}} P\subst{\abs{x}Q}{X}
-		\\
-
-		\bsel{s}{l}{P} \by{\bactsel{s}{l}} P
-		&&
-		\bbra{s}{l_i:P_i}_{i \in I} \by{\bactbra{s}{l_k}} P_k \quad k \in I
-		\\[4mm]
+		\binp{s}{X} P \by{\bactinp{s}{\abs{x}Q}} P\subst{\abs{x}Q}{X}\ \ltsrule{InA}
+		\qquad
+		\bsel{s}{l}{P} \by{\bactsel{s}{l}} P \ltsrule{Sel}
+		\qquad
+		\tree{
+			k \in I
+		}
+		{
+			\bbra{s}{l_i:P_i}_{i \in I} \by{\bactbra{s}{l_k}} P_k
+		}\ \ltsrule{Sel}
+		\\[5mm]
 
 		\tree{
 			P \by{\lambda} P' \quad s \notin \fn{\lambda}
 		}{
 			\news{s} P \by{\lambda} \news{s} P' 
-		}
-		&&
-		\tree{
-			P \by{\news{\tilde{s}} \bactout{s}{\abs{x} Q}} P' \quad s' \in \fn{\abs{x} Q}
-		}{
-			\news{s'} P \by{\news{s'\cat\tilde{s}} \bactout{s}{\abs{x} Q}} P'
-		}
-		\\[7mm]
-
-		\tree{
-			P \by{\lambda} P' \quad \bn{\lambda} \cap \fn{Q} = \es
-		}{
-			P \Par Q \by{\lambda} P' \Par Q
-		}
-		&&
-		\tree{
-			Q \by{\lambda} Q' \quad \bn{\lambda} \cap \fn{P} = \es
-		}{
-			P \Par Q \by{\lambda} P \Par Q'
-		}
-		\\[7mm]
-
-		\tree{
-			P \by{\lambda_1} P' \qquad Q \by{\lambda_2} Q' \qquad \lambda_1 \asymp \lambda_2
-		}{
-			P \Par Q \by{\tau} \newsp{\bn{\lambda_1} \cup \bn{\lambda_2}}{P' \Par Q'}
-		}
-		&&
+		}\ \ltsrule{Res}
+		\qquad
 		\tree{
 			P \scong_\alpha P'' \quad P'' \by{\lambda} P'
 		}{
 			P \by{\lambda} P'
-		}
+		}\ \ltsrule{Alpha}
+		\qquad
+		\tree{
+			P \by{\bactout{s}{s'}} P'
+		}{
+			\news{s'} P \by{\news{s'} \bactout{s}{s'}} P'
+		}\ \ltsrule{ScopeN}
+		\\[5mm]
+
+		\tree{
+			P \by{\news{\tilde{s}} \bactout{s}{\abs{x} Q}} P' \quad s' \in \fn{\abs{x} Q}
+		}{
+			\news{s'} P \by{\news{s'\cat\tilde{s}} \bactout{s}{\abs{x} Q}} P'
+		}\ \ltsrule{ScopeA}
+		\qquad
+		\tree{
+			P \by{\lambda_1} P' \qquad Q \by{\lambda_2} Q' \qquad \lambda_1 \asymp \lambda_2
+		}{
+			P \Par Q \by{\tau} \newsp{\bn{\lambda_1} \cup \bn{\lambda_2}}{P' \Par Q'}
+		}\ \ltsrule{Tau}
+		\\[5mm]
+
+		\tree{
+
+			P \by{\lambda} P' \quad \bn{\lambda} \cap \fn{Q} = \es
+		}{
+			P \Par Q \by{\lambda} P' \Par Q
+		}\ \ltsrule{LPar}
+		\qquad
+		\tree{
+			Q \by{\lambda} Q' \quad \bn{\lambda} \cap \fn{P} = \es
+		}{
+			P \Par Q \by{\lambda} P \Par Q'
+		}\ \ltsrule{RPar}
+%		\\[5mm]
 	\end{array}
 	\]
 	\caption{The untyped Labelled Transition System \label{fig:untyped_LTS}}

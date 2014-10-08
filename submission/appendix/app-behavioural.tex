@@ -1,0 +1,408 @@
+\section{Behavioural Semantics}
+
+We present the proofs for the theorems in
+Section~\ref{sec:beh_sem}.
+
+\subsection{Proof for Theorem~\ref{the:coincidence}}
+
+We split Theorem~\ref{the:coincidence} into 
+Lemmas which we prove independently.
+The combination of the lemmas is the proof for the parts
+of the theorem.
+
+The proof for Part 1 for the theorem is based on the
+stratified definition of the bisimulation relations
+$\wbc$ and $\wb$. The Knaster-Tarski theorem ensures
+that both definitions are equivalent.
+We give the stratified  definitions:
+
+\begin{definition}[Stratified Contextual Bisimulation]\rm
+	We define a set of relations $\mathcal{R}^c_n$
+	on the following conditions:
+%
+	\begin{itemize}
+		\item	$\mathcal{R}^c_0 = \bigcup_{\forall R} R, R$ is a typed relation.
+		\item	$\Gamma; \emptyset; \Sigma_1\ \mathcal{R}^c_n\ \Sigma_2 \proves P_1\ \mathcal{R}^c_n\ P_2$
+			whenever
+			\begin{enumerate}
+				\item	$\forall \news{\tilde{s}} \bactout{s}{\abs{x} P}$ such that
+					\[
+						\Gamma; \emptyset; \Sigma_1 \by{\news{\tilde{s}} \bactout{s}{\abs{x} P}} \Sigma_1' \proves P_1 \by{\news{\tilde{s}} \bactout{s}{\abs{x} P}} P_2
+					\]
+					$\exists Q_2, \abs{x}{Q}$ such that
+					\[
+						\Gamma; \emptyset; \Sigma_2 \By{\news{\tilde{s'}} \bactout{s}{\abs{x} Q}} \Sigma_2' \proves Q_1 \By{\news{\tilde{s}} \bactout{s}{\abs{x} Q}} Q_2
+					\]
+					and $\forall C, s'$
+%					such that
+%					\begin{eqnarray*}
+%						\Gamma; \emptyset; \Sigma_1'' \proves \newsp{\tilde{s}}{P_2 \Par P \subst{s'}{x}} \hastype \Proc \\
+%						\Gamma; \emptyset; \Sigma_2'' \proves \newsp{\tilde{s}}{Q_2 \Par Q \subst{s'}{x}} \hastype \Proc
+%					\end{eqnarray*}
+%					then
+					\[
+						\Gamma; \emptyset; \Sigma_1''\ \mathcal{R}^c_{n-1}\ \Sigma_2'' \proves
+						\newsp{\tilde{s}}{P_2 \Par \context{C}{P \subst{s'}{x}}}\ \mathcal{R}^c_{n-1}\  \newsp{\tilde{s}}{Q_2 \Par \context{C}{Q \subst{s'}{x}}}
+					\]
+
+				\item	$\forall \news{\tilde{s}} \bactout{s}{s_1}$ such that
+					\[
+						\Gamma; \emptyset; \Sigma_1 \by{\news{\tilde{s}} \bactout{s}{s_1}} \Sigma_1' \proves P_1 \by{\news{\tilde{s}} \bactout{s}{s_1}} P_2
+					\]
+					%with $s_1: S \in \Sigma_1 \vee (\dual{s_2}: S' \in \Sigma_2 \wedge S \dualof S')$
+					then $\exists Q_2, s_2$ such that
+					\[
+						\Gamma; \emptyset; \Sigma_2 \By{\news{\tilde{s'}} \bactout{s}{s_2}} \Sigma_2' \proves Q_1 \By{\news{\tilde{s'}} \bactout{s}{s_2}} Q_2
+					\]
+					%such that
+		%			\begin{eqnarray*}
+		%				\Gamma; \emptyset; \Sigma_1'' \proves \newsp{\tilde{s}}{P_2 \Par \context{C}{P \subst{s'}{x}}} \hastype \Proc \\
+		%				\Gamma; \emptyset; \Sigma_2'' \proves \newsp{\tilde{s}}{Q_2 \Par \context{C}{Q \subst{s'}{x}}} \hastype \Proc
+		%			\end{eqnarray*}
+					and $\forall R, \set{x} = \fn{R}$
+					\[
+						\Gamma; \emptyset; \Sigma_1''\ \mathcal{R}^c_{n-1}\ \Sigma_2'' \proves \newsp{\tilde{s}}{P_2 \Par R\subst{s_1}{x}}\ \mathcal{R}^c_{n-1}\ 
+						\newsp{\tilde{s'}}{Q_2 \Par R\subst{s_2}{x}}
+					\]
+
+
+				\item	$\forall \lambda \not= \news{\tilde{s}} \bactout{s}{\abs{x} P}$ such that
+					\[
+						\Gamma; \emptyset; \Sigma_1 \by{\lambda} \Sigma_1' \proves P_1 \by{\lambda} P_2
+					\]
+					$\exists Q_2$ such that 
+					\[
+						\Gamma; \emptyset; \Sigma_2 \by{\hat{\lambda}} \Sigma_2' \proves Q_1 \By{\hat{\lambda}} Q_2
+					\]
+					and
+					$\Gamma; \emptyset; \Sigma_1'\ \mathcal{R}^c_{n-1}\ \Sigma_2' \proves P_2\ \mathcal{R}^c_{n-1}\ Q_2$.
+
+				\item	The symmetric cases of 1, 2, 3.
+			\end{enumerate}
+	\end{itemize}
+	\noi The above function is monotone and the Knaster-Tarski theorem ensures that a lattice is define
+	with the largest $\mathcal{R}^c_n$ to be denote as $\wbc_n$ and the largest fix-point is equal to the
+	contextual bisimilarity relation $\wbc = \bigcap_{i \geq 0} \wbc_i$.
+\end{definition}
+
+
+\begin{definition}[Stratified Bisimulation]\rm
+	We define a set of relations $\mathcal{R}_n$
+	on the following conditions:
+%
+	\begin{itemize}
+		\item	$\mathcal{R}_0 = \bigcup_{\forall R} R, R$ is a typed relation.
+		\item	$\Gamma; \emptyset; \Sigma_1\ \mathcal{R}_n\ \Sigma_2 \proves P_1\ \mathcal{R}_n\ P_2$
+			whenever
+			\begin{enumerate}
+				\item	$\forall \news{\tilde{s}} \bactout{s}{\abs{x} P}$ such that
+					\[
+						\Gamma; \emptyset; \Sigma_1 \by{\news{\tilde{s}} \bactout{s}{\abs{x} P}} \Sigma_1' \proves P_1 \by{\news{\tilde{s}} \bactout{s}{\abs{x} P}} P_2
+					\]
+					$\exists Q_2, \abs{x}{Q}$ such that
+					\[
+						\Gamma; \emptyset; \Sigma_2 \By{\news{\tilde{s'}} \bactout{s}{\abs{x} Q}} \Sigma_2' \proves Q_1 \By{\news{\tilde{s}} \bactout{s}{\abs{x} Q}} Q_2
+					\]
+					and $\forall s'$
+%					such that
+%					\begin{eqnarray*}
+%						\Gamma; \emptyset; \Sigma_1'' \proves \newsp{\tilde{s}}{P_2 \Par P \subst{s'}{x}} \hastype \Proc \\
+%						\Gamma; \emptyset; \Sigma_2'' \proves \newsp{\tilde{s}}{Q_2 \Par Q \subst{s'}{x}} \hastype \Proc
+%					\end{eqnarray*}
+%					then
+					\[
+						\Gamma; \emptyset; \Sigma_1''\ \mathcal{R}_{n-1}\ \Sigma_2'' \proves
+						\newsp{\tilde{s}}{P_2 \Par P \subst{s'}{x}}\ \mathcal{R}_{n-1}\  \newsp{\tilde{s}}{Q_2 \Par Q \subst{s'}{x}}
+					\]
+
+				\item	$\forall \news{\tilde{s}} \bactout{s}{s_1}$ such that
+					\[
+						\Gamma; \emptyset; \Sigma_1 \by{\news{\tilde{s}} \bactout{s}{s_1}} \Sigma_1' \proves P_1 \by{\news{\tilde{s}} \bactout{s}{s_1}} P_2
+					\]
+					with $s_1: S \in \Sigma_1 \vee (\dual{s_2}: S' \in \Sigma_2 \wedge S \dualof S')$
+					then $\exists Q_2, s_2$ such that
+					\[
+						\Gamma; \emptyset; \Sigma_2 \By{\news{\tilde{s'}} \bactout{s}{s_2}} \Sigma_2' \proves Q_1 \By{\news{\tilde{s'}} \bactout{s}{s_2}} Q_2
+					\]
+					%such that
+		%			\begin{eqnarray*}
+		%				\Gamma; \emptyset; \Sigma_1'' \proves \newsp{\tilde{s}}{P_2 \Par \context{C}{P \subst{s'}{x}}} \hastype \Proc \\
+		%				\Gamma; \emptyset; \Sigma_2'' \proves \newsp{\tilde{s}}{Q_2 \Par \context{C}{Q \subst{s'}{x}}} \hastype \Proc
+		%			\end{eqnarray*}
+					and
+					\[
+						\Gamma; \emptyset; \Sigma_1''\ \mathcal{R}_{n-1}\ \Sigma_2'' \proves \newsp{\tilde{s}}{P_2 \Par \map{S}^{s_1}}\ \mathcal{R}_{n-1}\ 
+						\newsp{\tilde{s'}}{Q_2 \Par \map{S}^{s_2}}
+					\]
+
+
+				\item	$\forall \lambda \not= \news{\tilde{s}} \bactout{s}{\abs{x} P}$ such that
+					\[
+						\Gamma; \emptyset; \Sigma_1 \by{\lambda} \Sigma_1' \proves P_1 \by{\lambda} P_2
+					\]
+					$\exists Q_2$ such that 
+					\[
+						\Gamma; \emptyset; \Sigma_2 \by{\hat{\lambda}} \Sigma_2' \proves Q_1 \By{\hat{\lambda}} Q_2
+					\]
+					and
+					$\Gamma; \emptyset; \Sigma_1'\ \mathcal{R}_{n-1}\ \Sigma_2' \proves P_2\ \mathcal{R}_{n-1}\ Q_2$.
+
+				\item	The symmetric cases of 1, 2, 3.
+			\end{enumerate}
+	\end{itemize}
+	\noi The above function is monotone and the Knaster-Tarski theorem ensures that a lattice is define
+	with the largest $\mathcal{R}_n$ to be denote as $\wb_n$ and the largest fix-point is equal to the
+	bisimilarity relation $\wb = \bigcap_{i \geq 0} \wb_i$.
+\end{definition}
+
+
+\begin{lemma}\rm
+	$\wbc\ \subseteq\ \wb$
+\end{lemma}
+
+\begin{proof}
+	Statement $\wbc \subseteq \wb$
+	is equivalent to the statement $\forall n, \wbc_n \subseteq \wb_n$.
+	From here the proof is done using induction on the definitions of $\wbc$.
+
+	\noi {\bf Basic step:}
+	From the definitions of $\wbc_0$ and $\wb_0$ we get that $\wbc_0 = \wb_0$.
+
+	\noi {\bf Induction hypothesis:}
+	$\wbc_n\ \subseteq\ \wb_n$.
+
+	\noi {\bf Inductive step:}
+	Let
+%
+	\begin{eqnarray*}
+		\Gamma; \emptyset; \Sigma_1\ \wbc_{n+1}\ \Sigma_2 \proves P_1\ \wbc_{n+1}\ Q_1
+	\end{eqnarray*}
+%
+	\noi We perform a case analysis on transition $\by\lambda$.
+
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+	\noi - Case: $\lambda \notin \set{\news{\tilde{s}} \bactout{s}{\abs{x} P}, \news{\tilde{s}} \bactout{s}{s_1}}$
+%
+	\begin{eqnarray}
+		\Gamma; \emptyset; \Sigma_1 \by{\lambda} \Sigma_1' \proves P_1 \by{\lambda} P_2 \label{lem:wbc_is_wb1}
+	\end{eqnarray}
+%
+	\noi implies that 
+	$\exists Q_1$ such that
+%
+	\begin{eqnarray}
+		\Gamma; \emptyset; \Sigma_2 \by{\lambda} \Sigma_2' &\proves& Q_1 \by{\lambda} Q_2 \label{lem:wbc_is_wb2}\\
+		\Gamma; \emptyset; \Sigma_1'\ \wbc_n\ \Sigma_2' &\proves& P_1\ \wbc_n\ Q_2
+	\end{eqnarray}
+%
+	We apply the induction hypothesis to the latter judgement:
+%
+	\begin{eqnarray}
+		\Gamma; \emptyset; \Sigma_1' \proves P_2\ \wb_n\ \Gamma; \emptyset; \Sigma_2' \proves Q_2 \hastype \Proc  \label{lem:wbc_is_wb3}
+	\end{eqnarray}
+%
+	Assume $\mathcal{R}_{n+1} = \set{\Gamma; \emptyset; \Sigma_1 \proves P_1 \hastype \Proc, \Gamma; \emptyset; \Sigma_2 \proves Q_1 \hastype \Proc}$.
+
+	\noi $\mathcal{R}_{n+1}$ satisfies the condition for the stratified definition of bisimulation
+	because statement~\ref{lem:wbc_is_wb1} implies $\exists Q'$ such that
+	statements~\ref{lem:wbc_is_wb2} holds and furthermore statement~\ref{lem:wbc_is_wb3} holds
+%	if $\Gamma; \emptyset; \Sigma_1 \proves P \by{\lambda} \Gamma; \emptyset; \Sigma_1' \proves P' \hastype \Proc$ then
+%	$\exists Q'$ such that
+%	$\Gamma; \emptyset; \Sigma_2 \proves Q \by{\lambda} \Gamma; \emptyset; \Sigma_2' \proves Q' \hastype \Proc$
+%	and \ref{pr:biscong_is_bis2}.
+
+	\noi Because $\wb_{n+1}$ is the largest relation we get that $\mathcal{R}_{n+1} \subseteq \wb_{n+1}$ as required.
+
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+	\noi - Case: $\lambda = \news{\tilde{s}} \bactout{s}{\abs{x} P}$
+%
+	\begin{eqnarray}
+		\Gamma; \emptyset; \Sigma_1 \by{\news{\tilde{s}} \bactout{s}{\abs{x} P}} \Sigma_1' \proves P_1 \by{\news{\tilde{s}} \bactout{s}{\abs{x} P}} P_2 \label{lem:wbc_is_wb4}
+	\end{eqnarray}
+%
+	\noi implies that
+	$\exists Q_2, \abs{x}{Q}$ such that
+	\begin{eqnarray}
+		\Gamma; \emptyset; \Sigma_2 \By{\news{\tilde{s'}} \bactout{s}{\abs{x} Q}} \Sigma_2' \proves Q_1 \By{\news{\tilde{s'}} \bactout{s}{\abs{x} Q}} Q_2  \label{lem:wbc_is_wb5}
+	\end{eqnarray}
+	and $\forall C, s'$
+%	such that
+%	\begin{eqnarray*}
+%		\Gamma; \emptyset; \Sigma_1'' \proves \newsp{\tilde{s}}{\context{C}{P' \Par P \subst{s'}{x}}} \hastype \Proc \\
+%		\Gamma; \emptyset; \Sigma_2'' \proves \newsp{\tilde{s}}{\context{C}{Q' \Par Q \subst{s'}{x}}} \hastype \Proc
+%	\end{eqnarray*}
+%	then
+%
+	\begin{eqnarray*}
+		\Gamma; \emptyset; \Sigma_1''\ \wbc_{n}\ \Sigma_2'' \proves \newsp{\tilde{s}}{\context{C}{P_2 \Par P \subst{s'}{x}}}\ \wbc_{n}\ 
+		\newsp{\tilde{s'}}{\context{C}{Q_2 \Par Q \subst{s'}{x}}}
+	\end{eqnarray*}
+%
+	\noi For $C = \hole$ we have that 
+%
+	\begin{eqnarray*}
+		\Gamma; \emptyset; \Sigma_1''\ \wbc_{n}\ \Sigma_2'' \proves \newsp{\tilde{s}}{P_2 \Par P \subst{s'}{x}}\ \wbc_{n}\ 
+		\newsp{\tilde{s}}{Q' \Par Q_2 \subst{s'}{x}}
+	\end{eqnarray*}
+%
+	\dk{(prove that it is typable)}
+
+	\noi If we apply the induction hypothesis to the latter statement we get
+%
+	\begin{eqnarray}
+		\Gamma; \emptyset; \Sigma_1''\ \wb_{n}\ \Sigma_2'' \proves \newsp{\tilde{s}}{P_2 \Par P \subst{s'}{x}}\ \wb_{n}\ 
+		\newsp{\tilde{s}}{Q_2 \Par Q \subst{s'}{x}}
+		\label{lem:wbc_is_wb6}
+	\end{eqnarray}
+%
+	\noi Assume $\mathcal{R}_{n+1} = \set{\Gamma; \emptyset; \Sigma_1 \proves P_1 \hastype \Proc, \Gamma; \emptyset; \Sigma_2 \proves Q_2 \hastype \Proc}$.
+
+	\noi $\mathcal{R}_{n+1}$ satisfies the condition for the stratified definition for bisimulation
+	because statement~\ref{lem:wbc_is_wb4} implies that
+	$\exists Q', \abs{x}{Q}$ such that
+	statement~\ref{lem:wbc_is_wb5} holds and furthemore statement~\ref{lem:wbc_is_wb6} holds.
+
+	\noi Because $\wb_{n+1}$ is the largest relation we get that $\mathcal{R}_{n+1} \subseteq \wb_{n+1}$ as required.
+
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+	\noi - Case: $\lambda = \news{\tilde{s}} \bactout{s}{s_1}$
+%
+	\begin{eqnarray}
+		\Gamma; \emptyset; \Sigma_1 \by{\news{\tilde{s}} \bactout{s}{s_1}} \Sigma_1' \proves P_1 \by{\news{\tilde{s}} \bactout{s}{s_1}} P_2 \label{lem:wbc_is_wb7}
+	\end{eqnarray}
+%
+	\noi \dk{with $s_1: S \in \Sigma_1 \vee (\dual{s_1}: S' \in \Sigma_1' \wedge S \dualof S')$} implies that
+	$\exists Q', s_2$ such that
+	\begin{eqnarray}
+		\Gamma; \emptyset; \Sigma_2 \By{\news{\tilde{s'}} \bactout{s}{s_2}} \Sigma_2' \proves Q_1 \By{\news{\tilde{s'}} \bactout{s}{s_2}} Q_2 \label{lem:wbc_is_wb8}
+	\end{eqnarray}
+	and $\forall R$ with $\set{x} = \fn{P}$
+%	such that
+%	\begin{eqnarray*}
+%		\Gamma; \emptyset; \Sigma_1'' \proves \newsp{\tilde{s}}{\context{C}{P' \Par P \subst{s'}{x}}} \hastype \Proc \\
+%		\Gamma; \emptyset; \Sigma_2'' \proves \newsp{\tilde{s}}{\context{C}{Q' \Par Q \subst{s'}{x}}} \hastype \Proc
+%	\end{eqnarray*}
+%	then
+%
+	\begin{eqnarray*}
+		\Gamma; \emptyset; \Sigma_1''\ \wbc_{n}\ \Sigma_2'' \proves \newsp{\tilde{s}}{P_2 \Par R \subst{s_1}{x}}\ \wbc_{n}\ 
+		\newsp{\tilde{s'}}{Q_2 \Par R \subst{s_2}{x}}
+	\end{eqnarray*}
+%
+	\noi From the latter statement we get
+	\begin{eqnarray*}
+		\Gamma; \emptyset; \Sigma_1''\ \wbc_{n}\ \Sigma_2'' \proves \newsp{\tilde{s}}{P_2 \Par \map{S}^{x} \subst{s_1}{x}}\ \wbc_{n}\ 
+		\newsp{\tilde{s'}}{Q_2 \Par \map{S}^{x} \subst{s_2}{x}} \label{lem:wbc_is_wb9}
+	\end{eqnarray*}
+%
+	\noi Assume $\mathcal{R}_{n+1} = \set{\Gamma; \emptyset; \Sigma_1 \proves P_1 \hastype \Proc, \Gamma; \emptyset; \Sigma_2 \proves Q_1 \hastype \Proc}$.
+
+	\noi $\mathcal{R}_{n+1}$ satisfies the condition for the stratified definition for bisimulation
+	because statement~\ref{lem:wbc_is_wb7} implies that
+	$\exists Q', s_2$ such that
+	statement~\ref{lem:wbc_is_wb8} holds and furthemore statement~\ref{lem:wbc_is_wb9} holds.
+\end{proof}
+
+\begin{lemma}\rm
+	$\wb\ \subseteq\ \wbc$
+\end{lemma}
+
+\begin{proof}
+	The statement $\wb \subseteq \wbc$.
+	is equivalent to the statement $\forall n, \wb_n \subseteq \wbc_n$.
+	The proof is done using induction on the definition $\wb$.
+
+	\noi {\bf Basic step:} From the definitions of $\wbc_0$ and $\wb_0$ we get that $\wbc_0 = \wb_0$.
+
+	\noi {\bf Induction hypothesis:} $\wb_n \subseteq \wbc_n$.
+
+	\noi {\bf Inductive step:}
+	Let 
+	\[
+		\Gamma; \emptyset; \Sigma_1\ \wb_{n+1}\ \Sigma_2 \proves P_1\ \wb_{n+1}\ Q_1
+	\]
+	We perform a case analysis on transition $\by{\lambda}$.
+
+	\noi - Case: $\lambda \notin \set{\news{\tilde{s}} \bactout{s}{\abs{x} P}, \news{\tilde{s}} \bactout{s}{s_1}}$
+
+	\noi Same arguments with the same case of the direction $\wbc \subseteq \wb$
+
+	\noi - Case: $\lambda = \news{\tilde{s}} \bactout{s}{\abs{x} P}$
+%
+	\begin{eqnarray*}
+		\Gamma; \emptyset; \Sigma_1 \by{\news{\tilde{s}} \bactout{s}{\abs{x} P}} \Sigma_1' \proves P_1 \by{\news{\tilde{s}} \bactout{s}{\abs{x} P}} P_2
+	\end{eqnarray*}
+%
+	implies that
+	$\exists Q_2, \abs{x}{Q}$ such that
+	$\Gamma; \emptyset; \Sigma_2 \proves Q \by{\news{\tilde{s}} \bactout{s}{\abs{x} Q}} \Gamma; \emptyset; \Sigma_2' \proves Q' \hastype \Proc$
+	and $s'$
+	such that
+	\begin{eqnarray*}
+		\Gamma; \emptyset; \Sigma_1'' \proves \newsp{\tilde{s}}{P' \Par P \subst{s'}{x}} \hastype \Proc \\
+		\Gamma; \emptyset; \Sigma_2'' \proves \newsp{\tilde{s}}{Q' \Par Q \subst{s'}{x}} \hastype \Proc
+	\end{eqnarray*}
+	then
+	\[
+		\Gamma; \emptyset; \Sigma_1'' \proves \newsp{\tilde{s}}{P' \Par P \subst{s'}{x}}\ \wb_{n}\ 
+		\Gamma; \emptyset; \Sigma_2'' \proves \newsp{\tilde{s}}{Q' \Par Q \subst{s'}{x}} \hastype \Proc
+	\]
+
+	Let
+	\[
+		\begin{array}{rcl}
+			R_{n + 1} &=& \set{	(\Gamma; \emptyset; \Sigma_1 \proves \newsp{\tilde{s_1}}{\bout{s}{\abs{x}{\context{C}{P}}} P''} \hastype \Proc,
+						\Gamma; \emptyset; \Sigma_2 \proves \newsp{\tilde{s_2}}{\bout{s}{\abs{x}{\context{C}{P}}} Q''} \hastype \Proc) \setbar\\
+				& &		\forall C, P' \scong \news{\tilde{s_1}} P'', Q' \scong \news{\tilde{s_2}} Q''}
+		\end{array}
+	\]
+
+	\dk{prove that $R_{n+1}$ is typable}
+
+	$R_{n+1}$ satisfies the stratified definition for bisimulation and furthermore we can deduce that
+	$\forall C, s'$
+	such that
+	\begin{eqnarray*}
+		\Gamma; \emptyset; \Sigma_1'' \proves \newsp{\tilde{s}}{\context{C}{P' \Par P \subst{s'}{x}}} \hastype \Proc \\
+		\Gamma; \emptyset; \Sigma_2'' \proves \newsp{\tilde{s}}{\context{C}{Q' \Par Q \subst{s'}{x}}} \hastype \Proc
+	\end{eqnarray*}
+	then
+	\[
+		\Gamma; \emptyset; \Sigma_1'' \proves \newsp{\tilde{s}}{\context{C}{P' \Par P \subst{s'}{x}}}\ \wb_{n}\ 
+		\Gamma; \emptyset; \Sigma_2'' \proves \newsp{\tilde{s}}{\context{C}{Q' \Par Q \subst{s'}{x}}} \hastype \Proc
+	\]
+
+	From the induction hypothesis we get that
+	$\forall C, s'$
+	such that
+	\begin{eqnarray*}
+		\Gamma; \emptyset; \Sigma_1'' \proves \newsp{\tilde{s}}{\context{C}{P' \Par P \subst{s'}{x}}} \hastype \Proc \\
+		\Gamma; \emptyset; \Sigma_2'' \proves \newsp{\tilde{s}}{\context{C}{Q' \Par Q \subst{s'}{x}}} \hastype \Proc
+	\end{eqnarray*}
+	then
+	\begin{eqnarray}
+		\Gamma; \emptyset; \Sigma_1'' \proves \newsp{\tilde{s}}{\context{C}{P' \Par P \subst{s'}{x}}}\ \wbc_{n}\ 
+		\Gamma; \emptyset; \Sigma_2'' \proves \newsp{\tilde{s}}{\context{C}{Q' \Par Q \subst{s'}{x}}} \hastype \Proc
+		\label{pr:bis_is_contextbis}
+	\end{eqnarray}
+
+%	For $C = \hole$ we have that 
+%	\[
+%		\Gamma; \emptyset; \Sigma_1'' \proves \newsp{\tilde{s}}{P_2 \Par P \subst{s'}{x}}\ \wbc_{n}\ 
+%		\Gamma; \emptyset; \Sigma_2'' \proves \newsp{\tilde{s}}{Q_2 \Par Q \subst{s'}{x}} \hastype \Proc
+%	\]
+
+	Assume $R^c_{n+1} = \set{\Gamma; \emptyset; \Sigma_1 \proves P \hastype \Proc, \Gamma; \emptyset; \Sigma_2 \proves Q \hastype \Proc}$.
+
+	$R^c_{n+1}$ satisfies the condition for the stratified definition of the contextual bisimulation because of the fact that
+	if $\Gamma; \emptyset; \Sigma_1 \proves P \by{\news{\tilde{s}} \bactout{s}{\abs{x} P}} \Gamma; \emptyset; \Sigma_1' \proves P' \hastype \Proc$ then
+	$\exists Q', \abs{x}{Q}$ such that
+	$\Gamma; \emptyset; \Sigma_2 \proves Q \by{\news{\tilde{s}} \bactout{s}{\abs{x} Q}} \Gamma; \emptyset; \Sigma_2' \proves Q' \hastype \Proc$
+	and \ref{pr:bis_is_contextbis}.
+
+	Because $\wbc_{n+1}$ is the largest relation we get that $R^c_{n+1} \subseteq \wb_{n+1}$ as required.
+\end{proof}
+

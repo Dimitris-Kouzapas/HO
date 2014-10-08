@@ -1,4 +1,5 @@
-\section{Behavioral Semantics}
+\section{Behavioural Semantics}
+\label{sec:beh_sem}
 
 In this section we define a theory for observational equivalence over
 session typed $\HOp$ processes. The theory follows the principles
@@ -19,8 +20,9 @@ is defined on action $\lambda$:
 
 \begin{tabular}{rcl}
 		$\lambda$ &$\bnfis$& $\tau \bnfbar \bactout{s}{s'} \bnfbar \bactout{s}{\abs{x} P} \bnfbar\bactinp{s}{s} \bnfbar \bactinp{s}{\abs{x} P}$ \\
-		&	$\bnfbar$ & $\bactsel{s}{l} \bnfbar \bactbra{s}{l} \bnfbar \news{\tilde{s}} \bactout{s}{s'} \bnfbar \news{\tilde{s}} \bactout{s}{\abs{x} P}$\\
-		&$\bnfbar$ &	\dk{$\bactout{s}{\tilde{s}} \bnfbar \bactout{s}{\abs{\tilde{x}} P} \bactinp{s}{\tilde{s'}} \bnfbar \bactinp{s}{\abs{\tilde{x}} P}$}
+		&	$\bnfbar$ & $\bactsel{s}{l} \bnfbar \bactbra{s}{l} \bnfbar \news{s'} \bactout{s}{s'} \bnfbar \news{\tilde{s}} \bactout{s}{\abs{x} P}$
+%		\\
+%		&$\bnfbar$ &	\dk{$\bactout{s}{\tilde{s}} \bnfbar \bactout{s}{\abs{\tilde{x}} P} \bactinp{s}{\tilde{s'}} \bnfbar \bactinp{s}{\abs{\tilde{x}} P}$}
 \end{tabular}
 
 The internal action is defined on label $\tau$.
@@ -33,9 +35,13 @@ $l$, $\bactbra{s}{l}$. When output actions carry name restrictions a scope
 opening is implied.
 
 We define the notion of dual actions as the symmetric relation $\asymp$, that satisfies the rules:
-\[
-	\bactsel{s}{l} \asymp \bactbra{\dual{s}}{l} \qquad \news{\tilde{s}} \bactout{s}{\abs{x} P} \asymp \bactinp{\dual{s}}{\abs{x} P} \qquad \bactout{s}{s'} \asymp \bactinp{\dual{s}}{s'}
-\]
+
+\begin{tabular}{c}
+	$\bactsel{s}{l} \asymp \bactbra{\dual{s}}{l}
+	\qquad \news{\tilde{s}} \bactout{s}{\abs{x} P} \asymp \bactinp{\dual{s}}{\abs{x} P}
+	\qquad \bactout{s}{s'} \asymp \bactinp{\dual{s}}{s'}
+	\qquad \news{s'} \bactout{s}{s'} \asymp \bactinp{\dual{s}}{s'}$
+\end{tabular}
 
 Dual actions happen on subjects that are dual between them; they carry the same
 object; and furthermore output action is dual with input action and 
@@ -330,11 +336,12 @@ of a bisimulation relation avoids these two universal quantifiers.
 			\]
 		\item	$\forall \news{\tilde{s}} \bactout{s}{s_1}$ such that
 			\[
-				\Gamma; \emptyset; \Sigma_1 \dk{\cat s_1: S_1} \by{\news{\tilde{s}} \bactout{s}{s_1}} \Sigma_1' \proves P_1 \by{\news{\tilde{s}} \bactout{s}{s_1}} P_2
+				\Gamma; \emptyset; \Sigma_1 \by{\news{\tilde{s}} \bactout{s}{s_1}} \Sigma_1' \proves P_1 \by{\news{\tilde{s}} \bactout{s}{s_1}} P_2
 			\]
-			$\exists Q_2, s_2$ such that
+			with $s_1: S \in \Sigma_1 \vee (\dual{s_2}: S' \in \Sigma_2 \wedge S \dualof S')$
+			then $\exists Q_2, s_2$ such that
 			\[
-				\Gamma; \emptyset; \Sigma_2 \dk{\cat s_1: S_2} \By{\news{\tilde{s'}} \bactout{s}{s_2}} \Sigma_2' \proves Q_1 \By{\news{\tilde{s'}} \bactout{s}{s_2}} Q_2
+				\Gamma; \emptyset; \Sigma_2 \By{\news{\tilde{s'}} \bactout{s}{s_2}} \Sigma_2' \proves Q_1 \By{\news{\tilde{s'}} \bactout{s}{s_2}} Q_2
 			\]
 			%such that
 %			\begin{eqnarray*}
@@ -343,8 +350,8 @@ of a bisimulation relation avoids these two universal quantifiers.
 %			\end{eqnarray*}
 			and
 			\[
-				\Gamma; \emptyset; \Sigma_1''\ \mathcal{R}\ \Sigma_2'' \proves \newsp{\tilde{s}}{P_2 \Par \map{S_1}^{s_1}}\ \mathcal{R}\ 
-				\newsp{\tilde{s'}}{Q_2 \Par \map{S_2}^{s_2}}
+				\Gamma; \emptyset; \Sigma_1''\ \mathcal{R}\ \Sigma_2'' \proves \newsp{\tilde{s}}{P_2 \Par \map{S}^{s_1}}\ \mathcal{R}\ 
+				\newsp{\tilde{s'}}{Q_2 \Par \map{S}^{s_2}}
 			\]
 
 		\item	$\forall \lambda \notin \set{\news{\tilde{s}} \bactout{s}{s'}, \news{\tilde{s}} \bactout{s}{\abs{x} P}}s$ such that
@@ -369,6 +376,7 @@ they coincide between them and they also
 coincide with reduction closed, barbed congruence.
 
 \begin{theorem}[Coincidence]\rm
+	\label{the:coincidence}
 	$\wb\ =\ \wbc$ and $\cong\ =\ \wbc$.
 \end{theorem}
 
@@ -376,12 +384,7 @@ coincide with reduction closed, barbed congruence.
 	\dk{add sketch}
 \end{proof}
 
-
 Session types are inherintly $\tau$-inert.
-
-\jp{This result needs to be split two handle only a single reduction step.}
-
-We prove an auxiliary result:
 
 \begin{lemma}[$\tau$-inertness]
 	\label{lem:tau_inert}
