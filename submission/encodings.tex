@@ -148,27 +148,29 @@ due to the linearity of the session endpoints, \cite{VascoFun}.
 
 We are going to use the fact that polyadicity is well established
 to simplify our presentation in the rest of the paper.
-We define polyadicity as a syntax transformation since we have not
-introduced operational, typed or behavioural polyadic semantics\footnote{
+Below we define polyadicity as a syntax transformation (rather than as a typed encoding) since we have not
+formally introduced syntax, semantics, and types for $\HOp$ with polyadic communication.\footnote{
 The definition of the semantics for polyadicity would add a complication
 factor to the presentation of this paper which is not our intention,
 although they would add clarity to the results presented.
 Instead we are relying our results on the fact that polyadic semantics are well
-studied and established}:
+studied and established}
+Because of this transformation, we are able to focus our theory on monadic processes, and rely on polyadic constructs simply as syntactic sugar.
 
 \begin{definition}[Polyadic mapping]
-We define the mapping $\map{\cdot}^{p}:\pHOp \to \HOp$ as
+We define the mapping $\auxmap{\cdot}{\mathsf{p}}:\pHOp \to \HOp$ as
 \[
 	\begin{array}{rcl}
-			\map{\bout{k}{k'_1, \cdots, k'_n} P}^{p} &\defeq& \bout{k}{k'_1} \cdots ;  \bout{k}{k'_n} \pmap{P}{p}\\
-			\map{\binp{k}{x_1, \cdots, x_n} P}^{p} &\defeq& \binp{k}{x_1} \cdots ; \binp{k}{x_n}  \pmap{P}{p} \\
+			\auxmap{\bout{k}{k'_1, \cdots, k'_n} P}{\mathsf{p}} &\defeq& \bout{k}{k'_1} \cdots ;  \bout{k}{k'_n} \auxmap{P}{\mathsf{p}}\\
+			\auxmap{\binp{k}{x_1, \cdots, x_n} P}{\mathsf{p}} &\defeq& \binp{k}{x_1} \cdots ; \binp{k}{x_n}  \auxmap{P}{\mathsf{p}} \\
 %			\map{\bout{k}{\abs{\tilde{x}} P_1} P_2}^{p} &\defeq& \bbout{k}{\abs{z}\map{\binp{z}{\tilde{x}} P_1}^{p}} \map{P_2}^{p}\\
 %			\map{\appl{X}{\tilde{k}}}^{p}  &\defeq& \newsp{s}{\appl{X}{s} \Par \map{\bout{\dual{s}}{\tilde{k}} \inact}^{p}} \\
-			\map{\bbout{k}{\abs{x_1, \cdots, x_n} Q} P}^{p} &\defeq& \bbout{k}{\abs{z}\binp{z}{x_1} \cdots ; \binp{z}{x_n}\map{Q}^{p}} \map{P}^{p}\\
-			\map{\appl{X}{k_1, \cdots, k_n}}^{p}  &\defeq& \newsp{s}{\appl{X}{s} \Par \bout{\dual{s}}{k_1} \cdots ; \bout{\dual{s}}{k_n} \inact}^{p}
+			\auxmap{\bbout{k}{\abs{x_1, \cdots, x_n} Q} P}{\mathsf{p}} &\defeq& \bbout{k}{\abs{z}\binp{z}{x_1} \cdots ; \binp{z}{x_n}\auxmap{Q}{\mathsf{p}}} \auxmap{P}{\mathsf{p}}\\
+			\auxmap{\appl{X}{k_1, \cdots, k_n}}{\mathsf{p}}  &\defeq& \newsp{s}{\appl{X}{s} \Par \bout{\dual{s}}{k_1} \cdots ; \bout{\dual{s}}{k_n} \inact}^{p}
 	\end{array}
 	\]
-	and as an homomorphism for the remaining constructs in \pHOp. \jp{I prefer to be explicit in the encoding of polyadic abstraction/applications. Previous version is commented.}
+	and as an homomorphism for the remaining constructs in \pHOp. 
+	%\jp{I prefer to be explicit in the encoding of polyadic abstraction/applications. Previous version is commented.}
 \end{definition}
 
 Passing a list of names over session channels is established
@@ -498,69 +500,82 @@ A preliminary tool to encode the $\sesp$ recursion primitives would be to
 provide a mapping from processes to processes with no free names.
 We require some auxiliary definitions. 
 Let $\vmap{\cdot}: 2^{\mathcal{N}} \longrightarrow \mathcal{V}^\omega$
-be a map of names to variables. 
-Also, let 
-$\smap{\cdot}: 2^{\mathcal{N}} \longrightarrow \mathcal{N}^\omega$ be a map which 
-orders lexicographically a set of names. 
-We define $\vmap{\cdot}$ and $\smap{\cdot}$ as follows:
+be a map of sequences of names to sequences of variables, defined as follows:
 \[
 	\begin{array}{rcl}
 		\vmap{s} & = & x_s \\
 		\vmap{s \cat \tilde{s}} &=& x_s \cat \vmap{\tilde{s}}\\
-		\smap{\set{s_i}_{i \in I}} &=& \svmap{\smap{\set{s_i}_{i \in I}}}
+%		\smap{\set{s_i}_{i \in I}} &=& \svmap{\smap{\set{s_i}_{i \in I}}}
 	\end{array}
 \]
-Intuitively, the following process mapping rewrites free session names into variables for abstractions:
-\jp{Not sure the ordering mapping is properly defined - I have messed up some command name. Below, what are $L_{\HOp}$, $L_{\HOp}$??}
+Given a process $P$, we write $\ofn{P}$ to denote the \emph{sequence} of free names of $P$, lexicographically ordered.
+Intuitively, the following mapping transforms processes with free session names into abstractions:
 \begin{definition}\label{d:trabs}
    Let $\sigma$ be a set of session names.
-	Define $\map{\cdot}^{\sigma}: L_{\HOp} \to L_{\HOp}$  as follows
+	Define $\auxmapp{\cdot}{\mathsf{v}}{\sigma}: \HOp \to \pHOp$  as follows
 	\[
 	\begin{array}{rcll}
-		\map{\bout{s}{\abs{x} P'} P}^{\sigma} &\bnfis&
+			\auxmapp{\news{s} P}{\sigma}{\mathsf{v}} &\bnfis& \news{s} \auxmapp{P}{\mathsf{v}}{{\sigma \cat s}}\\
+		\auxmapp{\bout{s}{\abs{x} Q} P}{\mathsf{v}}{\sigma} &\bnfis&
 		\left\{
 		\begin{array}{rl}
-			\bbout{x_s}{\abs{\vmap{x, \fn{P}}} \map{P'}^{\es}} \map{P}^{\sigma} & s \notin \sigma\\
-			\bbout{s}{\abs{\vmap{x, \fn{P}}} \map{P'}^{\es}} \map{P}^{\sigma} & s \in \sigma
+			\bbout{x_s}{\abs{x,\vmap{ \ofn{P}}} \auxmapp{Q}{\mathsf{v}}{\sigma}} \auxmapp{P}{\mathsf{v}}{\sigma} & s \notin \sigma\\
+			\bbout{s}{\abs{x,\vmap{\ofn{P}}} \auxmapp{Q}{\mathsf{v}}{\sigma}} \auxmapp{P}{\mathsf{v}}{\sigma} & s \in \sigma
 		\end{array}
 		\right.
 		\\
-		\map{\binp{s}{X} P}^{\sigma} &\bnfis&
+		\auxmapp{\binp{s}{X} P}{\mathsf{v}}{\sigma} &\bnfis&
 		\left\{
 		\begin{array}{rl}
-			\binp{x_s}{X} \map{P}^{\sigma} & s \notin \sigma\\
-			\binp{s}{X} \map{P}^{\sigma} & s \in \sigma
+			\binp{x_s}{X} \auxmapp{P}{\mathsf{v}}{\sigma} & s \notin \sigma\\
+			\binp{s}{X} \auxmapp{P}{\mathsf{v}}{\sigma} & s \in \sigma
 		\end{array}
 		\right.
 		\\
-		\map{\bsel{s}{l} P}^{\sigma} &\bnfis&
+		\auxmapp{\bsel{s}{l} P}{\mathsf{v}}{\sigma} &\bnfis&
 		\left\{
 		\begin{array}{rl}
-			\bsel{x_s}{l} \map{P}^{\sigma} & s \notin \sigma\\
-			\bsel{s}{l} \map{P}^{\sigma} & s \in \sigma
+			\bsel{x_s}{l} \auxmapp{P}{\mathsf{v}}{\sigma} & s \notin \sigma\\
+			\bsel{s}{l} \auxmapp{P}{\mathsf{v}}{\sigma} & s \in \sigma
 		\end{array}
 		\right.
 		\\
-
-		\map{\bbra{s}{l_i: P_i}_{i \in I}}^{\sigma} &\bnfis&
+		\auxmapp{\bsel{s}{l} P}{\mathsf{v}}{\sigma} &\bnfis&
 		\left\{
 		\begin{array}{rl}
-			\bbra{x_s}{l_i: \map{P_i}^{\sigma}}_{i \in I} & s \notin \sigma\\
-			\bbra{s}{l_i: \map{P_i}^{\sigma}}_{i \in I} & s \in \sigma\\
+			\bsel{x_s}{l} \auxmapp{P}{\mathsf{v}}{\sigma} & s \notin \sigma\\
+			\bsel{s}{l} \auxmapp{P}{\mathsf{v}}{\sigma} & s \in \sigma
 		\end{array}
 		\right.
 		\\
-		\map{P_1 \Par P_2}^{\sigma} &\bnfis& \map{P_1}^{\sigma} \Par \map{P_2}^{\sigma} \\%& s \notin \sigma\\
-		\map{\news{s} P}^{\sigma} &\bnfis& \news{s} \map{P}^{\sigma\cat s}\\
-		\map{\inact}^{\sigma} &\bnfis& \inact\\
-		\map{\appl{\X}{s}}^{\sigma} &\bnfis&
+		\auxmapp{\bout{s}{s'}P}{\mathsf{v}}{\sigma} &\bnfis&
+		\left\{
+		\begin{array}{rl}
+		    \bout{s}{s'}P & s, s' \in \sigma \\
+		    \bout{x_s}{s'}P & s \not\in \sigma, s' \in \sigma \\
+		    \bout{s}{x'_s}P & s \in \sigma, s' \not\in \sigma \\
+		    \bout{x_s}{x'_s}P & s, s' \not\in \sigma 
+		\end{array}
+		\right.
+		\\
+		\auxmapp{\binp{s}{x}P}{\mathsf{v}}{\sigma} &\bnfis&
+		\left\{
+		\begin{array}{rl}
+		    \bout{s}{x}P & s \in \sigma \\
+		    \bout{x_s}{x}P & s \not\in \sigma 
+		\end{array}
+		\right.
+		\\
+		\auxmapp{\appl{\X}{s}}{\mathsf{v}}{\sigma} &\bnfis&
 		\left\{
 		\begin{array}{rl}
 			\appl{\X}{x_s} & s \notin \sigma\\
 			\appl{\X}{s} & s \in \sigma\\
 		\end{array}
-		\right.
-	\end{array}
+		\right. \\
+				\auxmapp{\inact}{\mathsf{v}}{\sigma} &\bnfis& \inact\\
+		\auxmapp{P \Par Q}{\mathsf{v}}{\sigma} &\bnfis& \auxmapp{P}{\mathsf{v}}{\sigma} \Par \auxmapp{Q}{\mathsf{v}}{\sigma} 
+			\end{array}
 \]
 
 \end{definition}
@@ -568,13 +583,11 @@ Intuitively, the following process mapping rewrites free session names into vari
 \jp{Please check the following.} \\
 We may undo the transformation above by means of abstraction and application.
 \begin{proposition}
-Let $P$ be a \HOp process with $N_P = \smap{\fn{P}}$.
-Let $A_P$ be the polyadic abstraction $\abs{\vmap{N_P}}\pmap{P}{\emptyset}$, where 
-$\pmap{P}{\emptyset}$ is obtained following Def.~\ref{d:trabs}.
-Then we have:
-$$
-P \scong \appl{X}{N_P}\subst{A_P}{X}
-$$
+Let $P$ 
+be a \HOp process, and 
+$N_P = \vmap{\ofn{P}}$.
+Also, let $A_P$ be the polyadic abstraction $\abs{N_P}\auxmapp{P}{\emptyset}{\mathsf{v}}$ (cf. Def.~\ref{d:trabs}).
+Then we have: $P \scong \appl{X}{N_P}\subst{A_P}{X}$.
 %	$\appl{X}{\smap{\fn{P}}} \subst{(\vmap{\fn{P}}) \map{P}^{\emptyset}}{X} \scong P$
 \end{proposition}
 
@@ -585,15 +598,19 @@ $$
 
 We are now ready to define the encoding of the $\sesp$ recursive
 operators:
-\jp{Notice that this needs to be parametric on a set of names, $N$.}
+\jp{Please check.}
 \begin{definition}[From $\sesp$ to $\pHOp$]
-	We define $\encod{\cdot}{\cdot}{2}: \sesp \to \HO$:
+Let $f$ be a function from recursion variables to sequences of name variables.
+	Define $\encod{\cdot}{\cdot}{2}: \sesp \to \pHOp$ as
 \[
 \begin{array}{rcl}
-	\map{\rec{X}{P}}^{2} &=& \newsp{s}{\binp{s}{\X} \map{P}^{2} \Par \bout{\dual{s}}{\abs{z \cat \vmap{\fn{P}}}{\binp{z}{\X} \map{P}^{\es}}} \inact}\\
-	\map{\rvar{X}}^{2} &=& \newsp{s}{\appl{\X}{s \cat \smap{\fn{P}}} \Par \bout{\dual{s}}{ \abs{z \cat \vmap{\fn{P}}}{\appl{X}{z \cat \vmap{\fn{P}}}}} \inact}
+%	\map{\rec{X}{P}}^{2} &=& \newsp{s}{\binp{s}{\X} \map{P}^{2} \Par \bout{\dual{s}}{\abs{z \cat \vmap{\fn{P}}}{\binp{z}{\X} \map{P}^{\es}}} \inact}\\
+%	\map{\rvar{X}}^{2} &=& \newsp{s}{\appl{\X}{s \cat \smap{\fn{P}}} \Par \bout{\dual{s}}{ \abs{z \cat \vmap{\fn{P}}}{\appl{X}{z \cat \vmap{\fn{P}}}}} \inact} \\
+	\pmapp{\rec{X}{P}}{2}{f} &=& \newsp{s}{\binp{s}{\X} \pmapp{P}{2}{{f,\{\rvar{X}\to \vmap{\ofn{P}}\}}} \Par \bbout{\dual{s}}{\abs{z , \vmap{\ofn{P}}}{\binp{z}{\X} \auxmapp{P}{\sigma}{\es}}} \inact}\\
+	\pmapp{\rvar{X}}{2}{f} &=& \newsp{s}{\appl{\X}{s, f(\rvar{X})} \Par \bbout{\dual{s}}{ \abs{z, f(\rvar{X})}{\appl{X}{z, f(\rvar{X})}}} \inact}
 \end{array}
 \]
+and as an homomorphism for the other process constructs. 
 \end{definition}
 \dk{put the recursive encodings}
 
