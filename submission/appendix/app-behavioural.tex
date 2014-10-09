@@ -1003,56 +1003,160 @@ We first show that every external action $\lambda$ is {\em definable}.
 \end{lemma}
 
 \begin{proof}
-	We show that $\forall \lambda \cat \tilde{\lambda}$ such that $\Gamma; \emptyset; \Sigma_1 \proves P_1 \by{\lambda} \By{\tilde{\lambda}} \Sigma_1' \proves P_1' \hastype \Proc$
-	and $\Gamma; \emptyset; \Sigma_1 \cup \Sigma_3 \proves P_1 \Par T\lrangle{\lambda \cat \tilde{\lambda}, \tilde{\suc}, N} \cong \Sigma_2 \cup \Sigma_3 \proves P_2 \Par T\lrangle{\lambda \cat \tilde{\lambda}, \tilde{\suc}, N} \hastype \Proc$ then $\forall n, \Gamma; \emptyset; \Sigma_1 \proves P_1 \wb_n \Sigma_2 \proves P_2 \hastype \Proc$.
-
-	We use induction on the definition of $\wb_n$.
-
-	Basic step: Trivial.
-
-	Inductive step:
-
-	We follow two cases:
-
-	Case $\lambda = \news{\tilde{s_1}} \bactout{s}{\abs{x}{Q_1}}$.
-
-	Take into account the fact that
-	$T\lrangle{\news{\tilde{s_1}} \bactout{s}{\abs{x}{Q_1}} \cat \tilde{\lambda}, \tilde{\suc}, N} = T\lrangle{\news{\tilde{s_2}} \bactout{s}{\abs{x}{Q_2}} \cat \tilde{\lambda}, \tilde{\suc}, N}$
-	to assume:
-
-	$\Gamma; \emptyset; \Sigma_1 \cup \Sigma_3 \proves P_1 \Par T\lrangle{\news{\tilde{s_1}} \bactout{s}{\abs{x}{Q_1}} \cat \tilde{\lambda}, \tilde{\suc}, N} \cong \Sigma_2 \cup \Sigma_3 \proves P_2 \Par T\lrangle{\news{\tilde{s_2}} \bactout{s}{\abs{x}{Q_2}} \cat \tilde{\lambda}, \tilde{\suc}, N} \hastype \Proc$.
-s
-
-	From the above we get that
-	\[
-		\Gamma; \emptyset; \Sigma_1 \cup \Sigma_3 \proves P_1 \Par T\lrangle{\news{\tilde{s_1}} \bactout{s}{\abs{x}{Q_1}} \cat \tilde{\lambda}, \suc \cat \tilde{\suc}, N} \red \Sigma_1' \cup \Sigma_3' \proves P_1' \Par Q_1 \subst{s'}{x} \Par T\lrangle{\tilde{\lambda}, \tilde{\suc}, N} \Par \bout{\suc}{\ast} \inact \hastype \Proc \barb{\suc}
-	\]
-	implies
-	\[
-		\Gamma; \emptyset; \Sigma_2 \cup \Sigma_3 \proves P_2 \Par T\lrangle{\news{\tilde{s_2}} \bactout{s}{\abs{x}{Q_2}} \cat \tilde{\lambda}, \suc \cat \tilde{\suc}, N} \Red \Sigma_2' \cup \Sigma_3 \proves Q \inact \hastype \Proc \Barb{\suc}
-	\]
-	implies (from the definibility of $\news{\tilde{s_1}} \bactout{s}{\abs{x}{Q_1}}$)
+	\noi We show that
+	$\forall \lambda \cat \tilde{\lambda}$
+	such that
 	\begin{eqnarray}
-		Q \scong P_2' \Par Q_2 \subst{s'}{x} \Par T\lrangle{\tilde{\lambda}, \tilde{\suc}, N} \Par \bout{\suc}{\ast}\\
-		\Gamma; \emptyset; \Sigma_2 \proves P_2 \By{\lambda} \Sigma_2' \proves P_2'
+		\Gamma; \emptyset; \Sigma_1 \by{\lambda} \Sigma_1' \proves P_1 \by{\lambda} \By{\tilde{\lambda}} P_1' \label{lem:cong_is_wb1}
 	\end{eqnarray}
+	\noi and 
+	\[
+		\Gamma; \emptyset; \Sigma_1 \cup \Sigma_3 \cong \Sigma_2 \cup \Sigma_3 \proves P_1 \Par T\lrangle{\lambda \cat \tilde{\lambda}, \tilde{\suc}} \cong P_2 \Par T\lrangle{\lambda \cat \tilde{\lambda}, \tilde{\suc}}
+	\]
+	\noi then $\forall n$
+	\[
+		\Gamma; \emptyset; \Sigma_1 \wb_n \Sigma_2 \proves P_1 \wb_n P_2
+	\]
+%
+	\noi We use induction on the definition of $\wb_n$.
 
-	From the induction hypothesis we get that
-	$\Gamma;\emptyset; \Sigma_1' \proves P_1' \Par Q_1 \subst{s'}{x} \wb_n \Sigma_2' \proves P_2' \Par Q_2 \subst{s'}{x} \hastype \Proc$.
+	\noi {\bf Basic step:} Trivialy $\Gamma; \emptyset; \Sigma_1 \wb_0 \Sigma_2 \proves P_1 \wb_0 P_2$
 
-	Let $R_{n+1} = \set{(\Gamma; \emptyset; \Sigma_1 \proves P_1 \hastype \Proc, \Gamma; \emptyset; \Sigma_2 \proves P_2 \hastype \Proc)}$
-	We check the requirements for $R_{n+1}$ to be a stratified definition with respect
-	to $\wb_n$ to conclude that $R_{n+1} \subseteq \wb_{n+1}$ as required.
+	\noi {\bf Inductive Hypothesis:} $\Gamma; \emptyset; \Sigma_1 \wb_n \Sigma_2 \proves P_1 \wb_n P_2$
 
-	Case $\lambda \not= \news{\tilde{s_1}} \bactout{s}{\abs{x}{Q_1}}$ is similar and easier than the previous case.
+	\noi {\bf Inductive step:}
 
-	We are ready to prove the main result.
+	\noi We follow three cases:
 
-	Let $\Gamma; \emptyset; \Sigma_1 \proves P_1 \cong \Sigma_2 \proves P_2 \hastype \Proc$.
-	For all $\tilde{\lambda}$ such that $\Gamma; \emptyset; \Sigma_1 \proves P_1 \By{\lambda} \Sigma_1' \proves P_1' \hastype \Proc$
-	choose $\Gamma; \emptyset; \Sigma_3 \proves T\lrangle{\tilde{\lambda}, \tilde{\suc}, N} \hastype \Proc$ such that
-	$\Gamma; \emptyset; \Sigma_1 \cup \Sigma_3 \proves P_1 \Par T\lrangle{\tilde{\lambda}, \tilde{\suc}, N} \cong \Sigma_2 \cup \Sigma_3 \proves P_2 \Par T\lrangle{\tilde{\lambda}, \tilde{\suc}, N} \hastype \Proc$
-	to imply that $\Gamma; \emptyset; \Sigma_1 \proves P_1 \wb \Sigma_2 \proves P_2 \hastype \Proc$
+	\noi - Case: $\lambda = \news{\tilde{s_1}} \bactout{s}{\abs{x}{Q_1}}$.
+
+	\noi Take into account the fact that
+%
+	\[
+		T\lrangle{\news{\tilde{s_1}} \bactout{s}{\abs{x}{Q_1}} \cat \tilde{\lambda}, \tilde{\suc}} = T\lrangle{\news{\tilde{s_2}} \bactout{s}{\abs{x}{Q_2}} \cat \tilde{\lambda}, \tilde{\suc}}
+	\]
+%
+	\noi to assume:
+%
+	\[
+		\Gamma; \emptyset; \Sigma_1 \cup \Sigma_3 \cong \Sigma_2 \cup \Sigma_3  \proves P_1 \Par T\lrangle{\news{\tilde{s_1}} \bactout{s}{\abs{x}{Q_1}} \cat \tilde{\lambda}, \tilde{\suc}} \cong P_2 \Par T\lrangle{\news{\tilde{s_2}} \bactout{s}{\abs{x}{Q_2}} \cat \tilde{\lambda}, \tilde{\suc}}
+	\]
+
+	\noi From the above we get that
+	\[
+		P_1 \Par T\lrangle{\news{\tilde{s_1}} \bactout{s}{\abs{x}{Q_1}} \cat \tilde{\lambda}, \suc \cat \tilde{\suc}} \red P_1' \Par Q_1 \subst{s'}{x} \Par T\lrangle{\tilde{\lambda}, \tilde{\suc}} \Par \bout{\suc}{\ast} \inact
+	\]
+	\noi with
+	\[
+		\Gamma; \emptyset; \Sigma_1' \cup \Sigma_3' \proves P_1' \Par Q_1 \subst{s'}{x} \Par T\lrangle{\tilde{\lambda}, \tilde{\suc}} \Par \bout{\suc}{\ast} \inact \hastype \Proc \barb{\suc}
+	\]
+	\noi which implies
+%
+	\begin{eqnarray*}
+		& & P_2 \Par T\lrangle{\news{\tilde{s_2}} \bactout{s}{\abs{x}{Q_2}} \cat \tilde{\lambda}, \suc \cat \tilde{\suc}} \Red Q\\
+		& & \Gamma; \emptyset; \Sigma_2' \cup \Sigma_3 \proves Q \hastype \Proc \Barb{\suc}
+	\end{eqnarray*}
+%
+	\noi which implies (from the definibility of $\news{\tilde{s_1}} \bactout{s}{\abs{x}{Q_1}}$)
+%
+	\begin{eqnarray}
+		& & Q \scong P_2' \Par Q_2 \subst{s'}{x} \Par T\lrangle{\tilde{\lambda}, \tilde{\suc}} \Par \bout{\suc}{\ast}\\
+		& & \Gamma; \emptyset; \Sigma_2\By{\news{\tilde{s_1}} \bactout{s}{\abs{x}{Q_1}}} \Sigma_2' \proves P_2 \By{\news{\tilde{s_1}} \bactout{s}{\abs{x}{Q_1}}} P_2' \label{lem:cong_is_wb2}
+	\end{eqnarray}
+%
+	\noi From the induction hypothesis we get that
+	\begin{eqnarray}
+		\Gamma;\emptyset; \Sigma_1' \wb_n \Sigma_2' \proves P_1' \Par Q_1 \subst{s'}{x} \wb_n P_2' \Par Q_2 \subst{s'}{x} \label{lem:cong_is_wb3}
+	\end{eqnarray}
+%
+	\noi Let
+	\[
+		\mathcal{R}_{n+1} = \set{(\Gamma; \emptyset; \Sigma_1 \proves P_1 \hastype \Proc, \Gamma; \emptyset; \Sigma_2 \proves P_2 \hastype \Proc)}
+	\]
+	\noi We check that requirements for $\mathcal{R}_{n+1}$ to be a stratified bisimulation
+	hold because transition~\ref{lem:cong_is_wb1} implies transition~\ref{lem:cong_is_wb2}
+	and furthermore~\ref{lem:cong_is_wb3} holds.
+%	with respect
+%	to $\wb_n$
+	The last statement implies that $R_{n+1} \subseteq \wb_{n+1}$ as required.
+
+	\noi - Case: $\lambda = \news{\tilde{s_1}} \bactout{s}{s_1}$.
+
+	\noi Take into account the fact that
+%
+	\[
+		T\lrangle{\news{\tilde{s_1}} \bactout{s}{s_1} \cat \tilde{\lambda}, \tilde{\suc}} = T\lrangle{\news{\tilde{s_2}} \bactout{s}{s_2} \cat \tilde{\lambda}, \tilde{\suc}}
+	\]
+	\dk{for $s_1: S, s_2: S$}
+%
+	\noi to assume:
+%
+	\[
+		\Gamma; \emptyset; \Sigma_1 \cup \Sigma_3 \cong \Sigma_2 \cup \Sigma_3  \proves P_1 \Par T\lrangle{\news{\tilde{s_1}} \bactout{s}{s_1} \cat \tilde{\lambda}, \tilde{\suc}} \cong P_2 \Par T\lrangle{\news{\tilde{s_2}} \bactout{s}{s_2} \cat \tilde{\lambda}, \tilde{\suc}}
+	\]
+
+	\noi From the above we get that
+	\[
+		P_1 \Par T\lrangle{\news{\tilde{s_1}} \bactout{s}{s_1} \cat \tilde{\lambda}, \suc \cat \tilde{\suc}} \red P_1' \Par \dk{\map{S}^x} \subst{s_1}{x} \Par T\lrangle{\tilde{\lambda}, \tilde{\suc}} \Par \bout{\suc}{\ast} \inact
+	\]
+	\noi with
+	\[
+		\Gamma; \emptyset; \Sigma_1' \cup \Sigma_3' \proves P_1' \Par \dk{\map{S}^x} \subst{s_1}{x} \Par T\lrangle{\tilde{\lambda}, \tilde{\suc}} \Par \bout{\suc}{\ast} \inact \hastype \Proc \barb{\suc}
+	\]
+	\noi which implies
+%
+	\begin{eqnarray*}
+		& & P_2 \Par T\lrangle{\news{\tilde{s_2}} \bactout{s}{\abs{x}{Q_2}} \cat \tilde{\lambda}, \suc \cat \tilde{\suc}} \Red Q\\
+		& & \Gamma; \emptyset; \Sigma_2' \cup \Sigma_3 \proves Q \hastype \Proc \Barb{\suc}
+	\end{eqnarray*}
+%
+	\noi which implies (from the definibility of $\news{\tilde{s_1}} \bactout{s}{s_2}$)
+%
+	\begin{eqnarray}
+		& & Q \scong P_2' \Par \dk{\map{S}^x} \subst{s_2}{x} \Par T\lrangle{\tilde{\lambda}, \tilde{\suc}} \Par \bout{\suc}{\ast}\\
+		& & \Gamma; \emptyset; \Sigma_2 \By{\news{\tilde{s_1}} \bactout{s}{s_2}} \Sigma_2' \proves P_2 \By{\news{\tilde{s_1}} \bactout{s}{s_2}} P_2' \label{lem:cong_is_wb4}
+	\end{eqnarray}
+%
+	\noi From the induction hypothesis we get that
+	\begin{eqnarray}
+		\Gamma;\emptyset; \Sigma_1' \wb_n \Sigma_2' \proves P_1' \Par \dk{\map{S}^x} \subst{s_1}{x} \wb_n P_2' \Par \dk{\map{S}} \subst{s_2}{x} \label{lem:cong_is_wb5}
+	\end{eqnarray}
+%
+	\noi Let
+	\[
+		\mathcal{R}_{n+1} = \set{(\Gamma; \emptyset; \Sigma_1 \proves P_1 \hastype \Proc, \Gamma; \emptyset; \Sigma_2 \proves P_2 \hastype \Proc)}
+	\]
+	\noi We check that requirements for $\mathcal{R}_{n+1}$ to be a stratified bisimulation
+	hold because transition~\ref{lem:cong_is_wb1} implies transition~\ref{lem:cong_is_wb4}
+	and furthermore~\ref{lem:cong_is_wb5} holds.
+%	with respect
+%	to $\wb_n$
+	The last statement implies that $R_{n+1} \subseteq \wb_{n+1}$ as required.
+
+	\noi - Case $\lambda \notin \news{\tilde{s_1}} \bactout{s}{\abs{x}{Q_1}}$ is similar and easier than the previous cases.
+
+	\noi We are ready to prove the main result.
+
+	\noi Let 
+	\[
+		\Gamma; \emptyset; \Sigma_1 \cong \Sigma_2 \proves P_1 \cong P_2
+	\]
+	\noi For all $\tilde{\lambda}$ such that
+	\[
+		\Gamma; \emptyset; \Sigma_1 \By{\lambda} \Sigma_1' \proves P_1 \By{\lambda} P_1'
+	\]
+	\noi choose
+	\[
+		\Gamma; \emptyset; \Sigma_3 \proves T\lrangle{\tilde{\lambda}, \tilde{\suc}} \hastype \Proc
+	\]
+	\noi such that
+	\[
+		\Gamma; \emptyset; \Sigma_1 \cup \Sigma_3 \cong \Sigma_2 \cup \Sigma_3 \proves P_1 \Par T\lrangle{\tilde{\lambda}, \tilde{\suc}} \cong P_2 \Par T\lrangle{\tilde{\lambda}, \tilde{\suc}}
+	\]
+	\noi to imply that
+	\[
+		\Gamma; \emptyset; \Sigma_1 \wb \Sigma_2 \proves P_1 \wb P_2
+	\]
 \end{proof}
 
 
