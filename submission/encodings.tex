@@ -671,15 +671,189 @@ cannot be put in parallel because they do not have disjoint environments.
 
 The correct approach would be to use replicated shared names
 as triggers instead of session names. 
+Below we write $\repl{} P$ as a shorthand notation for $\recp{X}{(P \Par \rvar{X})}$.
 
 \begin{definition}[From $\HO$ to $\sesp$]
-
-	\begin{tabular}{lcl}
-		$\map{\bout{k}{\abs{x} P_1} P_2}^{9}$ &$\defeq$& $ \newsp{a}{\bout{k}{a} (\map{P_2}^9 \Par \repl{} \binp{a}{y} \binp{y}{x} \map{P_1}^9)} $\\
-		$\map{\binp{k}{X} P}^{9}$ &$\defeq$& $\binp{s}{x} \map{P}^9$\\
-		$\map{\appl{X}{k}}^9$ &$\defeq$& $\newsp{s}{\bout{x}{s} \bout{\dual{s}}{k} \inact}$
-	\end{tabular}
+  Define $\encod{\cdot}{\cdot}{3}: \HO \to \sesp$ as follows
+  \[
+	\begin{array}{rcl}
+		\pmap{\bbout{k}{\abs{x} Q} P}{3} & \defeq &  \newsp{a}{\bout{k}{a} (\pmap{P}{3} \Par \repl{} \binp{a}{y} \binp{y}{x} \pmap{Q}{3})\,} \\
+		\pmap{\binp{k}{X} P}{3} &\defeq&  \binp{k}{x} \pmap{P}{3}\\
+		\pmap{\appl{X}{k}}{3} & \defeq & \newsp{s}{\bout{x}{s} \bout{\dual{s}}{k} \inact}\\
+		\tmap{\btout{\lhot{S}}S_1}{3} & \defeq & \bbtout{\chtype{\btinp{\tmap{S}{3}}\tinact}}\tmap{S_1}{3} \\
+		\tmap{\btinp{\lhot{S}}S_1}{3} & \defeq & \bbtinp{\chtype{\btinp{\tmap{S}{3}}\tinact}}\tmap{S_1}{3}
+	\end{array}
+	\]
 \end{definition}
+
+\begin{proposition}
+	Encoding $\encod{\cdot}{\cdot}{3}: \HO \to \sesp$  is type-preserving (cf. Def.~\ref{def:ep}\,(1)).
+\end{proposition}
+
+\begin{proof}
+By induction on the structure of \HO process $P$. 
+\begin{enumerate}[1.]
+
+%%%% Output of (linear) channel
+	\item Case $P = \bout{k}{\abs{x}Q}P$. Then  
+	we have the following typing in the source language:
+	{\small
+	\[
+		\tree{
+			\tree{}{\Gamma; \emptyset; \Sigma_1 \cat k:S  \proves  P \hastype \Proc} \quad \tree{\Gamma ; \emptyset ; \Sigma_2\cat x:S_1 \proves  Q \hastype \Proc}{\Gamma ; \emptyset ; \Sigma_2 \proves  \abs{x}Q \hastype \lhot{S_1}} }{
+			\Gamma; \emptyset; \Sigma_1 \cat \Sigma_2 \cat k:\btout{\lhot{S_1}}S \proves  \bbout{k}{\abs{x}Q} P \hastype \Proc}
+	\]
+	}
+	The corresponding typing in the target language is as follows --- we write $U_1$ to stand for 
+	$\chtype{\btinp{\tmap{S_1}{3}}\tinact}$.
+	In $\Gamma$ we should remove $X: \lhot{S_1}$.
+	We thus write 
+	\begin{eqnarray*}
+	\Gamma_0 & = &  \Gamma \setminus \{X: \lhot{S_1}\} \\
+	\tmap{\Gamma_1}{3} & = & \tmap{\Gamma_0}{3} \cup a:\chtype{\btinp{\tmap{S_1}{3}}\tinact} \\
+	\tmap{\Gamma_2}{3} & = & \tmap{\Gamma_1}{3} \cup \rvar{X}:\tmap{\Sigma_2}{3}
+	\end{eqnarray*}
+	Also $(*)$ stands for $\tmap{\Gamma_1}{3}; \es ; \es \proves a \hastype U_1$; 
+	$(**)$ stands for $\tmap{\Gamma_2}{3}; \es ; \es \proves a \hastype U_1$; and
+	$(***)$ stands for $\tmap{\Gamma_2}{3}; \es ; \es \proves \rvar{X} \hastype \Proc$.
+	
+		{\small
+	\[
+		\tree{
+		\tree{
+		\tree{}{(*)}  \quad 
+			\tree{
+			\tree{}{
+			\tmap{\Gamma_1}{3}; \es ; \tmap{\Sigma_1}{3}, k:\tmap{S}{3} 
+		\proves 
+		\pmap{P}{3}  \hastype \Proc
+			}
+			\quad 
+			\tree{
+			\tree{
+			\tree{}{
+			(***)
+			} 
+			\quad 
+			\tree{
+			\tree{
+			\tree{
+			\tree{
+			}{
+			\tmap{\Gamma_2}{3}; \es ; \tmap{\Sigma_2}{3},  x:\tmap{S_1}{3}
+			\proves 
+			\pmap{Q}{3} \hastype \Proc
+			}
+			}{
+			\tmap{\Gamma_2}{3}; \es ; \tmap{\Sigma_2}{3}, y:\tinact, x:\tmap{S_1}{3}
+			\proves 
+			\pmap{Q}{3} \hastype \Proc
+			}
+			}{
+			\tmap{\Gamma_2}{3}; \es ; \tmap{\Sigma_2}{3}, y: \btinp{\tmap{S_1}{3}}\tinact
+			\proves 
+			\binp{y}{x}\pmap{Q}{3} \hastype \Proc
+			} 
+			\quad 
+			\tree{
+			}{
+			(**)
+			}
+			}{
+			\tmap{\Gamma_2}{3}; \es ; \tmap{\Sigma_2}{3} 
+			\proves 
+			\binp{a}{y}\binp{y}{x}\pmap{Q}{3} \hastype \Proc
+			} 
+			}{
+			\tmap{\Gamma_2}{3}; \es ; \tmap{\Sigma_2}{3} 
+		\proves 
+		\binp{a}{y}\binp{y}{x}\pmap{Q}{3} \Par \rvar{X} \hastype \Proc
+			}
+			}{
+			\tmap{\Gamma_1}{3}; \es ; \tmap{\Sigma_2}{3} 
+		\proves 
+		\recp{X}{(\binp{a}{y}\binp{y}{x}\pmap{Q}{3} \Par \rvar{X})} \hastype \Proc
+			}
+			}{
+			\tmap{\Gamma_1}{3}; \es ; \tmap{\Sigma_1, \Sigma_2}{3}, k:\tmap{S}{3} 
+		\proves 
+		\pmap{P}{3} \Par 
+		\recp{X}{(\binp{a}{y}\binp{y}{x}\pmap{Q}{3} \Par \rvar{X})} \hastype \Proc
+			}
+		}{
+		\tmap{\Gamma_1}{3}; \es ; \tmap{\Sigma_1, \Sigma_2}{3}, k:\bbtout{U_1}\tmap{S}{3} 
+		\proves 
+		\bout{k}{a}(\pmap{P}{3} \Par 
+		\recp{X}{(\binp{a}{y}\binp{y}{x}\pmap{Q}{3} \Par \rvar{X}))} \hastype \Proc
+		}
+		}{
+		\tmap{\Gamma_0}{3}; \es ; \tmap{\Sigma_1, \Sigma_2}{3}, k:\bbtout{U_1}\tmap{S}{3} 
+		\proves 
+		\newsp{a}{\bout{k}{a}( 
+		\pmap{P}{3} \Par 
+		\recp{X}{(\binp{a}{y}\binp{y}{x}\pmap{Q}{3} \Par \rvar{X}))}
+		} \hastype \Proc
+		}
+	\]
+	}
+	
+	\item Case $P = \binp{k}{X} P$. Then  
+	we have the following typing in the source language:
+	{\small
+	\[
+			\tree{\Gamma \cat X : \lhot{S_1}; \emptyset ; \Sigma \cat k:S \proves  P \hastype \Proc
+			}{
+			\Gamma; \emptyset; \Sigma\cat k:\btinp{\lhot{S_1}}S \proves  \binp{k}{X} P \hastype \Proc}
+	\]
+	}
+	The corresponding typing in the target language is as follows --- we write $\Gamma_0$ to stand for $\Gamma \setminus \{X: \lhot{S_1}\}$.
+		{\small
+	\[
+			\tree{\tmap{\Gamma_0}{3} \cat x : \chtype{\btinp{\tmap{S_1}{3}}\tinact}; \emptyset ; \Sigma \cat k:\tmap{S}{3} \proves  \tmap{P}{3} \hastype \Proc
+			}{
+			\tmap{\Gamma_0}{3}; \emptyset; \tmap{\Sigma}{3}\cat k:\bbtinp{\chtype{\btinp{\tmap{S_1}{3}}\tinact}}\tmap{S}{3} \proves  \binp{k}{x} \pmap{P}{3} \hastype \Proc}
+	\]
+	}
+
+	
+	\item Case $P = \appl{X}{k}$. Then  
+	we have the following typing in the source language:
+	{\small
+	\[
+			\tree{\Gamma ; \{X : \lhot{S_1}\};  \es \proves  X \hastype \lhot{S_1} \quad \Gamma; \es ; k:S_1 \proves k \hastype S_1
+			}{
+			\Gamma; \{X : \lhot{S_1}\}; k:S_1 \proves  \appl{X}{k} \hastype \Proc}
+	\]
+	}
+	The corresponding typing in the target language is as follows 
+		{\small
+	\[
+			\tree{
+			\tree{
+			\tree{
+			\tree{
+			\Gamma; \es;  \es \proves  \inact \hastype \Proc
+			}{
+			\Gamma; \es;  \dual{s}:\tinact \proves  \inact \hastype \Proc
+			} \quad 
+			\tree{
+			}{
+			\Gamma; \es; k:\tmap{S_1}{3} \proves  k \hastype \tmap{S_1}{3} 
+			}
+			}{
+			\Gamma; \es; k:\tmap{S_1}{3},  \dual{s}:\btout{\tmap{S_1}{3}}\tinact \proves  \bout{\dual{s}}{k}\inact \hastype \Proc
+			} \quad \tree{}{\Gamma \cat x:\chtype{\btout{\tmap{S_1}{3}}\tinact} ; \es ; \es \proves x \hastype \chtype{\btout{\tmap{S_1}{3}}\tinact}}
+			}{
+			\Gamma; \es; k:\tmap{S_1}{3}, s:\btinp{\tmap{S_1}{3}}\tinact , \dual{s}:\btout{\tmap{S_1}{3}}\tinact \proves  \bout{x}{s}\bout{\dual{s}}{k}\inact \hastype \Proc
+			}
+			}{
+			\Gamma; \es; k:\tmap{S_1}{3} \proves  \news{s}{(\bout{x}{s}\bout{\dual{s}}{k}\inact)} \hastype \Proc}
+	\]
+	}
+	\end{enumerate}
+	\jp{Check how the encoding affects $\Gamma$ and $\Lambda$!}
+	\qed
+	\end{proof}
 
 At this point an open open question would be if
 we could find an encoding that maps
