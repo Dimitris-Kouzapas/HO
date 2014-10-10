@@ -1,6 +1,6 @@
 % !TEX root = main.tex
 
-
+\newpage
 \section{Typed Encodings}
 
 In this section we present a study of the expressiveness 
@@ -115,13 +115,13 @@ Encoding composition is closed on the above properties.
 \subsection{List of Languages Under Consideration}
 We consider the following variants of \HOp:
 \begin{enumerate}[-]
-	\item \pHOp: \HOp with polyadicity (name passing and name abstraction/application).
-	\item \pHOpnr: the finite variant of \pHOp 
-	\item \sesp: the first and third lines of the syntax of processes in Fig.~\ref{fig:syntax} (first-order, monadic communication).
 	\item \HO: the second and third lines of the syntax of processes in Fig.~\ref{fig:syntax} (pure higher-order, monadic communication).
+	\item \sesp: the first and third lines of the syntax of processes in Fig.~\ref{fig:syntax} (first-order, monadic communication).
 	\item \sespnr: the finite sub-calculus of \sesp, i.e., name passing without recursion.
-	\item \psesp: the variant of \sesp with polyadic communication.
-	\item \psespnr: the finite variant of \psesp with polyadic communication.
+	\item \pHOp: \HOp with polyadicity (name passing and name abstraction/application).
+%	\item \pHOpnr: the finite variant of \pHOp 
+%	\item \psesp: the variant of \sesp with polyadic communication.
+%	\item \psespnr: the finite variant of \psesp with polyadic communication.
 \end{enumerate}
 \noindent
 In the following we write $\pmap{\cdot}{i}$
@@ -601,11 +601,11 @@ into strict process-passing:
 Let $f$ be a function from recursion variables to sequences of name variables.
 	Define $\fencod{\cdot}{\cdot}{2}{f}: \sesp \to \HO$ as
 \[
-\begin{array}{rcl}
+\begin{array}{rcll}
 %	\map{\rec{X}{P}}^{2} &=& \newsp{s}{\binp{s}{\X} \map{P}^{2} \Par \bout{\dual{s}}{\abs{z \cat \vmap{\fn{P}}}{\binp{z}{\X} \map{P}^{\es}}} \inact}\\
 %	\map{\rvar{X}}^{2} &=& \newsp{s}{\appl{\X}{s \cat \smap{\fn{P}}} \Par \bout{\dual{s}}{ \abs{z \cat \vmap{\fn{P}}}{\appl{X}{z \cat \vmap{\fn{P}}}}} \inact} \\
-	\pmapp{\rec{X}{P}}{2}{f} &=& \newsp{s}{\binp{s}{\X} \pmapp{P}{2}{{f,\{\rvar{X}\to \vmap{\ofn{P}}\}}} \Par \bbout{\dual{s}}{\abs{z , \vmap{\ofn{P}}}{\binp{z}{\X} \auxmapp{P}{\sigma}{\es}}} \inact} \vspace{1mm}\\ 
-	\pmapp{\rvar{X}}{2}{f} &=& \newsp{s}{\appl{\X}{s, f(\rvar{X})} \Par \bbout{\dual{s}}{ \abs{z, f(\rvar{X})}{\appl{X}{z, f(\rvar{X})}}} \inact}
+	\pmapp{\rec{X}{P}}{2}{f} &=& \newsp{s}{\binp{s}{\X} \pmapp{P}{2}{{f,\{\rvar{X}\to \tilde{n}\}}} \Par \bbout{\dual{s}}{\abs{\tilde{n}, z } \,{\binp{z}{\X} \auxmapp{P}{\sigma}{\es}}} \inact} & \quad \tilde{n} = \ofn{P}\vspace{1mm}\\ 
+	\pmapp{\rvar{X}}{2}{f} &=& \newsp{s}{\appl{\X}{\tilde{n}, s} \Par \bbout{\dual{s}}{ \abs{\vmap{\tilde{n}},z}\,\,{\appl{X}{ \vmap{\tilde{n}}, z}}} \inact} & \quad \tilde{n} = f(\rvar{X})
 \end{array}
 \]
 and as an homomorphism for the other process constructs. 
