@@ -122,6 +122,26 @@ We give the stratified  definitions:
 						\newsp{\tilde{s}}{P_2 \Par P \subst{s'}{x}}\ \mathcal{R}_{n-1}\  \newsp{\tilde{s}}{Q_2 \Par Q \subst{s'}{x}}
 					\]
 
+				\item	$\exists \bactinp{s}{\abs{x} \map{S}^x}$ such that
+					\[
+						\Gamma; \emptyset; \Sigma_1 \cat s: S_1 \by{\bactinp{s}{\abs{x} \map{S}^x}} \Sigma_1 \cat s: S_2 \proves P_1 \by{\bactinp{s}{\abs{x} \map{S}^x}} P_2 \subst{\abs{x}{\map{S}^x}}{X}
+					\]
+					with $S_1 = \btinp{\lhot{S}} S_2 \vee S_1 = \btinp{\shot{S}} S_1$ implies that $\exists Q_2\subst{\abs{x}{\map{S}^x}}{X}$ such that
+					\[
+						\Gamma; \emptyset; \Sigma_2 \By{\bactinp{s}{\abs{x} \map{S}^x}} \Sigma_2' \proves Q_1 \By{\bactinp{s}{\abs{x} \map{S}^x}} Q_2\subst{\abs{x}{\map{S}^x}}{X}
+					\]
+		%			and $\forall s'$, %such that
+		%			\begin{eqnarray*}
+		%				\Gamma; \emptyset; \Sigma_1'' \proves \newsp{\tilde{s}}{P_2 \Par \context{C}{P \subst{s'}{x}}} \hastype \Proc \\
+		%				\Gamma; \emptyset; \Sigma_2'' \proves \newsp{\tilde{s}}{Q_2 \Par \context{C}{Q \subst{s'}{x}}} \hastype \Proc
+		%			\end{eqnarray*}
+					and
+					\[
+						\Gamma; \emptyset; \Sigma_1 \cat s: S_2\ \mathcal{R}_{n-1}\ \Sigma_2'' \proves P_2  \subst{\abs{x}{\map{S}^x}}{X}\ \mathcal{R}_{n-1}\ 
+						Q_2 \subst{\abs{x}{\map{S}^x}}{X}
+					\]
+
+
 				\item	$\forall \news{\tilde{s}} \bactout{s}{s_1}$ such that
 					\[
 						\Gamma; \emptyset; \Sigma_1 \by{\news{\tilde{s}} \bactout{s}{s_1}} \Sigma_1' \proves P_1 \by{\news{\tilde{s}} \bactout{s}{s_1}} P_2
@@ -154,7 +174,7 @@ We give the stratified  definitions:
 					and
 					$\Gamma; \emptyset; \Sigma_1'\ \mathcal{R}_{n-1}\ \Sigma_2' \proves P_2\ \mathcal{R}_{n-1}\ Q_2$.
 
-				\item	The symmetric cases of 1, 2, 3.
+				\item	The symmetric cases of 1, 2, 3 and 4.
 			\end{enumerate}
 	\end{itemize}
 	\noi The above function is monotone and the Knaster-Tarski theorem ensures that a lattice is define
@@ -173,8 +193,8 @@ the requirements of Theorem~\ref{the:coincidence}.
 \begin{lemma}\rm
 	\label{lem:aux}
 %	\begin{enumerate}
-		\item
-%		$\Gamma; \emptyset; \Sigma_1 \by{\bactout{s}{(x) P}} \Sigma_2 \proves P_1 \by{\bactout{s}{(x) P}} P_2$
+%		\item
+		$\Gamma; \emptyset; \Sigma_1 \by{\bactout{s}{(x) P}} \Sigma_2 \proves P_1 \by{\bactout{s}{(x) P}} P_2$
 		implies that $\exists s'$ such that $\Gamma; \emptyset; \Sigma_1 \cat s': S \proves P_2 \Par P \subst{s'}{x}$
 %	\end{enumerate}
 \end{lemma}
@@ -183,10 +203,13 @@ the requirements of Theorem~\ref{the:coincidence}.
 %	\noi Proof for part 1.
 
 	\noi We do an induction on the labelled transition system
-	to derivation for action $\bactout{s}{(x) P}$.
+	derivation for action $\bactout{s}{(x) P}$.
 	{\bf Basic Step: }
 
-	\noi $\bout{s}{(x) P} P_2 \by{\bactout{s}{(x) P}} P_2$ and
+	\[
+		\bout{s}{(x) P} P_2 \by{\bactout{s}{(x) P}} P_2
+	\]
+	\noi and
 	\[
 		\Gamma; \emptyset; \Sigma_1 \proves \bout{s}{(x) P} P_2 \hastype \Proc
 	\]
@@ -264,7 +287,7 @@ the requirements of Theorem~\ref{the:coincidence}.
 
 	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-	\noi - Case: $\lambda \notin \set{\news{\tilde{s}} \bactout{s}{\abs{x} P}, \news{\tilde{s}} \bactout{s}{s_1}}$
+	\noi - Case: $\lambda \notin \set{\news{\tilde{s}} \bactout{s}{\abs{x} P}, \news{\tilde{s}} \bactout{s}{s_1}, \bactinp{s}{\abs{x} P}}$
 %
 	\begin{eqnarray}
 		\Gamma; \emptyset; \Sigma_1 \by{\lambda} \Sigma_1' \proves P_1 \by{\lambda} P_2 \label{lem:wbc_is_wb1}
@@ -347,6 +370,56 @@ the requirements of Theorem~\ref{the:coincidence}.
 	statement~\ref{lem:wbc_is_wb5} holds and furthemore statement~\ref{lem:wbc_is_wb6} holds.
 
 	\noi Because $\wb_{n+1}$ is the largest relation we get that $\mathcal{R}_{n+1} \subseteq \wb_{n+1}$ as required.
+
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+	\noi - Case: $\lambda = \bactinp{s}{\abs{x} P}$
+%
+	\begin{eqnarray}
+		\Gamma; \emptyset; \Sigma_1 \cat s: S_1 \by{\bactinp{s}{\abs{x} P}} \Sigma_1 \cat s: S_2 \proves P_1 \by{\bactinp{s}{\abs{x} P}} P_2 \subst{(x) P}{X} \label{lem:wbc_is_wb14}
+	\end{eqnarray}
+%
+	\noi with $S_1 = \btinp{\lhot{S}} S_2 \vee S_1 = \btinp{\shot{S}} S_2$ implies that
+	$\exists Q_2 \subst{(x) P}{X}$ such that
+	\begin{eqnarray}
+		\Gamma; \emptyset; \Sigma_2 \By{\bactinp{s}{\abs{x} P}} \Sigma_2' \proves Q_1 \By{\bactinp{s}{\abs{x} P}} Q_2 \subst{(x) P}{X}  \label{lem:wbc_is_wb15}
+	\end{eqnarray}
+%	and $\forall R$ with $\set{X} = \fpv{R}$
+%	such that
+%	\begin{eqnarray*}
+%		\Gamma; \emptyset; \Sigma_1'' \proves \newsp{\tilde{s}}{\context{C}{P' \Par P \subst{s'}{x}}} \hastype \Proc \\
+%		\Gamma; \emptyset; \Sigma_2'' \proves \newsp{\tilde{s}}{\context{C}{Q' \Par Q \subst{s'}{x}}} \hastype \Proc
+%	\end{eqnarray*}
+%	then
+%
+	\begin{eqnarray*}
+		\Gamma; \emptyset; \Sigma_1'\ \wbc_{n}\ \Sigma_2' \proves P_2 \subst{(x) P}{X}\ \wbc_{n}\ Q_2 \subst{(x) P}{X}
+	\end{eqnarray*}
+%
+	\noi For $P = \map{S}^x$ we have that 
+%
+	\begin{eqnarray*}
+		\Gamma; \emptyset; \Sigma_1'\ \wbc_{n}\ \Sigma_2' \proves P_2 \subst{(x) \map{S}^x}{X}\ \wbc_{n}\ Q_2 \subst{(x) \map{S}^x}{X}
+	\end{eqnarray*}
+%
+%	\noi Lemma~\ref{lem:aux} ensures for the validity of the latter statement.
+
+	\noi If we apply the induction hypothesis to the latter statement we get
+%
+	\begin{eqnarray}
+		\Gamma; \emptyset; \Sigma_1'\ \wb_{n}\ \Sigma_2' \proves P_2 \subst{(x) \map{S}^x}{X}\ \wb_{n}\ Q_2 \subst{(x) \map{S}^x}{X}
+		\label{lem:wbc_is_wb16}
+	\end{eqnarray}
+%
+	\noi Assume $\mathcal{R}_{n+1} = \set{\Gamma; \emptyset; \Sigma_1 \proves P_1 \hastype \Proc, \Gamma; \emptyset; \Sigma_2 \proves Q_2 \hastype \Proc}$.
+
+	\noi $\mathcal{R}_{n+1}$ satisfies the condition for the stratified definition for bisimulation
+	because statement~\ref{lem:wbc_is_wb14} implies that
+	$\exists Q', \abs{x}{Q}$ such that
+	statement~\ref{lem:wbc_is_wb15} holds and furthemore statement~\ref{lem:wbc_is_wb16} holds.
+
+	\noi Because $\wb_{n+1}$ is the largest relation we get that $\mathcal{R}_{n+1} \subseteq \wb_{n+1}$ as required.
+
 
 	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -1135,6 +1208,7 @@ We first show that every external action $\lambda$ is {\em definable}.
 
 	\noi - Case $\lambda \notin \news{\tilde{s_1}} \bactout{s}{\abs{x}{Q_1}}$ is similar and easier than the previous cases.
 
+\begin{comment}
 	\noi We are ready to prove the main result.
 
 	\noi Let 
@@ -1157,6 +1231,7 @@ We first show that every external action $\lambda$ is {\em definable}.
 	\[
 		\Gamma; \emptyset; \Sigma_1 \wb \Sigma_2 \proves P_1 \wb P_2
 	\]
+\end{comment}
 \end{proof}
 
 
