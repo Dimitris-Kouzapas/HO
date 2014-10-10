@@ -643,8 +643,8 @@ into a calculus with name passing only. We essentially follow the representabili
 %\begin{proof}
 %	\dk{TODO}
 %\end{proof}
-(Mapping $\pmap{\cdot}{n}$ would be defined homomorphically for the remaining $\HO$ constructs.)
-Although this mapping captures the correct semantics when
+(The mapping $\pmap{\cdot}{n}$ would be defined homomorphically for the remaining $\HO$ constructs.)
+Although $\pmap{\cdot}{n}$ captures the correct semantics when
 dealing with systems that allow only linear process variables,
 it suffers from non-typability in the presence
 of shared process variables. For instance,
@@ -683,7 +683,8 @@ By induction on the structure of \HO process $P$.
 \begin{enumerate}[1.]
 
 %%%% Output of (linear) channel
-	\item Case $P = \bbout{k}{\abs{x}Q}P$. Then  
+	\item Case $P = \bbout{k}{\abs{x}Q}P$. Then we have two possibilities, depending on the typing for $\abs{x}Q$.
+	The first case concerns a linear typing, and  
 	we have the following typing in the source language:
 	{\small
 	\[
@@ -785,21 +786,42 @@ By induction on the structure of \HO process $P$.
 	\]
 	}
 	
-	\item Case $P = \binp{k}{X} P$. Then  
+	\item Case $P = \binp{k}{X} P$. Then there are two cases, depending on the type of $X$. 
+	In the first case,
 	we have the following typing in the source language:
 	{\small
 	\[
-			\tree{\Gamma \cat X : \lhot{S_1}; \emptyset ; \Sigma \cat k:S \proves  P \hastype \Proc
+			\tree{\Gamma \cat X : \shot{S_1};\, \emptyset ;\, \Sigma \cat k:S \proves  P \hastype \Proc
 			}{
-			\Gamma; \emptyset; \Sigma\cat k:\btinp{\lhot{S_1}}S \proves  \binp{k}{X} P \hastype \Proc}
+			\Gamma;\, \emptyset;\, \Sigma\cat k:\btinp{\shot{S_1}}S \proves  \binp{k}{X} P \hastype \Proc}
 	\]
 	}
-	The corresponding typing in the target language is as follows --- we write $\Gamma_0$ to stand for $\Gamma \setminus \{X: \lhot{S_1}\}$.
+	The corresponding typing in the target language is as follows:
+	% --- we write $\Gamma_0$ to stand for $\Gamma \setminus \{X: \lhot{S_1}\}$.
 		{\small
 	\[
-			\tree{\tmap{\Gamma_0}{3} \cat x : \chtype{\btinp{\tmap{S_1}{3}}\tinact}; \emptyset ; \Sigma \cat k:\tmap{S}{3} \proves  \tmap{P}{3} \hastype \Proc
+			\tree{\tmap{\Gamma}{3} \cat x : \chtype{\btinp{\tmap{S_1}{3}}\tinact};\, \emptyset ;\, \Sigma \cat k:\tmap{S}{3} \proves  \tmap{P}{3} \hastype \Proc
 			}{
-			\tmap{\Gamma_0}{3}; \emptyset; \tmap{\Sigma}{3}\cat k:\bbtinp{\chtype{\btinp{\tmap{S_1}{3}}\tinact}}\tmap{S}{3} \proves  \binp{k}{x} \pmap{P}{3} \hastype \Proc}
+			\tmap{\Gamma}{3};\, \emptyset; \, \tmap{\Sigma}{3}\cat k:\bbtinp{\chtype{\btinp{\tmap{S_1}{3}}\tinact}}\tmap{S}{3} \proves  \binp{k}{x} \pmap{P}{3} \hastype \Proc}
+	\]
+	}
+
+   In the second case, we 
+	we have the following typing in the source language:
+	{\small
+	\[
+			\tree{\Gamma;\, \{X : \lhot{S_1}\};\, \emptyset ;\, \Sigma \cat k:S \proves  P \hastype \Proc
+			}{
+			\Gamma;\, \emptyset;\, \Sigma\cat k:\btinp{\lhot{S_1}}S \proves  \binp{k}{X} P \hastype \Proc}
+	\]
+	}
+	The corresponding typing in the target language is as follows:
+	% --- we write $\Gamma_0$ to stand for $\Gamma \setminus \{X: \lhot{S_1}\}$.
+		{\small
+	\[
+			\tree{\tmap{\Gamma}{3} \cat x : \chtype{\btinp{\tmap{S_1}{3}}\tinact};\, \emptyset ;\, \Sigma \cat k:\tmap{S}{3} \proves  \tmap{P}{3} \hastype \Proc
+			}{
+			\tmap{\Gamma}{3};\, \emptyset;\, \tmap{\Sigma}{3}\cat k:\bbtinp{\chtype{\btinp{\tmap{S_1}{3}}\tinact}}\tmap{S}{3} \proves  \binp{k}{x} \pmap{P}{3} \hastype \Proc}
 	\]
 	}
 
