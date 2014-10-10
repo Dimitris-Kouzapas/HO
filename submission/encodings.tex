@@ -578,13 +578,17 @@ Intuitively, the following mapping transforms processes with free session names 
 and homomorphically for inaction and parallel composition.
 \end{definition}
 
-We may undo the transformation above by means of abstraction and application.
+Given a process $P$ with $\ofn{P} = s_1, \cdots, s_n$, we are interested in its associated (polyadic) abstraction, which is defined as
+$\abs{x_1, \cdots, x_n}{\auxmapp{P}{\mathsf{v}}{\es} }$, where $\vmap{s_j} = x_j$, for all $j \in \{1, \ldots, n\}$.
+This transformation from processes into abstractions can be reverted by
+using abstraction and application with an appropriate sequence of session names:
 \begin{proposition}
 Let $P$ 
-be a \HOp process, and 
-$N_P = \vmap{\ofn{P}}$.
-Also, let $A_P$ be the polyadic abstraction $\abs{N_P}\auxmapp{P}{\mathsf{v}}{\emptyset}$ (cf. Def.~\ref{d:trabs}).
-Then we have: $P \scong \appl{X}{N_P}\subst{A_P}{X}$.
+be a \HOp process with
+$\tilde{n} = \ofn{P}$. Also, suppose 
+$\tilde{x} = \vmap{\tilde{n}}$.
+%Also, let $A_P$ be the polyadic abstraction $\abs{\tilde{x}}\auxmapp{P}{\mathsf{v}}{\emptyset}$ (cf. Def.~\ref{d:trabs}).
+Then we have: $P \scong \appl{X}{\tilde{n}}\subst{\abs{\tilde{x}}\auxmapp{P}{\mathsf{v}}{\emptyset}}{X}$.
 %	$\appl{X}{\smap{\fn{P}}} \subst{(\vmap{\fn{P}}) \map{P}^{\emptyset}}{X} \scong P$
 \end{proposition}
 
@@ -596,7 +600,8 @@ Then we have: $P \scong \appl{X}{N_P}\subst{A_P}{X}$.
 \end{proof}
 
 We are now ready to define the encoding of the full $\sesp$ (including constructs for recursion)
-into strict process-passing:
+into strict process-passing. We stress that we use polyadicity in abstraction and application only as syntactic sugar, to simplify presentation.
+
 \begin{definition}[From $\sesp$ to $\HO$]
 Let $f$ be a function from recursion variables to sequences of name variables.
 	Define $\fencod{\cdot}{\cdot}{2}{f}: \sesp \to \HO$ as
@@ -604,8 +609,10 @@ Let $f$ be a function from recursion variables to sequences of name variables.
 \begin{array}{rcll}
 %	\map{\rec{X}{P}}^{2} &=& \newsp{s}{\binp{s}{\X} \map{P}^{2} \Par \bout{\dual{s}}{\abs{z \cat \vmap{\fn{P}}}{\binp{z}{\X} \map{P}^{\es}}} \inact}\\
 %	\map{\rvar{X}}^{2} &=& \newsp{s}{\appl{\X}{s \cat \smap{\fn{P}}} \Par \bout{\dual{s}}{ \abs{z \cat \vmap{\fn{P}}}{\appl{X}{z \cat \vmap{\fn{P}}}}} \inact} \\
-	\pmapp{\rec{X}{P}}{2}{f} &=& \newsp{s}{\binp{s}{\X} \pmapp{P}{2}{{f,\{\rvar{X}\to \tilde{n}\}}} \Par \bbout{\dual{s}}{\abs{\tilde{n}, z } \,{\binp{z}{\X} \auxmapp{P}{\sigma}{\es}}} \inact} & \quad \tilde{n} = \ofn{P}\vspace{1mm}\\ 
-	\pmapp{\rvar{X}}{2}{f} &=& \newsp{s}{\appl{\X}{\tilde{n}, s} \Par \bbout{\dual{s}}{ \abs{\vmap{\tilde{n}},z}\,\,{\appl{X}{ \vmap{\tilde{n}}, z}}} \inact} & \quad \tilde{n} = f(\rvar{X})
+	\pmapp{\rec{X}{P}}{2}{f} &\defeq& \newsp{s}{\binp{s}{\X} \pmapp{P}{2}{{f,\{\rvar{X}\to \tilde{n}\}}} \Par \bbout{\dual{s}}{\abs{\vmap{\tilde{n}}, z } \,{\binp{z}{\X} \auxmapp{\pmapp{P}{2}{{f,\{\rvar{X}\to \tilde{n}\}}}}{\mathsf{v}}{\es}}} \inact} & \quad \tilde{n} = \ofn{P} \\ 
+	\pmapp{\rvar{X}}{2}{f} &\defeq& \newsp{s}{\appl{\X}{\tilde{n}, s} \Par \bbout{\dual{s}}{ \abs{\vmap{\tilde{n}},z}\,\,{\appl{X}{ \vmap{\tilde{n}}, z}}} \inact} & \quad \tilde{n} = f(\rvar{X}) \\
+			\pmapp{\bout{k}{n} P}{2}{f}	&\defeq&	\bbout{k}{ \abs{z}{\,\binp{z}{X} \appl{X}{n}} } \pmapp{P}{2}{f} \\
+		\pmapp{\binp{k}{x} Q}{2}{f}	&\defeq&	\binp{k}{X} \newsp{s}{\appl{X}{s} \Par \bbout{\dual{s}}{\abs{x} \pmapp{Q}{2}{f}} \inact} 
 \end{array}
 \]
 and as an homomorphism for the other process constructs. 
@@ -616,7 +623,11 @@ and as an homomorphism for the other process constructs.
 \end{proposition}
 
 \begin{proof}
-TBD. 
+By induction on the structure of \sesp process $P_0$. 
+\begin{enumerate}[1.]
+	\item Case $P_0 = \rec{X}{P}$. Then we have: ...
+	\item Case $P_0 = \rvar{X}$. Then we have: ...
+	\end{enumerate}
 \qed
 \end{proof}
 
