@@ -619,16 +619,185 @@ and as an homomorphism for the other process constructs.
 \end{definition}
 
 \begin{proposition}
-	Encoding $\fencod{\cdot}{\cdot}{2}{f}: \sesp \to \HO$  is type-preserving (cf. Def.~\ref{def:ep}\,(1)).
+	Encoding $\fencod{\cdot}{\cdot}{2}{f}: \sesp \to \HO$  
+	is type-preserving (cf. Def.~\ref{def:ep}\,(1)).
 \end{proposition}
 
 \begin{proof}
 By induction on the structure of \sesp process $P_0$. 
 \begin{enumerate}[1.]
-	\item Case $P_0 = \rec{X}{P}$. Then we have: ...
-	\item Case $P_0 = \rvar{X}$. Then we have: ...
+	\item Case $P_0 = \rvar{X}$. Then we have the following typing in the source language:
+	
+	{\small
+	\[
+	\tree{
+	}{
+	\Gamma \cat \rvar{X}: \Sigma ;\, \es ;\, \es \proves \rvar{X} \hastype \Proc
+	}
+	\]
+	}
+	
+	Then the typing of $\pmapp{\rvar{X}}{2}{f}$ is as follows, assuming $f(\rvar{X}) = \tilde{n}$ and $\tilde{x} = \vmap{\tilde{n}}$.
+	Also, we write $\Sigma_{\tilde{n}}$ 
+	and $\Sigma_{\tilde{x}}$ 
+	to stand for 
+	$n_1: S_1, \ldots, n_m: S_m$ and
+		$x_1: S_1, \ldots, x_m: S_m$, respectively. 
+	Below, we assume that $\Gamma = \Gamma' \cat X:\shot{(\tilde{S}, \btinp{A}\tinact)}$, where $A$ is some recursive session?
+	{\small
+	\[
+	\tree{
+	\tree{
+	\tree{
+	\tree{
+	}{
+	\Gamma ;\, \es ;\, \es \proves X \hastype \shot{(\tilde{S}, \btinp{A}\tinact)}
+	}
+	\quad 
+	\begin{array}{c}
+	\Gamma ;\, \es ;\, \{n_i: S_i \} \proves n_i \hastype S_i \\
+	\Gamma ;\, \es ;\, \{s: \btinp{A}\tinact \} \proves s\hastype \btinp{A}\tinact  \\
+	\end{array}
+	}{
+	\Gamma  ;\, \es ;\, \Sigma_{\tilde{n}}, s:\btinp{A}\tinact
+	\proves  
+	\appl{\X}{\tilde{n}, s} \hastype \Proc
+	} 
+	\quad 
+	\tree{
+	\tree{
+	\Gamma  ;\, \es ;\,   \es \proves \inact \hastype \Proc
+	}{
+	\Gamma  ;\, \es ;\,   \dual{s}: \tinact \proves \inact \hastype \Proc
+	} 
+	\quad
+	\tree{
+	\tree{
+	\begin{array}{c}
+	\Gamma ;\, \es ;\, \{x_i: S_i \} \proves x_i \hastype S_i \\
+	\Gamma ;\, \es ;\, \{z: \btinp{A}\tinact  \} \proves z\hastype \btinp{A}\tinact  \\
+	\Gamma ;\, \es ;\, \es \proves X \hastype \shot{(\tilde{S}, \btinp{A}\tinact)}  \\
+	\end{array}	}{
+		\Gamma  ;\, \es ;\,   \Sigma_{\tilde{x}}, z:\btinp{A}\tinact 
+	\proves 
+	 {\appl{X}{ \tilde{x}, z}} \hastype \Proc
+	}
+	}{
+		\Gamma  ;\, \es ;\,   \es
+	\proves 
+	 \abs{\tilde{x},z}\,\,{\appl{X}{ \tilde{x}, z}} \hastype A
+	} 	
+	}{
+	\Gamma  ;\, \es ;\,   \dual{s}: \btout{A}\tinact
+	\proves 
+	\bbout{\dual{s}}{ \abs{\tilde{x},z}\,\,{\appl{X}{ \tilde{x}, z}}} \inact \hastype \Proc
+	}
+	}{
+	\Gamma  ;\, \es ;\, \Sigma_{\tilde{n}}, s:\btinp{A}\tinact, \, \dual{s}: \btout{A}\tinact
+	\proves 
+	\appl{\X}{\tilde{n}, s} \Par \bbout{\dual{s}}{ \abs{\tilde{x},z}\,\,{\appl{X}{ \tilde{x}, z}}} \inact \hastype \Proc
+	}
+	}{
+	\Gamma  ;\, \es ;\, \Sigma_{\tilde{n}}
+	\proves 
+	\newsp{s}{\appl{\X}{\tilde{n}, s} \Par \bbout{\dual{s}}{ \abs{\tilde{x},z}\,\,{\appl{X}{ \tilde{x}, z}}} \inact} \hastype \Proc
+	}
+	\]
+	}
+	
+	\item Case $P_0 = \rec{X}{P}$. Then we have the following typing in the source language:
+	
+	{\small
+	\[
+	\tree{
+	\Gamma \cat \rvar{X}:\Sigma ;\, \es ;\,  \Sigma \proves P \hastype \Proc
+	}{
+	\Gamma  ;\, \es ;\,  \Sigma \proves \rec{X}{P} \hastype \Proc
+	}
+	\]
+	}
+	
+	Then we have the following typing in the target language ---we write $R$ to stand for $\pmapp{P}{2}{{f,\{\rvar{X}\to \tilde{n}\}} }$
+	and $\tilde{x}$ to stand for $\vmap{\ofn{P}}$.
+	{\small 
+	\[
+	\tree{
+	\tree{
+	\tree{
+	\tree{
+	\tmap{\Gamma}{2}\cat X:\shot{\tilde{C}};\, \es;\, \tmap{\Sigma_{\tilde{n}}}{2}
+	\proves
+	 R  \hastype \Proc
+	}{
+	\tmap{\Gamma}{2}\cat X:\shot{\tilde{C}};\, \es;\, \tmap{\Sigma_{\tilde{n}}}{2}, s:\tinact 
+	\proves
+	 R  \hastype \Proc
+	}
+	}{
+	\tmap{\Gamma}{2};\, \es;\, \tmap{\Sigma_{\tilde{n}}}{2}, s:\btinp{\shot{\tilde{C}}}\tinact 
+	\proves
+	\binp{s}{\X} R  \hastype \Proc
+		} \quad 
+	\tree{
+	\tree{
+	\tmap{\Gamma}{2};\, \es;\, \es
+	\proves
+	\inact \hastype \Proc
+	}{
+	\tmap{\Gamma}{2};\, \es;\, \dual{s}:\tinact
+	\proves
+	\inact \hastype \Proc
+	} 
+	\quad 
+	\tree{
+	\tree{
+	\tree{
+	\tmap{\Gamma}{2} \cat X: \shot{\tilde{C}};\, \es;\, \tmap{\Sigma_{\tilde{x}}}{2}
+	\proves
+	{{\auxmapp{R}{\mathsf{v}}{\es}}}  \hastype \Proc
+	}{
+	\tmap{\Gamma}{2} \cat X: \shot{\tilde{C}};\, \es;\, \tmap{\Sigma_{\tilde{x}}}{2},z: \tinact
+	\proves
+	{{\auxmapp{R}{\mathsf{v}}{\es}}}  \hastype \Proc
+	}
+	}{
+	\tmap{\Gamma}{2};\, \es;\, \tmap{\Sigma_{\tilde{x}}}{2},z: \btinp{\shot{\tilde{C}}}\tinact
+	\proves
+	{{\binp{z}{\X} \auxmapp{R}{\mathsf{v}}{\es}}}  \hastype \Proc
+	}
+	}{
+	\tmap{\Gamma}{2};\, \es;\, \es
+	\proves
+	{\abs{\tilde{x}, z } \,{\binp{z}{\X} \auxmapp{R}{\mathsf{v}}{\es}}}  \hastype \shot{\tilde{C}}
+	}	
+	}{
+		\tmap{\Gamma}{2};\, \es;\, \dual{s}:\btout{\shot{\tilde{C}}}\tinact
+	\proves
+	\bbout{\dual{s}}{\abs{\tilde{x}, z } \,{\binp{z}{\X} \auxmapp{R}{\mathsf{v}}{\es}}} \inact \hastype \Proc
+	}
+	}{
+	\tmap{\Gamma}{2};\, \es;\, \tmap{\Sigma_{\tilde{n}}}{2}, s:\btinp{\shot{\tilde{C}}}\tinact , \dual{s}:\btout{\shot{\tilde{C}}}\tinact
+	\proves
+	\binp{s}{\X} R \Par \bbout{\dual{s}}{\abs{\tilde{x}, z } \,{\binp{z}{\X} \auxmapp{R}{\mathsf{v}}{\es}}} \inact \hastype \Proc
+	}
+	}{
+	\tmap{\Gamma}{2};\, \es;\, \tmap{\Sigma_{\tilde{n}}}{2} 
+	\proves
+	\newsp{s}{\binp{s}{\X} R \Par \bbout{\dual{s}}{\abs{\tilde{x}, z } \,{\binp{z}{\X} \auxmapp{R}{\mathsf{v}}{\es}}} \inact} \hastype \Proc
+	}
+	\]
+	}
 	\end{enumerate}
 \qed
+\end{proof}
+
+\begin{proposition}
+	Encoding $\fencod{\cdot}{\cdot}{2}{f}: \sesp \to \HO$ 
+enjoys operational correspondence (cf. Def.~\ref{def:ep}\,(2)).
+\end{proposition}
+
+\begin{proof}[Sketch]
+TBD.
 \end{proof}
 
 \subsection{From $\HO$ to $\sesp$}
@@ -894,6 +1063,17 @@ By induction on the structure of \HO process $P$.
 	The associated typing in the target language is obtained similarly as in the first case. \qed
 	\end{enumerate}
 	\end{proof}
+
+
+\begin{proposition}
+	Encoding $\encod{\cdot}{\cdot}{3}: \HO \to \sesp$ 
+enjoys operational correspondence (cf. Def.~\ref{def:ep}\,(2)).
+\end{proposition}
+
+\begin{proof}[Sketch]
+TBD.
+\end{proof}
+
 
 At this point an open  question would be if we could find an encoding that maps
 session names to session names without the creation of shared names.
