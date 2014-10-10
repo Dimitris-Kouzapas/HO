@@ -1,9 +1,5 @@
 % !TEX root = main.tex
-\newcommand{\enc}[2]{\big\langle\map{#1}, \mapt{#2}\big\rangle}
-\newcommand{\encod}[3]{\lrangle{\map{#1}^{#3}, \mapt{#2}^{#3}}}
 
-\newcommand{\calc}[5]{\lrangle{#1, #2, #3, #4, #5}}
-\newcommand{\tyl}[1]{\ensuremath{\mathcal{#1}}}
 
 \section{Typed Encodings}
 
@@ -446,8 +442,8 @@ The polyadic mapping, as presented here, is sound only on session names.
 
 
 
-\subsection{Encoding Recursion}
-Encoding the $\sesp$ recursive operation requires to follow the fundamental
+\subsection{Encoding Recursion into Abstraction Passing}
+Encoding the constructs for recursion present in $\sesp$ as process-passing communication requires to follow the fundamental
 principle of copying the process that needs to exhibit recursive behaviour.
 The primitive recursor operation creates copies of a process and uses them
 as continuations, e.g:
@@ -574,15 +570,14 @@ Intuitively, the following mapping transforms processes with free session names 
 			\appl{\X}{x_s} & s \notin \sigma\\
 			\appl{\X}{s} & s \in \sigma\\
 		\end{array}
-		\right. \\
-				\auxmapp{\inact}{\mathsf{v}}{\sigma} &\bnfis& \inact\\
-		\auxmapp{P \Par Q}{\mathsf{v}}{\sigma} &\bnfis& \auxmapp{P}{\mathsf{v}}{\sigma} \Par \auxmapp{Q}{\mathsf{v}}{\sigma} 
+		\right. 
+%				\auxmapp{\inact}{\mathsf{v}}{\sigma} &\bnfis& \inact\\
+%		\auxmapp{P \Par Q}{\mathsf{v}}{\sigma} &\bnfis& \auxmapp{P}{\mathsf{v}}{\sigma} \Par \auxmapp{Q}{\mathsf{v}}{\sigma} 
 			\end{array}
 \]
-
+and homomorphically for inaction and parallel composition.
 \end{definition}
 
-\jp{Please check the following.} \\
 We may undo the transformation above by means of abstraction and application.
 \begin{proposition}
 Let $P$ 
@@ -595,75 +590,68 @@ Then we have: $P \scong \appl{X}{N_P}\subst{A_P}{X}$.
 
 \begin{proof}
 	$\appl{X}{\smap{\fn{P}}} \subst{(\vmap{\fn{P}}) \map{P}^{\emptyset}}{X} =
-	\map{P}^{\sigma} \subst{\smap{\fn{P}}}{\vmap{\fn{P}}}$ \dk{TODO}
+	\map{P}^{\sigma} \subst{\smap{\fn{P}}}{\vmap{\fn{P}}}$ 
+	\dk{TODO}
+	\qed
 \end{proof}
 
-We are now ready to define the encoding of the $\sesp$ recursive
-operators:
-\jp{Please check.}
-\begin{definition}[From $\sesp$ to $\pHOp$]
+We are now ready to define the encoding of the full $\sesp$ (including constructs for recursion)
+into strict process-passing:
+\begin{definition}[From $\sesp$ to $\HO$]
 Let $f$ be a function from recursion variables to sequences of name variables.
-	Define $\encod{\cdot}{\cdot}{2}: \sesp \to \pHOp$ as
+	Define $\fencod{\cdot}{\cdot}{2}{f}: \sesp \to \HO$ as
 \[
 \begin{array}{rcl}
 %	\map{\rec{X}{P}}^{2} &=& \newsp{s}{\binp{s}{\X} \map{P}^{2} \Par \bout{\dual{s}}{\abs{z \cat \vmap{\fn{P}}}{\binp{z}{\X} \map{P}^{\es}}} \inact}\\
 %	\map{\rvar{X}}^{2} &=& \newsp{s}{\appl{\X}{s \cat \smap{\fn{P}}} \Par \bout{\dual{s}}{ \abs{z \cat \vmap{\fn{P}}}{\appl{X}{z \cat \vmap{\fn{P}}}}} \inact} \\
-	\pmapp{\rec{X}{P}}{2}{f} &=& \newsp{s}{\binp{s}{\X} \pmapp{P}{2}{{f,\{\rvar{X}\to \vmap{\ofn{P}}\}}} \Par \bbout{\dual{s}}{\abs{z , \vmap{\ofn{P}}}{\binp{z}{\X} \auxmapp{P}{\sigma}{\es}}} \inact}\\
+	\pmapp{\rec{X}{P}}{2}{f} &=& \newsp{s}{\binp{s}{\X} \pmapp{P}{2}{{f,\{\rvar{X}\to \vmap{\ofn{P}}\}}} \Par \bbout{\dual{s}}{\abs{z , \vmap{\ofn{P}}}{\binp{z}{\X} \auxmapp{P}{\sigma}{\es}}} \inact} \vspace{1mm}\\ 
 	\pmapp{\rvar{X}}{2}{f} &=& \newsp{s}{\appl{\X}{s, f(\rvar{X})} \Par \bbout{\dual{s}}{ \abs{z, f(\rvar{X})}{\appl{X}{z, f(\rvar{X})}}} \inact}
 \end{array}
 \]
 and as an homomorphism for the other process constructs. 
 \end{definition}
-\dk{put the recursive encodings}
-
-
-
-\subsection{From $\HO$ to $\sesp$}
-
-We follow the other direction to encode the semantics of the
-higher order calculus that allows only abstraction passing
-to the semantics that allow only name passing semantics.
-The techniques presented in this paper were originally developed
-by Sangiorgi in \cite{}. In this work we show that
-the same ideas can be applied in a session type setting.
-Following the principles of session types we furthermore
-study the limits on such encodings when it comes to the linearity
-of session endpoints.
-
-In \cite{} Sangiorgi used the idea of triggers to activate
-copies of the a process. Trigers were input guarded replicated
-processes and instead of passing processes a process is
-passing around the name of the input subject of the corresponding trigger.
-
-In the context of session types a session name cannot be replicated.
-If in our encoding approach we use non replicated session input guarded
-processes we end up with the following naive encoding:
-
-\begin{definition}[From $\HO$ to $\sesp$. Naive approach]
-
-	\begin{tabular}{lcl}
-		$\map{\bout{k}{\abs{x} P_1} P_2}^{3}$ &$\defeq$& $ \newsp{s}{\bout{k}{s} (\map{P_2}^3 \Par \binp{\dual{s}}{x} \map{P_1}^3)} $\\
-		$\map{\binp{k}{X} P}^{3}$ &$\defeq$& $\binp{s}{x} \map{P}^3$\\
-		$\map{\appl{X}{k}}^3$ &$\defeq$& $\bout{x}{k} \inact$
-	\end{tabular}
-\end{definition}
 
 \begin{proposition}
-	Let $\Gamma;\emptyset;\Sigma \proves P \hastype \Proc$ with
-	the typing derivation to use only linear session types. Then
-	$\map{P}^8$ respects the properties of definition~\ref{def:ep}.
+	Encoding $\fencod{\cdot}{\cdot}{2}{f}: \sesp \to \HO$  is type-preserving (cf. Def.~\ref{def:ep}\,(1)).
 \end{proposition}
 
 \begin{proof}
-	\dk{TODO}
+TBD. 
+\qed
 \end{proof}
 
-This approach although it captures the correct semantics when
+\subsection{From $\HO$ to $\sesp$}
+
+We now discuss the encodability of  $\HO$ into $\sesp$, i.e., how to encode a higher-order calculus with abstraction passing only
+into a calculus with name passing only. We essentially follow the representability result put forward by Sangiorgi~\cite{San92,SaWabook}, but casted in the setting of session-typed communications. As we shall see, linearity of session endpoints will play a role in adaptating Sangiorgi's encodability strategy into a typed setting. Intuitively, such a strategy represents the exchange of a process with the exchange of a \emph{trigger}---a freshly generated names. Triggers may then be used to activate copies of the process, which now becomes a persistent resource represented by an input-guarded replication. In session-based communication, a session name is a linear resource and cannot be replicated. Consider the follow (naive) adaptation of Sangiorgi's strategy in which session names are used are triggers and exchanged processes would be have to used exactly once:
+%\begin{definition}[From $\HO$ to $\sesp$. Naive approach]
+\[
+	\begin{array}{lcl}
+		\pmap{\bout{k}{\abs{x} P_1} Q}{n} & \defeq &  \newsp{s}{\bout{k}{s} (\pmap{Q}{n} \Par \binp{\dual{s}}{x} \pmap{P_1}{n})} \\
+		\pmap{\binp{k}{X} P}{n} & \defeq& \binp{k}{x} \pmap{P}{n}\\
+		\pmap{\appl{X}{k}}{n} & \defeq & \bout{x}{k} \inact
+	\end{array}
+	\]
+%\end{definition}
+%
+%\begin{proposition}
+%	Let $\Gamma;\emptyset;\Sigma \proves P \hastype \Proc$ with
+%	the typing derivation to use only linear session types. Then
+%	$\map{P}^8$ respects the properties of definition~\ref{def:ep}.
+%\end{proposition}
+%
+%\begin{proof}
+%	\dk{TODO}
+%\end{proof}
+(Mapping $\pmap{\cdot}{n}$ would be defined homomorphically for the remaining $\HO$ constructs.)
+Although this mapping captures the correct semantics when
 dealing with systems that allow only linear process variables,
 it suffers from non-typability in the presence
-of shared process variables. For example:
+of shared process variables. For instance,
+let $P = \bbout{s}{\abs{x}{\bout{x}{v}\inact}} \inact \Par \binp{\dual{s}}{X} (\appl{X}{s_1} \Par \appl{X}{s_2})$.
+We would have
 \[
-	\map{\bout{s}{\abs{x}{\bout{x}{v}\inact}} \inact \Par \binp{\dual{s}}{X} (\appl{X}{s_1} \Par \appl{X}{s_2})}^8 \defeq
+	\pmap{P}{n} \defeq
 	\newsp{s'}{\bout{s}{s'} \binp{\dual{s'}}{x} \bout{x}{v} \inact \Par \binp{\dual{s}}{x} (\bout{x}{s_1} \inact \Par \bout{x}{s_2} \inact)}
 \]
 The above process is non typable since processes $(\bout{x}{s_1} \inact$ and $\bout{x}{s_2} \inact)$
@@ -695,7 +683,7 @@ By induction on the structure of \HO process $P$.
 \begin{enumerate}[1.]
 
 %%%% Output of (linear) channel
-	\item Case $P = \bout{k}{\abs{x}Q}P$. Then  
+	\item Case $P = \bbout{k}{\abs{x}Q}P$. Then  
 	we have the following typing in the source language:
 	{\small
 	\[
