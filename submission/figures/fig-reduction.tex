@@ -1,56 +1,33 @@
-\begin{figure}
+\begin{figure}[t!]
 \[
 	\begin{array}{c}
-		\begin{array}{rclr}
-			\bout{s}{s'} P \Par \binp{\dual{s}}{x} Q & \red & P \Par Q \subst{s'}{x} & \orule{NPass} \\
+		\begin{array}{rclrcrclr}
+			\bout{s}{s'} P \Par \binp{\dual{s}}{x} Q & \red & P \Par Q \subst{s'}{x} & \orule{NPass} & \quad & P \red P' \Rightarrow \news{s} P & \red & \news{s} P'  & \orule{Sess}\\
 %			\bout{s}{\tilde{s}} P \Par \binp{\dual{s}}{\tilde{x}} Q & \red & P \Par Q \subst{\tilde{s}}{{x}} & \orule{PolPass}\\
-			\bout{s}{\abs{x}{P_1}} P \Par \binp{\dual{s}}{\X} Q & \red & P \Par Q \subst{\abs{x}{P_1}}{\X}\ & \orule{APass} \\
+			\bout{s}{\abs{x}{P_1}} P \Par \binp{\dual{s}}{\X} Q & \red & P \Par Q \subst{\abs{x}{P_1}}{\X}\ & \orule{APass} & & P \red P' \Rightarrow   P \Par Q & \red &  P' \Par Q  & \orule{Par} \\
 %			\bout{s}{\abs{\tilde{x}}{P_1}} P \Par \binp{\dual{s}}{\X} Q & \red & P \Par Q \subst{\abs{\tilde{x}}{P_1}}{\X}\ & \orule{PolAbs} \\
-			\bsel{s}{l_j} Q \Par \bbra{\dual{s}}{l_i : P_i}_{i \in I} & \red & Q \Par P_j ~~(j \in I)~~  & \orule{Sel}\\
-			P \red P' \Rightarrow \news{s} P & \red & \news{s} P'  & \orule{Sess} \\
-			P \red P' \Rightarrow   P \Par Q & \red &  P' \Par Q  & \orule{Par} \\
-			P \scong \red \scong P' \Rightarrow P & \red & P' & \orule{Cong}
-%			\tree{
-%				j \in I
-%			}{
-%				\bsel{s}{l_j} Q \Par \bbra{\dual{s}}{l_i : P_i}_{i \in I} \red Q \Par P_j 
-%			}\ \orule{Sel}
-%			\quad 
-%			\tree{
-%				P \red P'
-%			}{
-%				\news{s} P \red \news{s} P'
-%			}\ \orule{Sess}
-%			\\[4mm]
-%			\tree{
-%				P \red P'
-%			}{
-%				P \Par Q \red P' \Par Q
-%			}\ \orule{Par}
-%			\quad
-%			\tree{
-%				P \scong \red \scong P'
-%			}{
-%				P \red P'
-%			}\ \orule{Cong}
+			\bsel{s}{l_j} Q \Par \bbra{\dual{s}}{l_i : P_i}_{i \in I} & \red & Q \Par P_j ~~(j \in I)~~  & \orule{Sel} & & P \scong \red \scong P' \Rightarrow P & \red & P' & \orule{Cong}
+%			P \red P' \Rightarrow \news{s} P & \red & \news{s} P'  & \orule{Sess} \\
+%			P \red P' \Rightarrow   P \Par Q & \red &  P' \Par Q  & \orule{Par} \\
+%			P \scong \red \scong P' \Rightarrow P & \red & P' & \orule{Cong}
 		\end{array}
 		\vspace{2mm} \\
-		\begin{array}{rcl}
-			\appl{X}{k} \subst{\abs{x}{Q}}{\X} & = & Q \subst{k}{x} \\
+		\begin{array}{rclcrcl}
+			\appl{X}{k} \subst{\abs{x}{Q}}{\X} & = & Q \subst{k}{x} & \quad & \bsel{s}{l} P \subst{\abs{x}{Q}}{\X} & = & \bsel{s}{l} (P \subst{\abs{x}{Q}}{\X})\\
 %			\appl{X}{\tilde{k}} \subst{\abs{\tilde{x}}{Q}}{\X} & = & Q \subst{\tilde{k}}{\tilde{x}} \\
-			\inact \subst{\abs{x}{Q}}{\X} & = &  \inact
+			\inact \subst{\abs{x}{Q}}{\X} & = & \inact & & \bbra{s}{l_i : P_i}_{i \in I} \subst{\abs{x}{Q}}{\X} & = & \bbra{s}{l_i : P_i \subst{\abs{x}{Q}}{\X}}_{i \in I} 
 			\\
-			\binp{s}{\Y} P \subst{\abs{x}{Q}}{\X} & = &  \binp{s}{\Y} (P \subst{\abs{x}{Q}}{\X})
+			\binp{s}{\Y} P \subst{\abs{x}{Q}}{\X} & = &  \binp{s}{\Y} (P \subst{\abs{x}{Q}}{\X}) & & (P_1 \Par P_2) \subst{\abs{x}{Q}}{\X} & = & P_1 \subst{\abs{x}{Q}}{\X} \Par P_2 \subst{\abs{x}{Q}}{\X}
 			\\
-			(\bout{s}{\abs{y}{P_1}} P_2) \subst{\abs{x}{Q}}{\X} & = & \bout{s}{\abs{y}{P_1 \subst{\abs{x}{Q}}{\X}}} (P_2 \subst{\abs{x}{Q}}{\X})
-			\\
-			\bsel{s}{l} P \subst{\abs{x}{Q}}{\X} & = & \bsel{s}{l} (P \subst{\abs{x}{Q}}{\X})
-			\\
-			\bbra{s}{l_i : P_i}_{i \in I} \subst{\abs{x}{Q}}{\X} & = & \bbra{s}{l_i : P_i \subst{\abs{x}{Q}}{\X}}_{i \in I}
-			\\
-			(P_1 \Par P_2) \subst{\abs{x}{Q}}{\X} & = & P_1 \subst{\abs{x}{Q}}{\X} \Par P_2 \subst{\abs{x}{Q}}{\X}
-			\\
-			\news{s} P \subst{\abs{x}{Q}}{\X} & = & \news{s} (P \subst{\abs{x}{Q}}{\X})
+			\news{s} P \subst{\abs{x}{Q}}{\X} & = & \news{s} (P \subst{\abs{x}{Q}}{\X})  & & (\bout{s}{\abs{y}{P_1}} P_2) \subst{\abs{x}{Q}}{\X} & = & \bout{s}{\abs{y}{P_1 \subst{\abs{x}{Q}}{\X}}} (P_2 \subst{\abs{x}{Q}}{\X})
+%			\\
+%			\bsel{s}{l} P \subst{\abs{x}{Q}}{\X} & = & \bsel{s}{l} (P \subst{\abs{x}{Q}}{\X})
+%			\\
+%			\bbra{s}{l_i : P_i}_{i \in I} \subst{\abs{x}{Q}}{\X} & = & \bbra{s}{l_i : P_i \subst{\abs{x}{Q}}{\X}}_{i \in I}
+%			\\
+%			(P_1 \Par P_2) \subst{\abs{x}{Q}}{\X} & = & P_1 \subst{\abs{x}{Q}}{\X} \Par P_2 \subst{\abs{x}{Q}}{\X}
+%			\\
+%			\news{s} P \subst{\abs{x}{Q}}{\X} & = & \news{s} (P \subst{\abs{x}{Q}}{\X})
 		\end{array}
 	\end{array}
 \]
