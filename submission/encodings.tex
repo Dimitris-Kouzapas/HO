@@ -695,11 +695,9 @@ By induction on the structure of \HO process $P$.
 	}
 	The corresponding typing in the target language is as follows --- we write $U_1$ to stand for 
 	$\chtype{\btinp{\tmap{S_1}{3}}\tinact}$.
-	In $\Gamma$ we should remove $X: \lhot{S_1}$.
-	We thus write 
+	We also write 
 	\begin{eqnarray*}
-	\Gamma_0 & = &  \Gamma \setminus \{X: \lhot{S_1}\} \\
-	\tmap{\Gamma_1}{3} & = & \tmap{\Gamma_0}{3} \cup a:\chtype{\btinp{\tmap{S_1}{3}}\tinact} \\
+	\tmap{\Gamma_1}{3} & = & \tmap{\Gamma}{3} \cup a:\chtype{\btinp{\tmap{S_1}{3}}\tinact} \\
 	\tmap{\Gamma_2}{3} & = & \tmap{\Gamma_1}{3} \cup \rvar{X}:\tmap{\Sigma_2}{3}
 	\end{eqnarray*}
 	Also $(*)$ stands for $\tmap{\Gamma_1}{3}; \es ; \es \proves a \hastype U_1$; 
@@ -776,7 +774,7 @@ By induction on the structure of \HO process $P$.
 		\recp{X}{(\binp{a}{y}\binp{y}{x}\pmap{Q}{3} \Par \rvar{X}))} \hastype \Proc
 		}
 		}{
-		\tmap{\Gamma_0}{3}; \es ; \tmap{\Sigma_1, \Sigma_2}{3}, k:\bbtout{U_1}\tmap{S}{3} 
+		\tmap{\Gamma}{3}; \es ; \tmap{\Sigma_1, \Sigma_2}{3}, k:\bbtout{U_1}\tmap{S}{3} 
 		\proves 
 		\newsp{a}{\bout{k}{a}( 
 		\pmap{P}{3} \Par 
@@ -785,6 +783,18 @@ By induction on the structure of \HO process $P$.
 		}
 	\]
 	}
+	 In the second case, $\abs{x}Q$ has a shared type. We have the following typing in the source language:
+	{\small
+	\[
+		\tree{
+			\tree{}{\Gamma; \emptyset; \Sigma \cat k:S  \proves  P \hastype \Proc} \quad 
+			\tree{
+			\tree{\Gamma ; \emptyset ; \cat x:S_1 \proves  Q \hastype \Proc}{\Gamma ; \emptyset ; \es \proves  \abs{x}Q \hastype \lhot{S_1} }			
+			}{\Gamma ; \emptyset ; \es \proves  \abs{x}Q \hastype \shot{S_1} } }{
+			\Gamma; \emptyset; \Sigma  \cat k:\btout{\shot{S_1}}S \proves  \bbout{k}{\abs{x}Q} P \hastype \Proc}
+	\]
+	}
+	The corresponding typing in the target language can be derived similarly as in the first case.
 	
 	\item Case $P = \binp{k}{X} P$. Then there are two cases, depending on the type of $X$. 
 	In the first case,
@@ -826,50 +836,56 @@ By induction on the structure of \HO process $P$.
 	}
 
 	
-	\item Case $P = \appl{X}{k}$. Then  
+	\item Case $P = \appl{X}{k}$. Also here we have two cases, depending on whether $X$ has linear or shared type.
+	In the first case, $X$ is linear and
 	we have the following typing in the source language:
 	{\small
 	\[
-			\tree{\Gamma ; \{X : \lhot{S_1}\};  \es \proves  X \hastype \lhot{S_1} \quad \Gamma; \es ; k:S_1 \proves k \hastype S_1
+			\tree{\Gamma ;\, \{X : \lhot{S_1}\};\,  \es \proves  X \hastype \lhot{S_1} \quad \Gamma; \es ; \{k:S_1\} \proves k \hastype S_1
 			}{
-			\Gamma; \{X : \lhot{S_1}\}; k:S_1 \proves  \appl{X}{k} \hastype \Proc}
+			\Gamma;\, \{X : \lhot{S_1}\};\, k:S_1 \proves  \appl{X}{k} \hastype \Proc}
 	\]
 	}
-	The corresponding typing in the target language is as follows 
+	The corresponding typing in the target language is as follows  --- below we write $\tmap{\Gamma_1}{3}$ to stand for $\tmap{\Gamma}{3} \cat x:\chtype{\btout{\tmap{S_1}{3}}\tinact}$:
 		{\small
 	\[
 			\tree{
 			\tree{
 			\tree{
 			\tree{
-			\Gamma; \es;  \es \proves  \inact \hastype \Proc
+			\tmap{\Gamma_1}{3};\, \es;\,  \es \proves  \inact \hastype \Proc
 			}{
-			\Gamma; \es;  \dual{s}:\tinact \proves  \inact \hastype \Proc
+			\tmap{\Gamma_1}{3};\, \es;\,  \dual{s}:\tinact \proves  \inact \hastype \Proc
 			} \quad 
 			\tree{
 			}{
-			\Gamma; \es; k:\tmap{S_1}{3} \proves  k \hastype \tmap{S_1}{3} 
+			\tmap{\Gamma_1}{3};\, \es;\, \{k:\tmap{S_1}{3}\} \proves  k \hastype \tmap{S_1}{3} 
 			}
 			}{
-			\Gamma; \es; k:\tmap{S_1}{3},  \dual{s}:\btout{\tmap{S_1}{3}}\tinact \proves  \bout{\dual{s}}{k}\inact \hastype \Proc
-			} \quad \tree{}{\Gamma \cat x:\chtype{\btout{\tmap{S_1}{3}}\tinact} ; \es ; \es \proves x \hastype \chtype{\btout{\tmap{S_1}{3}}\tinact}}
+			\tmap{\Gamma_1}{3};\, \es;\,\, k:\tmap{S_1}{3},\,  \dual{s}:\btout{\tmap{S_1}{3}}\tinact \proves  \bout{\dual{s}}{k}\inact \hastype \Proc
+			} \quad \tree{}{\tmap{\Gamma_1}{3} ;\, \es ;\, \es \proves x \hastype \chtype{\btout{\tmap{S_1}{3}}\tinact}}
 			}{
-			\Gamma; \es; k:\tmap{S_1}{3}, s:\btinp{\tmap{S_1}{3}}\tinact , \dual{s}:\btout{\tmap{S_1}{3}}\tinact \proves  \bout{x}{s}\bout{\dual{s}}{k}\inact \hastype \Proc
+			\tmap{\Gamma_1}{3};\, \es;\, k:\tmap{S_1}{3}, s:\btinp{\tmap{S_1}{3}}\tinact , \dual{s}:\btout{\tmap{S_1}{3}}\tinact \proves  \bout{x}{s}\bout{\dual{s}}{k}\inact \hastype \Proc
 			}
 			}{
-			\Gamma; \es; k:\tmap{S_1}{3} \proves  \news{s}{(\bout{x}{s}\bout{\dual{s}}{k}\inact)} \hastype \Proc}
+			\tmap{\Gamma_1}{3};\, \es;\, k:\tmap{S_1}{3} \proves  \news{s}{(\bout{x}{s}\bout{\dual{s}}{k}\inact)} \hastype \Proc}
 	\]
 	}
+	In the second case, $X$ is shared, and
+	we have the following typing in the source language:
+	{\small
+	\[
+			\tree{\Gamma \cat  X : \lhot{S_1} ;\,  \es ;\,  \es \proves  X \hastype \shot{S_1} \quad \Gamma; \es ; k:S_1 \proves k \hastype S_1
+			}{
+			\Gamma \cat X : \shot{S_1};\, \es ;\, k:S_1 \proves  \appl{X}{k} \hastype \Proc}
+	\]
+	}
+	The associated typing in the target language is obtained similarly as in the first case. \qed
 	\end{enumerate}
-	\jp{Check how the encoding affects $\Gamma$ and $\Lambda$!}
-	\qed
 	\end{proof}
 
-At this point an open open question would be if
-we could find an encoding that maps
-session names to session names without the creation
-of shared names.
+At this point an open  question would be if we could find an encoding that maps
+session names to session names without the creation of shared names.
 
-\dk{give intuition}
 
 
