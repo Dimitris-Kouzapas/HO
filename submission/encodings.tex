@@ -1,7 +1,7 @@
 % !TEX root = main.tex
 
 \newpage
-\section{Typed Encodings}
+\section{Typed Encodings}\label{s:expr}
 
 In this section we present a study of the expressiveness 
 of the sub-calculi of $\HOp$.
@@ -112,7 +112,7 @@ Encoding composition is closed on the above properties.
 
 \section{Positive Expressiveness Results}
 
-\subsection{List of Languages Under Consideration}
+\subsection{Languages Under Consideration}
 We consider the following variants of \HOp:
 \begin{enumerate}[-]
 	\item \HO: the second and third lines of the syntax of processes in Fig.~\ref{fig:syntax} (pure higher-order, monadic communication).
@@ -410,7 +410,7 @@ thanks to the linearity of session endpoints~\cite{VascoFun}.
 The extension of the (monadic) session type system given in Section X to handle polyadic communication is straightforward and follow expected lines. For this reason, we do not present a typing system for \pHOp in full detail; rather, we shall define a syntactic transformation of \pHOp into \HOp, rather than as a typed encoding.\footnote{The definition of a polyadic semantics would only add visual clutter to our presentation, as all results extend easily from monadic to polyadic communication.}
 Because of this transformation, denoted  $\auxmap{\cdot}{\mathsf{p}}$, we are able to focus on monadic session processes, and rely on polyadic constructs simply as convenient syntactic sugar. In fact, we shall rely on polyadicity to encode recursive behaviors.
 
-\begin{definition}[Polyadic Into Monadic]Define the mapping $\auxmap{\cdot}{\mathsf{p}}:\pHOp \to \HOp$ as
+\begin{definition}[Polyadic Into Monadic]Define the process mapping $\auxmap{\cdot}{\mathsf{p}}:\pHOp \to \HOp$ as
 \[
 	\begin{array}{rcl}
 			\auxmap{\bout{k}{k'_1, \cdots, k'_n} P}{\mathsf{p}} &\defeq& \bout{k}{k'_1} \cdots ;  \bout{k}{k'_n} \auxmap{P}{\mathsf{p}}\\
@@ -418,10 +418,20 @@ Because of this transformation, denoted  $\auxmap{\cdot}{\mathsf{p}}$, we are ab
 %			\map{\bout{k}{\abs{\tilde{x}} P_1} P_2}^{p} &\defeq& \bbout{k}{\abs{z}\map{\binp{z}{\tilde{x}} P_1}^{p}} \map{P_2}^{p}\\
 %			\map{\appl{X}{\tilde{k}}}^{p}  &\defeq& \newsp{s}{\appl{X}{s} \Par \map{\bout{\dual{s}}{\tilde{k}} \inact}^{p}} \\
 			\auxmap{\bbout{k}{\abs{x_1, \cdots, x_n} Q} P}{\mathsf{p}} &\defeq& \bbout{k}{\abs{z}\binp{z}{x_1} \cdots ; \binp{z}{x_n}\auxmap{Q}{\mathsf{p}}} \auxmap{P}{\mathsf{p}}\\
-			\auxmap{\appl{X}{k_1, \cdots, k_n}}{\mathsf{p}}  &\defeq& \newsp{s}{\appl{X}{s} \Par \bout{\dual{s}}{k_1} \cdots ; \bout{\dual{s}}{k_n} \inact}
-	\end{array}
+			\auxmap{\appl{X}{k_1, \cdots, k_n}}{\mathsf{p}}  &\defeq& \newsp{s}{\appl{X}{s} \Par \bout{\dual{s}}{k_1} \cdots ; \bout{\dual{s}}{k_n} \inact} 
+				\end{array}
 	\]
 	and as an homomorphism for the remaining constructs in \pHOp. 
+	Define the mapping on types $\tauxmap{\cdot}{\mathsf{p}}$ as follows:
+\[
+	\begin{array}{rcl}
+			\tauxmap{\btout{S_1, \cdots, S_n}S}{\mathsf{p}}&\defeq& \btout{\tauxmap{S_1}{\mathsf{p}}} \cdots \btout{\tauxmap{S_n}{\mathsf{p}}}\tauxmap{S}{\mathsf{p}} \\
+			\tauxmap{\btinp{S_1, \cdots, S_n}S}{\mathsf{p}}&\defeq& \btinp{\tauxmap{S_1}{\mathsf{p}}} \cdots \btinp{\tauxmap{S_n}{\mathsf{p}}}\tauxmap{S}{\mathsf{p}} \\
+			\tauxmap{\lhot{(S_1, \cdots, S_n)}}{\mathsf{p}}&\defeq& \lhot{\big(\btinp{\tauxmap{S_1}{\mathsf{p}}} \cdots \btinp{\tauxmap{S_n}{\mathsf{p}}}\tinact\big)} \\
+			\tauxmap{\shot{(S_1, \cdots, S_n)}}{\mathsf{p}}&\defeq& \shot{\big(\btinp{\tauxmap{S_1}{\mathsf{p}}} \cdots \btinp{\tauxmap{S_n}{\mathsf{p}}}\tinact\big)} 
+	\end{array}
+	\]
+	and as an homomorphism for the remaining type constructs.
 	%\jp{I prefer to be explicit in the encoding of polyadic abstraction/applications. Previous version is commented.}
 \end{definition}
 

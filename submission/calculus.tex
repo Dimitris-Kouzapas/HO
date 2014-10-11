@@ -1,16 +1,16 @@
 % !TEX root = main.tex
-\section{The Full Higher-Order Session $\pi$-Calculus}
+\section{The Full Higher-Order Session $\pi$-Calculus (\HOp)}
 
-We present the syntax and operational semantics of the
-{\em Full Higher-Order Session $\pi$-calculus} or $\HOp$.
-$\HOp$ is a simpler version of the higher-order calculus developed
-in~\cite{tlca07}, that name and process abstraction application, as
-well as implicit application of abstractions. We believe that
-the higher-order semantics of the calculus is small and yet expressive
-enough to capture in a simple way the principles of
-session types.
+We introduce the {\em Full Higher-Order Session $\pi$-calculus} ($\HOp$ in the following).
+$\HOp$ features constructs for both name- and abstraction-passing; it corresponds to a sub-calculus 
+of the higher-order language studied by Mostrous and Yoshida in~\cite{tlca07}.
+Although minimal, 
+in \S\ref{s:expr}
+the abstraction-passing capabilities of \HOp will prove 
+expressive enough to capture key features of session communication, 
+such as delegation and recursion.
 
-\subsection{$\HOp$ Syntax}
+\paragraph{Syntax.}
 
 The syntax for $\HOp$ processes is given in Figure~\ref{fig:syntax}.
 We assume a set of names $N$, defined as $N = S \cup \dual{S}$.
@@ -18,39 +18,36 @@ We use $s, s_1, \dots$
 and $\dual{s}, \dual{s_1}, \dots$
 to range over elements of $S$ and $\dual{S}$, respectively.
 Intuitively, names $s$ and $\dual{s}$ are dual \emph{endpoints}.
+Note that $N$ includes session and shared names:
+we sometimes write  $a,b, \dots$ to denote shared names, although $a, b, \dots \in S$.
 Name variables $x, y,  \dots$, 
 process variables $X, Y,  \dots$,
 and recursive variables $\rvar{X}, \rvar{Y}, \dots$ 
 are taken from sets $\mathsf{Var}$, $\mathsf{PVar}$, and $\mathsf{RVar}$, respectively. 
-Abstractions, written $\abs{x}{P}$, are processes $P$ with a bound parameter $x$;
-the set of all abstractions is denoted $\mathsf{Abs}$.
+An abstraction $\abs{x}{P}$ is a process $P$ with a bound parameter $x$;
+$\mathsf{Abs}$ denotes the set of all abstractions.
 We denote either names or name variables with $k, k', \dots$.
 We write $V, V', \ldots$ to denote 
 transmittable \emph{values}, i.e., 
 name variables, process variables, recursive variables, or abstractions.
-Note that set $N$ includes session and shared names.
-We sometimes denote shared names with $a,b, c, \dots$, although $a, b, c, \dots \in S$.
 
-Processes include the standard $\pi$-calculus prefixes for sending and receiving names.
-Prefix $\bout{k}{k'} P$ denotes the sending of name $k$ over channel $k$ and then
-continuing as $P$ whereas prefix $\binp{k}{x} P$ denotes the reception of a value
-on channel $k$ over variable $x$ and then continue as $P$. Recursion is expressed
-on the primitive recursor $\recp{X}{P}$ that binds the recursive variable/process
-$\rvar{X}$ in the structure of $P$.
-
-Higher-order syntax is composed by the sending prefix $\bout{k}{\abs{x}{Q}} P$ that
-denotes the sending of abstraction $\abs{x}{Q}$ over channel $k$ and then continuing
-as $P$. On the receiving side prefix $\binp{k}{X} P$ denotes the reception of an abstraction
+The name-passing constructs of \HOp include the standard $\pi$-calculus prefixes for sending and receiving names.
+Process $\bout{k}{k'} P$ denotes the output of name $k'$ over channel $k$, with continuation $P$;
+process $\binp{k}{x} P$ denotes the input along  of a value
+on channel $k$ over variable $x$, with continuation $P$. 
+Recursion is expressed by the primitive recursor $\recp{X}{P}$, which binds the recursive variable $\rvar{X}$ in process $P$. The abstraction-passing constructs of \HOp include 
+the output prefix $\bbout{k}{\abs{x}{Q}} P$, which 
+sends out abstraction $\abs{x}{Q}$ over channel $k$ and then continues as $P$. 
+Process $\binp{k}{X} P$ denotes the reception of an abstraction
 on channel $k$ and over the process variable $\X$. Process $\appl{X}{k}$ is the application
 process which is used to bind channel $k$ on the process substituting process variable $\X$.
 
-We assume the standard session syntax for selection and branching. Process
-$\bsel{k}{l} P$ selects label $l$ on channel $k$ and then behaves as $P$. 
+\HOp also contains usual session constructs for $n$-ary labeled choice.
+%We assume the standard session syntax for selection and branching. 
+Process $\bsel{k}{l} P$ selects label $l$ on channel $k$ and then behaves as $P$. 
 Given $i \in I$, 
-process 
-$\bbra{k}{l_i:P_i}_{i \in I}$ offers a choice on labels $l_i$ with
-corresponding continuation $P_i$.
-The calculus is completed with the standard constructs for 
+process $\bbra{k}{l_i:P_i}_{i \in I}$ offers a choice on labels $l_i$ with continuation $P_i$.
+The calculus also includes standard constructs for 
 inaction $\inact$, 
 parallel composition $P_1 \Par P_2$, and 
 name restriction $\news{s} P$, which simultaneously binds endpoints $s$ and $\dual{s}$ in $P$.
@@ -63,25 +60,28 @@ name restriction $\news{s} P$, which simultaneously binds endpoints $s$ and $\du
 %over a polyadic abstraction.
 
 A well-formed process relies on assumptions for guarded recursive processes.
-A process is called a \emph{program} if it contains 
-no free recursion variables nor free name/process variables.
+A \emph{program} is a process without free 
+recursion variables nor free name/process variables.
 
 \input{figures/fig-syntax}
 
-Two significant sub-calculi of $\HOp$ will form the basis of our study.
-The first sub-calculus involves name-passing but no process-passing constructs; it is 
-defined by lines 1 and 3 of the syntax in Figure~\ref{fig:syntax}.
-This is essentially a standard session $\pi$-calculus 
-or $\sesp$ as defined in the bibliography~\cite{}.
-The second sub-calculus features abstraction passing and application but no name-passing; 
-it is defined by lines 2 and 3 of the same syntax. This language 
-calculus is called the higher-order session calculus or $\HO$.
+\paragraph{Sub-calculi.}
+Two significant sub-calculi of $\HOp$ will form the basis of our study:
+\begin{enumerate}[-]
+\item The sub-calculus \sesp involves only name-passing constructs; it is 
+defined by lines (\textsc{I}) and (\textsc{III}) of the syntax in Figure~\ref{fig:syntax}.
+\item The sub-calculus \HO features abstraction passing and application but no name-passing; 
+it is defined by lines (\textsc{II}) and (\textsc{III}) of the same syntax.
+\end{enumerate}
+Thus, while \sesp is essentially a standard session $\pi$-calculus as defined in the literature~\cite{},
+\HO can be related to core higher-order process calculi whole expressiveness in untyped and typed settings
+has been studied in, e.g.,~\cite{}.
 
-\subsection{Operational Semantics}
 
-\paragraph{Structural Congruence}
-
-We define structural congruence as the least congruence that satisfies the commutative monoid $(\Par, \inact)$
+\paragraph{Operational Semantics.}
+The operational semantics for \HOp is given as a fairly standard reduction relation, supported by
+a \emph{structural congruence}, denoted $\scong$. This is 
+the least congruence that satisfies the commutative monoid $(\Par, \inact)$
 and the rules:
 
 \begin{tabular}{c}
@@ -92,44 +92,41 @@ and the rules:
 	\quad \rec{X}{P} \scong P\subst{\rec{X}{P}}{\rvar{X}}$
 \end{tabular}
 
-
-We define the reduction semantics in Figure~\ref{fig:reduction}.
-Figure~\ref{fig:reduction} first describes the process variable
-substitution through the semantics
-of name substitution. Substitution of application process $\appl{X}{k}$
+\noindent Figure~\ref{fig:reduction} gives the 
+reduction semantics and defines process variable substitution. 
+Substitution of application process $\appl{X}{k}$
 over abstraction $\abs{x} Q$ substitutes free variable
 $x$ in $Q$ with $k$ and replaces $X$ with the resulting process.
 %The same intuition holds for polyadic substitution of the polyadic
 %application process $\appl{X}{\tilde{k}}$ where the list of names
 %$\tilde{k}$ substitutes a list of variables $\tilde{x}$.
 There is no effect on variable substitution for the inactive process.
-In all the other cases process variable substitution is homorphic 
+In all other cases process variable substitution is defined homorphically 
 on the structure of the process.
 
 \input{figures/fig-reduction}
 
-There are three communication rules for the $\HOp$. The name passing
-rule, $\orule{NPass}$ where a send prefix on channel $s$ sends
-channel $s'$ to be received by parallel receive prefixed process
-on the dual endpoint $\dual{s}$. After the reduction the continuation of the 
-latter process substitutes $s'$ on the receive prefix object $x$.
+There are three communication rules for $\HOp$. 
+Rule~$\orule{NPass}$ defines name passing 
+of a channel $s'$ from channel $s$ to its dual endpoint $\dual{s}$.
+%As a result of reduction the continuation of the 
+%latter process substitutes $s'$ on the receive prefix object $x$.
 %For clarity reasons we use the separate axiom, $\orule{PolPass}$
 %to extend name passing to the polyadic polyadic name passing.
-The second communication axiom, $\orule{APass}$, describes
-abstraction passing. An abstraction is sent on a send prefixed process
-over channel $s$ and it is being received by a parallel $\dual{s}$-received
-prefixed process. The latter process follows a process variable
-substitution.
+Rule~$\orule{APass}$ describes
+abstraction passing of an abstraction $\abs{x}P_1$
+along channel $s$; the reception along a $\dual{s}$-prefixed process leads to a process variable
+substitution as explained above.
 %Again we have a separate axiom, $\orule{PolAbs}$
 %to extend to polyadic abstraction passing.
-The third axiom is the standard select/branch action where
-a process select label $l_j, j \in I$ on channel $s$ over a set of
-labels $\set{l_i}_{i \in I}$ that are offered from a parallel process
-on the dual session endpoint $\dual{s}$. The continuation of the latter
-process is the corresponding process $P_k$.
-The last three rules are congruence rules that preserve reduction
-on the parallel, rule $\orule{Par}$ and name restriction, rule $\orule{Ses}$,
-operators as well as reduction is closed under structural congruence, rule $\orule{Cong}$.
+Rule~$\orule{Sel}$ is the standard rule for labeled choice/selection:
+given an index set $I$, 
+a process selects label $l_j, j \in I$ on channel $s$ over a set of
+labels $\set{l_i}_{i \in I}$ that are offered by a parallel process
+on the dual session endpoint $\dual{s}$. The resulting continuation is associated process $P_j$.
+Remaining r rules 
+define congruence with respect to parallel composition (rule $\orule{Par}$) and name restriction (rule $\orule{Ses}$).
+Rule $\orule{Cong}$ defines closure under structural congruence.
 
 
 
