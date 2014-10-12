@@ -403,6 +403,35 @@ Thus, e.g., for $n = 2$ one would have
 with $\appl{X}{k_1,k_2} \subst{\abs{x_1,x_2}{Q}}{\X}  =  Q \subst{k_1,k_2}{x_1,x_2} $.
 Thus, 
 \pHOp features tuple passing in intra-session (linear) communication, but also in abstractions/applications. 
+The session type system for \pHOp is an orthogonal extension of that in \S\,\ref{s:types}.
+The type syntax for values is extended as follows, where $\tilde{S}$ stands for a sequence $S_1, \ldots, S_n$ of 
+session types:
+\begin{eqnarray*}
+ U \bnfis  & \tilde{S} \bnfbar \lhot{\tilde{S}} \bnfbar \shot{\tilde{S}} \bnfbar \chtype{S}
+\end{eqnarray*}
+The syntax of session types would be kept unchanged.
+Typing rules require straightforward extensions. 
+For instance, the following rules would type 
+abstraction and application in the biadic case ($n = 2$):
+\[
+\trule{Abs2}~~\tree{
+			\Gamma; \Lambda; \Sigma \cat x_1: S_1, x_2: S_2 \proves P \hastype \Proc
+		}{
+			\Gamma; \Lambda; \Sigma \proves \abs{x_1, x_2}{P} \hastype \lhot{(S_1, S_2)}
+		}
+\quad
+		\trule{App2}~~\tree{
+		\begin{array}{c}
+		(U = \lhot{(S_1,S_2)}) \lor (U = \shot{(S_1,S_2)}) \\
+		\Gamma; \Lambda; \Sigma \proves X \hastype U  \\
+		\Gamma; \Lambda_1; \Sigma_1 \proves k_1 \hastype S_1 \quad 		
+		\Gamma; \Lambda_2; \Sigma_2 \proves k_2 \hastype S_2
+		\end{array}
+		}{
+			\Gamma; \Lambda \cup  \Lambda_1 \cup \Lambda_2; \Sigma \cup \Sigma_1 \cup \Sigma_2 \proves \appl{X}{k_1,k_2} \hastype \Proc
+		} 
+\]
+
 In the untyped $\pi$-calculus, polyadic communication can be encoded into monadic name passing 
 simply by performing $n$ monadic synchronizations on a fresh channel. 
 In session-typed $\pi$-calculi this encoding is even simpler, 
@@ -611,6 +640,8 @@ Then we have: $P \scong \appl{X}{\tilde{n}}\subst{\abs{\tilde{x}}\auxmapp{P}{\ma
 
 We are now ready to define the encoding of the full $\sesp$ (including constructs for recursion)
 into strict process-passing. We stress that we use polyadicity in abstraction and application only as syntactic sugar, to simplify presentation.
+For the sake of completeness, we give again the encodings for finite processes and types, as
+formalized by $\encod{\cdot}{\cdot}{1}: \sespnr \to \HO$.
 
 \begin{definition}[From $\sesp$ to $\HO$]
 Let $f$ be a function from recursion variables to sequences of name variables.
@@ -622,11 +653,26 @@ Let $f$ be a function from recursion variables to sequences of name variables.
 	\pmapp{\rec{X}{P}}{2}{f} &\defeq& \newsp{s}{\binp{s}{\X} \pmapp{P}{2}{{f,\{\rvar{X}\to \tilde{n}\}}} \Par \bbout{\dual{s}}{\abs{\vmap{\tilde{n}}, z } \,{\binp{z}{\X} \auxmapp{\pmapp{P}{2}{{f,\{\rvar{X}\to \tilde{n}\}}}}{\mathsf{v}}{\es}}} \inact} & \quad \tilde{n} = \ofn{P} \\ 
 	\pmapp{\rvar{X}}{2}{f} &\defeq& \newsp{s}{\appl{\X}{\tilde{n}, s} \Par \bbout{\dual{s}}{ \abs{\vmap{\tilde{n}},z}\,\,{\appl{X}{ \vmap{\tilde{n}}, z}}} \inact} & \quad \tilde{n} = f(\rvar{X}) \\
 			\pmapp{\bout{k}{n} P}{2}{f}	&\defeq&	\bbout{k}{ \abs{z}{\,\binp{z}{X} \appl{X}{n}} } \pmapp{P}{2}{f} \\
-		\pmapp{\binp{k}{x} Q}{2}{f}	&\defeq&	\binp{k}{X} \newsp{s}{\appl{X}{s} \Par \bbout{\dual{s}}{\abs{x} \pmapp{Q}{2}{f}} \inact} 
+		\pmapp{\binp{k}{x} Q}{2}{f}	&\defeq&	\binp{k}{X} \newsp{s}{\appl{X}{s} \Par \bbout{\dual{s}}{\abs{x} \pmapp{Q}{2}{f}} \inact} \\
+		\tmap{\btout{S_1} {S} }{2}	&\defeq&	\bbtout{\lhot{\btinp{\lhot{\tmap{S_1}{2}}}\tinact}} \tmap{S}{2}  \\
+		\tmap{\btinp{S_1} S }{2}	&\defeq&	\bbtinp{\lhot{\btinp{\lhot{\tmap{S_1}{2}}}\tinact}} \tmap{S}{2} \\
+		\tmap{\bbtout{\chtype{S_1}} {S} }{2}	&\defeq&	\bbtout{\shot{\btinp{\shot{\chtype{\tmap{S_1}{2}}}}\tinact}} \tmap{S}{2}  \\
+		\tmap{\bbtinp{\chtype{S_1}} {S} }{2}	&\defeq&	\bbtinp{\shot{\btinp{\shot{\chtype{\tmap{S_1}{2}}}}\tinact}} \tmap{S}{2} 
+
 \end{array}
 \]
 and as an homomorphism for the other process constructs. 
 \end{definition}
+
+\begin{remark}
+It seems that we would need to define a mapping for environments $\Gamma$, as follows:
+$$
+\tmap{\Gamma \cat \rvar{X}:\Sigma}{2} = \tmap{\Gamma}{2} \cat 
+%X:\shot{(\tilde{S}_{\Sigma}, S^*)}
+X:\trec{t}{\big(\shot{(\tilde{S}_{\Sigma}, \btinp{\vart{t}}\tinact)}\big)}
+$$
+where $\tilde{S}_{\Sigma} = S_1, \ldots, S_m$ for any $\Sigma = \{n_1:S_1, \ldots, n_m:S_m\}$.
+\end{remark}
 
 \begin{proposition}
 	Encoding $\fencod{\cdot}{\cdot}{2}{f}: \sesp \to \HO$  
@@ -653,23 +699,30 @@ By induction on the structure of \sesp process $P_0$.
 	to stand for 
 	$n_1: S_1, \ldots, n_m: S_m$ and
 		$x_1: S_1, \ldots, x_m: S_m$, respectively. 
-	Below, we assume that $\Gamma = \Gamma' \cat X:\shot{(\tilde{S}, \btinp{A}\tinact)}$, where $A$ is some recursive session?
-	{\small
+	Below, we assume that $\Gamma = \Gamma' \cat X:\shot{\tilde{T}}$, 
+	where  
+	%$$\tilde{T} =  \trec{t}{\big(\tilde{S}, \btinp{\vart{t}}\tinact\big)}$$.
+	\begin{eqnarray*}
+	\tilde{T} & = & \big(\tilde{S}, S^*\big) \\
+	S^* & = & \bbtinp{A}\tinact \\
+	A & = & \trec{t}{(\tilde{S}, \btinp{\vart{t}}\tinact)}
+	\end{eqnarray*}
+			{\small
 	\[
 	\tree{
 	\tree{
 	\tree{
 	\tree{
 	}{
-	\Gamma ;\, \es ;\, \es \proves X \hastype \shot{(\tilde{S}, \btinp{A}\tinact)}
+	\Gamma ;\, \es ;\, \es \proves X \hastype \shot{\tilde{T}}
 	}
 	\quad 
 	\begin{array}{c}
 	\Gamma ;\, \es ;\, \{n_i: S_i \} \proves n_i \hastype S_i \\
-	\Gamma ;\, \es ;\, \{s: \btinp{A}\tinact \} \proves s\hastype \btinp{A}\tinact  \\
+	\Gamma ;\, \es ;\, \{s: S^* \} \proves s\hastype S^*  \\
 	\end{array}
 	}{
-	\Gamma  ;\, \es ;\, \Sigma_{\tilde{n}}, s:\btinp{A}\tinact
+	\Gamma  ;\, \es ;\, \Sigma_{\tilde{n}}, s:\btinp{\shot{\tilde{T}}}\tinact
 	\proves  
 	\appl{\X}{\tilde{n}, s} \hastype \Proc
 	} 
@@ -685,25 +738,25 @@ By induction on the structure of \sesp process $P_0$.
 	\tree{
 	\begin{array}{c}
 	\Gamma ;\, \es ;\, \{x_i: S_i \} \proves x_i \hastype S_i \\
-	\Gamma ;\, \es ;\, \{z: \btinp{A}\tinact  \} \proves z\hastype \btinp{A}\tinact  \\
-	\Gamma ;\, \es ;\, \es \proves X \hastype \shot{(\tilde{S}, \btinp{A}\tinact)}  \\
+	\Gamma ;\, \es ;\, \{z: S^*  \} \proves z\hastype S^*  \\
+	\Gamma ;\, \es ;\, \es \proves X \hastype \shot{\tilde{T}}  \\
 	\end{array}	}{
-		\Gamma  ;\, \es ;\,   \Sigma_{\tilde{x}}, z:\btinp{A}\tinact 
+		\Gamma  ;\, \es ;\,   \Sigma_{\tilde{x}}, \, z:S^*
 	\proves 
 	 {\appl{X}{ \tilde{x}, z}} \hastype \Proc
 	}
 	}{
 		\Gamma  ;\, \es ;\,   \es
 	\proves 
-	 \abs{\tilde{x},z}\,\,{\appl{X}{ \tilde{x}, z}} \hastype A
+	 \abs{\tilde{x},z}\,\,{\appl{X}{ \tilde{x}, z}} \hastype \shot{\tilde{T}}
 	} 	
 	}{
-	\Gamma  ;\, \es ;\,   \dual{s}: \btout{A}\tinact
+	\Gamma  ;\, \es ;\,   \dual{s}: \btout{\shot{\tilde{T}}}\tinact
 	\proves 
 	\bbout{\dual{s}}{ \abs{\tilde{x},z}\,\,{\appl{X}{ \tilde{x}, z}}} \inact \hastype \Proc
 	}
 	}{
-	\Gamma  ;\, \es ;\, \Sigma_{\tilde{n}}, s:\btinp{A}\tinact, \, \dual{s}: \btout{A}\tinact
+	\Gamma  ;\, \es ;\, \Sigma_{\tilde{n}}, s:\btinp{\shot{\tilde{T}}}\tinact, \, \dual{s}: \btout{\shot{\tilde{T}}}\tinact
 	\proves 
 	\appl{\X}{\tilde{n}, s} \Par \bbout{\dual{s}}{ \abs{\tilde{x},z}\,\,{\appl{X}{ \tilde{x}, z}}} \inact \hastype \Proc
 	}
@@ -735,16 +788,16 @@ By induction on the structure of \sesp process $P_0$.
 	\tree{
 	\tree{
 	\tree{
-	\tmap{\Gamma}{2}\cat X:\shot{\tilde{C}};\, \es;\, \tmap{\Sigma_{\tilde{n}}}{2}
+	\tmap{\Gamma}{2}\cat X:\shot{\tilde{T}};\, \es;\, \tmap{\Sigma_{\tilde{n}}}{2}
 	\proves
 	 R  \hastype \Proc
 	}{
-	\tmap{\Gamma}{2}\cat X:\shot{\tilde{C}};\, \es;\, \tmap{\Sigma_{\tilde{n}}}{2}, s:\tinact 
+	\tmap{\Gamma}{2}\cat X:\shot{\tilde{T}};\, \es;\, \tmap{\Sigma_{\tilde{n}}}{2}, s:\tinact 
 	\proves
 	 R  \hastype \Proc
 	}
 	}{
-	\tmap{\Gamma}{2};\, \es;\, \tmap{\Sigma_{\tilde{n}}}{2}, s:\btinp{\shot{\tilde{C}}}\tinact 
+	\tmap{\Gamma}{2};\, \es;\, \tmap{\Sigma_{\tilde{n}}}{2}, s:\btinp{\shot{\tilde{T}}}\tinact 
 	\proves
 	\binp{s}{\X} R  \hastype \Proc
 		} \quad 
@@ -762,31 +815,31 @@ By induction on the structure of \sesp process $P_0$.
 	\tree{
 	\tree{
 	\tree{
-	\tmap{\Gamma}{2} \cat X: \shot{\tilde{C}};\, \es;\, \tmap{\Sigma_{\tilde{x}}}{2}
+	\tmap{\Gamma}{2} \cat X: \shot{\tilde{T}};\, \es;\, \tmap{\Sigma_{\tilde{x}}}{2}
 	\proves
 	{{\auxmapp{R}{\mathsf{v}}{\es}}}  \hastype \Proc
 	}{
-	\tmap{\Gamma}{2} \cat X: \shot{\tilde{C}};\, \es;\, \tmap{\Sigma_{\tilde{x}}}{2},z: \tinact
+	\tmap{\Gamma}{2} \cat X: \shot{\tilde{T}};\, \es;\, \tmap{\Sigma_{\tilde{x}}}{2},z: \tinact
 	\proves
 	{{\auxmapp{R}{\mathsf{v}}{\es}}}  \hastype \Proc
 	}
 	}{
-	\tmap{\Gamma}{2};\, \es;\, \tmap{\Sigma_{\tilde{x}}}{2},z: \btinp{\shot{\tilde{C}}}\tinact
+	\tmap{\Gamma}{2};\, \es;\, \tmap{\Sigma_{\tilde{x}}}{2}, \, z: \btinp{A}\tinact
 	\proves
 	{{\binp{z}{\X} \auxmapp{R}{\mathsf{v}}{\es}}}  \hastype \Proc
 	}
 	}{
 	\tmap{\Gamma}{2};\, \es;\, \es
 	\proves
-	{\abs{\tilde{x}, z } \,{\binp{z}{\X} \auxmapp{R}{\mathsf{v}}{\es}}}  \hastype \shot{\tilde{C}}
+	{\abs{\tilde{x}, z } \,{\binp{z}{\X} \auxmapp{R}{\mathsf{v}}{\es}}}  \hastype \shot{\tilde{T}}
 	}	
 	}{
-		\tmap{\Gamma}{2};\, \es;\, \dual{s}:\btout{\shot{\tilde{C}}}\tinact
+		\tmap{\Gamma}{2};\, \es;\, \dual{s}:\btout{\shot{\tilde{T}}}\tinact
 	\proves
 	\bbout{\dual{s}}{\abs{\tilde{x}, z } \,{\binp{z}{\X} \auxmapp{R}{\mathsf{v}}{\es}}} \inact \hastype \Proc
 	}
 	}{
-	\tmap{\Gamma}{2};\, \es;\, \tmap{\Sigma_{\tilde{n}}}{2}, s:\btinp{\shot{\tilde{C}}}\tinact , \dual{s}:\btout{\shot{\tilde{C}}}\tinact
+	\tmap{\Gamma}{2};\, \es;\, \tmap{\Sigma_{\tilde{n}}}{2}, s:\btinp{\shot{\tilde{T}}}\tinact , \dual{s}:\btout{\shot{\tilde{T}}}\tinact
 	\proves
 	\binp{s}{\X} R \Par \bbout{\dual{s}}{\abs{\tilde{x}, z } \,{\binp{z}{\X} \auxmapp{R}{\mathsf{v}}{\es}}} \inact \hastype \Proc
 	}
