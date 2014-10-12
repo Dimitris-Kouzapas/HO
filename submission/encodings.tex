@@ -436,7 +436,7 @@ In the untyped $\pi$-calculus, polyadic communication can be encoded into monadi
 simply by performing $n$ monadic synchronizations on a fresh channel. 
 In session-typed $\pi$-calculi this encoding is even simpler, 
 thanks to the linearity of session endpoints~\cite{VascoFun}.
-The extension of the (monadic) session type system given in Section X to handle polyadic communication is straightforward and follow expected lines. For this reason, we do not present a typing system for \pHOp in full detail; rather, we shall define a syntactic transformation of \pHOp into \HOp, rather than as a typed encoding.\footnote{The definition of a polyadic semantics would only add visual clutter to our presentation, as all results extend easily from monadic to polyadic communication.}
+The extension of the (monadic) session type system given in \S\,\ref{s:types} to handle polyadic communication is straightforward and follow expected lines. For this reason, we do not present a typing system for \pHOp in full detail; rather, we shall define a syntactic transformation of \pHOp into \HOp, rather than as a typed encoding.\footnote{The definition of a polyadic semantics would only add visual clutter to our presentation, as all results extend easily from monadic to polyadic communication.}
 Because of this transformation, denoted  $\auxmap{\cdot}{\mathsf{p}}$, we are able to focus on monadic session processes, and rely on polyadic constructs simply as convenient syntactic sugar. In fact, we shall rely on polyadicity to encode recursive behaviors.
 
 \begin{definition}[Polyadic Into Monadic]Define the process mapping $\auxmap{\cdot}{\mathsf{p}}:\pHOp \to \HOp$ as
@@ -1062,7 +1062,7 @@ By induction on the structure of \HO process $P$.
 	\]
 	}
 
-   In the second case, we 
+   In the second case,  
 	we have the following typing in the source language:
 	{\small
 	\[
@@ -1137,7 +1137,19 @@ enjoys operational correspondence (cf. Def.~\ref{def:ep}\,(2)).
 \end{proposition}
 
 \begin{proof}[Sketch]
-TBD.
+For completeness, we 
+consider the \HO process $P = {\bbout{k}{\abs{x} Q} P_1} \Par \binp{k}{X} P_2$. We have that
+\[
+P \red P_1 \Par P_2 \subst{\abs{x}Q}{X}
+\]
+In the target language, this reduction is mimicked as follows:
+\begin{eqnarray*}
+\pmap{P}{2} & = & \newsp{a}{\bout{k}{a} (\pmap{P_1}{3} \Par \repl{} \binp{a}{y} \binp{y}{x} \pmap{Q}{3})\,} 
+                  \Par \binp{k}{x} \pmap{P_2}{3} \\
+            & \red & \newsp{a}{\pmap{P_1}{3} \Par \repl{} \binp{a}{y} \binp{y}{x} \pmap{Q}{3} 
+                  \Par  \pmap{P_2}{3}\subst{a}{x}}
+\end{eqnarray*}
+\qed
 \end{proof}
 
 
