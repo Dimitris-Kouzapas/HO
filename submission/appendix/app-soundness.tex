@@ -103,9 +103,17 @@ We now repeat the statement of Theorem~\ref{t:sr} in Page~\pageref{t:sr}:
 \begin{proof}
 Part (1) is standard, using weakening and strengthening lemmas. Part (2) proceeds by induction on the last reduction rule used:
 \begin{enumerate}[$-$]
-\item Case \orule{NPass}: Then there are two sub-cases, depending on whether the communicated name is a shared name or a channel, that is, i.e., $U = S$ or $U = \chtype{S}$. The proof is standard, using appropriate rules for typing reception of a name: when $U = S$ we use typing 
+\item Case \orule{NPass}: Then there are three sub-cases, depending on whether the 
+communication subject is a shared name or a session channel. In turn, the second case should consider two possibilities, namely whether the communicated name is a shared name or a channel, that is, i.e., $U = S$ or $U = \chtype{S}$. 
+
+In all cases, the proof is standard, using appropriate rules.
+In the first case, we analyze the interaction of rules~\trule{Conn} and~\trule{ConnDual}, 
+using Lemma~\ref{l:subst}(1).
+This case amounts to delegation on shared channel and so the session environment does not reduce.
+In the second case, we consider rule~\trule{Send} with two different rules 
+ for typing reception of a name: when $U = S$ we use typing 
 rule~\trule{RecvS} and Lemma~\ref{l:subst}(1); when $U = \chtype{S}$ we use typing 
-rule~\trule{RecvShN} and Lemma~\ref{l:subst}(2). The session environment reduces.
+rule~\trule{RecvShN} and Lemma~\ref{l:subst}(2). In this case, the session environment does reduce.
 
 \item Case \orule{APass}: Then there are two sub-cases, depending on whether the communicated process abstraction is a shared or linear, that is, i.e., $U = \shot{S}$ or $U = \lhot{S}$. The proof is standard, using appropriate rules for typing reception of a process abstraction: 
 when $U = \lhot{S}$ we use typing rule~\trule{RecvL} and Lemma~\ref{l:subst}(3); 
