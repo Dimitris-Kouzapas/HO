@@ -130,7 +130,8 @@ The remaining rules are for processes. We briefly describe them...
 
 \paragraph{Type Soundness.}
 We state results for type safety:
-we report instances of more general statements already proved by Mostrous and Yoshida in the asynchronous case.
+we report instances of more general statements already proved by
+Mostrous and Yoshida in the asynchronous case.
 
 \begin{lemma}[Substitution Lemma - Lemma C.10 in M\&Y]\rm
 	\begin{enumerate}[1.]
@@ -138,17 +139,17 @@ we report instances of more general statements already proved by Mostrous and Yo
 			$k \not\in \dom{\Gamma, \Lambda, \Delta}$. 
 			Then $\Gamma; \Lambda; \Delta \cat k:S  \vdash P\subst{k}{x} \hastype \Proc$.
 
-		\item	Suppose $\Gamma \cat x:\chtype{S}; \Lambda; \Delta \proves P \hastype \Proc$ and
-			$a \not\in \dom{\Gamma, \Lambda, \Delta}$. 
-			Then $\Gamma \cat a:\chtype{S}; \Lambda; \Delta   \vdash P\subst{a}{x} \hastype \Proc$.
+		\item	Suppose $\Gamma \cat x:\chtype{U}; \Lambda; \Delta \proves P \hastype \Proc$ and
+			$a \notin \dom{\Gamma, \Lambda, \Delta}$. 
+			Then $\Gamma \cat a:\chtype{U}; \Lambda; \Delta   \vdash P\subst{a}{x} \hastype \Proc$.
 
-		\item	Suppose $\Gamma; \Lambda_1 \cat X:\lhot{S}; \Delta_1  \proves P \hastype \Proc$ 
-			and $\Gamma; \Lambda_2; \Delta_2  \proves V \hastype \lhot{S}$ with 
+		\item	Suppose $\Gamma; \Lambda_1 \cat X:\lhot{U}; \Delta_1  \proves P \hastype \Proc$ 
+			and $\Gamma; \Lambda_2; \Delta_2  \proves V \hastype \lhot{U}$ with 
 			$\Lambda_1, \Lambda_2$ and $\Delta_1, \Delta_2$ defined.  
 			Then $\Gamma; \Lambda_1 \cat \Lambda_2; \Delta_1 \cat \Delta_2  \proves P\subst{V}{X} \hastype \Proc$.
 
-		\item	Suppose $\Gamma \cat X:\shot{S}; \Lambda; \Delta  \proves P \hastype \Proc$ and
-			$\Gamma; \emptyset ; \emptyset  \proves V \hastype \shot{S}$.
+		\item	Suppose $\Gamma \cat X:\shot{U}; \Lambda; \Delta  \proves P \hastype \Proc$ and
+			$\Gamma; \emptyset ; \emptyset  \proves V \hastype \shot{U}$.
 			Then $\Gamma; \Lambda; \Delta  \proves P\subst{V}{X} \hastype \Proc$.
 		\end{enumerate}
 \end{lemma}
@@ -167,7 +168,7 @@ By induction on the typing for $P$, with a case analysis on the last used rule.
 \begin{definition}[Session Environment Reduction]\rm
 	We define relation $\red$ on session environments as:
 	\begin{itemize}
-		\item	$\Delta \cat s: \btout{U} S_1 \cat \dual{s}: \btinp{U} S_2 \red \Delta \cat s: S_1 \cat \dual{s}: S_2$
+		\item	$\Delta \cat s: \btout{\tilde{U}} S_1 \cat \dual{s}: \btinp{\tilde{U}} S_2 \red \Delta \cat s: S_1 \cat \dual{s}: S_2$
 		\item	$\Delta \cat s: \btsel{l_i: S_i}_{i \in I} \cat \dual{s}: \btbra{l_i: S_i'}_{i \in I} \red \Delta \cat s: S_k \cat \dual{s}: S_k', \quad k \in I$.
 	\end{itemize}
 \end{definition}
@@ -180,14 +181,14 @@ Since we are synchronous we can omit such an ordering.
 
 \begin{theorem}[Type Soundness - Theorem 7.3 in M\&Y]\label{t:sr}\rm
 	\begin{enumerate}[1.]
-		\item	(Subject Congruence) Suppose $\Gamma; \Lambda; \Delta \proves P \hastype \Proc$.
-			Then $P \scong P'$ implies $\Gamma; \Lambda; \Delta \proves P' \hastype \Proc$.
+		\item	(Subject Congruence) Suppose $\Gamma; \es; \Delta \proves P \hastype \Proc$.
+			Then $P \scong P'$ implies $\Gamma; \es; \Delta \proves P' \hastype \Proc$.
 
-		\item	(Subject Reduction) Suppose $\Gamma; \emptyset; \Delta \proves P \hastype \Proc$
+		\item	(Subject Reduction) Suppose $\Gamma; \es; \Delta \proves P \hastype \Proc$
 			with
 %			$\mathsf{balanced}(\Delta)$. 
 			well-typed $\Delta$.
-			Then $P \red P'$ implies $\Gamma; \emptyset; \Delta_2  \proves P' \hastype \Proc$
+			Then $P \red P'$ implies $\Gamma; \es; \Delta_2  \proves P' \hastype \Proc$
 			and $\Delta_1 \red \Delta_2$ or $\Delta_1 = \Delta_2$.
 	\end{enumerate}
 \end{theorem}

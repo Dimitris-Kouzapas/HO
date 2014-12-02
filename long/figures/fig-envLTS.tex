@@ -1,0 +1,123 @@
+\begin{figure}
+	\[
+	\begin{array}{c}
+		\eltsrule{SOut}~~\tree{
+			\begin{array}{c}
+				\dual{n} \notin \dom{\Sigma}
+				\qquad 
+				\Gamma \cat \Gamma'; \Lambda'; \Sigma_1 \cat \Sigma_2 \proves \tilde{V} \hastype \tilde{U}
+				\qquad
+				\Lambda' \subseteq \Lambda
+				\qquad
+				\Sigma_1 \subseteq \Sigma\\
+				a \in \tilde{s} \Leftrightarrow a: \chtype{U'} \in \Gamma' \wedge
+				s_i \in \tilde{s} \Leftrightarrow (s_i: S_i \in \Sigma_2 \wedge \dual{s_i}: S'_i \in \Sigma_3 \wedge S_i \dualof S'_i)
+			\end{array}
+		}{
+			(\Gamma; \Lambda; \Sigma \cat n: \btout{\tilde{U}} S) \by{\news{\tilde{s}} \bactout{n}{\tilde{V}}} (\Gamma \cat \Gamma'; \Lambda\backslash\Lambda'; (\Sigma\backslash\Sigma_1) \cat \Sigma_3 \cat n: S)			
+		}
+		\\[8mm]
+
+		\eltsrule{ShOut}~~\tree{
+			\begin{array}{c}
+				\Gamma \cat \Gamma' \cat a: \chtype{U}; \Lambda'; \Sigma_1 \cat \Sigma_2 \proves V \hastype U
+				\qquad
+				\Lambda' \subseteq \Lambda
+				\qquad
+				\Sigma_1 \subseteq \Sigma\\
+				b \in \tilde{n} \Leftrightarrow b: \chtype{U'} \in \Gamma \wedge
+				s \in \tilde{n} \Leftrightarrow (s_i: S_i \in \Sigma_2 \wedge \dual{s_i}: S'_i \in \Sigma_3 \wedge S_i \dualof S'_i)
+			\end{array}
+		}{
+			(\Gamma\cat a: \chtype{U}; \Lambda; \Sigma) \by{\news{\tilde{n}} \bactout{s}{V}} (\Gamma \cat \Gamma'\cat a: \chtype{U}; \Lambda\backslash\Lambda'; (\Sigma\backslash\Sigma_1) \cat \Sigma_3)			
+		}
+		\\[8mm]
+
+
+		\eltsrule{SRecv}~~\tree{
+			\dual{n} \notin \dom{\Sigma} \quad \Gamma; \Lambda'; \Sigma' \proves \tilde{V} \hastype \tilde{U}
+			\quad
+			\Sigma' \cap \Sigma = \es
+			\quad
+			\Lambda' \cap \Lambda = \es
+		}{
+			(\Gamma; \Lambda; \Sigma \cat n: \btinp{\tilde{U}} S) \by{\bactinp{n}{\tilde{V}}} (\Gamma; \Lambda\cat\Lambda'; \Sigma\cat\Sigma' \cat s: S)
+		}
+		\\[8mm]
+
+		\eltsrule{ShRecv}~~\tree{
+			\Gamma; \Lambda'; \Sigma' \proves \tilde{V} \hastype \tilde{U}
+			\quad
+			\Sigma' \cap \Sigma = \es \quad \Lambda' \cap \Lambda = \es
+		}{
+			(\Gamma \cat a: \tilde{\chtype{U}}; \Lambda; \Sigma) \by{\bactinp{a}{\tilde{V}}} (\Gamma \cat a: \tilde{\chtype{U}}; \Lambda\cat\Lambda'; \Sigma\cat\Sigma')
+		}
+		\\[8mm]
+
+		\tree{
+			\dual{s} \notin \dom{\Sigma} \quad k \in I
+		}{
+			(\Gamma; \Lambda; \Sigma \cat s: \btsel{l_i: S_i}_{i \in I}) \by{\bactsel{s}{l_k}} (\Gamma; \Lambda; \Sigma \cat s:S_k)
+		}
+		\qquad
+		\tree{
+			\dual{s} \notin \dom{\Sigma} \quad k \in I
+		}{
+			(\Gamma; \Lambda; \Sigma \cat s: \btbra{l_i: T_i}_{i \in I}) \by{\bactbra{s}{l_k}} (\Gamma; \Lambda; \Sigma \cat s:S_k)
+		}
+		\\[6mm]
+
+		\tree{
+			\Sigma_1 \red \Sigma_2
+		}{
+			(\Gamma; \Lambda; \Sigma_1) \by{\tau} (\Gamma; \Lambda; \Sigma_2)
+		}
+
+		\vspace{10mm}\\
+
+
+		\tree{
+			\dual{n} \notin \dom{\Sigma} \quad U = \lhot{C} \vee U = \shot{C}
+		}{
+			(\Gamma; \Lambda; \Sigma \cat n: \btinp{U} S) \hby{\bactinp{n}{\abs{x}{\map{C}^x}}} (\Gamma; \Lambda; \Sigma \cat n: S)
+		}
+		\\[6mm]
+
+		\tree{
+			\dual{n}, \dual{t} \notin \dom{\Sigma}
+		}{
+			(\Gamma; \Lambda; \Sigma \cat n: \btinp{\lhot{C}} S) \hby{\bactinp{n}{\abs{x}{\binp{t}{X} \appl{X}{x}}}} (\Gamma; \Lambda; \Sigma \cat n: S \cat t: \btinp{\lhot{C}} \tinact)
+		}
+		\\[6mm]
+
+		\tree{
+			U = \lhot{C} \vee U = \shot{C}
+		}{
+		(\Gamma \cat a: \chtype{U}; \Lambda; \Sigma) \hby{\bactinp{a}{\abs{x}{\map{C}^x}}} (\Gamma \cat a: \chtype{U}; \Lambda; \Sigma)
+		}
+		\\[6mm]
+
+		\tree{
+			\dual{t} \notin \Sigma
+		}{
+		(\Gamma \cat a: \chtype{\lhot{C}}; \Lambda; \Sigma) \hby{\bactinp{a}{\abs{x}{\binp{t}{X} \appl{X}{x}}}} (\Gamma \cat a: \chtype{\lhot{U}}; \Lambda; \Sigma \cat t: \btinp{\lhot{C}}
+ \tinact)
+		}
+		\\[6mm]
+
+		\tree{
+			\dual{n} \notin \dom{\Sigma} \quad t \notin \dom{\Gamma}
+		}{
+			(\Gamma; \Lambda; \Sigma \cat n: \btinp{\shot{C}} S) \hby{\bactinp{n}{\abs{x}{\binp{t}{X} \appl{X}{x}}}} (\Gamma \cat t: \chtype{\lhot{C}}; \Lambda; \Sigma \cat n: S)
+		}
+		\\[6mm]
+		\tree{
+			t \notin \dom{\Gamma}
+		}{
+			(\Gamma \cat a: \chtype{\shot{C}}; \Lambda; \Sigma) \hby{\bactinp{a}{\abs{x}{\binp{t}{X} \appl{X}{x}}}} (\Gamma \cat a: \chtype{\shot{U}} \cat t: \chtype{\lhot{U}}; \Lambda; \Sigma)
+		}
+		\\[6mm]
+	\end{array}
+	\]
+	\caption{Labelled Transition Semantics for Typed Enviroments \label{fig:envLTS}}
+\end{figure}

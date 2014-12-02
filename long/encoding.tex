@@ -1,0 +1,1216 @@
+% !TEX root = main.tex
+
+\newpage
+\section{Typed Encodings}\label{s:expr}
+
+In this section we present a study of the expressiveness 
+of the sub-calculi of $\HOp$.
+
+We first define the notion of calculus.
+We extend notions proposed elsewhere (cf.~Gorla\cite{})
+by explicitly considering a type structure and a type system.
+
+\begin{definition}[Typed Calculus]\label{d:tcalculus}\rm
+	A \emph{typed calculus} $\tyl{L}$ is defined as a tuple:
+%
+	\[
+		\calc{L}{T}{\red}{\wb}{\proves}
+	\]
+%
+	where $L$ and $T$ are sets of processes and types, respectively; %$T_1$ is the set of types;
+	$\red$ and $\wb$ denote a reduction semantics 
+	and a typed equivalence
+	on processes, respectively. Finally, $\proves$ denotes a type system for processes in $L$.
+\end{definition}
+
+We notice that in this paper we shall always consider languages with the same type system.
+In the following, when writing $\tyl{L}_i$ we tacitly assume the existence of appropriate 
+$L_i$, $T_i$, $\red_i$, $\wb_i$, and $\proves_i$.
+We first define the notion of encoding over typed calculi.
+
+\begin{definition}[Typed Encoding]\rm
+	Let  $\tyl{L}_1$ % = \calc{L_1}{T_1}{\red_1}{\wb_1}{\proves_1}$
+	and $\tyl{L}_2$ % =  \calc{L_2}{T_2}{\red_2}{\wb_2}{\proves_2}$ 
+	be typed calculi.% as in Definition~\ref{d:tcalculus}.
+	Given mappings $\map{\cdot}: L_1 \to L_2$ and
+	$\mapt{\cdot}: T_1 \to T_2$, 
+	we write 
+	%$\enc{\cdot}{\cdot}: \calc{L_1}{T_1}{\red_1}{\wb_1}{\proves_1} \longrightarrow \calc{L_2}{T_2}{\red_2}{\wb_2}{\proves_2}$
+%	for the encoding from $\calc{L_1}{T_1}{\red_1}{\wb_1}{\proves_1}$ to $\calc{L_2}{T_2}{\red_2}{\wb_2}{\proves_2}$.
+	\[
+		\enc{\cdot}{\cdot} : \tyl{L}_1 \to \tyl{L}_2
+	\]
+	to denote the \emph{typed encoding} of $\tyl{L}_1$ into $\tyl{L}_2$.
+\end{definition}
+
+\subsection{Encoding Properties}
+
+We require that a {\em good} encoding should 
+preserve not only the syntax but
+also the operational, typing and behavioural
+semantics. 
+
+% ----> DK: The next notation is already defined
+%\begin{notation}[Typed Equivalence]\rm
+%	Let $P$ and $Q$ be two well-typed processes, i.e., 
+%	there exist $\Gamma, \Sigma_1, \Sigma_2$ such that 
+%	$\Gamma; \emptyset; \Sigma_1 \proves P \hastype \Proc$ 
+%	and
+%	$\Gamma; \emptyset; \Sigma_2 \proves Q \hastype \Proc$.
+%	Then, to denote the fact that 
+%	$P$ and $Q$ are related by behavioral equivalence $\wb$, we shall write
+%	%Then we adopt the following notational convention:
+%	\[
+%		\Gamma; \Sigma_1 \wb \Sigma_2 \proves P \wb Q.
+%	\]
+%\end{notation}
+
+\begin{definition}[Semantic Preserving Encoding]\rm
+	\label{def:ep}
+	We say that $\enc{\cdot}{\cdot} : \tyl{L}_1 \to \tyl{L}_2$ is a \emph{semantic preserving encoding}
+	if it satisfies the following properties:
+	%Let $\Gamma; \emptyset; \Sigma \proves P \hastype \Proc$ 
+	%a process from calculus $\calc{L_1}{T_1}{\red_1}{\wb_1}{\proves_1}$
+	%and an encoding 
+	%$\enc{\cdot}{\cdot}: \calc{L_1}{T_1}{\red_1}{\wb_1}{\proves_1} \longrightarrow \calc{L_2}{T_2}{\red_2}{\wb_2}{\proves_2}$.
+	
+	\begin{enumerate}[1.]
+		\item \emph{Type preservation}:	%We say that $\enc{\cdot}{\cdot}$ is \emph{type preserving}
+		if
+			$\Gamma; \emptyset; \Sigma \proves_1 P \hastype \Proc$ then $\mapt{\Gamma}; \emptyset; \mapt{\Sigma} \proves_2 \map{P} \hastype \Proc$ for any   $P$ in $L_1$.
+
+		\item \emph{Operational Correspondence}: If $\Gamma; \emptyset; \Sigma \proves_1 P \hastype \Proc$ then
+		\begin{enumerate}[-]
+			\item	Completeness: If $P \red_1 P'$ then $\exists \Sigma'$ s.t.
+				$\map{P} \Red_2 \map{P'}$ and
+				$\mapt{\Gamma}; \emptyset; \mapt{\Sigma'} \proves_2 \map{P'} \hastype \Proc$.
+			\item Soundness : If $\map{P} \red_2 Q$ then
+				$\exists P'$ s.t. $P \red_1 P'$ and \\
+				$\mapt{\Gamma}; \mapt{\Sigma_1} \wb_2 \mapt{\Sigma_2} \proves_2 \map{P'} \wb_2 Q$.
+		\end{enumerate}
+		
+		\item \emph{Full Abstraction:}
+		$\Gamma; \Sigma_1 \wb_1 \Sigma_2 \proves_1 P \wb_1 Q $ if and only if $\mapt{\Gamma}; \mapt{\Sigma_1} \wb_2 \mapt{\Sigma_2} \proves_2 \map{P} \wb_2 \map{Q} $.
+	\end{enumerate}
+\end{definition}
+
+
+We show that the composition of encodings is closed on the above properties.
+
+\begin{proposition}[Composability of Semantic Preserving Encodings]
+	Let $\encod{\cdot}{\cdot}{1}: \tyl{L}_1 \to \tyl{L}_2$ and $\encod{\cdot}{\cdot}{2}: \tyl{L}_2 \to \tyl{L}_3$
+	be two semantic preserving encodings.
+	Then their composition, denoted 
+	$\encod{\cdot}{\cdot}{1} \cdot \encod{\cdot}{\cdot}{2}: \tyl{L}_1 \to \tyl{L}_3$
+	is also a semantic preserving encoding.
+\end{proposition}
+
+\begin{proof}
+	Straightforward application of the definition of each property.
+\end{proof}
+
+\section{Positive Expressiveness Results}
+
+\subsection{Languages Under Consideration}
+We consider the following variants of \HOp:
+\begin{enumerate}[-]
+	\item	\HO: the second and third lines of the syntax of processes in Fig.~\ref{fig:syntax} (pure higher-order, monadic communication).
+	\item	\sesp: the first and third lines of the syntax of processes in Fig.~\ref{fig:syntax} (first-order, monadic communication).
+	\item	\sespnr: the finite sub-calculus of \sesp, i.e., name passing without recursion.
+	\item	$\HO^{+\mathsf{p}}$: The polyadic \HO, i.~e.\ without polyadicity (polyadic abstraction/application).
+	\item	$\sesp^{+\mathsf{p}}$: The polyadic \sesp, i.~e.\ with polyadicity (name passing)
+	\item	$\HOp^{-\mathsf{p}}$: The monadic \HOp.
+%	\item \pHOpnr: the finite variant of \pHOp 
+%	\item \psesp: the variant of \sesp with polyadic communication.
+%	\item \psespnr: the finite variant of \psesp with polyadic communication.
+\end{enumerate}
+\noindent
+In the following we write $\pmap{\cdot}{i}$
+and $\tmap{\cdot}{i}$ 
+for mappings of processes and types, respectively.
+Since we always consider variants and fragments of \HOp, the 
+reduction semantics $\red$, the typed behavioral equivalence $\wb$,
+and the type system $\proves$ are the same for all languages.
+
+\subsection{Encoding \sespnr  into \HO}
+
+The semantics of the $\HO$ are powerful enough to
+express the semantics of the standard $\sesp$ calculus.
+
+The name passing semantics of $\sesp$ have a rather straightforward
+encoding from to $\HO$.
+On the other hand to achieve the encoding of the recursion semantic
+of $\sesp$, we need to extend
+to the polyadic version of $\sesp$ as an intermediate step in order
+to give a sound encoding of the recursion semantics to $\HO$.
+
+We first encode the name passing semantics.
+%Below, we use $n$ to stand for either a linear channel $k'$ or a shared name $a$.
+
+\begin{definition}[\sespnr  into \HO]\rm
+	Define $\encod{\cdot}{\cdot}{1}: \sespnr \to \HO$  as follows:
+	\[
+	\begin{array}{rcl}
+		\pmap{\bout{k}{k'} P}{1}		&\defeq&	\bbout{k}{ \abs{z}{\,\binp{z}{X} \appl{X}{k'}} } \pmap{P}{1} \\
+		\pmap{\binp{k}{x} Q}{1}			&\defeq&	\binp{k}{X} \newsp{s}{\appl{X}{s} \Par \bbout{\dual{s}}{\abs{x} \pmap{Q}{1}} \inact} \\
+		\tmap{\btout{S_1} {S} }{1}		&\defeq&	\bbtout{\lhot{\btinp{\lhot{\tmap{S_1}{1}}}\tinact}} \tmap{S}{1}  \\
+		\tmap{\btinp{S_1} S }{1}		&\defeq&	\bbtinp{\lhot{\btinp{\lhot{\tmap{S_1}{1}}}\tinact}} \tmap{S}{1} \\
+		\tmap{\bbtout{\chtype{S_1}}{S}}{1}	&\defeq&	\bbtout{\shot{\btinp{\shot{\chtype{\tmap{S_1}{1}}}}\tinact}} \tmap{S}{1}  \\
+		\tmap{\bbtinp{\chtype{S_1}}{S}}{1}	&\defeq&	\bbtinp{\shot{\btinp{\shot{\chtype{\tmap{S_1}{1}}}}\tinact}} \tmap{S}{1} 
+	\end{array}
+	\]
+	where $\pmap{\cdot}{1}$ (resp. $\tmap{\cdot}{1}$) is an 
+	homomorphism for the other process (resp. type) constructs.
+\end{definition}
+
+In the higher-order setting, a name $k$ is being passed as an input
+guarded abstraction. The input prefix receives an abstraction and
+continues with the application of $k$ over the received abstraction.
+On the reception side $\binp{s}{x} P$ 
+the encoding develops a mechanism that will receive
+the input guarded abstraction, apply it on a fresh endpoint $s$ and use
+the dual endpoint $\dual{s}$ to send the continuation $P$ as the abstraction
+$\abs{x}{P}$. Name substitution is then achieved as application.
+
+\begin{proposition}
+	Encoding $\encod{\cdot}{\cdot}{1}: \sespnr \to \HO$  is type-preserving (cf. Def.~\ref{def:ep}\,(1)).\rm
+\end{proposition}
+
+\begin{proof}
+	By induction on the structure of \sesp process $P$.
+%
+	\begin{enumerate}[1.]
+		%%%% Output of (linear) channel
+		\item	Case $P = \bout{k}{n}P'$. There are two sub-cases.
+			In the first sub-case $n = k'$ (output of a linear channel). Then  
+			we have the following typing in the source language:
+			{\small
+			\[
+				\tree{
+					\Gamma; \emptyset; \Sigma \cat k:S  \proves  P' \hastype \Proc \quad \Gamma ; \emptyset ; \{k' : S_1\} \proves  k' \hastype S_1}{
+					\Gamma; \emptyset; \Sigma \cat k':S_1 \cat k:\btout{S_1}S \proves  \bout{k}{k'} P' \hastype \Proc}
+			\]
+			}
+			The corresponding typing in the target language is as follows --- we write $U_1$ to stand for $\lhot{\btinp{\lhot{\tmap{S_1}{1}}}\tinact}$:
+			{\small
+			\[
+				\tree{
+					\tree{}{\tmap{\Gamma}{1}; \emptyset ; \tmap{\Sigma}{1} \cat k:\tmap{S}{1} \proves \pmap{P'}{1} \hastype \Proc}
+					~~
+					\tree{
+						\tree{
+							\tree{
+								\tree{
+									\tree{}{\tmap{\Gamma}{1} ; \{X : \lhot{\tmap{S_1}{1}}\} ; \emptyset \proves \X  \hastype \lhot{\tmap{S_1}{1}}} 
+									\quad 
+									\tree{}{\tmap{\Gamma}{1} ; \emptyset ; \{k' : \tmap{S_1}{1}\} \proves  k' \hastype \tmap{S_1}{1}}}{\tmap{\Gamma}{1} ; \{X : \lhot{\tmap{S_1}{1}}\} ; k' : \tmap{S_1}{1} \proves \appl{\X}{k'} \hastype \Proc}}{\tmap{\Gamma}{1} ; \{X : \lhot{\tmap{S_1}{1}}\} ; k' : 	\tmap{S_1}{1} \cat z:\tinact \proves \appl{\X}{k'} \hastype \Proc}
+						}{
+							\tmap{\Gamma}{1} ; \emptyset; k' : \tmap{S_1}{1} \cat z:\btinp{\lhot{\tmap{S_1}{1}}}\tinact \proves \binp{z}{X} \appl{\X}{k'} \hastype \Proc
+						}
+					}{
+						\tmap{\Gamma}{1} ; \emptyset; k' : \tmap{S_1}{1} \proves \abs{z}{\binp{z}{X} \appl{\X}{k'}} \hastype U_1
+					}
+				}{
+				\tmap{\Gamma}{1}; \emptyset; \tmap{\Sigma}{1} \cat k':\tmap{S_1}{1} \cat k:\btout{U_1}\tmap{S}{1} \proves  \bbout{k}{\abs{z}{\binp{z}{X} \appl{\X}{k'}}} \pmap{P'}{1} \hastype \Proc
+				}
+			\]
+			}
+	
+			In the second sub-case, we have $n = a$ (output of a shared name). Then  
+			we have the following typing in the source language:
+			{\small
+			\[
+				\tree{
+					\Gamma \cat a:\chtype{S_1}; \emptyset; \Sigma \cat k:S  \proves  P' \hastype \Proc \quad \Gamma \cat a:\chtype{S_1} ; \emptyset ; \emptyset \proves  a \hastype S_1}{
+					\Gamma \cat a:\chtype{S_1} ; \emptyset; \Sigma  \cat k:\bbtout{\chtype{S_1}}S \proves  \bout{k}{a} P' \hastype \Proc}
+			\]
+			}
+			The typing in the target language is derived similarly as in the first sub-case. \\
+	
+		%%%% Input of (linear) channel 
+		\item	Case $P = \binp{k}{x}Q$. We have two sub-cases, depending on the type of $x$.
+			In the first case, $x$ stands for a linear channel.
+			Then we have the following typing in the source language:
+			{\small
+			\[
+			 \tree{
+				 \Gamma; \emptyset; \Sigma  \cat k:S \cat x:S_1 \proves   Q \hastype \Proc
+			 	}{
+				\Gamma; \emptyset; \Sigma  \cat k:\btinp{S_1}S \proves  \binp{k}{x} Q \hastype \Proc}
+			 \]
+			 }
+			 The corresponding typing in the target language is as follows --- we write $U_1$ to stand for $\lhot{\btinp{\lhot{\tmap{S_1}{1}}}\tinact}$:
+			{\small  
+			\[
+			 \tree{
+				 \tree{
+				 	\tree{
+					\tree{
+					\begin{array}{c}
+					\tmap{\Gamma}{1}; \{X: U_1\};   \emptyset \proves X \hastype U_1 \\
+					\tmap{\Gamma}{1}; \emptyset;   \cat s: \btinp{\lhot{\tmap{S_1}{1}}}\tinact \ \proves s \, \hastype  \btinp{\lhot{\tmap{S_1}{1}}}
+					\tinact 
+					\end{array}
+					}{
+					\tmap{\Gamma}{1}; \{X: U_1\};   \cat s: \btinp{\lhot{\tmap{S_1}{1}}}\tinact \ \proves \appl{X}{s}  \hastype \Proc
+					} \quad 
+					\tree{
+					\tree{
+					\tmap{\Gamma}{1}; \emptyset;  \emptyset \proves   \inact  \hastype \Proc}{
+					\tmap{\Gamma}{1}; \emptyset;  \dual{s}: \tinact\proves   \inact  \hastype \Proc
+					}
+					\quad 
+					\tree{
+					\tmap{\Gamma}{1}; \emptyset;  \tmap{\Sigma}{1} \cat k:\tmap{S}{1}  x:\tmap{S_1}{1} \proves \pmap{Q}{1}   \hastype \Proc	 }{
+					\tmap{\Gamma}{1}; \emptyset;  \tmap{\Sigma}{1} \cat k:\tmap{S}{1}   \proves \abs{x} \pmap{Q}{1}   \hastype \lhot{\tmap{S_1}{1}}			}
+					}{
+					\tmap{\Gamma}{1}; \emptyset;  \tmap{\Sigma}{1} \cat k:\tmap{S}{1}  \cat \dual{s}: \btout{\lhot{\tmap{S_1}{1}}}\tinact\proves  \bbout{\dual{s}}{\abs{x} \pmap{Q}{1}} \inact  \hastype \Proc
+					}
+					}{
+					\tmap{\Gamma}{1}; \{X: U_1\};  \tmap{\Sigma}{1} \cat k:\tmap{S}{1} \cat s: \btinp{\lhot{\tmap{S_1}{1}}}\tinact \cat \dual{s}: \btout{\lhot{\tmap{S_1}{1}}}\tinact\proves \appl{X}{s} \Par \bbout{\dual{s}}{\abs{x} \pmap{Q}{1}} \inact  \hastype \Proc
+					}
+					}{
+				 \tmap{\Gamma}{1}; \{X: U_1\};  \tmap{\Sigma}{1} \cat k:\tmap{S}{1} \proves \newsp{s}{\appl{X}{s} \Par \bbout{\dual{s}}{\abs{x} \pmap{Q}{1}} \inact}  \hastype \Proc
+				 }
+				 }{
+				\tmap{\Gamma}{1}; \emptyset; \tmap{\Sigma}{1}  \cat k:\btinp{U_1}\tmap{S}{1} \proves  \binp{k}{X} \newsp{s}{\appl{X}{s} \Par \bbout{\dual{s}}{\abs{x} \pmap{Q}{1}} \inact}  \hastype \Proc
+				}
+			 \]
+			 }
+			 
+			 In the second sub-case, $x$ stands for a shared name. Then we have the following typing in the source language:
+			{\small
+			\[
+			 \tree{
+				 \Gamma \cat x:\chtype{S_1} ; \emptyset; \Sigma  \cat k:S \proves   Q \hastype \Proc
+			 	}{
+				\Gamma ; \emptyset; \Sigma  \cat k:\btinp{\chtype{S_1}}S \proves  \binp{k}{x} Q \hastype \Proc}
+			 \]
+			 }
+			 The typing in the target language is derived similarly as in the first sub-case.	
+\end{enumerate}
+%
+\qed
+\end{proof}
+
+
+\begin{proposition}\rm
+	Encoding $\encod{\cdot}{\cdot}{1}: \sespnr \to \HO$  enjoys operational correspondence (cf. Def.~\ref{def:ep}\,(2)).
+\end{proposition}
+
+\begin{proof}[Sketch]
+	We must show completeness and soundness properties. 
+	For completeness, it suffices to consider source process
+	$P_0 = \bout{k}{k'} P \Par \binp{k}{x} Q$. We have that
+%
+	\[
+		P_0 \red P \Par Q\subst{k'}{x}.
+	\]
+%
+	By the definition of encoding we have:
+	\begin{eqnarray*}
+		\pmap{P_0}{1} & = & \bbout{k}{ \abs{z}{\,\binp{z}{X} \appl{X}{k'}} } \pmap{P}{1} \Par \binp{k}{X} \newsp{s}{\appl{X}{s} \Par \bbout{\dual{s}}{\abs{x} \pmap{Q}{1}} \inact}  \\
+		& \red & \pmap{P}{1} \Par \newsp{s}{\appl{X}{s} \subst{\abs{z}{\,\binp{z}{X} \appl{X}{k'}}}{X} \Par \bbout{\dual{s}}{\abs{x} \pmap{Q}{1}} \inact} \\
+		& = & \pmap{P}{1} \Par \newsp{s}{\,\binp{s}{X} \appl{X}{k'} \Par \bbout{\dual{s}}{\abs{x} \pmap{Q}{1}} \inact} \\
+		& \red & \pmap{P}{1} \Par \appl{X}{k'} \subst{\abs{x} \pmap{Q}{1}}{X} \Par \inact \\
+		& \scong & \pmap{P}{1} \Par \pmap{Q}{1}\subst{k'}{x}  
+	\end{eqnarray*}
+	For soundness, it suffices to notice that the encoding does not add new visible actions:
+	the additional synchronizations induced by the encoding always occur on private (fresh) names.
+	We assume weak bisimilarities, which abstract from internal actions used by the encoding,
+	and so  constructing a relation witnessing behavioral equivalence is easy.
+	\qed
+\end{proof}
+
+%\subsection{Polyadic Into Monadic}
+%The encoding from $\psesp$ to $\sesp$ is easier than the
+%encoding of polyadic $\pi$-calculus in the $\pi$-calculus because
+%we have linear session endpoints.
+%
+%\begin{definition}[$\psesp$ to $\sesp$]
+%	We write $\encod{\cdot}{\cdot}{2}:\psesp \to \sesp$ whenever
+%
+%	\begin{tabular}{c}
+%			$\map{\bout{k}{k'_1, \cdots, k'_n} P}^{2} \defeq \bout{k}{k'_1} \cdots ;  \bout{k}{k'_n}
+%			\pmap{P}{2}$\\
+%			$\map{\binp{k}{x_1, \cdots, x_n} P}^{2} \defeq \binp{k}{x_1} \cdots ; \binp{k}{x_n}  \pmap{P}{2}$ \\
+%			$\tmap{\btout{S_1, \cdots, S_n} S}{2} \defeq \bbtout{\tmap{S_1}{2}} \cdots; \bbtout{\tmap{S_n}{2}} \tmap{S}{2}$\\
+%			$\tmap{\btinp{S_1, \cdots, S_n} S}{2} \defeq \bbtinp{\tmap{S_1}{2}} \cdots; \bbtinp{\tmap{S_n}{2}} \tmap{S}{2}$
+%%		\end{tabular}
+%%		& \quad &
+%%		\begin{tabular}{l}
+%%			$\tmap{\btout{S_1 \cat \tilde{S}} S}{2} \defeq \btout{S_1} \tmap{\btout{\tilde{S}} S}{2}$\\
+%%			$\tmap{\btinp{S_1 \cat \tilde{S}} S}{2} \defeq \btinp{S_1} \tmap{\btinp{\tilde{S}} S}{2}$
+%%		\end{tabular}
+%	\end{tabular}
+%\end{definition}
+%
+%Polyadic name sending (resp.\ receive) is encoded as sequence of
+%send (resp.\ receive) operations. Linearity of session endpoints
+%ensures no race conditions, thus the encoding is sound.
+%
+%The encoding of the polyadic $\sesp$ semantics is as simple as the
+%composition of the two former encodings.
+%
+%\begin{definition}[Encoding from $\psespnr$ to $\HO$]
+%	We define $\encod{\cdot}{\cdot}{3}: \psespnr \longrightarrow \HO$
+%	as $\encod{\cdot}{\cdot}{3} = \encod{\cdot}{\cdot}{1} \cat \encod{\cdot}{\cdot}{2}$.	
+%\end{definition}
+
+%So far we have consider name abstractions and applications which are \emph{monadic}.
+%We now consider the \emph{polyadic} extension of these constructs, %name abstractions and applications.
+%written $\abs{x_1, \ldots, x_n} P$ and $\appl{X}{k_1, \ldots, k_n}$, respectively.
+%Next we give the encoding from $\HOp$ with polyadic name abstraction to $\HOp^{p}$.
+%
+%\begin{definition}[Encoding from $\pHOpnr$ to $\pHOp$]
+%
+%	\begin{tabular}{lcl}
+%		$\map{\bout{k}{\abs{\tilde{x}} P_1} P_2}^4$ &$\defeq$& $\bout{k}{\abs{z} \binp{z}{\tilde{x}} \map{P_1}^4} \map{P_2}^4$\\
+%		$\map{\appl{X}{\tilde{k}}}$ &$\defeq$& $\newsp{s}{\appl{X}{s} \Par \bout{\dual{s}}{\tilde{k}} \inact}$
+%	\end{tabular}
+%\end{definition}
+
+%We compose the latter encoding with the generalisation $\map{\cdot}^3 : \HOp^{p-\mu} \longrightarrow \HO$
+%of the encoding $\map{\cdot}^3 : \sesp^{p-\mu} \longrightarrow \HO$ to get a translation
+%of $\HOp^{pa-\mu}$ to $\HO$.
+%
+%\begin{definition}[Encoding from $\HOp^{pa-\mu}$ to $\HO$]
+%	We define $\encod{\cdot}{\cdot}{5}: \HOp^{pa-\mu} \longrightarrow \HO$
+%	as $\encod{\cdot}{\cdot}{5} = \encod{\cdot}{\cdot}{4} \cat \encod{\cdot}{\cdot}{3}$.	
+%\end{definition}
+
+\subsection{Encode Polyadic Semantics (\HOp) to Monadic Semantics ($\HOp^{-\mathsf{p}}$)}
+
+%In the extension of \HOp with 
+%polyadic communication, denoted \pHOp, 
+%one may pass in each synchronization 
+%a tuple of values of length $n$, rather than a just single value.
+%Thus, e.g., for $n = 2$ one would have
+%%
+%\begin{eqnarray*}
+%	\bout{n}{m_1, m_2} P \Par \binp{\dual{n}}{x_1,x_2} Q  & \red &  P \Par Q \subst{m_1, m_2}{x_1, x_2} \\
+%	\bout{n}{\abs{x_1, x_2}{P_1}} P \Par \binp{\dual{s}}{\X} Q & \red & P \Par Q \subst{\abs{x_1,x_2}{P_1}}{\X}
+%\end{eqnarray*}
+%%
+%with $\appl{X}{k_1,k_2} \subst{\abs{x_1,x_2}{Q}}{\X}  =  Q \subst{k_1,k_2}{x_1,x_2} $.
+%Thus, 
+%\pHOp features tuple passing in intra-session (linear) communication,
+%but also in abstractions/applications. 
+%The session type system for \pHOp is an orthogonal
+%extension of that in \S\,\ref{s:types}.
+%The type syntax for values is extended as follows,
+%where $\tilde{S}$ stands for a sequence $S_1, \ldots, S_n$ of 
+%session types:
+%
+%\begin{eqnarray*}
+%	U \bnfis  & \tilde{S} \bnfbar \lhot{\tilde{S}} \bnfbar \shot{\tilde{S}} \bnfbar \chtype{S}
+%\end{eqnarray*}
+%
+%The syntax of session types would be kept unchanged.
+%Typing rules require straightforward extensions. 
+%For instance, the following rules would type 
+%abstraction and application in the biadic case ($n = 2$):
+%\[
+%\trule{Abs2}~~\tree{
+%			\Gamma; \Lambda; \Sigma \cat x_1: S_1, x_2: S_2 \proves P \hastype \Proc
+%		}{
+%			\Gamma; \Lambda; \Sigma \proves \abs{x_1, x_2}{P} \hastype \lhot{(S_1, S_2)}
+%		}
+%		\quad
+%		\trule{App2}~~\tree{
+%		\begin{array}{c}
+%		(U = \lhot{(S_1,S_2)}) \lor (U = \shot{(S_1,S_2)}) \\
+%		\Gamma; \Lambda; \Sigma \proves X \hastype U  \\
+%		\Gamma; \Lambda_1; \Sigma_1 \proves k_1 \hastype S_1 \quad 		
+%		\Gamma; \Lambda_2; \Sigma_2 \proves k_2 \hastype S_2
+%		\end{array}
+%		}{
+%			\Gamma; \Lambda \cup  \Lambda_1 \cup \Lambda_2; \Sigma \cup \Sigma_1 \cup \Sigma_2 \proves \appl{X}{k_1,k_2} \hastype \Proc
+%		} 
+%\]
+
+In the untyped $\pi$-calculus, polyadic communication
+can be encoded into monadic name passing 
+simply by performing $n$ monadic synchronizations on a fresh channel. 
+In session-typed $\pi$-calculi this encoding is even simpler, 
+thanks to the linearity of session endpoints~\cite{VascoFun}.
+%The extension of the (monadic) session type system given in \S\,\ref{s:types}
+%to handle polyadic communication is straightforward and follow expected lines.
+%For this reason, we do not present a typing system for \pHOp in full detail; rather, 
+%we shall define a syntactic transformation of \pHOp into \HOp, rather than as a typed encoding.
+%\footnote{The definition of a polyadic semantics would only add visual clutter to our presentation,
+%as all results extend easily from monadic to polyadic communication.}
+We give the definition of the encoding of polyadic semantics to monadic semantics.
+Because of the polyadic to monadic encoding %, denoted  $\auxmap{\cdot}{\mathsf{p}}$,
+we are able to focus on monadic session processes,
+and rely on polyadic constructs simply as convenient syntactic sugar.
+In fact, we shall rely on polyadicity to encode recursive behaviors.
+%
+\begin{definition}[Polyadic Into Monadic]\rm
+	Define the process mapping $\encod{\cdot}{\cdot}{\mathsf{p}}: \HOp \to \HOp^{-\mathsf{p}}$:
+	%$\auxmap{\cdot}{\mathsf{p}}:\pHOp \to \HOp$ as
+\[
+	\begin{array}{rcl}
+		\map{\bout{k}{k_1, \cdots, k_n} P}{\mathsf{p}}
+		&\defeq&
+		\bout{k}{k_1} \cdots ;  \bout{k}{k_n} \map{P}{\mathsf{p}}
+		\\
+
+		\map{\binp{k}{x_1, \cdots, x_n} P}{\mathsf{p}}
+		&\defeq&
+		\binp{k}{x_1} \cdots ; \binp{k}{x_n}  \map{P}{\mathsf{p}}
+		\\
+
+		\map{\bbout{k}{\abs{x_1, \cdots, x_n} Q} P}{\mathsf{p}}
+		&\defeq&
+		\bbout{k}{\abs{z}\binp{z}{x_1} \cdots ; \binp{z}{x_n} \map{Q}{\mathsf{p}}} \map{P}^{\mathsf{p}}
+		\\
+
+		\map{\appl{X}{k_1, \cdots, k_n}}{\mathsf{p}}
+		&\defeq&
+		\newsp{s}{\appl{X}{s} \Par \bout{\dual{s}}{k_1} \cdots ; \bout{\dual{s}}{k_n} \inact} 
+	\end{array}
+	\]
+	and as an homomorphism for the remaining constructs in \HOp. 
+	Define the mapping on types $\tmap{\cdot}{\mathsf{p}}$ as follows:
+\[
+	\begin{array}{rcl}
+		\tmap{\btout{S_1, \cdots, S_n}S}{\mathsf{p}}
+		&\defeq&
+		\btout{\tmap{S_1}{\mathsf{p}}} \cdots \btout{\tmap{S_n}{\mathsf{p}}}\tmap{S}{\mathsf{p}}
+		\\
+		\tmap{\btinp{S_1, \cdots, S_n}S}{\mathsf{p}}
+		&\defeq&
+		\btinp{\tmap{S_1}{\mathsf{p}}} \cdots \btinp{\tmap{S_n}{\mathsf{p}}}\tmap{S}{\mathsf{p}}
+		\\
+		\tmap{\lhot{(S_1, \cdots, S_n)}}{\mathsf{p}}
+		&\defeq&
+		\lhot{\big(\btinp{\tmap{S_1}{\mathsf{p}}} \cdots \btinp{\tmap{S_n}{\mathsf{p}}}\tinact\big)}
+		\\
+		\tmap{\shot{(S_1, \cdots, S_n)}}{\mathsf{p}}
+		&\defeq&
+		\shot{\big(\btinp{\tmap{S_1}{\mathsf{p}}} \cdots \btinp{\tmap{S_n}{\mathsf{p}}}\tinact\big)}
+	\end{array}
+\]
+	and as an homomorphism for the remaining type constructs.
+	%\jp{I prefer to be explicit in the encoding of polyadic abstraction/applications. Previous version is commented.}
+\end{definition}
+%
+Passing a list of names over session channels is established
+with a corresponding list of sequential send (resp. receive) prefixes.
+When we are dealing with an abstraction over a list of bound variables,
+then we create a new abstraction name and we use it to receive in a polyadic
+way the list of names on the abstraction. Similarly application will instantiate
+the abstraction subject with a new session name and will use it 
+to send the list of names that are going to be applied on the abstraction.
+Note that we do not allow polyadic mapping on shared names.
+The polyadic mapping, as presented here, is sound only on session names.
+%The semantics might break if we apply this mapping on shared names.
+
+%\begin{proposition}
+%	$\Gamma; \emptyset; \Sigma \proves \map{P}^{p} \hastype \Proc$
+%\end{proposition}
+
+
+\subsection{Encoding Recursion into Abstraction Passing}
+
+Encoding the constructs for recursion present in $\sesp$ as process-passing communication requires to follow the fundamental
+principle of copying the process that needs to exhibit recursive behaviour.
+The primitive recursor operation creates copies of a process and uses them
+as continuations, e.g:
+\[
+	\recp{X}{\bout{n}{m} r} \scong \bout{n}{m} \recp{X}{\bout{n}{m} r}
+\]
+In the above example the scope of name $n$ includes the entire process so
+the type for $n$ should be recursive. An alternative representation
+of the above process would be:
+\[
+	\bout{a}{n} \inact \Par \recp{r}{\binp{a}{x} \bout{x}{m} (\bout{a}{x} \inact \Par r)} \red \bout{n}{m} (\bout{a}{n} \inact \Par \recp{r}{\binp{a}{x} \bout{x}{m} (\bout{a}{x} \inact \Par r))}
+\]
+Endpoint $n$ is being passed sequentially on copies of the 
+same process to achieve the effect of infinite sending of value $m$.
+If we apply the same principles on higher order semantics we get:
+\[
+	\begin{array}{l}
+		\newsp{s_1}{\bbout{s_1}{(z) \bout{n}{m} \binp{z}{X} \newsp{s_2}{\appl{X}{s_2} \Par \bout{\dual{s_2}}{(z) \appl{X}{z} } \inact} } \inact \Par \binp{\dual{s_1}}{X} \newsp{s_3}{\appl{X}{s_3} \Par \bout{\dual{s_3}}{(z) \appl{X}{z}} \inact } }
+		\\
+		\red
+		\\
+		\newsp{s_3}{\bout{n}{m} \binp{s_3}{X} \newsp{s_2}{\appl{X}{s_2} \Par \bout{\dual{s_2}}{(z) \appl{X}{z}} \inact} \Par \bout{\dual{s_3}}{(z) \bout{n}{m} \binp{z}{X} \newsp{s_2}{\appl{X}{s_2} \Par \bout{\dual{s_2}}{(z) \appl{X}{z} } \inact}  } \inact }
+	\end{array}
+\]
+In the above encoding the abstraction
+\[
+	(z) \bout{n}{m} \binp{z}{X} \newsp{s_2}{\appl{X}{s_2} \Par \bout{\dual{s_2}}{(z) \appl{X}{z} } \inact}
+\]
+has a linear type due to the free occurrence of the session channel $n$.
+But when passed, the latter abstraction is applied in a shared manner, i.e.\ two
+copies of the abstraction are instantiated, thus the whole
+encoding is untypable. The untypability problem would not exist
+provided that the abstraction being passed were not linear.
+
+
+A typable encoding of the example would be:
+\[
+	\begin{array}{l}
+		\newsp{s_1}{\bout{s_1}{(z,x) \bout{x}{m} \binp{z}{X} \newsp{s_2}{\appl{X}{s_2,x} \Par \bout{\dual{s_2}}{(z,x) \appl{X}{z,x} } \inact} } \inact \Par \binp{\dual{s_1}}{X} \newsp{s_3}{\appl{X}{s_3, n} \Par \bout{\dual{s_3}}{(z,x) \appl{X}{z,x}} \inact } }
+		\\
+		\red
+		\\
+		\newsp{s_3}{\bout{n}{m} \binp{s_3}{X} \newsp{s_2}{\appl{X}{s_2, n} \Par \bout{\dual{s_2}}{(z, x) \appl{X}{z, x}} \inact} \Par \bout{\dual{s_3}}{(z, x) \bout{x}{m} \binp{z}{X} \newsp{s_2}{\appl{X}{s_2, x} \Par \bout{\dual{s_2}}{(z, x) \appl{X}{z, x} } \inact}  } \inact }
+	\end{array}
+\]
+
+The abstraction now has become:
+\[
+	(z,x) \bout{x}{m} \binp{z}{X} \newsp{s_2}{\appl{X}{s_2,x} \Par \bout{\dual{s_2}}{(z,x) \appl{X}{z,x} } \inact}
+\]
+by replacing the free ocurrence of channel $n$ with variable $x$ and
+bind $x$ as an abstraction variable. We can then instantiate
+the above abstraction by passing session $n$ around following the same
+principle as the name passing discipline.
+
+A preliminary tool to encode the $\sesp$ recursion primitives would be to
+provide a mapping from processes to processes with no free names.
+We require some auxiliary definitions.
+%
+\begin{definition}\rm 
+	Let $\vmap{\cdot}: 2^{\mathcal{N}} \longrightarrow \mathcal{V}^\omega$
+	be a map of sequences of names to sequences of variables, defined
+	inductively as follows:
+%
+\[
+	\vmap{n} = x_n \qquad \qquad \qquad \vmap{n \cat \tilde{m}} = x_n \cat \vmap{\tilde{m}}
+\]
+\end{definition}
+
+Given a process $P$, we write $\ofn{P}$ to denote the
+\emph{sequence} of free names of $P$, lexicographically ordered.
+Intuitively, the following mapping transforms processes
+with free session names into abstractions:
+%
+\begin{definition}\label{d:trabs}\rm
+	Let $\sigma$ be a set of session names.
+	Define $\auxmapp{\cdot}{\mathsf{v}}{\sigma}: \HOp \to \HOp$  as follows
+%
+\[
+	\begin{array}{rcl}
+		\auxmapp{\news{n} P}{\sigma}{\mathsf{v}} &\bnfis& \news{n} \auxmapp{P}{\mathsf{v}}{{\sigma \cat n}}\\
+		\auxmapp{\bout{n}{\abs{x} Q} P}{\mathsf{v}}{\sigma} &\bnfis&
+		\left\{
+		\begin{array}{rl}
+			\bbout{x_n}{\abs{x,\vmap{ \ofn{P}}} \auxmapp{Q}{\mathsf{v}}{\sigma}} \auxmapp{P}{\mathsf{v}}{\sigma} & n \notin \sigma\\
+			\bbout{n}{\abs{x,\vmap{\ofn{P}}} \auxmapp{Q}{\mathsf{v}}{\sigma}} \auxmapp{P}{\mathsf{v}}{\sigma} & n \in \sigma
+		\end{array}
+		\right.
+		\\
+		\auxmapp{\binp{n}{X} P}{\mathsf{v}}{\sigma} &\bnfis&
+		\left\{
+		\begin{array}{rl}
+			\binp{x_n}{X} \auxmapp{P}{\mathsf{v}}{\sigma} & n \notin \sigma\\
+			\binp{n}{X} \auxmapp{P}{\mathsf{v}}{\sigma} & n \in \sigma
+		\end{array}
+		\right.
+		\\
+		\auxmapp{\bsel{n}{l} P}{\mathsf{v}}{\sigma} &\bnfis&
+		\left\{
+		\begin{array}{rl}
+			\bsel{x_n}{l} \auxmapp{P}{\mathsf{v}}{\sigma} & n \notin \sigma\\
+			\bsel{n}{l} \auxmapp{P}{\mathsf{v}}{\sigma} & n \in \sigma
+		\end{array}
+		\right.
+		\\
+		\auxmapp{\bsel{n}{l} P}{\mathsf{v}}{\sigma} &\bnfis&
+		\left\{
+		\begin{array}{rl}
+			\bsel{x_n}{l} \auxmapp{P}{\mathsf{v}}{\sigma} & n \notin \sigma\\
+			\bsel{n}{l} \auxmapp{P}{\mathsf{v}}{\sigma} & n \in \sigma
+		\end{array}
+		\right.
+		\\
+		\auxmapp{\bout{n}{m}P}{\mathsf{v}}{\sigma} &\bnfis&
+		\left\{
+		\begin{array}{rl}
+		    \bout{n}{m}\auxmapp{P}{\mathsf{v}}{\sigma} & n, m \in \sigma \\
+		    \bout{x_n}{m}\auxmapp{P}{\mathsf{v}}{\sigma} & n \not\in \sigma, m \in \sigma \\
+		    \bout{n}{x_m}\auxmapp{P}{\mathsf{v}}{\sigma} & n \in \sigma, m \not\in \sigma \\
+		    \bout{x_n}{x_m}\auxmapp{P}{\mathsf{v}}{\sigma} & n, m \not\in \sigma 
+		\end{array}
+		\right.
+		\\
+		\auxmapp{\binp{n}{x}P}{\mathsf{v}}{\sigma} &\bnfis&
+		\left\{
+		\begin{array}{rl}
+		    \binp{n}{x}\auxmapp{P}{\mathsf{v}}{\sigma} & n \in \sigma \\
+		    \binp{x_n}{x}\auxmapp{P}{\mathsf{v}}{\sigma} & n \not\in \sigma 
+		\end{array}
+		\right.
+		\\
+		\auxmapp{\appl{\X}{n}}{\mathsf{v}}{\sigma} &\bnfis&
+		\left\{
+		\begin{array}{rl}
+			\appl{\X}{x_n} & n \notin \sigma\\
+			\appl{\X}{n} & n \in \sigma\\
+		\end{array}
+		\right. 
+%		\auxmapp{\inact}{\mathsf{v}}{\sigma} &\bnfis& \inact\\
+%		\auxmapp{P \Par Q}{\mathsf{v}}{\sigma} &\bnfis& \auxmapp{P}{\mathsf{v}}{\sigma} \Par \auxmapp{Q}{\mathsf{v}}{\sigma} 
+	\end{array}
+\]
+and homomorphically for inaction and parallel composition.
+\end{definition}
+
+Given a process $P$ with $\ofn{P} = m_1, \cdots, m_n$, we are interested in its associated (polyadic) abstraction, which is defined as
+$\abs{x_1, \cdots, x_n}{\auxmapp{P}{\mathsf{v}}{\es} }$, where $\vmap{m_j} = x_j$, for all $j \in \{1, \ldots, n\}$.
+This transformation from processes into abstractions can be reverted by
+using abstraction and application with an appropriate sequence of session names:
+%
+\begin{proposition}\rm
+	Let $P$ be a \HOp process with $\tilde{n} = \ofn{P}$.
+	Also, suppose $\tilde{x} = \vmap{\tilde{n}}$.
+%	Also, let $A_P$ be the polyadic abstraction $\abs{\tilde{x}}\auxmapp{P}{\mathsf{v}}{\emptyset}$ (cf. Def.~\ref{d:trabs}).
+	Then we have: $P \scong \appl{X}{\tilde{n}}\subst{\abs{\tilde{x}}\auxmapp{P}{\mathsf{v}}{\emptyset}}{X}$.
+%	$\appl{X}{\smap{\fn{P}}} \subst{(\vmap{\fn{P}}) \map{P}^{\emptyset}}{X} \scong P$
+\end{proposition}
+
+\begin{proof}
+	$\appl{X}{\smap{\fn{P}}} \subst{(\vmap{\fn{P}}) \map{P}^{\emptyset}}{X} =
+	\map{P}^{\sigma} \subst{\smap{\fn{P}}}{\vmap{\fn{P}}}$ 
+	\dk{TODO}
+	\qed
+\end{proof}
+
+We are now ready to define the encoding of $\sesp$
+(including constructs for recursion) into strict process-passing.
+We stress that we use polyadicity in abstraction and application only
+as syntactic sugar, to simplify presentation.
+For the sake of completeness, we give again the encodings for 
+finite processes and types, as
+formalized by $\encod{\cdot}{\cdot}{1}: \sespnr \to \HO$.
+
+\begin{definition}[From $\sesp$ to $\HO$]\rm
+	Let $f$ be a function from recursion variables to sequences of name variables.
+	Define $\fencod{\cdot}{\cdot}{2}{f}: \sesp \to \HO$ as
+%
+\[
+	\begin{array}{rcll}
+%	\map{\rec{X}{P}}^{2} &=& \newsp{s}{\binp{s}{\X} \map{P}^{2} \Par \bout{\dual{s}}{\abs{z \cat \vmap{\fn{P}}}{\binp{z}{\X} \map{P}^{\es}}} \inact}\\
+%	\map{r}^{2} &=& \newsp{s}{\appl{\X}{s \cat \smap{\fn{P}}} \Par \bout{\dual{s}}{ \abs{z \cat \vmap{\fn{P}}}{\appl{X}{z \cat \vmap{\fn{P}}}}} \inact} \\
+		\pmapp{\rec{X}{P}}{2}{f} &\defeq& \newsp{s}{\binp{s}{\X} \pmapp{P}{2}{{f,\{r\to \tilde{n}\}}} \Par \bbout{\dual{s}}{\abs{\vmap{\tilde{n}}, z } \,{\binp{z}{\X} \auxmapp{\pmapp{P}{2}{{f,\{r\to \tilde{n}\}}}}{\mathsf{v}}{\es}}} \inact} & \quad \tilde{n} = \ofn{P} \\ 
+		\pmapp{r}{2}{f} &\defeq& \newsp{s}{\appl{\X}{\tilde{n}, s} \Par \bbout{\dual{s}}{ \abs{\vmap{\tilde{n}},z}\,\,{\appl{X}{ \vmap{\tilde{n}}, z}}} \inact} & \quad \tilde{n} = f(r) \\
+		\pmapp{\bout{k}{n} P}{2}{f}	&\defeq&	\bbout{k}{ \abs{z}{\,\binp{z}{X} \appl{X}{n}} } \pmapp{P}{2}{f} \\
+		\pmapp{\binp{k}{x} Q}{2}{f}	&\defeq&	\binp{k}{X} \newsp{s}{\appl{X}{s} \Par \bbout{\dual{s}}{\abs{x} \pmapp{Q}{2}{f}} \inact} \\
+		\tmap{\btout{S_1} {S} }{2}	&\defeq&	\bbtout{\lhot{\btinp{\lhot{\tmap{S_1}{2}}}\tinact}} \tmap{S}{2}  \\
+		\tmap{\btinp{S_1} S }{2}	&\defeq&	\bbtinp{\lhot{\btinp{\lhot{\tmap{S_1}{2}}}\tinact}} \tmap{S}{2} \\
+		\tmap{\bbtout{\chtype{S_1}} {S} }{2}	&\defeq&	\bbtout{\shot{\btinp{\shot{\chtype{\tmap{S_1}{2}}}}\tinact}} \tmap{S}{2}  \\
+		\tmap{\bbtinp{\chtype{S_1}} {S} }{2}	&\defeq&	\bbtinp{\shot{\btinp{\shot{\chtype{\tmap{S_1}{2}}}}\tinact}} \tmap{S}{2}
+	\end{array}
+\]
+%
+and as a homomorphism for the other process constructs. 
+\end{definition}
+
+\begin{remark}\rm
+	Furthermore we define a mapping for environments $\Gamma$, as follows:
+	\[
+		\tmap{\Gamma \cat r:\Sigma}{2} = \tmap{\Gamma}{2} \cat X:\shot{(\tilde{S}_{\Sigma}, S^*)}
+		%X:\trec{t}{\big(\shot{(\tilde{S}_{\Sigma}, \btinp{\vart{t}}\tinact)}\big)}
+	\]
+	where
+	$S^* = \trec{t}{\big((\tilde{S}_{\Sigma}, \btinp{\vart{t}}\tinact)\big)}$
+	and
+	$\tilde{S}_{\Sigma} = S_1, \ldots, S_m$ for any $\Sigma = \{n_1:S_1, \ldots, n_m:S_m\}$.
+\end{remark}
+
+\begin{proposition}\rm
+	Encoding $\fencod{\cdot}{\cdot}{2}{f}: \sesp \to \HO$  
+	is type-preserving (cf. Def.~\ref{def:ep}\,(1)).
+\end{proposition}
+
+\begin{proof}
+	By induction on the structure of \sesp process $P_0$. 
+	\begin{enumerate}[1.]
+		\item Case $P_0 = r$. Then we have the following typing in the source language:
+	
+		{\small
+		\[
+		\tree{
+		}{
+		\Gamma \cat r: \Sigma ;\, \es ;\, \es \proves r \hastype \Proc
+		}
+		\]
+		}
+	
+		Then the typing of $\pmapp{r}{2}{f}$ is as follows, assuming $f(r) = \tilde{n}$ and $\tilde{x} = \vmap{\tilde{n}}$.
+		Also, we write $\Sigma_{\tilde{n}}$ 
+		and $\Sigma_{\tilde{x}}$ 
+		to stand for 
+		$n_1: S_1, \ldots, n_m: S_m$ and
+			$x_1: S_1, \ldots, x_m: S_m$, respectively. 
+		Below, we assume that $\Gamma = \Gamma' \cat X:\shot{\tilde{T}}$, 
+		where  
+		%$$\tilde{T} =  \trec{t}{\big(\tilde{S}, \btinp{\vart{t}}\tinact\big)}$$.
+		\begin{eqnarray*}
+		\tilde{T} & = & \big(\tilde{S}, S^*\big) \\
+		S^* & = & \bbtinp{A}\tinact \\
+		A & = & \trec{t}{(\tilde{S}, \btinp{\vart{t}}\tinact)}
+		\end{eqnarray*}
+				{\small
+		\[
+		\tree{
+		\tree{
+		\tree{
+		\tree{
+		}{
+		\Gamma ;\, \es ;\, \es \proves X \hastype \shot{\tilde{T}}
+		}
+		\quad 
+		\begin{array}{c}
+		\Gamma ;\, \es ;\, \{n_i: S_i \} \proves n_i \hastype S_i \\
+		\Gamma ;\, \es ;\, \{s: S^* \} \proves s\hastype S^*  \\
+		\end{array}
+		}{
+		\Gamma  ;\, \es ;\, \Sigma_{\tilde{n}}, s:\btinp{\shot{\tilde{T}}}\tinact
+		\proves  
+		\appl{\X}{\tilde{n}, s} \hastype \Proc
+		} 
+		\quad 
+		\tree{
+		\tree{
+		\Gamma  ;\, \es ;\,   \es \proves \inact \hastype \Proc
+		}{
+		\Gamma  ;\, \es ;\,   \dual{s}: \tinact \proves \inact \hastype \Proc
+		} 
+		\quad
+		\tree{
+		\tree{
+		\begin{array}{c}
+		\Gamma ;\, \es ;\, \{x_i: S_i \} \proves x_i \hastype S_i \\
+		\Gamma ;\, \es ;\, \{z: S^*  \} \proves z\hastype S^*  \\
+		\Gamma ;\, \es ;\, \es \proves X \hastype \shot{\tilde{T}}  \\
+		\end{array}	}{
+			\Gamma  ;\, \es ;\,   \Sigma_{\tilde{x}}, \, z:S^*
+		\proves 
+		 {\appl{X}{ \tilde{x}, z}} \hastype \Proc
+		}
+		}{
+			\Gamma  ;\, \es ;\,   \es
+		\proves 
+		 \abs{\tilde{x},z}\,\,{\appl{X}{ \tilde{x}, z}} \hastype \shot{\tilde{T}}
+		} 	
+		}{
+		\Gamma  ;\, \es ;\,   \dual{s}: \btout{\shot{\tilde{T}}}\tinact
+		\proves 
+		\bbout{\dual{s}}{ \abs{\tilde{x},z}\,\,{\appl{X}{ \tilde{x}, z}}} \inact \hastype \Proc
+		}
+		}{
+		\Gamma  ;\, \es ;\, \Sigma_{\tilde{n}}, s:\btinp{\shot{\tilde{T}}}\tinact, \, \dual{s}: \btout{\shot{\tilde{T}}}\tinact
+		\proves 
+		\appl{\X}{\tilde{n}, s} \Par \bbout{\dual{s}}{ \abs{\tilde{x},z}\,\,{\appl{X}{ \tilde{x}, z}}} \inact \hastype \Proc
+		}
+		}{
+		\Gamma  ;\, \es ;\, \Sigma_{\tilde{n}}
+		\proves 
+		\newsp{s}{\appl{\X}{\tilde{n}, s} \Par \bbout{\dual{s}}{ \abs{\tilde{x},z}\,\,{\appl{X}{ \tilde{x}, z}}} \inact} \hastype \Proc
+		}
+		\]
+		}
+	
+		\item Case $P_0 = \rec{X}{P}$. Then we have the following typing in the source language:
+	
+		{\small
+		\[
+		\tree{
+		\Gamma \cat r:\Sigma ;\, \es ;\,  \Sigma \proves P \hastype \Proc
+		}{
+		\Gamma  ;\, \es ;\,  \Sigma \proves \rec{X}{P} \hastype \Proc
+		}
+		\]
+		}
+	
+		Then we have the following typing in the target language ---we write $R$ to stand for $\pmapp{P}{2}{{f,\{r\to \tilde{n}\}} }$
+		and $\tilde{x}$ to stand for $\vmap{\ofn{P}}$.
+		{\small 
+		\[
+		\tree{
+		\tree{
+		\tree{
+		\tree{
+		\tmap{\Gamma}{2}\cat X:\shot{\tilde{T}};\, \es;\, \tmap{\Sigma_{\tilde{n}}}{2}
+		\proves
+		 R  \hastype \Proc
+		}{
+		\tmap{\Gamma}{2}\cat X:\shot{\tilde{T}};\, \es;\, \tmap{\Sigma_{\tilde{n}}}{2}, s:\tinact 
+		\proves
+		 R  \hastype \Proc
+		}
+		}{
+		\tmap{\Gamma}{2};\, \es;\, \tmap{\Sigma_{\tilde{n}}}{2}, s:\btinp{\shot{\tilde{T}}}\tinact 
+		\proves
+		\binp{s}{\X} R  \hastype \Proc
+			} \quad 
+		\tree{
+		\tree{
+		\tmap{\Gamma}{2};\, \es;\, \es
+		\proves
+		\inact \hastype \Proc
+		}{
+		\tmap{\Gamma}{2};\, \es;\, \dual{s}:\tinact
+		\proves
+		\inact \hastype \Proc
+		} 
+		\quad 
+		\tree{
+		\tree{
+		\tree{
+		\tmap{\Gamma}{2} \cat X: \shot{\tilde{T}};\, \es;\, \tmap{\Sigma_{\tilde{x}}}{2}
+		\proves
+		{{\auxmapp{R}{\mathsf{v}}{\es}}}  \hastype \Proc
+		}{
+		\tmap{\Gamma}{2} \cat X: \shot{\tilde{T}};\, \es;\, \tmap{\Sigma_{\tilde{x}}}{2},z: \tinact
+		\proves
+		{{\auxmapp{R}{\mathsf{v}}{\es}}}  \hastype \Proc
+		}
+		}{
+		\tmap{\Gamma}{2};\, \es;\, \tmap{\Sigma_{\tilde{x}}}{2}, \, z: \btinp{A}\tinact
+		\proves
+		{{\binp{z}{\X} \auxmapp{R}{\mathsf{v}}{\es}}}  \hastype \Proc
+		}
+		}{
+		\tmap{\Gamma}{2};\, \es;\, \es
+		\proves
+		{\abs{\tilde{x}, z } \,{\binp{z}{\X} \auxmapp{R}{\mathsf{v}}{\es}}}  \hastype \shot{\tilde{T}}
+		}	
+		}{
+			\tmap{\Gamma}{2};\, \es;\, \dual{s}:\btout{\shot{\tilde{T}}}\tinact
+		\proves
+		\bbout{\dual{s}}{\abs{\tilde{x}, z } \,{\binp{z}{\X} \auxmapp{R}{\mathsf{v}}{\es}}} \inact \hastype \Proc
+		}
+		}{
+		\tmap{\Gamma}{2};\, \es;\, \tmap{\Sigma_{\tilde{n}}}{2}, s:\btinp{\shot{\tilde{T}}}\tinact , \dual{s}:\btout{\shot{\tilde{T}}}\tinact
+		\proves
+		\binp{s}{\X} R \Par \bbout{\dual{s}}{\abs{\tilde{x}, z } \,{\binp{z}{\X} \auxmapp{R}{\mathsf{v}}{\es}}} \inact \hastype \Proc
+		}
+		}{
+		\tmap{\Gamma}{2};\, \es;\, \tmap{\Sigma_{\tilde{n}}}{2} 
+		\proves
+		\newsp{s}{\binp{s}{\X} R \Par \bbout{\dual{s}}{\abs{\tilde{x}, z } \,{\binp{z}{\X} \auxmapp{R}{\mathsf{v}}{\es}}} \inact} \hastype \Proc
+		}
+		\]
+		}
+	\end{enumerate}
+\qed
+\end{proof}
+
+\begin{proposition}\rm
+	Encoding $\fencod{\cdot}{\cdot}{2}{f}: \sesp \to \HO$ 
+	enjoys operational correspondence (cf. Def.~\ref{def:ep}\,(2)).
+\end{proposition}
+
+\begin{proof}[Sketch]
+\dk{TBD.}
+\end{proof}
+
+\subsection{From $\HO$ to $\sesp$}
+
+We now discuss the encodability of  $\HO$ into $\sesp$, 
+i.e., how to encode a higher-order calculus with abstraction passing only
+into a calculus with name passing only. 
+We essentially follow the representability result put forward by 
+Sangiorgi~\cite{San92,SaWabook}, but casted in the setting of session-typed communications. 
+As we shall see, linearity of session endpoints will play a role in adaptating Sangiorgi's 
+encodability strategy into a typed setting. 
+Intuitively, such a strategy represents the exchange of a process with the exchange of 
+a \emph{trigger}---a freshly generated names. 
+Triggers may then be used to activate copies of the process, which now becomes a persistent 
+resource represented by an input-guarded replication. In session-based communication, a session name 
+is a linear resource and cannot be replicated. Consider the following (naive) adaptation of 
+Sangiorgi's strategy in which session names are used are triggers and exchanged processes would be have to used exactly once:
+%\begin{definition}[From $\HO$ to $\sesp$. Naive approach]
+\[
+	\begin{array}{lcl}
+		\pmap{\bout{k}{\abs{x} P_1} Q}{n} & \defeq &  \newsp{s}{\bout{k}{s} (\pmap{Q}{n} \Par \binp{\dual{s}}{x} \pmap{P_1}{n})} \\
+		\pmap{\binp{k}{X} P}{n} & \defeq& \binp{k}{x} \pmap{P}{n}\\
+		\pmap{\appl{X}{k}}{n} & \defeq & \bout{x}{k} \inact
+	\end{array}
+	\]
+%\end{definition}
+%
+%\begin{proposition}
+%	Let $\Gamma;\emptyset;\Sigma \proves P \hastype \Proc$ with
+%	the typing derivation to use only linear session types. Then
+%	$\map{P}^8$ respects the properties of definition~\ref{def:ep}.
+%\end{proposition}
+%
+%\begin{proof}
+%	\dk{TODO}
+%\end{proof}
+(The mapping $\pmap{\cdot}{n}$ would be defined homomorphically for the remaining $\HO$ constructs.)
+Although $\pmap{\cdot}{n}$ captures the correct semantics when
+dealing with systems that allow only linear process variables,
+it suffers from non-typability in the presence
+of shared process variables. For instance,
+let $P = \bbout{n}{\abs{x}{\bout{x}{m}\inact}} \inact \Par \binp{\dual{n}}{X} (\appl{X}{s_1} \Par \appl{X}{s_2})$.
+We would have
+\[
+	\pmap{P}{n} \defeq
+	\newsp{s}{\bout{n}{s} \binp{\dual{s}}{x} \bout{x}{m} \inact \Par \binp{\dual{n}}{x} (\bout{x}{s_1} \inact \Par \bout{x}{s_2} \inact)}
+\]
+The above process is non typable since processes $(\bout{x}{s_1} \inact$ and $\bout{x}{s_2} \inact)$
+cannot be put in parallel because they do not have disjoint session environments.
+
+The correct approach would be to use replicated shared names
+as triggers instead of session names. 
+Below we write $\repl{} P$ as a shorthand notation for $\recp{X}{(P \Par r)}$.
+
+\begin{definition}[From $\HO$ to $\sesp$]\rm
+  Define $\encod{\cdot}{\cdot}{3}: \HO \to \sesp$ as follows
+  \[
+	\begin{array}{rcl}
+		\pmap{\bbout{k}{\abs{x} Q} P}{3} & \defeq &  \newsp{a}{\bout{k}{a} (\pmap{P}{3} \Par \repl{} \binp{a}{y} \binp{y}{x} \pmap{Q}{3})\,} \\
+		\pmap{\binp{k}{X} P}{3} &\defeq&  \binp{k}{x} \pmap{P}{3}\\
+		\pmap{\appl{X}{k}}{3} & \defeq & \newsp{s}{\bout{x}{s} \bout{\dual{s}}{k} \inact}\\
+		\tmap{\btout{\lhot{S}}S_1}{3} & \defeq & \bbtout{\chtype{\btinp{\tmap{S}{3}}\tinact}}\tmap{S_1}{3} \\
+		\tmap{\btinp{\lhot{S}}S_1}{3} & \defeq & \bbtinp{\chtype{\btinp{\tmap{S}{3}}\tinact}}\tmap{S_1}{3}
+	\end{array}
+	\]
+\end{definition}
+
+\begin{proposition}\rm
+	Encoding $\encod{\cdot}{\cdot}{3}: \HO \to \sesp$  is type-preserving (cf. Def.~\ref{def:ep}\,(1)).
+\end{proposition}
+
+\begin{proof}
+By induction on the structure of \HO process $P$. 
+\begin{enumerate}[1.]
+
+%%%% Output of (linear) channel
+	\item Case $P = \bbout{k}{\abs{x}Q}P$. Then we have two possibilities, depending on the typing for $\abs{x}Q$.
+	The first case concerns a linear typing, and  
+	we have the following typing in the source language:
+	{\small
+	\[
+		\tree{
+			\tree{}{\Gamma; \emptyset; \Sigma_1 \cat k:S  \proves  P \hastype \Proc} \quad \tree{\Gamma ; \emptyset ; \Sigma_2\cat x:S_1 \proves  Q \hastype \Proc}{\Gamma ; \emptyset ; \Sigma_2 \proves  \abs{x}Q \hastype \lhot{S_1}} }{
+			\Gamma; \emptyset; \Sigma_1 \cat \Sigma_2 \cat k:\btout{\lhot{S_1}}S \proves  \bbout{k}{\abs{x}Q} P \hastype \Proc}
+	\]
+	}
+	The corresponding typing in the target language is as follows --- we write $U_1$ to stand for 
+	$\chtype{\btinp{\tmap{S_1}{3}}\tinact}$.
+	We also write 
+	\begin{eqnarray*}
+	\tmap{\Gamma_1}{3} & = & \tmap{\Gamma}{3} \cup a:\chtype{\btinp{\tmap{S_1}{3}}\tinact} \\
+	\tmap{\Gamma_2}{3} & = & \tmap{\Gamma_1}{3} \cup r:\tmap{\Sigma_2}{3}
+	\end{eqnarray*}
+	Also $(*)$ stands for $\tmap{\Gamma_1}{3}; \es ; \es \proves a \hastype U_1$; 
+	$(**)$ stands for $\tmap{\Gamma_2}{3}; \es ; \es \proves a \hastype U_1$; and
+	$(***)$ stands for $\tmap{\Gamma_2}{3}; \es ; \es \proves r \hastype \Proc$.
+	
+		{\small
+	\[
+		\tree{
+		\tree{
+		\tree{}{(*)}  \quad 
+			\tree{
+			\tree{}{
+			\tmap{\Gamma_1}{3}; \es ; \tmap{\Sigma_1}{3}, k:\tmap{S}{3} 
+		\proves 
+		\pmap{P}{3}  \hastype \Proc
+			}
+			\quad 
+			\tree{
+			\tree{
+			\tree{}{
+			(***)
+			} 
+			\quad 
+			\tree{
+			\tree{
+			\tree{
+			\tree{
+			}{
+			\tmap{\Gamma_2}{3}; \es ; \tmap{\Sigma_2}{3},  x:\tmap{S_1}{3}
+			\proves 
+			\pmap{Q}{3} \hastype \Proc
+			}
+			}{
+			\tmap{\Gamma_2}{3}; \es ; \tmap{\Sigma_2}{3}, y:\tinact, x:\tmap{S_1}{3}
+			\proves 
+			\pmap{Q}{3} \hastype \Proc
+			}
+			}{
+			\tmap{\Gamma_2}{3}; \es ; \tmap{\Sigma_2}{3}, y: \btinp{\tmap{S_1}{3}}\tinact
+			\proves 
+			\binp{y}{x}\pmap{Q}{3} \hastype \Proc
+			} 
+			\quad 
+			\tree{
+			}{
+			(**)
+			}
+			}{
+			\tmap{\Gamma_2}{3}; \es ; \tmap{\Sigma_2}{3} 
+			\proves 
+			\binp{a}{y}\binp{y}{x}\pmap{Q}{3} \hastype \Proc
+			} 
+			}{
+			\tmap{\Gamma_2}{3}; \es ; \tmap{\Sigma_2}{3} 
+		\proves 
+		\binp{a}{y}\binp{y}{x}\pmap{Q}{3} \Par r \hastype \Proc
+			}
+			}{
+			\tmap{\Gamma_1}{3}; \es ; \tmap{\Sigma_2}{3} 
+		\proves 
+		\recp{X}{(\binp{a}{y}\binp{y}{x}\pmap{Q}{3} \Par r)} \hastype \Proc
+			}
+			}{
+			\tmap{\Gamma_1}{3}; \es ; \tmap{\Sigma_1, \Sigma_2}{3}, k:\tmap{S}{3} 
+		\proves 
+		\pmap{P}{3} \Par 
+		\recp{X}{(\binp{a}{y}\binp{y}{x}\pmap{Q}{3} \Par r)} \hastype \Proc
+			}
+		}{
+		\tmap{\Gamma_1}{3}; \es ; \tmap{\Sigma_1, \Sigma_2}{3}, k:\bbtout{U_1}\tmap{S}{3} 
+		\proves 
+		\bout{k}{a}(\pmap{P}{3} \Par 
+		\recp{X}{(\binp{a}{y}\binp{y}{x}\pmap{Q}{3} \Par r))} \hastype \Proc
+		}
+		}{
+		\tmap{\Gamma}{3}; \es ; \tmap{\Sigma_1, \Sigma_2}{3}, k:\bbtout{U_1}\tmap{S}{3} 
+		\proves 
+		\newsp{a}{\bout{k}{a}( 
+		\pmap{P}{3} \Par 
+		\recp{X}{(\binp{a}{y}\binp{y}{x}\pmap{Q}{3} \Par r))}
+		} \hastype \Proc
+		}
+	\]
+	}
+	 In the second case, $\abs{x}Q$ has a shared type. We have the following typing in the source language:
+	{\small
+	\[
+		\tree{
+			\tree{}{\Gamma; \emptyset; \Sigma \cat k:S  \proves  P \hastype \Proc} \quad 
+			\tree{
+			\tree{\Gamma ; \emptyset ; \cat x:S_1 \proves  Q \hastype \Proc}{\Gamma ; \emptyset ; \es \proves  \abs{x}Q \hastype \lhot{S_1} }			
+			}{\Gamma ; \emptyset ; \es \proves  \abs{x}Q \hastype \shot{S_1} } }{
+			\Gamma; \emptyset; \Sigma  \cat k:\btout{\shot{S_1}}S \proves  \bbout{k}{\abs{x}Q} P \hastype \Proc}
+	\]
+	}
+	The corresponding typing in the target language can be derived similarly as in the first case.
+	
+	\item Case $P = \binp{k}{X} P$. Then there are two cases, depending on the type of $X$. 
+	In the first case,
+	we have the following typing in the source language:
+	{\small
+	\[
+			\tree{\Gamma \cat X : \shot{S_1};\, \emptyset ;\, \Sigma \cat k:S \proves  P \hastype \Proc
+			}{
+			\Gamma;\, \emptyset;\, \Sigma\cat k:\btinp{\shot{S_1}}S \proves  \binp{k}{X} P \hastype \Proc}
+	\]
+	}
+	The corresponding typing in the target language is as follows:
+	% --- we write $\Gamma_0$ to stand for $\Gamma \setminus \{X: \lhot{S_1}\}$.
+		{\small
+	\[
+			\tree{\tmap{\Gamma}{3} \cat x : \chtype{\btinp{\tmap{S_1}{3}}\tinact};\, \emptyset ;\, \Sigma \cat k:\tmap{S}{3} \proves  \tmap{P}{3} \hastype \Proc
+			}{
+			\tmap{\Gamma}{3};\, \emptyset; \, \tmap{\Sigma}{3}\cat k:\bbtinp{\chtype{\btinp{\tmap{S_1}{3}}\tinact}}\tmap{S}{3} \proves  \binp{k}{x} \pmap{P}{3} \hastype \Proc}
+	\]
+	}
+
+   In the second case,  
+	we have the following typing in the source language:
+	{\small
+	\[
+			\tree{\Gamma;\, \{X : \lhot{S_1}\};\, \emptyset ;\, \Sigma \cat k:S \proves  P \hastype \Proc
+			}{
+			\Gamma;\, \emptyset;\, \Sigma\cat k:\btinp{\lhot{S_1}}S \proves  \binp{k}{X} P \hastype \Proc}
+	\]
+	}
+	The corresponding typing in the target language is as follows:
+	% --- we write $\Gamma_0$ to stand for $\Gamma \setminus \{X: \lhot{S_1}\}$.
+		{\small
+	\[
+			\tree{\tmap{\Gamma}{3} \cat x : \chtype{\btinp{\tmap{S_1}{3}}\tinact};\, \emptyset ;\, \Sigma \cat k:\tmap{S}{3} \proves  \tmap{P}{3} \hastype \Proc
+			}{
+			\tmap{\Gamma}{3};\, \emptyset;\, \tmap{\Sigma}{3}\cat k:\bbtinp{\chtype{\btinp{\tmap{S_1}{3}}\tinact}}\tmap{S}{3} \proves  \binp{k}{x} \pmap{P}{3} \hastype \Proc}
+	\]
+	}
+
+	
+	\item Case $P = \appl{X}{k}$. Also here we have two cases, depending on whether $X$ has linear or shared type.
+	In the first case, $X$ is linear and
+	we have the following typing in the source language:
+	{\small
+	\[
+			\tree{\Gamma ;\, \{X : \lhot{S_1}\};\,  \es \proves  X \hastype \lhot{S_1} \quad \Gamma; \es ; \{k:S_1\} \proves k \hastype S_1
+			}{
+			\Gamma;\, \{X : \lhot{S_1}\};\, k:S_1 \proves  \appl{X}{k} \hastype \Proc}
+	\]
+	}
+	The corresponding typing in the target language is as follows  --- below we write $\tmap{\Gamma_1}{3}$ to stand for $\tmap{\Gamma}{3} \cat x:\chtype{\btout{\tmap{S_1}{3}}\tinact}$:
+		{\small
+	\[
+			\tree{
+			\tree{
+			\tree{
+			\tree{
+			\tmap{\Gamma_1}{3};\, \es;\,  \es \proves  \inact \hastype \Proc
+			}{
+			\tmap{\Gamma_1}{3};\, \es;\,  \dual{s}:\tinact \proves  \inact \hastype \Proc
+			} \quad 
+			\tree{
+			}{
+			\tmap{\Gamma_1}{3};\, \es;\, \{k:\tmap{S_1}{3}\} \proves  k \hastype \tmap{S_1}{3} 
+			}
+			}{
+			\tmap{\Gamma_1}{3};\, \es;\,\, k:\tmap{S_1}{3},\,  \dual{s}:\btout{\tmap{S_1}{3}}\tinact \proves  \bout{\dual{s}}{k}\inact \hastype \Proc
+			} \quad \tree{}{\tmap{\Gamma_1}{3} ;\, \es ;\, \es \proves x \hastype \chtype{\btout{\tmap{S_1}{3}}\tinact}}
+			}{
+			\tmap{\Gamma_1}{3};\, \es;\, k:\tmap{S_1}{3}, s:\btinp{\tmap{S_1}{3}}\tinact , \dual{s}:\btout{\tmap{S_1}{3}}\tinact \proves  \bout{x}{s}\bout{\dual{s}}{k}\inact \hastype \Proc
+			}
+			}{
+			\tmap{\Gamma_1}{3};\, \es;\, k:\tmap{S_1}{3} \proves  \news{s}{(\bout{x}{s}\bout{\dual{s}}{k}\inact)} \hastype \Proc}
+	\]
+	}
+	In the second case, $X$ is shared, and
+	we have the following typing in the source language:
+	{\small
+	\[
+			\tree{\Gamma \cat  X : \lhot{S_1} ;\,  \es ;\,  \es \proves  X \hastype \shot{S_1} \quad \Gamma; \es ; k:S_1 \proves k \hastype S_1
+			}{
+			\Gamma \cat X : \shot{S_1};\, \es ;\, k:S_1 \proves  \appl{X}{k} \hastype \Proc}
+	\]
+	}
+	The associated typing in the target language is obtained similarly as in the first case. \qed
+	\end{enumerate}
+	\end{proof}
+
+
+\begin{proposition}\rm
+	Encoding $\encod{\cdot}{\cdot}{3}: \HO \to \sesp$ 
+enjoys operational correspondence (cf. Def.~\ref{def:ep}\,(2)).
+\end{proposition}
+
+\begin{proof}[Sketch]
+For completeness, we 
+consider the \HO process $P = {\bbout{k}{\abs{x} Q} P_1} \Par \binp{k}{X} P_2$. We have that
+\[
+P \red P_1 \Par P_2 \subst{\abs{x}Q}{X}
+\]
+In the target language, this reduction is mimicked as follows:
+\begin{eqnarray*}
+\pmap{P}{2} & = & \newsp{a}{\bout{k}{a} (\pmap{P_1}{3} \Par \repl{} \binp{a}{y} \binp{y}{x} \pmap{Q}{3})\,} 
+                  \Par \binp{k}{x} \pmap{P_2}{3} \\
+            & \red & \newsp{a}{\pmap{P_1}{3} \Par \repl{} \binp{a}{y} \binp{y}{x} \pmap{Q}{3} 
+                  \Par  \pmap{P_2}{3}\subst{a}{x}}
+\end{eqnarray*}
+\qed
+\end{proof}
+
+
+At this point an open  question would be if we could find an encoding that maps
+session names to session names without the creation of shared names.
+
+\dk{put intuition??}
+
