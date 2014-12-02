@@ -1,0 +1,198 @@
+% !TEX root = main.tex
+%\newcommand{\jrule}[3]{\displaystyle \trule{#3}~~\frac{#1 }{#2}}
+%\newcommand{\addenv}{\circ}
+
+\section{Session Types for $\HOp$}
+\label{s:types}
+
+In this section we define a session type system for
+$\HOp$ and establish its main properties. We use as
+a reference type system the Higher Order type system
+developed by Mostrous and Yoshida~\cite{tlca07}, although
+our type system is simpler.
+
+{\bf Syntax:}
+%We write $\Proc$ to denote the type of processes.
+The type syntax for values and sessions
+(denoted $U$ and $S$, respectively) is as follows:
+%
+\[
+\begin{array}{cl}
+	C \bnfis &	S \bnfbar \chtype{S}\\ %\bnfbar \tilde{C} \\
+	L \bnfis &	\shot{\tilde{C}} \bnfbar \lhot{\tilde{C}} \\
+	U \bnfis &	\tilde{C} \bnfbar L \bnfbar \chtype{L} \bnfbar \Proc\\
+			%S \bnfbar \lhot{U} \bnfbar \shot{U} \bnfbar \chtype{U}$ \\
+			%\qquad \quad Terms \quad $T \bnfis U  \bnfbar  \Proc$ \\
+	S \bnfis & 	\btout{U} S \bnfbar \btinp{U} S
+			\bnfbar \btsel{l_i:S_i}_{i \in I} \bnfbar \btbra{l_i:S_i}_{i \in I}
+			\bnfbar \trec{t}{S} \bnfbar \vart{t}  \bnfbar \tinact
+\end{array}
+\]
+%
+\noi
+We give the polyadic definition of our type system since
+polyadic semantics subsumes monadic semantics.
+Symbol $C$ denotes first order channel types; session types $s$
+for session channels and shared types $\chtype{S}$ for shared channels.
+Symbol $L$ types higher order types for abstractions,
+with $\shot{\tilde{C}}$ and $\lhot{\tilde{C}}$ to denote
+shared and linear abstraction types, respectively.
+Types for values are denoted with $U$ that denotes
+channel types, abstraction types and process types.
+The shared channel type in $U$ is extended
+to include shared names that carry abstractions.
+Note that the session syntax dissalows types of
+the form $\chtype{\chtype{U}}$, $\chtype{\tilde{U}}$
+and $\shot{(\shot{U})}$,
+meaning that shared names cannot carry shared names or
+polyadic values and
+we that do not apply abstractions over abstractions.
+
+Session $S$ types follow the standard syntax for
+binary session types syntax~\cite{}.
+Session send prefix $\btout{U} S$ denotes a session type that
+sends a value of type $U$ and continues as $S$.
+Dually, receive prefix $\btinp{U} S$ denotes a session type 
+that receives a value of type $U$ and continues as $S$. 
+Session types for labeled choice, and selection, and recursion
+are also standard---well-formedness conditions apply to recursive types.
+
+Our type structure is a subset of that defined by Mostrous and Yoshida in~\cite{tlca07}.
+In particular, we focus on having higher-order values with types
+$\shot{C}$ and $\lhot{C}$, in contrast with the the type structure
+in~\cite{tlca07} that supports general functions
+$U \sharedop T$ and 
+$U \lollipop T$, where $T$ denotes a term, i.e., a value or a process.
+
+%Value types can be of four different classes: session types $S$, 
+%types for shared channels $\chtype{U}$, and types for linear and
+%shared higher-order values (noted $\lhot{U}$ and $\shot{U}$, respectively).
+
+{\bf Duality: }
+Assuming set $\mathsf{ST}$ to be the space of all session types,
+the following definition establishes the key notion of duality on session types.
+%
+\begin{definition}[Duality]\rm
+	Let function $F(R): \mathsf{ST} \longrightarrow \mathsf{ST}$ to be defined as:
+
+	\begin{tabular}{rcl}
+		$F(R)$ &$=$&		$\set{(\tinact, \tinact), (\vart{t}, \vart{t})}$\\
+			&$\cup$&	$\set{(\btout{\tilde{U}} S_1, \btinp{\tilde{U}} S_2), (\btinp{\tilde{U}} S_1, \btout{\tilde{U}} S_2) \bnfbar S_1\ R\ S_2}$\\
+			&$\cup$&	$\set{(\btsel{l_i: S_i}_{i \in I}, \btbra{l_j: S_j'}_{j \in J}) \bnfbar I \subseteq J, S_i\ R\ S_j'}$\\
+			&$\cup$&	$\set{(\btbra{l_i: S_i}_{i \in I}, \btsel{l_j: S_j'}_{j \in J}) \bnfbar J \subseteq I, S_j\ R\ S_i'}$\\
+			&$\cup$&	$\set{(\trec{t}{S_1}, \trec{t}{S_2}) \cup (S_1 \subst{\trec{t}{S}}{\vart{t}}, S_2), (S_1, S_2\subst{\trec{t}{S}}{\vart{t}}) \bnfbar S_1\ R\ S_2)}$
+	\end{tabular}
+	
+\noindent
+	Standard arguments ensure that $F$ is monotone, thus the greatest fix point
+	of $F$ exists and let duality defined as $\dualof = \nu X. F(X)$.
+\end{definition}
+%
+
+{\bf Environments and Judgments:}
+Following our decision of focusing on functions
+$\shot{U}$ and $\lhot{U}$, our environments are
+simpler than those in~\cite{tlca07}:
+%
+\[
+\begin{array}{llcl}
+	\text{Linear} & \Lambda & \bnfis & \emptyset \bnfbar \Lambda \cat \varp{X}: \lhot{\tilde{C}}\\
+	\text{Session} & \Delta & \bnfis & \emptyset \bnfbar \Delta \cat k:S \\
+	\text{Shared} & \Gamma & \bnfis & \emptyset \bnfbar \Gamma \cat \varp{X}: \shot{\tilde{C}} \bnfbar \Gamma \cat k: \chtype{S} \bnfbar \Gamma \cat k: \chtype{L} \bnfbar \Gamma \cat r: \Delta
+\end{array}
+\]
+%
+\noi We define typing judgements for polyadic values $\tilde{V}$
+(subsumes monadic values $V$)
+and processes $P$ following~\cite{tlca07}:
+%
+\[	\begin{array}{c}
+		\Gamma; \Lambda; \Delta \proves \tilde{V} \hastype \tilde{U} \qquad \qquad \qquad \Gamma; \Lambda; \Delta \proves P \hastype \Proc
+	\end{array}
+\]
+%
+\noi As expected, weakening, contraction, and exchange principles apply to $\Gamma$;
+environments $\Lambda$ and $\Delta$ behave linearly, and are only subject to exchange.
+We require that the domains of $\Gamma, \Lambda$ and $\Delta$ are pairwise distinct.
+The first judgement states that under environment $\Gamma; \Lambda; \Delta$
+values $\tilde{V}$ (resp.\ value $V$) have type $\tilde{U}$
+(resp. $\tilde{U}$),
+whereas the second judgement states that under environment $\Gamma; \Lambda; \Delta$
+process $P$ has the process type $\Proc$.
+
+{\bf Typing Rules.}
+The typing system is defined in Figure~\ref{fig:typerulesmy}. 
+The first five rules define the typing for values. Notice that the analogous of rule~\trule{LVar}
+for shared higher-order functions is derivable.
+The remaining rules are for processes. We briefly describe them...
+
+\input{figures/fig-types}
+
+\paragraph{Type Soundness.}
+We state results for type safety:
+we report instances of more general statements already proved by Mostrous and Yoshida in the asynchronous case.
+
+\begin{lemma}[Substitution Lemma - Lemma C.10 in M\&Y]\rm
+	\begin{enumerate}[1.]
+		\item	Suppose $\Gamma; \Lambda; \Delta \cat x:S  \proves P \hastype \Proc$ and
+			$k \not\in \dom{\Gamma, \Lambda, \Delta}$. 
+			Then $\Gamma; \Lambda; \Delta \cat k:S  \vdash P\subst{k}{x} \hastype \Proc$.
+
+		\item	Suppose $\Gamma \cat x:\chtype{S}; \Lambda; \Delta \proves P \hastype \Proc$ and
+			$a \not\in \dom{\Gamma, \Lambda, \Delta}$. 
+			Then $\Gamma \cat a:\chtype{S}; \Lambda; \Delta   \vdash P\subst{a}{x} \hastype \Proc$.
+
+		\item	Suppose $\Gamma; \Lambda_1 \cat X:\lhot{S}; \Delta_1  \proves P \hastype \Proc$ 
+			and $\Gamma; \Lambda_2; \Delta_2  \proves V \hastype \lhot{S}$ with 
+			$\Lambda_1, \Lambda_2$ and $\Delta_1, \Delta_2$ defined.  
+			Then $\Gamma; \Lambda_1 \cat \Lambda_2; \Delta_1 \cat \Delta_2  \proves P\subst{V}{X} \hastype \Proc$.
+
+		\item	Suppose $\Gamma \cat X:\shot{S}; \Lambda; \Delta  \proves P \hastype \Proc$ and
+			$\Gamma; \emptyset ; \emptyset  \proves V \hastype \shot{S}$.
+			Then $\Gamma; \Lambda; \Delta  \proves P\subst{V}{X} \hastype \Proc$.
+		\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+By induction on the typing for $P$, with a case analysis on the last used rule. 
+\qed
+\end{proof}
+
+\begin{definition}[Well-typed Session Environment]\rm
+	Let $\Delta$ a session environment.
+	We say that $\Delta$ is {\em well-typed} if whenever
+	$s: S_1, \dual{s}: S_2 \in \Delta$ then $S_1 \dualof S_2$.
+\end{definition}
+
+\begin{definition}[Session Environment Reduction]\rm
+	We define relation $\red$ on session environments as:
+	\begin{itemize}
+		\item	$\Delta \cat s: \btout{U} S_1 \cat \dual{s}: \btinp{U} S_2 \red \Delta \cat s: S_1 \cat \dual{s}: S_2$
+		\item	$\Delta \cat s: \btsel{l_i: S_i}_{i \in I} \cat \dual{s}: \btbra{l_i: S_i'}_{i \in I} \red \Delta \cat s: S_k \cat \dual{s}: S_k', \quad k \in I$.
+	\end{itemize}
+\end{definition}
+
+We now state the instance of type soundness that we can derived from the Mostrous and Yoshida system.
+It is worth noticing that M\&Y have a slightly richer definition of structural congruence.
+Also, their statement for subject reduction relies on an ordering on typings associated to queues and other 
+runtime elements (such extended typings are denoted $\Delta$ by M\&Y).
+Since we are synchronous we can omit such an ordering.
+
+\begin{theorem}[Type Soundness - Theorem 7.3 in M\&Y]\label{t:sr}\rm
+	\begin{enumerate}[1.]
+		\item	(Subject Congruence) Suppose $\Gamma; \Lambda; \Delta \proves P \hastype \Proc$.
+			Then $P \scong P'$ implies $\Gamma; \Lambda; \Delta \proves P' \hastype \Proc$.
+
+		\item	(Subject Reduction) Suppose $\Gamma; \emptyset; \Delta \proves P \hastype \Proc$
+			with
+%			$\mathsf{balanced}(\Delta)$. 
+			well-typed $\Delta$.
+			Then $P \red P'$ implies $\Gamma; \emptyset; \Delta_2  \proves P' \hastype \Proc$
+			and $\Delta_1 \red \Delta_2$ or $\Delta_1 = \Delta_2$.
+	\end{enumerate}
+\end{theorem}
+
+\begin{proof}
+See Appendix \ref{app:ts}.
+%	\dk{Refer to the proof}
+\end{proof}
