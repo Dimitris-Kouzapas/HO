@@ -77,7 +77,7 @@ the following definition establishes the key notion of duality on session types.
 
 	\begin{tabular}{rcl}
 		$F(R)$ &$=$&		$\set{(\tinact, \tinact), (\vart{t}, \vart{t})}$\\
-			&$\cup$&	$\set{(\btout{\tilde{U}} S_1, \btinp{\tilde{U}} S_2), (\btinp{\tilde{U}} S_1, \btout{\tilde{U}} S_2) \bnfbar S_1\ R\ S_2}$\\
+			&$\cup$&	$\set{(\btout{U} S_1, \btinp{U} S_2), (\btinp{U} S_1, \btout{U} S_2) \bnfbar S_1\ R\ S_2}$\\
 			&$\cup$&	$\set{(\btsel{l_i: S_i}_{i \in I}, \btbra{l_j: S_j'}_{j \in J}) \bnfbar I \subseteq J, S_i\ R\ S_j'}$\\
 			&$\cup$&	$\set{(\btbra{l_i: S_i}_{i \in I}, \btsel{l_j: S_j'}_{j \in J}) \bnfbar J \subseteq I, S_j\ R\ S_i'}$\\
 			&$\cup$&	$\set{(\trec{t}{S_1}, \trec{t}{S_2}) \cup (S_1 \subst{\trec{t}{S}}{\vart{t}}, S_2), (S_1, S_2\subst{\trec{t}{S}}{\vart{t}}) \bnfbar S_1\ R\ S_2)}$
@@ -102,12 +102,11 @@ simpler than those in~\cite{tlca07}:
 \end{array}
 \]
 %
-\noi We define typing judgements for polyadic values $\tilde{V}$
-(subsumes monadic values $V$)
+\noi We define typing judgements for values $V$
 and processes $P$ following~\cite{tlca07}:
 %
 \[	\begin{array}{c}
-		\Gamma; \Lambda; \Delta \proves \tilde{V} \hastype \tilde{U} \qquad \qquad \qquad \Gamma; \Lambda; \Delta \proves P \hastype \Proc
+		\Gamma; \Lambda; \Delta \proves V \hastype U \qquad \qquad \qquad \Gamma; \Lambda; \Delta \proves P \hastype \Proc
 	\end{array}
 \]
 %
@@ -115,8 +114,7 @@ and processes $P$ following~\cite{tlca07}:
 environments $\Lambda$ and $\Delta$ behave linearly, and are only subject to exchange.
 We require that the domains of $\Gamma, \Lambda$ and $\Delta$ are pairwise distinct.
 The first judgement states that under environment $\Gamma; \Lambda; \Delta$
-values $\tilde{V}$ (resp.\ value $V$) have type $\tilde{U}$
-(resp. $\tilde{U}$),
+values $V$ have type $U$,
 whereas the second judgement states that under environment $\Gamma; \Lambda; \Delta$
 process $P$ has the process type $\Proc$.
 
@@ -134,6 +132,7 @@ we report instances of more general statements already proved by
 Mostrous and Yoshida in the asynchronous case.
 
 \begin{lemma}[Substitution Lemma - Lemma C.10 in M\&Y]\rm
+	\label{lem:subst}
 	\begin{enumerate}[1.]
 		\item	Suppose $\Gamma; \Lambda; \Delta \cat x:S  \proves P \hastype \Proc$ and
 			$k \not\in \dom{\Gamma, \Lambda, \Delta}$. 
@@ -168,7 +167,7 @@ By induction on the typing for $P$, with a case analysis on the last used rule.
 \begin{definition}[Session Environment Reduction]\rm
 	We define relation $\red$ on session environments as:
 	\begin{itemize}
-		\item	$\Delta \cat s: \btout{\tilde{U}} S_1 \cat \dual{s}: \btinp{\tilde{U}} S_2 \red \Delta \cat s: S_1 \cat \dual{s}: S_2$
+		\item	$\Delta \cat s: \btout{U} S_1 \cat \dual{s}: \btinp{U} S_2 \red \Delta \cat s: S_1 \cat \dual{s}: S_2$
 		\item	$\Delta \cat s: \btsel{l_i: S_i}_{i \in I} \cat \dual{s}: \btbra{l_i: S_i'}_{i \in I} \red \Delta \cat s: S_k \cat \dual{s}: S_k', \quad k \in I$.
 	\end{itemize}
 \end{definition}

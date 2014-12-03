@@ -1,0 +1,1212 @@
+\section{Behavioural Semantics}
+
+We present the proofs for the theorems in
+Section~\ref{sec:beh_sem}.
+
+\subsection{Proof for Theorem~\ref{the:coincidence}}
+
+We split Theorem~\ref{the:coincidence} into 
+Lemmas which we prove independently.
+The combination of the lemmas is the proof for the parts
+of the theorem.
+
+\begin{comment}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%  Auxiliary Lemma
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+We develop an auxiliary lemma used to prove
+the requirements of Theorem~\ref{the:coincidence}.
+
+\begin{lemma}\rm
+	\label{lem:aux}
+	$\Gamma; \emptyset; \Delta_1 \by{\bactout{s}{(x) P}} \Delta_2 \proves P_1 \by{\bactout{s}{(x) P}} P_2$
+	implies that $\exists s'$ such that $\Gamma; \emptyset; \Delta_1 \cat s': S \proves P_2 \Par P \subst{s'}{x}$
+\end{lemma}
+
+\begin{proof}
+%	\noi Proof for part 1.
+
+	\noi We do an induction on the labelled transition system
+	derivation for action $\bactout{s}{(x) P}$.
+	{\bf Basic Step: }
+
+	\[
+		\bout{s}{(x) P} P_2 \by{\bactout{s}{(x) P}} P_2
+	\]
+	\noi and
+	\[
+		\Gamma; \emptyset; \Delta_1 \proves \bout{s}{(x) P} P_2 \hastype \Proc
+	\]
+	\noi Type rule $\trule{Send}$ implies
+	\begin{eqnarray}
+		\Gamma; \emptyset; \Delta_1' &\proves& P_2 \hastype \Proc \label{lem:aux1}\\
+		\Gamma; \emptyset; \Delta_1'' &\proves& (x) P \hastype U \label{lem:aux2} \\
+		\Delta_1 &=& (\Delta_1' \cup \Delta_1'')\backslash s \cup \set{s: \btout{U} S}
+	\end{eqnarray}
+	\noi Rule $\trule{Abs}$ implies that from~\ref{lem:aux2} we get
+	\begin{eqnarray*}
+		\Gamma; \emptyset; \Delta_1'' \cat x: S' \proves P \hastype \Proc
+	\end{eqnarray*}
+	\noi we apply the Substitution Lemma~\ref{aaa} to get that for fresh $s'$
+	\begin{eqnarray*}
+		\Gamma; \emptyset; \Delta_1'' \cat s': S' \proves P\subst{s'}{x} \hastype \Proc
+	\end{eqnarray*}
+	\noi Finally we apply rule $\trule{Par}$ to~\ref{lem:aux1} and the latter judgement to get
+	\begin{eqnarray*}
+		\Gamma; \emptyset; \Delta_1' \cup \Delta_1'' \cat s': S' \proves P_2 \Par P\subst{s'}{x} \hastype \Proc
+	\end{eqnarray*}
+
+	\noi {\bf Induction step:}
+
+	\noi - Case: $Q \Par R \by{\bactout{s}{(x) P}} Q' \Par R$ and
+	\[
+		\Gamma; \emptyset; \Delta_1 \proves Q \Par R \hastype \Proc
+	\]
+	\noi Type rule $\trule{Par}$ implies
+	\begin{eqnarray}
+		\Gamma; \emptyset; \Delta_1' &\proves& Q \hastype \Proc\\
+		\Gamma; \emptyset; \Delta_1'' &\proves& R \hastype \Proc \label{lem:aux3}
+	\end{eqnarray}
+	\noi From the induction hypothesis we get that 
+	\begin{eqnarray*}
+		\Gamma; \emptyset; \Delta_2' \proves Q' \Par P \hastype \Proc
+	\end{eqnarray*}
+	we apply rule $\trule{Par}$ to the latter judgement and judgement~\ref{lem:aux3} to get
+	\begin{eqnarray*}
+		\Gamma; \emptyset; \Delta_2' \cup \Delta'' \proves Q' \Par R \Par P \hastype \Proc
+	\end{eqnarray*}
+
+	The rest of the cases enjoy similar argumentation.
+\end{proof}
+
+\end{comment}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%  LINEAR SUBSTITUTION
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+The next Lemma implies a process substitution corollary.
+Given two process that are bisimilar under trigerred substitution
+and simple process substitution we can imply that they are
+bisimilar under every process substitution. This result is
+the key result for proving the soundness of the bisimulation
+definition.
+ 
+\begin{lemma}\rm
+	\label{lem:subst_equiv}
+	Let 
+	\begin{eqnarray*}
+		S &=& \set{ \Gamma; \es; \Delta_1, \Delta_2 \proves \newsp{\tilde{s_1}}{P_1 \Par P_2 \subst{(\tilde{x}) R}{X}}, \newsp{\tilde{s_2}}{Q_1 \Par Q_2 \subst{(\tilde{x}) R}{X}} \setbar \\
+		&& \quad \forall R \textrm{ such that } \fv{R} = \tilde{x}, \fpv{P_2} = \fpv{Q_2} = \set{X}\\
+		&& \quad \Gamma; X: U; \Delta_1''' \proves P_2 \hastype \Proc, \Gamma; X: U; \Delta_2''' \proves Q_2 \hastype \Proc\\
+		&& \quad \textrm{for fresh } t, \Gamma; \es; \Delta_1' \wb \Delta_2' \proves \newsp{\tilde{s_1}}{P_1 \Par P_2 \subst{(\tilde{x}) \binp{t}{Y} \appl{Y}{\tilde{x}}}{X}} \wb \newsp{\tilde{s_2}}{Q_1 \Par Q_2 \subst{(\tilde{x}) \binp{t}{Y} \appl{Y}{\tilde{x}}}{X}}, \\
+		&& \quad \Gamma; \es; \Delta_1'' \wb \Delta_2'' \proves \newsp{\tilde{s_1}}{P_1 \Par P_2 \subst{(\tilde{x}) \map{U}^{\tilde{x}}}{X}} \wb \newsp{\tilde{s_2}}{Q_1 \Par Q_2 \subst{(\tilde{x}) \map{U}^{\tilde{x}}}{X}} \textrm{ for some } U \\
+		&&}
+	\end{eqnarray*}
+
+	$S$ is a bisimulation.
+\end{lemma}
+
+\begin{proof}
+	\noi We do a case analysis on the transition:
+%
+	\[
+		\Gamma; \es; \Delta_1 \by{\ell_1} \Delta_1' \proves \newsp{\tilde{s_1}}{P_1 \subst{(\tilde{x}) R}{X} \Par P_2\subst{(\tilde{x}) R}{X} } \by{\ell_1} P_1'
+	\]
+%
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	%          Case
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+	\noi - Case: $P_2 \not= \appl{X}{\tilde{n}}$ for some $\tilde{n}$.
+%
+	\begin{eqnarray*}
+		&&\Gamma; \es; \Delta_1 \by{\ell_1} \Delta_1' \proves \newsp{\tilde{s_1}}{P_1 \Par P_2 \subst{(\tilde{x}) R}{X} }
+		\by{\ell_1}
+		\newsp{\tilde{s_1'}}{P_1 \Par P_2' \subst{(\tilde{x}) R}{X}}
+	\end{eqnarray*}
+
+	\noi From the latter transition we get that
+%
+\[
+	\begin{array}{rcll}
+		\Gamma; \es; \Delta_1 &\by{\ell_1}& \Delta_1' \proves & \newsp{\tilde{s_1}}{P_1 \Par P_2 \subst{(\tilde{x}) \binp{t}{Y} \appl{Y}{\tilde{x}}}{X}}\\
+		&\by{\ell_1}&
+		P' \scong & \newsp{\tilde{s_1}}{P_1 \Par P_2' \subst{(\tilde{x}) \binp{t}{Y} \appl{Y}{\tilde{x}}}{X}}
+	\end{array}
+\]
+%
+	\noi which implies
+%
+	\begin{eqnarray}
+		\Gamma; \es; \Delta_2 &\By{\ell_2}& \Delta_2' \proves \newsp{\tilde{s_2}}{Q_1 \Par Q_2 \subst{(\tilde{x}) \binp{t}{Y} \appl{Y}{\tilde{x}}}{X}} \nonumber \\
+		&\By{\ell_2}&
+		Q' \scong \newsp{\tilde{s_2}}{Q_1' \Par Q_2' \subst{(\tilde{x}) \binp{t}{Y} \appl{Y}{\tilde{x}}}{X}} \label{lem:subst_equiv1}
+		\\
+		&&\Gamma; \es; \Delta_1' \wb \Delta_2' \proves P' \Par C_1 \wb Q' \Par C_2 \label{lem:subst_equiv2}
+	\end{eqnarray}
+%
+	\noi Furthermore
+%
+\[
+	\begin{array}{rcll}
+		\Gamma; \es; \Delta_1 &\by{\ell_1}& \Delta_1' \proves & \newsp{\tilde{s_1}}{P_1 \Par P_2 \subst{(\tilde{x}) \map{U}^{\tilde{x}}}{X}}\\
+		&\by{\ell_1}&
+		P'' \scong & \newsp{\tilde{s_1'}}{P_1 \Par P_2' \subst{(\tilde{x}) \map{U}^{\tilde{x}}}{X}}
+	\end{array}
+\]
+%
+	\noi which implies
+%
+	\begin{eqnarray}
+		\Gamma; \es; \Delta_2 &\By{\ell_2}& \Delta_2' \proves \newsp{\tilde{s_2}}{Q_1 \Par Q_2 \subst{(\tilde{x}) \map{U}^{\tilde{x}}}{X}} \nonumber \\
+		&\By{\ell_2}& Q'' \scong \newsp{\tilde{s_2'}}{Q_1' \Par Q_2' \subst{(\tilde{x}) \map{U}^{\tilde{x}}}{X}} \label{lem:subst_equiv3}
+		\\
+		&&\Gamma; \es; \Delta_1' \wb \Delta_2' \proves P'' \Par C_1 \wb Q'' \Par C_2 \label{lem:subst_equiv4}
+	\end{eqnarray}
+%
+	\noi From~\ref{lem:subst_equiv1} and~\ref{lem:subst_equiv3} we get that $\forall R$ with $\fv{R} = \tilde{x}$:
+%
+	\begin{eqnarray*}
+		\Gamma; \es; \Delta_2 \By{\ell_2} \Delta_2' \proves \newsp{\tilde{s_2}}{Q_1 \Par Q_2 \subst{(\tilde{x}) R}{X}} \By{\ell_2} \newsp{\tilde{s_2'}}{Q_1' \Par Q_2' \subst{(\tilde{x}) R}{X}}
+	\end{eqnarray*}
+%
+	\noi The case concludes if we combine~\ref{lem:subst_equiv2} and~\ref{lem:subst_equiv4} to get that $\forall R$ with $\fv{R} = \tilde{x}$
+%
+	\begin{eqnarray*}
+		\Gamma' \es; \Delta_1''\ S\ \Delta_2'' \proves \newsp{\tilde{s_2'}}{P_1 \Par P_2' \subst{(\tilde{x}) R}{X}} \Par C_1\ S\ \newsp{\tilde{s_2'}}{Q_1 \Par Q_2' \subst{(\tilde{x}) R}{X}} \Par C_2
+	\end{eqnarray*}
+
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	%          Case
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+	\noi - Case: $P_2 = \appl{X}{\tilde{n}}$ for some $\tilde{n}$
+%
+	Let $\forall R$ with $\fv{R} = \tilde{x}$ and $\ell$ such that
+\[
+	\begin{array}{rcll}
+		\Gamma; \es; \Delta_1 &\by{\ell}& \Delta_1' \proves & \newsp{\tilde{s_1}}{P_1 \Par \appl{X}{\tilde{n}} \subst{(\tilde{x}) R}{X}}\\
+		&\by{\ell}& &
+		\newsp{\tilde{s_1'}}{P_1 \Par \appl{X}{\tilde{n}} \subst{(\tilde{x}) R'}{X}}
+	\end{array}
+\]
+%
+	\noi From the latter transition we get that:
+%
+	\begin{eqnarray}
+		\Gamma; \es; \Delta_1 &\by{\bactinp{t}{(\tilde{x}) \binp{t'}{Y} \appl{Y}{\tilde{x}}}}& \Delta_1' \proves \newsp{\tilde{s_1}}{P_1 \Par \appl{X}{\tilde{n}} \subst{(\tilde{x}) \binp{t}{Y} \appl{Y}{\tilde{x}}}{X}} \nonumber \\
+		&\by{\bactinp{t}{(\tilde{x}) \binp{t'}{Y} \appl{Y}{\tilde{x}}}}& 
+		\newsp{\tilde{s_1'}}{P_1 \Par \appl{X}{\tilde{n}} \subst{(\tilde{x}) \binp{t'}{Y} \appl{Y}{\tilde{x}}}{X}}
+		\label{lem:subst_equiv5}
+	\end{eqnarray}
+%
+	\noi and $t'$ a fresh name. From the freshness of $t$ and the fact that $X$ is linear in $Q_2$
+	it has to be the case that:
+%
+\[
+	\begin{array}{rcll}
+		\Gamma; \es; \Delta_2' &\By{\bactinp{t}{(\tilde{x}) \binp{t'}{Y} \appl{Y}{\tilde{x}}}}& \Delta_2'' \proves &
+		\newsp{\tilde{s_2'}}{Q_1 \Par Q_2 \subst{(\tilde{x}) \binp{t}{Y} \appl{Y}{\tilde{x}}}{X}}\\
+		&\By{}& &
+		\newsp{\tilde{s_2'}}{Q_1'' \Par Q_3 \Par \appl{X}{\tilde{m}} \subst{(\tilde{x})\binp{t}{Y} \appl{Y}{\tilde{x}}}{X}} \\
+		&\by{\bactinp{t}{(\tilde{x}) \binp{t'}{Y} \appl{Y}{\tilde{x}}}}& &
+		\newsp{\tilde{s_2'}}{Q_1' \Par \appl{X}{\tilde{m}} \subst{(\tilde{x})\binp{t'}{Y} \appl{Y}{\tilde{x}}}{X}} \\
+	\end{array}
+\]
+%
+	\noi and
+%
+	\begin{eqnarray}
+		\Gamma; \es; &&\Delta_1' \wb \Delta_2' \proves \nonumber \\
+		&&\newsp{\tilde{s_1'}}{P_1 \Par \appl{X}{\tilde{n}} \subst{(\tilde{x}) \binp{t'}{Y} \appl{Y}{\tilde{x}}}{X}} \wb \newsp{s_2'}{Q_1' \Par \appl{X}{\tilde{m}} \subst{(\tilde{x}) \binp{t'}{Y} \appl{Y}{\tilde{x}}}{X}}
+		\label{lem:subst_equiv6}
+	\end{eqnarray} 
+%
+	\noi From the latter transition we can conclude that $\forall R$ with $\fv{R} = \set{x}$:
+%
+\[
+	\begin{array}{rcll}
+		\Gamma; \es; \Delta_2' &\By{\ell}& \Delta_2'' \proves &
+		\newsp{\tilde{s_2'}}{Q_1 \Par Q_2 \subst{(\tilde{x}) R}{X}}\\
+		&\By{}& &
+		\newsp{\tilde{s_2'}}{Q_1' \Par \appl{X}{\tilde{m}} \subst{(\tilde{x}) R}{X}} \\
+		&\by{\ell}& &
+		\newsp{\tilde{s_2'}}{Q_1' \Par \appl{X}{\tilde{m}} \subst{(\tilde{x}) R'}{X}} \\
+	\end{array}
+\]
+%
+	\noi From the definition of $S$ and~\ref{lem:subst_equiv6}
+	we also conclude that
+	\begin{eqnarray*}
+		&&\Gamma; \es; \Delta_1'\ S\ \Delta_2' \proves 
+		\newsp{\tilde{s_1'}}{P_1 \Par \appl{X}{\tilde{n}} \subst{(\tilde{x}) R' \Par C}{X}}\ S\ \newsp{s_2'}{Q_1' \Par \appl{X}{\tilde{m}} \subst{(\tilde{x}) R' \Par C}{X}}
+	\end{eqnarray*}
+	\noi that using substitution can be rewritten as
+	\begin{eqnarray*}
+		&&\Gamma; \es; \Delta_1'\ S\ \Delta_2' \proves 
+		\newsp{\tilde{s_1'}}{P_1 \Par \appl{X}{s} \subst{(\tilde{x}) R'}{X} \Par C}\ S\ \newsp{s_2'}{Q_1' \Par \appl{X}{s'} \subst{(\tilde{x}) R'}{X} \Par C}
+	\end{eqnarray*}
+	\noi with process $C$ being the process derived from action $\ell$
+	to complete the bisimulation closure.
+	\qed
+\end{proof}
+
+\begin{corollary}\rm
+	\label{cor:subst_equiv}
+	Let
+	\begin{eqnarray*}
+		S &=& \set{ \Gamma; \es; \Delta_1, \Delta_2 \proves P \subst{(\tilde{x}) R}{X}, Q \subst{(\tilde{x}) R}{X} \setbar \\
+		&& \quad \forall R \textrm{ such that } \fv{R} = \tilde{x}\\
+		&& \quad \Gamma \cat X: U; \es;\Delta_1''' \proves P_2 \hastype \Proc, \Gamma \cat X: U; \es; \Delta_2''' \proves Q_2 \hastype \Proc\\
+		&& \quad \textrm{for fresh } t,  \Gamma; \es; \Delta_1' \wb \Delta_2' \proves P \subst{(\tilde{x}) \binp{t}{Y} \appl{Y}{\tilde{x}}}{X} \wb Q \subst{(\tilde{x}) \binp{t}{Y} \appl{Y}{\tilde{x}}}{X}, \\
+		&& \quad \Gamma; \es; \Delta_1'' \wb \Delta_2'' \proves P \subst{(\tilde{x}) \map{U}^{\tilde{x}}}{X} \wb Q \subst{\map{U}^{\tilde{x}}}{X} \textrm{ for some } U \\
+		&&}
+	\end{eqnarray*}
+	$S$ is a bisimulation.
+\end{corollary}
+
+\begin{proof}
+	We can rewrite $S$ in its normal form to get
+	\begin{eqnarray*}
+		S &=& \set{ \Gamma; \es; \Delta_1, \Delta_2 \proves \newsp{\tilde{s_1}}{P_1 \subst{(\tilde{x}) R}{X} \Par P_2 \subst{(\tilde{x}) R}{X}}, \newsp{\tilde{s_2}}{Q_1 \subst{(\tilde{x}) R}{X} \Par Q_2 \subst{(\tilde{x}) R}{X}} \setbar \\
+		&& \quad \forall R \textrm{ such that } \fv{R} = \tilde{x},\\
+		&& \quad \Gamma \cat X: U; \es;\Delta_1''' \proves P_2 \hastype \Proc, \Gamma \cat X: U; \es; \Delta_2''' \proves Q_2 \hastype \Proc,\\
+		&& \quad \textrm{ for fresh } t,\\
+		&& \quad \Gamma; \es; \Delta_1' \wb \Delta_2' \proves \\
+		&& \quad \newsp{\tilde{s_1}}{P_1 \subst{(\tilde{x}) \binp{t}{Y} \appl{Y}{\tilde{x}}}{X} \Par P_2 \subst{(\tilde{x}) \binp{t}{Y} \appl{Y}{\tilde{x}}}{X}} \wb \newsp{\tilde{s_2}}{Q_1 \subst{(\tilde{x}) \binp{t}{Y} \appl{Y}{\tilde{x}}}{X} \Par Q_2 \subst{(\tilde{x}) \binp{t}{Y} \appl{Y}{\tilde{x}}}{X}}, \\
+		&& \quad \Gamma; \es; \Delta_1'' \wb \Delta_2'' \proves \\
+		&& \quad \newsp{\tilde{s_1}}{P_1 \subst{(\tilde{x}) \map{U}^x}{X} \Par P_2 \subst{(\tilde{x}) \map{U}^x}{X}} \wb \newsp{\tilde{s_2}}{Q_1 \subst{(\tilde{x}) \map{U}^x}{X} \Par Q_2 \subst{(\tilde{x}) \map{U}^x}{X}} \textrm{ for some } U \\
+		&&}
+	\end{eqnarray*}
+
+	\noi - Case: $P_2 \not= \appl{X}{\tilde{n}}$ for some $\tilde{n}$.
+%
+	\[
+	\begin{array}{rcll}
+		\Gamma; \es; \Delta_1 &\by{\ell_1}& \Delta_1' \proves& \newsp{\tilde{s_1}}{P_1 \subst{(\tilde{x}) R}{X} \Par P_2 \subst{(\tilde{x}) R}{X}}\\
+		&\by{\ell_1} & & \newsp{\tilde{s_1'}}{P_1 \subst{(\tilde{x}) R}{X} \Par P_2' \subst{(\tilde{x}) R}{X}}
+	\end{array}
+	\]
+%
+	\noi The case is similar to the first case of Lemma~\ref{lem:subst_equiv}.
+
+	\noi - Case: $P_2 = \appl{X}{\tilde{n}}$ for some $\tilde{n}$.
+%
+	\[
+	\begin{array}{rcll}
+		\Gamma; \es; \Delta_1 &\by{\ell_1}& \Delta_1' \proves& \newsp{\tilde{s_1}}{P_1 \subst{(\tilde{x}) R}{X} \Par \appl{X}{\tilde{n}} \subst{(\tilde{x}) R}{X}}\\
+		&\by{\ell_1} & & \newsp{\tilde{s_1'}}{P_1 \subst{(\tilde{x}) R}{X} \Par \appl{X}{\tilde{n}} \subst{(\tilde{x}) R'}{X}}
+	\end{array}
+	\]
+%
+	\noi From the latter transition we get that:
+%
+	\begin{eqnarray}
+		\Gamma; \es; \Delta_1 &\by{\bactinp{t}{(\tilde{x}) \binp{t'}{Y} \appl{Y}{\tilde{x}}}}& \Delta_1' \proves \newsp{\tilde{s_1}}{P_1 \subst{(\tilde{x}) \binp{t}{Y} \appl{Y}{\tilde{x}}}{X} \Par \appl{X}{\tilde{n}} \subst{(\tilde{x}) \binp{t}{Y} \appl{Y}{\tilde{x}}}{X}} \nonumber \\
+		&\by{\bactinp{t}{(\tilde{x}) \binp{t'}{Y} \appl{Y}{\tilde{x}}}}& 
+		\newsp{\tilde{s_1'}}{P_1 \subst{(\tilde{x}) \binp{t}{Y} \appl{Y}{\tilde{x}}}{X} \Par \appl{X}{\tilde{n}} \subst{(\tilde{x}) \binp{t'}{Y} \appl{Y}{\tilde{x}}}{X}}
+		\label{cor:subst_equiv5}
+	\end{eqnarray}
+%
+	\noi and $t'$ a fresh name. From the freshness of $t$
+	it has to be the case that:
+%
+\[
+	\begin{array}{rcll}
+		\Gamma; \es; \Delta_2' &\By{\bactinp{t}{(\tilde{x}) \binp{t'}{Y} \appl{Y}{\tilde{x}}}}& \Delta_2'' \proves &
+		\newsp{\tilde{s_2'}}{Q_1 \subst{(\tilde{x}) \binp{t}{Y} \appl{Y}{\tilde{x}}}{X} \Par Q_2 \subst{(\tilde{x}) \binp{t}{Y} \appl{Y}{\tilde{x}}}{X}}\\
+		&\By{}& &
+		\newsp{\tilde{s_2'}}{Q_1'' \subst{(\tilde{x}) \binp{t}{Y} \appl{Y}{\tilde{x}}}{X} \Par Q_3 \subst{(\tilde{x}) \binp{t}{Y} \appl{Y}{\tilde{x}}}{X} \Par \appl{X}{\tilde{m}} \subst{(\tilde{x})\binp{t}{Y} \appl{Y}{\tilde{x}}}{X}} \\
+		&\by{\bactinp{t}{(\tilde{x}) \binp{t'}{Y} \appl{Y}{\tilde{x}}}}& &
+		\newsp{\tilde{s_2'}}{Q_1'\subst{(\tilde{x}) \binp{t}{Y} \appl{Y}{\tilde{x}}}{X} \Par \appl{X}{\tilde{m}} \subst{(\tilde{x})\binp{t'}{Y} \appl{Y}{\tilde{x}}}{X}} \\
+	\end{array}
+\]
+%
+	\noi From Lemma~\ref{lem:subst_equiv} we get that $\forall R$ with $\fv{R} = x$
+
+	\begin{eqnarray}
+		&&\Gamma; \es; \Delta_1'' \wb \Delta_2'' \proves \nonumber \\
+		&&\newsp{\tilde{s_1'}}{P_1 \subst{(\tilde{x}) \binp{t}{Y} \appl{Y}{\tilde{x}}}{X} \Par \appl{X}{\tilde{n}} \subst{(\tilde{x}) R}{X}} \wb \newsp{s_2'}{Q_1' \subst{(\tilde{x}) \binp{t}{Y} \appl{Y}{\tilde{x}}}{X} \Par \appl{X}{\tilde{m}} \subst{(\tilde{x}) R}{X}}
+		\label{cor:subst_equiv6}
+	\end{eqnarray} 
+
+	\noi From here we apply Lemma~\ref{lem:subst_equiv} for each substituting instance of
+	abstraction $\abs{\tilde{x}}{R}$ to complete the proof.
+	\qed
+\end{proof}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%  WB IS WBC
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{lemma}\rm
+	\label{lem:wb_is_wbc}
+	$\wb\ \subseteq\ \wbc$
+\end{lemma}
+
+\begin{proof}
+	Let
+	\[
+		\Gamma; \es; \Delta_1 \wb \Delta_2 \proves P_1 \wb Q_1
+	\]
+	The proof is divided on cases on the label $\ell$ for the transition:
+%
+	\begin{eqnarray}
+		\Gamma; \es; \Delta_1 \hby{\ell} \Delta_1' \proves P_1 \Hby{\ell} P_2 \label{lem:wb_is_wbc1}
+	\end{eqnarray}
+%
+	\noi - Case: $\ell \notin \set{ \news{\tilde{m_1}} \bactout{n}{(\tilde{x}) P},  \news{\tilde{s_1}} \bactout{n}{\tilde{m_1}}, \bactinp{n}{(\tilde{x}) P} }$
+
+	\noi For the latter $\ell$ and transiton~\ref{lem:wb_is_wbc1} we conlude that:	
+%
+	\[
+		\Gamma; \es; \Delta_2 \Hby{\ell} \Delta_2' \proves Q_1 \Hby{\ell} Q_2
+	\]
+%
+	\noi and
+%
+	\[
+		\Gamma; \es; \Delta_1' \wb \Delta_2' \proves P_2 \wb Q_2
+	\]
+%
+	The above premise and conclusion coincides with defining cases for $\ell$ in $\wbc$.
+
+	\noi - Case: $\ell = \bactinp{n}{(\tilde{x}) P}$
+
+	\noi Transition~\ref{lem:wb_is_wbc1} concludes:
+%
+\[
+	\begin{array}{rclcl}
+		\Gamma; \es; \Delta_1 &\hby{\bactinp{n}{(\tilde{x}) \map{U}^{\tilde{x}}}}& \Delta_1' \proves P_1 &\hby{\bactinp{n}{(\tilde{x}) \map{U}^{\tilde{x}}}}& P_2 \subst{(\tilde{x}) \map{U}^{\tilde{x}}}{X}\\
+		\Gamma; \es; \Delta_1 &\hby{\bactinp{n}{(\tilde{x}) \binp{t}{Y} \appl{Y}{\tilde{x}}}}& \Delta_1'' \proves P_1 &\hby{\bactinp{n}{(\tilde{x}) \binp{t}{Y} \appl{Y}{\tilde{x}}}}& P_2 \subst{(\tilde{x}) \binp{t}{Y} \appl{Y}{\tilde{x}}}{X}
+	\end{array}
+\]
+%
+	\noi The last two transitions imply:
+%
+\[
+	\begin{array}{rclcl}
+		\Gamma; \es; \Delta_2 &\Hby{\bactinp{n}{(\tilde{x}) \map{U}^{\tilde{x}}}}& \Delta_2' \proves Q_1 &\Hby{\bactinp{n}{(\tilde{x}) \map{U}^{\tilde{x}}}}& Q_2 \subst{(\tilde{x}) \map{U}^{\tilde{x}}}{X}\\
+		\Gamma; \es; \Delta_2 &\Hby{\bactinp{n}{(\tilde{x}) \binp{t}{Y} \appl{Y}{\tilde{x}}}}& \Delta_2'' \proves Q_1 &\Hby{\bactinp{n}{(\tilde{x}) \binp{t}{Y} \appl{Y}{\tilde{x}}}}& Q_2 \subst{(\tilde{x}) \binp{t}{Y} \appl{Y}{\tilde{x}}}{X}
+	\end{array}
+\]
+%
+	\noi and
+\[
+	\begin{array}{rclcl}
+		\Gamma; \es; \Delta_1' &\wb& \Delta_2' \proves P_2 \subst{(\tilde{x}) \map{U}^{\tilde{x}}}{X} &\wb& Q_2 \subst{(\tilde{x}) \map{U}^{\tilde{x}}}{X}\\
+		\Gamma; \es; \Delta_1'' &\wb& \Delta_2'' \proves P_2 \subst{(\tilde{x}) \binp{t}{Y} \appl{Y}{\tilde{x}}}{X} &\wb& Q_2 \subst{(\tilde{x}) \binp{t}{Y} \appl{Y}{\tilde{x}}}{X}
+	\end{array}
+\]
+%
+	\noi To conlude from Corollary~\ref{cor:subst_equiv} that
+	$\forall R$ with $\fv{R} = \tilde{x}$
+\[
+	\begin{array}{rclcl}
+		\Gamma; \es; \Delta_1' &\wb& \Delta_2' \proves P_2 \subst{(\tilde{x}) R}{X} &\wb& Q_2 \subst{(\tilde{x}) R}{X}\\
+	\end{array}
+\]
+	\noi as required.
+
+	\noi - Case: $\ell = \news{\tilde{m_1}} \bactout{n}{(\tilde{x}) P}$
+
+	\noi From transition~\ref{lem:wb_is_wbc1} we conclude:
+\[
+	\begin{array}{rclcl}
+		\Gamma; \es; \Delta_2 &\Hby{\news{\tilde{m_2}} \bactout{n}{(\tilde{x}) Q}}& \Delta_2' \proves Q_1 &\Hby{\news{\tilde{m_2}} \bactout{n}{(\tilde{x}) Q}}& Q_2\\
+	\end{array}
+\]
+	\noi and for fresh $t$
+%
+	\begin{eqnarray*}
+		\Gamma; \es; \Delta_1' \wb \Delta_2' \proves && \\
+		&& \newsp{\tilde{m_1}}{P_2 \Par \binp{t}{X} \newsp{s}{\appl{X}{s} \Par \bout{\dual{s}}{(\tilde{x}) P} \inact}} \wb\\
+		&& \newsp{\tilde{m_2}}{Q_2 \Par \binp{t}{X} \newsp{s}{\appl{X}{s} \Par \bout{\dual{s}}{(\tilde{x}) Q} \inact}} 
+	\end{eqnarray*}
+%
+	\noi From the  previous case we can conclude that $\forall R$ with $\fpv{R} = \set{X}$:
+\[
+	\begin{array}{rcll}
+		\Gamma; \es; \Delta_1' &\by{\bactinp{t}{(x) \binp{x}{X} R}}& \Delta_1'' \proves& \newsp{\tilde{m_1}}{P_2 \Par \binp{t}{X} \newsp{s}{\appl{X}{s} \Par \bout{\dual{s}}{(\tilde{x}) P} \inact}} \\
+		&\by{\bactinp{t}{(x) \binp{x}{X} R}}& &\newsp{\tilde{m_1}}{P_2 \Par \newsp{s}{\binp{s}{X} R \Par \bout{\dual{s}}{(\tilde{x}) P} \inact}}\\
+		&\by{\tau}&& \newsp{\tilde{m_1}}{P_2 \Par  R \subst{(\tilde{x}) P}{X}}
+	\end{array}
+\]
+	\noi and
+\[
+	\begin{array}{rcll}
+		\Gamma; \es; \Delta_2' &\by{\bactinp{t}{(x) \binp{x}{X} R}}& \Delta_2'' \proves& \newsp{\tilde{m_2}}{Q_2 \Par \binp{t}{X} \newsp{s}{\appl{X}{s} \Par \bout{\dual{s}}{(\tilde{x}) Q} \inact}} \\
+		 &\by{\bactinp{t}{(x) \binp{x}{X} R}}& &\newsp{\tilde{m_2}}{Q_2 \Par \newsp{s}{\binp{s}{X} R \Par \bout{\dual{s}}{(\tilde{x}) Q} \inact}}\\
+		&\by{\tau}&& \newsp{\tilde{m_2}}{Q_2 \Par  R \subst{(\tilde{x}) Q}{X}}
+	\end{array}
+\]
+	\noi and furthermore it is easy to see that $\forall R$ with $\fpv{R} = X$:
+\[
+	\Gamma; \es; \Delta_1'' \wb \Delta_2 \proves \newsp{\tilde{m_1}}{P_2 \Par  R \subst{(\tilde{x}) P}{X}} \wb \newsp{\tilde{m_2}}{Q_2 \Par R \subst{(\tilde{x}) Q}{X}}
+\]
+	\noi as required by the definition of $\wbc$.
+
+
+	\noi - Case: $\ell = \news{\tilde{s_1}} \bactout{n}{\tilde{m_1}}$
+
+	The last case shares a similar argumentation with the previous case.
+	\qed
+\end{proof}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%  WB IS CONG
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{lemma}
+	\label{lem:wbc_is_cong}
+	$\wbc \subseteq \cong$.
+\end{lemma}
+
+
+\begin{proof}
+	\noi We prove that $\wbc$ satisfies the defining properties of $\cong$. Let 
+%
+	\[
+		\Gamma; \emptyset; \Delta_1 \wbc \Delta_2 \proves P_1 \wbc P_2
+	\]
+%
+	{\bf Reduction Closed:}
+
+	\begin{eqnarray*}
+		\Gamma; \emptyset; \Delta_1 \by{} \Delta_1' \proves P_1 \by{} P_1'
+	\end{eqnarray*}
+%
+	\noi implies that 
+	$\exists P_2'$ such that 
+%
+	\begin{eqnarray*}
+		\Gamma; \emptyset; \Delta_2 \By{} \Delta_2' &\proves& P_2 \By{} P_2'\\
+		\Gamma; \emptyset; \Delta_1' \wbc \Delta_2' &\proves& P_1' \wbc P_2'
+	\end{eqnarray*}
+
+	\noi Same argument hold for the symmetric case, thus $\wbc$ is reduction closed.
+
+	\noi {\bf Barb Preservation:}
+%
+	\begin{eqnarray*}
+		\Gamma; \emptyset; \Delta_1 \proves P_1 \hastype \Proc \barb{n}
+	\end{eqnarray*}
+%
+	implies that
+	\begin{eqnarray*}
+		P &\cong& \newsp{\tilde{m}}{\bout{n}{V_1} P_3 \Par P_4}\\
+		\dual{n} &\notin& \Delta_1
+	\end{eqnarray*}
+%
+	\noi From the definition of $\wbc$ we get that
+%
+	\begin{eqnarray*}
+		\Gamma; \emptyset; \Delta_1 \by{\news{s_1} \bactout{m}{V_1}} \Delta_1' \proves \newsp{\tilde{m}}{\bout{n}{V_1} P_3 \Par P_4} \by{\news{m_1} \bactout{n}{V_1}} \newsp{\tilde{m'}}{P_3 \Par P_4}
+	\end{eqnarray*}
+%
+	\noi implies
+%
+	\begin{eqnarray*}
+		\Gamma; \emptyset; \Delta_2 \By{\news{m_2} \bactout{n}{V_2}} \Delta_2' \proves P_2 \By{\news{m_2} \bactout{n}{V_2}} \proves P_2'
+	\end{eqnarray*}
+%
+	\noi From the last result we get that
+%
+	\begin{eqnarray*}
+		\Gamma; \emptyset; \Delta_2 \proves P_2 \hastype \Proc \Barb{n}
+	\end{eqnarray*}
+%
+	\noi as required.
+
+	\noi {\bf Congruence:}
+
+	\noi The congruence property requires that we check that $\wbc$
+	is preserved under any context.
+	The most interesting context case is parallel composition.
+
+	\noi We construct a congruence relation. Let
+	\[
+	\begin{array}{rcl}
+		\mathcal{S} &=&	\set{(\Gamma; \emptyset; \Delta_1 \cat \Delta_3 \proves \newsp{\tilde{s_1}}{P_1 \Par R} \hastype \Proc, \Gamma; \emptyset; \Delta_2 \cat \Delta_3 \proves \newsp{\tilde{s_2}}{P_2 \Par R}) \setbar \\
+		& &	\Gamma;\emptyset;\Delta_1 \wbc \Delta_2 \proves P_1 \wbc P_2, \forall \Gamma; \emptyset; \Delta_3 \proves R \hastype \Proc}
+	\end{array}
+	\]
+	\noi We need to show that the above congruence is a bisimulation.
+	To show that $\mathcal{S}$ is a bisimulation we do a case analysis on the structure
+	of the $\by{\ell}$ transition.
+
+	%%%%%%%%%%%%%%%
+	% Case 1
+	%%%%%%%%%%%%%%%
+
+	\noi - Case: 
+	\[
+		\Gamma; \emptyset; \Delta_1 \cat \Delta_3 \by{\ell} \Delta_1' \cat \Delta_3 \proves \newsp{\tilde{s_1}}{P_1 \Par R} \by{\ell} \newsp{\tilde{s_1'}}{P_1' \Par R}
+	\]
+
+	\noi The case is divided into three subcases:
+
+	\noi Subcase i: $\ell \notin \set{\news{\tilde{m}} \bactout{n}{(\tilde{x}) Q}, \news{\tilde{s}} \bactout{n}{\tilde{m_1}}}$
+
+	\noi From the definition of typed transition we get
+	\[
+		\Gamma; \emptyset; \Delta_1 \by{\ell} \Delta_1' \proves P_1 \by{\ell} P_1'
+	\]
+	\noi which implies that
+%
+	\begin{eqnarray}
+		\Gamma; \emptyset; \Delta_1 \By{\ell} \Delta_2' \proves P_2 \By{\ell} P_2' \label{lem:wbc_is_cong1}\\
+		\Gamma; \emptyset; \Delta_1' \wbc \Delta_2'' \proves P_1' \wbc P_2' \label{lem:wbc_is_cong2}
+	\end{eqnarray}
+%
+	\noi From transition~\ref{lem:wbc_is_cong1} we conclude that 
+	\[
+		\Gamma;\emptyset; \Delta_2 \cat \Delta_3 \By{\ell} \Delta_2' \cat \Delta_3 \proves \newsp{\tilde{s_2}}{P_2 \Par R} \By{\ell} \newsp{\tilde{s_2'}}{P_2' \Par R}
+	\]
+%
+	\noi Furthermore from~\ref{lem:wbc_is_cong2} and the definition of $\mathcal{S}$ we conlude that
+	\[
+		\Gamma; \emptyset; \Delta_1' \cat \Delta_3\ \mathcal{S}\ \Delta_2' \cat \Delta_3 \proves \newsp{\tilde{s_1'}}{P_1' \Par R}\ \mathcal{S}\ \newsp{\tilde{s_2'}}{P_2' \Par R}
+	\]
+
+	\noi Subcase ii: $\ell = \news{\tilde{m_1}} \bactout{n}{\abs{\tilde{x}}{Q_1}}$
+
+	\noi From the definition of typed transition we get
+	\[
+		\Gamma; \emptyset; \Delta_1 \by{\news{\tilde{m_1}} \bactout{n}{\abs{\tilde{x}}{Q_1}}} \Delta_1' \proves P_1 \by{\news{\tilde{m_1}} \bactout{n}{\abs{\tilde{x}}{Q_1}}} P_1'
+	\]
+	\noi which implies that
+%
+	\begin{eqnarray}
+		&&\Gamma; \emptyset; \Delta_1 \By{\news{\tilde{m_2}} \bactout{n}{\abs{\tilde{x}}{Q_2}}} \Delta_2' \proves P_2 \By{\news{\tilde{m_2}} \bactout{n}{\abs{\tilde{x}}{Q_2}}} P_2' \label{lem:wbc_is_cong3} \\
+		&&\forall Q, \set{X} \in \fpv{Q} \nonumber \\
+%		\forall s'
+%		&&\Gamma; \emptyset; \Delta_1'' \wb \Delta_2'' \proves \newsp{\tilde{s_1''}}{P_1' \Par Q_1 \subst{s'}{s}}\ \wb\ \newsp{\tilde{s_2''}}{P_2' \Par Q_2 \subst{s'}{x}} \label{lem:wb_is_cong4}
+		&&\Gamma; \emptyset; \Delta_1'' \wbc \Delta_2'' \proves \newsp{\tilde{s_1''}}{P_1' \Par Q \subst{(\tilde{x}) Q_1}{X}}\ \wbc\ \newsp{\tilde{s_2''}}{P_2' \Par Q \subst{(\tilde{x}) Q_2}{X}} \label{lem:wbc_is_cong4}
+	\end{eqnarray}
+%
+	\noi From transition~\ref{lem:wbc_is_cong3} conclude that 
+	\[
+		\Gamma;\emptyset; \Delta_2 \cat \Delta_3 \By{\news{\tilde{m_2}} \bactout{n}{\abs{\tilde{x}}{Q_2}}} \Delta_2' \cup \Delta_3 \proves \newsp{\tilde{s_2}}{P_2 \Par R} \By{\news{\tilde{m_2}} \bactout{n}{\abs{\tilde{x}}{Q_2}}} \newsp{\tilde{s_2'}}{P_2' \Par R}
+	\]
+%
+	\noi Furthermore from~\ref{lem:wbc_is_cong4} we conlude that $\forall Q$ with $\set{X} = \fpv{Q}$
+%
+	\[
+		\Gamma; \emptyset; \Delta_1'' \cat \Delta_3\ \mathcal{S}\ \Delta_2'' \cat \Delta_3 \proves \newsp{\tilde{s_1''}}{P_1' \Par Q \subst{(\tilde{x}) Q_1}{X} \Par R}\ \mathcal{S}\ \newsp{\tilde{s_2''}}{P_2' \Par Q \subst{(\tilde{x}) Q_2}{X} \Par R}
+	\]
+%
+	- Subcase iii: $\ell = \news{\tilde{s_1}} \bactout{n}{\tilde{m_1}}$
+
+	\noi From the definition of typed transition we get that
+	\[
+		\Gamma; \emptyset; \Delta_1 \by{\news{\tilde{s_1}} \bactout{n}{\tilde{m_1}}} \Delta_1' \proves P_1 \by{\news{\tilde{s_1}} \bactout{n}{\tilde{m_1}}} P_1'
+	\]
+	\noi which implies that $\exists P_2', s_2$ such that
+%
+	\begin{eqnarray}
+		&& \Gamma; \emptyset; \Delta_1 \By{\news{\tilde{s_2}} \bactout{n}{\tilde{m_2}}} \Delta_2' \proves P_2 \By{\news{\tilde{s_2}} \bactout{n}{\tilde{m_2}}} P_2'
+		\label{lem:wbc_is_cong5}\\
+		&&\forall Q, x = \fn{Q}, \nonumber \\%  &&
+		&&\Gamma; \emptyset; \Delta_1''\ \wbc\ \Delta_2'' \proves \newsp{\tilde{s_1}}{P_1' \Par Q \subst{\tilde{m_1}}{\tilde{x}}}\ \wbc\ \newsp{\tilde{s_2}}{P_2' \Par Q \subst{\tilde{m_2}}{\tilde{x}}} \label{lem:wbc_is_cong6}
+	\end{eqnarray}
+%
+	\noi From transition~\ref{lem:wbc_is_cong5} conclude that 
+	\[
+		\Gamma;\emptyset; \Delta_2 \cat \Delta_3 \By{\news{\tilde{s_2}} \bactout{n}{\tilde{m_2}}} \Delta_2' \cat \Delta_3 \proves \newsp{\tilde{s_2'}}{P_2 \Par R} \By{\news{\tilde{s_2}} \bactout{n}{\tilde{m_2}}} \proves \newsp{\tilde{s_2'''}}{P_2' \Par R}
+	\]
+%
+	\noi Furthermore from~\ref{lem:wbc_is_cong6} we conlude that $\forall Q, x = \fn{Q}$
+%
+	\[
+		\Gamma; \emptyset; \Delta_1'' \cat \Delta_3\ \mathcal{S}\ \Delta_2'' \cat \Delta_3 \proves \newsp{\tilde{s_1''}}{P_1' \Par Q \subst{\tilde{m_1}}{\tilde{x}} \Par R}\ \mathcal{S}\ \newsp{\tilde{s_2''}}{P_2' \Par Q \subst{\tilde{m_2}}{\tilde{x}} \Par R}
+	\]
+%
+	%%%%%%%%%%%%%%%
+	% Case 2
+	%%%%%%%%%%%%%%%
+
+	\noi - Case:
+%
+	\[
+		\Gamma; \emptyset; \Delta_1 \cat \Delta_3 \by{\ell} \Delta_1 \cat \Delta_3' \proves \newsp{\tilde{s_1}}{P_1 \Par R} \by{\ell} \newsp{\tilde{s_1'}}{P_1 \Par R'}
+	\]
+%
+	\noi This case is divided into three subcases:
+
+	\noi Subcase i: $\ell \notin \set{\news{\tilde{m}} \bactout{n}{\abs{\tilde{x}}{Q}}, \news{\tilde{s}} \bactout{n}{\tilde{m_1}}}$
+
+	\noi From the LTS we get that:
+	\[
+		\Gamma; \emptyset; \Delta_3 \by{\ell} \Delta_3' \proves R \by{\ell} R'
+	\]
+%
+	\noi Which in turn implies
+	\begin{eqnarray*}
+		\Gamma; \emptyset; \Delta_2 \cat \Delta_3 \by{\ell} \Delta_2 \cat \Delta_3' \proves \newsp{\tilde{s_2}}{P_2 \Par R} \by{\ell} \newsp{\tilde{s_2'}}{P_2 \Par R'}
+	\end{eqnarray*}
+%
+	\noi From the definition of $\mathcal{S}$ we conclude that
+	\[
+		\Gamma; \emptyset; \Delta_1 \cat \Delta_3'\ \mathcal{S}\ \Delta_2 \cat \Delta_3'' \proves \newsp{\tilde{s_1'}}{P_1 \Par R'}\ \mathcal{S}\ \newsp{\tilde{s_2'}}{P_2 \Par R'}
+	\]
+	\noi as required.
+
+	\noi Subcase ii: $\ell = \news{\tilde{m_1}} \bactout{n}{\abs{\tilde{x}}{Q}}$
+
+	\noi From the LTS we get that:
+	\begin{eqnarray}
+		& &	\Gamma; \emptyset; \Delta_3 \by{\ell} \Delta_3' \proves R \by{\ell} R' \label{lem:wbc_is_cong7}\\
+		& & 	\forall R_1, \set{X} = \fpv{R_1}, \nonumber\\
+		%\forall s'
+		& &	\Gamma; \emptyset; \Delta_3'' \proves \newsp{\tilde{m}'}{R' \Par R_1 \subst{(\tilde{x}) Q}{X}} \hastype \Proc \label{lem:wbc_is_cong8}
+	\end{eqnarray}
+%
+	\noi From~\ref{lem:wbc_is_cong7} we get that
+	\[
+		\Gamma; \emptyset; \Delta_2 \cat \Delta_3 \by{\ell} \Delta_2 \cat \Delta_3' \proves \newsp{\tilde{s_2}}{P_2 \Par R} \by{\ell} \newsp{\tilde{s_2}}{P_2 \Par R'}
+	\]
+	\noi Furthermore from~\ref{lem:wbc_is_cong8} and the definition of $\mathcal{S}$ we conclude that
+	$\forall R_1$ with $\set{X} \in \fpv{R_1}$
+	\[
+		\Gamma; \emptyset; \Delta_1 \cat \Delta_3''\ \mathcal{S}\ \Delta_2 \cup \Delta_3'' \proves \newsp{\tilde{s_1}}{P_1 \Par \newsp{\tilde{m}'}{R' \Par R_1 \subst{(\tilde{x}) Q}{X}}}\ \mathcal{S}\ \newsp{\tilde{s_2}}{P_2 \Par \newsp{\tilde{m}'}{R' \Par R_1 \subst{(\tilde{x}) Q}{X}}}
+	\]
+	\noi as required.
+
+	\noi Subcase iii: $\ell = \news{\tilde{s}} \bactout{n}{\tilde{m}}$
+
+	\noi From the typed LTS we get that:
+	\begin{eqnarray}
+		& & \Gamma; \emptyset; \Delta_3 \by{\ell} \Delta_3' \proves R \by{\ell} R' \label{lem:wbc_is_cong9}\\
+		& & \forall Q, \tilde{x} = \fn{Q}, \nonumber\\
+		& & \Gamma; \emptyset; \Delta_3'' \proves \newsp{\tilde{m}'}{R' \Par Q \subst{\tilde{m}}{\tilde{x}}} \hastype \Proc \label{lem:wbc_is_cong10}
+	\end{eqnarray}
+%
+	\noi From~\ref{lem:wbc_is_cong9} we get that
+	\[
+		\Gamma; \emptyset; \Delta_2 \cat \Delta_3 \by{\ell} \Delta_2 \cat \Delta_3' \proves \newsp{\tilde{s_2}}{P_2 \Par R} \by{\ell} \newsp{\tilde{s_2}}{P_2 \Par R'}
+	\]
+	\noi Furthermore from~\ref{lem:wbc_is_cong10} and the definition of $\mathcal{S}$ we conclude that
+	$\forall Q, \tilde{x} = \fn{Q}$
+	\[
+		\Gamma; \emptyset; \Delta_1 \cat \Delta_3''\ \mathcal{S}\ \Delta_2 \cat \Delta_3'' \proves \newsp{\tilde{s_1}}{P_1 \Par \newsp{\tilde{m}}{R' \Par Q \subst{\tilde{m}'}{\tilde{x}}}}\ \mathcal{S}\ \newsp{\tilde{s_2}}{P_2 \Par \newsp{\tilde{m}'}{R' \Par Q \subst{\tilde{m}}{\tilde{x}}}}
+	\]
+	\noi as required.
+
+
+	%%%%%%%%%%%%%%%
+	% Case 3
+	%%%%%%%%%%%%%%%
+
+	\noi - Case:
+	\[
+		\Gamma; \emptyset; \Delta_1 \cat \Delta_3 \by{} \Delta_1' \cat \Delta_3' \proves \newsp{\tilde{s_1}}{P_1 \Par R} \by{} \newsp{\tilde{s_1'}}{P_1' \Par R'}
+	\]
+
+	\noi This case is divided into three subcases:
+
+	\noi Subcase i: $\Gamma; \emptyset; \Delta_1 \by{\ell} \Delta_1' \proves P_1 \by{\ell} P_1'$
+	and $\ell \notin \set{\news{\tilde{m}} \bactout{n}{\abs{\tilde{x}}{Q}}, \news{\tilde{s_1}} \bactout{n}{\tilde{m_1}}}$ implies
+%
+	\begin{eqnarray}
+		\Gamma; \emptyset; \Delta_3 \by{\dual{\ell}} \Delta_3 \proves R \by{\dual{\ell}} R' \label{lem:wbc_is_cong11} \\
+		\Gamma; \emptyset; \Delta_2 \By{\hat{\ell}} \Delta_2' \proves P_2 \By{\hat{\ell}} P_2' \label{lem:wbc_is_cong12}\\
+		\Gamma; \emptyset; \Delta_1' \wbc \Delta_2' \proves P_1' \wbc P_2' \label{lem:wbc_is_cong13}
+	\end{eqnarray}
+%
+	\noi From~\ref{lem:wbc_is_cong11} and~\ref{lem:wbc_is_cong12} we get
+	\[
+		\Gamma; \emptyset; \Delta_2 \cat \Delta_3 \By{} \Delta_2' \cat \Delta_3' \proves \newsp{\tilde{s_2}}{P_2 \Par R} \By{} \newsp{\tilde{s_2'}}{P_2' \Par R'}
+	\]
+%
+	\noi From~\ref{lem:wbc_is_cong13} and the definition of $\mathcal{S}$ we get that
+	\[
+		\Gamma; \emptyset; \Delta_1' \cat \Delta_3'\ \mathcal{S}\ \Delta_2' \cat \Delta_3 \proves \newsp{\tilde{s_1'}}{P_1' \Par R'}\ \mathcal{S}\ \newsp{\tilde{s_2'}}{P_2' \Par R'}
+	\]
+	\noi as required.
+
+	\noi Subcase ii: $\Gamma; \emptyset; \Delta_1 \by{\news{\tilde{m_1}} \bactout{n}{\abs{\tilde{x}}{Q_1}}} \Delta_1' \proves P_1 \by{\news{\tilde{\tilde{m_1}}} \bactout{n}{\abs{\tilde{x}}{Q_1}}} P_1'$ implies
+%
+	\begin{eqnarray}
+		& & \Gamma; \emptyset; \Delta_3 \by{\bactinp{n}{\abs{\tilde{x}} {Q_1}}} \Delta_3' \proves R \by{\bactinp{n}{\abs{\tilde{x}} {Q_1}}} R' \subst{\abs{\tilde{x}}{Q_1}}{X}
+		\label{lem:wbc_is_cong14}\\
+		& & \Gamma; \emptyset; \Delta_1 \cat \Delta_3 \by{} \Delta_1' \cat \Delta_3' \proves \newsp{\tilde{s_1}}{P_1 \Par R} \by{} \newsp{\tilde{s_1''}}{P_1' \Par R' \subst{\abs{\tilde{x}}{Q_1}}{X}} \nonumber \\
+		& & \Gamma; \emptyset; \Delta_2\By{\news{\tilde{m_2}} \bactout{n}{\abs{\tilde{x}}{Q_2}}} \Delta_2' \proves P_2 \By{\news{\tilde{m_2}} \bactout{n}{\abs{\tilde{x}}{Q_2}}} P_2'
+		\label{lem:wbc_is_cong15}\\
+		& & \forall Q, \set{X} = \fpv{Q}, \nonumber \\
+		& & \Gamma; \emptyset; \Delta_1''\ \wbc\ \Delta_2'' \proves \newsp{\tilde{s_1'}}{P_1' \Par Q \subst{(\tilde{x}) Q_1}{X}}\ \wbc\ \newsp{\tilde{s_2'}}{P_2' \Par Q \subst{(\tilde{x}) Q_2}{X}} \label{lem:wbc_is_cong16}
+	\end{eqnarray}
+%
+	From~\ref{lem:wbc_is_cong14} and the Substitution Lemma~\ref{lem:subst} we get that
+	\[
+		\Gamma; \emptyset; \Delta_3 \by{\bactinp{n}{\abs{\tilde{x}} {Q_2}}} \Delta_3'' \proves R \by{\bactinp{n}{\abs{\tilde{x}} {Q_2}}} R' \subst{\abs{\tilde{x}}{Q_2}}{X}
+	\]
+	%\dk{(prove that $\forall V, R \by{\bactinp{s}{V}} R'\subst{V}{X}$)}
+	\noi to combine with~\ref{lem:wbc_is_cong15} and get
+	\[
+		\Gamma; \emptyset; \Delta_2 \cat \Delta_3 \By{} \Delta_2' \cat \Delta_3'' \proves \newsp{\tilde{s_2}}{P_2 \Par R} \By{} \newsp{\tilde{s_2''}}{P_2' \Par R' \subst{\abs{\tilde{x}}{Q_2}}{X}}
+	\]
+%
+	\noi In result~\ref{lem:wbc_is_cong16} set $Q$ as $R'$ to get:
+%
+%	\noi From~\ref{lem:wbc_is_cong16} and the definition of $\mathcal{S}$ we get that
+	\[
+		\Gamma; \emptyset; \Delta_1''\ \mathcal{S}\ \Delta_2'' \proves \newsp{\tilde{s_1'}}{P_1' \Par R' \subst{\abs{\tilde{x}}{Q_1}}{X}}\ \mathcal{S}\ \newsp{\tilde{s_2'}}{P_2' \Par R' \subst{\abs{\tilde{x}}{Q_2}}{X}}
+	\]
+
+	\noi Subcase iii: $\Gamma; \emptyset; \Delta_1 \by{\news{\tilde{s_3}} \bactout{n}{\tilde{m_1}}} \Delta_1' \proves P_1 \by{\news{\tilde{s_3}} \bactout{n}{\tilde{m_1}}} P_1'$
+%
+	\begin{eqnarray}
+		& & \Gamma; \emptyset; \Delta_3 \by{\bactinp{n}{\tilde{m_1}}} \Delta_3' \proves R \by{\bactinp{n}{\tilde{m_1}}} R' \subst{\tilde{m_1}}{\tilde{x}}
+		\label{lem:wbc_is_cong24}\\
+		& & \Gamma; \emptyset; \Delta_1 \cup \Delta_3 \by{} \Delta_1' \cup \Delta_3' \proves \newsp{\tilde{s_1}}{P_1 \Par R} \by{} \newsp{\tilde{s_1''}}{P_1' \Par R' \subst{s_1}{x}}
+		\nonumber \\
+		& & \Gamma; \emptyset; \Delta_2\By{\news{\tilde{s_4}} \bactout{n}{\tilde{m_2}}} \Delta_2' \proves P_2 \By{\news{\tilde{s_4}} \bactout{n}{\tilde{m_2}}} P_2'
+		\label{lem:wbc_is_cong25}\\
+		& & \forall Q, \set{x} = \fpv{Q}, \nonumber \\
+		& & \Gamma; \emptyset; \Delta_1''\ \wbc\ \Delta_2'' \proves \newsp{\tilde{s_1'}}{P_1' \Par Q \subst{\tilde{m_1}}{\tilde{x}}}\ \wbc\ \newsp{\tilde{s_2'}}{P_2' \Par Q \subst{\tilde{m_2}}{\tilde{x}}} \label{lem:wbc_is_cong26}
+	\end{eqnarray}
+%
+	From~\ref{lem:wbc_is_cong24} and the Substitution Lemma~\ref{lem:subst} we get that
+	\[
+		\Gamma; \emptyset; \Delta_3 \by{\bactinp{n}{\tilde{m_2}}} \Delta_3'' \proves R \by{\bactinp{n}{\tilde{m_2}}} R' \subst{\tilde{m_2}}{\tilde{x}}
+	\]
+	%\dk{(prove that $\forall V, R \by{\bactinp{s}{V}} R'\subst{V}{X}$)}
+	\noi to combine with~\ref{lem:wbc_is_cong25} and get
+	\[
+		\Gamma; \emptyset; \Delta_2 \cat \Delta_3 \By{} \Delta_2' \cat \Delta_3'' \proves \newsp{\tilde{s_2}}{P_2 \Par R} \By{} \newsp{\tilde{s_2''}}{P_2' \Par R' \subst{\tilde{m_2}}{\tilde{x}}}
+	\]
+%
+	\noi Set $Q$ as $R'$ in result~\ref{lem:wbc_is_cong26} to get
+%
+%	\noi From~\ref{lem:wbc_is_cong16} and the definition of $\mathcal{S}$ we get that
+	\[
+		\Gamma; \emptyset; \Delta_1''\ \mathcal{S}\ \Delta_2'' \proves \newsp{\tilde{s_1'}}{P_1' \Par R' \subst{\tilde{m_1}}{\tilde{x}}}\ \mathcal{S}\ \newsp{\tilde{s_2'}}{P_2' \Par R' \subst{\tilde{m_2}}{\tilde{x}}}
+	\]
+	\qed
+\end{proof}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%  CONG IS WB
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{definition}[Definibility]\rm
+	Let $\Gamma; \emptyset; \Delta_1 \proves P \hastype \Proc$.
+	An external action $\ell$ is definable whenever
+	there exists process
+	$\Gamma; \emptyset; \Delta_2 \proves T\lrangle{\ell, \suc} \hastype \Proc$
+	with $\suc$ fresh name % and $N$ a set of names.
+	such that:
+%
+	\begin{itemize}
+		\item	If $\Gamma; \emptyset; \Delta_1 \by{\ell} \Delta_1' \proves P \by{\ell} P'$ and
+			$\ell \in \set{\bactsel{n}{\ell}, \bactbra{n}{\ell}, \bactinp{n}{\tilde{m}}, \bactinp{n}{(\tilde{x}) Q}}$
+			%\news{\tilde{s}}\bactout{s}{\abs{x}{Q}}, \news{\tilde{s}} \bactout{s}{s_1}}$
+			then:
+%
+\[
+			P \Par T\lrangle{\ell, \suc} \red P' \Par \bout{\suc}{\dual{m}} \inact \textrm{ and }
+			\Gamma; \emptyset; \Delta_1' \cat \Delta_2' \proves P' \Par \bout{\suc}{\dual{m}} \inact
+\]
+%
+		\item	If $\Gamma; \emptyset; \Delta_1 \proves P \by{\news{\tilde{m}}\bactout{n}{\abs{\tilde{x}}{Q}}} \Delta_1' \proves P' \hastype \Proc$
+			and $\tilde{m}' \subseteq \tilde{m}$
+			then:
+%
+			\begin{eqnarray*}
+				& & P \Par T\lrangle{\news{\tilde{m}}\bactout{n}{\abs{\tilde{x}}{Q}}, \suc} \red \newsp{\tilde{m}}{P' \Par \appl{X}{\tilde{n}} \subst{(\tilde{x}) Q}{X} \Par \bout{\suc}{\dual{n}, \tilde{m}'} \inact}\\
+				& & \Gamma; \emptyset; \Delta_1' \cat \Delta_2' \proves \newsp{\tilde{m}}{P' \Par \appl{X}{\tilde{n}} \subst{(\tilde{x}) Q}{X} \Par \bout{\suc}{\dual{n}, \tilde{m}'} \inact} \hastype \Proc
+			\end{eqnarray*}
+%
+		\item	If $\Gamma; \emptyset; \Delta_1 \proves P \by{\news{\tilde{s}}\bactout{n}{\tilde{m}}} \Delta_1' \proves P' \hastype \Proc$,
+			$\Gamma; \emptyset; \Delta_1 \proves \tilde{m} \hastype \tilde{C}$
+			and $\tilde{s}' \subseteq \tilde{s}$
+			then:
+%
+			\begin{eqnarray*}
+				& & P \Par T\lrangle{\news{\tilde{s}}\bactout{n}{\tilde{m}}, \suc} \red \newsp{\tilde{s}}{P' \Par \map{\tilde{C}}^{\tilde{m}} \Par \bout{\suc}{\dual{n}, \tilde{s}'} \inact}\\
+				& & \Gamma; \emptyset; \Delta_1' \cat \Delta_2' \proves \newsp{\tilde{s}}{P' \Par \map{\tilde{C}}^{\tilde{m}} \Par \bout{\suc}{\dual{n}, \tilde{s}'} \inact} \hastype \Proc
+			\end{eqnarray*}
+%
+		\item	Let $\ell \in \set{\bactsel{n}{\ell}, \bactbra{n}{\ell}, \bactinp{n}{\tilde{m}}, \bactinp{n}{(\tilde{x}) Q}}$.
+			If $P \Par T\lrangle{\ell, \suc} \red Q$ with			
+			$\Gamma; \emptyset; \Delta \proves Q \hastype \Proc \barb{\suc}$ then 
+			$\Gamma; \emptyset; \Delta_1 \By{\ell} \Delta_1' \proves P \By{\ell} P' \hastype \Proc$
+			and $Q \scong P' \Par \bout{\suc}{\dual{n}} \inact$.
+
+		\item	If $P \Par T\lrangle{\news{\tilde{m}}\bactout{n}{\abs{\tilde{x}}{Q}}, \suc} \red Q$
+			with $\Gamma; \emptyset; \Delta \proves Q \hastype \Proc \barb{\suc}$ then
+			$\Gamma; \emptyset; \Delta_1 \proves P \By{\news{\tilde{m}}\bactout{n}{\abs{\tilde{x}}{Q}}} \Delta_1' \proves P' \hastype \Proc$
+			and $Q \scong \newsp{\tilde{m}}{P' \Par \appl{X}{\tilde{n}} \subst{(\tilde{x}) Q}{X} \Par \bout{\suc}{\dual{n}, \tilde{m}'} \inact}$.
+
+		\item	If $P \Par T\lrangle{\news{\tilde{s}}\bactout{n}{\tilde{m}}, \suc} \red Q $
+			and $\Gamma; \emptyset; \Delta \proves Q \hastype \Proc \barb{\suc}$ then
+			$\Gamma; \emptyset; \Delta_1 \proves P \By{\news{\tilde{s}}\bactout{n}{\tilde{m}}} \Delta_1' \proves P' \hastype \Proc$
+			and $Q \scong \newsp{\tilde{s}}{P' \Par \map{\tilde{C}}^{\tilde{m}} \Par \bout{\suc}{\dual{n}, \tilde{s}'} \inact}$.
+
+
+	\end{itemize}	
+%
+\end{definition}
+
+We first show that every external action $\ell$ is {\em definable}.
+
+\begin{lemma}[Definibility]
+	\label{lem:definibility}
+	Every action $\ell$ is definable.
+\end{lemma}
+
+\begin{proof}
+	\noi We define $T\lrangle{\ell, \suc}$:
+%
+	\begin{itemize}
+%		\item	$T\lrangle{\emptyset, \emptyset} \scong \newsp{s_1, s_2}{\binp{s_1}{x} \bout{s_2}{\ast} R \Par \binp{s_2}{x} \bout{s_1}{\ast} \inact}$ with
+%			$\Gamma; \emptyset; \Delta \proves T\lrangle{\emptyset, \emptyset} \hastype \Proc$.
+%			\dk{$R$ is used to complete the type of a session}.
+
+		\item	$T\lrangle{\bactinp{n}{\tilde{m}}, \suc} = \bout{\dual{n}}{\tilde{m}} \bout{\suc}{\dual{n}} \inact$.
+
+		\item	$T\lrangle{\bactbra{n}{l}, \suc} = \bsel{\dual{n}}{l} \bout{\suc}{\dual{n}} \inact$.
+
+		\item	$T\lrangle{\bactinp{n}{\abs{\tilde{x}} Q}, \suc} = \bout{\dual{n}}{\abs{\tilde{x}}{Q}} \bout{\suc}{\dual{n}} \inact$.
+
+%		\item	$T\lrangle{\bactout{n}{\tilde{m}}, \suc} = \binp{\dual{n}}{\tilde{x}} (\binp{t}{X} \appl{X}{\tilde{x}} \Par \bout{\suc}{\dual{n}} \inact)$.
+
+		\item	$T\lrangle{\news{\tilde{s}} \bactout{n}{\tilde{m}}, \suc} = \binp{\dual{n}}{\tilde{x}} (\dk{\map{\tilde{C}}^{\tilde{x}}} \Par \bout{\suc}{\dual{n}, \tilde{s}'} \inact)$
+			with $\tilde{s}' \subseteq \tilde{s}$.
+
+		\item	$T\lrangle{\bactsel{n}{l}, \suc} = \bbra{\dual{n}}{l: \bout{\suc}{\dual{n}} \inact), l_i: \newsp{a}{\binp{a}{y} \bout{\suc}{\dual{n}} \inact}}_{i \in I}$.
+
+		\item	$T\lrangle{\news{\tilde{m}} \bactout{n}{\abs{x}{Q}}, \suc} = \binp{\dual{n}}{X} (\appl{X}{\tilde{n}} \Par \bout{\suc}{\dual{n}, \tilde{m}'} \inact)$ with $\tilde{m}' \subseteq \tilde{m}$.
+.
+	\end{itemize}
+
+	\noi Assuming a process 
+	\[
+		\Gamma; \emptyset; \Delta \proves P \hastype \Proc
+	\] 
+	\noi it is straightforward to verify that $\forall \ell$, $\ell$ is definable.
+	\qed
+\end{proof}
+
+\begin{lemma}[Extrusion]\rm
+	\label{lem:extrusion}
+	If $\Gamma; \es; \Delta_1' \cong \Delta_2 \proves \newsp{\tilde{m_1}'}{P \Par \bout{\suc}{\dual{n}, \tilde{m_1}''} \inact} \cong \newsp{\tilde{m_2}'}{Q \Par \bout{\suc}{\dual{n}, \tilde{m_2}''} \inact}$
+	then
+	$\Gamma; \es; \Delta_1 \cong \Delta_2 \proves P \cong Q$
+\end{lemma}
+
+\begin{proof}
+	\noi Let
+	\begin{eqnarray*}
+		\mathcal{S} &=&	\set{\Gamma; \es; \Delta_1 \proves P \hastype \Proc, \Gamma; \es; \Delta_2 \proves Q \hastype \Proc \setbar \\
+		& &	\Gamma; \es; \Delta_1' \cong \Delta_2' \proves \newsp{\tilde{m_1}'}{P \Par \bout{\suc}{\dual{n}, \tilde{m_1}''} \inact} \cong \newsp{\tilde{m_2}'}{Q \Par \bout{\suc}{\dual{n}, \tilde{m_2}''} \inact}
+		}
+	\end{eqnarray*}
+	\noi We show that $\mathcal{S}$ is a congruence.
+
+	\noi {\bf Reduction close}
+
+	\noi $P \red P'$
+	implies
+	$\newsp{\tilde{m_1}'}{P \Par \bout{\suc}{\dual{n}, \tilde{m_1}''} \inact} \red \newsp{\tilde{m_1}'}{P' \Par \bout{\suc}{\dual{n}, \tilde{m_1}''} \inact}$
+	implies from the freshness of $\suc$
+	$\newsp{\tilde{m_1}'}{P \Par \bout{\suc}{\dual{n}, \tilde{m_1}''} \inact} \Red \newsp{\tilde{m_1}'}{Q' \Par \bout{\suc}{\dual{n}, \tilde{m_2}''} \inact}$.
+	which implies
+	$Q \Red Q'$ as required.
+
+	\noi {\bf Barb Preserving}
+
+	\noi Let $\Gamma; \es; \Delta_1 \proves P \barb{s}$. We analyse two cases.
+
+	\noi - Case: $s \not= n$.
+
+	\noi $\Gamma; \es; \Delta_1 \proves P \barb{s}$
+	implies
+\[
+	\Gamma; \es; \Delta_1' \proves \newsp{\tilde{m_1}'}{P \Par \bout{\suc}{\dual{n}, \tilde{m_1}''} \inact} \barb{s}
+\]
+	\noi implies
+	$\Gamma; \es; \Delta_2' \proves \newsp{\tilde{m_2}'}{Q \Par \bout{\suc}{\dual{n}, \tilde{m_2}''} \inact} \Barb{s}$
+	implies from the freshness of $\suc$ that
+	$\Gamma; \es; \Delta_2 \proves Q \Barb{s}$ as required.
+
+	\noi - Case: $s = n$ and $\Gamma; \es; \Delta_1 \proves P \barb{n}$
+
+	\noi We compose with $\binp{\dual{\suc}}{x, \tilde{y}} T\lrangle{\ell, \suc'}$ with $\subj{\ell} = x$ to get
+\[
+	\Gamma; \es; \Delta_1' \proves \newsp{\tilde{m_1}'}{P \Par \bout{\suc}{\dual{n}, \tilde{m_1}''} \inact} \Par \binp{\dual{\suc}}{x, \tilde{y}} T\lrangle{\ell, \suc'}
+\]
+	\noi Which implies from the fact that $\Gamma; \es; \Delta_1 \proves P \barb{n}$ that
+\[
+		\newsp{\tilde{m_1}'}{P \Par \bout{\suc}{\dual{n}, \tilde{m_1}''} \inact} \Par \binp{\dual{\suc}}{x, \tilde{y}} T\lrangle{\ell, \suc'} \Red 
+	\newsp{\tilde{m_1}'}{P' \Par \bout{\suc'}{\dual{n}, \tilde{m_1}''} \inact}
+\]
+	\noi and furthermore
+\[
+	\newsp{\tilde{m_2}'}{Q \Par \bout{\suc}{\dual{n}, \tilde{m_2}''} \inact} \Par \binp{\dual{\suc}}{x, \tilde{y}} T\lrangle{\ell, \suc'} \Red 
+	\newsp{\tilde{m_2}'}{Q' \Par \bout{\suc'}{\dual{n}, \tilde{m_2}''} \inact}
+\]
+	\noi The last reduction implies that
+	$\Gamma; \es; \Delta_2 \proves Q \Barb{n}$ as required.
+
+	\noi {\bf Congruence}
+	The important case of congruence is parallel composition.
+	We define relation $\mathcal{C}$ as
+%
+	\begin{eqnarray*}
+		\mathcal{C} &=&	\set{ \Gamma; \es; \Delta_1 \cat \Delta_3 \proves P \Par R \hastype \Proc,  \Gamma; \es; \Delta_2 \cat \Delta_3 \proves Q \Par R \hastype \Proc \setbar \\
+		& &	\forall R,\\
+		& &	\Gamma; \es; \Delta_1' \cong \Delta_2' \proves \newsp{\tilde{m_1}'}{P \Par \bout{\suc}{\dual{n}, \tilde{m_1}''} \inact} \cong \newsp{\tilde{m_2}'}{Q \Par \bout{\suc}{\dual{n}, \tilde{m_2}''} \inact}}
+	\end{eqnarray*}
+%
+	We show that $\mathcal{C}$ is a congruence.
+	We distinguish two cases:
+	- Case: $\dual{n}, \tilde{m_1}'', \tilde{m_2}'' \notin \fn{R}$	
+
+	\noi From the definition of $\mathcal{C}$ we can deduce that $\forall R$:
+\[
+	\Gamma; \es; \Delta_1'' \cong \Delta_2'' \proves \newsp{\tilde{m_1}'}{P \Par \bout{\suc}{\dual{n}, \tilde{m_1}''} \inact} \Par R \cong \newsp{\tilde{m_2}'}{Q \Par \bout{\suc}{\dual{n}, \tilde{m_2}''} \inact} \Par R
+\]
+	\noi The conclusion is then trivial.
+
+	- Case: $\tilde{s} = \set{\dual{n}, \tilde{m_1}''} \cap \set{\dual{n}, \tilde{m_2}''} \in \fn{R}$
+
+	\noi From the definition of $\mathcal{C}$ we can deduce that $\forall R^{y_1}$ such that $R = R^{y_1}\subst{\tilde{s}}{\tilde{y_1}}$
+	and $\suc'$ fresh and $\set{\tilde{y}} = \set{\tilde{y_1}} \cup \set{\tilde{y_2}}$:
+	\begin{eqnarray*}
+		&& \Gamma; \es; \Delta_1'' \cong \Delta_2'' \proves\\
+		&& \newsp{\tilde{m_1}'}{P \Par \bout{\suc}{\dual{n}, \tilde{m_1}''} \inact} \Par \binp{\dual{\suc}}{\tilde{y}} (R^{y_1} \Par \bout{\suc'}{\tilde{y_2}} \inact) \cong\\
+		&& \newsp{\tilde{m_2}'}{Q \Par \bout{\suc}{\dual{n}, \tilde{m_2}''} \inact} \Par \binp{\dual{\suc}}{\tilde{y}} (R^{y_1} \Par \bout{\suc'}{\tilde{y_2}} \inact)
+	\end{eqnarray*}
+	Applying reduction closeness to the above pair we get:
+	\begin{eqnarray*}
+		&& \Gamma; \es; \Delta_1'' \cong \Delta_2'' \proves
+		\newsp{\tilde{m_1}'}{P \Par R \Par \bout{\suc'}{\tilde{s_2}}} \inact \cong
+		\newsp{\tilde{m_2}'}{Q \Par R \Par \bout{\suc'}{\tilde{s_2}}} \inact
+	\end{eqnarray*}
+	\noi The conclusion then follows.
+	\qed
+\end{proof}
+
+
+\begin{lemma}\rm
+	\label{lem:cong_is_wb}
+	$\cong \subseteq \wb$
+\end{lemma}
+
+\begin{proof}
+	\noi Let
+	\[
+		\Gamma; \es; \Delta_1 \cong \Delta_2 \proves P_1 \cong P_2
+	\]
+	\noi We distinguish two cases:
+
+	\noi - Case:
+	\[
+		\Gamma; \es; \Delta_1 \by{\tau} \Delta_1' \cong P_1 \by{\tau} P_1' 
+	\]
+	\noi The result follow the reduction close property of $\cong$ since
+	\[
+		\Gamma; \es; \Delta_2 \By{\tau} \Delta_2' \cong P_2 \By{\tau} P_2' 
+	\]
+	\noi and
+	\[
+		\Gamma; \es; \Delta_1' \cong \Delta_2' \proves P_1' \cong P_2'
+	\]
+
+	\noi - Case:
+	\begin{eqnarray}
+		\Gamma; \es; \Delta_1 \by{\ell} \Delta_1' \proves P_1 \by{\tau} P_1'
+		\label{lem:cong_is_wb1}
+	\end{eqnarray}
+	We choose test $T\lrangle{\ell, \suc}$ to get
+	\noi Let
+	\begin{eqnarray}
+		\Gamma; \es; \Delta_1 \cat \Delta_3 \cong \Delta_2 \cat \Delta_3 \proves P_1 \Par T\lrangle{\ell, \suc} \cong P_2 \Par T\lrangle{\ell, \suc}
+		\label{lem:cong_is_wb2}
+	\end{eqnarray}
+%
+	\noi From this point we distinguish three subcases:
+
+	\noi Subcase i: $\ell \in \set{\bactinp{n}{\tilde{m}}, \bactinp{n}{(\tilde{x}) Q}, \bactsel{n}{l}, \bactbra{n}{l}}$
+
+	\noi By reducing~\ref{lem:cong_is_wb1} we get
+	\begin{eqnarray*}
+		&&P_1 \Par T\lrangle{\ell, \suc} \red P_1' \Par \bout{\suc}{\dual{n}} \inact \\
+		&&\Gamma; \es; \Delta_1' \cat \Delta_3' \proves P_1' \Par \bout{\suc}{\dual{n}} \inact \barb{\suc}
+	\end{eqnarray*}
+	\noi implies from~\ref{lem:cong_is_wb2}
+	\begin{eqnarray*}
+		&&\Gamma; \es; \Delta_2 \cat \Delta_3 \proves P_2 \Par T\lrangle{\ell, \suc} \Barb{\suc}
+	\end{eqnarray*}
+	\noi implies from Lemma~\ref{lem:definibility}
+	\begin{eqnarray*}
+		&&\Gamma; \es; \Delta_2 \By{\ell} \Delta_2' \proves P_2 \By{\ell} P_2'\\
+		&&P_2 \Par T \lrangle{\ell, \suc} \Red P_2' \Par \bout{\suc}{\dual{n}} \inact
+	\end{eqnarray*}
+	\noi and
+	\[
+		\Gamma; \es; \Delta_1' \cat \Delta_3' \cong \Delta_2' \cat \Delta_3' \proves P_1' \Par \bout{\suc}{\dual{n}} \cong P_2' \Par \bout{\suc}{\dual{n}} \inact
+	\]
+	We then apply Lemma~\ref{lem:extrusion} to get
+	\[
+		\Gamma; \es; \Delta_1' \cong \Delta_2' \proves P_1' \cong P_2'
+	\]
+	\noi as required.
+
+	\noi Subcase i: $\ell = \news{\tilde{m_1}} \bactout{n}{(\tilde{x}) Q_1}$
+
+	\noi Note that $T\lrangle{\news{\tilde{m_1}} \bactout{n}{(\tilde{x}) Q_1}, \suc} = T\lrangle{\news{\tilde{m_2}} \bactout{n}{(\tilde{x}) Q_2}, \suc}$
+
+	\noi Transition~\ref{lem:cong_is_wb1} becomes
+	\begin{eqnarray}
+		\Gamma; \es; \Delta_1 \by{\news{\tilde{m_1}} \bactout{n}{(\tilde{x}) Q_1}} \Delta_1' \proves P_1 \by{\news{\tilde{m_1}} \bactout{n}{(\tilde{x}) Q_1}} P_1'
+		\label{lem:cong_is_wb3}
+	\end{eqnarray}
+	\noi By reducing~\ref{lem:cong_is_wb1} we get
+	\begin{eqnarray*}
+		&&P_1 \Par T\lrangle{\news{\tilde{m_1}} \bactout{n}{(\tilde{x}) Q_1}, \suc} \red P_1' \Par \appl{X}{\tilde{n}} \subst{(\tilde{x}) Q_1}{X} \Par \bout{\suc}{\dual{n}} \inact \\
+		&&\Gamma; \es; \Delta_1' \cat \Delta_3' \proves \newsp{s_1}{P_1' \Par \appl{X}{\tilde{n}} \subst{(\tilde{x}) Q_1}{X}} \Par \bout{\suc}{\dual{n}} \inact \barb{\suc}
+	\end{eqnarray*}
+	\noi implies from~\ref{lem:cong_is_wb2}
+	\begin{eqnarray*}
+		&&\Gamma; \es; \Delta_2 \cat \Delta_3 \proves P_2 \Par T\lrangle{\news{\tilde{m_2}} \bactout{n}{(\tilde{x}) Q_2}, \suc} \Barb{\suc}
+	\end{eqnarray*}
+	\noi implies from Lemma~\ref{lem:definibility}
+	\begin{eqnarray}
+		&&\Gamma; \es; \Delta_2 \By{\news{\tilde{m_2}} \bactout{n}{(\tilde{x}) Q_2}} \Delta_2' \proves P_2 \By{\news{\tilde{m_2}} \bactout{n}{(\tilde{x}) Q_2}} P_2'
+		\label{lem:cong_is_wb4}\\
+		&&P_2 \Par T \lrangle{\ell, \suc} \Red \newsp{s_2}{P_2' \Par \appl{X}{\tilde{n}} \subst{(\tilde{x}) Q_2}{X}} \Par \bout{\suc}{\dual{n}} \inact \nonumber
+	\end{eqnarray}
+	\noi and
+	\[
+		\Gamma; \es; \Delta_1' \cat \Delta_3' \cong \Delta_2' \cat \Delta_3' \proves \newsp{s_1}{P_1' \Par \appl{X}{\tilde{n}} \subst{(\tilde{x}) Q_1}{X}} \Par \bout{\suc}{\dual{n}} \cong \newsp{s_2}{P_2' \Par \appl{X}{\tilde{n}} \subst{(\tilde{x}) Q_2}{X}} \Par \bout{\suc}{\dual{n}} \inact
+	\]
+	We then apply Lemma~\ref{lem:extrusion} to get
+	\[
+		\Gamma; \es; \Delta_1' \cong \Delta_2' \proves \newsp{s_1}{P_1' \Par \appl{X}{\tilde{n}} \subst{(\tilde{x}) Q_1}{X}} \cong \newsp{s_2}{P_2' \Par \appl{X}{\tilde{n}} \subst{(\tilde{x}) Q_2}{X}}
+	\]
+
+	\noi Assume 
+	\dk{complete here}
+	\qed
+\end{proof}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Proof of the main theorem
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{theorem}[Concidence]
+	\begin{enumerate}
+		\item	$\wbc\ =\ \wb$.
+		\item	$\wbc\ =\ \cong$.
+	\end{enumerate}
+\end{theorem}
+
+\begin{proof}
+	\noi	Lemma~\ref{lem:cong_is_wb} proves $\cong \subseteq \wb$.
+		Lemma~\ref{lem:wb_is_wbc} proves $\wb \subseteq \wbc$.
+		Lemma~\ref{lem:wbc_is_cong} proves $\wbc \subseteq \cong$.
+
+	\noi From the above results we conclude $\cong \subseteq \wb \subseteq \wbc \subseteq \cong$. 
+	\qed
+\end{proof}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% T - Innertness
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{$\tau$-inertness}
+
+Session types are inherintly $\tau$-inert.
+
+\begin{lemma}[$\tau$-inertness]\rm
+	\label{lem:tau_inert}
+	Let $P$ an $\HOp$ process
+	and $\Gamma; \emptyset; \Delta \proves P \hastype \Proc$
+	\begin{enumerate}
+		\item	If $P \red P'$ then $\Gamma; \empty; \Delta \wb \Delta' \proves P \wb P'$.
+		\item	If $P \red^* P'$ then $\Gamma; \empty; \Delta \wb \Delta' \proves P \wb P'$.
+	\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+	The proof for part 1 is done by induction on the structure of $\red$.
+
+
+%	The proof is a double induction first on the length and then on the structure of $\red$.
+%	Induction on the length of $\red$.
+
+%	The basic step is trivial
+%	Induction hypothesis:
+%	If $P \red^* P''$ then
+%	$\Gamma; \ell; \Delta \proves P \wbc \Gamma''; \ell''; \Delta'' \proves P'' \hastype \Proc$.
+%
+%	Induction step:
+%	Let $P'' \red P'$. We do an induction on the structure of $\red$
+%	to show that $\Gamma'; \ell'; \Delta' \proves P'' \wbc \Gamma'; \ell'; \Delta' \proves P' \hastype \Proc$.
+%
+	Basic step:
+
+	\Case{$P = \bout{s}{V} P_1 \Par \binp{\dual{s}}{X} P_2$}
+	\[
+%		\Gamma; \emptyset; \Delta \red \Delta' \proves
+		\bout{s}{V} P_1 \Par \binp{\dual{s}}{X} P_2 \red P_1 \Par P_2
+	\]
+	The proof follows from the fact that we can only observe a $\tau$
+	action on typed process
+	$\Gamma; \emptyset; \Delta \proves P \hastype \Proc$.
+	Actions $\bactout{s}{V}$ and $\bactinp{\dual{s}}{V}$
+	are forbiden by the LTS for typed environments.
+
+	It is easy to conclude then that $\Gamma; \emptyset; \Delta \wb \Delta' \proves P \wb P'$.
+
+	\Case{$P = \bsel{s}{l} P_1 \Par \bbra{\dual{s}}{l_i: P_i}_{i \in I}$}
+
+	Similar arguments as the previous case.
+
+	Induction hypothesis:
+	If $P_1 \red P_2$ then
+	$\Gamma_1; \emptyset; \Delta_1 \wb \Delta_2 \proves P_1 \wb P_2$.
+
+	Induction Step:
+
+	\Case{$P = \news{s} P_1$}
+	\[
+%		\Gamma; \emptyset; \Delta \red \Delta' \proves
+		\news{s}{P_1} \red \news{s} P_2
+	\]
+	From the induction hypothesis and the fact that bisimulation is a congruence
+	we get that $\Gamma; \emptyset; \Delta \wb \Delta' \proves P \wb P'$.
+
+	\Case{$P = P_1 \Par P_3$}
+
+	\[
+%		\Gamma; \emptyset; \Delta \red \Delta' \proves
+		P_1 \Par P_3 \red P_2 \Par P_3
+	\]
+	From the induction hypothesis and the fact that bisimulation is a congruence
+	we get that $\Gamma; \emptyset; \Delta \wb \Delta' \proves P \wb P'$.
+
+	\Case{$P \scong P_1$}
+
+	From the induction hypothesis and the facts that bisimulation is a congruence
+	and structural congruence preserves $\wb$
+	we get that $\Gamma; \emptyset; \Delta \wb \Delta' \proves P \wb P'$.
+
+
+	The proof for part two is an induction on the length of $\red^*$.
+	The basic step is trivial and the inductive step
+	deploys part 1 of this lemma and the fact that bisimulation is
+	transitive to conclude.
+%	We can now conclude that
+%	$P \wbc P'$ because $P \wbc P''$ and $P'' \wbc P'$.
+	\qed
+\end{proof}
+
+

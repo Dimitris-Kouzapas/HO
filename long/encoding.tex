@@ -519,13 +519,13 @@ principle of copying the process that needs to exhibit recursive behaviour.
 The primitive recursor operation creates copies of a process and uses them
 as continuations, e.g:
 \[
-	\recp{X}{\bout{n}{m} r} \scong \bout{n}{m} \recp{X}{\bout{n}{m} r}
+	\recp{X}{\bout{n}{m} \rvar{X}} \scong \bout{n}{m} \recp{X}{\bout{n}{m} \rvar{X}}
 \]
 In the above example the scope of name $n$ includes the entire process so
 the type for $n$ should be recursive. An alternative representation
 of the above process would be:
 \[
-	\bout{a}{n} \inact \Par \recp{r}{\binp{a}{x} \bout{x}{m} (\bout{a}{x} \inact \Par r)} \red \bout{n}{m} (\bout{a}{n} \inact \Par \recp{r}{\binp{a}{x} \bout{x}{m} (\bout{a}{x} \inact \Par r))}
+	\bout{a}{n} \inact \Par \recp{X}{\binp{a}{x} \bout{x}{m} (\bout{a}{x} \inact \Par \rvar{X})} \red \bout{n}{m} (\bout{a}{n} \inact \Par \recp{X}{\binp{a}{x} \bout{x}{m} (\bout{a}{x} \inact \Par \rvar{X}))}
 \]
 Endpoint $n$ is being passed sequentially on copies of the 
 same process to achieve the effect of infinite sending of value $m$.
@@ -696,8 +696,8 @@ formalized by $\encod{\cdot}{\cdot}{1}: \sespnr \to \HO$.
 	\begin{array}{rcll}
 %	\map{\rec{X}{P}}^{2} &=& \newsp{s}{\binp{s}{\X} \map{P}^{2} \Par \bout{\dual{s}}{\abs{z \cat \vmap{\fn{P}}}{\binp{z}{\X} \map{P}^{\es}}} \inact}\\
 %	\map{r}^{2} &=& \newsp{s}{\appl{\X}{s \cat \smap{\fn{P}}} \Par \bout{\dual{s}}{ \abs{z \cat \vmap{\fn{P}}}{\appl{X}{z \cat \vmap{\fn{P}}}}} \inact} \\
-		\pmapp{\rec{X}{P}}{2}{f} &\defeq& \newsp{s}{\binp{s}{\X} \pmapp{P}{2}{{f,\{r\to \tilde{n}\}}} \Par \bbout{\dual{s}}{\abs{\vmap{\tilde{n}}, z } \,{\binp{z}{\X} \auxmapp{\pmapp{P}{2}{{f,\{r\to \tilde{n}\}}}}{\mathsf{v}}{\es}}} \inact} & \quad \tilde{n} = \ofn{P} \\ 
-		\pmapp{r}{2}{f} &\defeq& \newsp{s}{\appl{\X}{\tilde{n}, s} \Par \bbout{\dual{s}}{ \abs{\vmap{\tilde{n}},z}\,\,{\appl{X}{ \vmap{\tilde{n}}, z}}} \inact} & \quad \tilde{n} = f(r) \\
+		\pmapp{\recp{X}{P}}{2}{f} &\defeq& \newsp{s}{\binp{s}{\X} \pmapp{P}{2}{{f,\{\rvar{X}\to \tilde{n}\}}} \Par \bbout{\dual{s}}{\abs{\vmap{\tilde{n}}, z } \,{\binp{z}{\X} \auxmapp{\pmapp{P}{2}{{f,\{\rvar{X}\to \tilde{n}\}}}}{\mathsf{v}}{\es}}} \inact} & \quad \tilde{n} = \ofn{P} \\ 
+		\pmapp{\rvar{X}}{2}{f} &\defeq& \newsp{s}{\appl{\X}{\tilde{n}, s} \Par \bbout{\dual{s}}{ \abs{\vmap{\tilde{n}},z}\,\,{\appl{X}{ \vmap{\tilde{n}}, z}}} \inact} & \quad \tilde{n} = f(\rvar{X}) \\
 		\pmapp{\bout{k}{n} P}{2}{f}	&\defeq&	\bbout{k}{ \abs{z}{\,\binp{z}{X} \appl{X}{n}} } \pmapp{P}{2}{f} \\
 		\pmapp{\binp{k}{x} Q}{2}{f}	&\defeq&	\binp{k}{X} \newsp{s}{\appl{X}{s} \Par \bbout{\dual{s}}{\abs{x} \pmapp{Q}{2}{f}} \inact} \\
 		\tmap{\btout{S_1} {S} }{2}	&\defeq&	\bbtout{\lhot{\btinp{\lhot{\tmap{S_1}{2}}}\tinact}} \tmap{S}{2}  \\
@@ -713,7 +713,7 @@ and as a homomorphism for the other process constructs.
 \begin{remark}\rm
 	Furthermore we define a mapping for environments $\Gamma$, as follows:
 	\[
-		\tmap{\Gamma \cat r:\Sigma}{2} = \tmap{\Gamma}{2} \cat X:\shot{(\tilde{S}_{\Sigma}, S^*)}
+		\tmap{\Gamma \cat \rvar{X}:\Sigma}{2} = \tmap{\Gamma}{2} \cat X:\shot{(\tilde{S}_{\Sigma}, S^*)}
 		%X:\trec{t}{\big(\shot{(\tilde{S}_{\Sigma}, \btinp{\vart{t}}\tinact)}\big)}
 	\]
 	where
@@ -730,18 +730,18 @@ and as a homomorphism for the other process constructs.
 \begin{proof}
 	By induction on the structure of \sesp process $P_0$. 
 	\begin{enumerate}[1.]
-		\item Case $P_0 = r$. Then we have the following typing in the source language:
+		\item Case $P_0 = \rvar{X}$. Then we have the following typing in the source language:
 	
 		{\small
 		\[
 		\tree{
 		}{
-		\Gamma \cat r: \Sigma ;\, \es ;\, \es \proves r \hastype \Proc
+		\Gamma \cat \rvar{X}: \Sigma ;\, \es ;\, \es \proves \rvar{X} \hastype \Proc
 		}
 		\]
 		}
 	
-		Then the typing of $\pmapp{r}{2}{f}$ is as follows, assuming $f(r) = \tilde{n}$ and $\tilde{x} = \vmap{\tilde{n}}$.
+		Then the typing of $\pmapp{\rvar{X}}{2}{f}$ is as follows, assuming $f(\rvar{X}) = \tilde{n}$ and $\tilde{x} = \vmap{\tilde{n}}$.
 		Also, we write $\Sigma_{\tilde{n}}$ 
 		and $\Sigma_{\tilde{x}}$ 
 		to stand for 
@@ -816,19 +816,19 @@ and as a homomorphism for the other process constructs.
 		\]
 		}
 	
-		\item Case $P_0 = \rec{X}{P}$. Then we have the following typing in the source language:
+		\item Case $P_0 = \recp{X}{P}$. Then we have the following typing in the source language:
 	
 		{\small
 		\[
 		\tree{
-		\Gamma \cat r:\Sigma ;\, \es ;\,  \Sigma \proves P \hastype \Proc
+		\Gamma \cat \rvar{X}:\Sigma ;\, \es ;\,  \Sigma \proves P \hastype \Proc
 		}{
-		\Gamma  ;\, \es ;\,  \Sigma \proves \rec{X}{P} \hastype \Proc
+		\Gamma  ;\, \es ;\,  \Sigma \proves \recp{X}{P} \hastype \Proc
 		}
 		\]
 		}
 	
-		Then we have the following typing in the target language ---we write $R$ to stand for $\pmapp{P}{2}{{f,\{r\to \tilde{n}\}} }$
+		Then we have the following typing in the target language ---we write $R$ to stand for $\pmapp{P}{2}{{f,\{\rvar{X}\to \tilde{n}\}} }$
 		and $\tilde{x}$ to stand for $\vmap{\ofn{P}}$.
 		{\small 
 		\[
@@ -961,7 +961,7 @@ cannot be put in parallel because they do not have disjoint session environments
 
 The correct approach would be to use replicated shared names
 as triggers instead of session names. 
-Below we write $\repl{} P$ as a shorthand notation for $\recp{X}{(P \Par r)}$.
+Below we write $\repl{} P$ as a shorthand notation for $\recp{X}{(P \Par \rvar{X})}$.
 
 \begin{definition}[From $\HO$ to $\sesp$]\rm
   Define $\encod{\cdot}{\cdot}{3}: \HO \to \sesp$ as follows
@@ -1000,11 +1000,11 @@ By induction on the structure of \HO process $P$.
 	We also write 
 	\begin{eqnarray*}
 	\tmap{\Gamma_1}{3} & = & \tmap{\Gamma}{3} \cup a:\chtype{\btinp{\tmap{S_1}{3}}\tinact} \\
-	\tmap{\Gamma_2}{3} & = & \tmap{\Gamma_1}{3} \cup r:\tmap{\Sigma_2}{3}
+	\tmap{\Gamma_2}{3} & = & \tmap{\Gamma_1}{3} \cup \rvar{X}:\tmap{\Sigma_2}{3}
 	\end{eqnarray*}
 	Also $(*)$ stands for $\tmap{\Gamma_1}{3}; \es ; \es \proves a \hastype U_1$; 
 	$(**)$ stands for $\tmap{\Gamma_2}{3}; \es ; \es \proves a \hastype U_1$; and
-	$(***)$ stands for $\tmap{\Gamma_2}{3}; \es ; \es \proves r \hastype \Proc$.
+	$(***)$ stands for $\tmap{\Gamma_2}{3}; \es ; \es \proves \rvar{X} \hastype \Proc$.
 	
 		{\small
 	\[
@@ -1056,31 +1056,31 @@ By induction on the structure of \HO process $P$.
 			}{
 			\tmap{\Gamma_2}{3}; \es ; \tmap{\Sigma_2}{3} 
 		\proves 
-		\binp{a}{y}\binp{y}{x}\pmap{Q}{3} \Par r \hastype \Proc
+		\binp{a}{y}\binp{y}{x}\pmap{Q}{3} \Par \rvar{X} \hastype \Proc
 			}
 			}{
 			\tmap{\Gamma_1}{3}; \es ; \tmap{\Sigma_2}{3} 
 		\proves 
-		\recp{X}{(\binp{a}{y}\binp{y}{x}\pmap{Q}{3} \Par r)} \hastype \Proc
+		\recp{X}{(\binp{a}{y}\binp{y}{x}\pmap{Q}{3} \Par \rvar{X})} \hastype \Proc
 			}
 			}{
 			\tmap{\Gamma_1}{3}; \es ; \tmap{\Sigma_1, \Sigma_2}{3}, k:\tmap{S}{3} 
 		\proves 
 		\pmap{P}{3} \Par 
-		\recp{X}{(\binp{a}{y}\binp{y}{x}\pmap{Q}{3} \Par r)} \hastype \Proc
+		\recp{X}{(\binp{a}{y}\binp{y}{x}\pmap{Q}{3} \Par \rvar{X})} \hastype \Proc
 			}
 		}{
 		\tmap{\Gamma_1}{3}; \es ; \tmap{\Sigma_1, \Sigma_2}{3}, k:\bbtout{U_1}\tmap{S}{3} 
 		\proves 
 		\bout{k}{a}(\pmap{P}{3} \Par 
-		\recp{X}{(\binp{a}{y}\binp{y}{x}\pmap{Q}{3} \Par r))} \hastype \Proc
+		\recp{X}{(\binp{a}{y}\binp{y}{x}\pmap{Q}{3} \Par \rvar{X}))} \hastype \Proc
 		}
 		}{
 		\tmap{\Gamma}{3}; \es ; \tmap{\Sigma_1, \Sigma_2}{3}, k:\bbtout{U_1}\tmap{S}{3} 
 		\proves 
 		\newsp{a}{\bout{k}{a}( 
 		\pmap{P}{3} \Par 
-		\recp{X}{(\binp{a}{y}\binp{y}{x}\pmap{Q}{3} \Par r))}
+		\recp{X}{(\binp{a}{y}\binp{y}{x}\pmap{Q}{3} \Par \rvar{X}))}
 		} \hastype \Proc
 		}
 	\]
