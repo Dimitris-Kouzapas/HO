@@ -813,23 +813,26 @@ definition.
 			\Gamma; \emptyset; \Delta_1' \cat \Delta_2' \proves P' \Par \bout{\suc}{\dual{m}} \inact
 \]
 %
-		\item	If $\Gamma; \emptyset; \Delta_1 \proves P \by{\news{\tilde{m}}\bactout{n}{\abs{\tilde{x}}{Q}}} \Delta_1' \proves P' \hastype \Proc$
+		\item	If $\Gamma; \emptyset; \Delta_1 \proves P \by{\news{\tilde{m}}\bactout{n}{\abs{\tilde{x}}{Q}}} \Delta_1' \proves P' \hastype \Proc$,
+			$t$ fresh
 			and $\tilde{m}' \subseteq \tilde{m}$
 			then:
 %
 			\begin{eqnarray*}
-				& & P \Par T\lrangle{\news{\tilde{m}}\bactout{n}{\abs{\tilde{x}}{Q}}, \suc} \red \newsp{\tilde{m}}{P' \Par \appl{X}{\tilde{n}} \subst{(\tilde{x}) Q}{X} \Par \bout{\suc}{\dual{n}, \tilde{m}'} \inact}\\
-				& & \Gamma; \emptyset; \Delta_1' \cat \Delta_2' \proves \newsp{\tilde{m}}{P' \Par \appl{X}{\tilde{n}} \subst{(\tilde{x}) Q}{X} \Par \bout{\suc}{\dual{n}, \tilde{m}'} \inact} \hastype \Proc
+				& & P \Par T\lrangle{\news{\tilde{m}}\bactout{n}{\abs{\tilde{x}}{Q}}, \suc} \red
+				\newsp{\tilde{m}}{P' \Par \binp{t}{X} \newsp{s}{\appl{X}{s} \Par \bout{s}{(\tilde{x}) Q} \inact} \Par \bout{\suc}{\dual{n}, \tilde{m}'} \inact}\\
+				& & \Gamma; \emptyset; \Delta_1' \cat \Delta_2' \proves
+				\newsp{\tilde{m}}{P' \Par \binp{t}{X} \newsp{s}{\appl{X}{s} \Par \bout{s}{(\tilde{x}) Q} \inact} \Par \bout{\suc}{\dual{n}, \tilde{m}'} \inact} \hastype \Proc
 			\end{eqnarray*}
 %
 		\item	If $\Gamma; \emptyset; \Delta_1 \proves P \by{\news{\tilde{s}}\bactout{n}{\tilde{m}}} \Delta_1' \proves P' \hastype \Proc$,
-			$\Gamma; \emptyset; \Delta_1 \proves \tilde{m} \hastype \tilde{C}$
+			$t$ fresh
 			and $\tilde{s}' \subseteq \tilde{s}$
 			then:
 %
 			\begin{eqnarray*}
-				& & P \Par T\lrangle{\news{\tilde{s}}\bactout{n}{\tilde{m}}, \suc} \red \newsp{\tilde{s}}{P' \Par \map{\tilde{C}}^{\tilde{m}} \Par \bout{\suc}{\dual{n}, \tilde{s}'} \inact}\\
-				& & \Gamma; \emptyset; \Delta_1' \cat \Delta_2' \proves \newsp{\tilde{s}}{P' \Par \map{\tilde{C}}^{\tilde{m}} \Par \bout{\suc}{\dual{n}, \tilde{s}'} \inact} \hastype \Proc
+				& & P \Par T\lrangle{\news{\tilde{s}}\bactout{n}{\tilde{m}}, \suc} \red \newsp{\tilde{s}}{P' \Par \binp{t}{X} \appl{X}{\tilde{m}} \Par \bout{\suc}{\dual{n}, \tilde{s}'} \inact}\\
+				& & \Gamma; \emptyset; \Delta_1' \cat \Delta_2' \proves \newsp{\tilde{s}}{P' \Par \binp{t}{X} \appl{X}{\tilde{m}} \Par \bout{\suc}{\dual{n}, \tilde{s}'} \inact} \hastype \Proc
 			\end{eqnarray*}
 %
 		\item	Let $\ell \in \set{\bactsel{n}{\ell}, \bactbra{n}{\ell}, \bactinp{n}{\tilde{m}}, \bactinp{n}{(\tilde{x}) Q}}$.
@@ -841,12 +844,14 @@ definition.
 		\item	If $P \Par T\lrangle{\news{\tilde{m}}\bactout{n}{\abs{\tilde{x}}{Q}}, \suc} \red Q$
 			with $\Gamma; \emptyset; \Delta \proves Q \hastype \Proc \barb{\suc}$ then
 			$\Gamma; \emptyset; \Delta_1 \proves P \By{\news{\tilde{m}}\bactout{n}{\abs{\tilde{x}}{Q}}} \Delta_1' \proves P' \hastype \Proc$
-			and $Q \scong \newsp{\tilde{m}}{P' \Par \appl{X}{\tilde{n}} \subst{(\tilde{x}) Q}{X} \Par \bout{\suc}{\dual{n}, \tilde{m}'} \inact}$.
+			and $Q \scong \newsp{\tilde{m}}{P' \Par \binp{t}{X} \newsp{s}{\appl{X}{s} \Par \bout{s}{(\tilde{x}) Q} \inact} \Par \bout{\suc}{\dual{n}, \tilde{m}'} \inact}$
+			with $t$ fresh and $\tilde{m}' \subseteq \tilde{m}$.
 
 		\item	If $P \Par T\lrangle{\news{\tilde{s}}\bactout{n}{\tilde{m}}, \suc} \red Q $
 			and $\Gamma; \emptyset; \Delta \proves Q \hastype \Proc \barb{\suc}$ then
 			$\Gamma; \emptyset; \Delta_1 \proves P \By{\news{\tilde{s}}\bactout{n}{\tilde{m}}} \Delta_1' \proves P' \hastype \Proc$
-			and $Q \scong \newsp{\tilde{s}}{P' \Par \map{\tilde{C}}^{\tilde{m}} \Par \bout{\suc}{\dual{n}, \tilde{s}'} \inact}$.
+			and $Q \scong \newsp{\tilde{s}}{P' \Par \binp{t}{X} \appl{X}{\tilde{m}} \Par \bout{\suc}{\dual{n}, \tilde{s}'} \inact}$
+			with $t$ fresh and $\tilde{s}' \subseteq \tilde{s}$.
 
 
 	\end{itemize}	
@@ -864,24 +869,18 @@ We first show that every external action $\ell$ is {\em definable}.
 	\noi We define $T\lrangle{\ell, \suc}$:
 %
 	\begin{itemize}
-%		\item	$T\lrangle{\emptyset, \emptyset} \scong \newsp{s_1, s_2}{\binp{s_1}{x} \bout{s_2}{\ast} R \Par \binp{s_2}{x} \bout{s_1}{\ast} \inact}$ with
-%			$\Gamma; \emptyset; \Delta \proves T\lrangle{\emptyset, \emptyset} \hastype \Proc$.
-%			\dk{$R$ is used to complete the type of a session}.
-
 		\item	$T\lrangle{\bactinp{n}{\tilde{m}}, \suc} = \bout{\dual{n}}{\tilde{m}} \bout{\suc}{\dual{n}} \inact$.
 
 		\item	$T\lrangle{\bactbra{n}{l}, \suc} = \bsel{\dual{n}}{l} \bout{\suc}{\dual{n}} \inact$.
 
 		\item	$T\lrangle{\bactinp{n}{\abs{\tilde{x}} Q}, \suc} = \bout{\dual{n}}{\abs{\tilde{x}}{Q}} \bout{\suc}{\dual{n}} \inact$.
 
-%		\item	$T\lrangle{\bactout{n}{\tilde{m}}, \suc} = \binp{\dual{n}}{\tilde{x}} (\binp{t}{X} \appl{X}{\tilde{x}} \Par \bout{\suc}{\dual{n}} \inact)$.
-
-		\item	$T\lrangle{\news{\tilde{s}} \bactout{n}{\tilde{m}}, \suc} = \binp{\dual{n}}{\tilde{x}} (\dk{\map{\tilde{C}}^{\tilde{x}}} \Par \bout{\suc}{\dual{n}, \tilde{s}'} \inact)$
+		\item	$T\lrangle{\news{\tilde{s}} \bactout{n}{\tilde{m}}, \suc} = \binp{\dual{n}}{\tilde{x}} (\bout{t}{X} \appl{X}{\tilde{x}} \Par \bout{\suc}{\dual{n}, \tilde{s}'} \inact)$
 			with $\tilde{s}' \subseteq \tilde{s}$.
 
 		\item	$T\lrangle{\bactsel{n}{l}, \suc} = \bbra{\dual{n}}{l: \bout{\suc}{\dual{n}} \inact), l_i: \newsp{a}{\binp{a}{y} \bout{\suc}{\dual{n}} \inact}}_{i \in I}$.
 
-		\item	$T\lrangle{\news{\tilde{m}} \bactout{n}{\abs{x}{Q}}, \suc} = \binp{\dual{n}}{X} (\appl{X}{\tilde{n}} \Par \bout{\suc}{\dual{n}, \tilde{m}'} \inact)$ with $\tilde{m}' \subseteq \tilde{m}$.
+		\item	$T\lrangle{\news{\tilde{m}} \bactout{n}{\abs{x}{Q}}, \suc} = \binp{\dual{n}}{Y} (\binp{t}{X} \newsp{s}{\appl{X}{s} \Par \bout{\dual{s}}{(\tilde{x}) \appl{Y}{\tilde{x}}} \inact} \Par \bout{\suc}{\dual{n}, \tilde{m}'} \inact)$ with $\tilde{m}' \subseteq \tilde{m}$.
 .
 	\end{itemize}
 
@@ -895,9 +894,14 @@ We first show that every external action $\ell$ is {\em definable}.
 
 \begin{lemma}[Extrusion]\rm
 	\label{lem:extrusion}
-	If $\Gamma; \es; \Delta_1' \cong \Delta_2 \proves \newsp{\tilde{m_1}'}{P \Par \bout{\suc}{\dual{n}, \tilde{m_1}''} \inact} \cong \newsp{\tilde{m_2}'}{Q \Par \bout{\suc}{\dual{n}, \tilde{m_2}''} \inact}$
+	If 
+	\[
+		\Gamma; \es; \Delta_1' \cong \Delta_2 \proves \newsp{\tilde{m_1}'}{P \Par \bout{\suc}{\dual{n}, \tilde{m_1}''} \inact} \cong \newsp{\tilde{m_2}'}{Q \Par \bout{\suc}{\dual{n}, \tilde{m_2}''} \inact}
+	\]
 	then
-	$\Gamma; \es; \Delta_1 \cong \Delta_2 \proves P \cong Q$
+	\[
+		\Gamma; \es; \Delta_1 \cong \Delta_2 \proves P \cong Q
+	\]
 \end{lemma}
 
 \begin{proof}
@@ -1006,6 +1010,7 @@ We first show that every external action $\ell$ is {\em definable}.
 	\]
 	\noi We distinguish two cases:
 
+%% Case tau
 	\noi - Case:
 	\[
 		\Gamma; \es; \Delta_1 \by{\tau} \Delta_1' \cong P_1 \by{\tau} P_1' 
@@ -1019,6 +1024,7 @@ We first show that every external action $\ell$ is {\em definable}.
 		\Gamma; \es; \Delta_1' \cong \Delta_2' \proves P_1' \cong P_2'
 	\]
 
+%% Case ell
 	\noi - Case:
 	\begin{eqnarray}
 		\Gamma; \es; \Delta_1 \by{\ell} \Delta_1' \proves P_1 \by{\tau} P_1'
@@ -1033,6 +1039,7 @@ We first show that every external action $\ell$ is {\em definable}.
 %
 	\noi From this point we distinguish three subcases:
 
+%% Subcase i
 	\noi Subcase i: $\ell \in \set{\bactinp{n}{\tilde{m}}, \bactinp{n}{(\tilde{x}) Q}, \bactsel{n}{l}, \bactbra{n}{l}}$
 
 	\noi By reducing~\ref{lem:cong_is_wb1} we get
@@ -1059,7 +1066,8 @@ We first show that every external action $\ell$ is {\em definable}.
 	\]
 	\noi as required.
 
-	\noi Subcase i: $\ell = \news{\tilde{m_1}} \bactout{n}{(\tilde{x}) Q_1}$
+%% Subcase ii
+	\noi Subcase ii: $\ell = \news{\tilde{m_1}} \bactout{n}{(\tilde{x}) Q_1}$
 
 	\noi Note that $T\lrangle{\news{\tilde{m_1}} \bactout{n}{(\tilde{x}) Q_1}, \suc} = T\lrangle{\news{\tilde{m_2}} \bactout{n}{(\tilde{x}) Q_2}, \suc}$
 
@@ -1070,8 +1078,8 @@ We first show that every external action $\ell$ is {\em definable}.
 	\end{eqnarray}
 	\noi By reducing~\ref{lem:cong_is_wb1} we get
 	\begin{eqnarray*}
-		&&P_1 \Par T\lrangle{\news{\tilde{m_1}} \bactout{n}{(\tilde{x}) Q_1}, \suc} \red P_1' \Par \appl{X}{\tilde{n}} \subst{(\tilde{x}) Q_1}{X} \Par \bout{\suc}{\dual{n}} \inact \\
-		&&\Gamma; \es; \Delta_1' \cat \Delta_3' \proves \newsp{s_1}{P_1' \Par \appl{X}{\tilde{n}} \subst{(\tilde{x}) Q_1}{X}} \Par \bout{\suc}{\dual{n}} \inact \barb{\suc}
+		&&P_1 \Par T\lrangle{\news{\tilde{m_1}} \bactout{n}{(\tilde{x}) Q_1}, \suc} \red \newsp{m_1}{P_1' \Par \binp{t}{X} \newsp{s}{\appl{X}{s} \Par \bout{s}{(\tilde{x}) Q_1} \inact}} \Par \bout{\suc}{\dual{n}, \tilde{m_1}'} \inact \\
+		&&\Gamma; \es; \Delta_1' \cat \Delta_3' \proves \newsp{m_1}{P_1' \Par \binp{t}{X} \newsp{s}{\appl{X}{s} \Par \bout{s}{(\tilde{x}) Q_1} \inact}} \Par \bout{\suc}{\dual{n}, \tilde{m_1}'} \inact \barb{\suc}
 	\end{eqnarray*}
 	\noi implies from~\ref{lem:cong_is_wb2}
 	\begin{eqnarray*}
@@ -1081,19 +1089,25 @@ We first show that every external action $\ell$ is {\em definable}.
 	\begin{eqnarray}
 		&&\Gamma; \es; \Delta_2 \By{\news{\tilde{m_2}} \bactout{n}{(\tilde{x}) Q_2}} \Delta_2' \proves P_2 \By{\news{\tilde{m_2}} \bactout{n}{(\tilde{x}) Q_2}} P_2'
 		\label{lem:cong_is_wb4}\\
-		&&P_2 \Par T \lrangle{\ell, \suc} \Red \newsp{s_2}{P_2' \Par \appl{X}{\tilde{n}} \subst{(\tilde{x}) Q_2}{X}} \Par \bout{\suc}{\dual{n}} \inact \nonumber
+		&&P_2 \Par T \lrangle{\ell, \suc} \Red \newsp{m_2}{P_2' \Par \binp{t}{X} \newsp{s}{\appl{X}{s} \Par \bout{s}{(\tilde{x}) Q_2} \inact}} \Par \bout{\suc}{\dual{n}, \tilde{m_2}'} \inact \nonumber
 	\end{eqnarray}
 	\noi and
-	\[
-		\Gamma; \es; \Delta_1' \cat \Delta_3' \cong \Delta_2' \cat \Delta_3' \proves \newsp{s_1}{P_1' \Par \appl{X}{\tilde{n}} \subst{(\tilde{x}) Q_1}{X}} \Par \bout{\suc}{\dual{n}} \cong \newsp{s_2}{P_2' \Par \appl{X}{\tilde{n}} \subst{(\tilde{x}) Q_2}{X}} \Par \bout{\suc}{\dual{n}} \inact
-	\]
+	\begin{eqnarray*}
+		\Gamma; \es; \Delta_1' \cat \Delta_3' \cong \Delta_2' \cat \Delta_3' \proves\\
+		&& \newsp{m_1}{P_1' \Par \binp{t}{X} \newsp{s}{\appl{X}{s} \Par \bout{s}{(\tilde{x}) Q_1} \inact}} \Par \bout{\suc}{\dual{n}, \tilde{m_1}'} \inact \cong\\
+		&& \newsp{m_2}{P_2' \Par \binp{t}{X} \newsp{s}{\appl{X}{s} \Par \bout{s}{(\tilde{x}) Q_2} \inact}} \Par \bout{\suc}{\dual{n}, \tilde{m_2}'} \inact
+	\end{eqnarray*}
 	We then apply Lemma~\ref{lem:extrusion} to get
-	\[
-		\Gamma; \es; \Delta_1' \cong \Delta_2' \proves \newsp{s_1}{P_1' \Par \appl{X}{\tilde{n}} \subst{(\tilde{x}) Q_1}{X}} \cong \newsp{s_2}{P_2' \Par \appl{X}{\tilde{n}} \subst{(\tilde{x}) Q_2}{X}}
-	\]
+	\begin{eqnarray*}
+		\Gamma; \es; \Delta_1' \cong \Delta_2' \proves\\
+		&& \newsp{m_1}{P_1' \Par \binp{t}{X} \newsp{s}{\appl{X}{s} \Par \bout{s}{(\tilde{x}) Q_1} \inact}} \cong\\
+		&& \newsp{m_2}{P_2' \Par \binp{t}{X} \newsp{s}{\appl{X}{s} \Par \bout{s}{(\tilde{x}) Q_2} \inact}}
+	\end{eqnarray*}
+	\noi as required.
 
-	\noi Assume 
-	\dk{complete here}
+	\noi -Case: $\ell = \news{\tilde{s}} \bactout{n}{\tilde{m}}$
+
+	\noi Follows similar arguments as the previous case.
 	\qed
 \end{proof}
 
