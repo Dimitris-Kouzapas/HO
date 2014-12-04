@@ -528,61 +528,157 @@ The polyadic mapping, as presented here, is sound only on session names.
 
 \subsection{Encoding Recursion into Abstraction Passing}
 
-Encoding the constructs for recursion present in $\sesp$ as process-passing communication requires to follow the fundamental
+Encoding the constructs for recursion present in $\sesp$ as process-passing
+communication requires to follow the fundamental
 principle of copying the process that needs to exhibit recursive behaviour.
 The primitive recursor operation creates copies of a process and uses them
-as continuations, e.g:
-\[
-	\recp{X}{\bout{n}{m} \rvar{X}} \scong \bout{n}{m} \recp{X}{\bout{n}{m} \rvar{X}}
-\]
-In the above example the scope of name $n$ includes the entire process so
-the type for $n$ should be recursive. An alternative representation
-of the above process would be:
-\[
-	\bout{a}{n} \inact \Par \recp{X}{\binp{a}{x} \bout{x}{m} (\bout{a}{x} \inact \Par \rvar{X})} \red \bout{n}{m} (\bout{a}{n} \inact \Par \recp{X}{\binp{a}{x} \bout{x}{m} (\bout{a}{x} \inact \Par \rvar{X}))}
-\]
-Endpoint $n$ is being passed sequentially on copies of the 
-same process to achieve the effect of infinite sending of value $m$.
-If we apply the same principles on higher order semantics we get:
-\[
-	\begin{array}{l}
-		\newsp{s_1}{\bbout{s_1}{(z) \bout{n}{m} \binp{z}{X} \newsp{s_2}{\appl{X}{s_2} \Par \bout{\dual{s_2}}{(z) \appl{X}{z} } \inact} } \inact \Par \binp{\dual{s_1}}{X} \newsp{s_3}{\appl{X}{s_3} \Par \bout{\dual{s_3}}{(z) \appl{X}{z}} \inact } }
-		\\
-		\red
-		\\
-		\newsp{s_3}{\bout{n}{m} \binp{s_3}{X} \newsp{s_2}{\appl{X}{s_2} \Par \bout{\dual{s_2}}{(z) \appl{X}{z}} \inact} \Par \bout{\dual{s_3}}{(z) \bout{n}{m} \binp{z}{X} \newsp{s_2}{\appl{X}{s_2} \Par \bout{\dual{s_2}}{(z) \appl{X}{z} } \inact}  } \inact }
-	\end{array}
-\]
-In the above encoding the abstraction
-\[
-	(z) \bout{n}{m} \binp{z}{X} \newsp{s_2}{\appl{X}{s_2} \Par \bout{\dual{s_2}}{(z) \appl{X}{z} } \inact}
-\]
-has a linear type due to the free occurrence of the session channel $n$.
-But when passed, the latter abstraction is applied in a shared manner, i.e.\ two
-copies of the abstraction are instantiated, thus the whole
-encoding is untypable. The untypability problem would not exist
-provided that the abstraction being passed were not linear.
+as continuations.
 
+We use an example to demostrate our basic intuitions:
+\begin{example}
+	Assume process:
+%
+	\begin{eqnarray}
+		\label{ex:rec1}
+		\recp{X}{\bout{n}{m} \rvar{X}} \scong \bout{n}{m} \recp{X}{\bout{n}{m} \rvar{X}} 
+	\end{eqnarray}
+%
+	\noi An observer of the above process observers an infinite sequence
+	of send actions, where channel $m$ is emmited on channel $n$.
+	Name $n$ includes the recursive
+	variable $\rvar{X}$, so the type for $n$ should be recursive.
+%
+	\[
+		\recp{X}{\bout{n}{m} \rvar{X}} \by{\bactout{n}{m}} \recp{X}{\bout{n}{m} \rvar{X}}
+	\]
+%
+	To get a better understanding of how name $n$ is handled
+	on such scenarios, consider the process:
+	\[
+		P \scong \newsp{a}{\bout{a}{n} \inact \Par \recp{X}{\binp{a}{x} \bout{x}{m} (\bout{a}{x} \inact \Par \rvar{X})}}
+		%\red \newsp{a}{\bout{n}{m} (\bout{a}{n} \inact \Par \recp{X}{\binp{a}{x} \bout{x}{m} (\bout{a}{x} \inact \Par \rvar{X}))}}
+	\]
+%
+	\noi The above process exhibits the same behaviour as
+	process~\ref{ex:rec1}.
+	Endpoint $n$ is being passed sequentially on copies of the 
+	same process to achieve the effect of infinite sending of value $m$.
+%
+	\begin{eqnarray*}
+		P	&\scong&	\newsp{a}{\bout{a}{n} \inact \Par \recp{X}{\binp{a}{x} \bout{x}{m} (\bout{a}{x} \inact \Par \rvar{X})}}\\
+			&\red&		\newsp{a}{\bout{n}{m} (\bout{a}{n} \inact \Par \recp{X}{\binp{a}{x} \bout{x}{m} (\bout{a}{x} \inact \Par \rvar{X}))}}\\
+			&\by{\bactout{n}{m}}& \newsp{a}{\bout{a}{n} \inact \Par \recp{X}{\binp{a}{x} \bout{x}{m} (\bout{a}{x} \inact \Par \rvar{X})}}\\
+			&\scong&	P
+	\end{eqnarray*}
+%
+	\noi If we want to apply the same principles on higher order semantics we should first
+	abstract the recursive process:
+%
+	\[
+		\recp{X}{\binp{a}{x} \bout{x}{m} ( \rvar{X} \Par \bout{a}{x} \inact)}
+	\]
+%
+	\noi as
+%
+	\[
+		V \scong (z) \bout{n}{m} \binp{z}{X} \newsp{s}{\appl{X}{s} \Par \bout{\dual{s}}{(z) \appl{X}{z}} \inact}
+	\]
+%
+	So the entire process can be written as:
+	\[
+		P \scong \newsp{s_1}{\bbout{s_1}{V} \inact \Par \binp{\dual{s_1}}{X} \newsp{s_2}{\appl{X}{s_2} \Par \bout{\dual{s_2}}{(z) \appl{X}{z}} \inact}}	
+	\]
+%
+	\noi where abstraction $V$ is copied and passed to itself
+	infinitely many times:
+	\[
+		\begin{array}{rcl}
+			P &\scong& \newsp{s_1}{\bbout{s_1}{V} \inact \Par \binp{\dual{s_1}}{X} \newsp{s_2}{\appl{X}{s_2} \Par \bout{\dual{s_2}}{(z) \appl{X}{z}} \inact}} \\
+			&\red&
+			\newsp{s_2}{\bout{\dual{s_2}}{V} \inact \Par \bout{n}{m} \binp{s_2}{X} \newsp{s}{\appl{X}{s} \Par \bout{\dual{s}}{(z) \appl{X}{z}} \inact}}\\
+			&\by{\bactout{n}{m}}&
+			\newsp{s_2}{\bout{\dual{s_2}}{V} \inact \Par \binp{s_2}{X} \newsp{s}{\appl{X}{s} \Par \bout{\dual{s}}{(z) \appl{X}{z}} \inact}}\\
+			&\scong_\alpha&
+			P
+		\end{array}
+	\]
+%
 
-A typable encoding of the example would be:
-\[
-	\begin{array}{l}
-		\newsp{s_1}{\bout{s_1}{(z,x) \bout{x}{m} \binp{z}{X} \newsp{s_2}{\appl{X}{s_2,x} \Par \bout{\dual{s_2}}{(z,x) \appl{X}{z,x} } \inact} } \inact \Par \binp{\dual{s_1}}{X} \newsp{s_3}{\appl{X}{s_3, n} \Par \bout{\dual{s_3}}{(z,x) \appl{X}{z,x}} \inact } }
-		\\
-		\red
-		\\
-		\newsp{s_3}{\bout{n}{m} \binp{s_3}{X} \newsp{s_2}{\appl{X}{s_2, n} \Par \bout{\dual{s_2}}{(z, x) \appl{X}{z, x}} \inact} \Par \bout{\dual{s_3}}{(z, x) \bout{x}{m} \binp{z}{X} \newsp{s_2}{\appl{X}{s_2, x} \Par \bout{\dual{s_2}}{(z, x) \appl{X}{z, x} } \inact}  } \inact }
-	\end{array}
-\]
+	\noi In the typing setting, abstraction $V$ has a linear type:
+	\[
+		m: U; \es; n: \btout{U} S_1 \tinact \proves
+		(z) \bout{n}{m} \binp{z}{X} \newsp{s_2}{\appl{X}{s_2} \Par \bout{\dual{s_2}}{(z) \appl{X}{z} } \inact} \hastype
+		\lhot{S_2}
+	\]
+	because of the free occurence of session channel $n$ in $V$,
+	i.e.\ we cannot apply typing rule $\trule{Prom}$ to the latter
+	judgement.
+%	In the above encoding the abstraction
+%	\[
+%		(z) \bout{n}{m} \binp{z}{X} \newsp{s_2}{\appl{X}{s_2} \Par \bout{\dual{s_2}}{(z) \appl{X}{z} } \inact}
+%	\]
+%	has a linear type due to the free occurrence of the session channel $n$.
 
-The abstraction now has become:
-\[
-	(z,x) \bout{x}{m} \binp{z}{X} \newsp{s_2}{\appl{X}{s_2,x} \Par \bout{\dual{s_2}}{(z,x) \appl{X}{z,x} } \inact}
-\]
-by replacing the free ocurrence of channel $n$ with variable $x$ and
-bind $x$ as an abstraction variable. We can then instantiate
-the above abstraction by passing session $n$ around following the same
-principle as the name passing discipline.
+	\noi But when passed, abstraction $V$ is applied in a shared manner, i.e.\ two
+	copies of the abstraction are instantiated, thus the whole
+	encoding is untypable: 
+	\[
+		\Gamma; X: \lhot{S_2}; \es \not\proves \newsp{s_2}{\appl{X}{s_2} \Par \bout{\dual{s_2}}{(z) \appl{X}{z}} \inact}
+	\]
+%
+	\noi The untypability problem would not exist
+	provided that the abstraction being passed were not linear.
+
+	\noi A typable solution of the above example would be first to
+	define a shared abstraction by replacing the free
+	occurence of session name $n$ with an abstraction variable:
+%
+	\[
+		V' = (z, x) \bout{x}{m} \binp{z}{X} \newsp{s}{\appl{X}{s, x} \Par \bout{\dual{s}}{(z, x) \appl{X}{z, x} } \inact}
+	\]
+%
+	Abstraction $V'$ can be typed using a shared type:
+	\[
+		\tree{
+			m: U_1; \es; \es \proves
+			(z, x) \bout{x}{m} \binp{z}{X} \newsp{s}{\appl{X}{s, x} \Par \bout{\dual{s}}{(z, x) \appl{X}{z, x} } \inact}
+			\hastype \lhot{U_2}
+		}{
+			m: U_1; \es; \es \proves
+			(z, x) \bout{x}{m} \binp{z}{X} \newsp{s}{\appl{X}{s, x} \Par \bout{\dual{s}}{(z, x) \appl{X}{z, x} } \inact}
+			\hastype \shot{U_2}
+		}~~\trule{Prom}
+	\]
+%
+	\noi and the definition and behaviour of the recursive process, becomes:
+%
+	\begin{eqnarray*}
+		P' &\scong&	\newsp{s_1}{\bout{s_1}{V} \inact \Par \binp{\dual{s_1}}{X} \newsp{s_2}{\appl{X}{s_2, n} \Par \bout{\dual{s_2}}{(z,x) \appl{X}{z,x}} \inact}}\\
+		&\red&		\newsp{s_2}{\bout{\dual{s_2}}{V} \inact \Par \bout{n}{m} \binp{s_2}{X} \newsp{s}{\appl{X}{s, n} \Par \bout{\dual{s}}{(z, x) \appl{X}{z, x} } \inact}}\\
+		&\by{\bactout{n}{m}}& \newsp{s_2}{\bout{\dual{s_2}}{V} \inact \Par \binp{s_2}{X} \newsp{s}{\appl{X}{s, n} \Par \bout{\dual{s}}{(z, x) \appl{X}{z, x} } \inact}}\\
+		&\scong_\alpha& P'
+	\end{eqnarray*}
+%
+	\noi Session channel $n$ is passed and applied
+	together with the recursive process.
+%	\[
+%		\begin{array}{l}
+%			\newsp{s_1}{\bout{s_1}{(z,x) \bout{x}{m} \binp{z}{X} \newsp{s_2}{\appl{X}{s_2,x} \Par \bout{\dual{s_2}}{(z,x) \appl{X}{z,x} } \inact} } \inact \Par \binp{\dual{s_1}}{X} \newsp{s_3}{\appl{X}{s_3, n} \Par \bout{\dual{s_3}}{(z,x) \appl{X}{z,x}} \inact } }
+%			\\
+%			\red
+%			\\
+%			\newsp{s_3}{\bout{n}{m} \binp{s_3}{X} \newsp{s_2}{\appl{X}{s_2, n} \Par \bout{\dual{s_2}}{(z, x) \appl{X}{z, x}} \inact} \Par \bout{\dual{s_3}}{(z, x) \bout{x}{m} \binp{z}{X} \newsp{s_2}{\appl{X}{s_2, x} \Par \bout{\dual{s_2}}{(z, x) \appl{X}{z, x} } \inact}  } \inact }
+%		\end{array}
+%	\]
+%	The abstraction now has become:
+%	\[
+%		(z,x) \bout{x}{m} \binp{z}{X} \newsp{s_2}{\appl{X}{s_2,x} \Par \bout{\dual{s_2}}{(z,x) \appl{X}{z,x} } \inact}
+%	\]
+%	by replacing the free ocurrence of channel $n$ with variable $x$ and
+%	bind $x$ as an abstraction variable. We can then instantiate
+%	the above abstraction by passing session $n$ around following the same
+%	principle as the name passing discipline.
+\end{example}
 
 A preliminary tool to encode the $\sesp$ recursion primitives would be to
 provide a mapping from processes to processes with no free names.
