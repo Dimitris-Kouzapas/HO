@@ -1,0 +1,727 @@
+\section{Encoding Semantics}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% SESSPNR TO HO
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\subsection{Properties for $\encod{\cdot}{\cdot}{1}: \sespnr \to \HO$}
+
+\begin{proposition}\rm
+	\label{app:enc_sesspnr_to_ho_typing}
+	Encoding $\encod{\cdot}{\cdot}{1}: \sespnr \to \HO$  is type-preserving (cf. Def.~\ref{def:ep}\,(1)).\rm
+\end{proposition}
+
+\begin{proof}
+	By induction on the structure of \sesp process $P$.
+%
+	\begin{enumerate}[1.]
+		%%%% Output of (linear) channel
+		\item	Case $P = \bout{k}{n}P'$. There are two sub-cases.
+			In the first sub-case $n = k'$ (output of a linear channel). Then  
+			we have the following typing in the source language:
+			{
+			\[
+				\tree{
+					\Gamma; \emptyset; \Sigma \cat k:S  \proves  P' \hastype \Proc \quad \Gamma ; \emptyset ; \{k' : S_1\} \proves  k' \hastype S_1}{
+					\Gamma; \emptyset; \Sigma \cat k':S_1 \cat k:\btout{S_1}S \proves  \bout{k}{k'} P' \hastype \Proc}
+			\]
+			}
+			The corresponding typing in the target language is as follows --- we write $U_1$
+			to stand for $\lhot{\btinp{\lhot{\tmap{S_1}{1}}}\tinact}$:
+%
+			\begin{eqnarray}
+				\label{prop:sesspnr_to_HO_t1}
+				\tree{
+					\tree{
+						\tree{
+							\tree{
+								\tmap{\Gamma}{1} ; \set{X : \lhot{\tmap{S_1}{1}}} ; \emptyset \proves \X  \hastype \lhot{\tmap{S_1}{1}}
+								\qquad 
+								\tmap{\Gamma}{1} ; \emptyset ; \set{k' : \tmap{S_1}{1}} \proves  k' \hastype \tmap{S_1}{1}
+							}{
+								\tmap{\Gamma}{1} ; \set{X : \lhot{\tmap{S_1}{1}}} ; k' : \tmap{S_1}{1} \proves \appl{\X}{k'} \hastype \Proc
+							}
+						}{
+							\tmap{\Gamma}{1} ; \{X : \lhot{\tmap{S_1}{1}}\} ; k' : \tmap{S_1}{1} \cat z:\tinact \proves \appl{\X}{k'} \hastype \Proc
+						}
+					}{
+						\tmap{\Gamma}{1} ; \emptyset; k' : \tmap{S_1}{1} \cat z:\btinp{\lhot{\tmap{S_1}{1}}}\tinact \proves \binp{z}{X} \appl{\X}{k'} \hastype \Proc
+					}
+				}{
+					\tmap{\Gamma}{1} ; \emptyset; k' : \tmap{S_1}{1} \proves \abs{z}{\binp{z}{X} \appl{\X}{k'}} \hastype U_1
+				}
+			\end{eqnarray}
+			\begin{eqnarray*}
+				\tree{
+					\tmap{\Gamma}{1}; \emptyset ; \tmap{\Sigma}{1} \cat k:\tmap{S}{1} \proves \pmap{P'}{1} \hastype \Proc
+					\qquad
+					\tmap{\Gamma}{1} ; \emptyset; k' : \tmap{S_1}{1} \proves \abs{z}{\binp{z}{X} \appl{\X}{k'}} \hastype U_1 \ \ref{prop:sesspnr_to_HO_t1}
+				}{
+					\tmap{\Gamma}{1}; \emptyset; \tmap{\Sigma}{1} \cat k':\tmap{S_1}{1} \cat k:\btout{U_1}\tmap{S}{1} \proves  \bbout{k}{\abs{z}{\binp{z}{X} \appl{\X}{k'}}} \pmap{P'}{1} \hastype \Proc
+				}
+			\end{eqnarray*}
+%
+	
+		%%%% Output of (shared) channel
+			In the second sub-case, we have $n = a$ (output of a shared name). Then  
+			we have the following typing in the source language:
+			{
+			\[
+				\tree{
+					\Gamma \cat a:\chtype{S_1}; \emptyset; \Sigma \cat k:S  \proves
+					P' \hastype \Proc \quad \Gamma \cat a:\chtype{S_1} ; \emptyset ; \emptyset \proves  a \hastype S_1
+				}{
+					\Gamma \cat a:\chtype{S_1} ; \emptyset; \Sigma  \cat k:\bbtout{\chtype{S_1}}S \proves  \bout{k}{a} P' \hastype \Proc
+				}
+			\]
+			}
+			The typing in the target language is derived similarly as in the first sub-case. \\
+	
+		%%%% Input of (linear) channel 
+		\item	Case $P = \binp{k}{x}Q$. We have two sub-cases, depending on the type of $x$.
+			In the first case, $x$ stands for a linear channel.
+			Then we have the following typing in the source language:
+			{
+			\[
+				\tree{
+					\Gamma; \emptyset; \Sigma  \cat k:S \cat x:S_1 \proves   Q \hastype \Proc
+				}{
+					\Gamma; \emptyset; \Sigma  \cat k:\btinp{S_1}S \proves  \binp{k}{x} Q \hastype \Proc
+				}
+			\]
+			 }
+			 The corresponding typing in the target language is as follows --- we write $U_1$ to stand for $\lhot{\btinp{\lhot{\tmap{S_1}{1}}}\tinact}$:
+			{\small
+%
+			\begin{eqnarray}
+				\label{prop:sesspnr_to_HO_t2}
+				\tree{
+					\tmap{\Gamma}{1}; \{X: U_1\};   \emptyset \proves X \hastype U_1
+					\qquad
+					\tmap{\Gamma}{1}; \emptyset;   \cat s: \btinp{\lhot{\tmap{S_1}{1}}}\tinact \ \proves s \, \hastype  \btinp{\lhot{\tmap{S_1}{1}}} \tinact 
+				}{
+					\tmap{\Gamma}{1}; \{X: U_1\};   \cat s: \btinp{\lhot{\tmap{S_1}{1}}}\tinact \ \proves \appl{X}{s}  \hastype \Proc
+				}
+			\end{eqnarray}
+%
+			\begin{eqnarray}
+				\label{prop:sesspnr_to_HO_t3}
+				\tree{
+					\tree{
+						\tmap{\Gamma}{1}; \emptyset;  \emptyset \proves   \inact  \hastype \Proc
+					}{
+						\tmap{\Gamma}{1}; \emptyset;  \dual{s}: \tinact\proves   \inact  \hastype \Proc
+					}
+					\quad 
+					\tree{
+						\tmap{\Gamma}{1}; \emptyset;  \tmap{\Sigma}{1} \cat k:\tmap{S}{1}  x:\tmap{S_1}{1} \proves \pmap{Q}{1}   \hastype \Proc
+					}{
+						\tmap{\Gamma}{1}; \emptyset;  \tmap{\Sigma}{1} \cat k:\tmap{S}{1}   \proves \abs{x} \pmap{Q}{1}   \hastype \lhot{\tmap{S_1}{1}}
+					}
+				}{
+					\tmap{\Gamma}{1}; \emptyset;  \tmap{\Sigma}{1} \cat k:\tmap{S}{1}  \cat \dual{s}: \btout{\lhot{\tmap{S_1}{1}}}\tinact\proves  \bbout{\dual{s}}{\abs{x} \pmap{Q}{1}} \inact  \hastype \Proc
+				}
+			\end{eqnarray}
+%
+			\begin{eqnarray}
+				\label{prop:sesspnr_to_HO_t4}
+		 		\tree{
+					\begin{array}{cl}
+						\tmap{\Gamma}{1}; \{X: U_1\}; \cat s: \btinp{\lhot{\tmap{S_1}{1}}}\tinact \ \proves \appl{X}{s}  \hastype \Proc
+						& \ref{prop:sesspnr_to_HO_t2}
+						\\
+						\tmap{\Gamma}{1}; \emptyset; \tmap{\Sigma}{1} \cat k:\tmap{S}{1} \cat \dual{s}: \btout{\lhot{\tmap{S_1}{1}}}\tinact \proves
+						\bbout{\dual{s}}{\abs{x} \pmap{Q}{1}} \inact  \hastype \Proc
+						& \ref{prop:sesspnr_to_HO_t3}
+					\end{array}
+				}{
+					\tmap{\Gamma}{1}; \{X: U_1\};  \tmap{\Sigma}{1} \cat k:\tmap{S}{1} \cat s: \btinp{\lhot{\tmap{S_1}{1}}}\tinact \cat \dual{s}: \btout{\lhot{\tmap{S_1}{1}}}\tinact\proves \appl{X}{s} \Par \bbout{\dual{s}}{\abs{x} \pmap{Q}{1}} \inact  \hastype \Proc
+			}
+			\end{eqnarray}
+%
+			\begin{eqnarray*}
+			\\
+			 \tree{
+				 \tree{
+					\tmap{\Gamma}{1}; \{X: U_1\};  \tmap{\Sigma}{1} \cat k:\tmap{S}{1} \cat s: \btinp{\lhot{\tmap{S_1}{1}}}\tinact \cat \dual{s}: \btout{\lhot{\tmap{S_1}{1}}}\tinact\proves \appl{X}{s} \Par \bbout{\dual{s}}{\abs{x} \pmap{Q}{1}} \inact  \hastype \Proc \quad \ref{prop:sesspnr_to_HO_t4}
+				}{
+					\tmap{\Gamma}{1}; \{X: U_1\};  \tmap{\Sigma}{1} \cat k:\tmap{S}{1} \proves \newsp{s}{\appl{X}{s} \Par \bbout{\dual{s}}{\abs{x} \pmap{Q}{1}} \inact}  \hastype \Proc
+				}
+			}{
+				\tmap{\Gamma}{1}; \emptyset; \tmap{\Sigma}{1}  \cat k:\btinp{U_1}\tmap{S}{1} \proves  \binp{k}{X} \newsp{s}{\appl{X}{s} \Par \bbout{\dual{s}}{\abs{x} \pmap{Q}{1}} \inact}  \hastype \Proc
+			}
+			\end{eqnarray*}
+			 }
+			 
+			 In the second sub-case, $x$ stands for a shared name. Then we have the following typing in the source language:
+			\[
+			 \tree{
+				\Gamma \cat x:\chtype{S_1} ; \emptyset; \Sigma  \cat k:S \proves   Q \hastype \Proc
+			 }{
+				\Gamma ; \emptyset; \Sigma  \cat k:\btinp{\chtype{S_1}}S \proves  \binp{k}{x} Q \hastype \Proc}
+			 \]
+			 The typing in the target language is derived similarly as in the first sub-case.	
+	\end{enumerate}
+	%
+	\qed
+\end{proof}
+
+
+\begin{proposition}\rm
+	\label{app:enc_sesspnr_to_ho_oc}
+	Encoding $\encod{\cdot}{\cdot}{1}: \sespnr \to \HO$  enjoys operational correspondence (cf. Def.~\ref{def:ep}\,(2)).
+\end{proposition}
+
+\begin{proof}[Sketch]
+	We must show completeness and soundness properties. 
+	For completeness, it suffices to consider source process
+	$P_0 = \bout{k}{k'} P \Par \binp{k}{x} Q$. We have that
+%
+	\[
+		P_0 \red P \Par Q\subst{k'}{x}.
+	\]
+%
+	By the definition of encoding we have:
+	\begin{eqnarray*}
+		\pmap{P_0}{1} & = & \bbout{k}{ \abs{z}{\,\binp{z}{X} \appl{X}{k'}} } \pmap{P}{1} \Par \binp{k}{X} \newsp{s}{\appl{X}{s} \Par \bbout{\dual{s}}{\abs{x} \pmap{Q}{1}} \inact}  \\
+		& \red & \pmap{P}{1} \Par \newsp{s}{\appl{X}{s} \subst{\abs{z}{\,\binp{z}{X} \appl{X}{k'}}}{X} \Par \bbout{\dual{s}}{\abs{x} \pmap{Q}{1}} \inact} \\
+		& = & \pmap{P}{1} \Par \newsp{s}{\,\binp{s}{X} \appl{X}{k'} \Par \bbout{\dual{s}}{\abs{x} \pmap{Q}{1}} \inact} \\
+		& \red & \pmap{P}{1} \Par \appl{X}{k'} \subst{\abs{x} \pmap{Q}{1}}{X} \Par \inact \\
+		& \scong & \pmap{P}{1} \Par \pmap{Q}{1}\subst{k'}{x}  
+	\end{eqnarray*}
+	For soundness, it suffices to notice that the encoding does not add new visible actions:
+	the additional synchronizations induced by the encoding always occur on private (fresh) names.
+	We assume weak bisimilarities, which abstract from internal actions used by the encoding,
+	and so  constructing a relation witnessing behavioral equivalence is easy.
+	\qed
+\end{proof}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% SESSP TO HO
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Properties for $\fencod{\cdot}{\cdot}{2}{f}: \sesp \to \HO$}
+
+\begin{proposition}\rm
+	\label{app:enc_sesp_to_HO_t}
+	Encoding $\fencod{\cdot}{\cdot}{2}{f}: \sesp \to \HO$  
+	is type-preserving (cf. Def.~\ref{def:ep}\,(1)).
+\end{proposition}
+
+\begin{proof}
+	By induction on the structure of \sesp process $P_0$. 
+	\begin{enumerate}[1.]
+		\item	Case $P_0 = \rvar{X}$.
+			Then we have the following typing in the source language:
+%
+			\[
+				\Gamma \cat \rvar{X}: \Sigma ;\, \es ;\, \es \proves \rvar{X} \hastype \Proc
+			\]
+%
+			Then the typing of $\pmapp{\rvar{X}}{2}{f}$ is as follows,
+			assuming $f(\rvar{X}) = \tilde{n}$ and $\tilde{x} = \vmap{\tilde{n}}$.
+			Also, we write $\Sigma_{\tilde{n}}$ 
+			and $\Sigma_{\tilde{x}}$ 
+			to stand for 
+			$n_1: S_1, \ldots, n_m: S_m$ and
+			$x_1: S_1, \ldots, x_m: S_m$, respectively. 
+			Below, we assume that $\Gamma = \Gamma' \cat X:\shot{\tilde{T}}$, 
+			where  
+			%$$\tilde{T} =  \trec{t}{\big(\tilde{S}, \btinp{\vart{t}}\tinact\big)}$$.
+			\[
+				\tilde{T} = \big(\tilde{S}, S^*\big) \qquad \quad
+				S^* = \bbtinp{A}\tinact \qquad \quad
+				A = \trec{t}{(\tilde{S}, \btinp{\vart{t}}\tinact)}
+			\]
+%
+			\begin{eqnarray}
+				\label{prop:sessp_to_HO_t1}
+				\tree{
+					\tree{
+					}{
+						\Gamma ;\, \es ;\, \es \proves X \hastype \shot{\tilde{T}}
+					}
+					\quad 
+					\begin{array}{c}
+						\Gamma ;\, \es ;\, \{n_i: S_i \} \proves n_i \hastype S_i \\
+						\Gamma ;\, \es ;\, \{s: S^* \} \proves s\hastype S^*  \\
+					\end{array}
+				}{
+					\Gamma  ;\, \es ;\, \Sigma_{\tilde{n}}, s:\btinp{\shot{\tilde{T}}}\tinact
+					\proves  
+					\appl{\X}{\tilde{n}, s} \hastype \Proc
+				} 
+			\end{eqnarray}
+%
+			\begin{eqnarray}
+				\label{prop:sessp_to_HO_t2}
+				\tree{
+					\tree{
+						\Gamma  ;\, \es ;\,   \es \proves \inact \hastype \Proc
+					}{
+						\Gamma  ;\, \es ;\,   \dual{s}: \tinact \proves \inact \hastype \Proc
+					} 
+					\quad
+					\tree{
+						\tree{
+							\begin{array}{c}
+								\Gamma ;\, \es ;\, \{x_i: S_i \} \proves x_i \hastype S_i \\
+								\Gamma ;\, \es ;\, \{z: S^*  \} \proves z\hastype S^*  \\
+								\Gamma ;\, \es ;\, \es \proves X \hastype \shot{\tilde{T}}  \\
+							\end{array}
+						}{
+							\Gamma  ;\, \es ;\,   \Sigma_{\tilde{x}}, \, z:S^*
+							\proves 
+							 {\appl{X}{ \tilde{x}, z}} \hastype \Proc
+						}
+					}{
+						\Gamma  ;\, \es ;\,   \es
+						\proves 
+						 \abs{\tilde{x},z}\,\,{\appl{X}{ \tilde{x}, z}} \hastype \shot{\tilde{T}}
+					} 	
+				}{
+					\Gamma  ;\, \es ;\,   \dual{s}: \btout{\shot{\tilde{T}}}\tinact
+					\proves 
+					\bbout{\dual{s}}{ \abs{\tilde{x},z}\,\,{\appl{X}{ \tilde{x}, z}}} \inact \hastype \Proc
+				}
+			\end{eqnarray}
+%
+			\[
+			\tree{
+				\tree{
+					\begin{array}{cc}
+						\Gamma  ;\, \es ;\, \Sigma_{\tilde{n}}, s:\btinp{\shot{\tilde{T}}}\tinact
+						\proves  
+						\appl{\X}{\tilde{n}, s} \hastype \Proc
+						& \ref{prop:sessp_to_HO_t1}
+						\\ 
+						\Gamma  ;\, \es ;\,   \dual{s}: \btout{\shot{\tilde{T}}}\tinact
+						\proves 
+						\bbout{\dual{s}}{ \abs{\tilde{x},z}\,\,{\appl{X}{ \tilde{x}, z}}} \inact \hastype \Proc
+						& \ref{prop:sessp_to_HO_t2}
+					\end{array}
+				}{
+					\Gamma  ;\, \es ;\, \Sigma_{\tilde{n}}, s:\btinp{\shot{\tilde{T}}}\tinact, \, \dual{s}: \btout{\shot{\tilde{T}}}\tinact
+					\proves 
+					\appl{\X}{\tilde{n}, s} \Par \bbout{\dual{s}}{ \abs{\tilde{x},z}\,\,{\appl{X}{ \tilde{x}, z}}} \inact \hastype \Proc
+				}
+			}{
+				\Gamma  ;\, \es ;\, \Sigma_{\tilde{n}}
+				\proves 
+				\newsp{s}{\appl{\X}{\tilde{n}, s} \Par \bbout{\dual{s}}{ \abs{\tilde{x},z}\,\,{\appl{X}{ \tilde{x}, z}}} \inact} \hastype \Proc
+			}
+			\]
+%	
+		\item	Case $P_0 = \recp{X}{P}$. Then we have the following typing in the source language:
+%
+			\[
+				\tree{
+					\Gamma \cat \rvar{X}:\Sigma ;\, \es ;\,  \Sigma \proves P \hastype \Proc
+				}{
+					\Gamma  ;\, \es ;\,  \Sigma \proves \recp{X}{P} \hastype \Proc
+				}
+			\]
+%	
+			Then we have the following typing in the target language ---we write $R$
+			to stand for $\pmapp{P}{2}{{f,\{\rvar{X}\to \tilde{n}\}} }$
+			and $\tilde{x}$ to stand for $\vmap{\ofn{P}}$.
+%
+			\begin{eqnarray}
+				\label{prop:sessp_to_HO_t4}
+				\tree{
+					\tree{
+						\tmap{\Gamma}{2}\cat X:\shot{\tilde{T}};\, \es;\, \tmap{\Sigma_{\tilde{n}}}{2}
+						\proves
+						 R  \hastype \Proc
+					}{
+						\tmap{\Gamma}{2}\cat X:\shot{\tilde{T}};\, \es;\, \tmap{\Sigma_{\tilde{n}}}{2}, s:\tinact 
+						\proves
+						 R  \hastype \Proc
+					}
+				}{
+					\tmap{\Gamma}{2};\, \es;\, \tmap{\Sigma_{\tilde{n}}}{2}, s:\btinp{\shot{\tilde{T}}}\tinact 
+					\proves
+					\binp{s}{\X} R  \hastype \Proc
+				}
+			\end{eqnarray}
+%
+			\begin{eqnarray}
+				\label{prop:sessp_to_HO_t5}
+				\tree{
+					\tree{
+						\tmap{\Gamma}{2};\, \es;\, \es
+						\proves
+						\inact \hastype \Proc
+					}{
+						\tmap{\Gamma}{2};\, \es;\, \dual{s}:\tinact
+						\proves
+						\inact \hastype \Proc
+					} 
+					\quad 
+					\tree{
+						\tree{
+							\tree{
+								\tmap{\Gamma}{2} \cat X: \shot{\tilde{T}};\, \es;\, \tmap{\Sigma_{\tilde{x}}}{2}
+								\proves
+								{{\auxmapp{R}{\mathsf{v}}{\es}}}  \hastype \Proc
+							}{
+								\tmap{\Gamma}{2} \cat X: \shot{\tilde{T}};\, \es;\, \tmap{\Sigma_{\tilde{x}}}{2},z: \tinact
+								\proves
+								{{\auxmapp{R}{\mathsf{v}}{\es}}}  \hastype \Proc
+							}
+						}{
+							\tmap{\Gamma}{2};\, \es;\, \tmap{\Sigma_{\tilde{x}}}{2}, \, z: \btinp{A}\tinact
+							\proves
+							{{\binp{z}{\X} \auxmapp{R}{\mathsf{v}}{\es}}}  \hastype \Proc
+						}
+					}{
+						\tmap{\Gamma}{2};\, \es;\, \es
+						\proves
+						{\abs{\tilde{x}, z } \,{\binp{z}{\X} \auxmapp{R}{\mathsf{v}}{\es}}}  \hastype \shot{\tilde{T}}
+					}
+				}{
+					\tmap{\Gamma}{2};\, \es;\, \dual{s}:\btout{\shot{\tilde{T}}}\tinact
+					\proves
+					\bbout{\dual{s}}{\abs{\tilde{x}, z } \,{\binp{z}{\X} \auxmapp{R}{\mathsf{v}}{\es}}} \inact \hastype \Proc
+				}
+			\end{eqnarray}
+%
+			\[
+			\tree{
+				\tree{
+					\begin{array}{cc}
+						\tmap{\Gamma}{2};\, \es;\, \tmap{\Sigma_{\tilde{n}}}{2}, s:\btinp{\shot{\tilde{T}}}\tinact 
+						\proves
+						\binp{s}{\X} R  \hastype \Proc
+						& \ref{prop:sessp_to_HO_t4}
+						\\
+						\tmap{\Gamma}{2};\, \es;\, \dual{s}:\btout{\shot{\tilde{T}}}\tinact
+						\proves
+						\bbout{\dual{s}}{\abs{\tilde{x}, z } \,{\binp{z}{\X} \auxmapp{R}{\mathsf{v}}{\es}}} \inact \hastype \Proc
+						& \ref{prop:sessp_to_HO_t5}
+					\end{array}
+				}{
+					\tmap{\Gamma}{2};\, \es;\, \tmap{\Sigma_{\tilde{n}}}{2}, s:\btinp{\shot{\tilde{T}}}\tinact , \dual{s}:\btout{\shot{\tilde{T}}}\tinact
+					\proves
+					\binp{s}{\X} R \Par \bbout{\dual{s}}{\abs{\tilde{x}, z } \,{\binp{z}{\X} \auxmapp{R}{\mathsf{v}}{\es}}} \inact \hastype \Proc
+				}
+			}{
+				\tmap{\Gamma}{2};\, \es;\, \tmap{\Sigma_{\tilde{n}}}{2} 
+				\proves
+				\newsp{s}{\binp{s}{\X} R \Par \bbout{\dual{s}}{\abs{\tilde{x}, z } \,{\binp{z}{\X} \auxmapp{R}{\mathsf{v}}{\es}}} \inact} \hastype \Proc
+			}
+			\]
+	\end{enumerate}
+	\qed
+\end{proof}
+
+\begin{proposition}\rm
+	\label{app:enc_sesp_to_HO_oc}
+	Encoding $\fencod{\cdot}{\cdot}{2}{f}: \sesp \to \HO$ 
+	enjoys operational correspondence (cf. Def.~\ref{def:ep}\,(2)).
+\end{proposition}
+
+\begin{proof}[Sketch]
+\dk{TBD.}
+\end{proof}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% HO TO SESSP
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\subsection{Properties for $\encod{\cdot}{\cdot}{3}: \HO \to \sesp$}
+
+\begin{proposition}\rm
+	\label{app:enc_HO_to_sessp_t}
+	Encoding $\encod{\cdot}{\cdot}{3}: \HO \to \sesp$  is type-preserving (cf. Def.~\ref{def:ep}\,(1)).
+\end{proposition}
+
+\begin{proof}
+	By induction on the structure of \HO process $P$. 
+	\begin{enumerate}[1.]
+
+	%%%% Output of (linear) channel
+		\item	Case $P = \bbout{k}{\abs{x}Q}P$. Then we have two possibilities, depending on the typing for $\abs{x}Q$.
+			The first case concerns a linear typing, and  
+			we have the following typing in the source language:
+%
+			\[
+				\tree{
+					\Gamma; \emptyset; \Sigma_1 \cat k:S  \proves  P \hastype \Proc
+					\quad
+					\tree{
+						\Gamma ; \emptyset ; \Sigma_2\cat x:S_1 \proves  Q \hastype \Proc
+					}{
+						\Gamma ; \emptyset ; \Sigma_2 \proves  \abs{x}Q \hastype \lhot{S_1}
+					}
+				}{
+					\Gamma; \emptyset; \Sigma_1 \cat \Sigma_2 \cat k:\btout{\lhot{S_1}}S \proves  \bbout{k}{\abs{x}Q} P \hastype \Proc
+				}
+			\]
+%
+			The corresponding typing in the target language is as follows --- we write $U_1$ to stand for 
+			$\chtype{\btinp{\tmap{S_1}{3}}\tinact}$.
+			We also write 
+%
+			\begin{eqnarray*}
+				\tmap{\Gamma_1}{3} & = & \tmap{\Gamma}{3} \cup a:\chtype{\btinp{\tmap{S_1}{3}}\tinact} \\
+				\tmap{\Gamma_2}{3} & = & \tmap{\Gamma_1}{3} \cup \rvar{X}:\tmap{\Sigma_2}{3}
+			\end{eqnarray*}
+%
+			Also $(*)$ stands for $\tmap{\Gamma_1}{3}; \es ; \es \proves a \hastype U_1$; 
+			$(**)$ stands for $\tmap{\Gamma_2}{3}; \es ; \es \proves a \hastype U_1$; and
+			$(***)$ stands for $\tmap{\Gamma_2}{3}; \es ; \es \proves \rvar{X} \hastype \Proc$.
+			\begin{eqnarray}
+				\label{prop:HO_to_sessp_t1}
+				\tree{
+					\tree{
+						\tree{
+						}{
+							(***)
+						} 
+						\quad 
+						\tree{
+							\tree{
+								\tree{
+									\tree{
+									}{
+										\tmap{\Gamma_2}{3}; \es ; \tmap{\Sigma_2}{3},  x:\tmap{S_1}{3}
+										\proves 
+										\pmap{Q}{3} \hastype \Proc
+									}
+								}{
+									\tmap{\Gamma_2}{3}; \es ; \tmap{\Sigma_2}{3}, y:\tinact, x:\tmap{S_1}{3}
+									\proves 
+									\pmap{Q}{3} \hastype \Proc
+								}
+							}{
+								\tmap{\Gamma_2}{3}; \es ; \tmap{\Sigma_2}{3}, y: \btinp{\tmap{S_1}{3}}\tinact
+								\proves 
+								\binp{y}{x}\pmap{Q}{3} \hastype \Proc
+							} 
+							\quad 
+							\tree{
+							}{
+								(**)
+							}
+						}{
+							\tmap{\Gamma_2}{3}; \es ; \tmap{\Sigma_2}{3} 
+							\proves 
+							\binp{a}{y}\binp{y}{x}\pmap{Q}{3} \hastype \Proc
+						} 
+					}{
+						\tmap{\Gamma_2}{3}; \es ; \tmap{\Sigma_2}{3} 
+						\proves 
+						\binp{a}{y}\binp{y}{x}\pmap{Q}{3} \Par \rvar{X} \hastype \Proc
+					}
+				}{
+					\tmap{\Gamma_1}{3}; \es ; \tmap{\Sigma_2}{3} 
+					\proves 
+					\recp{X}{(\binp{a}{y}\binp{y}{x}\pmap{Q}{3} \Par \rvar{X})} \hastype \Proc
+				}
+			\end{eqnarray}
+%
+			\begin{eqnarray}
+				\label{prop:HO_to_sessp_t2}
+				\tree{
+					\begin{array}{c}
+						\tmap{\Gamma_1}{3}; \es ; \tmap{\Sigma_1}{3}, k:\tmap{S}{3} 
+						\proves 
+						\pmap{P}{3}  \hastype \Proc
+						\\
+						\tmap{\Gamma_1}{3}; \es ; \tmap{\Sigma_2}{3} 
+						\proves 
+						\recp{X}{(\binp{a}{y}\binp{y}{x}\pmap{Q}{3} \Par \rvar{X})} \hastype \Proc
+						\quad \ref{prop:HO_to_sessp_t1}
+					\end{array}
+				}{
+					\tmap{\Gamma_1}{3}; \es ; \tmap{\Sigma_1, \Sigma_2}{3}, k:\tmap{S}{3} 
+					\proves 
+					\pmap{P}{3} \Par 
+					\recp{X}{(\binp{a}{y}\binp{y}{x}\pmap{Q}{3} \Par \rvar{X})} \hastype \Proc
+				}
+			\end{eqnarray}
+%
+			\[
+				\tree{
+					\tree{
+						\begin{array}{c}
+							\tmap{\Gamma_1}{3}; \es ; \es \proves a \hastype U_1
+							\\
+							\tmap{\Gamma_1}{3}; \es ; \tmap{\Sigma_1, \Sigma_2}{3}, k:\tmap{S}{3} 
+							\proves 
+							\pmap{P}{3} \Par 
+							\recp{X}{(\binp{a}{y}\binp{y}{x}\pmap{Q}{3} \Par \rvar{X})} \hastype \Proc
+							\quad \ref{prop:HO_to_sessp_t2}
+						\end{array}
+					}{
+						\tmap{\Gamma_1}{3}; \es ; \tmap{\Sigma_1, \Sigma_2}{3}, k:\bbtout{U_1}\tmap{S}{3} 
+						\proves 
+						\bout{k}{a}(\pmap{P}{3} \Par 
+						\recp{X}{(\binp{a}{y}\binp{y}{x}\pmap{Q}{3} \Par \rvar{X}))} \hastype \Proc
+					}
+				}{
+					\tmap{\Gamma}{3}; \es ; \tmap{\Sigma_1, \Sigma_2}{3}, k:\bbtout{U_1}\tmap{S}{3} 
+					\proves 
+					\newsp{a}{\bout{k}{a}( 
+					\pmap{P}{3} \Par 
+					\recp{X}{(\binp{a}{y}\binp{y}{x}\pmap{Q}{3} \Par \rvar{X}))}} \hastype \Proc
+				}
+			\]
+%
+			In the second case, $\abs{x}Q$ has a shared type. We have the following typing in the source language:
+%
+			\[
+				\tree{
+					\Gamma; \emptyset; \Sigma \cat k:S  \proves  P \hastype \Proc
+					\quad 
+					\tree{
+						\tree{
+							\Gamma ; \emptyset ; \cat x:S_1 \proves  Q \hastype \Proc
+						}{
+							\Gamma ; \emptyset ; \es \proves  \abs{x}Q \hastype \lhot{S_1}
+						}
+					}{
+						\Gamma ; \emptyset ; \es \proves  \abs{x}Q \hastype \shot{S_1}
+					}
+				}{
+					\Gamma; \emptyset; \Sigma  \cat k:\btout{\shot{S_1}}S \proves  \bbout{k}{\abs{x}Q} P \hastype \Proc
+				}
+			\]
+%
+			The corresponding typing in the target language can be derived similarly as in the first case.
+	
+		\item	Case $P = \binp{k}{X} P$. Then there are two cases, depending on the type of $X$. 
+			In the first case,
+			we have the following typing in the source language:
+%
+			\[
+				\tree{
+					\Gamma \cat X : \shot{S_1};\, \emptyset ;\, \Sigma \cat k:S \proves  P \hastype \Proc
+				}{
+					\Gamma;\, \emptyset;\, \Sigma\cat k:\btinp{\shot{S_1}}S \proves  \binp{k}{X} P \hastype \Proc
+				}
+			\]
+			The corresponding typing in the target language is as follows:
+			% --- we write $\Gamma_0$ to stand for $\Gamma \setminus \{X: \lhot{S_1}\}$.
+%
+			\[
+				\tree{
+					\tmap{\Gamma}{3} \cat x : \chtype{\btinp{\tmap{S_1}{3}}\tinact};\, \emptyset ;\, \Sigma \cat k:\tmap{S}{3} \proves  \tmap{P}{3} \hastype \Proc
+				}{
+					\tmap{\Gamma}{3};\, \emptyset; \, \tmap{\Sigma}{3}\cat k:\bbtinp{\chtype{\btinp{\tmap{S_1}{3}}\tinact}}\tmap{S}{3} \proves
+					\binp{k}{x} \pmap{P}{3} \hastype \Proc
+				}
+			\]
+%
+			In the second case,  
+			we have the following typing in the source language:
+%
+			\[
+				\tree{
+					\Gamma;\, \{X : \lhot{S_1}\};\, \emptyset ;\, \Sigma \cat k:S \proves  P \hastype \Proc
+				}{
+					\Gamma;\, \emptyset;\, \Sigma\cat k:\btinp{\lhot{S_1}}S \proves  \binp{k}{X} P \hastype \Proc
+				}
+			\]
+%
+			The corresponding typing in the target language is as follows:
+			% --- we write $\Gamma_0$ to stand for $\Gamma \setminus \{X: \lhot{S_1}\}$.
+%
+			\[
+				\tree{
+					\tmap{\Gamma}{3} \cat x : \chtype{\btinp{\tmap{S_1}{3}}\tinact};\, \emptyset ;\, \Sigma \cat k:\tmap{S}{3} \proves  \tmap{P}{3} \hastype \Proc
+				}{
+					\tmap{\Gamma}{3};\, \emptyset;\, \tmap{\Sigma}{3}\cat k:\bbtinp{\chtype{\btinp{\tmap{S_1}{3}}\tinact}}\tmap{S}{3} \proves
+					\binp{k}{x} \pmap{P}{3} \hastype \Proc
+				}
+			\]
+%
+		\item	Case $P = \appl{X}{k}$. Also here we have two cases, depending on whether $X$ has linear or shared type.
+			In the first case, $X$ is linear and
+			we have the following typing in the source language:
+%
+			\[
+				\tree{
+					\Gamma ;\, \{X : \lhot{S_1}\};\,  \es \proves  X \hastype \lhot{S_1} \quad \Gamma; \es ; \{k:S_1\} \proves k \hastype S_1
+				}{
+					\Gamma;\, \{X : \lhot{S_1}\};\, k:S_1 \proves  \appl{X}{k} \hastype \Proc}
+			\]
+			The corresponding typing in the target language is as follows  --- below we write
+			$\tmap{\Gamma_1}{3}$ to stand for $\tmap{\Gamma}{3} \cat x:\chtype{\btout{\tmap{S_1}{3}}\tinact}$:
+%
+			\begin{eqnarray}
+				\label{prop:HO_to_sessp_t11}
+				\tree{
+					\tree{
+						\tmap{\Gamma_1}{3};\, \es;\,  \es \proves  \inact \hastype \Proc
+					}{
+						\tmap{\Gamma_1}{3};\, \es;\,  \dual{s}:\tinact \proves  \inact \hastype \Proc
+					}
+					\quad 
+						\tmap{\Gamma_1}{3};\, \es;\, \{k:\tmap{S_1}{3}\} \proves  k \hastype \tmap{S_1}{3} 
+				}{
+					\tmap{\Gamma_1}{3};\, \es;\,\, k:\tmap{S_1}{3},\,  \dual{s}:\btout{\tmap{S_1}{3}}\tinact \proves  \bout{\dual{s}}{k}\inact \hastype \Proc
+				}
+			\end{eqnarray}
+%
+			\[
+				\tree{
+					\tree{
+						\begin{array}{c}
+							\tmap{\Gamma_1}{3};\, \es;\,\, k:\tmap{S_1}{3},\,  \dual{s}:\btout{\tmap{S_1}{3}}\tinact \proves
+							\bout{\dual{s}}{k}\inact \hastype \Proc
+							\quad \ref{prop:HO_to_sessp_t11}
+							\\
+							\tmap{\Gamma_1}{3} ;\, \es ;\, \es \proves x \hastype \chtype{\btout{\tmap{S_1}{3}}\tinact}
+						\end{array}
+					}{
+						\tmap{\Gamma_1}{3};\, \es;\, k:\tmap{S_1}{3}, s:\btinp{\tmap{S_1}{3}}\tinact , \dual{s}:\btout{\tmap{S_1}{3}}\tinact
+						\proves
+						\bout{x}{s}\bout{\dual{s}}{k}\inact \hastype \Proc
+					}
+				}{
+					\tmap{\Gamma_1}{3};\, \es;\, k:\tmap{S_1}{3} \proves  \news{s}{(\bout{x}{s}\bout{\dual{s}}{k}\inact)} \hastype \Proc
+				}
+	\]
+%
+			In the second case, $X$ is shared, and
+			we have the following typing in the source language:
+%
+			\[
+				\tree{
+					\Gamma \cat  X : \lhot{S_1} ;\,  \es ;\,  \es \proves  X \hastype \shot{S_1} \quad \Gamma; \es ; k:S_1 \proves k \hastype S_1
+				}{
+					\Gamma \cat X : \shot{S_1};\, \es ;\, k:S_1 \proves  \appl{X}{k} \hastype \Proc
+				}
+			\]
+%
+			The associated typing in the target language is obtained similarly as in the first case. \qed
+	\end{enumerate}
+\end{proof}
+
+
+\begin{proposition}\rm
+	\label{app:enc_HO_to_sessp_oc}
+	Encoding $\encod{\cdot}{\cdot}{3}: \HO \to \sesp$ 
+	enjoys operational correspondence (cf. Def.~\ref{def:ep}\,(2)).
+\end{proposition}
+
+\begin{proof}[Sketch]
+For completeness, we 
+consider the \HO process $P = {\bbout{k}{\abs{x} Q} P_1} \Par \binp{k}{X} P_2$. We have that
+\[
+P \red P_1 \Par P_2 \subst{\abs{x}Q}{X}
+\]
+In the target language, this reduction is mimicked as follows:
+\begin{eqnarray*}
+\pmap{P}{2} & = & \newsp{a}{\bout{k}{a} (\pmap{P_1}{3} \Par \repl{} \binp{a}{y} \binp{y}{x} \pmap{Q}{3})\,} 
+                  \Par \binp{k}{x} \pmap{P_2}{3} \\
+            & \red & \newsp{a}{\pmap{P_1}{3} \Par \repl{} \binp{a}{y} \binp{y}{x} \pmap{Q}{3} 
+                  \Par  \pmap{P_2}{3}\subst{a}{x}}
+\end{eqnarray*}
+\qed
+\end{proof}
+
