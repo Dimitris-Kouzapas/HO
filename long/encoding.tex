@@ -106,7 +106,7 @@ We show that the composition of encodings is closed on the above properties.
 \end{proof}
 
 \section{Positive Expressiveness Results}
-
+\begin{comment}
 \subsection{Languages Under Consideration}
 We consider the following variants of \HOp:
 \begin{enumerate}[-]
@@ -127,32 +127,33 @@ for mappings of processes and types, respectively.
 Since we always consider variants and fragments of \HOp, the 
 reduction semantics $\red$, the typed behavioral equivalence $\wb$,
 and the type system $\proves$ are the same for all languages.
+\end{comment}
 
-\subsection{Encoding \sespnr  into \HO}
+\subsection{Encoding $\sessp^{-\mu}$  into \HO}
 
 The semantics of the $\HO$ are powerful enough to
-express the semantics of the standard $\sesp$ calculus.
+express the semantics of the standard $\sessp$ calculus.
 
-The name passing semantics of $\sesp$ have a rather straightforward
+The name passing semantics of $\sessp$ have a rather straightforward
 encoding from to $\HO$.
 On the other hand to achieve the encoding of the recursion semantic
-of $\sesp$, we need to extend
-to the polyadic version of $\sesp$ as an intermediate step in order
+of $\sessp$, we need to extend
+to the polyadic version of $\sessp$ as an intermediate step in order
 to give a sound encoding of the recursion semantics to $\HO$.
 
 We first encode the name passing semantics.
 %Below, we use $n$ to stand for either a linear channel $k'$ or a shared name $a$.
 
-\begin{definition}[\sespnr  into \HO]\rm
-	Define $\encod{\cdot}{\cdot}{1}: \sespnr \to \HO$  as follows:
+\begin{definition}[$\sessp^{-\mu}$  into \HO]\rm
+	Define $\encod{\cdot}{\cdot}{1}: \sessp^{-\mu} \to \HO$  as follows:
 	\[
 	\begin{array}{rcl}
-		\pmap{\bout{k}{k'} P}{1}		&\defeq&	\bbout{k}{ \abs{z}{\,\binp{z}{X} \appl{X}{k'}} } \pmap{P}{1} \\
-		\pmap{\binp{k}{x} Q}{1}			&\defeq&	\binp{k}{X} \newsp{s}{\appl{X}{s} \Par \bbout{\dual{s}}{\abs{x} \pmap{Q}{1}} \inact} \\
-		\tmap{\btout{S_1} {S} }{1}		&\defeq&	\bbtout{\lhot{\btinp{\lhot{\tmap{S_1}{1}}}\tinact}} \tmap{S}{1}  \\
-		\tmap{\btinp{S_1} S }{1}		&\defeq&	\bbtinp{\lhot{\btinp{\lhot{\tmap{S_1}{1}}}\tinact}} \tmap{S}{1} \\
-		\tmap{\bbtout{\chtype{S_1}}{S}}{1}	&\defeq&	\bbtout{\shot{\btinp{\shot{\chtype{\tmap{S_1}{1}}}}\tinact}} \tmap{S}{1}  \\
-		\tmap{\bbtinp{\chtype{S_1}}{S}}{1}	&\defeq&	\bbtinp{\shot{\btinp{\shot{\chtype{\tmap{S_1}{1}}}}\tinact}} \tmap{S}{1} 
+		\pmap{\bout{k}{k'} P}{1}		&\defeq&	\bout{k}{ \abs{z}{\,\binp{z}{X} \appl{X}{k'}} } \pmap{P}{1} \\
+		\pmap{\binp{k}{x} Q}{1}			&\defeq&	\binp{k}{X} \newsp{s}{\appl{X}{s} \Par \bbout{\dual{s}}{\abs{x}{\pmap{Q}{1}}} \inact} \\
+		\tmap{\btout{S_1} {S} }{1}		&\defeq&	\btout{\lhot{\btinp{\lhot{\tmap{S_1}{1}}}\tinact}} \tmap{S}{1}  \\
+		\tmap{\btinp{S_1} S }{1}		&\defeq&	\btinp{\lhot{\btinp{\lhot{\tmap{S_1}{1}}}\tinact}} \tmap{S}{1} \\
+		\tmap{\bbtout{\chtype{S_1}}{S}}{1}	&\defeq&	\btout{\shot{\btinp{\shot{\chtype{\tmap{S_1}{1}}}}\tinact}} \tmap{S}{1}  \\
+		\tmap{\bbtinp{\chtype{S_1}}{S}}{1}	&\defeq&	\btinp{\shot{\btinp{\shot{\chtype{\tmap{S_1}{1}}}}\tinact}} \tmap{S}{1} 
 	\end{array}
 	\]
 	where $\pmap{\cdot}{1}$ (resp. $\tmap{\cdot}{1}$) is an 
@@ -169,7 +170,7 @@ the dual endpoint $\dual{s}$ to send the continuation $P$ as the abstraction
 $\abs{x}{P}$. Name substitution is then achieved as application.
 
 \begin{proposition}\rm
-	Encoding $\encod{\cdot}{\cdot}{1}: \sespnr \to \HO$  is type-preserving (cf. Def.~\ref{def:ep}\,(1)).\rm
+	Encoding $\encod{\cdot}{\cdot}{1}: \sessp^{-\mu} \to \HO$  is type-preserving (cf. Def.~\ref{def:ep}\,(1)).\rm
 \end{proposition}
 
 \begin{proof}
@@ -178,7 +179,7 @@ $\abs{x}{P}$. Name substitution is then achieved as application.
 \end{proof}
 
 \begin{proposition}\rm
-	Encoding $\encod{\cdot}{\cdot}{1}: \sespnr \to \HO$  enjoys operational correspondence (cf. Def.~\ref{def:ep}\,(2)).
+	Encoding $\encod{\cdot}{\cdot}{1}: \sessp^{-\mu} \to \HO$  enjoys operational correspondence (cf. Def.~\ref{def:ep}\,(2)).
 \end{proposition}
 
 
@@ -405,7 +406,7 @@ The polyadic mapping, as presented here, is sound only on session names.
 
 \subsection{Encoding Recursion into Abstraction Passing}
 
-Encoding the constructs for recursion present in $\sesp$ as process-passing
+Encoding the constructs for recursion present in $\sessp$ as process-passing
 communication requires to follow the fundamental
 principle of copying the process that needs to exhibit recursive behaviour.
 The primitive recursor operation creates copies of a process and uses them
@@ -459,23 +460,23 @@ We use an example to demostrate our basic intuitions:
 	\noi as
 %
 	\[
-		V \scong (z) \bout{n}{m} \binp{z}{X} \newsp{s}{\appl{X}{s} \Par \bout{\dual{s}}{(z) \appl{X}{z}} \inact}
+		V \scong (z) \bout{n}{m} \binp{z}{X} \newsp{s}{\appl{X}{s} \Par \bout{\dual{s}}{\abs{z}{\appl{X}{z}}} \inact}
 	\]
 %
 	So the entire process can be written as:
 	\[
-		P \scong \newsp{s_1}{\bbout{s_1}{V} \inact \Par \binp{\dual{s_1}}{X} \newsp{s_2}{\appl{X}{s_2} \Par \bout{\dual{s_2}}{(z) \appl{X}{z}} \inact}}	
+		P \scong \newsp{s_1}{\bout{s_1}{V} \inact \Par \binp{\dual{s_1}}{X} \newsp{s_2}{\appl{X}{s_2} \Par \bout{\dual{s_2}}{\abs{z}{\appl{X}{z}}} \inact}}	
 	\]
 %
 	\noi where abstraction $V$ is copied and passed to itself
 	infinitely many times:
 	\[
 		\begin{array}{rcl}
-			P &\scong& \newsp{s_1}{\bbout{s_1}{V} \inact \Par \binp{\dual{s_1}}{X} \newsp{s_2}{\appl{X}{s_2} \Par \bout{\dual{s_2}}{(z) \appl{X}{z}} \inact}} \\
+			P &\scong& \newsp{s_1}{\bout{s_1}{V} \inact \Par \binp{\dual{s_1}}{X} \newsp{s_2}{\appl{X}{s_2} \Par \bout{\dual{s_2}}{\abs{z}{\appl{X}{z}}} \inact}} \\
 			&\red&
-			\newsp{s_2}{\bout{\dual{s_2}}{V} \inact \Par \bout{n}{m} \binp{s_2}{X} \newsp{s}{\appl{X}{s} \Par \bout{\dual{s}}{(z) \appl{X}{z}} \inact}}\\
+			\newsp{s_2}{\bout{\dual{s_2}}{V} \inact \Par \bout{n}{m} \binp{s_2}{X} \newsp{s}{\appl{X}{s} \Par \bout{\dual{s}}{{z}{\appl{X}{z}} \inact}}}\\
 			&\by{\bactout{n}{m}}&
-			\newsp{s_2}{\bout{\dual{s_2}}{V} \inact \Par \binp{s_2}{X} \newsp{s}{\appl{X}{s} \Par \bout{\dual{s}}{(z) \appl{X}{z}} \inact}}\\
+			\newsp{s_2}{\bout{\dual{s_2}}{V} \inact \Par \binp{s_2}{X} \newsp{s}{\appl{X}{s} \Par \bout{\dual{s}}{\abs{z}{\appl{X}{z}} \inact}}}\\
 			&\scong_\alpha&
 			P
 		\end{array}
@@ -485,7 +486,7 @@ We use an example to demostrate our basic intuitions:
 	\noi In the typing setting, abstraction $V$ has a linear type:
 	\[
 		m: U; \es; n: \btout{U} S_1 \tinact \proves
-		(z) \bout{n}{m} \binp{z}{X} \newsp{s_2}{\appl{X}{s_2} \Par \bout{\dual{s_2}}{(z) \appl{X}{z} } \inact} \hastype
+		(z) \bout{n}{m} \binp{z}{X} \newsp{s_2}{\appl{X}{s_2} \Par \bout{\dual{s_2}}{\abs{z{\appl{X}{z}} } \inact} \hastype
 		\lhot{S_2}
 	\]
 	because of the free occurence of session channel $n$ in $V$,
@@ -496,7 +497,7 @@ We use an example to demostrate our basic intuitions:
 	copies of the abstraction are instantiated, thus the whole
 	encoding is untypable: 
 	\[
-		\Gamma; X: \lhot{S_2}; \es \not\proves \newsp{s_2}{\appl{X}{s_2} \Par \bout{\dual{s_2}}{(z) \appl{X}{z}} \inact}
+		\Gamma; X: \lhot{S_2}; \es \not\proves \newsp{s_2}{\appl{X}{s_2} \Par \bout{\dual{s_2}}{\abs{z} \appl{X}{z}}} \inact}
 	\]
 %
 	\noi The untypability problem would not exist
@@ -507,18 +508,18 @@ We use an example to demostrate our basic intuitions:
 	occurence of session name $n$ with an abstraction variable:
 %
 	\[
-		V' = (z, x) \bout{x}{m} \binp{z}{X} \newsp{s}{\appl{X}{s, x} \Par \bout{\dual{s}}{(z, x) \appl{X}{z, x} } \inact}
+		V' = (z, x) \bout{x}{m} \binp{z}{X} \newsp{s}{\appl{X}{s, x} \Par \bout{\dual{s}}{\abs{z, x}{\appl{X}{z, x}} } \inact}
 	\]
 %
 	Abstraction $V'$ can be typed using a shared type:
 	\[
 		\tree{
 			m: U_1; \es; \es \proves
-			(z, x) \bout{x}{m} \binp{z}{X} \newsp{s}{\appl{X}{s, x} \Par \bout{\dual{s}}{(z, x) \appl{X}{z, x} } \inact}
+			(z, x) \bout{x}{m} \binp{z}{X} \newsp{s}{\appl{X}{s, x} \Par \bout{\dual{s}}{\abs{z, x}{\appl{X}{z, x}} } \inact}
 			\hastype \lhot{U_2}
 		}{
 			m: U_1; \es; \es \proves
-			(z, x) \bout{x}{m} \binp{z}{X} \newsp{s}{\appl{X}{s, x} \Par \bout{\dual{s}}{(z, x) \appl{X}{z, x} } \inact}
+			(z, x) \bout{x}{m} \binp{z}{X} \newsp{s}{\appl{X}{s, x} \Par \bout{\dual{s}}{\abs{z, x}{\appl{X}{z, x}} } \inact}
 			\hastype \shot{U_2}
 		}~~\trule{Prom}
 	\]
@@ -526,9 +527,9 @@ We use an example to demostrate our basic intuitions:
 	\noi and the definition and behaviour of the recursive process, becomes:
 %
 	\begin{eqnarray*}
-		P' &\scong&	\newsp{s_1}{\bout{s_1}{V} \inact \Par \binp{\dual{s_1}}{X} \newsp{s_2}{\appl{X}{s_2, n} \Par \bout{\dual{s_2}}{(z,x) \appl{X}{z,x}} \inact}}\\
-		&\red&		\newsp{s_2}{\bout{\dual{s_2}}{V} \inact \Par \bout{n}{m} \binp{s_2}{X} \newsp{s}{\appl{X}{s, n} \Par \bout{\dual{s}}{(z, x) \appl{X}{z, x} } \inact}}\\
-		&\by{\bactout{n}{m}}& \newsp{s_2}{\bout{\dual{s_2}}{V} \inact \Par \binp{s_2}{X} \newsp{s}{\appl{X}{s, n} \Par \bout{\dual{s}}{(z, x) \appl{X}{z, x} } \inact}}\\
+		P' &\scong&	\newsp{s_1}{\bout{s_1}{V} \inact \Par \binp{\dual{s_1}}{X} \newsp{s_2}{\appl{X}{s_2, n} \Par \bout{\dual{s_2}}{\abs{z,x}{\appl{X}{z,x}}} \inact}}\\
+		&\red&		\newsp{s_2}{\bout{\dual{s_2}}{V} \inact \Par \bout{n}{m} \binp{s_2}{X} \newsp{s}{\appl{X}{s, n} \Par \bout{\dual{s}}{\abs{z, x}{\appl{X}{z, x}}} \inact}}\\
+		&\by{\bactout{n}{m}}& \newsp{s_2}{\bout{\dual{s_2}}{V} \inact \Par \binp{s_2}{X} \newsp{s}{\appl{X}{s, n} \Par \bout{\dual{s}}{\abs{z, x}{\appl{X}{z, x}}} \inact}}\\
 		&\scong_\alpha& P'
 	\end{eqnarray*}
 %
@@ -536,7 +537,7 @@ We use an example to demostrate our basic intuitions:
 	together with the recursive process.
 \end{example}
 
-A preliminary tool to encode the $\sesp$ recursion primitives would be to
+A preliminary tool to encode the $\sessp$ recursion primitives would be to
 provide a mapping from processes to processes with no free names.
 We require some auxiliary definitions.
 %
@@ -562,11 +563,11 @@ with free session names into abstractions:
 \[
 	\begin{array}{rcl}
 		\auxmapp{\news{n} P}{\sigma}{\mathsf{v}} &\bnfis& \news{n} \auxmapp{P}{\mathsf{v}}{{\sigma \cat n}}\\
-		\auxmapp{\bout{n}{\abs{x} Q} P}{\mathsf{v}}{\sigma} &\bnfis&
+		\auxmapp{\bout{n}{\abs{x}{Q}} P}{\mathsf{v}}{\sigma} &\bnfis&
 		\left\{
 		\begin{array}{rl}
-			\bbout{x_n}{\abs{x,\vmap{ \ofn{P}}} \auxmapp{Q}{\mathsf{v}}{\sigma}} \auxmapp{P}{\mathsf{v}}{\sigma} & n \notin \sigma\\
-			\bbout{n}{\abs{x,\vmap{\ofn{P}}} \auxmapp{Q}{\mathsf{v}}{\sigma}} \auxmapp{P}{\mathsf{v}}{\sigma} & n \in \sigma
+			\bout{x_n}{\abs{x,\vmap{\ofn{P}}}{\auxmapp{Q}{\mathsf{v}}{\sigma}}} \auxmapp{P}{\mathsf{v}}{\sigma} & n \notin \sigma\\
+			\bout{n}{\abs{x,\vmap{\ofn{P}}}{\auxmapp{Q}{\mathsf{v}}{\sigma}}} \auxmapp{P}{\mathsf{v}}{\sigma} & n \in \sigma
 		\end{array}
 		\right.
 		\\
@@ -594,7 +595,7 @@ with free session names into abstractions:
 		\end{array}
 		\right.
 		\\
-		\auxmapp{\bout{n}{m}P}{\mathsf{v}}{\sigma} &\bnfis&
+		\auxmapp{\bout{n}{m} P}{\mathsf{v}}{\sigma} &\bnfis&
 		\left\{
 		\begin{array}{rl}
 		    \bout{n}{m}\auxmapp{P}{\mathsf{v}}{\sigma} & n, m \in \sigma \\
@@ -646,26 +647,27 @@ using abstraction and application with an appropriate sequence of session names:
 	\qed
 \end{proof}
 
-We are now ready to define the encoding of $\sesp$
+We are now ready to define the encoding of $\sessp$
 (including constructs for recursion) into strict process-passing.
 We stress that we use polyadicity in abstraction and application only
 as syntactic sugar, to simplify presentation.
 For the sake of completeness, we give again the encodings for 
 finite processes and types, as
-formalized by $\encod{\cdot}{\cdot}{1}: \sespnr \to \HO$.
+formalized by $\encod{\cdot}{\cdot}{1}: \sessp^{-\mu} \to \HO$.
 
-\begin{definition}[From $\sesp$ to $\HO$]\rm
+\begin{definition}[From $\sessp$ to $\HO$]\rm
 	Let $f$ be a function from recursion variables to sequences of name variables.
-	Define $\fencod{\cdot}{\cdot}{2}{f}: \sesp \to \HO$ as
+	Define $\fencod{\cdot}{\cdot}{2}{f}: \sessp \to \HO$ as
 %
 \[
 	\begin{array}{rcll}
 %	\map{\rec{X}{P}}^{2} &=& \newsp{s}{\binp{s}{\X} \map{P}^{2} \Par \bout{\dual{s}}{\abs{z \cat \vmap{\fn{P}}}{\binp{z}{\X} \map{P}^{\es}}} \inact}\\
 %	\map{r}^{2} &=& \newsp{s}{\appl{\X}{s \cat \smap{\fn{P}}} \Par \bout{\dual{s}}{ \abs{z \cat \vmap{\fn{P}}}{\appl{X}{z \cat \vmap{\fn{P}}}}} \inact} \\
-		\pmapp{\recp{X}{P}}{2}{f} &\defeq& \newsp{s}{\binp{s}{\X} \pmapp{P}{2}{{f,\{\rvar{X}\to \tilde{n}\}}} \Par \bbout{\dual{s}}{\abs{\vmap{\tilde{n}}, z } \,{\binp{z}{\X} \auxmapp{\pmapp{P}{2}{{f,\{\rvar{X}\to \tilde{n}\}}}}{\mathsf{v}}{\es}}} \inact} & \quad \tilde{n} = \ofn{P} \\ 
+		\pmapp{\recp{X}{P}}{2}{f} &\defeq&
+		\newsp{s}{\binp{s}{\X} \pmapp{P}{2}{{f,\{\rvar{X}\to \tilde{n}\}}} \Par \bout{\dual{s}}{\abs{\vmap{\tilde{n}}, z } \,{\binp{z}{\X} \auxmapp{\pmapp{P}{2}{{f,\{\rvar{X}\to \tilde{n}\}}}}{\mathsf{v}}{\es}}} \inact} & \quad \tilde{n} = \ofn{P} \\ 
 		\pmapp{\rvar{X}}{2}{f} &\defeq& \newsp{s}{\appl{\X}{\tilde{n}, s} \Par \bbout{\dual{s}}{ \abs{\vmap{\tilde{n}},z}\,\,{\appl{X}{ \vmap{\tilde{n}}, z}}} \inact} & \quad \tilde{n} = f(\rvar{X}) \\
-		\pmapp{\bout{k}{n} P}{2}{f}	&\defeq&	\bbout{k}{ \abs{z}{\,\binp{z}{X} \appl{X}{n}} } \pmapp{P}{2}{f} \\
-		\pmapp{\binp{k}{x} Q}{2}{f}	&\defeq&	\binp{k}{X} \newsp{s}{\appl{X}{s} \Par \bbout{\dual{s}}{\abs{x} \pmapp{Q}{2}{f}} \inact} \\
+		\pmapp{\bout{k}{n} P}{2}{f}	&\defeq&	\bout{k}{ \abs{z}{\,\binp{z}{X} \appl{X}{n}} } \pmapp{P}{2}{f} \\
+		\pmapp{\binp{k}{x} Q}{2}{f}	&\defeq&	\binp{k}{X} \newsp{s}{\appl{X}{s} \Par \bout{\dual{s}}{\abs{x}{\pmapp{Q}{2}{f}}} \inact} \\
 		\tmap{\btout{S_1} {S} }{2}	&\defeq&	\bbtout{\lhot{\btinp{\lhot{\tmap{S_1}{2}}}\tinact}} \tmap{S}{2}  \\
 		\tmap{\btinp{S_1} S }{2}	&\defeq&	\bbtinp{\lhot{\btinp{\lhot{\tmap{S_1}{2}}}\tinact}} \tmap{S}{2} \\
 		\tmap{\bbtout{\chtype{S_1}} {S} }{2}	&\defeq&	\bbtout{\shot{\btinp{\shot{\chtype{\tmap{S_1}{2}}}}\tinact}} \tmap{S}{2}  \\
@@ -689,7 +691,7 @@ and as a homomorphism for the other process constructs.
 \end{remark}
 
 \begin{proposition}\rm
-	Encoding $\fencod{\cdot}{\cdot}{2}{f}: \sesp \to \HO$  
+	Encoding $\fencod{\cdot}{\cdot}{2}{f}: \sessp \to \HO$  
 	is type-preserving (cf. Def.~\ref{def:ep}\,(1)).
 \end{proposition}
 
@@ -699,7 +701,7 @@ and as a homomorphism for the other process constructs.
 \end{proof}
 
 \begin{proposition}\rm
-	Encoding $\fencod{\cdot}{\cdot}{2}{f}: \sesp \to \HO$ 
+	Encoding $\fencod{\cdot}{\cdot}{2}{f}: \sessp \to \HO$ 
 	enjoys operational correspondence (cf. Def.~\ref{def:ep}\,(2)).
 \end{proposition}
 
@@ -709,9 +711,9 @@ and as a homomorphism for the other process constructs.
 	\qed
 \end{proof}
 
-\subsection{From $\HO$ to $\sesp$}
+\subsection{From $\HO$ to $\sessp$}
 
-We now discuss the encodability of  $\HO$ into $\sesp$, 
+We now discuss the encodability of  $\HO$ into $\sessp$, 
 i.e., how to encode a higher-order calculus with abstraction passing only
 into a calculus with name passing only. 
 We essentially follow the representability result put forward by 
@@ -727,7 +729,7 @@ Sangiorgi's strategy in which session names are used are triggers and exchanged 
 %\begin{definition}[From $\HO$ to $\sesp$. Naive approach]
 \[
 	\begin{array}{lcl}
-		\pmap{\bout{k}{\abs{x} P_1} Q}{n} & \defeq &  \newsp{s}{\bout{k}{s} (\pmap{Q}{n} \Par \binp{\dual{s}}{x} \pmap{P_1}{n})} \\
+		\pmap{\bout{k}{\abs{x}{P_1}} Q}{n} & \defeq &  \newsp{s}{\bout{k}{s} (\pmap{Q}{n} \Par \binp{\dual{s}}{x} \pmap{P_1}{n})} \\
 		\pmap{\binp{k}{X} P}{n} & \defeq& \binp{k}{x} \pmap{P}{n}\\
 		\pmap{\appl{X}{k}}{n} & \defeq & \bout{x}{k} \inact
 	\end{array}
@@ -748,7 +750,7 @@ Although $\pmap{\cdot}{n}$ captures the correct semantics when
 dealing with systems that allow only linear process variables,
 it suffers from non-typability in the presence
 of shared process variables. For instance,
-let $P = \bbout{n}{\abs{x}{\bout{x}{m}\inact}} \inact \Par \binp{\dual{n}}{X} (\appl{X}{s_1} \Par \appl{X}{s_2})$.
+let $P = \bout{n}{\abs{x}{\bout{x}{m}\inact}} \inact \Par \binp{\dual{n}}{X} (\appl{X}{s_1} \Par \appl{X}{s_2})$.
 We would have
 \[
 	\pmap{P}{n} \defeq
@@ -761,11 +763,17 @@ The correct approach would be to use replicated shared names
 as triggers instead of session names. 
 Below we write $\repl{} P$ as a shorthand notation for $\recp{X}{(P \Par \rvar{X})}$.
 
-\begin{definition}[From $\HO$ to $\sesp$]\rm
-	Define $\encod{\cdot}{\cdot}{3}: \HO \to \sesp$ as follows
+\begin{definition}[From $\HO$ to $\sessp$]\rm
+	Define $\encod{\cdot}{\cdot}{3}: \HO \to \sessp$ as follows
 	\[
 	\begin{array}{rcl}
-		\pmap{\bbout{k}{\abs{x} Q} P}{3} & \defeq &  \newsp{a}{\bout{k}{a} (\pmap{P}{3} \Par \repl{} \binp{a}{y} \binp{y}{x} \pmap{Q}{3})\,} \\
+		\pmap{\bout{k}{\abs{x}{Q}} P}{3} & \defeq &  \left\{
+		\begin{array}{ll}
+			\newsp{a}{\bout{k}{a} (\pmap{P}{3} \Par \binp{a}{y} \binp{y}{x} \pmap{Q}{3})\,} & \dk{Q \textrm{ linear}} \\
+			\newsp{a}{\bout{k}{a} (\pmap{P}{3} \Par \repl{} \binp{a}{y} \binp{y}{x} \pmap{Q}{3})\,} & \textrm{otherwise}
+		\end{array}
+		\right.
+		\\
 		\pmap{\binp{k}{X} P}{3} &\defeq&  \binp{k}{x} \pmap{P}{3}\\
 		\pmap{\appl{X}{k}}{3} & \defeq & \newsp{s}{\bout{x}{s} \bout{\dual{s}}{k} \inact}\\
 		\tmap{\btout{\lhot{S}}S_1}{3} & \defeq & \bbtout{\chtype{\btinp{\tmap{S}{3}}\tinact}}\tmap{S_1}{3} \\
@@ -775,7 +783,7 @@ Below we write $\repl{} P$ as a shorthand notation for $\recp{X}{(P \Par \rvar{X
 \end{definition}
 
 \begin{proposition}\rm
-	Encoding $\encod{\cdot}{\cdot}{3}: \HO \to \sesp$  is type-preserving (cf. Def.~\ref{def:ep}\,(1)).
+	Encoding $\encod{\cdot}{\cdot}{3}: \HO \to \sessp$  is type-preserving (cf. Def.~\ref{def:ep}\,(1)).
 \end{proposition}
 
 \begin{proof}
@@ -784,7 +792,7 @@ Below we write $\repl{} P$ as a shorthand notation for $\recp{X}{(P \Par \rvar{X
 \end{proof}
 
 \begin{proposition}\rm
-	Encoding $\encod{\cdot}{\cdot}{3}: \HO \to \sesp$ 
+	Encoding $\encod{\cdot}{\cdot}{3}: \HO \to \sessp$ 
 	enjoys operational correspondence (cf. Def.~\ref{def:ep}\,(2)).
 \end{proposition}
 
