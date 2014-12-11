@@ -72,13 +72,17 @@ We can use a session type to define the simplest process that is typed
 under the given session type.
 %
 \begin{definition}[Simple Process]\rm
-	Let type $U = C$ and name $k$; then we define a {\em simple process}
-	$\map{U}^{k}$:
+	Let name $k$ and type $\tilde{C}$; then we define a {\em simple process}
+	$\map{\tilde{C}}^{k}$:
+	\[
+		\map{C_1 \cdots C_n}^{k_1 \cdots k_n} = \map{C_1}^{k_1} \Par \dots \Par \map{C_n}^{k_n}		
+	\]
+	with $\map{C}^k$ defined as:
 	\[
 	\begin{array}{rclcrcll}
-		\map{\btinp{S'} S}^{k} &=& \binp{k}{x} (\map{S}^{k} \Par \map{S'}^{x})
+		\map{\btinp{\tilde{C}} S}^{k} &=& \binp{k}{\tilde{x}} (\map{S}^{k} \Par \map{\tilde{C}}^{\tilde{x}})
 		&&
-		\map{\btout{U} S}^{k} &=& \binp{k}{n} \map{S}^{k} & n\textrm{ fresh}
+		\map{\btout{\tilde{C}} S}^{k} &=& \bout{k}{\tilde{n}} \map{S}^{k} & \tilde{n}\textrm{ fresh}
 		\\
 
 		\map{\btsel{l : S}}^{k} &=& \bsel{k}{l} \map{S}^{k}
@@ -86,36 +90,36 @@ under the given session type.
 		\map{\btbra{l_i: S_i}_{i \in I}}^{k} &=& \bbra{k}{l_i: \map{S_i}^{k}}_{i \in I}
 		\\
 
-		\map{\tvar{t}}^{k} &=& \rvar{T}
+		\map{\tvar{t}}^{k} &=& \rvar{X}_t
 		& &
-		\map{\trec{t}{S}}^{k} &=& \recp{T}{\map{S}^{k}}
+		\map{\trec{t}{S}}^{k} &=& \mu \rvar{X}_t.\map{S}^{k}
 		\\
 
-		\map{\btout{\lhot{S'}} S}^{k} &=& \bout{k}{\abs{x}{\map{S'}^x}} \map{S}^k
+		\map{\btout{\lhot{\tilde{C}}} S}^{k} &=& \bout{k}{\abs{\tilde{x}}{\map{\tilde{C}}^{\tilde{x}}}} \map{S}^k
 		& &
-		\map{\btinp{\lhot{S'}} S}^{k} &=& \binp{k}{X} (\map{S}^k \Par \appl{X}{n}) & n\textrm{ fresh}
+		\map{\btinp{\lhot{\tilde{C}}} S}^{k} &=& \binp{k}{X} (\map{S}^k \Par \appl{X}{\tilde{n}}) & \tilde{n}\textrm{ fresh}
 		\\
 
-		\map{\btout{\shot{S'}} S}^{k} &=& \bout{k}{\abs{x}{\map{S'}^x}} \map{S}^k
+		\map{\btout{\shot{\tilde{C}}} S}^{k} &=& \bout{k}{\abs{\tilde{x}}{\map{\tilde{C}}^{\tilde{x}}}} \map{S}^k
 		& &
-		\map{\btinp{\shot{S'}} S}^{k} &=& \binp{k}{X} (\map{S}^k \Par \appl{X}{n}) & n\textrm{ fresh}
+		\map{\btinp{\shot{\tilde{C}}} S}^{k} &=& \binp{k}{X} (\map{S}^k \Par \appl{X}{\tilde{n}}) & \tilde{n}\textrm{ fresh}
 		\\
 
-		\map{\btinp{\chtype{S}} S}^{k} &=& \binp{k}{x} (\map{S}^k \Par \map{\chtype{S}}^y)
-		&&
-		\map{\btout{\chtype{S}} S}^{k} &=& \bout{k}{a} \map{S}^k  & a\textrm{ fresh}
-		\\
-		\map{\chtype{S}}^{k} &=& \binp{k}{x} \map{S}^x 
-		&&
+%		\map{\btinp{\chtype{S}} S}^{k} &=& \binp{k}{x} (\map{S}^k \Par \map{\chtype{S}}^y)
+%		&&
+%		\map{\btout{\chtype{S}} S}^{k} &=& \bout{k}{a} \map{S}^k  & a\textrm{ fresh}
+%		\\
+
 		\map{\tinact}^{k} &=& \inact
+		&&
+		\map{\chtype{S}}^{k} &=& \bout{k}{s} \inact &s\textrm{ fresh}%\binp{k}{x} \map{S}^x 
 	\end{array}
 	\]
-	We extend the {\em simple process} to the polyadic case:
-\[
-	\begin{array}{c}
-		\map{C_1 \cdots C_n}^{k_1 \cdots k_n} = \map{C_1}^{k_1} \Par \dots \Par \map{C_n}^{k_n}
-	\end{array}
-\]
+%	We extend the {\em simple process} to the polyadic case:
+%\[
+%	\begin{array}{c}
+%	\end{array}
+%\]
 \end{definition}
 
 \begin{proposition}\rm
@@ -401,7 +405,7 @@ of a bisimulation relation avoids the universal quantifier over processes.
 %				\Gamma; \emptyset; \Delta_1'' \proves \newsp{\tilde{s}}{P_2 \Par \context{C}{P \subst{s'}{x}}} \hastype \Proc \\
 %				\Gamma; \emptyset; \Delta_2'' \proves \newsp{\tilde{s}}{Q_2 \Par \context{C}{Q \subst{s'}{x}}} \hastype \Proc
 %			\end{eqnarray*}
-			then
+%			then
 			\[
 				\Gamma; \emptyset; \Delta_1''\ \mathcal{R}\ \Delta_2'' \proves
 				\newsp{\tilde{m_1}}{P_2 \Par \hotrigger{t}{\abs{x}{P}}}%\context{C}{P}}
