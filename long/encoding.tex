@@ -23,7 +23,7 @@ by explicitly considering a type structure and a type system.
 	on processes, respectively. Finally, $\proves$ denotes a type system for processes in $L$.
 \end{definition}
 
-We notice that in this paper we shall always consider languages with the same type system.
+We notice that in this paper we shall always consider languages with type system of \S\,\ref{s:types}.
 In the following, when writing $\tyl{L}_i$ we tacitly assume the existence of appropriate 
 $L_i$, $T_i$, $\red_i$, $\wb_i$, and $\proves_i$.
 We first define the notion of encoding over typed calculi.
@@ -31,7 +31,7 @@ We first define the notion of encoding over typed calculi.
 \begin{definition}[Typed Encoding]\rm
 	Let  $\tyl{L}_1$ % = \calc{L_1}{T_1}{\red_1}{\wb_1}{\proves_1}$
 	and $\tyl{L}_2$ % =  \calc{L_2}{T_2}{\red_2}{\wb_2}{\proves_2}$ 
-	be typed calculi.% as in Definition~\ref{d:tcalculus}.
+	be typed calculi. % as in Definition~\ref{d:tcalculus}.
 	Given mappings $\map{\cdot}: L_1 \to L_2$ and
 	$\mapt{\cdot}: T_1 \to T_2$, 
 	we write 
@@ -43,7 +43,23 @@ We first define the notion of encoding over typed calculi.
 	to denote the \emph{typed encoding} of $\tyl{L}_1$ into $\tyl{L}_2$.
 \end{definition}
 
+% Parameters - 1:Gamma , 2:label, 3:initial delta, 4:initial processes, 5:final delta, 6:initial process
+\newcommand{\stytra}[6]{\ensuremath{#1; \emptyset; #3 \hby{#2} #5 \proves #4  \hby{#2} #6 }}
+\newcommand{\wtytra}[6]{\ensuremath{#1; \emptyset; #3 \Hby{#2} #5 \proves #4  \Hby{#2} #6 }}
+\newcommand{\mapl}[1]{\ensuremath{\{\!\{#1\}\!\}}}
+\newcommand{\wbb}[6]{\ensuremath{#1; \emptyset; #3 \wb #5 \proves #4  \wb #6 }}
+
 \subsection{Encoding Properties}
+We use the following labeled transitions:
+\begin{enumerate}
+\item Strong case: $\Gamma; \emptyset; \Delta_1 \hby{\ell} \Delta_1' \proves P_1 \hby{\ell} P_2$ \\
+(With the new command: $\stytra{\Gamma}{\ell}{\Delta_1}{P_1}{\Delta'_1}{P_2}$)
+\item Weak case: $\Gamma; \emptyset; \Delta_1 \Hby{ \ell} \Delta_1' \proves P_1 \Hby{ \ell} P_2$ \\
+(With the new command: $\wtytra{\Gamma}{\ell}{\Delta_1}{P_1}{\Delta'_1}{P_2}$)
+\item Using the command for weak bisimilarity:
+$\wbb{\Gamma}{\ell}{\Delta_1}{P_1}{\Delta'_1}{P_2}$.
+
+\end{enumerate}
 
 We require that a {\em good} encoding should 
 preserve not only the syntax but
@@ -73,19 +89,36 @@ semantics.
 	\begin{enumerate}[1.]
 		\item \emph{Type preservation}:
 		if
-			$\Gamma; \emptyset; \Sigma \proves_1 P \hastype \Proc$ then $\mapt{\Gamma}; \emptyset; \mapt{\Sigma} \proves_2 \map{P} \hastype \Proc$ for any   $P$ in $L_1$.
+			$\Gamma; \emptyset; \Delta \proves_1 P \hastype \Proc$ then 
+			$\mapt{\Gamma}; \emptyset; \mapt{\Delta} \proves_2 \map{P} \hastype \Proc$ 
+			for any   $P$ in $L_1$.
 
-		\item \emph{Operational Correspondence}: If $\Gamma; \emptyset; \Sigma \proves_1 P \hastype \Proc$ then
+		\item \emph{Operational Correspondence}: If $\Gamma; \emptyset; \Delta \proves_1 P \hastype \Proc$ then
 		\begin{enumerate}[-]
-			\item	Completeness: If $P \red_1 P'$ then $\exists \Sigma'$ s.t.
+			\item	Completeness: \\
+			    If $P \red_1 P'$ then $\exists\, \Delta'$ s.t.
 				$\map{P} \Red_2 \map{P'}$ and
-				$\mapt{\Gamma}; \emptyset; \mapt{\Sigma'} \proves_2 \map{P'} \hastype \Proc$.
-			\item Soundness : If $\map{P} \red_2 Q$ then
-				$\exists P'$ s.t. $P \red_1 P'$ and \\
-				$\mapt{\Gamma}; \mapt{\Sigma_1} \wb_2 \mapt{\Sigma_2} \proves_2 \map{P'} \wb_2 Q$.
+				$\mapt{\Gamma}; \emptyset; \mapt{\Delta'} \proves_2 \map{P'} \hastype \Proc$.
+			\item	Completeness (Labelled): \\
+			   If  $\stytra{\Gamma}{\ell_1}{\Delta_1}{P}{\Delta'_1}{P'}$
+			   then $\exists \ell_2$ s.t. 
+			    $\wtytra{\mapt{\Gamma}}{\ell_2}{\mapt{\Delta_1}}{\map{P_1}}{\mapt{\Delta'_1}}{\map{P_2}}$
+			    and $\ell_2 = \mapl{\ell_1}$.
+			    				
+			\item Soundness : \\
+			    If $\map{P} \red_2 Q$ then
+				$\exists P'$ s.t. $P \red_1 P'$ and 
+				$\mapt{\Gamma}; \mapt{\Delta_1} \wb_2 \mapt{\Delta_2} \proves_2 \map{P'} \wb_2 Q$.
+				
+			\item Soundness (Labelled):\\   
+			If  $\stytra{\mapt{\Gamma}}{\ell_2}{\mapt{\Delta_1}}{\map{P}}{\mapt{\Delta'_1}}{Q}$
+			   then $\exists \ell_2, P'$ s.t.  \\
+			    (i)~$\stytra{\Gamma}{\ell_1}{\Delta_1}{P}{\Delta'_1}{P'}$,
+			    (ii)~$\ell_2 = \mapl{\ell_1}$, and
+			    (iii)~$\wbb{\Gamma}{\ell}{\Delta'_1}{P'}{\mapt{\Delta'_1}}{Q}$.
 		\end{enumerate}
 		
-		\item \emph{Full Abstraction:}
+		\item \emph{Full Abstraction:} \\
 		$\Gamma; \Sigma_1 \wb_1 \Sigma_2 \proves_1 P \wb_1 Q $ if and only if $\mapt{\Gamma}; \mapt{\Sigma_1} \wb_2 \mapt{\Sigma_2} \proves_2 \map{P} \wb_2 \map{Q} $.
 	\end{enumerate}
 \end{definition}
@@ -128,6 +161,165 @@ Since we always consider variants and fragments of \HOp, the
 reduction semantics $\red$, the typed behavioral equivalence $\wb$,
 and the type system $\proves$ are the same for all languages.
 \end{comment}
+
+\subsection{Encode Polyadic Semantics (\HOp) to Monadic Semantics ($\HOp^{-\mathsf{p}}$)}\label{ss:polmon}
+
+%In the extension of \HOp with 
+%polyadic communication, denoted \pHOp, 
+%one may pass in each synchronization 
+%a tuple of values of length $n$, rather than a just single value.
+%Thus, e.g., for $n = 2$ one would have
+%%
+%\begin{eqnarray*}
+%	\bout{n}{m_1, m_2} P \Par \binp{\dual{n}}{x_1,x_2} Q  & \red &  P \Par Q \subst{m_1, m_2}{x_1, x_2} \\
+%	\bout{n}{\abs{x_1, x_2}{P_1}} P \Par \binp{\dual{s}}{\X} Q & \red & P \Par Q \subst{\abs{x_1,x_2}{P_1}}{\X}
+%\end{eqnarray*}
+%%
+%with $\appl{X}{k_1,k_2} \subst{\abs{x_1,x_2}{Q}}{\X}  =  Q \subst{k_1,k_2}{x_1,x_2} $.
+%Thus, 
+%\pHOp features tuple passing in intra-session (linear) communication,
+%but also in abstractions/applications. 
+%The session type system for \pHOp is an orthogonal
+%extension of that in \S\,\ref{s:types}.
+%The type syntax for values is extended as follows,
+%where $\tilde{S}$ stands for a sequence $S_1, \ldots, S_n$ of 
+%session types:
+%
+%\begin{eqnarray*}
+%	U \bnfis  & \tilde{S} \bnfbar \lhot{\tilde{S}} \bnfbar \shot{\tilde{S}} \bnfbar \chtype{S}
+%\end{eqnarray*}
+%
+%The syntax of session types would be kept unchanged.
+%Typing rules require straightforward extensions. 
+%For instance, the following rules would type 
+%abstraction and application in the biadic case ($n = 2$):
+%\[
+%\trule{Abs2}~~\tree{
+%			\Gamma; \Lambda; \Sigma \cat x_1: S_1, x_2: S_2 \proves P \hastype \Proc
+%		}{
+%			\Gamma; \Lambda; \Sigma \proves \abs{x_1, x_2}{P} \hastype \lhot{(S_1, S_2)}
+%		}
+%		\quad
+%		\trule{App2}~~\tree{
+%		\begin{array}{c}
+%		(U = \lhot{(S_1,S_2)}) \lor (U = \shot{(S_1,S_2)}) \\
+%		\Gamma; \Lambda; \Sigma \proves X \hastype U  \\
+%		\Gamma; \Lambda_1; \Sigma_1 \proves k_1 \hastype S_1 \quad 		
+%		\Gamma; \Lambda_2; \Sigma_2 \proves k_2 \hastype S_2
+%		\end{array}
+%		}{
+%			\Gamma; \Lambda \cup  \Lambda_1 \cup \Lambda_2; \Sigma \cup \Sigma_1 \cup \Sigma_2 \proves \appl{X}{k_1,k_2} \hastype \Proc
+%		} 
+%\]
+
+In the untyped $\pi$-calculus, polyadic communication
+can be encoded into monadic name passing by first generating a fresh channel and then 
+performing $n$ monadic synchronizations on that channel. 
+In session-typed $\pi$-calculi this encoding is even more direct, 
+thanks to the linearity (and non-interference properties) of session endpoints~\cite{VascoFun}.
+%The extension of the (monadic) session type system given in \S\,\ref{s:types}
+%to handle polyadic communication is straightforward and follow expected lines.
+%For this reason, we do not present a typing system for \pHOp in full detail; rather, 
+%we shall define a syntactic transformation of \pHOp into \HOp, rather than as a typed encoding.
+%\footnote{The definition of a polyadic semantics would only add visual clutter to our presentation,
+%as all results extend easily from monadic to polyadic communication.}
+Below we  define an encoding of polyadic semantics to monadic semantics.
+Thanks to this encoding, %Because of the polyadic to monadic encoding %, denoted  $\auxmap{\cdot}{\mathsf{p}}$,
+we are able to focus on monadic session processes,
+and rely on polyadic constructs simply as convenient syntactic sugar.
+In fact, we shall rely on polyadicity to encode recursive behaviors.
+%
+\begin{definition}[Polyadic Into Monadic]\rm
+	Define the process mapping $\encod{\cdot}{\cdot}{\mathsf{p}}: \HOp \to \HOp^{-\mathsf{p}}$:
+	%$\auxmap{\cdot}{\mathsf{p}}:\pHOp \to \HOp$ as
+\[
+	\begin{array}{rcl}
+		\map{\bout{k}{k_1, \cdots, k_m} P}^{\mathsf{p}}
+		&\defeq&
+		\bout{k}{k_1} \cdots ;  \bout{k}{k_m} \map{P}^{\mathsf{p}}
+		\\
+
+		\map{\binp{k}{x_1, \cdots, x_m} P}^{\mathsf{p}}
+		&\defeq&
+		\binp{k}{x_1} \cdots ; \binp{k}{x_m}  \map{P}^{\mathsf{p}}
+		\\
+
+		\map{\bbout{k}{\abs{x_1, \cdots, x_m} Q} P}^{\mathsf{p}}
+		&\defeq&
+		\bbout{k}{\abs{z}\binp{z}{x_1} \cdots ; \binp{z}{x_m} \map{Q}^{\mathsf{p}}} \map{P}^{\mathsf{p}}
+		\\
+
+		\map{\appl{X}{k_1, \cdots, k_m}}^{\mathsf{p}}
+		&\defeq&
+		\newsp{s}{\appl{X}{s} \Par \bout{\dual{s}}{k_1} \cdots ; \bout{\dual{s}}{k_m} \inact} 
+	\end{array}
+	\]
+	and as an homomorphism for the remaining constructs in \HOp. 
+	Define the mapping on types $\tmap{\cdot}{\mathsf{p}}$ as follows:
+\[
+	\begin{array}{rcl}
+		\tmap{\btout{S_1, \cdots, S_m}S}{\mathsf{p}}
+		&\defeq&
+		\btout{\tmap{S_1}{\mathsf{p}}} \cdots \btout{\tmap{S_m}{\mathsf{p}}}\tmap{S}{\mathsf{p}}
+		\\
+		\tmap{\btinp{S_1, \cdots, S_m}S}{\mathsf{p}}
+		&\defeq&
+		\btinp{\tmap{S_1}{\mathsf{p}}} \cdots \btinp{\tmap{S_m}{\mathsf{p}}}\tmap{S}{\mathsf{p}}
+		\\
+		\tmap{\lhot{(S_1, \cdots, S_m)}}{\mathsf{p}}
+		&\defeq&
+		\lhot{\big(\btinp{\tmap{S_1}{\mathsf{p}}} \cdots \btinp{\tmap{S_m}{\mathsf{p}}}\tinact\big)}
+		\\
+		\tmap{\shot{(S_1, \cdots, S_m)}}{\mathsf{p}}
+		&\defeq&
+		\shot{\big(\btinp{\tmap{S_1}{\mathsf{p}}} \cdots \btinp{\tmap{S_m}{\mathsf{p}}}\tinact\big)}
+	\end{array}
+\]
+	and as an homomorphism for the remaining type constructs.
+	%\jp{I prefer to be explicit in the encoding of polyadic abstraction/applications. Previous version is commented.}
+\end{definition}
+%
+The encoding is simple:
+passing an $m$-tuple of names over a session channel $k$ is represented by 
+a $m$ exchanges along channel $k$.
+The output of an abstraction with $m$ bound variables $x_1, \ldots, x_m$ is represented by
+outputting an abstraction with a single bound variable $z$,
+which is used as the subject for receiving $x_1, \ldots, x_m$ individually. 
+Accordingly, 
+%When we are dealing with an abstraction over a list of bound variables,
+%then we create a new abstraction name and we use it to receive in a polyadic
+%way the list of names on the abstraction. Similarly 
+the encoding of a polyadic application  instantiates
+the abstraction subject with a freshly generated session name $s$, which will be used  
+to the names 
+$k_1, \ldots, k_m$
+that are going to be applied on the abstraction.
+Note that we do not allow polyadic mapping on shared names.
+The polyadic mapping, as presented here, is sound only on session names.
+%The semantics might break if we apply this mapping on shared names.
+
+%\begin{proposition}
+%	$\Gamma; \emptyset; \Sigma \proves \map{P}^{p} \hastype \Proc$
+%\end{proposition}
+
+\begin{proposition}\rm
+	Encoding $\encod{\cdot}{\cdot}{\mathsf{p}}: \HOp \to \HOp^{-\mathsf{p}}$  is type-preserving (cf. Def.~\ref{def:ep}\,(1)).\rm
+\end{proposition}
+
+\begin{proof}
+TBD!
+	\qed
+\end{proof}
+
+\begin{proposition}\rm
+	Encoding $\encod{\cdot}{\cdot}{\mathsf{p}}: \HOp \to \HOp^{-\mathsf{p}}$  enjoys operational correspondence (cf. Def.~\ref{def:ep}\,(2)).
+\end{proposition}
+
+\begin{proof}
+TBD!
+	\qed
+\end{proof}
+
 
 \subsection{Encoding $\sessp^{-\mu}$  into \HO}
 
@@ -174,7 +366,7 @@ $\abs{x}{P}$. Name substitution is then achieved as application.
 \end{proposition}
 
 \begin{proof}
-	Proof in Appendix~\ref{app:enc_sesspnr_to_ho}.
+	Proof in Appendix~\ref{app:enc_sesspnr_to_ho} (Page~\pageref{app:enc_sesspnr_to_ho}).
 	\qed
 \end{proof}
 
@@ -184,7 +376,7 @@ $\abs{x}{P}$. Name substitution is then achieved as application.
 
 
 \begin{proof}
-	Proof in Appendix~\ref{app:enc_sesspnr_to_ho}.
+	Proof in Appendix~\ref{app:enc_sesspnr_to_ho} (Page~\pageref{app:enc_sesspnr_to_ho}).
 	\qed
 \end{proof}
 
@@ -271,137 +463,7 @@ $\abs{x}{P}$. Name substitution is then achieved as application.
 %	as $\encod{\cdot}{\cdot}{5} = \encod{\cdot}{\cdot}{4} \cat \encod{\cdot}{\cdot}{3}$.	
 %\end{definition}
 
-\subsection{Encode Polyadic Semantics (\HOp) to Monadic Semantics ($\HOp^{-\mathsf{p}}$)}
 
-%In the extension of \HOp with 
-%polyadic communication, denoted \pHOp, 
-%one may pass in each synchronization 
-%a tuple of values of length $n$, rather than a just single value.
-%Thus, e.g., for $n = 2$ one would have
-%%
-%\begin{eqnarray*}
-%	\bout{n}{m_1, m_2} P \Par \binp{\dual{n}}{x_1,x_2} Q  & \red &  P \Par Q \subst{m_1, m_2}{x_1, x_2} \\
-%	\bout{n}{\abs{x_1, x_2}{P_1}} P \Par \binp{\dual{s}}{\X} Q & \red & P \Par Q \subst{\abs{x_1,x_2}{P_1}}{\X}
-%\end{eqnarray*}
-%%
-%with $\appl{X}{k_1,k_2} \subst{\abs{x_1,x_2}{Q}}{\X}  =  Q \subst{k_1,k_2}{x_1,x_2} $.
-%Thus, 
-%\pHOp features tuple passing in intra-session (linear) communication,
-%but also in abstractions/applications. 
-%The session type system for \pHOp is an orthogonal
-%extension of that in \S\,\ref{s:types}.
-%The type syntax for values is extended as follows,
-%where $\tilde{S}$ stands for a sequence $S_1, \ldots, S_n$ of 
-%session types:
-%
-%\begin{eqnarray*}
-%	U \bnfis  & \tilde{S} \bnfbar \lhot{\tilde{S}} \bnfbar \shot{\tilde{S}} \bnfbar \chtype{S}
-%\end{eqnarray*}
-%
-%The syntax of session types would be kept unchanged.
-%Typing rules require straightforward extensions. 
-%For instance, the following rules would type 
-%abstraction and application in the biadic case ($n = 2$):
-%\[
-%\trule{Abs2}~~\tree{
-%			\Gamma; \Lambda; \Sigma \cat x_1: S_1, x_2: S_2 \proves P \hastype \Proc
-%		}{
-%			\Gamma; \Lambda; \Sigma \proves \abs{x_1, x_2}{P} \hastype \lhot{(S_1, S_2)}
-%		}
-%		\quad
-%		\trule{App2}~~\tree{
-%		\begin{array}{c}
-%		(U = \lhot{(S_1,S_2)}) \lor (U = \shot{(S_1,S_2)}) \\
-%		\Gamma; \Lambda; \Sigma \proves X \hastype U  \\
-%		\Gamma; \Lambda_1; \Sigma_1 \proves k_1 \hastype S_1 \quad 		
-%		\Gamma; \Lambda_2; \Sigma_2 \proves k_2 \hastype S_2
-%		\end{array}
-%		}{
-%			\Gamma; \Lambda \cup  \Lambda_1 \cup \Lambda_2; \Sigma \cup \Sigma_1 \cup \Sigma_2 \proves \appl{X}{k_1,k_2} \hastype \Proc
-%		} 
-%\]
-
-In the untyped $\pi$-calculus, polyadic communication
-can be encoded into monadic name passing 
-simply by performing $n$ monadic synchronizations on a fresh channel. 
-In session-typed $\pi$-calculi this encoding is even simpler, 
-thanks to the linearity of session endpoints~\cite{VascoFun}.
-%The extension of the (monadic) session type system given in \S\,\ref{s:types}
-%to handle polyadic communication is straightforward and follow expected lines.
-%For this reason, we do not present a typing system for \pHOp in full detail; rather, 
-%we shall define a syntactic transformation of \pHOp into \HOp, rather than as a typed encoding.
-%\footnote{The definition of a polyadic semantics would only add visual clutter to our presentation,
-%as all results extend easily from monadic to polyadic communication.}
-We give the definition of the encoding of polyadic semantics to monadic semantics.
-Because of the polyadic to monadic encoding %, denoted  $\auxmap{\cdot}{\mathsf{p}}$,
-we are able to focus on monadic session processes,
-and rely on polyadic constructs simply as convenient syntactic sugar.
-In fact, we shall rely on polyadicity to encode recursive behaviors.
-%
-\begin{definition}[Polyadic Into Monadic]\rm
-	Define the process mapping $\encod{\cdot}{\cdot}{\mathsf{p}}: \HOp \to \HOp^{-\mathsf{p}}$:
-	%$\auxmap{\cdot}{\mathsf{p}}:\pHOp \to \HOp$ as
-\[
-	\begin{array}{rcl}
-		\map{\bout{k}{k_1, \cdots, k_n} P}^{\mathsf{p}}
-		&\defeq&
-		\bout{k}{k_1} \cdots ;  \bout{k}{k_n} \map{P}^{\mathsf{p}}
-		\\
-
-		\map{\binp{k}{x_1, \cdots, x_n} P}^{\mathsf{p}}
-		&\defeq&
-		\binp{k}{x_1} \cdots ; \binp{k}{x_n}  \map{P}^{\mathsf{p}}
-		\\
-
-		\map{\bbout{k}{\abs{x_1, \cdots, x_n} Q} P}^{\mathsf{p}}
-		&\defeq&
-		\bbout{k}{\abs{z}\binp{z}{x_1} \cdots ; \binp{z}{x_n} \map{Q}^{\mathsf{p}}} \map{P}^{\mathsf{p}}
-		\\
-
-		\map{\appl{X}{k_1, \cdots, k_n}}^{\mathsf{p}}
-		&\defeq&
-		\newsp{s}{\appl{X}{s} \Par \bout{\dual{s}}{k_1} \cdots ; \bout{\dual{s}}{k_n} \inact} 
-	\end{array}
-	\]
-	and as an homomorphism for the remaining constructs in \HOp. 
-	Define the mapping on types $\tmap{\cdot}{\mathsf{p}}$ as follows:
-\[
-	\begin{array}{rcl}
-		\tmap{\btout{S_1, \cdots, S_n}S}{\mathsf{p}}
-		&\defeq&
-		\btout{\tmap{S_1}{\mathsf{p}}} \cdots \btout{\tmap{S_n}{\mathsf{p}}}\tmap{S}{\mathsf{p}}
-		\\
-		\tmap{\btinp{S_1, \cdots, S_n}S}{\mathsf{p}}
-		&\defeq&
-		\btinp{\tmap{S_1}{\mathsf{p}}} \cdots \btinp{\tmap{S_n}{\mathsf{p}}}\tmap{S}{\mathsf{p}}
-		\\
-		\tmap{\lhot{(S_1, \cdots, S_n)}}{\mathsf{p}}
-		&\defeq&
-		\lhot{\big(\btinp{\tmap{S_1}{\mathsf{p}}} \cdots \btinp{\tmap{S_n}{\mathsf{p}}}\tinact\big)}
-		\\
-		\tmap{\shot{(S_1, \cdots, S_n)}}{\mathsf{p}}
-		&\defeq&
-		\shot{\big(\btinp{\tmap{S_1}{\mathsf{p}}} \cdots \btinp{\tmap{S_n}{\mathsf{p}}}\tinact\big)}
-	\end{array}
-\]
-	and as an homomorphism for the remaining type constructs.
-	%\jp{I prefer to be explicit in the encoding of polyadic abstraction/applications. Previous version is commented.}
-\end{definition}
-%
-Passing a list of names over session channels is established
-with a corresponding list of sequential send (resp. receive) prefixes.
-When we are dealing with an abstraction over a list of bound variables,
-then we create a new abstraction name and we use it to receive in a polyadic
-way the list of names on the abstraction. Similarly application will instantiate
-the abstraction subject with a new session name and will use it 
-to send the list of names that are going to be applied on the abstraction.
-Note that we do not allow polyadic mapping on shared names.
-The polyadic mapping, as presented here, is sound only on session names.
-%The semantics might break if we apply this mapping on shared names.
-
-%\begin{proposition}
-%	$\Gamma; \emptyset; \Sigma \proves \map{P}^{p} \hastype \Proc$
-%\end{proposition}
 
 
 \subsection{Encoding Recursion into Abstraction Passing}
@@ -422,8 +484,7 @@ We use an example to demostrate our basic intuitions:
 		\recp{X}{\bout{n}{m} \rvar{X}} \scong \bout{n}{m} \recp{X}{\bout{n}{m} \rvar{X}} 
 	\end{eqnarray}
 %
-	\noi An observer of the above process observers an infinite sequence
-	of send actions, where channel $m$ is emmited on channel $n$.
+	\noi The above process emits to its environment infinitely many send actions of channel $m$ along channel $n$.
 	Name $n$ includes the recursive
 	variable $\rvar{X}$, so the type for $n$ should be recursive.
 %
@@ -649,8 +710,8 @@ using abstraction and application with an appropriate sequence of session names:
 
 We are now ready to define the encoding of $\sessp$
 (including constructs for recursion) into strict process-passing.
-We stress that we use polyadicity in abstraction and application only
-as syntactic sugar, to simplify presentation.
+Thanks to the encoding in \S\,\ref{ss:polmon}, we may use polyadicity in abstraction and application only
+as syntactic sugar.
 For the sake of completeness, we give again the encodings for 
 finite processes and types, as
 formalized by $\encod{\cdot}{\cdot}{1}: \sessp^{-\mu} \to \HO$.
