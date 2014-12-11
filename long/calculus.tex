@@ -15,41 +15,48 @@ such as delegation and recursion.
 \subsection{Syntax}
 
 The syntax for $\HOp$ processes is given in Figure~\ref{fig:syntax}.
-We assume a set of names $N$, defined as $N = S \cup \dual{S}$.
-We use $a,b,c, \dots, m, n, \dots, s, t, \dots$ 
-and $\dual{a}, \dots, \dual{m}, \dual{s}, \dots$
-to range over elements of $S$ and $\dual{S}$, respectively.
-Intuitively, names $n$ and $\dual{n}$ are dual \emph{endpoints}.
-Note that $N$ includes both session and shared names:
-we often use  $a,b, \dots$ to denote shared names.
+We assume a set of names $N$, defined as $N = \mathsf{Sh} \cup \mathsf{S} \cup \dual{\mathsf{S}}$.
+We use $a,b,c, \dots \in \mathsf{Sh}$ to range over shared names,
+$s, s', \dots \in \mathsf{S}$ to range over session names and
+$m, n, t, \dots \in \mathsf{Sh} \cup \mathsf{S}$.
+Also $\dual{s}, \dots$
+to range over elements of $S$ and $\dual{S}$, respectively with
+$\dual{\dual{s}} = s$.
+Intuitively, names $s$ and $\dual{s}$ are dual \emph{endpoints}.
+%Note that $N$ includes both session and shared names:
+%we often use  $a,b, \dots$ to denote shared names.
 Name variables $x, y,  \dots$, 
 process variables $X, Y,  \dots$,
 and recursive variables $\rvar{X}, \dots$ 
 are taken from sets $\mathsf{Var}$, $\mathsf{PVar}$, and $\mathsf{RVar}$, respectively. 
-An abstraction $\abs{x}{P}$ is a process $P$ with a bound parameter $x$;
+An abstraction $\abs{\tilde{x}}{P}$ is a process $P$ with bound parameters $\tilde{x}$;
 $\mathsf{Abs}$ denotes the set of all abstractions.
 We denote either names or name variables with $k, k', \dots$.
 We write $V, V', \ldots$ to denote 
 transmittable \emph{values}, i.e., 
 polyadic names and name variables or abstractions.
 
+The presentation of \HOp is based on polyadic semantics.
+Note that the monadic version of \HOp is implied from
+the polyadic semantics.
 The name-passing construcsts of \HOp include the
 standard $\pi$-calculus prefixes for sending and receiving names,
 as defined in line 1 of Figure~\ref{fig:syntax}.
-Process $\bout{k}{k'} P$ denotes the output of name $k'$ over channel $k$,
+Process $\bout{k}{\tilde{k}'} P$ denotes the output of names $\tilde{k}'$
+over channel $k$,
 with continuation $P$;
-process $\binp{k}{x} P$ denotes the input along  of a value
-on channel $k$ over variable $x$, with continuation $P$. 
+process $\binp{k}{\tilde{x}} P$ denotes the input along  of a value
+on channel $k$ over variables $\tilde{x}$, with continuation $P$. 
 Recursion is expressed by the primitive recursor $\recp{X}{P}$,
 which binds the recursive variable $r$ in process $P$.
 The abstraction-passing constructs of \HOp are presented in line
 2 of Figure~\ref{fig:syntax} and include 
-the output prefix $\bout{k}{\abs{x}{Q}} P$, which 
-sends out abstraction $\abs{x}{Q}$ over channel $k$ and then continues as $P$. 
+the output prefix $\bout{k}{\abs{\tilde{x}}{Q}} P$, which 
+sends out abstraction $\abs{\tilde{x}}{Q}$ over channel $k$ and then continues as $P$. 
 Process $\binp{k}{X} P$ denotes the reception of an abstraction
 on channel $k$ and over the process variable $\X$.
-Process $\appl{X}{k}$ is the application
-process which is used to bind channel $k$ on the process
+Process $\appl{X}{\tilde{k}}$ is the application
+process which is used to bind channels $\tilde{k}$ on the process
 substituting process variable $\X$.
 
 In line 3 of Figure~\ref{fig:syntax} we can define the usual session
@@ -63,13 +70,13 @@ inaction $\inact$,
 parallel composition $P_1 \Par P_2$, and 
 name restriction $\news{s} P$, which simultaneously binds endpoints $s$ and $\dual{s}$ in $P$.
 
-In lines 4 and 5 of Figure~\ref{fig:syntax} \HOp is extended with polyadicidy;
-In line 4 we define the standard polyadic name passing where we allow 
-list of names to be send and received as messages. 
-Line 5 extends the calculus with polyadic abstractions and applications,
-where we allow for a process to be abstracted on a list of
-bound variables and dualy we can apply a list of names
-over a polyadic abstraction.
+%In lines 4 and 5 of Figure~\ref{fig:syntax} \HOp is extended with polyadicidy;
+%In line 4 we define the standard polyadic name passing where we allow 
+%list of names to be send and received as messages. 
+%Line 5 extends the calculus with polyadic abstractions and applications,
+%where we allow for a process to be abstracted on a list of
+%bound variables and dualy we can apply a list of names
+%over a polyadic abstraction.
 
 A well-formed process relies on assumptions for guarded recursive processes.
 A \emph{program} is a process without free 
@@ -79,14 +86,18 @@ recursion variables nor free name/process variables.
 
 \subsection{Sub-calculi}
 
-Two significant sub-calculi of $\HOp$ will form the basis of our study:
+We identify two significant sub-calculi of $\HOp$ that will form 
+the basis of our study:
 %
 \begin{enumerate}[-]
-	\item	The sub-calculus \sessp involves only name-passing constructs; it is 
-		defined by lines (1) and (3) of the syntax in Figure~\ref{fig:syntax}.
+	\item	The sub-calculus \sessp involves only monadic name-passing constructs; it is 
+		defined as the monadic version of the calculus defined by lines (1) and (3)
+		of the syntax in Figure~\ref{fig:syntax}.
 
-	\item	The sub-calculus \HO features abstraction passing and application but no name-passing; 
-		it is defined by lines (2) and (3) of the same syntax.
+	\item	The sub-calculus \HO features monadic abstraction passing and monadic application
+		but no name-passing; 
+		it is defined by the monadic version of the calculus defined by lines (2) and (3) of
+		the syntax in Figure~\ref{fig:syntax}.
 \end{enumerate}
 %
 Thus, while \sessp is essentially a standard session $\pi$-calculus as defined in the
@@ -98,7 +109,7 @@ primitives and the subscripts $+\pol$ and $-\pol$ to denote presence or
 absence of polyadic semantics. For example $\HOp^{-\pol-\mu}$ is $\HO$ without
 polyadicity and recursion semantics while $\HO^{+\pol}$ and $\sessp^{+\pol}$
 %We can also assume the extensions for \sesp and \HO with their
-are the polyadic variances of $\HO$ and $\sessp$ as defined in lines 4 and 5 respectively.
+are the polyadic variances of $\HO$ and $\sessp$ as defined in lines 1, 3 and 2, 3 respectively.
 
 \subsection{Operational Semantics}
 

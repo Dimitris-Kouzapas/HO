@@ -39,11 +39,11 @@ We define the notion of dual actions as the symmetric relation $\asymp$, that sa
 \[
 	\bactsel{n}{l} \asymp \bactbra{\dual{n}}{l}
 	\qquad
-	\news{\tilde{s}} \bactout{n}{\abs{\tilde{x}}{P}} \asymp \bactinp{\dual{n}}{\abs{\tilde{x}}{P}}
+	\news{\tilde{m}} \bactout{n}{\abs{\tilde{x}}{P}} \asymp \bactinp{\dual{n}}{\abs{\tilde{x}}{P}}
 	\qquad
-	\bactout{n}{m} \asymp \bactinp{\dual{n}}{m}
-	\qquad
-	\news{\tilde{s}} \bactout{n}{\tilde{m}} \asymp \bactinp{\dual{n}}{\tilde{m}}
+%	\bactout{n}{m} \asymp \bactinp{\dual{n}}{m}
+%	\qquad
+	\news{\tilde{m}'} \bactout{n}{\tilde{m}} \asymp \bactinp{\dual{n}}{\tilde{m}}
 \]
 %
 Dual actions happen on subjects that are dual between them; they carry the same
@@ -67,7 +67,7 @@ any bound names with parallel processes. If two parallale processes can perform
 dual actions then the two actions can synchronise to observe an internal transition.
 Finally the LTS is closed under structural congruence.
 
-{\bf Simple Process: }
+\subsection{Simple Process}
 We can use a session type to define the simplest process that is typed
 under the given session type.
 %
@@ -141,7 +141,10 @@ $ $
 \end{corollary}
 
 
-{\bf Labeled Transition System for Typed Environments: }
+\subsection{Typed Labeled Transition System}
+
+\input{figures/fig-envLTS}
+
 We define two relations of the form:
 %
 \[
@@ -149,15 +152,12 @@ We define two relations of the form:
 \]
 %
 \noi over type tuples, that allows us to follow the progress of types over actions $\ell$.
-
-\input{figures/fig-envLTS}
-
 The upper part of Figure~\ref{fig:envLTS} describes relation $\by{\ell}$.
 \dk{describe env LTS}.
 
 A second envrionment LTS, denoted $\hby{\ell}$, is defined in the lower part of
 Figure~\ref{fig:envLTS}, by substituting the corresponding input cases
-of $\by{\ell}$ with the definitions of $\hby{ell}$. All other definiting
+of $\by{\ell}$ with the definitions of $\hby{\ell}$. All other definiting
 cases remain the same as relation $\by{\ell}. $Relation $\hby{\ell}$ 
 restricts higher order input; only simple processes and trigger processes
 are allowed to be receive on a higher order input.
@@ -190,8 +190,9 @@ of the untyped LTS and the LTS for typed environments:
 %
 \end{definition}
 
-For notational convenience we can write
-$\Gamma; \emptyset; \Delta_1 \by{\ell} \Delta_2 \proves P_1 \by{\ell} P_2$,
+For notational convenience we can write:
+%$\Gamma; \emptyset; \Delta_1 \by{\ell} \Delta_2 \proves P_1 \by{\ell} P_2$,
+$\horel{\Gamma}{\Delta_1}{P_1}{\by{\ell}}{\Delta_2}{P_2}$,
 instead of $\Gamma; \emptyset; \Delta_1 \proves P_1 \hastype \Proc \by{\ell} \Gamma; \emptyset; \Delta_1 \proves P_2 \hastype \Proc$.
 We extend to $\By{}$ (resp.\ $\Hby{}$) and $\By{\hat{\ell}}$ (resp.\ $\Hby{\hat{\ell}}$) in the \dk{standard way}.
 
@@ -203,8 +204,11 @@ typed transition system.
 		\item	If $\Gamma; \emptyset; \Delta_1 \proves P_1 \hastype \Proc$ and
 			$P_1 \by{\ell} P_2$ and $(\Gamma; \emptyset; \Delta_1) \by{\ell} (\Gamma; \emptyset; \Delta_2)$
 			then $\Gamma; \emptyset; \Delta_2 \proves P_2 \hastype \Proc$.
-		\item	If $\Gamma; \emptyset; \Delta_1 \hby{\ell} \Delta_2 \proves P_1 \hby{\ell} P_2$
-			then $\Gamma; \emptyset; \Delta_1 \by{\ell} \Delta_2 \proves P_1 \by{\ell} P_2$
+
+		\item	If $\horel{\Gamma}{\Delta_1}{P_1}{\hby{\ell}}{\Delta_2}{P_2}$
+			then $\horel{\Gamma}{\Delta_1}{P_1}{\by{\ell}}{\Delta_2}{P_2}$
+%		\item	If $\Gamma; \emptyset; \Delta_1 \hby{\ell} \Delta_2 \proves P_1 \hby{\ell} P_2$
+%			then $\Gamma; \emptyset; \Delta_1 \by{\ell} \Delta_2 \proves P_1 \by{\ell} P_2$
 
 	\end{itemize}
 \end{lemma}
@@ -246,7 +250,9 @@ We require that relate only programs (i.e.\ processes with no free variables) wi
 well typed session environments and furthermore we require that two related processes
 have confluent session environments.
 
-For notational convenience we write $\Gamma; \emptyset; \Delta_1\ R\ \Delta_2 \proves P_1\ R\ P_2$
+For notational convenience we write
+%$\Gamma; \emptyset; \Delta_1\ R\ \Delta_2 \proves P_1\ R\ P_2$
+$\horel{\Gamma}{\Delta_1}{P_1}{\ R\ }{\Delta_2}{P_2}$
 for expressing the typed relation $\Gamma; \emptyset; \Delta_1 \proves P_1 \hastype \Proc\ R\ \Gamma; \emptyset; \Delta_2 \proves P_2 \hastype \Proc$.
 
 We define the notions of barb and typed barb.
@@ -296,20 +302,29 @@ according to the above syntax.
 The first behavioural relation we define is reduction-closed, barbed congruence:
 %
 \begin{definition}[Reduction-closed, Barbed Congruence]\rm
-	Typed relation $\Gamma; \emptyset; \Delta_1\ \mathcal{R}\ \Delta \proves P_1 \ \mathcal{R}\ P_2$ is a barbed congruence
-	whenever:
+	Typed relation
+%	$\Gamma; \emptyset; \Delta_1\ \mathcal{R}\ \Delta \proves P_1 \ \mathcal{R}\ P_2$
+	$\horel{\Gamma}{\Delta_1}{P_1}{\ R\ }{\Delta_2}{P_2}$
+	is a barbed congruence whenever:
 	\begin{enumerate}
 		\item
 		\begin{itemize}
-			\item	If $P_1 \red P_1'$ then $\exists P_2', P_2 \red^* P_1'$ and $\Gamma; \emptyset; \Delta_1'\ \mathcal{R}\ \Delta_2' \proves P_1'\ \mathcal{R}\ P_2'$.
-			\item	If $P_2 \red P_2'$ then $\exists P_1', P_1 \red^* P_1'$ and $\Gamma; \emptyset; \Delta_1'\ \mathcal{R}\ \Delta_2' \proves P_1'\ \mathcal{R}\ P_2'$.
+			\item	If $P_1 \red P_1'$ then $\exists P_2', P_2 \red^* P_1'$ and
+%				$\Gamma; \emptyset; \Delta_1'\ \mathcal{R}\ \Delta_2' \proves P_1'\ \mathcal{R}\ P_2'$.
+				$\horel{\Gamma}{\Delta_1'}{P_1'}{\ R\ }{\Delta_2'}{P_2'}$
+			\item	If $P_2 \red P_2'$ then $\exists P_1', P_1 \red^* P_1'$ and
+%				$\Gamma; \emptyset; \Delta_1'\ \mathcal{R}\ \Delta_2' \proves P_1'\ \mathcal{R}\ P_2'$.
+				$\horel{\Gamma}{\Delta_1'}{P_1'}{\ R\ }{\Delta_2'}{P_2'}$
 		\end{itemize}
+
 		\item
 		\begin{itemize}
 			\item	If $\Gamma;\emptyset;\Delta \proves P_1 \barb{s}$ then $\Gamma;\emptyset;\Delta \proves P_2 \Barb{s}$.
 			\item	If $\Gamma;\emptyset;\Delta \proves P_2 \barb{s}$ then $\Gamma;\emptyset;\Delta \proves P_1 \Barb{s}$.
 		\end{itemize}
-		\item	$\forall C, \Gamma; \emptyset; \Delta_1'\ \mathcal{R}\ \Delta_2' \proves \context{C}{P_1}\ \mathcal{R}\ \context{C}{P_2}$.
+
+		\item	$\forall C, \horel{\Gamma}{\Delta_1'}{\context{C}{P_1}}{\ R\ }{\Delta_2'}{\context{C}{P_2}}$
+%			$\Gamma; \emptyset; \Delta_1'\ \mathcal{R}\ \Delta_2' \proves \context{C}{P_1}\ \mathcal{R}\ \context{C}{P_2}$.
 	\end{enumerate}
 	The largest such congruence is denoted with $\cong$.
 \end{definition}
@@ -321,16 +336,20 @@ between two related processes.
 The second behavioural relation is contextual bisimulation:
 %
 \begin{definition}[Contextual Bisimulation]\rm
-	Let typed relation $\mathcal{R}$ such that $\Gamma; \emptyset; \Delta_1\ \mathcal{R}\ \Delta_2 \proves P_1\ \mathcal{R}\ Q_1$.
+	Let typed relation $\mathcal{R}$ such that
+%	$\Gamma; \emptyset; \Delta_1\ \mathcal{R}\ \Delta_2 \proves P_1\ \mathcal{R}\ Q_1$.
+	$\horel{\Gamma}{\Delta_1}{P_1}{\ R\ }{\Delta_2}{P_2}$.
 	$\mathcal{R}$ is a {\em contextual bisimulation} whenever:
 	\begin{enumerate}
 		\item	$\forall \news{\tilde{m_1}} \bactout{n}{\abs{\tilde{x}}{P}}$ such that
 			\[
-				\Gamma; \emptyset; \Delta_1 \by{\news{\tilde{m_1}} \bactout{n}{\abs{\tilde{x}}{P}}} \Delta_1' \proves P_1 \by{\news{\tilde{m_1}} \bactout{n}{\abs{\tilde{x}}{P}}} P_2
+%				\Gamma; \emptyset; \Delta_1 \by{\news{\tilde{m_1}} \bactout{n}{\abs{\tilde{x}}{P}}} \Delta_1' \proves P_1 \by{\news{\tilde{m_1}} \bactout{n}{\abs{\tilde{x}}{P}}} P_2
+				\horel{\Gamma}{\Delta_1}{P_1}{\by{\news{\tilde{m_1}} \bactout{n}{\abs{\tilde{x}}{P}}}}{\Delta_1'}{P_2}
 			\]
 			implies that $\exists Q_2, \abs{x}{Q}$ such that
 			\[
-				\Gamma; \emptyset; \Delta_2 \By{\news{\tilde{m_2}} \bactout{n}{\abs{\tilde{x}}{Q}}} \Delta_2' \proves Q_1 \By{\news{\tilde{m_2}} \bactout{n}{\abs{\tilde{x}}{Q}}} Q_2
+%				\Gamma; \emptyset; \Delta_2 \By{\news{\tilde{m_2}} \bactout{n}{\abs{\tilde{x}}{Q}}} \Delta_2' \proves Q_1 \By{\news{\tilde{m_2}} \bactout{n}{\abs{\tilde{x}}{Q}}} Q_2
+				\horel{\Gamma}{\Delta_2}{Q_1}{\By{\news{\tilde{m_2}} \bactout{n}{\abs{\tilde{x}}{Q}}}}{\Delta_2'}{Q_2}
 			\]
 			and $\forall R$ with $\set{X} = \fpv{R}$, %such that
 %			\begin{eqnarray*}
@@ -339,17 +358,20 @@ The second behavioural relation is contextual bisimulation:
 %			\end{eqnarray*}
 			then
 			\[
-				\Gamma; \emptyset; \Delta_1''\ \mathcal{R}\ \Delta_2'' \proves \newsp{\tilde{m_1}}{P_2 \Par R\subst{(\tilde{x}) P}{X}}
-				\ \mathcal{R}\ 
-				\newsp{\tilde{m_2}}{Q_2 \Par R\subst{(\tilde{x}) Q}{X}}
+				\horel{\Gamma}{\Delta_1''}{\newsp{\tilde{m_1}}{P_2 \Par R\subst{(\tilde{x}) P}{X}}}{\ \mathcal{R}\ }{\Delta_2''}{\newsp{\tilde{m_2}}{Q_2 \Par R\subst{(\tilde{x}) Q}{X}}}
+%				\Gamma; \emptyset; \Delta_1''\ \mathcal{R}\ \Delta_2'' \proves \newsp{\tilde{m_1}}{P_2 \Par R\subst{(\tilde{x}) P}{X}}
+%				\ \mathcal{R}\ 
+%				\newsp{\tilde{m_2}}{Q_2 \Par R\subst{(\tilde{x}) Q}{X}}
 			\]
-		\item	$\forall \news{\tilde{s_1}} \bactout{n}{\tilde{m_1}}$ such that
+		\item	$\forall \news{\tilde{m_1}'} \bactout{n}{\tilde{m_1}}$ such that
 			\[
-				\Gamma; \emptyset; \Delta_1 \by{\news{\tilde{s_1}} \bactout{n}{\tilde{m_1}}} \Delta_1' \proves P_1 \by{\news{\tilde{s_1}} \bactout{n}{\tilde{m_1}}} P_2
+%				\Gamma; \emptyset; \Delta_1 \by{\news{\tilde{m_1}'} \bactout{n}{\tilde{m_1}}} \Delta_1' \proves P_1 \by{\news{\tilde{m_1}'} \bactout{n}{\tilde{m_1}}} P_2
+				\horel{\Gamma}{\Delta_1}{P_1}{\by{\news{\tilde{m_1}'} \bactout{n}{\tilde{m_1}}}}{\Delta_1'}{P_2}
 			\]
 			implies that $\exists Q_2, \tilde{m_2}$ such that
 			\[
-				\Gamma; \emptyset; \Delta_2 \By{\news{\tilde{s_2}} \bactout{n}{\tilde{m_2}}} \Delta_2' \proves Q_1 \By{\news{\tilde{s_2}} \bactout{n}{\tilde{m_2}}} Q_2
+%				\Gamma; \emptyset; \Delta_2 \By{\news{\tilde{m_2}'} \bactout{n}{\tilde{m_2}}} \Delta_2' \proves Q_1 \By{\news{\tilde{m_2}'} \bactout{n}{\tilde{m_2}}} Q_2
+				\horel{\Gamma}{\Delta_2}{Q_1}{\By{\news{\tilde{m_2}'} \bactout{n}{\tilde{m_2}}}}{\Delta_2'}{Q_2}
 			\]
 			and $\forall R$ with $\tilde{x} = \fn{R}$, %such that
 %			\begin{eqnarray*}
@@ -358,21 +380,25 @@ The second behavioural relation is contextual bisimulation:
 %			\end{eqnarray*}
 			then
 			\[
-				\Gamma; \emptyset; \Delta_1''\ \mathcal{R}\ \Delta_2'' \proves \newsp{\tilde{s_1}}{P_2 \Par R \subst{\tilde{m_1}}{\tilde{x}}}
-				\ \mathcal{R}\ 
-				\newsp{\tilde{s_2}}{Q_2 \Par R \subst{\tilde{m_2}}{\tilde{x}}}
+				\horel{\Gamma}{\Delta_1''}{\newsp{\tilde{m_1}'}{P_2 \Par R \subst{\tilde{m_1}}{\tilde{x}}}}{\ \mathcal{R}\ }{\Delta_2''}{\newsp{\tilde{m_2}'}{Q_2 \Par R \subst{\tilde{m_2}}{\tilde{x}}}}
+%				\Gamma; \emptyset; \Delta_1''\ \mathcal{R}\ \Delta_2'' \proves \newsp{\tilde{m_1}'}{P_2 \Par R \subst{\tilde{m_1}}{\tilde{x}}}
+%				\ \mathcal{R}\ 
+%				\newsp{\tilde{m_2}'}{Q_2 \Par R \subst{\tilde{m_2}}{\tilde{x}}}
 			\]
 
-		\item	$\forall \ell \notin \set{\news{\tilde{s}} \bactout{n}{m}, \news{\tilde{m}} \bactout{n}{\abs{x}{P}}}s$ such that
+		\item	$\forall \ell \notin \set{\news{\tilde{m}'} \bactout{n}{m}, \news{\tilde{m}} \bactout{n}{\abs{x}{P}}}$ such that
 			\[
-				\Gamma; \emptyset; \Delta_1 \by{\ell} \Delta_1' \proves P_1 \by{\ell} P_2
+				\horel{\Gamma}{\Delta_1}{P_1}{\by{\ell}}{\Delta_1'}{P_2}
+%				\Gamma; \emptyset; \Delta_1 \by{\ell} \Delta_1' \proves P_1 \by{\ell} P_2
 			\]
 			implies that $\exists Q_2$ such that 
 			\[
-				\Gamma; \emptyset; \Delta_2 \By{\hat{\ell}} \Delta_2' \proves Q_1 \By{\hat{\ell}} Q_2
+				\horel{\Gamma}{\Delta_1}{Q_1}{\by{\ell}}{\Delta_1'}{Q_2}
+%				\Gamma; \emptyset; \Delta_2 \By{\hat{\ell}} \Delta_2' \proves Q_1 \By{\hat{\ell}} Q_2
 			\]
 			and
-			$\Gamma; \emptyset; \Delta_1\ \mathcal{R}\ \Delta_2 \proves P_2\ \mathcal{R}\ Q_2$.
+			$\horel{\Gamma}{\Delta_1'}{P_2}{\ \mathcal{R}\ }{\Delta_2'}{Q_2}$
+%			$\Gamma; \emptyset; \Delta_1\ \mathcal{R}\ \Delta_2 \proves P_2\ \mathcal{R}\ Q_2$.
 
 		\item	The symmetric cases of 1, 2 and 3.
 	\end{enumerate}
@@ -392,11 +418,13 @@ of a bisimulation relation avoids the universal quantifier over processes.
 	\begin{enumerate}
 		\item	$\forall \news{\tilde{m_1}} \bactout{n}{\abs{\tilde{x}}{P}}$ such that
 			\[
-				\Gamma; \emptyset; \Delta_1 \hby{\news{\tilde{m_1}} \bactout{n}{\abs{\tilde{x}}{P}}} \Delta_1' \proves P_1 \hby{\news{\tilde{m_1}} \bactout{n}{\abs{\tilde{x}}{P}}} P_2
+%				\Gamma; \emptyset; \Delta_1 \hby{\news{\tilde{m_1}} \bactout{n}{\abs{\tilde{x}}{P}}} \Delta_1' \proves P_1 \hby{\news{\tilde{m_1}} \bactout{n}{\abs{\tilde{x}}{P}}} P_2
+				\horel{\Gamma}{\Delta_1}{P_1}{\hby{\news{\tilde{m_1}} \bactout{n}{\abs{\tilde{x}}{P}}}}{\Delta_1'}{P_2}
 			\]
 			implies that $\exists Q_2, \abs{\tilde{x}}{Q}$ such that
 			\[
-				\Gamma; \emptyset; \Delta_2 \Hby{\news{\tilde{m_2}} \bactout{n}{\abs{\tilde{x}}{Q}}} \Delta_2' \proves Q_1 \Hby{\news{\tilde{m_2}} \bactout{n}{\abs{\tilde{x}}{Q}}} Q_2
+%				\Gamma; \emptyset; \Delta_2 \Hby{\news{\tilde{m_2}} \bactout{n}{\abs{\tilde{x}}{Q}}} \Delta_2' \proves Q_1 \Hby{\news{\tilde{m_2}} \bactout{n}{\abs{\tilde{x}}{Q}}} Q_2
+				\horel{\Gamma}{\Delta_2}{Q_1}{\Hby{\news{\tilde{m_2}} \bactout{n}{\abs{\tilde{x}}{Q}}}}{\Delta_2'}{Q_2}
 			\]
 			and for fresh $t$
 %			and for $C = \binp{t}{X} \newsp{s}{\appl{X}{s} \Par \bout{s}{\abs{\tilde{x}}{\hole}} \inact}$ with $t$ fresh
@@ -407,10 +435,11 @@ of a bisimulation relation avoids the universal quantifier over processes.
 %			\end{eqnarray*}
 %			then
 			\[
-				\Gamma; \emptyset; \Delta_1''\ \mathcal{R}\ \Delta_2'' \proves
-				\newsp{\tilde{m_1}}{P_2 \Par \hotrigger{t}{\abs{x}{P}}}%\context{C}{P}}
-				\ \mathcal{R}\ 
-				\newsp{\tilde{m_2}}{Q_2 \Par \hotrigger{t}{\abs{x}{Q}}}%\context{C}{Q}}
+				\horel{\Gamma}{\Delta_1''}{\newsp{\tilde{m_1}}{P_2 \Par \hotrigger{t}{\abs{x}{P}}}}{\ \mathcal{R}\ }{\Delta_2''}{\newsp{\tilde{m_2}}{Q_2 \Par \hotrigger{t}{\abs{x}{Q}}}}
+%				\Gamma; \emptyset; \Delta_1''\ \mathcal{R}\ \Delta_2'' \proves
+%				\newsp{\tilde{m_1}}{P_2 \Par \hotrigger{t}{\abs{x}{P}}}%\context{C}{P}}
+%				\ \mathcal{R}\ 
+%				\newsp{\tilde{m_2}}{Q_2 \Par \hotrigger{t}{\abs{x}{Q}}}%\context{C}{Q}}
 			\]
 
 %		\item	$\exists \bactinp{s}{\abs{x} \map{S}^x}$ such that
@@ -432,14 +461,16 @@ of a bisimulation relation avoids the universal quantifier over processes.
 %				Q_2 \subst{\abs{x}{\map{S}^x}}{X}
 %			\]
 
-		\item	$\forall \news{\tilde{s_1}} \bactout{n}{\tilde{m_1}}$ such that
+		\item	$\forall \news{\tilde{m_1}'} \bactout{n}{\tilde{m_1}}$ such that
 			\[
-				\Gamma; \emptyset; \Delta_1 \hby{\news{\tilde{s_1}} \bactout{n}{\tilde{m_1}}} \Delta_1' \proves P_1 \hby{\news{\tilde{s_1}} \bactout{n}{\tilde{m_1}}} P_2
+%				\Gamma; \emptyset; \Delta_1 \hby{\news{\tilde{m_1}'} \bactout{n}{\tilde{m_1}}} \Delta_1' \proves P_1 \hby{\news{\tilde{m_1}'} \bactout{n}{\tilde{m_1}}} P_2
+				\horel{\Gamma}{\Delta_1}{P_1}{\hby{\news{\tilde{m_1}'} \bactout{n}{\tilde{m_1}}}}{\Delta_1'}{P_2}
 			\]
 			%with $s_1: S \in \Delta_1 \vee (\dual{s_2}: S' \in \Delta_2 \wedge S \dualof S')$
 			implies that $\exists Q_2, \tilde{m_2}$ such that
 			\[
-				\Gamma; \emptyset; \Delta_2 \Hby{\news{\tilde{s_2}} \bactout{n}{\tilde{m_2}}} \Delta_2' \proves Q_1 \Hby{\news{\tilde{s_2}} \bactout{n}{\tilde{m_2}}} Q_2
+%				\Gamma; \emptyset; \Delta_2 \Hby{\news{\tilde{m_2}'} \bactout{n}{\tilde{m_2}}} \Delta_2' \proves Q_1 \Hby{\news{\tilde{m_2}'} \bactout{n}{\tilde{m_2}}} Q_2
+				\horel{\Gamma}{\Delta_2}{Q_1}{\Hby{\news{\tilde{m_2}'} \bactout{n}{\tilde{m_2}}}}{\Delta_2'}{Q_2}
 			\]
 			%such that
 %			\begin{eqnarray*}
@@ -448,22 +479,26 @@ of a bisimulation relation avoids the universal quantifier over processes.
 %			\end{eqnarray*}
 			and for fresh $t$
 			\[
-				\Gamma; \emptyset; \Delta_1''\ \mathcal{R}\ \Delta_2'' \proves
-				\newsp{\tilde{s_1}}{P_2 \Par \fotrigger{t}{\tilde{m_1}}}  % \map{S}^{s_1}}
-				\ \mathcal{R}\ 
-				\newsp{\tilde{s_2}}{Q_2 \Par \fotrigger{t}{\tilde{m_2}}} %\map{S}^{s_2}}
+				\horel{\Gamma}{\Delta_1''}{\newsp{\tilde{m_1}}{P_2 \Par \fotrigger{t}{\tilde{m_1}}}}{\ \mathcal{R}\ }{\Delta_2''}{\newsp{\tilde{m_2}}{Q_2 \Par \fotrigger{t}{\tilde{m_2}}}}
+%				\Gamma; \emptyset; \Delta_1''\ \mathcal{R}\ \Delta_2'' \proves
+%				\newsp{\tilde{m_1}'}{P_2 \Par \fotrigger{t}{\tilde{m_1}}}  % \map{S}^{s_1}}
+%				\ \mathcal{R}\ 
+%				\newsp{\tilde{m_2}'}{Q_2 \Par \fotrigger{t}{\tilde{m_2}}} %\map{S}^{s_2}}
 			\]
 
-		\item	$\forall \ell \notin \set{\news{\tilde{s}} \bactout{n}{m}, \news{\tilde{m}} \bactout{n}{\abs{x}{P}}}$ such that
+		\item	$\forall \ell \notin \set{\news{\tilde{m}'} \bactout{n}{m}, \news{\tilde{m}} \bactout{n}{\abs{x}{P}}}$ such that
 			\[
-				\Gamma; \emptyset; \Delta_1 \hby{\ell} \Delta_1' \proves P_1 \hby{\ell} P_2
+				\horel{\Gamma}{\Delta_1}{P_1}{\hby{\ell}}{\Delta_1'}{P_2}
+%				\Gamma; \emptyset; \Delta_1 \hby{\ell} \Delta_1' \proves P_1 \by{\ell} P_2
 			\]
 			implies that $\exists Q_2$ such that 
 			\[
-				\Gamma; \emptyset; \Delta_2 \Hby{\hat{\ell}} \Delta_2' \proves Q_1 \Hby{\hat{\ell}} Q_2
+				\horel{\Gamma}{\Delta_1}{Q_1}{\Hby{\ell}}{\Delta_1'}{Q_2}
+%				\Gamma; \emptyset; \Delta_2 \Hby{\hat{\ell}} \Delta_2' \proves Q_1 \By{\hat{\ell}} Q_2
 			\]
 			and
-			$\Gamma; \emptyset; \Delta_1\ \mathcal{R}\ \Delta_2 \proves P_2\ \mathcal{R}\ Q_2$.
+			$\horel{\Gamma}{\Delta_1'}{P_2}{\ \mathcal{R}\ }{\Delta_2'}{Q_2}$
+%			$\Gamma; \emptyset; \Delta_1\ \mathcal{R}\ \Delta_2 \proves P_2\ \mathcal{R}\ Q_2$.
 
 		\item	The symmetric cases of 1, 2 and 3.
 	\end{enumerate}
@@ -509,7 +544,7 @@ Session types are inherintly $\tau$-inert.
 
 \begin{proof}
 	The proof is relied on the fact that processes of the
-	form $\Gamma; \es; \Delta \bout{s}{V} P_1 \Par \binp{k}{x} P_2$
+	form $\Gamma; \es; \Delta \proves \bout{s}{V} P_1 \Par \binp{k}{x} P_2$
 	cannot have any typed transition observables and the fact
 	that bisimulation is a congruence.
 	See details in Appendix~\ref{app:sub_tau_inert}.
