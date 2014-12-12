@@ -3,45 +3,42 @@
 \newpage
 \section{Typed Encodings}\label{s:expr}
 
-In this section we present a study of the expressiveness 
-of the sub-calculi of $\HOp$.
-
-We first define the notion of calculus.
-We extend notions proposed elsewhere (cf.~Gorla\cite{})
-by explicitly considering a type structure and a type system.
+In this section we present a study of the expressiveness of $\HOp$ and its subcalculi. 
+%In general, we may define:
 
 \begin{definition}[Typed Calculus]\label{d:tcalculus}\rm
-	A \emph{typed calculus} $\tyl{L}$ is defined as a tuple:
-%
-	\[
-		\calc{L}{T}{\red}{\wb}{\proves}
-	\]
-%
-	where $L$ and $T$ are sets of processes and types, respectively; %$T_1$ is the set of types;
-	$\red$ and $\wb$ denote a reduction semantics 
-	and a typed equivalence
-	on processes, respectively. Finally, $\proves$ denotes a type system for processes in $L$.
+	A \emph{typed calculus} $\tyl{L}$ is a tuple
+$		\calc{L}{T}{\hby{\ell}}{\wb}{\proves}$
+	where $L$ and $T$ are set of processes and types, respectively.
+	Also, $\hby{\ell}$, $\wb$, and $\proves$ 
+	denote a transition semantics, a typed process equivalence, and a type system for $L$ processes, respectively. 
 \end{definition}
 
-We notice that in this paper we shall always consider languages with type system of \S\,\ref{s:types}.
-In the following, when writing $\tyl{L}_i$ we tacitly assume the existence of appropriate 
-$L_i$, $T_i$, $\red_i$, $\wb_i$, and $\proves_i$.
-We first define the notion of encoding over typed calculi.
+In the context of this paper, we consider as typed calculi some
+ subcalculi of $\HOp$, using the same 
+  type system (as in \S\,\ref{s:types}),
+ transition semantics (cf. Def.~\ref{d:tlts}) with labels $\ell$ (as in  \S\,\ref{ss:lts}), 
+ and behavioral equivalence (cf. Def.~\ref{d:bisim}) for all variants. 
+  Thus, in the following, when writing $\tyl{L}_i$ we tacitly assume the existence of appropriate 
+  $L_i$ and $T_i$, keeping all other elements unchanged.
+ We define the notion of encoding over typed calculi.
 
 \begin{definition}[Typed Encoding]\rm
 	Let  $\tyl{L}_1$ % = \calc{L_1}{T_1}{\red_1}{\wb_1}{\proves_1}$
 	and $\tyl{L}_2$ % =  \calc{L_2}{T_2}{\red_2}{\wb_2}{\proves_2}$ 
 	be typed calculi. % as in Definition~\ref{d:tcalculus}.
-	Given mappings $\map{\cdot}: L_1 \to L_2$ and
-	$\mapt{\cdot}: T_1 \to T_2$, 
+	Given mappings $\map{\cdot}: L_1 \to L_2$, 
+	$\mapt{\cdot}: T_1 \to T_2$, and $\mapa{\cdot}: \ell \to \ell$, 
 	we write 
 	%$\enc{\cdot}{\cdot}: \calc{L_1}{T_1}{\red_1}{\wb_1}{\proves_1} \longrightarrow \calc{L_2}{T_2}{\red_2}{\wb_2}{\proves_2}$
 %	for the encoding from $\calc{L_1}{T_1}{\red_1}{\wb_1}{\proves_1}$ to $\calc{L_2}{T_2}{\red_2}{\wb_2}{\proves_2}$.
-	\[
-		\enc{\cdot}{\cdot} : \tyl{L}_1 \to \tyl{L}_2
-	\]
+	$\lrangle{\map{\cdot}, \mapt{\cdot}, \mapa{\cdot}} : \tyl{L}_1 \to \tyl{L}_2$
 	to denote the \emph{typed encoding} of $\tyl{L}_1$ into $\tyl{L}_2$.
 \end{definition}
+
+Thus, our notion of encoding considers a process mapping $\map{\cdot}$,
+a mapping on types $\mapt{\cdot}$, and a mapping on transition labels $\mapa{\cdot}$.
+In the following we use number decorations on these mappings, to distinguish them.
 
 % Parameters - 1:Gamma , 2:label, 3:initial delta, 4:initial processes, 5:final delta, 6:initial process
 \newcommand{\stytra}[6]{\ensuremath{#1; \emptyset; #3 \hby{#2} #5 \proves #4  \hby{#2} #6 }}
@@ -49,19 +46,19 @@ We first define the notion of encoding over typed calculi.
 \newcommand{\mapl}[1]{\ensuremath{\{\!\{#1\}\!\}}}
 \newcommand{\wbb}[6]{\ensuremath{#1; \emptyset; #3 \wb #5 \proves #4  \wb #6 }}
 
-\subsection{Encoding Properties}
-We use the following labeled transitions:
-\begin{enumerate}
-\item Strong case: $\Gamma; \emptyset; \Delta_1 \hby{\ell} \Delta_1' \proves P_1 \hby{\ell} P_2$ \\
-(With the new command: $\stytra{\Gamma}{\ell}{\Delta_1}{P_1}{\Delta'_1}{P_2}$)
-\item Weak case: $\Gamma; \emptyset; \Delta_1 \Hby{ \ell} \Delta_1' \proves P_1 \Hby{ \ell} P_2$ \\
-(With the new command: $\wtytra{\Gamma}{\ell}{\Delta_1}{P_1}{\Delta'_1}{P_2}$)
-\item Using the command for weak bisimilarity:
-$\wbb{\Gamma}{\ell}{\Delta_1}{P_1}{\Delta'_1}{P_2}$.
+%\subsection{Encoding Properties}
+%We use the following labeled transitions:
+%\begin{enumerate}
+%\item Strong case: $\Gamma; \emptyset; \Delta_1 \hby{\ell} \Delta_1' \proves P_1 \hby{\ell} P_2$ \\
+%(With the new command: $\stytra{\Gamma}{\ell}{\Delta_1}{P_1}{\Delta'_1}{P_2}$)
+%\item Weak case: $\Gamma; \emptyset; \Delta_1 \Hby{ \ell} \Delta_1' \proves P_1 \Hby{ \ell} P_2$ \\
+%(With the new command: $\wtytra{\Gamma}{\ell}{\Delta_1}{P_1}{\Delta'_1}{P_2}$)
+%\item Using the command for weak bisimilarity:
+%$\wbb{\Gamma}{\ell}{\Delta_1}{P_1}{\Delta'_1}{P_2}$.
+%
+%\end{enumerate}
 
-\end{enumerate}
-
-We require that a {\em good} encoding should 
+We require that a {\em good} typed encoding should 
 preserve not only the syntax but
 also the operational, typing and behavioural
 semantics. 
@@ -83,7 +80,7 @@ semantics.
 
 \begin{definition}[Semantic Preserving Encoding]\rm
 	\label{def:ep}
-	We say that $\enc{\cdot}{\cdot} : \tyl{L}_1 \to \tyl{L}_2$ is a \emph{semantic preserving encoding}
+	We say that $\lrangle{\map{\cdot}, \mapt{\cdot}, \mapa{\cdot}}: \tyl{L}_1 \to \tyl{L}_2$ is a \emph{semantic preserving encoding}
 	if it satisfies the following properties:
 	
 	\begin{enumerate}[1.]
@@ -95,26 +92,26 @@ semantics.
 
 		\item \emph{Operational Correspondence}: If $\Gamma; \emptyset; \Delta \proves_1 P \hastype \Proc$ then
 		\begin{enumerate}[-]
+%			\item	Completeness: \\
+%			    If $P \red_1 P'$ then $\exists\, \Delta'$ s.t.
+%				$\map{P} \Red_2 \map{P'}$ and
+%				$\mapt{\Gamma}; \emptyset; \mapt{\Delta'} \proves_2 \map{P'} \hastype \Proc$.
 			\item	Completeness: \\
-			    If $P \red_1 P'$ then $\exists\, \Delta'$ s.t.
-				$\map{P} \Red_2 \map{P'}$ and
-				$\mapt{\Gamma}; \emptyset; \mapt{\Delta'} \proves_2 \map{P'} \hastype \Proc$.
-			\item	Completeness (Labelled): \\
 			   If  $\stytra{\Gamma}{\ell_1}{\Delta_1}{P}{\Delta'_1}{P'}$
 			   then $\exists \ell_2$ s.t. 
 			    $\wtytra{\mapt{\Gamma}}{\ell_2}{\mapt{\Delta_1}}{\map{P_1}}{\mapt{\Delta'_1}}{\map{P_2}}$
-			    and $\ell_2 = \mapl{\ell_1}$.
+			    and $\ell_2 = \mapa{\ell_1}$.
 			    				
-			\item Soundness : \\
-			    If $\map{P} \red_2 Q$ then
-				$\exists P'$ s.t. $P \red_1 P'$ and 
-				$\mapt{\Gamma}; \mapt{\Delta_1} \wb_2 \mapt{\Delta_2} \proves_2 \map{P'} \wb_2 Q$.
+%			\item Soundness : \\
+%			    If $\map{P} \red_2 Q$ then
+%				$\exists P'$ s.t. $P \red_1 P'$ and 
+%				$\mapt{\Gamma}; \mapt{\Delta_1} \wb_2 \mapt{\Delta_2} \proves_2 \map{P'} \wb_2 Q$.
 				
-			\item Soundness (Labelled):\\   
+			\item Soundness:\\   
 			If  $\stytra{\mapt{\Gamma}}{\ell_2}{\mapt{\Delta_1}}{\map{P}}{\mapt{\Delta'_1}}{Q}$
 			   then $\exists \ell_2, P'$ s.t.  \\
 			    (i)~$\stytra{\Gamma}{\ell_1}{\Delta_1}{P}{\Delta'_1}{P'}$,
-			    (ii)~$\ell_2 = \mapl{\ell_1}$, and
+			    (ii)~$\ell_2 = \mapa{\ell_1}$, and
 			    (iii)~$\wbb{\Gamma}{\ell}{\Delta'_1}{P'}{\mapt{\Delta'_1}}{Q}$.
 		\end{enumerate}
 		
