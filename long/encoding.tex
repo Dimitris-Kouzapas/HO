@@ -14,7 +14,7 @@ $		\calc{L}{T}{\hby{\ell}}{\wb}{\proves}$
 	denote a transition semantics, a typed process equivalence, and a type system for $L$ processes, respectively. 
 \end{definition}
 
-In the context of this paper, we consider as typed calculi some
+We shall consider as typed calculi some
  subcalculi of $\HOp$, using the same 
   type system (as in \S\,\ref{s:types}),
  transition semantics (cf. Def.~\ref{d:tlts}) with labels $\ell$ (as in  \S\,\ref{ss:lts}), 
@@ -28,22 +28,29 @@ In the context of this paper, we consider as typed calculi some
 	and $\tyl{L}_2$ % =  \calc{L_2}{T_2}{\red_2}{\wb_2}{\proves_2}$ 
 	be typed calculi. % as in Definition~\ref{d:tcalculus}.
 	Given mappings $\map{\cdot}: L_1 \to L_2$, 
-	$\mapt{\cdot}: T_1 \to T_2$, and $\mapa{\cdot}: \ell \to \ell$, 
+	$\mapt{\cdot}: T_1 \to T_2$, and 
+	$\mapa{\cdot}: \ell \to \ell^{\,m}$, 
 	we write 
 	%$\enc{\cdot}{\cdot}: \calc{L_1}{T_1}{\red_1}{\wb_1}{\proves_1} \longrightarrow \calc{L_2}{T_2}{\red_2}{\wb_2}{\proves_2}$
 %	for the encoding from $\calc{L_1}{T_1}{\red_1}{\wb_1}{\proves_1}$ to $\calc{L_2}{T_2}{\red_2}{\wb_2}{\proves_2}$.
-	$\lrangle{\map{\cdot}, \mapt{\cdot}, \mapa{\cdot}} : \tyl{L}_1 \to \tyl{L}_2$
+	$\enco{\map{\cdot}, \mapt{\cdot}, \mapa{\cdot}} : \tyl{L}_1 \to \tyl{L}_2$
 	to denote the \emph{typed encoding} of $\tyl{L}_1$ into $\tyl{L}_2$.
 \end{definition}
 
 Thus, our notion of encoding considers a process mapping $\map{\cdot}$,
-a mapping on types $\mapt{\cdot}$, and a mapping on transition labels $\mapa{\cdot}$.
+a mapping on types $\mapt{\cdot}$, and a mapping $\mapa{\cdot}$ from transition labels 
+into \emph{sets} of transition labels. 
 In the following we use number decorations on these mappings, to distinguish them.
+
+We should assume that if 
+$P \hby{\ell} P'$ and $\mapa{\ell} = \{\ell_1, \ell_2,  \cdots, \ell_m\}$ then
+there exist $P_1, P_2, \ldots, P_m$ such that
+$\map{P} \Hby{\ell_1} P_1 \Hby{\ell_2} P_2 \cdots \Hby{\ell_m} P_m =  \map{P'}$.
+
 
 % Parameters - 1:Gamma , 2:label, 3:initial delta, 4:initial processes, 5:final delta, 6:initial process
 \newcommand{\stytra}[6]{\ensuremath{#1; \emptyset; #3 \hby{#2} #5 \proves #4  \hby{#2} #6 }}
 \newcommand{\wtytra}[6]{\ensuremath{#1; \emptyset; #3 \Hby{#2} #5 \proves #4  \Hby{#2} #6 }}
-\newcommand{\mapl}[1]{\ensuremath{\{\!\{#1\}\!\}}}
 \newcommand{\wbb}[6]{\ensuremath{#1; \emptyset; #3 \wb #5 \proves #4  \wb #6 }}
 
 %\subsection{Encoding Properties}
@@ -80,7 +87,7 @@ semantics.
 
 \begin{definition}[Semantic Preserving Encoding]\rm
 	\label{def:ep}
-	We say that $\lrangle{\map{\cdot}, \mapt{\cdot}, \mapa{\cdot}}: \tyl{L}_1 \to \tyl{L}_2$ is a \emph{semantic preserving encoding}
+	We say that $\enco{\map{\cdot}, \mapt{\cdot}, \mapa{\cdot}}: \tyl{L}_1 \to \tyl{L}_2$ is a \emph{semantic preserving encoding}
 	if it satisfies the following properties:
 	
 	\begin{enumerate}[1.]
@@ -96,9 +103,9 @@ semantics.
 %			    If $P \red_1 P'$ then $\exists\, \Delta'$ s.t.
 %				$\map{P} \Red_2 \map{P'}$ and
 %				$\mapt{\Gamma}; \emptyset; \mapt{\Delta'} \proves_2 \map{P'} \hastype \Proc$.
-			\item	Completeness: \\
+			\item	Completeness: 
 			   If  $\stytra{\Gamma}{\ell_1}{\Delta_1}{P}{\Delta'_1}{P'}$
-			   then $\exists \ell_2$ s.t. 
+			   then \\ $\exists \ell_2$ s.t. 
 			    $\wtytra{\mapt{\Gamma}}{\ell_2}{\mapt{\Delta_1}}{\map{P_1}}{\mapt{\Delta'_1}}{\map{P_2}}$
 			    and $\ell_2 = \mapa{\ell_1}$.
 			    				
@@ -107,8 +114,8 @@ semantics.
 %				$\exists P'$ s.t. $P \red_1 P'$ and 
 %				$\mapt{\Gamma}; \mapt{\Delta_1} \wb_2 \mapt{\Delta_2} \proves_2 \map{P'} \wb_2 Q$.
 				
-			\item Soundness:\\   
-			If  $\stytra{\mapt{\Gamma}}{\ell_2}{\mapt{\Delta_1}}{\map{P}}{\mapt{\Delta'_1}}{Q}$
+			\item Soundness:   
+			If  $\wtytra{\mapt{\Gamma}}{\ell_2}{\mapt{\Delta_1}}{\map{P}}{\mapt{\Delta'_1}}{Q}$
 			   then $\exists \ell_2, P'$ s.t.  \\
 			    (i)~$\stytra{\Gamma}{\ell_1}{\Delta_1}{P}{\Delta'_1}{P'}$,
 			    (ii)~$\ell_2 = \mapa{\ell_1}$, and
@@ -124,10 +131,14 @@ semantics.
 We show that the composition of encodings is closed on the above properties.
 
 \begin{proposition}[Composability of Semantic Preserving Encodings]
-	Let $\encod{\cdot}{\cdot}{1}: \tyl{L}_1 \to \tyl{L}_2$ and $\encod{\cdot}{\cdot}{2}: \tyl{L}_2 \to \tyl{L}_3$
+	Let 
+	$\enco{\map{\cdot}^{1}, \mapt{\cdot}^{1}, \mapa{\cdot}^{1}}: \tyl{L}_1 \to \tyl{L}_2$
+	and 
+	$\enco{\map{\cdot}^{2}, \mapt{\cdot}^{2}, \mapa{\cdot}^{2}}: \tyl{L}_2 \to \tyl{L}_3$
+%	$\enco{\cdot}{\cdot}{1}: \tyl{L}_1 \to \tyl{L}_2$ and $\encod{\cdot}{\cdot}{2}: \tyl{L}_2 \to \tyl{L}_3$
 	be two semantic preserving encodings.
 	Then their composition, denoted 
-	$\encod{\cdot}{\cdot}{1} \cdot \encod{\cdot}{\cdot}{2}: \tyl{L}_1 \to \tyl{L}_3$
+	$\enco{\map{\cdot}^{1} \circ \map{\cdot}^{2}, \mapt{\cdot}^{1} \circ \mapt{\cdot}^{2}, \mapa{\cdot}^{1}\circ \mapa{\cdot}^{2}}: \tyl{L}_1 \to \tyl{L}_3$
 	is also a semantic preserving encoding.
 \end{proposition}
 
@@ -213,7 +224,7 @@ In the untyped $\pi$-calculus, polyadic communication
 can be encoded into monadic name passing by first generating a fresh channel and then 
 performing $n$ monadic synchronizations on that channel. 
 In session-typed $\pi$-calculi this encoding is even more direct, 
-thanks to the linearity (and non-interference properties) of session endpoints~\cite{VascoFun}.
+thanks to the linearity and non-interference  of session endpoints~\cite{VascoFun}.
 %The extension of the (monadic) session type system given in \S\,\ref{s:types}
 %to handle polyadic communication is straightforward and follow expected lines.
 %For this reason, we do not present a typing system for \pHOp in full detail; rather, 
@@ -221,13 +232,15 @@ thanks to the linearity (and non-interference properties) of session endpoints~\
 %\footnote{The definition of a polyadic semantics would only add visual clutter to our presentation,
 %as all results extend easily from monadic to polyadic communication.}
 Below we  define an encoding of polyadic semantics to monadic semantics.
-Thanks to this encoding, %Because of the polyadic to monadic encoding %, denoted  $\auxmap{\cdot}{\mathsf{p}}$,
-we are able to focus on monadic session processes,
+Using this encoding, %Because of the polyadic to monadic encoding %, denoted  $\auxmap{\cdot}{\mathsf{p}}$,
+we may focus on monadic session processes,
 and rely on polyadic constructs simply as convenient syntactic sugar.
 In fact, we shall rely on polyadicity to encode recursive behaviors.
 %
 \begin{definition}[Polyadic Into Monadic]\rm
-	Define the process mapping $\encod{\cdot}{\cdot}{\mathsf{p}}: \HOp \to \HOp^{-\mathsf{p}}$:
+Let 
+$\enco{\map{\cdot}^{\mathsf{p}}, \mapt{\cdot}^{\mathsf{p}}, \mapa{\cdot}^{\mathsf{p}}}: \HOp \to \HOp^{-\mathsf{p}}$
+be a typed encoding, where
 	%$\auxmap{\cdot}{\mathsf{p}}:\pHOp \to \HOp$ as
 \[
 	\begin{array}{rcl}
@@ -240,21 +253,14 @@ In fact, we shall rely on polyadicity to encode recursive behaviors.
 		&\defeq&
 		\binp{k}{x_1} \cdots ; \binp{k}{x_m}  \map{P}^{\mathsf{p}}
 		\\
-
 		\map{\bbout{k}{\abs{x_1, \cdots, x_m} Q} P}^{\mathsf{p}}
 		&\defeq&
 		\bbout{k}{\abs{z}\binp{z}{x_1} \cdots ; \binp{z}{x_m} \map{Q}^{\mathsf{p}}} \map{P}^{\mathsf{p}}
-		\\
-
+		\\ 
 		\map{\appl{X}{k_1, \cdots, k_m}}^{\mathsf{p}}
 		&\defeq&
 		\newsp{s}{\appl{X}{s} \Par \bout{\dual{s}}{k_1} \cdots ; \bout{\dual{s}}{k_m} \inact} 
-	\end{array}
-	\]
-	and as an homomorphism for the remaining constructs in \HOp. 
-	Define the mapping on types $\tmap{\cdot}{\mathsf{p}}$ as follows:
-\[
-	\begin{array}{rcl}
+        \\ % typed mapping starts here
 		\tmap{\btout{S_1, \cdots, S_m}S}{\mathsf{p}}
 		&\defeq&
 		\btout{\tmap{S_1}{\mathsf{p}}} \cdots \btout{\tmap{S_m}{\mathsf{p}}}\tmap{S}{\mathsf{p}}
@@ -270,9 +276,15 @@ In fact, we shall rely on polyadicity to encode recursive behaviors.
 		\tmap{\shot{(S_1, \cdots, S_m)}}{\mathsf{p}}
 		&\defeq&
 		\shot{\big(\btinp{\tmap{S_1}{\mathsf{p}}} \cdots \btinp{\tmap{S_m}{\mathsf{p}}}\tinact\big)}
+		\\ % action mapping starts here
+		\mapa{\bactout{k}{k_1, \ldots, k_m}} &\defeq&   \big\{\bactout{k}{k_1}, \cdots, \bactout{k}{k_m}\big\} \\
+		\mapa{\bactinp{k}{k_1, \ldots, k_m}} &\defeq&   \big\{\bactinp{k}{k_1}, \cdots, \bactinp{k}{k_m} \big\}\\
+		\mapa{\bactout{k}{\abs{x_1, \ldots, x_m}{P}} } &\defeq&  \bactout{k}{\abs{z}\binp{z}{x_1} \cdots ; \binp{z}{x_m} \map{P}^{\mathsf{p}}} \\
+		\mapa{\bactinp{k}{\abs{x_1, \ldots, x_m}{P}} } &\defeq&  \bactinp{k}{\abs{z}\binp{z}{x_1} \cdots ; \binp{z}{x_m} \map{P}^{\mathsf{p}}} 
 	\end{array}
 \]
-	and as an homomorphism for the remaining type constructs.
+and mappings $\map{\cdot}^{\mathsf{p}}$, $\mapt{\cdot}^{\mathsf{p}}$, $\mapa{\cdot}^{\mathsf{p}}$
+are homomorphisms for the other processes/types/labels. 
 	%\jp{I prefer to be explicit in the encoding of polyadic abstraction/applications. Previous version is commented.}
 \end{definition}
 %
