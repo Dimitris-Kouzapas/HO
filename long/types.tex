@@ -1,3 +1,5 @@
+% !TEX root = main.tex
+\newpage
 \section{Session Types for $\HOp$}
 \label{s:types}
 
@@ -134,10 +136,10 @@ process $P$ has the process type $\Proc$.
 
 \subsection{Typing Rules}
 The typing system is defined in Figure~\ref{fig:typerulesmy}.
-Types for session names or session variables $k$ and
+Types for session names/variables $k$ and
 for linear process variables $X$ are
 directly derived from the linear part of the typing
-environment,i.e.~type maps $\Lambda; \Delta$.
+environment, i.e.~type maps $\Delta$ and $\Lambda$.
 Rules $\trule{Session}$ and $\trule{LVar}$ require
 a minimal linear environment in order to type
 sessions $k$ with type $S$ and variables $X$ with
@@ -145,23 +147,22 @@ type $\shot{\tilde{C}}$. Rule $\trule{Shared}$
 types shared names or shared variables $k$ with
 type $U$ if the map $k:U$ exists in environment
 $\Gamma$. Again the linear environment should
-be minimal, i.e.~empty.
+be minimal, i.e.,~empty.
 The type $\shot{\tilde{C}}$ for shared values $V$
 is derived using rule $\trule{Prom}$, where we require
 a value with linear type to be typed without a linear
 environment in order to promote shared type.
 Rule $\trule{Derelic}$ allows to freely use a linear
-type variable as shared type variable. The polyadic
-name value is typed using the $\trule{Pol}$ rule,
-which requires to type and combine each value in the
-polyadic tuple.
+type variable as shared type variable. 
+A value consisting of a tuple of names/variables is typed using the $\trule{Pol}$ rule,
+which requires theto type and combine each value in the tuple.
 Abstraction values are typed with rule $\trule{Abs}$.
 The key type for an abstraction is the type for
 the bound variables of the abstraction, i.e.~for
 bound variable type $\tilde{C}$ the abstraction
 has type $\lhot{\tilde{C}}$.
 The dual of abstraction typing is application typing
-described in rule $\trule{App}$, where we expect
+governed by rule $\trule{App}$, where we expect
 the type $\tilde{C}$ of an application name $k$ 
 to match the type $\lhot{\tilde{C}}$ or $\shot{\tilde{C}}$
 of the application variable $X$.
@@ -170,19 +171,19 @@ A process prefixed with a session send operator $\bout{k}{V} P$
 is typed using rule $\trule{Send}$.
 The type $U$ of a send value $V$ should appear as a prefix
 on the session type $\btout{U} S$ of $s$.
-Rules $\trule{RecvS}$ and $\trule{RecvH}$ distinguish 
-two similar receive processes for
-receiving session names $\binp{k}{\tilde{x}} P$
+Rules $\trule{RecvS}$ and $\trule{RecvH}$ 
+are for typing the 
+reception of  session names $\binp{k}{\tilde{x}} P$
 and abstractions $\binp{k}{X} P$, respectively.
 In both rules type $U$ of a receive value should 
 appear as a prefix on the session type $\btinp{U} S$ of $k$.
 We use a similar approach with session prefixes
 to type interaction between shared channels as defined 
 in rules $\trule{Req}, \trule{AccS}$ and $\trule{AccH}$,
-where the type of the send/receive object 
-($U$, $\tilde{C}$ and $L$ respectively) should
-match the type of the send/reveice subject
-($\chtype{U}$, $\chtype{\tilde{C}}$, $\chtype{L}$).
+where the type of the sent/received object 
+($U$, $\tilde{C}$ and $L$, respectively) should
+match the type of the sent/received subject
+($\chtype{U}$, $\chtype{\tilde{C}}$, and $\chtype{L}$, respectively).
 In the case of rule $\trule{Req}$ we require
 a duality condition for the communication of session names.
 Select and branch prefixes are typed using the rules

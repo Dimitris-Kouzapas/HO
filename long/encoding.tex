@@ -1,5 +1,15 @@
 % !TEX root = main.tex
 
+%%%%
+% COMMANDS
+% Parameters - 1:Gamma , 2:label, 3:initial delta, 4:initial processes, 5:final delta, 6:initial process
+\newcommand{\stytra}[6]{\ensuremath{#1; \emptyset; #3 \hby{#2} #5 \proves #4  \hby{#2} #6 }}
+\newcommand{\wtytra}[6]{\ensuremath{#1; \emptyset; #3 \Hby{#2} #5 \proves #4  \Hby{#2} #6 }}
+\newcommand{\wbb}[6]{\ensuremath{#1; \emptyset; #3 \wb #5 \proves #4  \wb #6 }}
+
+%%%%%%%%%%
+
+
 \newpage
 \section{Typed Encodings}\label{s:expr}
 
@@ -42,16 +52,10 @@ a mapping on types $\mapt{\cdot}$, and a mapping $\mapa{\cdot}$ from transition 
 into \emph{sets} of transition labels. 
 In the following we use number decorations on these mappings, to distinguish them.
 
-We should assume that if 
-$P \hby{\ell} P'$ and $\mapa{\ell} = \{\ell_1, \ell_2,  \cdots, \ell_m\}$ then
-there exist $P_1, P_2, \ldots, P_m$ such that
-$\map{P} \Hby{\ell_1} P_1 \Hby{\ell_2} P_2 \cdots \Hby{\ell_m} P_m =  \map{P'}$.
 
 
-% Parameters - 1:Gamma , 2:label, 3:initial delta, 4:initial processes, 5:final delta, 6:initial process
-\newcommand{\stytra}[6]{\ensuremath{#1; \emptyset; #3 \hby{#2} #5 \proves #4  \hby{#2} #6 }}
-\newcommand{\wtytra}[6]{\ensuremath{#1; \emptyset; #3 \Hby{#2} #5 \proves #4  \Hby{#2} #6 }}
-\newcommand{\wbb}[6]{\ensuremath{#1; \emptyset; #3 \wb #5 \proves #4  \wb #6 }}
+
+
 
 %\subsection{Encoding Properties}
 %We use the following labeled transitions:
@@ -93,11 +97,11 @@ semantics.
 	\begin{enumerate}[1.]
 		\item \emph{Type preservation}:
 		if
-			$\Gamma; \emptyset; \Delta \proves_1 P \hastype \Proc$ then 
-			$\mapt{\Gamma}; \emptyset; \mapt{\Delta} \proves_2 \map{P} \hastype \Proc$ 
+			$\Gamma; \emptyset; \Delta \proves P \hastype \Proc$ then 
+			$\mapt{\Gamma}; \emptyset; \mapt{\Delta} \proves \map{P} \hastype \Proc$,  
 			for any   $P$ in $L_1$.
 
-		\item \emph{Operational Correspondence}: If $\Gamma; \emptyset; \Delta \proves_1 P \hastype \Proc$ then
+		\item \emph{Operational Correspondence}: If $\Gamma; \emptyset; \Delta \proves P \hastype \Proc$ then
 		\begin{enumerate}[-]
 %			\item	Completeness: \\
 %			    If $P \red_1 P'$ then $\exists\, \Delta'$ s.t.
@@ -122,11 +126,21 @@ semantics.
 			    (iii)~$\wbb{\Gamma}{\ell}{\Delta'_1}{P'}{\mapt{\Delta'_1}}{Q}$.
 		\end{enumerate}
 		
-		\item \emph{Full Abstraction:} \\
-		$\Gamma; \Sigma_1 \wb_1 \Sigma_2 \proves_1 P \wb_1 Q $ if and only if $\mapt{\Gamma}; \mapt{\Sigma_1} \wb_2 \mapt{\Sigma_2} \proves_2 \map{P} \wb_2 \map{Q} $.
+		\item \emph{Full Abstraction:} 
+		$\Gamma; \Delta_1 \wb \Delta_2 \proves P \wb Q $ if and only if $\mapt{\Gamma}; \mapt{\Delta_1} \wb \mapt{\Delta_2} \proves \map{P} \wb \map{Q} $.
 	\end{enumerate}
 \end{definition}
 
+\begin{remark}
+We  assume that if 
+$P \hby{\ell} P'$ and $\mapa{\ell} = \{\ell_1, \ell_2,  \cdots, \ell_m\}$ then
+$\map{P} \Hby{\mapa{\ell}} \map{P'}$
+should be understood as
+$\map{P} \Hby{\ell_1} P_1 \Hby{\ell_2} P_2 \cdots \Hby{\ell_m} P_m =  \map{P'}$,
+for some
+$P_1, P_2, \ldots, P_m$.
+This is useful for the encoding of polyadic into monadic communication.
+\end{remark}
 
 We show that the composition of encodings is closed on the above properties.
 
@@ -237,10 +251,10 @@ we may focus on monadic session processes,
 and rely on polyadic constructs simply as convenient syntactic sugar.
 In fact, we shall rely on polyadicity to encode recursive behaviors.
 %
-\begin{definition}[Polyadic Into Monadic]\rm
+\begin{definition}[Polyadic Into Monadic]%\rm
 Let 
 $\enco{\map{\cdot}^{\mathsf{p}}, \mapt{\cdot}^{\mathsf{p}}, \mapa{\cdot}^{\mathsf{p}}}: \HOp \to \HOp^{-\mathsf{p}}$
-be a typed encoding, where
+be a typed encoding where
 	%$\auxmap{\cdot}{\mathsf{p}}:\pHOp \to \HOp$ as
 \[
 	\begin{array}{rcl}
@@ -311,8 +325,10 @@ The polyadic mapping, as presented here, is sound only on session names.
 %	$\Gamma; \emptyset; \Sigma \proves \map{P}^{p} \hastype \Proc$
 %\end{proposition}
 
-\begin{proposition}\rm
-	Encoding $\encod{\cdot}{\cdot}{\mathsf{p}}: \HOp \to \HOp^{-\mathsf{p}}$  is type-preserving (cf. Def.~\ref{def:ep}\,(1)).\rm
+\begin{proposition}[Type Preservation, Polyadic to Monadic]
+Let $P$ be an  $\HOp$ process.
+If			$\Gamma; \emptyset; \Delta \proves P \hastype \Proc$ then 
+			$\mapt{\Gamma}^{\mathsf{p}}; \emptyset; \mapt{\Delta}^{\mathsf{p}} \proves \map{P}^{\mathsf{p}} \hastype \Proc$. 
 \end{proposition}
 
 \begin{proof}
@@ -320,8 +336,22 @@ TBD!
 	\qed
 \end{proof}
 
-\begin{proposition}\rm
-	Encoding $\encod{\cdot}{\cdot}{\mathsf{p}}: \HOp \to \HOp^{-\mathsf{p}}$  enjoys operational correspondence (cf. Def.~\ref{def:ep}\,(2)).
+\begin{proposition}[Operational Correspondence, Polyadic to Monadic]
+Let $P$ be an  $\HOp$ process.
+If $\Gamma; \emptyset; \Delta \proves P \hastype \Proc$ then
+		\begin{enumerate}[-]
+			\item	 
+			   If  $\stytra{\Gamma}{\ell_1}{\Delta_1}{P}{\Delta'_1}{P'}$
+			   then  $\exists \ell_2$ s.t. 
+			    $\wtytra{\mapt{\Gamma}^{\mathsf{p}}}{\ell_2}{\mapt{\Delta_1}^{\mathsf{p}}}{\map{P_1}}{\mapt{\Delta'_1}^{\mathsf{p}}}{\map{P_2}}$
+			    and $\ell_2 = \mapa{\ell_1}^{\mathsf{p}}$.
+			\item   
+			If  $\wtytra{\mapt{\Gamma}^{\mathsf{p}}}{\ell_2}{\mapt{\Delta_1}^{\mathsf{p}}}{\map{P}}{\mapt{\Delta'_1}^{\mathsf{p}}}{Q}$
+			   then $\exists \ell_2, P'$ s.t.  
+			    (i)~$\stytra{\Gamma}{\ell_1}{\Delta_1}{P}{\Delta'_1}{P'}$,
+			    (ii)~$\ell_2 = \mapa{\ell_1}^{\mathsf{p}}$, and
+			    (iii)~$\wbb{\Gamma}{\ell}{\Delta'_1}{P'}{\mapt{\Delta'_1}^{\mathsf{p}}}{Q}$.
+			    \end{enumerate}
 \end{proposition}
 
 \begin{proof}
