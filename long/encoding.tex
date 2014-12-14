@@ -2,10 +2,16 @@
 
 %%%%
 % COMMANDS
-% Parameters - 1:Gamma , 2:label, 3:initial delta, 4:initial processes, 5:final delta, 6:initial process
-\newcommand{\stytra}[6]{\ensuremath{#1; \emptyset; #3 \hby{#2} #5 \proves #4  \hby{#2} #6 }}
-\newcommand{\wtytra}[6]{\ensuremath{#1; \emptyset; #3 \Hby{#2} #5 \proves #4  \Hby{#2} #6 }}
-\newcommand{\wbb}[6]{\ensuremath{#1; \emptyset; #3 \wb #5 \proves #4  \wb #6 }}
+% Parameters - 1:Gamma , 2:label, 3:initial delta, 4:initial processes, 5:final delta, 6:final process
+
+%\newcommand{\stytra}[6]{\ensuremath{#1; \emptyset; #3 \hby{#2} #5 \proves #4  \hby{#2} #6 }}
+\newcommand{\stytra}[6]{\ensuremath{#1; #3 \proves #4 \hby{#2} #1; #5 \proves #6 }}
+
+%\newcommand{\wtytra}[6]{\ensuremath{#1; \emptyset; #3 \Hby{#2} #5 \proves #4  \Hby{#2} #6 }}
+\newcommand{\wtytra}[6]{\ensuremath{#1; #3 \proves #4 \Hby{#2} #1; #5 \proves #6 }}
+
+%\newcommand{\wbb}[6]{\ensuremath{#1; \emptyset; #3 \wb #5 \proves #4  \wb #6 }}
+\newcommand{\wbb}[6]{\ensuremath{#1; #3 \proves #4 \wb #1; #5 \proves #6 }}
 
 %%%%%%%%%%
 
@@ -13,7 +19,8 @@
 \newpage
 \section{Typed Encodings}\label{s:expr}
 
-In this section we present a study of the expressiveness of $\HOp$ and its subcalculi. 
+In this section, we define the notion of \emph{typed encoding} that we
+shall use in the following section.
 %In general, we may define:
 
 \begin{definition}[Typed Calculus]\label{d:tcalculus}\rm
@@ -24,14 +31,15 @@ $		\calc{L}{T}{\hby{\ell}}{\wb}{\proves}$
 	denote a transition semantics, a typed process equivalence, and a type system for $L$ processes, respectively. 
 \end{definition}
 
-We shall consider as typed calculi some
- subcalculi of $\HOp$, using the same 
+Since we study subcalculi of $\HOp$, 
+the typed calculi considered here 
+use the same 
   type system (as in \S\,\ref{s:types}),
  transition semantics (cf. Def.~\ref{d:tlts}) with labels $\ell$ (as in  \S\,\ref{ss:lts}), 
- and behavioral equivalence (cf. Def.~\ref{d:bisim}) for all variants. 
+ and behavioral equivalence (cf. Def.~\ref{d:bisim}). 
   Thus, in the following, when writing $\tyl{L}_i$ we tacitly assume the existence of appropriate 
   $L_i$ and $T_i$, keeping all other elements unchanged.
- We define the notion of encoding over typed calculi.
+ We now define the notion of encoding over typed calculi.
 
 \begin{definition}[Typed Encoding]\rm
 	Let  $\tyl{L}_1$ % = \calc{L_1}{T_1}{\red_1}{\wb_1}{\proves_1}$
@@ -47,10 +55,15 @@ We shall consider as typed calculi some
 	to denote the \emph{typed encoding} of $\tyl{L}_1$ into $\tyl{L}_2$.
 \end{definition}
 
-Thus, our notion of encoding considers a process mapping $\map{\cdot}$,
-a mapping on types $\mapt{\cdot}$, and a mapping $\mapa{\cdot}$ from transition labels 
-into \emph{sets} of transition labels. 
-In the following we use number decorations on these mappings, to distinguish them.
+Our notion of encoding considers a mapping on processes, 
+% mapping $\map{\cdot}$,
+a mapping on types, % $\mapt{\cdot}$, 
+and a mapping %$\mapa{\cdot}$ 
+from transition labels 
+into \emph{sets} of transition labels.
+We will often assume that  $\mapt{\cdot}$ extends to typing environments as expected.
+As we will define several typed encodings,  
+in the following we use number decorations on these mappings, to distinguish them.
 
 
 
@@ -126,8 +139,11 @@ semantics.
 			    (iii)~$\wbb{\Gamma}{\ell}{\Delta'_1}{P'}{\mapt{\Delta'_1}}{Q}$.
 		\end{enumerate}
 		
-		\item \emph{Full Abstraction:} 
-		$\Gamma; \Delta_1 \wb \Delta_2 \proves P \wb Q $ if and only if $\mapt{\Gamma}; \mapt{\Delta_1} \wb \mapt{\Delta_2} \proves \map{P} \wb \map{Q} $.
+		\item \emph{Full Abstraction:} \\
+%		$\Gamma; \Delta_1 \wb \Delta_2 \proves P \wb Q $ if and only if $\mapt{\Gamma}; \mapt{\Delta_1} \wb \mapt{\Delta_2} \proves \map{P} \wb \map{Q} $.
+		\wbb{\Gamma}{}{\Delta_1}{P}{\Delta_2}{Q}
+		if and only if
+		\wbb{\mapt{\Gamma}}{}{\mapt{\Delta_1}}{\map{P}}{\mapt{\Delta_2}}{\map{Q}}.
 	\end{enumerate}
 \end{definition}
 
@@ -161,6 +177,9 @@ We show that the composition of encodings is closed on the above properties.
 \end{proof}
 
 \section{Positive Expressiveness Results}
+In this section we present a study of the expressiveness of $\HOp$ and its subcalculi. 
+
+
 \begin{comment}
 \subsection{Languages Under Consideration}
 We consider the following variants of \HOp:
@@ -184,7 +203,7 @@ reduction semantics $\red$, the typed behavioral equivalence $\wb$,
 and the type system $\proves$ are the same for all languages.
 \end{comment}
 
-\subsection{Encode Polyadic Semantics (\HOp) to Monadic Semantics ($\HOp^{-\mathsf{p}}$)}\label{ss:polmon}
+\subsection{Encoding Polyadic Semantics (\HOp) to Monadic Semantics ($\HOp^{-\mathsf{p}}$)}\label{ss:polmon}
 
 %In the extension of \HOp with 
 %polyadic communication, denoted \pHOp, 
@@ -317,7 +336,8 @@ the abstraction subject with a freshly generated session name $s$, which will be
 to the names 
 $k_1, \ldots, k_m$
 that are going to be applied on the abstraction.
-Note that we do not allow polyadic mapping on shared names.
+Observe how $\mapa{\cdot}$ maps polyadic labels for input and output into (ordered) sets of
+monadic labels. Also, note that we do not allow polyadic mapping on shared names.
 The polyadic mapping, as presented here, is sound only on session names.
 %The semantics might break if we apply this mapping on shared names.
 
@@ -332,7 +352,7 @@ If			$\Gamma; \emptyset; \Delta \proves P \hastype \Proc$ then
 \end{proposition}
 
 \begin{proof}
-TBD!
+By induction on the inference $\Gamma; \emptyset; \Delta \proves P \hastype \Proc$. TBD!
 	\qed
 \end{proof}
 
@@ -362,8 +382,9 @@ TBD!
 
 \subsection{Encoding $\sessp^{-\mu}$  into \HO}
 
-The semantics of the $\HO$ are powerful enough to
-express the semantics of the standard $\sessp$ calculus.
+We now show that the subcalculus $\HO$ is expressive enough to
+represent the $\sessp$ calculus, i.e., a standard  session calculus with first-order communication.
+
 
 The name passing semantics of $\sessp$ have a rather straightforward
 encoding from to $\HO$.
@@ -375,20 +396,22 @@ to give a sound encoding of the recursion semantics to $\HO$.
 We first encode the name passing semantics.
 %Below, we use $n$ to stand for either a linear channel $k'$ or a shared name $a$.
 
-\begin{definition}[$\sessp^{-\mu}$  into \HO]\rm
-	Define $\encod{\cdot}{\cdot}{1}: \sessp^{-\mu} \to \HO$  as follows:
+\begin{definition}[Finite First-Order into Higher-Order]%\rm
+   Let  $\enco{\map{\cdot}^{1}, \mapt{\cdot}^{1}, \mapa{\cdot}^{1}}: \sessp^{-\mu} \to \HO$ be a typed encoding where
+%	Define $\encod{\cdot}{\cdot}{1}: \sessp^{-\mu} \to \HO$  as follows:
 	\[
 	\begin{array}{rcl}
-		\pmap{\bout{k}{k'} P}{1}		&\defeq&	\bout{k}{ \abs{z}{\,\binp{z}{X} \appl{X}{k'}} } \pmap{P}{1} \\
+		\pmap{\bout{k}{k'} P}{1}		&\defeq&	\bbout{k}{ \abs{z}{\,\binp{z}{X} \appl{X}{k'}} } \pmap{P}{1} \\
 		\pmap{\binp{k}{x} Q}{1}			&\defeq&	\binp{k}{X} \newsp{s}{\appl{X}{s} \Par \bbout{\dual{s}}{\abs{x}{\pmap{Q}{1}}} \inact} \\
 		\tmap{\btout{S_1} {S} }{1}		&\defeq&	\btout{\lhot{\btinp{\lhot{\tmap{S_1}{1}}}\tinact}} \tmap{S}{1}  \\
 		\tmap{\btinp{S_1} S }{1}		&\defeq&	\btinp{\lhot{\btinp{\lhot{\tmap{S_1}{1}}}\tinact}} \tmap{S}{1} \\
 		\tmap{\bbtout{\chtype{S_1}}{S}}{1}	&\defeq&	\btout{\shot{\btinp{\shot{\chtype{\tmap{S_1}{1}}}}\tinact}} \tmap{S}{1}  \\
-		\tmap{\bbtinp{\chtype{S_1}}{S}}{1}	&\defeq&	\btinp{\shot{\btinp{\shot{\chtype{\tmap{S_1}{1}}}}\tinact}} \tmap{S}{1} 
+		\tmap{\bbtinp{\chtype{S_1}}{S}}{1}	&\defeq&	\btinp{\shot{\btinp{\shot{\chtype{\tmap{S_1}{1}}}}\tinact}} \tmap{S}{1}  \\
+		\mapa{a} &\defeq& ---
 	\end{array}
 	\]
-	where $\pmap{\cdot}{1}$ (resp. $\tmap{\cdot}{1}$) is an 
-	homomorphism for the other process (resp. type) constructs.
+and mappings $\map{\cdot}^{1}$, $\mapt{\cdot}^{1}$, $\mapa{\cdot}^{1}$
+are homomorphisms for the other processes/types/labels. 
 \end{definition}
 
 In the higher-order setting, a name $k$ is being passed as an input
@@ -766,10 +789,11 @@ For the sake of completeness, we give again the encodings for
 finite processes and types, as
 formalized by $\encod{\cdot}{\cdot}{1}: \sessp^{-\mu} \to \HO$.
 
-\begin{definition}[From $\sessp$ to $\HO$]\rm
+\begin{definition}[Full First-Order into Higher-Order]%\rm
 	Let $f$ be a function from recursion variables to sequences of name variables.
-	Define $\fencod{\cdot}{\cdot}{2}{f}: \sessp \to \HO$ as
+	%Define $\fencod{\cdot}{\cdot}{2}{f}: \sessp \to \HO$ as
 %
+Define the typed encoding $\enco{\map{\cdot}^{2}_f, \mapt{\cdot}^{2}, \mapa{\cdot}^{2}}: \sessp \to \HO$ as
 \[
 	\begin{array}{rcll}
 %	\map{\rec{X}{P}}^{2} &=& \newsp{s}{\binp{s}{\X} \map{P}^{2} \Par \bout{\dual{s}}{\abs{z \cat \vmap{\fn{P}}}{\binp{z}{\X} \map{P}^{\es}}} \inact}\\
@@ -782,11 +806,13 @@ formalized by $\encod{\cdot}{\cdot}{1}: \sessp^{-\mu} \to \HO$.
 		\tmap{\btout{S_1} {S} }{2}	&\defeq&	\bbtout{\lhot{\btinp{\lhot{\tmap{S_1}{2}}}\tinact}} \tmap{S}{2}  \\
 		\tmap{\btinp{S_1} S }{2}	&\defeq&	\bbtinp{\lhot{\btinp{\lhot{\tmap{S_1}{2}}}\tinact}} \tmap{S}{2} \\
 		\tmap{\bbtout{\chtype{S_1}} {S} }{2}	&\defeq&	\bbtout{\shot{\btinp{\shot{\chtype{\tmap{S_1}{2}}}}\tinact}} \tmap{S}{2}  \\
-		\tmap{\bbtinp{\chtype{S_1}} {S} }{2}	&\defeq&	\bbtinp{\shot{\btinp{\shot{\chtype{\tmap{S_1}{2}}}}\tinact}} \tmap{S}{2}
+		\tmap{\bbtinp{\chtype{S_1}} {S} }{2}	&\defeq&	\bbtinp{\shot{\btinp{\shot{\chtype{\tmap{S_1}{2}}}}\tinact}} \tmap{S}{2} \\
+				\mapa{a} &\defeq& ---
 	\end{array}
 \]
 %
-and as a homomorphism for the other process constructs. 
+and mappings $\map{\cdot}^{2}$, $\mapt{\cdot}^{2}$, $\mapa{\cdot}^{2}$
+are homomorphisms for the other processes/types/labels. 
 \end{definition}
 
 \begin{remark}\rm
@@ -874,8 +900,9 @@ The correct approach would be to use replicated shared names
 as triggers instead of session names. 
 Below we write $\repl{} P$ as a shorthand notation for $\recp{X}{(P \Par \rvar{X})}$.
 
-\begin{definition}[From $\HO$ to $\sessp$]\rm
-	Define $\encod{\cdot}{\cdot}{3}: \HO \to \sessp$ as follows
+\begin{definition}[Higher-Order into First-order]%\rm
+	Define $\encod{\cdot}{\cdot}{3}: \HO \to \sessp$ 
+	Let $\enco{\map{\cdot}^3, \mapa{\cdot}^3, \mapa{\cdot}^3,}$ be the typed encoding defined as
 	\[
 	\begin{array}{rcl}
 		\pmap{\bout{k}{\abs{x}{Q}} P}{3} & \defeq &  \left\{
@@ -888,9 +915,12 @@ Below we write $\repl{} P$ as a shorthand notation for $\recp{X}{(P \Par \rvar{X
 		\pmap{\binp{k}{X} P}{3} &\defeq&  \binp{k}{x} \pmap{P}{3}\\
 		\pmap{\appl{X}{k}}{3} & \defeq & \newsp{s}{\bout{x}{s} \bout{\dual{s}}{k} \inact}\\
 		\tmap{\btout{\lhot{S}}S_1}{3} & \defeq & \bbtout{\chtype{\btinp{\tmap{S}{3}}\tinact}}\tmap{S_1}{3} \\
-		\tmap{\btinp{\lhot{S}}S_1}{3} & \defeq & \bbtinp{\chtype{\btinp{\tmap{S}{3}}\tinact}}\tmap{S_1}{3}
+		\tmap{\btinp{\lhot{S}}S_1}{3} & \defeq & \bbtinp{\chtype{\btinp{\tmap{S}{3}}\tinact}}\tmap{S_1}{3} \\
+		\mapa{a}^3 &  \defeq & ----
 	\end{array}
 	\]
+	and mappings $\map{\cdot}^{3}$, $\mapt{\cdot}^{3}$, $\mapa{\cdot}^{3}$
+are homomorphisms for the other processes/types/labels. 
 \end{definition}
 
 \begin{proposition}\rm
