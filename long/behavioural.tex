@@ -1,0 +1,561 @@
+\section{Behavioural Semantics}
+\label{sec:beh_sem}
+
+In this section we define a theory for observational equivalence over
+session typed $\HOp$ processes. The theory follows the principles
+laid by the previous work of the authors
+\cite{DBLP:conf/forte/KouzapasYH11,KY13,dkphdthesis}.
+We require a bisimulation relation over typed processes that
+is also characterised by the corresponding typed, reduction-closed,
+barbed congruence relation.
+
+\dk{(Jorge, I think you have a paper we can cite over session typed bisimulations)}
+
+\subsection{Labelled Transition Semantics}\label{ss:lts}
+
+We define a relation $(P_1, \ell, P_2) \in R$ over
+(untyped) processes, that allows us to follow how a process may
+interact with a process in its enviroment. The interaction
+is defined on action $\ell$:
+%
+\[
+\begin{array}{rcl}
+		\ell	& \bnfis  & \tau 
+		\bnfbar \bactout{n}{\tilde{m}} 
+		\bnfbar \bactout{n}{\abs{\tilde{x}}{P}} 
+		\bnfbar\bactinp{n}{\tilde{m}} 
+		\bnfbar \bactinp{n}{\abs{\tilde{x}}{P}} \\
+			& \bnfbar & \bactsel{n}{l} 
+			\bnfbar \bactbra{n}{l} 
+			\bnfbar \news{\tilde{s}} \bactout{n}{\tilde{m}} 
+			\bnfbar \news{\tilde{m}} \bactout{n}{\abs{\tilde{x}}{P}}
+\end{array}
+\]
+%
+\noi The internal action is defined on label $\tau$.
+Action $\bactout{n}{\tilde{m}}$ denotes the sending of names $\tilde{m}$ over channel $n$.
+Similarly action $\bactout{n}{\abs{\tilde{x}}{P}}$ is the sending of abstraction $\abs{\tilde{x}}{P}$
+over channel $n$. Dually actions for the reception of names and abstractions are
+$\bactinp{n}{\tilde{m}}$ and $\bactinp{n}{\abs{\tilde{x}}{P}}$ respectively. We also defined
+actions for selecting a label $l$, $\bactsel{n}{l}$ and branching on a label
+$n$, $\bactbra{s}{l}$. When output actions carry name restrictions a scope
+opening is implied.
+
+We define the notion of dual actions as the symmetric relation $\asymp$, that satisfies the rules:
+%
+\[
+	\bactsel{n}{l} \asymp \bactbra{\dual{n}}{l}
+	\qquad
+	\news{\tilde{m}} \bactout{n}{\abs{\tilde{x}}{P}} \asymp \bactinp{\dual{n}}{\abs{\tilde{x}}{P}}
+	\qquad
+%	\bactout{n}{m} \asymp \bactinp{\dual{n}}{m}
+%	\qquad
+	\news{\tilde{m}'} \bactout{n}{\tilde{m}} \asymp \bactinp{\dual{n}}{\tilde{m}}
+\]
+%
+Dual actions happen on subjects that are dual between them; they carry the same
+object; and furthermore output action is dual with input action and 
+select action is dual with branch action.
+
+\input{figures/fig-unLTS}
+
+{\bf Untyped Labelled Transition System:}
+The labelled transition system, LTS, is defined in Figure~\ref{fig:untyped_LTS}.
+A process with a send prefix can interact with the environment with a send
+action that carries a name $m$ or an abstraction $\abs{\tilde{x}}{Q}$. Dually
+on a received prefixed process we can observe a receive action of a name or
+an abstraction. Select and branch prefixed processes can trigger select
+and branch actions respectively. The LTS is closed under the name creation
+operator provided that the restricted name does not occur free in the LTS action.
+If the restricted name occurs free in the LTS action then we observe a bound name
+action and the continuation process performs scope opening. Similarly the LTS 
+is closed on the parallel operator provided that the LTS action does not shared
+any bound names with parallel processes. If two parallale processes can perform
+dual actions then the two actions can synchronise to observe an internal transition.
+Finally the LTS is closed under structural congruence.
+
+\subsection{Simple Process}
+We can use a session type to define the simplest process that is typed
+under the given session type.
+%
+\begin{definition}[Simple Process]\rm
+	Let name $k$ and type $\tilde{C}$; then we define a {\em simple process}
+	$\map{\tilde{C}}^{k}$:
+	\[
+		\map{C_1, \cdots, C_n}^{k_1 \cdots k_n} = \map{C_1}^{k_1} \Par \dots \Par \map{C_n}^{k_n}		
+	\]
+	with $\map{C}^k$ defined as:
+	\[
+	\begin{array}{rclcrcll}
+		\map{\btinp{\tilde{C}} S}^{k} &=& \binp{k}{\tilde{x}} (\map{S}^{k} \Par \map{\tilde{C}}^{\tilde{x}})
+		&&
+		\map{\btout{\tilde{C}} S}^{k} &=& \bout{k}{\tilde{n}} \map{S}^{k} & \tilde{n}\textrm{ fresh}
+		\\
+
+		\map{\btsel{l : S}}^{k} &=& \bsel{k}{l} \map{S}^{k}
+		& &
+		\map{\btbra{l_i: S_i}_{i \in I}}^{k} &=& \bbra{k}{l_i: \map{S_i}^{k}}_{i \in I}
+		\\
+
+		\map{\tvar{t}}^{k} &=& \rvar{X}_t
+		& &
+		\map{\trec{t}{S}}^{k} &=& \mu \rvar{X}_t.\map{S}^{k}
+		\\
+
+		\map{\btout{\lhot{\tilde{C}}} S}^{k} &=& \bout{k}{\abs{\tilde{x}}{\map{\tilde{C}}^{\tilde{x}}}} \map{S}^k
+		& &
+		\map{\btinp{\lhot{\tilde{C}}} S}^{k} &=& \binp{k}{X} (\map{S}^k \Par \appl{X}{\tilde{n}}) & \tilde{n}\textrm{ fresh}
+		\\
+
+		\map{\btout{\shot{\tilde{C}}} S}^{k} &=& \bout{k}{\abs{\tilde{x}}{\map{\tilde{C}}^{\tilde{x}}}} \map{S}^k
+		& &
+		\map{\btinp{\shot{\tilde{C}}} S}^{k} &=& \binp{k}{X} (\map{S}^k \Par \appl{X}{\tilde{n}}) & \tilde{n}\textrm{ fresh}
+		\\
+
+%		\map{\btinp{\chtype{S}} S}^{k} &=& \binp{k}{x} (\map{S}^k \Par \map{\chtype{S}}^y)
+%		&&
+%		\map{\btout{\chtype{S}} S}^{k} &=& \bout{k}{a} \map{S}^k  & a\textrm{ fresh}
+%		\\
+
+		\map{\tinact}^{k} &=& \inact
+		&&
+		\map{\chtype{S}}^{k} &=& \bout{k}{s} \inact &s\textrm{ fresh}%\binp{k}{x} \map{S}^x 
+	\end{array}
+	\]
+%	We extend the {\em simple process} to the polyadic case:
+%\[
+%	\begin{array}{c}
+%	\end{array}
+%\]
+\end{definition}
+
+\begin{proposition}\rm
+$ $
+	\begin{itemize}
+		\item	$\Gamma; \emptyset; \Delta \cat k:S \proves \map{S}^k \hastype \Proc$
+		\item	$\Gamma \cat k:\chtype{S}; \emptyset; \Delta \proves \map{\chtype{S}}^k \hastype \Proc$
+	\end{itemize}
+\end{proposition}
+
+\begin{proof}
+	By induction on the definition $\map{S}^k$ and $\map{\chtype{S}}^k$.
+\end{proof}
+
+\begin{corollary}\rm
+	If $\Gamma; \emptyset; \Delta \proves \map{\tilde{C}}^{\tilde{k}} \hastype \Proc$
+	then
+	$\Gamma; \es; \Delta \proves \tilde{k} \hastype \tilde{C}$.
+\end{corollary}
+
+
+\subsection{Typed Labeled Transition System}
+
+\input{figures/fig-envLTS}
+
+We define two relations of the form:
+%
+\[
+	((\Gamma, \ell_1, \Delta_1), \ell, (\Gamma, \ell_2, \Delta_2)) \in R \textrm{ and }
+\]
+%
+\noi over type tuples, that allows us to follow the progress of types over actions $\ell$.
+The upper part of Figure~\ref{fig:envLTS} describes relation $\by{\ell}$.
+\dk{describe env LTS}.
+
+A second environment LTS, denoted $\hby{\ell}$, is defined in the lower part of
+Figure~\ref{fig:envLTS}, by substituting the corresponding input cases
+of $\by{\ell}$ with the definitions of $\hby{\ell}$. All other 
+cases remain the same as relation $\by{\ell}. $Relation $\hby{\ell}$ 
+restricts higher order input; only simple processes and trigger processes
+are allowed to be received on a higher-order input.
+\dk{describe env LTS}. 
+
+\paragraph{Typed Transition System}
+
+We define two transition systems over processes, as a combination
+of the untyped LTS and the LTS for typed environments:
+
+\begin{definition}[Typed Transition Systems]\label{d:tlts}\rm
+	We write
+	$\Gamma; \emptyset; \Delta_1 \proves P_1 \hastype \Proc \by{\ell} \Gamma; \emptyset; \Delta_1 \proves P_2 \hastype \Proc$
+	whenever:
+%
+	\begin{itemize}
+		\item	$P_1 \by{\ell} P_2$.
+		\item	$(\Gamma, \emptyset, \Delta_1) \by{\ell} (\Gamma, \emptyset, \Delta_2)$.
+	\end{itemize}
+%
+
+	Furthermore we write
+	$\Gamma; \emptyset; \Delta_1 \proves P_1 \hastype \Proc \hby{\ell} \Gamma; \emptyset; \Delta_1 \proves P_2 \hastype \Proc$
+	whenever:
+%
+	\begin{itemize}
+		\item	$P_1 \by{\ell} P_2$.
+		\item	$(\Gamma, \emptyset, \Delta_1) \hby{\ell} (\Gamma, \emptyset, \Delta_2)$.
+	\end{itemize}
+%
+\end{definition}
+
+For notational convenience we can write:
+%$\Gamma; \emptyset; \Delta_1 \by{\ell} \Delta_2 \proves P_1 \by{\ell} P_2$,
+$\horel{\Gamma}{\Delta_1}{P_1}{\by{\ell}}{\Delta_2}{P_2}$,
+instead of $\Gamma; \emptyset; \Delta_1 \proves P_1 \hastype \Proc \by{\ell} \Gamma; \emptyset; \Delta_1 \proves P_2 \hastype \Proc$.
+We extend to $\By{}$ (resp.\ $\Hby{}$) and $\By{\hat{\ell}}$ (resp.\ $\Hby{\hat{\ell}}$) in the \dk{standard way}.
+
+The next invariant clarifies the soundness of the
+typed transition system.
+
+\begin{lemma}[Invariant]
+	\begin{itemize}
+		\item	If $\Gamma; \emptyset; \Delta_1 \proves P_1 \hastype \Proc$ and
+			$P_1 \by{\ell} P_2$ and $(\Gamma; \emptyset; \Delta_1) \by{\ell} (\Gamma; \emptyset; \Delta_2)$
+			then $\Gamma; \emptyset; \Delta_2 \proves P_2 \hastype \Proc$.
+
+		\item	If $\horel{\Gamma}{\Delta_1}{P_1}{\hby{\ell}}{\Delta_2}{P_2}$
+			then $\horel{\Gamma}{\Delta_1}{P_1}{\by{\ell}}{\Delta_2}{P_2}$
+%		\item	If $\Gamma; \emptyset; \Delta_1 \hby{\ell} \Delta_2 \proves P_1 \hby{\ell} P_2$
+%			then $\Gamma; \emptyset; \Delta_1 \by{\ell} \Delta_2 \proves P_1 \by{\ell} P_2$
+
+	\end{itemize}
+\end{lemma}
+
+\begin{proof}
+	\dk{TODO}
+\end{proof}
+
+\subsection{Behavioural Semantics}
+
+We use the typed labelled transition semantics to define
+a set of relations over typed processes that allow us to compare
+typed processes over a notion of observational equivalence.
+
+
+We begin with a definition of a notion of confluence
+over session environments $\Delta$:
+\begin{definition}[Session Environment Confluence]\rm
+	We denote $\Delta_1 \bistyp \Delta_2$ whenever $\exists \Delta$ such that
+	$\Delta_1 \red^* \Delta$ and $\Delta_2 \red^* \Delta$.
+\end{definition}
+
+%\jp{The following definition is a bit too "loose". Need to add conditions on $\Delta_1,\Delta_2$, and a better notation not involving the empty $\ell$.}
+
+A typed relation is a relation over typed programs:
+
+\begin{definition}[Typed Relation]\rm
+	We say that
+	$\Gamma; \emptyset; \Delta_1 \proves P_1 \hastype \Proc\ R\ \Gamma; \emptyset; \Delta_2 \proves P_2 \hastype \Proc$
+	is a typed relation whenever
+	\begin{itemize}
+		\item	$P_1$ and $P_2$ are programs.
+		\item	$\Delta_1$ and $\Delta_2$ are well typed.
+		\item	$\Delta_1 \bistyp \Delta_2$.
+	\end{itemize}
+\end{definition}
+
+We require that relate only programs (i.e.\ processes with no free variables) with
+well typed session environments and furthermore we require that two related processes
+have confluent session environments.
+
+For notational convenience we write
+%$\Gamma; \emptyset; \Delta_1\ R\ \Delta_2 \proves P_1\ R\ P_2$
+$\horel{\Gamma}{\Delta_1}{P_1}{\ R\ }{\Delta_2}{P_2}$
+for expressing the typed relation $\Gamma; \emptyset; \Delta_1 \proves P_1 \hastype \Proc\ R\ \Gamma; \emptyset; \Delta_2 \proves P_2 \hastype \Proc$.
+
+We define the notions of barb and typed barb.
+
+\begin{definition}[Barbs]\rm
+	Let program $P$.
+	\begin{enumerate}
+		\item	We write $P \barb{n}$ if $P \scong \newsp{\tilde{m}}{\bout{n}{V} P_2 \Par P_3}, n \notin \tilde{m}$.
+			We write $P \Barb{n}$ if $P \red^* \barb{n}$.
+
+		\item	We write $\Gamma; \emptyset; \Delta \proves P \barb{n}$ if
+			$\Gamma; \emptyset; \Delta \proves P \hastype \Proc$ with $P \barb{n}$ and $\dual{n} \notin \Delta$.
+			We write $\Gamma; \emptyset; \Delta \proves P \Barb{n}$ if $P \red^* P'$ and
+			$\Gamma; \emptyset; \Delta' \proves P' \barb{n}$.			
+	\end{enumerate}
+\end{definition}
+
+A barb $\barb{n}$ is an observable on an output prefix with subject $n$.
+Similarly a weak barb $\Barb{n}$ is a barb after a number of reduction steps.
+Typed barbs $\barb{n}$ (resp.\ $\Barb{n}$)
+happen on typed processes $\Gamma; \emptyset; \Delta \proves P \hastype \Proc$
+where we require that the corresponding dual endpoint $\dual{n}$ is not present
+in the session type $\Delta$.
+
+We define the notion of the context:
+
+\begin{definition}[Context]\rm
+	$C$ is a context defined on the grammar:
+
+	\begin{tabular}{rcl}
+		$C$ &$=$& %$\news{s} C \bnfbar \hole \Par P$
+		$\hole \bnfbar P \bnfbar \bout{k}{\abs{x}{C}} C \bnfbar \binp{k}{X} C \bnfbar \binp{k}{x} C$ \\
+		& $\bnfbar$ & $\news{s} C \bnfbar C \Par C \bnfbar \bsel{k}{l} C \bnfbar \bbra{k}{l_i:C_i}_{i \in I}$
+	\end{tabular}
+
+	Notation $\context{C}{P}$ replaces every $\hole$ in $C$ with $P$.
+\end{definition}
+
+A context is a function that takes a process and returns a new process
+according to the above syntax.
+
+%We extend the notion of context to the notion of typed context:
+%\begin{definition}[Typed Context]
+%	Let program $\Gamma; \emptyset; \Delta \proves P \hastype \Proc$ then	
+%\end{definition}
+
+The first behavioural relation we define is reduction-closed, barbed congruence:
+%
+\begin{definition}[Reduction-closed, Barbed Congruence]\rm
+	Typed relation
+%	$\Gamma; \emptyset; \Delta_1\ \mathcal{R}\ \Delta \proves P_1 \ \mathcal{R}\ P_2$
+	$\horel{\Gamma}{\Delta_1}{P_1}{\ R\ }{\Delta_2}{P_2}$
+	is a barbed congruence whenever:
+	\begin{enumerate}
+		\item
+		\begin{itemize}
+			\item	If $P_1 \red P_1'$ then $\exists P_2', P_2 \red^* P_1'$ and
+%				$\Gamma; \emptyset; \Delta_1'\ \mathcal{R}\ \Delta_2' \proves P_1'\ \mathcal{R}\ P_2'$.
+				$\horel{\Gamma}{\Delta_1'}{P_1'}{\ R\ }{\Delta_2'}{P_2'}$
+			\item	If $P_2 \red P_2'$ then $\exists P_1', P_1 \red^* P_1'$ and
+%				$\Gamma; \emptyset; \Delta_1'\ \mathcal{R}\ \Delta_2' \proves P_1'\ \mathcal{R}\ P_2'$.
+				$\horel{\Gamma}{\Delta_1'}{P_1'}{\ R\ }{\Delta_2'}{P_2'}$
+		\end{itemize}
+
+		\item
+		\begin{itemize}
+			\item	If $\Gamma;\emptyset;\Delta \proves P_1 \barb{s}$ then $\Gamma;\emptyset;\Delta \proves P_2 \Barb{s}$.
+			\item	If $\Gamma;\emptyset;\Delta \proves P_2 \barb{s}$ then $\Gamma;\emptyset;\Delta \proves P_1 \Barb{s}$.
+		\end{itemize}
+
+		\item	$\forall C, \horel{\Gamma}{\Delta_1'}{\context{C}{P_1}}{\ R\ }{\Delta_2'}{\context{C}{P_2}}$
+%			$\Gamma; \emptyset; \Delta_1'\ \mathcal{R}\ \Delta_2' \proves \context{C}{P_1}\ \mathcal{R}\ \context{C}{P_2}$.
+	\end{enumerate}
+	The largest such congruence is denoted with $\cong$.
+\end{definition}
+%
+Reduction-closed, barbed congruence is closed under reduction semantics and 
+preserves barbs under any context. In a sense no barb observer can distinguish
+between two related processes.
+
+The second behavioural relation is contextual bisimulation:
+%
+\begin{definition}[Contextual Bisimulation]\rm
+	Let typed relation $\mathcal{R}$ such that
+%	$\Gamma; \emptyset; \Delta_1\ \mathcal{R}\ \Delta_2 \proves P_1\ \mathcal{R}\ Q_1$.
+	$\horel{\Gamma}{\Delta_1}{P_1}{\ R\ }{\Delta_2}{P_2}$.
+	$\mathcal{R}$ is a {\em contextual bisimulation} whenever:
+	\begin{enumerate}
+		\item	$\forall \news{\tilde{m_1}} \bactout{n}{\abs{\tilde{x}}{P}}$ such that
+			\[
+%				\Gamma; \emptyset; \Delta_1 \by{\news{\tilde{m_1}} \bactout{n}{\abs{\tilde{x}}{P}}} \Delta_1' \proves P_1 \by{\news{\tilde{m_1}} \bactout{n}{\abs{\tilde{x}}{P}}} P_2
+				\horel{\Gamma}{\Delta_1}{P_1}{\by{\news{\tilde{m_1}} \bactout{n}{\abs{\tilde{x}}{P}}}}{\Delta_1'}{P_2}
+			\]
+			implies that $\exists Q_2, \abs{x}{Q}$ such that
+			\[
+%				\Gamma; \emptyset; \Delta_2 \By{\news{\tilde{m_2}} \bactout{n}{\abs{\tilde{x}}{Q}}} \Delta_2' \proves Q_1 \By{\news{\tilde{m_2}} \bactout{n}{\abs{\tilde{x}}{Q}}} Q_2
+				\horel{\Gamma}{\Delta_2}{Q_1}{\By{\news{\tilde{m_2}} \bactout{n}{\abs{\tilde{x}}{Q}}}}{\Delta_2'}{Q_2}
+			\]
+			and $\forall R$ with $\set{X} = \fpv{R}$, %such that
+%			\begin{eqnarray*}
+%				\Gamma; \emptyset; \Delta_1'' \proves \newsp{\tilde{s}}{P_2 \Par \context{C}{P \subst{s'}{x}}} \hastype \Proc \\
+%				\Gamma; \emptyset; \Delta_2'' \proves \newsp{\tilde{s}}{Q_2 \Par \context{C}{Q \subst{s'}{x}}} \hastype \Proc
+%			\end{eqnarray*}
+			then
+			\[
+				\horel{\Gamma}{\Delta_1''}{\newsp{\tilde{m_1}}{P_2 \Par R\subst{(\tilde{x}) P}{X}}}{\ \mathcal{R}\ }{\Delta_2''}{\newsp{\tilde{m_2}}{Q_2 \Par R\subst{(\tilde{x}) Q}{X}}}
+%				\Gamma; \emptyset; \Delta_1''\ \mathcal{R}\ \Delta_2'' \proves \newsp{\tilde{m_1}}{P_2 \Par R\subst{(\tilde{x}) P}{X}}
+%				\ \mathcal{R}\ 
+%				\newsp{\tilde{m_2}}{Q_2 \Par R\subst{(\tilde{x}) Q}{X}}
+			\]
+		\item	$\forall \news{\tilde{m_1}'} \bactout{n}{\tilde{m_1}}$ such that
+			\[
+%				\Gamma; \emptyset; \Delta_1 \by{\news{\tilde{m_1}'} \bactout{n}{\tilde{m_1}}} \Delta_1' \proves P_1 \by{\news{\tilde{m_1}'} \bactout{n}{\tilde{m_1}}} P_2
+				\horel{\Gamma}{\Delta_1}{P_1}{\by{\news{\tilde{m_1}'} \bactout{n}{\tilde{m_1}}}}{\Delta_1'}{P_2}
+			\]
+			implies that $\exists Q_2, \tilde{m_2}$ such that
+			\[
+%				\Gamma; \emptyset; \Delta_2 \By{\news{\tilde{m_2}'} \bactout{n}{\tilde{m_2}}} \Delta_2' \proves Q_1 \By{\news{\tilde{m_2}'} \bactout{n}{\tilde{m_2}}} Q_2
+				\horel{\Gamma}{\Delta_2}{Q_1}{\By{\news{\tilde{m_2}'} \bactout{n}{\tilde{m_2}}}}{\Delta_2'}{Q_2}
+			\]
+			and $\forall R$ with $\tilde{x} = \fn{R}$, %such that
+%			\begin{eqnarray*}
+%				\Gamma; \emptyset; \Delta_1'' \proves \newsp{\tilde{s}}{P_2 \Par \context{C}{P \subst{s'}{x}}} \hastype \Proc \\
+%				\Gamma; \emptyset; \Delta_2'' \proves \newsp{\tilde{s}}{Q_2 \Par \context{C}{Q \subst{s'}{x}}} \hastype \Proc
+%			\end{eqnarray*}
+			then
+			\[
+				\horel{\Gamma}{\Delta_1''}{\newsp{\tilde{m_1}'}{P_2 \Par R \subst{\tilde{m_1}}{\tilde{x}}}}{\ \mathcal{R}\ }{\Delta_2''}{\newsp{\tilde{m_2}'}{Q_2 \Par R \subst{\tilde{m_2}}{\tilde{x}}}}
+%				\Gamma; \emptyset; \Delta_1''\ \mathcal{R}\ \Delta_2'' \proves \newsp{\tilde{m_1}'}{P_2 \Par R \subst{\tilde{m_1}}{\tilde{x}}}
+%				\ \mathcal{R}\ 
+%				\newsp{\tilde{m_2}'}{Q_2 \Par R \subst{\tilde{m_2}}{\tilde{x}}}
+			\]
+
+		\item	$\forall \ell \notin \set{\news{\tilde{m}'} \bactout{n}{m}, \news{\tilde{m}} \bactout{n}{\abs{x}{P}}}$ such that
+			\[
+				\horel{\Gamma}{\Delta_1}{P_1}{\by{\ell}}{\Delta_1'}{P_2}
+%				\Gamma; \emptyset; \Delta_1 \by{\ell} \Delta_1' \proves P_1 \by{\ell} P_2
+			\]
+			implies that $\exists Q_2$ such that 
+			\[
+				\horel{\Gamma}{\Delta_1}{Q_1}{\by{\ell}}{\Delta_1'}{Q_2}
+%				\Gamma; \emptyset; \Delta_2 \By{\hat{\ell}} \Delta_2' \proves Q_1 \By{\hat{\ell}} Q_2
+			\]
+			and
+			$\horel{\Gamma}{\Delta_1'}{P_2}{\ \mathcal{R}\ }{\Delta_2'}{Q_2}$
+%			$\Gamma; \emptyset; \Delta_1\ \mathcal{R}\ \Delta_2 \proves P_2\ \mathcal{R}\ Q_2$.
+
+		\item	The symmetric cases of 1, 2 and 3.
+	\end{enumerate}
+	The Knaster Tarski theorem ensures that the largest contextual bisimulation exists, it is called contextual bisimilarity and is denoted by $\wb^c$.
+\end{definition}
+
+The contextual bisimulation in the general case is a hard relation to be computed
+since it is universaly quantified over substituting processes. The next definition
+of a bisimulation relation avoids the universal quantifier over processes.
+
+%\newcommand{\outtrigger}[2]{\binp{#1}{X} \newsp{s''}{\appl{X}{s''} \Par \bout{\dual{s''}}{#2} \inact} }
+%\newcommand{\nametrigger}[2]{\binp{#1}{X} \appl{X}{#2}}
+
+\begin{definition}[Bisimulation]\label{d:bisim}\rm
+	Let typed relation $\mathcal{R}$ such that $\Gamma; \emptyset; \Delta_1\ \mathcal{R}\ \Delta_2 \proves P_1\ \mathcal{R}\ Q_1$.
+	$\mathcal{R}$ is a {\em bisimulation} whenever:
+	\begin{enumerate}
+		\item	$\forall \news{\tilde{m_1}} \bactout{n}{\abs{\tilde{x}}{P}}$ such that
+			\[
+%				\Gamma; \emptyset; \Delta_1 \hby{\news{\tilde{m_1}} \bactout{n}{\abs{\tilde{x}}{P}}} \Delta_1' \proves P_1 \hby{\news{\tilde{m_1}} \bactout{n}{\abs{\tilde{x}}{P}}} P_2
+				\horel{\Gamma}{\Delta_1}{P_1}{\hby{\news{\tilde{m_1}} \bactout{n}{\abs{\tilde{x}}{P}}}}{\Delta_1'}{P_2}
+			\]
+			implies that $\exists Q_2, \abs{\tilde{x}}{Q}$ such that
+			\[
+%				\Gamma; \emptyset; \Delta_2 \Hby{\news{\tilde{m_2}} \bactout{n}{\abs{\tilde{x}}{Q}}} \Delta_2' \proves Q_1 \Hby{\news{\tilde{m_2}} \bactout{n}{\abs{\tilde{x}}{Q}}} Q_2
+				\horel{\Gamma}{\Delta_2}{Q_1}{\Hby{\news{\tilde{m_2}} \bactout{n}{\abs{\tilde{x}}{Q}}}}{\Delta_2'}{Q_2}
+			\]
+			and for fresh $t$
+%			and for $C = \binp{t}{X} \newsp{s}{\appl{X}{s} \Par \bout{s}{\abs{\tilde{x}}{\hole}} \inact}$ with $t$ fresh
+%			such that
+%			\begin{eqnarray*}
+%				\Gamma; \emptyset; \Delta_1'' \proves \newsp{\tilde{s}}{P_2 \Par \context{C}{P \subst{s'}{x}}} \hastype \Proc \\
+%				\Gamma; \emptyset; \Delta_2'' \proves \newsp{\tilde{s}}{Q_2 \Par \context{C}{Q \subst{s'}{x}}} \hastype \Proc
+%			\end{eqnarray*}
+%			then
+			\[
+				\horel{\Gamma}{\Delta_1''}{\newsp{\tilde{m_1}}{P_2 \Par \hotrigger{t}{\abs{x}{P}}}}{\ \mathcal{R}\ }{\Delta_2''}{\newsp{\tilde{m_2}}{Q_2 \Par \hotrigger{t}{\abs{x}{Q}}}}
+%				\Gamma; \emptyset; \Delta_1''\ \mathcal{R}\ \Delta_2'' \proves
+%				\newsp{\tilde{m_1}}{P_2 \Par \hotrigger{t}{\abs{x}{P}}}%\context{C}{P}}
+%				\ \mathcal{R}\ 
+%				\newsp{\tilde{m_2}}{Q_2 \Par \hotrigger{t}{\abs{x}{Q}}}%\context{C}{Q}}
+			\]
+
+%		\item	$\exists \bactinp{s}{\abs{x} \map{S}^x}$ such that
+%			\[
+%				\Gamma; \emptyset; \Delta_1 \cat s: S_1 \by{\bactinp{s}{\abs{x} \map{S}^x}} \Delta_1 \cat s: S_2 \proves P_1 \by{\bactinp{s}{\abs{x} \map{S}^x}} P_2 \subst{\abs{x}{\map{S}^x}}{X}
+%			\]
+%			with $S_1 = \btinp{\lhot{S}} S_2 \vee S_1 = \btinp{\shot{S}} S_1$ implies that $\exists Q_2\subst{\abs{x}{\map{S}^x}}{X}$ such that
+%			\[
+%				\Gamma; \emptyset; \Delta_2 \By{\bactinp{s}{\abs{x} \map{S}^x}} \Delta_2' \proves Q_1 \By{\bactinp{s}{\abs{x} \map{S}^x}} Q_2\subst{\abs{x}{\map{S}^x}}{X}
+%			\]
+%			and $\forall s'$, %such that
+%			\begin{eqnarray*}
+%				\Gamma; \emptyset; \Delta_1'' \proves \newsp{\tilde{s}}{P_2 \Par \context{C}{P \subst{s'}{x}}} \hastype \Proc \\
+%				\Gamma; \emptyset; \Delta_2'' \proves \newsp{\tilde{s}}{Q_2 \Par \context{C}{Q \subst{s'}{x}}} \hastype \Proc
+%			\end{eqnarray*}
+%			and
+%			\[
+%				\Gamma; \emptyset; \Delta_1 \cat s: S_2\ \mathcal{R}\ \Delta_2'' \proves P_2  \subst{\abs{x}{\map{S}^x}}{X}\ \mathcal{R}\ 
+%				Q_2 \subst{\abs{x}{\map{S}^x}}{X}
+%			\]
+
+		\item	$\forall \news{\tilde{m_1}'} \bactout{n}{\tilde{m_1}}$ such that
+			\[
+%				\Gamma; \emptyset; \Delta_1 \hby{\news{\tilde{m_1}'} \bactout{n}{\tilde{m_1}}} \Delta_1' \proves P_1 \hby{\news{\tilde{m_1}'} \bactout{n}{\tilde{m_1}}} P_2
+				\horel{\Gamma}{\Delta_1}{P_1}{\hby{\news{\tilde{m_1}'} \bactout{n}{\tilde{m_1}}}}{\Delta_1'}{P_2}
+			\]
+			%with $s_1: S \in \Delta_1 \vee (\dual{s_2}: S' \in \Delta_2 \wedge S \dualof S')$
+			implies that $\exists Q_2, \tilde{m_2}$ such that
+			\[
+%				\Gamma; \emptyset; \Delta_2 \Hby{\news{\tilde{m_2}'} \bactout{n}{\tilde{m_2}}} \Delta_2' \proves Q_1 \Hby{\news{\tilde{m_2}'} \bactout{n}{\tilde{m_2}}} Q_2
+				\horel{\Gamma}{\Delta_2}{Q_1}{\Hby{\news{\tilde{m_2}'} \bactout{n}{\tilde{m_2}}}}{\Delta_2'}{Q_2}
+			\]
+			%such that
+%			\begin{eqnarray*}
+%				\Gamma; \emptyset; \Delta_1'' \proves \newsp{\tilde{s}}{P_2 \Par \context{C}{P \subst{s'}{x}}} \hastype \Proc \\
+%				\Gamma; \emptyset; \Delta_2'' \proves \newsp{\tilde{s}}{Q_2 \Par \context{C}{Q \subst{s'}{x}}} \hastype \Proc
+%			\end{eqnarray*}
+			and for fresh $t$
+			\[
+				\horel{\Gamma}{\Delta_1''}{\newsp{\tilde{m_1}}{P_2 \Par \fotrigger{t}{\tilde{m_1}}}}{\ \mathcal{R}\ }{\Delta_2''}{\newsp{\tilde{m_2}}{Q_2 \Par \fotrigger{t}{\tilde{m_2}}}}
+%				\Gamma; \emptyset; \Delta_1''\ \mathcal{R}\ \Delta_2'' \proves
+%				\newsp{\tilde{m_1}'}{P_2 \Par \fotrigger{t}{\tilde{m_1}}}  % \map{S}^{s_1}}
+%				\ \mathcal{R}\ 
+%				\newsp{\tilde{m_2}'}{Q_2 \Par \fotrigger{t}{\tilde{m_2}}} %\map{S}^{s_2}}
+			\]
+
+		\item	$\forall \ell \notin \set{\news{\tilde{m}'} \bactout{n}{m}, \news{\tilde{m}} \bactout{n}{\abs{x}{P}}}$ such that
+			\[
+				\horel{\Gamma}{\Delta_1}{P_1}{\hby{\ell}}{\Delta_1'}{P_2}
+%				\Gamma; \emptyset; \Delta_1 \hby{\ell} \Delta_1' \proves P_1 \by{\ell} P_2
+			\]
+			implies that $\exists Q_2$ such that 
+			\[
+				\horel{\Gamma}{\Delta_1}{Q_1}{\Hby{\ell}}{\Delta_1'}{Q_2}
+%				\Gamma; \emptyset; \Delta_2 \Hby{\hat{\ell}} \Delta_2' \proves Q_1 \By{\hat{\ell}} Q_2
+			\]
+			and
+			$\horel{\Gamma}{\Delta_1'}{P_2}{\ \mathcal{R}\ }{\Delta_2'}{Q_2}$
+%			$\Gamma; \emptyset; \Delta_1\ \mathcal{R}\ \Delta_2 \proves P_2\ \mathcal{R}\ Q_2$.
+
+		\item	The symmetric cases of 1, 2 and 3.
+	\end{enumerate}
+	The Knaster Tarski theorem ensures that the largest bisimulation exists, it is called bisimilarity and is denoted by $\wb$.
+\end{definition}
+
+The next theorem justifies our definition choices
+for both of the bisimulation relations, since
+they coincide between them and they also
+coincide with reduction closed, barbed congruence.
+
+\begin{theorem}[Coincidence]\rm
+	\label{the:coincidence}
+	Relations $\wb, \wbc$ and $\cong$ coincide.
+\end{theorem}
+
+\begin{proof}
+	The full details of the proof are in Appendix~\ref{app:sub_coinc}.
+	The theorem is split into a hierarchy of Lemmas. Specifically
+	Lemma~\ref{lem:wb_is_wbc} exploits a process substitution result
+	(Corollary~\ref{cor:subst_equiv}) to prove that $\wb \subseteq \wbc$.
+	Lemma~\ref{lem:wbc_is_cong} shows that $\wbc$ is a congruence
+	which implies $\wbc \subseteq \cong$.
+	The final result comes from Lemma~\ref{lem:cong_is_wb} where
+	we use label testing to show that $\cong \subseteq \wb$ using
+	the technique in developed in~\cite{Hennessy07}. The formulation of input
+	triggers in the bisimulation relation allows us to prove
+	the latter result without using a matching operator.
+	\qed
+\end{proof}
+
+Session types are inherintly $\tau$-inert.
+
+\begin{lemma}[$\tau$-inertness]\rm
+	\label{lem:tau_inert}
+	Let $P$ an $\HOp$ process
+	and $\Gamma; \emptyset; \Delta \proves P \hastype \Proc$
+	\begin{enumerate}
+		\item	If $P \red P'$ then $\Gamma; \es; \Delta \wb \Delta' \proves P \wb P'$.
+		\item	If $P \red^* P'$ then $\Gamma; \es; \Delta \wb \Delta' \proves P \wb P'$.
+	\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+	The proof is relied on the fact that processes of the
+	form $\Gamma; \es; \Delta \proves \bout{s}{V} P_1 \Par \binp{k}{x} P_2$
+	cannot have any typed transition observables and the fact
+	that bisimulation is a congruence.
+	See details in Appendix~\ref{app:sub_tau_inert}.
+	\qed
+\end{proof}
+
+

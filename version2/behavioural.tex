@@ -316,15 +316,19 @@ We extend to $\By{}$ and $\By{\hat{\lambda}}$ in the \dk{standard way}.
 
 \begin{theorem}[Soundness and Completness]
 	\begin{enumerate}
-		\item	$\wbc\ =\ \cong$.
 		\item	$\wbc\ =\ \wb$
+		\item	$\wbc\ =\ \cong$.
 	\end{enumerate}
 \end{theorem}
 
 \begin{proof}
-	\dk{Sketch Proof for part 2}
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	% PART 1
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-	For the proof of part two we use the stratified definitions of the two bisimulation relations:
+%	\dk{Sketch Proof for part 2}
+
+	For the proof of part one we use the stratified definitions of the two bisimulation relations:
 
 	The stratified definition for bisimulation is:
 
@@ -417,6 +421,10 @@ We extend to $\By{}$ and $\By{\hat{\lambda}}$ in the \dk{standard way}.
 	with the largest $R^c_n$ to be denote as $\wbc_n$ and the largest fix-point is equal to the bisimulation relation $\wbc = \bigcap_{i \geq 0} \wb_i$.
 	\vspace{3mm}
 
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	% WBC SUBSETEQ WB
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 	We proof the direction $\wbc \subseteq \wb$.
 	The latter statement is equivalent to the statement $\forall n, \wbc_n \subseteq \wb_n$.
 	The proof is done using induction.
@@ -492,6 +500,10 @@ We extend to $\By{}$ and $\By{\hat{\lambda}}$ in the \dk{standard way}.
 
 	Because $\wb_{n+1}$ is the largest relation we get that $R_{n+1} \subseteq \wb_{n+1}$ as required.
 	\vspace{3mm}
+
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	% WB SUBSETEQ WBC
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 	We proof the direction $\wb \subseteq \wbc$.
 	The latter statement is equivalent to the statement $\forall n, \wb_n \subseteq \wbc_n$.
@@ -577,7 +589,302 @@ We extend to $\By{}$ and $\By{\hat{\lambda}}$ in the \dk{standard way}.
 	and \ref{pr:bis_is_contextbis}.
 
 	Because $\wbc_{n+1}$ is the largest relation we get that $R^c_{n+1} \subseteq \wb_{n+1}$ as required.
+
+
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	% PART 2
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	Proof for Part two.
+
+	%%%%%%%%%%%%%%%%%%%%%
+	% Soundness
+	%%%%%%%%%%%%%%%%%%%%%
+
+	We first prove that $\wbc \subseteq \cong$.
+
+	Let $\Gamma; \emptyset; \Sigma_1 \proves P_1 \wbc \Sigma_2 \proves P_2 \hastype \Proc$.
+
+	{\bf Reduction Closed:}
+
+	If $\Gamma; \emptyset; \Sigma_1 \proves P_1 \by{} \Sigma_1' \proves P_1' \hastype \Proc$ then 
+	$\exists P_2'$ such that $\Gamma; \emptyset; \Sigma_2 \proves P_2 \By{} \Sigma_2' \proves P_2' \hastype \Proc$
+	and $\Gamma; \emptyset; \Sigma_1' \proves P_1' \wbc \Sigma_2' \proves P_2' \hastype \Proc$.
+
+	Same argument hold for the symmetric case, thus $\wbc$ is reduction closed.
+
+	{\bf Barb Preserving: }
+
+	If $\Gamma; \emptyset; \Sigma_1 \proves P_1 \hastype \Proc \barb{s}$ then
+	$P \cong \newsp{\tilde{s}}{\bout{s}{V_1} P_3 \Par P_4}$ and $\dual{s} \notin \Sigma_1$.
+
+	From the definition of $\wbc$ we get that if
+	$\Gamma; \emptyset; \Sigma_1 \proves \newsp{\tilde{s}}{\bout{s}{V_1} P_3 \Par P_4} \by{\news{s_1} \bactout{s}{V_1}} \Sigma_1' \proves \newsp{\tilde{s'}}{P_3 \Par P_4} \hastype \Proc$
+	then
+	$\Gamma; \emptyset; \Sigma_2 \proves P_2 \By{\news{s_2} \bactout{s}{V_2}} \Sigma_2' \proves P_2' \hastype \Proc$.
+	From the last result we get that
+	$\Gamma; \emptyset; \Sigma_2 \proves P_2 \hastype \Proc \Barb{s}$ as required.
+
+
+	{\bf Congruence: }
+	The most interesting case is parallel composition.
+
+	Let
+	\[
+	\begin{array}{rcl}
+		S &=&	\set{(\Gamma; \emptyset; \Sigma_1 \cup \Sigma_3 \proves \newsp{\tilde{s_1}}{P_1 \Par R} \hastype \Proc, \Gamma; \emptyset; \Sigma_2 \cup \Sigma_3 \proves \newsp{\tilde{s_2}}{P_2 \Par R}) \setbar \\
+		& &	\Gamma;\emptyset;\Sigma_1 \proves P_1 \wbc \Sigma_2 \proves P_2 \hastype \Proc, \forall \Gamma; \emptyset; \Sigma_3 \proves R \hastype \Proc}
+	\end{array}
+	\]
+	We need to show that the above congruence is a bisimulation.
+	To show that $S$ is a bisimulation we do a case analysis on the structure
+	of the $\by{\lambda}$ transition.
+
+	%%%%%%%%%%%%%%%
+	% Case 1
+	%%%%%%%%%%%%%%%
+
+	\Case{$\Gamma; \emptyset; \Sigma_1 \cup \Sigma_3 \proves \newsp{\tilde{s_1}}{P_1 \Par R} \by{\lambda} \Sigma_1' \cup \Sigma_3 \proves \newsp{\tilde{s_1'}}{P_1' \Par R} \hastype \Proc$}
+
+	This case is divided into two subcases:
+
+	\noi Subcase i: $\lambda \not= \news{\tilde{s}} \bactout{s}{Q}$
+
+	From the LTS we get that:
+	$\Gamma; \emptyset; \Sigma_1 \proves P_1 \by{\lambda} \Sigma_1' \proves P_1' \hastype \Proc$
+	implies:
+	\begin{eqnarray}
+		\Gamma; \emptyset; \Sigma_1 \proves P_2 \By{\lambda} \Sigma_2' \proves P_2' \hastype \Proc \label{th:soundness1}\\
+		\Gamma; \emptyset; \Sigma_1' \proves P_1' \wbc \Sigma_2'' \proves P_2' \label{th:soundness2}
+	\end{eqnarray}
+
+	From~\ref{th:soundness1} conclude that 
+	$\Gamma;\emptyset; \Sigma_2 \cup \Sigma_3 \proves \newsp{\tilde{s_2}}{P_2 \Par R} \By{\lambda} \Sigma_2' \cup \Sigma_3 \proves \newsp{\tilde{s_2'}}{P_2' \Par R} \hastype \Proc$.
+
+	Furthermore from~\ref{th:soundness2} and the definition of $S$ we conlude that
+	$\Gamma; \emptyset; \Sigma_1' \cup \Sigma_3 \proves \newsp{\tilde{s_1'}}{P_1' \Par R}\ S\ \Sigma_2' \cup \Sigma_3 \proves \newsp{\tilde{s_2'}}{P_2' \Par R}$.
+
+	\noi Subcase ii: $\lambda_2 = \news{\tilde{s_3}} \bactout{s}{\abs{x}{Q_1}}$
+
+	From the LTS we get that:
+	$\Gamma; \emptyset; \Sigma_1 \proves P_1 \by{\news{\tilde{s_3}} \bactout{s}{\abs{x}{Q_1}}} \Sigma_1' \proves P_1' \hastype \Proc$,
+	which implies:
+	\begin{eqnarray}
+		&& \Gamma; \emptyset; \Sigma_1 \proves P_2 \By{\news{\tilde{s_4}} \bactout{s}{\abs{x}{Q_2}}} \Sigma_2' \proves P_2' \hastype \Proc \label{th:soundness3}\\
+		\forall C, s &&
+		\Gamma; \emptyset; \Sigma_1'' \proves \newsp{\tilde{s_1''}}{P_1' \Par \context{C}{Q_1 \subst{s}{x}}} \wbc \Sigma_2'' \proves \newsp{\tilde{s_2''}}{P_2' \Par \context{C}{Q_2\subst{s}{x}}} \label{th:soundness4}
+	\end{eqnarray}
+
+	From~\ref{th:soundness3} conclude that 
+	$\Gamma;\emptyset; \Sigma_2 \cup \Sigma_3 \proves \newsp{\tilde{s_2}}{P_2 \Par R} \By{\news{\tilde{s_4}} \bactout{s}{\abs{x}{Q_2}}} \Sigma_2' \cup \Sigma_3 \proves \newsp{\tilde{s_2'}}{P_2' \Par R} \hastype \Proc$.
+
+	Furthermore from~\ref{th:soundness4} we conlude that $\forall C, s$
+	$\Gamma; \emptyset; \Sigma_1'' \cup \Sigma_3 \proves \newsp{\tilde{s_1''}}{P_1' \Par \context{C}{Q_1\subst{s}{x}} \Par R}\ S\ \Sigma_2'' \cup \Sigma_3 \proves \newsp{\tilde{s_2''}}{P_2' \Par \context{C}{Q_2\subst{s}{x}} \Par R}$.
+
+	%%%%%%%%%%%%%%%
+	% Case 2
+	%%%%%%%%%%%%%%%
+
+	\Case{$\Gamma; \emptyset; \Sigma_1 \cup \Sigma_3 \proves \newsp{\tilde{s_1}}{P_1 \Par R} \by{\lambda} \Sigma_1 \cup \Sigma_3' \proves \newsp{\tilde{s_1'}}{P_1 \Par R'} \hastype \Proc$}
+
+	This case is divided into two subcases:
+
+	\noi Subcase i: $\lambda \not= \news{\tilde{s}} \bactout{s}{\abs{x}{Q}}$
+
+	From the LTS we get that:
+	$\Gamma; \emptyset; \Sigma_3 \proves R \by{\lambda} \Sigma_3' \proves R' \hastype \Proc \label{th:soundness5}$
+
+	Which in turn implies
+	$\Gamma; \emptyset; \Sigma_2 \cup \Sigma_3 \proves \newsp{\tilde{s_2}}{P_2 \Par R} \by{\lambda} \Sigma_2 \cup \Sigma_3' \proves \newsp{\tilde{s_2'}}{P_2 \Par R'} \hastype \Proc$.
+	From the definition of $S$ we conclude that
+	$\Gamma; \emptyset; \Sigma_1 \cup \Sigma_3' \proves \newsp{\tilde{s_1'}}{P_1 \Par R'}\ S\ \Sigma_2 \cup \Sigma_3'' \proves \newsp{\tilde{s_2'}}{P_2 \Par R'} \hastype \Proc$ as required.
+
+	\noi Subcase ii: $\lambda = \news{\tilde{s}} \bactout{s}{\abs{x}{Q}}$
+
+	From the LTS we get that:
+	\begin{eqnarray}
+		& &	\Gamma; \emptyset; \Sigma_3 \proves R \by{\lambda} \Sigma_3' \proves R' \hastype \Proc \label{th:soundness5}\\
+		\forall C, s& &	\Gamma; \emptyset; \Sigma_3'' \proves \newsp{\tilde{s'}}{R' \Par \context{C}{Q \subst{s}{x}} \hastype \Proc} \label{th:soundness6}
+	\end{eqnarray}
+
+	From~\ref{th:soundness5} we get that
+	$\Gamma; \emptyset; \Sigma_2 \cup \Sigma_3 \proves \newsp{\tilde{s_2}}{P_2 \Par R} \by{\lambda} \Sigma_2 \cup \Sigma_3' \proves \newsp{\tilde{s_2}}{P_2 \Par R'} \hastype \Proc$.
+	Furthermore from~\ref{th:soundness6} and the definition of $S$ we conclude that
+	$\forall C,s$ we get that $\Gamma; \emptyset; \Sigma_1 \cup \Sigma_3'' \proves \newsp{\tilde{s_1}}{P_1 \Par \newsp{\tilde{s'}}{R' \Par \context{C}{Q \subst{s}{x}}}}\ S\ \Sigma_2 \cup \Sigma_3'' \proves \newsp{\tilde{s_2}}{P_2 \Par \newsp{\tilde{s'}}{R' \Par \context{C}{Q \subst{s}{x}}}} \hastype \Proc$ as required.
+
+
+	%%%%%%%%%%%%%%%
+	% Case 3
+	%%%%%%%%%%%%%%%
+
+	\Case{$\Gamma; \emptyset; \Sigma_1 \cup \Sigma_3 \proves \newsp{\tilde{s_1}}{P_1 \Par R} \by{} \Sigma_1' \cup \Sigma_3' \proves \newsp{\tilde{s_1'}}{P_1' \Par R'} \hastype \Proc$}
+
+	This case is divided into two subcases:
+
+	\noi Subcase i: $\Gamma; \emptyset; \Sigma_1 \proves P_1 \by{\lambda} \Sigma_1' \proves P_1' \hastype \Proc$ 
+	and $\lambda \not= \news{\tilde{s}} \bactout{s}{\abs{x}{Q}}$ implies
+	\begin{eqnarray}
+		\Gamma; \emptyset; \Sigma_3 \proves R \by{\dual{\lambda}} R' \label{th:soundness10} \\
+		\Gamma; \emptyset; \Sigma_2 \proves P_2 \By{\hat{\lambda}} \Sigma_2' \proves P_2' \hastype \Proc \label{th:soundness11}\\
+		\Gamma; \emptyset; \Sigma_1' \proves P_1' \wbc \Sigma_2' \proves P_2' \hastype \Proc \label{th:soundness12}
+	\end{eqnarray}
+
+	From~\ref{th:soundness10} and~\ref{th:soundness11} we get
+	$\Gamma; \emptyset; \Sigma_2 \cup \Sigma_3 \proves \newsp{\tilde{s_2}}{P_2 \Par R} \By{} \Sigma_2' \cup \Sigma_3' \proves \newsp{\tilde{s_2'}}{P_2' \Par R'} \hastype \Proc$.
+
+	From~\ref{th:soundness12} and the definition of $S$ we get that
+	$\Gamma; \emptyset; \Sigma_1' \cup \Sigma_3' \proves \newsp{\tilde{s_1'}}{P_1' \Par R'}\ S\ \Sigma_2' \cup \Sigma_3 \proves \newsp{\tilde{s_2'}}{P_2' \Par R'} \hastype \Proc$.
+
+	\noi Subcase ii: $\Gamma; \emptyset; \Sigma_1 \proves P_1 \by{\news{\tilde{s_3}} \bactout{s}{\abs{x}{Q_1}}} \Sigma_1' \proves P_1' \hastype \Proc$ implies
+	\begin{eqnarray}
+		& & \Gamma; \emptyset; \Sigma_1 \cup \Sigma_3 \proves \newsp{\tilde{s_1}}{P_1 \Par R} \by{} \Sigma_1' \cup \Sigma_3' \proves \newsp{\tilde{s_1''}}{P_1' \Par R' \subst{\abs{x}{Q_1}}{X}} \hastype \Proc\\
+		& & \Gamma; \emptyset; \Sigma_3 \proves R \by{\bactinp{s}{\abs{x} {Q_1}}} R' \subst{\abs{x}{Q_1}}{X} \label{th:soundness7}\\
+		& & \Gamma; \emptyset; \Sigma_2 \proves P_2 \By{\news{\tilde{s_4}} \bactout{s}{\abs{x}{Q_2}}} \Sigma_2' \proves P_2' \hastype \Proc \label{th:soundness8}\\
+		\forall C, s & & \Gamma; \emptyset; \Sigma_1'' \proves \newsp{\tilde{s_1'}}{P_1' \Par \context{C}{Q_1 \subst{s}{x}}} \wbc \Sigma_2'' \proves \newsp{\tilde{s_2'}}{P_2' \Par \context{C}{Q_2 \subst{s}{x}}} \hastype \Proc \label{th:soundness9}
+	\end{eqnarray}
+
+	From~\ref{th:soundness7} we get that
+	$\Gamma; \emptyset; \Sigma_3 \proves R \by{\bactinp{s}{\abs{x} {Q_2}}} R' \subst{\abs{x}{Q_2}}{X}$ \dk{(prove that $\forall V, R \by{\bactinp{s}{V}} R'\subst{V}{X}$)}
+	to combine with~\ref{th:soundness8} and get
+	$\Gamma; \emptyset; \Sigma_2 \cup \Sigma_3 \proves \newsp{\tilde{s_2}}{P_2 \Par R} \By{} \Sigma_2' \cup \Sigma_3' \proves \newsp{\tilde{s_2''}}{P_2' \Par R' \subst{\abs{x}{Q_2}}{X}} \hastype \Proc$.
+
+	Choose context $C'$ by replacing process variable $X$ in $R'$ with $\hole$,
+	such that $\context{C'}{Q_1 \subst{s}{x}} = R' \subst{\abs{x}{Q_1}}{X}$ and $\context{C'}{Q_2 \subst{s}{x}} = R' \subst{\abs{x}{Q_2}}{X}$.
+
+	From~\ref{th:soundness9} and the definition of $S$ we get that
+	$\Gamma; \emptyset; \Sigma_1'' \proves \newsp{\tilde{s_1'}}{P_1' \Par \context{C'}{Q_1 \subst{s}{x}}}\ S\ \Sigma_2'' \proves \newsp{\tilde{s_2'}}{P_2' \Par \context{C'}{Q_2 \subst{s}{x}}} \hastype \Proc$.
+
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	% Completeness
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+	In order to prove the completness direction we need to equip our calculus with
+	name matching operator; $\ifthenelse{k_1 == k_2}{P}{Q}$.
+	In this work we will only use name matching for
+	proving the completeness direction of our bisimulation.
+
+	The reduction semantics for the matching operator are
+	$\ifthenelse{k == k}{P}{Q} \red P$ and if $k_1 \not= k_2$ then $\ifthenelse{k_1==k_2}{P}{Q} \red Q$.
+	Furthemore the typing for the matching construct is
+	$\tree{
+		\Gamma; \emptyset; \Sigma_i \proves k_i \hastype U_i \qquad \Gamma; \Lambda; \Sigma \proves P_i \hastype \Proc
+	}{
+		\Gamma; \Lambda; \Sigma \proves \ifthenelse{k_i == k_2}{P_1}{P_2} \hastype \Proc
+	}$
+
+	We want to show that $\cong \subseteq \wbc$. If we part 1 of this theorem
+	we can equivalently prove that $\cong \subseteq \wb$.
+
+	We first show that every external action $\lambda$ is {\em definable}.
+	Let $\Gamma; \emptyset; \Sigma_1 \proves P \hastype \Proc$.
+	For all $\lambda$ we define process $\Gamma; \emptyset; \Sigma_2 \proves T\lrangle{\lambda \cat \tilde{\lambda}, \suc \cat \tilde{\suc}, N} \hastype \Proc$
+	with $\suc\cat\tilde{\suc}$ fresh names and $N$ a set of names.
+	such that:
+	\begin{itemize}
+		\item	If $\Gamma; \emptyset; \Sigma_1 \proves P \by{\lambda} \Sigma_1' \proves P' \hastype \Proc$ and
+			$\lambda\not=\news{\tilde{s}}\bactout{s}{\abs{x}{Q}}$
+			then
+			$\Gamma; \emptyset; \Sigma_1 \cup \Sigma_2 \proves P \Par T\lrangle{\lambda \cat \tilde{\lambda}, \suc \cat \tilde{\suc}, N} \red \Sigma_1' \cup \Sigma_2' \proves P' \Par T\lrangle{\tilde{\lambda}, \tilde{\suc}, N} \Par \bout{\suc}{\ast} \inact \hastype \Proc$.
+
+		\item	If $\Gamma; \emptyset; \Sigma_1 \proves P \by{\news{\tilde{s}}\bactout{s}{\abs{x}{Q}}} \Sigma_1' \proves P' \hastype \Proc$
+			then
+			$\Gamma; \emptyset; \Sigma_1 \cup \Sigma_2 \proves P \Par T\lrangle{\news{\tilde{s}}\bactout{s}{\abs{x}{Q}} \cat \tilde{\lambda}, \suc \cat \tilde{\suc}, N} \red \Sigma_1' \cup \Sigma_2' \proves P' \Par Q\subst{s'}{x} \Par T\lrangle{\tilde{\lambda}, \tilde{\suc}, N} \Par \bout{\suc}{\ast} \inact \hastype \Proc$.
+
+
+		\item	If $\Gamma; \emptyset; \Sigma_1 \cup \Sigma_2 \proves P \Par T\lrangle{\lambda \cat \tilde{\lambda}, \suc \cat \tilde{\suc}, N} \red \Sigma \proves Q \hastype \Proc$
+			and $\lambda\not=\news{\tilde{s}}\bactout{s}{\abs{x}{Q}}$
+			and $\Gamma; \emptyset; \Sigma \proves Q \hastype \Proc \barb{\suc}$ then
+			$\Gamma; \emptyset; \Sigma_1 \proves P \By{\lambda} \Sigma_1' \proves P' \hastype \Proc$,
+			and $Q \scong P' \Par T\lrangle{\tilde{\lambda}, \tilde{\suc}, N} \Par \bout{\suc}{\ast} \inact$.
+
+		\item	If $\Gamma; \emptyset; \Sigma_1 \cup \Sigma_2 \proves P \Par T\lrangle{\news{\tilde{s}}\bactout{s}{\abs{x}{Q}} \cat \tilde{\lambda}, \suc \cat \tilde{\suc}, N} \red \Sigma \proves Q \hastype \Proc$
+			and $\Gamma; \emptyset; \Sigma \proves Q \hastype \Proc \barb{\suc}$ then
+			$\Gamma; \emptyset; \Sigma_1 \proves P \By{\news{\tilde{s}}\bactout{s}{\abs{x}{Q}}} \Sigma_1' \proves P' \hastype \Proc$,
+			and $Q \scong P' \Par Q \subst{s'}{x} \Par T\lrangle{\tilde{\lambda}, \tilde{\suc}, N} \Par \bout{\suc}{\ast} \inact$.
+
+
+	\end{itemize}
+
 	
+	We define $T\lrangle{\lambda \cat \tilde{\lambda}, \suc \cat \tilde{\suc}, N}$:
+
+	\begin{itemize}
+		\item	$T\lrangle{\emptyset, \emptyset, N} \scong \newsp{s_1, s_2}{\binp{s_1}{x} \bout{s_2}{\ast} R \Par \binp{s_2}{x} \bout{s_1}{\ast} \inact}$ with
+			$\Gamma; \emptyset; \Sigma \proves T\lrangle{\emptyset, \emptyset, N} \hastype \Proc$.
+			\dk{$R$ is used to complete the type of a session}.
+
+		\item	$T\lrangle{\bactinp{s}{s'} \cat \tilde{\lambda}, \suc \cat \tilde{\suc}, N} = \bout{\dual{s}}{s'} (T\lrangle{\tilde{\lambda}, \tilde{\suc}, N} \Par \bout{\suc}{\ast} \inact)$.
+
+		\item	$T\lrangle{\bactbra{s}{l} \cat \tilde{\lambda}, \suc \cat \tilde{\suc}, N} = \bsel{\dual{s}}{l} (T\lrangle{\tilde{\lambda}, \tilde{\suc}, N} \Par \bout{\suc}{\ast} \inact)$.
+
+		\item	$T\lrangle{\bactinp{s}{\abs{x} Q} \cat \tilde{\lambda}, \suc \cat \tilde{\suc}, N} = \bout{\dual{s}}{\abs{x}{Q}} (T\lrangle{\tilde{\lambda}, \tilde{\suc}, N} \Par \bout{\suc}{\ast} \inact)$.
+
+		\item	$T\lrangle{\bactout{s}{s'} \cat \tilde{\lambda}, \suc \cat \tilde{\suc}, N} = \binp{\dual{s}}{x} \ifthenelse{x == s'}{(T\lrangle{\tilde{\lambda}, \tilde{\suc}, N} \Par \bout{\suc}{\ast} \inact)}{R}$.
+
+		\item	$T\lrangle{\news{\s'} \bactout{s}{s'} \cat \tilde{\lambda}, \suc \cat \tilde{\suc}, N} = \binp{\dual{s}}{x} \ifthenelse{x \notin N}{(T\lrangle{\tilde{\lambda}, \tilde{\suc}, N} \Par \bout{\suc}{\ast} \inact)}{R}$.
+
+		\item	$T\lrangle{\bactsel{s}{l} \cat \tilde{\lambda}, \suc \cat \tilde{\suc}, N} = \bbra{\dual{s}}{l:(T\lrangle{\tilde{\lambda}, \tilde{\suc}, N} \Par \bout{\suc}{\ast} \inact), l_i: R}_{i \in I}$.
+
+		\item	$T\lrangle{\news{\tilde{s}} \bactout{s}{\news{\tilde{s}} \abs{x}{Q}} \cat \tilde{\lambda}, \suc \cat \tilde{\suc}, N} = \binp{\dual{s}}{X} (\appl{X}{s'} \Par T\lrangle{\tilde{\lambda}, \tilde{\suc}, N} \Par \bout{\suc}{\ast} \inact)$. \dk{$s'$ is such that $T$ is typable.}
+	\end{itemize}
+
+	It is straightforward to verify that assuming a process each $\Gamma; \emptyset; \Sigma_1 \proves P \hastype \Proc$ then $\forall \lambda$ each $\lambda$ is definable.
+
+	Note that the matching operator is used only in the fragment of
+	the calculus that allow name passing. The higher order sub-calculus
+	does not need a matching operator for proving completness.
+
+	We now show that $\forall \lambda \cat \tilde{\lambda}$ such that $\Gamma; \emptyset; \Sigma_1 \proves P_1 \by{\lambda} \By{\tilde{\lambda}} \Sigma_1' \proves P_1' \hastype \Proc$
+	and $\Gamma; \emptyset; \Sigma_1 \cup \Sigma_3 \proves P_1 \Par T\lrangle{\lambda \cat \tilde{\lambda}, \tilde{\suc}, N} \cong \Sigma_2 \cup \Sigma_3 \proves P_2 \Par T\lrangle{\lambda \cat \tilde{\lambda}, \tilde{\suc}, N} \hastype \Proc$ then $\forall n, \Gamma; \emptyset; \Sigma_1 \proves P_1 \wb_n \Sigma_2 \proves P_2 \hastype \Proc$.
+
+	We use induction on the definition of $\wb_n$.
+
+	Basic step: Trivial.
+
+	Inductive step:
+
+	We follow two cases:
+
+	Case $\lambda = \news{\tilde{s_1}} \bactout{s}{\abs{x}{Q_1}}$.
+
+	Take into account the fact that
+	$T\lrangle{\news{\tilde{s_1}} \bactout{s}{\abs{x}{Q_1}} \cat \tilde{\lambda}, \tilde{\suc}, N} = T\lrangle{\news{\tilde{s_2}} \bactout{s}{\abs{x}{Q_2}} \cat \tilde{\lambda}, \tilde{\suc}, N}$
+	to assume:
+
+	$\Gamma; \emptyset; \Sigma_1 \cup \Sigma_3 \proves P_1 \Par T\lrangle{\news{\tilde{s_1}} \bactout{s}{\abs{x}{Q_1}} \cat \tilde{\lambda}, \tilde{\suc}, N} \cong \Sigma_2 \cup \Sigma_3 \proves P_2 \Par T\lrangle{\news{\tilde{s_2}} \bactout{s}{\abs{x}{Q_2}} \cat \tilde{\lambda}, \tilde{\suc}, N} \hastype \Proc$.
+s
+
+	From the above we get that
+	\[
+		\Gamma; \emptyset; \Sigma_1 \cup \Sigma_3 \proves P_1 \Par T\lrangle{\news{\tilde{s_1}} \bactout{s}{\abs{x}{Q_1}} \cat \tilde{\lambda}, \suc \cat \tilde{\suc}, N} \red \Sigma_1' \cup \Sigma_3' \proves P_1' \Par Q_1 \subst{s'}{x} \Par T\lrangle{\tilde{\lambda}, \tilde{\suc}, N} \Par \bout{\suc}{\ast} \inact \hastype \Proc \barb{\suc}
+	\]
+	implies
+	\[
+		\Gamma; \emptyset; \Sigma_2 \cup \Sigma_3 \proves P_2 \Par T\lrangle{\news{\tilde{s_2}} \bactout{s}{\abs{x}{Q_2}} \cat \tilde{\lambda}, \suc \cat \tilde{\suc}, N} \Red \Sigma_2' \cup \Sigma_3 \proves Q \inact \hastype \Proc \Barb{\suc}
+	\]
+	implies (from the definibility of $\news{\tilde{s_1}} \bactout{s}{\abs{x}{Q_1}}$)
+	\begin{eqnarray}
+		Q \scong P_2' \Par Q_2 \subst{s'}{x} \Par T\lrangle{\tilde{\lambda}, \tilde{\suc}, N} \Par \bout{\suc}{\ast}\\
+		\Gamma; \emptyset; \Sigma_2 \proves P_2 \By{\lambda} \Sigma_2' \proves P_2'
+	\end{eqnarray}
+
+	From the induction hypothesis we get that
+	$\Gamma;\emptyset; \Sigma_1' \proves P_1' \Par Q_1 \subst{s'}{x} \wb_n \Sigma_2' \proves P_2' \Par Q_2 \subst{s'}{x} \hastype \Proc$.
+
+	Let $R_{n+1} = \set{(\Gamma; \emptyset; \Sigma_1 \proves P_1 \hastype \Proc, \Gamma; \emptyset; \Sigma_2 \proves P_2 \hastype \Proc)}$
+	We check the requirements for $R_{n+1}$ to be a stratified definition with respect
+	to $\wb_n$ to conclude that $R_{n+1} \subseteq \wb_{n+1}$ as required.
+
+	Case $\lambda \not= \news{\tilde{s_1}} \bactout{s}{\abs{x}{Q_1}}$ is similar and easier than the previous case.
+
+	We are ready to prove the main result.
+
+	Let $\Gamma; \emptyset; \Sigma_1 \proves P_1 \cong \Sigma_2 \proves P_2 \hastype \Proc$.
+	For all $\tilde{\lambda}$ such that $\Gamma; \emptyset; \Sigma_1 \proves P_1 \By{\lambda} \Sigma_1' \proves P_1' \hastype \Proc$
+	choose $\Gamma; \emptyset; \Sigma_3 \proves T\lrangle{\tilde{\lambda}, \tilde{\suc}, N} \hastype \Proc$ such that
+	$\Gamma; \emptyset; \Sigma_1 \cup \Sigma_3 \proves P_1 \Par T\lrangle{\tilde{\lambda}, \tilde{\suc}, N} \cong \Sigma_2 \cup \Sigma_3 \proves P_2 \Par T\lrangle{\tilde{\lambda}, \tilde{\suc}, N} \hastype \Proc$
+	to imply that $\Gamma; \emptyset; \Sigma_1 \proves P_1 \wb \Sigma_2 \proves P_2 \hastype \Proc$
+
 \end{proof}
 
 
