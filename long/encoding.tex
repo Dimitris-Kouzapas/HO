@@ -19,7 +19,7 @@
 \newpage
 \section{Typed Encodings}\label{s:expr}
 
-In this section, we define the notion of \emph{typed encoding} that we
+We define the notion of \emph{typed encoding} that we
 shall use in the following section.
 %In general, we may define:
 
@@ -270,7 +270,7 @@ we may focus on monadic session processes,
 and rely on polyadic constructs simply as convenient syntactic sugar.
 In fact, we shall rely on polyadicity to encode recursive behaviors.
 %
-\begin{definition}[Polyadic Into Monadic]%\rm
+\begin{definition}[Polyadic Into Monadic]\label{d:enc:poltomon}
 Let 
 $\enco{\map{\cdot}^{\mathsf{p}}, \mapt{\cdot}^{\mathsf{p}}, \mapa{\cdot}^{\mathsf{p}}}: \HOp \to \HOp^{-\mathsf{p}}$
 be a typed encoding where
@@ -352,32 +352,45 @@ If			$\Gamma; \emptyset; \Delta \proves P \hastype \Proc$ then
 \end{proposition}
 
 \begin{proof}
-By induction on the inference $\Gamma; \emptyset; \Delta \proves P \hastype \Proc$. TBD!
+By induction on the inference $\Gamma; \emptyset; \Delta \proves P \hastype \Proc$.
 	\qed
 \end{proof}
+
+\begin{proposition}
+If $\map{P\subst{\abs{x_1, \cdots, x_m} Q}{X}}^{\mathsf{p}} = \map{P}^{\mathsf{p}}\subst{\abs{z}\binp{z}{x_1} \cdots ; \binp{z}{x_m} \map{Q}^{\mathsf{p}}}{X}$.
+\end{proposition}
+\begin{proof}
+Immediate from the definition of $\map{\cdot}^{\mathsf{p}}$ (cf. Def.~\ref{d:enc:poltomon}).
+	\qed
+\end{proof}
+
 
 \begin{proposition}[Operational Correspondence, Polyadic to Monadic]
 Let $P$ be an  $\HOp$ process.
 If $\Gamma; \emptyset; \Delta \proves P \hastype \Proc$ then
-		\begin{enumerate}[(a)]
+		\begin{enumerate}[a)]
 			\item	 
 			   If  $\stytra{\Gamma}{\ell_1}{\Delta_1}{P}{\Delta'_1}{P'}$
 			   then  $\exists \ell_2$ s.t. 
-			    $\wtytra{\mapt{\Gamma}^{\mathsf{p}}}{\ell_2}{\mapt{\Delta_1}^{\mathsf{p}}}{\map{P_1}}{\mapt{\Delta'_1}^{\mathsf{p}}}{\map{P_2}}$
+			    $\wtytra{\mapt{\Gamma}^{\mathsf{p}}}{\ell_2}{\mapt{\Delta_1}^{\mathsf{p}}}{\map{P}}{\mapt{\Delta'_1}^{\mathsf{p}}}{\map{P'}}$
 			    and $\ell_2 = \mapa{\ell_1}^{\mathsf{p}}$.
 			\item   
 			If  $\wtytra{\mapt{\Gamma}^{\mathsf{p}}}{\ell_2}{\mapt{\Delta_1}^{\mathsf{p}}}{\map{P}}{\mapt{\Delta'_1}^{\mathsf{p}}}{Q}$
-			   then $\exists \ell_1, P'$ s.t.  
+			   then $\exists \ell_1, P', R$ s.t.  \\
 			    (i)~$\stytra{\Gamma}{\ell_1}{\Delta_1}{P}{\Delta'_1}{P'}$,
-			    (ii)~$\ell_2 = \mapa{\ell_1}^{\mathsf{p}}$, and
-			    (iii)~$\wbb{\Gamma}{\ell}{\Delta'_1}{P'}{\mapt{\Delta'_1}^{\mathsf{p}}}{Q}$.
+			    (ii)~$\ell_2 = \mapa{\ell_1}^{\mathsf{p}}$, 
+			    (iii)~$Q \Hby{} R$, and \\
+			    (iv)~$\wbb{\Gamma}{\ell}{\Delta'_1}{\map{P'}^{\mathsf{p}}}{\mapt{\Delta'_1}^{\mathsf{p}}}{Q}$.
 			    \end{enumerate}
 \end{proposition}
 
 \begin{proof}
-By transition induction.
-TBD!
-	\qed
+By transition induction. All cases are easy;
+we only remark that the additional $\tau$-transitions induced by the encoding 
+are directly associated to the polyadicity involved. This is particularly relevant
+when $\ell_1 = \bactinp{n}{\abs{\tilde{x}}{P}}$, for the encoding of a polyadic application involves
+as many $\tau$-transitions (i.e., synchronizations on the restricted name $s$) 
+as polyadic parameters are involved.	\qed
 \end{proof}
 
 
