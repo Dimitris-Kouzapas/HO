@@ -411,14 +411,15 @@ If $\Gamma; \emptyset; \Delta \proves P \hastype \Proc$ then
 \end{proposition}
 
 \begin{proof}
-By transition induction, considering Remark~\ref{r:multilabels} for weak transitions. All cases are easy;
-we only remark that the additional $\tau$-transitions induced by the encoding 
-are directly associated to the polyadicity involved. This is particularly relevant
-when $\ell_1 = \bactinp{n}{\abs{\tilde{x}}{P}}$, for the encoding of a polyadic application involves
-as many $\tau$-transitions (i.e., synchronizations on the restricted name $s$) 
-as polyadic parameters are involved.	\\
-
-\noi Part (a). We consider two non-trivial cases, using biadic communication:
+By transition induction.
+%, considering Remark~\ref{r:multilabels} for weak transitions. All cases are easy;
+%we only remark that the additional $\tau$-transitions induced by the encoding 
+%are directly associated to the polyadicity involved. This is particularly relevant
+%when $\ell_1 = \bactinp{n}{\abs{\tilde{x}}{P}}$, for the encoding of a polyadic application involves
+%as many $\tau$-transitions (i.e., synchronizations on the restricted name $s$) 
+%as polyadic parameters are involved.	\\
+We consider parts (a) and (b) separately: \\
+\noi \textbf{Part (a)}. We consider two non-trivial cases, using biadic communication:
 \begin{enumerate}[1.]
 
 %% Biadic Output 
@@ -511,14 +512,14 @@ k:S}^{\mathsf{p}}
 which concludes the proof for this case.
 \end{enumerate}
 
-\noi Part (b). We consider two non-trivial cases, using biadic communication:
+\noi \textbf{Part (b)}. We consider some non-trivial cases, using biadic communication:
 \begin{enumerate}[1.]
 
-%% Biadic Output 
+%% Biadic Input 
 \item Case $P =  \binp{k}{x_1, x_2} P' $, 
 $\map{P}^{\mathsf{p}} = 
 		\binp{k}{x_1}  \binp{k}{x_2}  \map{P'}^{\mathsf{p}}$,
-		and $\ell_2 = \bactinp{k}{k_1,   k_2}$. Then we have, for some $S$, $S_1$, $S_2$, and $\Delta$, the following transitions:
+		and $\ell_2 = \bactinp{k}{k_1}, \bactinp{k}{k_2}$. Then we have, for some $S$, $S_1$, $S_2$, and $\Delta$, the following transitions:
 \begin{eqnarray*}
 & & \mapt{\Gamma}^{\mathsf{p}}; 
 \mapt{\Delta}^{\mathsf{p}}, k:\mapt{\btinp{S_1, S_2}S}^{\mathsf{p}}
@@ -538,20 +539,76 @@ k_2: \mapt{S_2}^{\mathsf{p}}
 \proves 
 \map{P'}^{\mathsf{p}} \subst{k_1}{x_1}\subst{k_2}{x_2} = Q
 \end{eqnarray*}
-It is then immediate to infer the label for the source transition:
+Considering Remark~\ref{r:multilabels} 
+it is then immediate to infer the label for the source transition:
 $\ell_1 = \bactinp{k}{k_1,k_2}$. 
 Now, in the source term $P$ we can infer the following transition:
 $$
 \stytra{\Gamma}{\ell_1}{\Delta, k:\btinp{S_1, S_2}S}{\binp{k}{x_1, x_2} P' }{\Delta, k{:}S, k_1:S_1, k_2:S_2}{P'\subst{k_1,k_2}{x_1, x_2}}
 $$
-We conclude by observing that,
+We now observe that, by
 letting
  $\Delta^* = \mapt{\Delta}^{\mathsf{p}}, k:\tmap{S}{\mathsf{p}}, \,
 k_1:  \mapt{S_1}^{\mathsf{p}} , \,
-k_2: \mapt{S_2}^{\mathsf{p}}$, we have
+k_2: \mapt{S_2}^{\mathsf{p}}$, we have the desired conclusion:
 $$\wbb{\mapt{\Gamma}^{\mathsf{p}}}{\ell}{\Delta^*}{\map{P'\subst{k_1,k_2}{x_1, x_2}}^{\mathsf{p}}}{\Delta^*}{Q}$$
+
+%% Biadic Abstraction Output 
+\item Case $P =  \bbout{k}{\abs{x_1,x_2} Q} P' $, 
+$\map{P}^{\mathsf{p}} = 
+		\bbout{k}{\abs{z}\binp{z}{x_1}\binp{z}{x_2} \map{Q}^{\mathsf{p}}} \map{P'}^{\mathsf{p}}$,
+		and \\ $\ell_2 = \bactout{k}{\abs{z}\binp{z}{x_1} \binp{z}{x_2} \map{Q}^{\mathsf{p}}} $. Then we have, for some $S$, $C_1$, $C_2$, and $\Delta$, the following judgment and  transition:
+\begin{eqnarray*}
+& & \mapt{\Gamma}^{\mathsf{p}}; 
+\mapt{\Delta}^{\mathsf{p}}, k:\tmap{\bbtout{\lhot{(C_1,  C_2)}} S}{\mathsf{p}}
+\proves 
+\bbout{k}{\abs{z}\binp{z}{x_1}\binp{z}{x_2} \map{Q}^{\mathsf{p}}} \map{P'}^{\mathsf{p}} \\
+& \hby{\ell_2} & 
+\mapt{\Gamma}^{\mathsf{p}}; 
+\mapt{\Delta}^{\mathsf{p}}, k:\tmap{ S}{\mathsf{p}} 
+\proves 
+\map{P'}^{\mathsf{p}} = Q
+\end{eqnarray*}
+For simplicity, we consider only the case of linear functions.
+It is then immediate to infer the label for the source transition:
+$\ell_1 = \bactout{k}{\abs{x_1,  x_2}{Q}} $. 
+Now, in the source term $P$ we can infer the following transition:
+$$
+\stytra{\Gamma}{\ell_1}{\Delta, k:\bbtout{\lhot{(C_1,  C_2)}} S}{ \bbout{k}{\abs{x_1,x_2} Q} P'}{\Delta, k{:}S}{P'}
+$$
+Then we have the desired conclusion:
+$$\wbb{\mapt{\Gamma}^{\mathsf{p}}}{\ell}{\mapt{\Delta, k:S}^{\mathsf{p}}}{\map{P'}^{\mathsf{p}}}{\mapt{\Delta, k:S}^{\mathsf{p}}}{Q}$$
+
+
+%% Biadic Abstraction Input 
+\item Case $P =  \binp{k}{X} P' $, 
+$\map{P}^{\mathsf{p}} = 
+		\binp{k}{X} \map{P'}^{\mathsf{p}}$,
+		and  $\ell_2 = \bactinp{k}{\abs{z}\binp{z}{x_1} \binp{z}{x_2} \map{Q}^{\mathsf{p}}} $. Then we have, for some $S$, $C_1$, $C_2$, and $\Delta$, the following judgment and  transition:
+\begin{eqnarray*}
+& & \mapt{\Gamma}^{\mathsf{p}}; 
+\mapt{\Delta}^{\mathsf{p}}, k:\tmap{\bbtinp{\shot{(C_1,  C_2)}} S}{\mathsf{p}}
+\proves 
+\binp{k}{X} \map{P'}^{\mathsf{p}} \\
+& \hby{\ell_2} & 
+\mapt{\Gamma}^{\mathsf{p}}; 
+\mapt{\Delta}^{\mathsf{p}}, k:\tmap{ S}{\mathsf{p}} 
+\proves 
+\map{P'}^{\mathsf{p}}\subst{\abs{z}\binp{z}{x_1} \binp{z}{x_2} \map{Q}^{\mathsf{p}}}{X} = Q
+\end{eqnarray*}
+For simplicity, we consider only the case of shared functions.
+It is then immediate to infer the label for the source transition:
+$\ell_1 = \bactinp{k}{\abs{x_1,  x_2}{Q}} $. 
+Now, in the source term $P$ we can infer the following transition:
+$$
+\stytra{\Gamma}{\ell_1}{\Delta, k:\bbtinp{\shot{(C_1, C_2)}} S}{ \binp{k}{X} P'}{\Delta, k{:}S}{P'\subst{\abs{x_1,  x_2}{Q}}{X}}
+$$
+Then we have the desired conclusion:
+$$\wbb{\mapt{\Gamma}^{\mathsf{p}}}{\ell}{\mapt{\Delta, k:S}^{\mathsf{p}}}{\map{P'\subst{\abs{x_1,  x_2}{Q}}{X}}^{\mathsf{p}}}{\mapt{\Delta, k:S}^{\mathsf{p}}}{Q}$$
+It is worth noticing that the key difference between 
+${\map{P'\subst{\abs{x_1,  x_2}{Q}}{X}}^{\mathsf{p}}}$
+and $Q$ consists in the $\tau$-transitions present in $Q$  and absent in${\map{P'\subst{\abs{x_1,  x_2}{Q}}{X}}^{\mathsf{p}}}$, which are induced   by the monadic representation of polyadic communication.
 \end{enumerate}
-as desired.
 \qed
 \end{proof}
 
@@ -590,9 +647,10 @@ to give a sound encoding of the recursion semantics to $\HO$.
 We first encode the name passing semantics.
 %Below, we use $n$ to stand for either a linear channel $k'$ or a shared name $a$.
 
-\begin{definition}[Finite First-Order into Higher-Order]%\rm
+\begin{definition}[Finite First-Order into Higher-Order]\label{d:enc:fotoho}
    Let  $\enco{\map{\cdot}^{1}, \mapt{\cdot}^{1}, \mapa{\cdot}^{1}}: \sessp^{-\mu} \to \HO$ be a typed encoding where
 %	Define $\encod{\cdot}{\cdot}{1}: \sessp^{-\mu} \to \HO$  as follows:
+\begin{figure}[t]
 	\[
 	\begin{array}{rcl}
 		\pmap{\bout{k}{k'} P}{1}		&\defeq&	\bbout{k}{ \abs{z}{\,\binp{z}{X} \appl{X}{k'}} } \pmap{P}{1} \\
@@ -605,8 +663,15 @@ We first encode the name passing semantics.
 		\mapa{\bactinp{k}{k_1}}^{1} &\defeq&   \bactinp{k}{\abs{z}{\,\binp{z}{X} \appl{X}{k_1}}\, }
 	\end{array}
 	\]
-and mappings $\map{\cdot}^{1}$, $\mapt{\cdot}^{1}$, $\mapa{\cdot}^{1}$
-are homomorphisms for the other processes/types/labels. 
+	\caption{
+Encoding of first-order communication into higher-order communication (cf.~Defintion~\ref{d:enc:fotoho} \label{f:enc:fotoho}).
+The mappings are homomorphisms for the other processes/types/labels. 
+}
+\end{figure}
+mappings $\map{\cdot}^{1}$, $\mapt{\cdot}^{1}$, $\mapa{\cdot}^{1}$
+%are homomorphisms for the other processes/types/labels. 
+are 
+as in Fig.~\ref{f:enc:fotoho}.
 \end{definition}
 
 In the higher-order setting, a name $k$ is being passed as an input
