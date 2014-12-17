@@ -382,7 +382,7 @@ By induction on the inference $\Gamma; \emptyset; \Delta \proves P \hastype \Pro
 	\qed
 \end{proof}
 
-\begin{proposition}
+\begin{proposition}\label{p:poltomo}
 If $\map{P\subst{\abs{x_1, \cdots, x_m} Q}{X}}^{\mathsf{p}} = \map{P}^{\mathsf{p}}\subst{\abs{z}\binp{z}{x_1} \cdots ; \binp{z}{x_m} \map{Q}^{\mathsf{p}}}{X}$.
 \end{proposition}
 \begin{proof}
@@ -423,17 +423,30 @@ We consider parts (a) and (b) separately: \\
 \begin{enumerate}[1.]
 
 %% Biadic Output 
-\item Case  $P =\bout{k}{k_1, k_2} P'$ and $\ell_1 = \bactout{k}{k_1, k_2}$. Then we have:
+\item Case  $P =\bout{k}{k_1, k_2} P'$ and $\ell_1 = \bactout{k}{k_1, k_2}$. By assumption, $P$ is well-typed. 
+We may have:
+			\[
+				\tree{
+					\Gamma; \emptyset; \Delta_0 \cat k:S  \proves  P' \hastype \Proc \quad 
+					\Gamma ; \emptyset ; k_1{:} S_1 \cat k_2{:}S_2 \proves  k_1,k_2 \hastype S_1,S_2}{
+					\Gamma; \emptyset; \Delta_0 \cat k_1{:}S_1 \cat k_2{:}S_2 \cat k:\btout{S_1,S_2}S \proves  
+					\bout{k}{k_1,k_2} P' \hastype \Proc}
+			\]
+for some $\Gamma, S, S_1, S_2, \Delta_0$, 
+such that $\Delta = \Delta_0 \cat k_1{:}S_1 \cat k_2{:}S_2 \cat k:\btout{S_1,S_2}S$.
+We may then have the following transition
 $$
-\stytra{\Gamma}{\ell_1}{\Delta, k:\btout{S_1, S_2}S}{\bout{k}{k_1, k_2} P'}{\Delta, k{:}S, k_1{:}S_1, k_2{:}S_2}{P'}
+\stytra{\Gamma}{\ell_1}{\Delta_0 \cat k_1{:}S_1 \cat k_2{:}S_2 \cat k:\btout{S_1,S_2}S}{\bout{k}{k_1, k_2} P'}{\Delta_0 \cat k{:}S}{P'}
 $$
-for some $\Gamma, S, S_1, S_2, \Delta$. The encoding of the source judgment is
+The encoding of the source judgment for $P$ is as follows:
 $$
-\mapt{\Gamma}^{\mathsf{p}}; \emptyset; \mapt{\Delta, k:\btout{S_1, S_2}S}^{\mathsf{p}} \proves \map{\bout{k}{k_1, k_2} P'}^{\mathsf{p}} \hastype \Proc
+\mapt{\Gamma}^{\mathsf{p}}; \emptyset; \mapt{\Delta_0 \cat k_1{:}S_1 \cat k_2{:}S_2 \cat k:\btout{S_1,S_2}S}^{\mathsf{p}} \proves \map{\bout{k}{k_1, k_2} P'}^{\mathsf{p}} \hastype \Proc
 $$
 which, using Def.~\ref{d:enc:poltomon}, can be equivalently expressed as 
 $$
-\mapt{\Gamma}^{\mathsf{p}}; \emptyset; \mapt{\Delta}, k:\btout{\mapt{S_1}^{\mathsf{p}}}\btout{\mapt{S_2}^{\mathsf{p}}}\mapt{S}^{\mathsf{p}}
+\mapt{\Gamma}^{\mathsf{p}}; \emptyset; \mapt{\Delta_0} 
+\cat k_1{:}\mapt{S_1}^{\mathsf{p}} \cat k_2{:}\mapt{S_2}^{\mathsf{p}} 
+\cat k:\btout{\mapt{S_1}^{\mathsf{p}}}\btout{\mapt{S_2}^{\mathsf{p}}}\mapt{S}^{\mathsf{p}}
 \proves 
 \bout{k}{k_1}\bout{k}{k_2} \map{P'}^{\mathsf{p}} 
 \hastype \Proc
@@ -441,26 +454,25 @@ $$
 Now, $\mapa{\ell_1}^{\mathsf{p}} = \{ \bactout{k}{k_1 }, \bactout{k}{ k_2}\}$. 
 It is immediate to infer the following transitions for $\map{P}^{\mathsf{p}}  = \bout{k}{k_1}\bout{k}{k_2} \map{P'}^{\mathsf{p}} $:
 \begin{eqnarray*}
-& & \mapt{\Gamma}^{\mathsf{p}}; \mapt{\Delta}, k:\btout{\mapt{S_1}^{\mathsf{p}}}\btout{\mapt{S_2}^{\mathsf{p}}}\mapt{S}^{\mathsf{p}}
+& & \mapt{\Gamma}^{\mathsf{p}}; 
+\mapt{\Delta_0} \cat  k_1{:}\mapt{S_1}^{\mathsf{p}} \cat k_2{:}\mapt{S_2}^{\mathsf{p}} \cat
+k:\btout{\mapt{S_1}^{\mathsf{p}}}\btout{\mapt{S_2}^{\mathsf{p}}}\mapt{S}^{\mathsf{p}}
 \proves 
 \bout{k}{k_1}\bout{k}{k_2} \map{P'}^{\mathsf{p}}  \\
 & \hby{\bactout{k}{k_1}} & 
-\mapt{\Gamma}^{\mathsf{p}}; \mapt{\Delta}, \,
-k:\btout{\mapt{S_2}^{\mathsf{p}}}\mapt{S}^{\mathsf{p}}, \,
-k_1{:}\mapt{S_1}^{\mathsf{p}}
+\mapt{\Gamma}^{\mathsf{p}}; \mapt{\Delta_0} \cat  k_1{:}\mapt{S_1}^{\mathsf{p}} \cat k_2{:}\mapt{S_2}^{\mathsf{p}} \cat
+k:\btout{\mapt{S_2}^{\mathsf{p}}}\mapt{S}^{\mathsf{p}}
 \proves 
 \bout{k}{k_2} \map{P'}^{\mathsf{p}} \\
 & \hby{\bactout{k}{k_2}} & 
-\mapt{\Gamma}^{\mathsf{p}}; \mapt{\Delta}, \,
-k:\mapt{S}^{\mathsf{p}}, \,
-k_1{:}\mapt{S_1}^{\mathsf{p}}, \,
-k_2{:}\mapt{S_2}^{\mathsf{p}}
+\mapt{\Gamma}^{\mathsf{p}}; \mapt{\Delta_0} \cat  k_1{:}\mapt{S_1}^{\mathsf{p}} \cat k_2{:}\mapt{S_2}^{\mathsf{p}} \cat
+\mapt{S}^{\mathsf{p}}
 \proves 
  \map{P'}^{\mathsf{p}} \\
  & = & 
- \mapt{\Gamma}^{\mathsf{p}}; \mapt{\Delta, \,
-k:S, \,
-k_1{:}S_1, \,
+ \mapt{\Gamma}^{\mathsf{p}}; \mapt{\Delta_0 \cat
+k:S \cat
+k_1{:}S_1 \cat
 k_2{:}S_2}^{\mathsf{p}}
 \proves 
  \map{P'}^{\mathsf{p}}
@@ -468,19 +480,30 @@ k_2{:}S_2}^{\mathsf{p}}
 which concludes the proof for this case.
 
 %% Biadic Abstraction Output 
-\item Case  $P = \bbout{k}{\abs{x_1, x_2} Q} P' $ and $\ell_1 = \bactout{k}{\abs{x_1, x_2}{Q}}$. Then we have:
+\item Case  $P = \bbout{k}{\abs{x_1, x_2} Q} P' $ and $\ell_1 = \bactout{k}{\abs{x_1, x_2}{Q}}$. 
+By assumption, $P$ is well-typed. 
+We may have:
+			\[
+				\tree{
+					\Gamma; \emptyset; \Delta_0 \cat k:S  \proves  P' \hastype \Proc \quad 
+					\Gamma ; \emptyset ; \Delta_1 \proves  \abs{x_1,x_2}Q \hastype \lhot{(C_1,C_2)}}{
+					\Gamma; \emptyset; \Delta_0 \cat \Delta_1 \cat k:\btout{\lhot{(C_1,C_2)}}S \proves  
+					\bout{k}{\abs{x_1,x_2}Q} P' \hastype \Proc}
+			\]
+for some $\Gamma, S, C_1, C_2, \Delta_0, \Delta_1$, 
+such that $\Delta = \Delta_0 \cat \Delta_1 \cat  k:\btout{\lhot{(C_1,C_2)}}S$.
+(For simplicity, we consider only the case of a linear function.)
+We may have the following transition:
 $$
-\stytra{\Gamma}{\ell_1}{\Delta, k:\bbtout{\lhot{(C_1, C_2)}}S}{\bbout{k}{\abs{x_1, x_2} Q} P' }{\Delta, k{:}S}{P'}
+\stytra{\Gamma}{\ell_1}{\Delta_0 \cat \Delta_1 \cat k:\bbtout{\lhot{(C_1, C_2)}}S}{\bbout{k}{\abs{x_1, x_2} Q} P' }{\Delta_0 \cat k{:}S}{P'}
 $$
-for some $\Gamma, S, C_1, C_2, \Delta$.
-For simplicity, we consider only the case of a linear function.
 The encoding of the source judgment is
 $$
-\mapt{\Gamma}^{\mathsf{p}}; \emptyset; \mapt{\Delta, k:\bbtout{\lhot{(C_1, C_2)}}S}^{\mathsf{p}} \proves \map{\bbout{k}{\abs{x_1, x_2} Q} P' }^{\mathsf{p}} \hastype \Proc
+\mapt{\Gamma}^{\mathsf{p}}; \emptyset; \mapt{\Delta_0 \cat \Delta_1 \cat k:\bbtout{\lhot{(C_1, C_2)}}S}^{\mathsf{p}} \proves \map{\bbout{k}{\abs{x_1, x_2} Q} P' }^{\mathsf{p}} \hastype \Proc
 $$
 which, using Def.~\ref{d:enc:poltomon}, can be equivalently expressed as 
 $$
-\mapt{\Gamma}^{\mathsf{p}}; \emptyset; \mapt{\Delta}, 
+\mapt{\Gamma}^{\mathsf{p}}; \emptyset; \mapt{\Delta_0 \cat \Delta_1} \cat
 %k:\btout{\mapt{S_1}^{\mathsf{p}}}\btout{\mapt{S_2}^{\mathsf{p}}}\mapt{S}^{\mathsf{p}}
 k:\bbtout{
 		\lhot{\big(\btinp{\tmap{C_1}{\mathsf{p}}}\btinp{\tmap{C_2}{\mathsf{p}}}\tinact\big)}}\mapt{S}^{\mathsf{p}}
@@ -488,24 +511,24 @@ k:\bbtout{
 \bbout{k}{\abs{z}\binp{z}{x_1} \binp{z}{x_2} \map{Q}^{\mathsf{p}}} \map{P'}^{\mathsf{p}}
 \hastype \Proc
 $$
+
 Now, $\mapa{\ell_1}^{\mathsf{p}} = \bactout{k}{\abs{z}\binp{z}{x_1}\binp{z}{x_2} \map{Q}^{\mathsf{p}}}$. 
 It is immediate to infer the following transitions for $\map{P}^{\mathsf{p}}  = \bbout{k}{\abs{z}\binp{z}{x_1} \binp{z}{x_2} \map{Q}^{\mathsf{p}}} \map{P'}^{\mathsf{p}}$:
 \begin{eqnarray*}
-& & \mapt{\Gamma}^{\mathsf{p}}; \mapt{\Delta}, 
+& & \mapt{\Gamma}^{\mathsf{p}}; \mapt{\Delta_0 \cat \Delta_1} \cat
 %k:\btout{\mapt{S_1}^{\mathsf{p}}}\btout{\mapt{S_2}^{\mathsf{p}}}\mapt{S}^{\mathsf{p}}
 k:\bbtout{
 		\lhot{\big(\btinp{\tmap{C_1}{\mathsf{p}}}\btinp{\tmap{C_2}{\mathsf{p}}}\tinact\big)}}\mapt{S}^{\mathsf{p}}
 \proves 
 \bbout{k}{\abs{z}\binp{z}{x_1} \binp{z}{x_2} \map{Q}^{\mathsf{p}}} \map{P'}^{\mathsf{p}} \\
 & \hby{\mapa{\ell_1}^{\mathsf{p}}} & 
-\mapt{\Gamma}^{\mathsf{p}}; \mapt{\Delta}, \,
+\mapt{\Gamma}^{\mathsf{p}}; \mapt{\Delta_0} \cat
 k:\mapt{S}^{\mathsf{p}}, \,
 \proves 
 \map{P'}^{\mathsf{p}} \\
  & = & 
  \mapt{\Gamma}^{\mathsf{p}}; 
- \mapt{\Delta, \,
-k:S}^{\mathsf{p}}
+ \mapt{\Delta_0 \cat k:S}^{\mathsf{p}}
 \proves 
  \map{P'}^{\mathsf{p}}
 \end{eqnarray*}
@@ -522,19 +545,19 @@ $\map{P}^{\mathsf{p}} =
 		and $\ell_2 = \bactinp{k}{k_1}, \bactinp{k}{k_2}$. Then we have, for some $S$, $S_1$, $S_2$, and $\Delta$, the following transitions:
 \begin{eqnarray*}
 & & \mapt{\Gamma}^{\mathsf{p}}; 
-\mapt{\Delta}^{\mathsf{p}}, k:\mapt{\btinp{S_1, S_2}S}^{\mathsf{p}}
+\mapt{\Delta}^{\mathsf{p}} \cat k:\mapt{\btinp{S_1, S_2}S}^{\mathsf{p}}
 \proves 
 \binp{k}{x_1} \binp{k}{x_2}\map{P'}^{\mathsf{p}} \\
 & \hby{\bactinp{k}{k_1}} & 
 \mapt{\Gamma}^{\mathsf{p}}; 
-\mapt{\Delta}^{\mathsf{p}}, k:\btinp{\tmap{S_2}{\mathsf{p}}}\tmap{S}{\mathsf{p}}, \,
+\mapt{\Delta}^{\mathsf{p}} \cat k:\btinp{\tmap{S_2}{\mathsf{p}}}\tmap{S}{\mathsf{p}} \cat
 k_1:\mapt{S_1}^{\mathsf{p}}
 \proves 
 \binp{k}{x_2}\map{P'}^{\mathsf{p}} \subst{k_1}{x_1} \\
 & \hby{\bactinp{k}{k_2}} & 
 \mapt{\Gamma}^{\mathsf{p}}; 
-\mapt{\Delta}^{\mathsf{p}}, k:\tmap{S}{\mathsf{p}}, \,
-k_1:  \mapt{S_1}^{\mathsf{p}} , \,
+\mapt{\Delta}^{\mathsf{p}} \cat k:\tmap{S}{\mathsf{p}} \cat
+k_1:  \mapt{S_1}^{\mathsf{p}} \cat
 k_2: \mapt{S_2}^{\mathsf{p}}
 \proves 
 \map{P'}^{\mathsf{p}} \subst{k_1}{x_1}\subst{k_2}{x_2} = Q
@@ -544,12 +567,12 @@ it is then immediate to infer the label for the source transition:
 $\ell_1 = \bactinp{k}{k_1,k_2}$. 
 Now, in the source term $P$ we can infer the following transition:
 $$
-\stytra{\Gamma}{\ell_1}{\Delta, k:\btinp{S_1, S_2}S}{\binp{k}{x_1, x_2} P' }{\Delta, k{:}S, k_1:S_1, k_2:S_2}{P'\subst{k_1,k_2}{x_1, x_2}}
+\stytra{\Gamma}{\ell_1}{\Delta \cat k:\btinp{S_1, S_2}S}{\binp{k}{x_1, x_2} P' }{\Delta\cat k{:}S \cat k_1:S_1 \cat k_2:S_2}{P'\subst{k_1,k_2}{x_1, x_2}}
 $$
 We now observe that, by
 letting
- $\Delta^* = \mapt{\Delta}^{\mathsf{p}}, k:\tmap{S}{\mathsf{p}}, \,
-k_1:  \mapt{S_1}^{\mathsf{p}} , \,
+ $\Delta^* = \mapt{\Delta}^{\mathsf{p}}\cat k:\tmap{S}{\mathsf{p}}, \,
+k_1:  \mapt{S_1}^{\mathsf{p}} \cat
 k_2: \mapt{S_2}^{\mathsf{p}}$, we have the desired conclusion:
 $$\wbb{\mapt{\Gamma}^{\mathsf{p}}}{\ell}{\Delta^*}{\map{P'\subst{k_1,k_2}{x_1, x_2}}^{\mathsf{p}}}{\Delta^*}{Q}$$
 
@@ -560,12 +583,12 @@ $\map{P}^{\mathsf{p}} =
 		and \\ $\ell_2 = \bactout{k}{\abs{z}\binp{z}{x_1} \binp{z}{x_2} \map{Q}^{\mathsf{p}}} $. Then we have, for some $S$, $C_1$, $C_2$, and $\Delta$, the following judgment and  transition:
 \begin{eqnarray*}
 & & \mapt{\Gamma}^{\mathsf{p}}; 
-\mapt{\Delta}^{\mathsf{p}}, k:\tmap{\bbtout{\lhot{(C_1,  C_2)}} S}{\mathsf{p}}
+\mapt{\Delta}^{\mathsf{p}}\cat k:\tmap{\bbtout{\lhot{(C_1,  C_2)}} S}{\mathsf{p}}
 \proves 
 \bbout{k}{\abs{z}\binp{z}{x_1}\binp{z}{x_2} \map{Q}^{\mathsf{p}}} \map{P'}^{\mathsf{p}} \\
 & \hby{\ell_2} & 
 \mapt{\Gamma}^{\mathsf{p}}; 
-\mapt{\Delta}^{\mathsf{p}}, k:\tmap{ S}{\mathsf{p}} 
+\mapt{\Delta}^{\mathsf{p}}\cat k:\tmap{ S}{\mathsf{p}} 
 \proves 
 \map{P'}^{\mathsf{p}} = Q
 \end{eqnarray*}
@@ -574,10 +597,10 @@ It is then immediate to infer the label for the source transition:
 $\ell_1 = \bactout{k}{\abs{x_1,  x_2}{Q}} $. 
 Now, in the source term $P$ we can infer the following transition:
 $$
-\stytra{\Gamma}{\ell_1}{\Delta, k:\bbtout{\lhot{(C_1,  C_2)}} S}{ \bbout{k}{\abs{x_1,x_2} Q} P'}{\Delta, k{:}S}{P'}
+\stytra{\Gamma}{\ell_1}{\Delta\cat k:\bbtout{\lhot{(C_1,  C_2)}} S}{ \bbout{k}{\abs{x_1,x_2} Q} P'}{\Delta\cat k{:}S}{P'}
 $$
 Then we have the desired conclusion:
-$$\wbb{\mapt{\Gamma}^{\mathsf{p}}}{\ell}{\mapt{\Delta, k:S}^{\mathsf{p}}}{\map{P'}^{\mathsf{p}}}{\mapt{\Delta, k:S}^{\mathsf{p}}}{Q}$$
+$$\wbb{\mapt{\Gamma}^{\mathsf{p}}}{\ell}{\mapt{\Delta\cat k:S}^{\mathsf{p}}}{\map{P'}^{\mathsf{p}}}{\mapt{\Delta\cat k:S}^{\mathsf{p}}}{Q}$$
 
 
 %% Biadic Abstraction Input 
@@ -587,12 +610,12 @@ $\map{P}^{\mathsf{p}} =
 		and  $\ell_2 = \bactinp{k}{\abs{z}\binp{z}{x_1} \binp{z}{x_2} \map{Q}^{\mathsf{p}}} $. Then we have, for some $S$, $C_1$, $C_2$, and $\Delta$, the following judgment and  transition:
 \begin{eqnarray*}
 & & \mapt{\Gamma}^{\mathsf{p}}; 
-\mapt{\Delta}^{\mathsf{p}}, k:\tmap{\bbtinp{\shot{(C_1,  C_2)}} S}{\mathsf{p}}
+\mapt{\Delta}^{\mathsf{p}}\cat k:\tmap{\bbtinp{\shot{(C_1,  C_2)}} S}{\mathsf{p}}
 \proves 
 \binp{k}{X} \map{P'}^{\mathsf{p}} \\
 & \hby{\ell_2} & 
 \mapt{\Gamma}^{\mathsf{p}}; 
-\mapt{\Delta}^{\mathsf{p}}, k:\tmap{ S}{\mathsf{p}} 
+\mapt{\Delta}^{\mathsf{p}}\cat k:\tmap{ S}{\mathsf{p}} 
 \proves 
 \map{P'}^{\mathsf{p}}\subst{\abs{z}\binp{z}{x_1} \binp{z}{x_2} \map{Q}^{\mathsf{p}}}{X} = Q
 \end{eqnarray*}
@@ -601,11 +624,13 @@ It is then immediate to infer the label for the source transition:
 $\ell_1 = \bactinp{k}{\abs{x_1,  x_2}{Q}} $. 
 Now, in the source term $P$ we can infer the following transition:
 $$
-\stytra{\Gamma}{\ell_1}{\Delta, k:\bbtinp{\shot{(C_1, C_2)}} S}{ \binp{k}{X} P'}{\Delta, k{:}S}{P'\subst{\abs{x_1,  x_2}{Q}}{X}}
+\stytra{\Gamma}{\ell_1}{\Delta\cat k:\bbtinp{\shot{(C_1, C_2)}} S}{ \binp{k}{X} P'}{\Delta\cat k{:}S}{P'\subst{\abs{x_1,  x_2}{Q}}{X}}
 $$
 Then we have the desired conclusion:
-$$\wbb{\mapt{\Gamma}^{\mathsf{p}}}{\ell}{\mapt{\Delta, k:S}^{\mathsf{p}}}{\map{P'\subst{\abs{x_1,  x_2}{Q}}{X}}^{\mathsf{p}}}{\mapt{\Delta, k:S}^{\mathsf{p}}}{Q}$$
-It is worth noticing that the key difference between 
+$$\wbb{\mapt{\Gamma}^{\mathsf{p}}}{\ell}{\mapt{\Delta\cat k:S}^{\mathsf{p}}}{\map{P'\subst{\abs{x_1,  x_2}{Q}}{X}}^{\mathsf{p}}}{\mapt{\Delta\cat k:S}^{\mathsf{p}}}{Q}$$
+We omit the (easy) conductive argument supporting the last claim,
+which uses Prop.~\ref{p:poltomo}.
+We content ourselves with noticing that the key difference between 
 ${\map{P'\subst{\abs{x_1,  x_2}{Q}}{X}}^{\mathsf{p}}}$
 and $Q$ consists in the $\tau$-transitions present in $Q$  and absent in${\map{P'\subst{\abs{x_1,  x_2}{Q}}{X}}^{\mathsf{p}}}$, which are induced   by the monadic representation of polyadic communication.
 \end{enumerate}
@@ -627,9 +652,11 @@ $\wbb{\mapt{\Gamma}^{\mathsf{p}}}{\ell}{\mapt{\Delta_1}^{\mathsf{p}}}{\map{P}^{\
 then 
 $\wbb{ \Gamma}{\ell}{\Delta_1}{ P }{ \Delta_2}{Q}$.
 \end{enumerate}
-While (a) is  completeness, (b) is soundness.
-
+While (a) is  completeness (easy in principle), (b) is soundness (non trivial).
 \end{conjecture}
+
+In the light of the tight operational correspondence for the polyadic/monadic encoding,
+in the following we restrict to consider monadic communications.
 
 \subsection{Encoding $\sessp^{-\mu}$  into \HO}
 
@@ -700,24 +727,59 @@ Let $P$ be an  $\sessp^{-\mu}$ process.
 If $\Gamma; \emptyset; \Delta \proves P \hastype \Proc$ then
 		\begin{enumerate}[a)]
 			\item	 
-			   If  $\stytra{\Gamma}{\ell_1}{\Delta_1}{P}{\Delta'_1}{P'}$
-			   then  $\exists \ell_2$ s.t. 
-			    $\wtytra{\mapt{\Gamma}^{1}}{\ell_2}{\mapt{\Delta_1}^{1}}{\map{P}}{\mapt{\Delta'_1}^{1}}{\map{P'}}$
+			   If  $\stytra{\Gamma}{\ell_1}{\Delta}{P}{\Delta'}{P'}$
+			   then  $\exists \ell_2$ s.t. \\
+			    $\wtytra{\mapt{\Gamma}^{1}}{\ell_2}{\mapt{\Delta}^{1}}{\map{P}}{\mapt{\Delta'}^{1}}{\map{P'}}$
 			    and $\ell_2 = \mapa{\ell_1}^{1}$.
 			\item   
-			If  $\wtytra{\mapt{\Gamma}^{1}}{\ell_2}{\mapt{\Delta_1}^{1}}{\map{P}}{\mapt{\Delta'_1}^{1}}{Q}$
-			   then $\exists \ell_1, P', R$ s.t.  \\
-			    (i)~$\stytra{\Gamma}{\ell_1}{\Delta_1}{P}{\Delta'_1}{P'}$,
+			If  $\wtytra{\mapt{\Gamma}^{1}}{\ell_2}{\mapt{\Delta}^{1}}{\map{P}}{\mapt{\Delta'}^{1}}{Q}$
+			   then $\exists \ell_1, P'$ s.t.  \\
+			    (i)~$\stytra{\Gamma}{\ell_1}{\Delta}{P}{\Delta'}{P'}$,
 			    (ii)~$\ell_2 = \mapa{\ell_1}^{1}$, 
-			    (iii)~$Q \Hby{} R$, and \\
-			    (iv)~$\wbb{\mapt{\Gamma}^{1}}{\ell}{\mapt{\Delta'_1}^{1}}{\map{P'}^{1}}{\mapt{\Delta'_1}^{1}}{Q}$.
+			    (iii)~$\wbb{\mapt{\Gamma}^{1}}{\ell}{\mapt{\Delta'}^{1}}{\map{P'}^{1}}{\mapt{\Delta'}^{1}}{Q}$.
 			    \end{enumerate}
 \end{proposition}
 
 \begin{proof}
-By transition induction. TBC. \\
-Some old details in Appendix~\ref{app:enc_sesspnr_to_ho} (Page~\pageref{app:enc_sesspnr_to_ho}).
-	\qed
+By transition induction. We consider parts (a) and (b) separately: \\
+\noi \textbf{Part (a)}. We consider two non-trivial cases, the rest is similar or simpler:
+\begin{enumerate}[1.]
+%%  Output 
+\item Case  $P =\bout{k}{k_1} P'$ and $\ell_1 = \bactout{k}{k_1}$. By assumption, $P$ is well-typed. 
+We may have:
+			\[
+				\tree{
+					\Gamma; \emptyset; \Delta_0 \cat k:S  \proves  P' \hastype \Proc \quad 
+					\Gamma ; \emptyset ; \{k_1{:} S_1\}  \proves   k_1 \hastype S_1 }{
+					\Gamma; \emptyset; \Delta_0 \cat k_1{:}S_1 \cat k:\btout{S_1 }S \proves  
+					\bout{k}{k_1} P' \hastype \Proc}
+			\]
+for some $\Gamma, S, S_1, \Delta_0$, 
+such that $\Delta = \Delta_0 \cat k_1{:}S_1  \cat k:\btout{S_1}S$.
+We may then have the following transition
+$$
+\stytra{\Gamma}{\ell_1}{\Delta_0 \cat k_1{:}S_1  \cat k:\btout{S_1}S}{\bout{k}{k_1} P'}{\Delta_0 \cat k{:}S }{P'}
+$$
+The encoding of the source judgment for $P$ is as follows:
+$$
+\mapt{\Gamma}^{\mathsf{p}}; \emptyset; \mapt{\Delta_0 \cat k_1{:}S_1  \cat k:\btout{S_1}S}^{\mathsf{p}} \proves \map{\bout{k}{k_1} P'}^{\mathsf{p}} \hastype \Proc
+$$
+which, using Def.~\ref{d:enc:fotoho}, can be equivalently expressed as 
+$$
+\mapt{\Gamma}^{\mathsf{p}}; \emptyset; \mapt{\Delta_0} 
+\cat k_1{:}\mapt{S_1}^{\mathsf{p}} 
+\cat k: \btout{\lhot{\btinp{\lhot{\tmap{S_1}{1}}}\tinact}} \tmap{S}{1}
+\proves 
+\bbout{k}{ \abs{z}{\,\binp{z}{X} \appl{X}{k_1}} } \pmap{P}{1}
+\hastype \Proc
+$$
+Now, $\mapa{\ell_1}^{\mathsf{p}} = \bactout{k}{\abs{z}{\,\binp{z}{X} \appl{X}{k_1}}\, } $. 
+It is immediate to infer the following transitions for $\map{P}^{\mathsf{p}}  = 
+\bbout{k}{ \abs{z}{\,\binp{z}{X} \appl{X}{k_1}} } \pmap{P}{1}$:
+
+
+
+\end{enumerate}
 \end{proof}
 
 %\begin{conjecture}[Full Abstraction]
