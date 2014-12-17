@@ -296,19 +296,39 @@ be a typed encoding where
         \\ % typed mapping starts here
 		\tmap{\btout{S_1, \cdots, S_m}S}{\mathsf{p}}
 		&\defeq&
-		\btout{\tmap{S_1}{\mathsf{p}}} \cdots \btout{\tmap{S_m}{\mathsf{p}}}\tmap{S}{\mathsf{p}}
+		\btout{\tmap{S_1}{\mathsf{p}}} \cdots ; \btout{\tmap{S_m}{\mathsf{p}}}\tmap{S}{\mathsf{p}}
 		\\
 		\tmap{\btinp{S_1, \cdots, S_m}S}{\mathsf{p}}
 		&\defeq&
-		\btinp{\tmap{S_1}{\mathsf{p}}} \cdots \btinp{\tmap{S_m}{\mathsf{p}}}\tmap{S}{\mathsf{p}}
+		\btinp{\tmap{S_1}{\mathsf{p}}} \cdots ; \btinp{\tmap{S_m}{\mathsf{p}}}\tmap{S}{\mathsf{p}}
 		\\
-		\tmap{\lhot{(S_1, \cdots, S_m)}}{\mathsf{p}}
+		\tmap{\bbtout{\lhot{(C_1, \cdots, C_m)}} S}{\mathsf{p}}
 		&\defeq&
-		\lhot{\big(\btinp{\tmap{S_1}{\mathsf{p}}} \cdots \btinp{\tmap{S_m}{\mathsf{p}}}\tinact\big)}
+		\bbtout{
+		\lhot{\big(\btinp{\tmap{C_1}{\mathsf{p}}} \cdots ;\btinp{\tmap{C_m}{\mathsf{p}}}\tinact\big)}}\mapt{S}^{\mathsf{p}}
 		\\
-		\tmap{\shot{(S_1, \cdots, S_m)}}{\mathsf{p}}
+		\tmap{\bbtinp{\lhot{(C_1, \cdots, C_m)}} S}{\mathsf{p}}
 		&\defeq&
-		\shot{\big(\btinp{\tmap{S_1}{\mathsf{p}}} \cdots \btinp{\tmap{S_m}{\mathsf{p}}}\tinact\big)}
+		\bbtinp{
+		\lhot{\big(\btinp{\tmap{C_1}{\mathsf{p}}} \cdots; \btinp{\tmap{C_m}{\mathsf{p}}}\tinact\big)}}\mapt{S}^{\mathsf{p}}
+		\\
+		\tmap{\bbtout{\shot{(C_1, \cdots, C_m)}} S}{\mathsf{p}}
+		&\defeq&
+		\bbtout{
+		\shot{\big(\btinp{\tmap{C_1}{\mathsf{p}}} \cdots; \btinp{\tmap{C_m}{\mathsf{p}}}\tinact\big)}}\mapt{S}^{\mathsf{p}}
+		\\
+		\tmap{\bbtinp{\shot{(C_1, \cdots, C_m)}} S}{\mathsf{p}}
+		&\defeq&
+		\bbtinp{
+		\shot{\big(\btinp{\tmap{C_1}{\mathsf{p}}} \cdots; \btinp{\tmap{C_m}{\mathsf{p}}}\tinact\big)}}\mapt{S}^{\mathsf{p}}
+%		\\
+%		\tmap{\lhot{(C_1, \cdots, C_m)}}{\mathsf{p}}
+%		&\defeq&
+%		\lhot{\big(\btinp{\tmap{C_1}{\mathsf{p}}} \cdots \btinp{\tmap{C_m}{\mathsf{p}}}\tinact\big)}
+%		\\
+%		\tmap{\shot{(C_1, \cdots, C_m)}}{\mathsf{p}}
+%		&\defeq&
+%		\shot{\big(\btinp{\tmap{C_1}{\mathsf{p}}} \cdots \btinp{\tmap{C_m}{\mathsf{p}}}\tinact\big)}
 		\\ % action mapping starts here
 		\mapa{\bactout{k}{k_1, \ldots, k_m}}^\mathsf{p} &\defeq&   \big\{\bactout{k}{k_1}, \cdots, \bactout{k}{k_m}\big\} \\
 		\mapa{\bactinp{k}{k_1, \ldots, k_m}}^\mathsf{p} &\defeq&   \big\{\bactinp{k}{k_1}, \cdots, \bactinp{k}{k_m} \big\}\\
@@ -370,10 +390,11 @@ Let $P$ be an  $\HOp$ process.
 If $\Gamma; \emptyset; \Delta \proves P \hastype \Proc$ then
 		\begin{enumerate}[a)]
 			\item	 
-			   If  $\stytra{\Gamma}{\ell_1}{\Delta_1}{P}{\Delta'_1}{P'}$
+			   If  $\stytra{\Gamma}{\ell_1}{\Delta}{P}{\Delta'}{P'}$
 			   then  $\exists \ell_2$ s.t. 
-			    $\wtytra{\mapt{\Gamma}^{\mathsf{p}}}{\ell_2}{\mapt{\Delta_1}^{\mathsf{p}}}{\map{P}}{\mapt{\Delta'_1}^{\mathsf{p}}}{\map{P'}}$
+			    $\wtytra{\mapt{\Gamma}^{\mathsf{p}}}{\ell_2}{\mapt{\Delta}^{\mathsf{p}}}{\map{P}}{\mapt{\Delta'}^{\mathsf{p}}}{\map{P'}}$
 			    and $\ell_2 = \mapa{\ell_1}^{\mathsf{p}}$.
+			    
 			\item   
 			If  $\wtytra{\mapt{\Gamma}^{\mathsf{p}}}{\ell_2}{\mapt{\Delta_1}^{\mathsf{p}}}{\map{P}}{\mapt{\Delta'_1}^{\mathsf{p}}}{Q}$
 			   then $\exists \ell_1, P', R$ s.t.  \\
@@ -390,7 +411,109 @@ we only remark that the additional $\tau$-transitions induced by the encoding
 are directly associated to the polyadicity involved. This is particularly relevant
 when $\ell_1 = \bactinp{n}{\abs{\tilde{x}}{P}}$, for the encoding of a polyadic application involves
 as many $\tau$-transitions (i.e., synchronizations on the restricted name $s$) 
-as polyadic parameters are involved.	\qed
+as polyadic parameters are involved.	\\
+
+\noi Part (a). We consider some non-trivial cases, using biadic communication:
+\begin{enumerate}[1.]
+
+%% Biadic Output 
+\item Case  $P =\bout{k}{k_1, k_2} P'$ and $\ell_1 = \bactout{k}{k_1, k_2}$. Then we have:
+$$
+\stytra{\Gamma}{\ell_1}{\Delta, k:\btout{S_1, S_2}S}{\bout{k}{k_1, k_2} P'}{\Delta, k{:}S, k_1{:}S_1, k_2{:}S_2}{P'}
+$$
+for some $\Gamma, S, S_1, S_2, \Delta$. The encoding of the source judgment is
+$$
+\mapt{\Gamma}^{\mathsf{p}}; \emptyset; \mapt{\Delta, k:\btout{S_1, S_2}S}^{\mathsf{p}} \proves \map{\bout{k}{k_1, k_2} P'}^{\mathsf{p}} \hastype \Proc
+$$
+which, using Def.~\ref{d:enc:poltomon}, can be equivalently expressed as 
+$$
+\mapt{\Gamma}^{\mathsf{p}}; \emptyset; \mapt{\Delta}, k:\btout{\mapt{S_1}^{\mathsf{p}}}\btout{\mapt{S_2}^{\mathsf{p}}}\mapt{S}^{\mathsf{p}}
+\proves 
+\bout{k}{k_1}\bout{k}{k_2} \map{P'}^{\mathsf{p}} 
+\hastype \Proc
+$$
+Now, $\mapa{\ell_1}^{\mathsf{p}} = \{ \bactout{k}{k_1 }, \bactout{k}{ k_2}\}$. 
+It is immediate to infer the following transitions for $\map{P}^{\mathsf{p}}  = \bout{k}{k_1}\bout{k}{k_2} \map{P'}^{\mathsf{p}} $:
+\begin{eqnarray*}
+& & \mapt{\Gamma}^{\mathsf{p}}; \mapt{\Delta}, k:\btout{\mapt{S_1}^{\mathsf{p}}}\btout{\mapt{S_2}^{\mathsf{p}}}\mapt{S}^{\mathsf{p}}
+\proves 
+\bout{k}{k_1}\bout{k}{k_2} \map{P'}^{\mathsf{p}}  \\
+& \hby{\bactout{k}{k_1}} & 
+\mapt{\Gamma}^{\mathsf{p}}; \mapt{\Delta}, \,
+k:\btout{\mapt{S_2}^{\mathsf{p}}}\mapt{S}^{\mathsf{p}}, \,
+k_1{:}\mapt{S_1}^{\mathsf{p}}
+\proves 
+\bout{k}{k_2} \map{P'}^{\mathsf{p}} \\
+& \hby{\bactout{k}{k_2}} & 
+\mapt{\Gamma}^{\mathsf{p}}; \mapt{\Delta}, \,
+k:\mapt{S}^{\mathsf{p}}, \,
+k_1{:}\mapt{S_1}^{\mathsf{p}}, \,
+k_2{:}\mapt{S_2}^{\mathsf{p}}
+\proves 
+ \map{P'}^{\mathsf{p}} \\
+ & = & 
+ \mapt{\Gamma}^{\mathsf{p}}; \mapt{\Delta, \,
+k:S, \,
+k_1{:}S_1, \,
+k_2{:}S_2}^{\mathsf{p}}
+\proves 
+ \map{P'}^{\mathsf{p}}
+\end{eqnarray*}
+which concludes the proof for this case.
+
+%% Biadic Abstraction Output 
+\item Case  $P = \bbout{k}{\abs{x_1, x_2} Q} P' $ and $\ell_1 = \bactout{k}{\abs{x_1, x_2}{Q}}$. Then we have:
+$$
+\stytra{\Gamma}{\ell_1}{\Delta, k:\bbtout{\lhot{(C_1, C_2)}}S}{\bbout{k}{\abs{x_1, x_2} Q} P' }{\Delta, k{:}S}{P'}
+$$
+for some $\Gamma, S, C_1, C_2, \Delta$.
+For simplicity, we consider only the case of a linear function.
+The encoding of the source judgment is
+$$
+\mapt{\Gamma}^{\mathsf{p}}; \emptyset; \mapt{\Delta, k:\bbtout{\lhot{(C_1, C_2)}}S}^{\mathsf{p}} \proves \map{\bbout{k}{\abs{x_1, x_2} Q} P' }^{\mathsf{p}} \hastype \Proc
+$$
+which, using Def.~\ref{d:enc:poltomon}, can be equivalently expressed as 
+$$
+\mapt{\Gamma}^{\mathsf{p}}; \emptyset; \mapt{\Delta}, 
+%k:\btout{\mapt{S_1}^{\mathsf{p}}}\btout{\mapt{S_2}^{\mathsf{p}}}\mapt{S}^{\mathsf{p}}
+k:\bbtout{
+		\lhot{\big(\btinp{\tmap{C_1}{\mathsf{p}}}\btinp{\tmap{C_2}{\mathsf{p}}}\tinact\big)}}\mapt{S}^{\mathsf{p}}
+\proves 
+\bbout{k}{\abs{z}\binp{z}{x_1} \binp{z}{x_2} \map{Q}^{\mathsf{p}}} \map{P'}^{\mathsf{p}}
+\hastype \Proc
+$$
+Now, $\mapa{\ell_1}^{\mathsf{p}} = \bactout{k}{\abs{z}\binp{z}{x_1}\binp{z}{x_2} \map{Q}^{\mathsf{p}}}$. 
+It is immediate to infer the following transitions for $\map{P}^{\mathsf{p}}  = \bbout{k}{\abs{z}\binp{z}{x_1} \binp{z}{x_2} \map{Q}^{\mathsf{p}}} \map{P'}^{\mathsf{p}}$:
+\begin{eqnarray*}
+& & \mapt{\Gamma}^{\mathsf{p}}; \mapt{\Delta}, 
+%k:\btout{\mapt{S_1}^{\mathsf{p}}}\btout{\mapt{S_2}^{\mathsf{p}}}\mapt{S}^{\mathsf{p}}
+k:\bbtout{
+		\lhot{\big(\btinp{\tmap{C_1}{\mathsf{p}}}\btinp{\tmap{C_2}{\mathsf{p}}}\tinact\big)}}\mapt{S}^{\mathsf{p}}
+\proves 
+\bbout{k}{\abs{z}\binp{z}{x_1} \binp{z}{x_2} \map{Q}^{\mathsf{p}}} \map{P'}^{\mathsf{p}} \\
+& \hby{\mapa{\ell_1}^{\mathsf{p}}} & 
+\mapt{\Gamma}^{\mathsf{p}}; \mapt{\Delta}, \,
+k:\mapt{S}^{\mathsf{p}}, \,
+\proves 
+\map{P'}^{\mathsf{p}} \\
+ & = & 
+ \mapt{\Gamma}^{\mathsf{p}}; 
+ \mapt{\Delta, \,
+k:S}^{\mathsf{p}}
+\proves 
+ \map{P'}^{\mathsf{p}}
+\end{eqnarray*}
+which concludes the proof for this case.
+\end{enumerate}
+
+\noi Part (b). We consider some non-trivial cases, using biadic communication:
+\begin{enumerate}[1.]
+
+%% Biadic Output 
+\item Case 
+
+\end{enumerate}
+\qed
 \end{proof}
 
 \begin{conjecture}[Full Abstraction]
