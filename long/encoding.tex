@@ -275,14 +275,14 @@ Let
 $\enco{\map{\cdot}^{\mathsf{p}}, \mapt{\cdot}^{\mathsf{p}}, \mapa{\cdot}^{\mathsf{p}}}: \HOp \to \HOp^{-\mathsf{p}}$
 be a typed encoding where
 	%$\auxmap{\cdot}{\mathsf{p}}:\pHOp \to \HOp$ as
+\begin{figure}[t]
 \[
 	\begin{array}{rcl}
 		\map{\bout{k}{k_1, \cdots, k_m} P}^{\mathsf{p}}
 		&\defeq&
 		\bout{k}{k_1} \cdots ;  \bout{k}{k_m} \map{P}^{\mathsf{p}}
 		\\
-
-		\map{\binp{k}{x_1, \cdots, x_m} P}^{\mathsf{p}}
+			\map{\binp{k}{x_1, \cdots, x_m} P}^{\mathsf{p}}
 		&\defeq&
 		\binp{k}{x_1} \cdots ; \binp{k}{x_m}  \map{P}^{\mathsf{p}}
 		\\
@@ -336,8 +336,14 @@ be a typed encoding where
 		\mapa{\bactinp{k}{\abs{x_1, \ldots, x_m}{P}} }^\mathsf{p} &\defeq&  \bactinp{k}{\abs{z}\binp{z}{x_1} \cdots ; \binp{z}{x_m} \map{P}^{\mathsf{p}}} 
 	\end{array}
 \]
-and mappings $\map{\cdot}^{\mathsf{p}}$, $\mapt{\cdot}^{\mathsf{p}}$, $\mapa{\cdot}^{\mathsf{p}}$
-are homomorphisms for the other processes/types/labels. 
+\caption{
+Encoding of polyadic into monadic communication (cf.~Defintion \ref{d:enc:poltomon} \label{f:enc:poltomon}).
+The mappings are homomorphisms for the other processes/types/labels. 
+}
+\end{figure}
+mappings $\map{\cdot}^{\mathsf{p}}$, $\mapt{\cdot}^{\mathsf{p}}$, $\mapa{\cdot}^{\mathsf{p}}$
+are 
+as in Fig.~\ref{f:enc:poltomon}.
 	%\jp{I prefer to be explicit in the encoding of polyadic abstraction/applications. Previous version is commented.}
 \end{definition}
 %
@@ -397,11 +403,10 @@ If $\Gamma; \emptyset; \Delta \proves P \hastype \Proc$ then
 			    
 			\item   
 			If  $\wtytra{\mapt{\Gamma}^{\mathsf{p}}}{\ell_2}{\mapt{\Delta_1}^{\mathsf{p}}}{\map{P}}{\mapt{\Delta'_1}^{\mathsf{p}}}{Q}$
-			   then $\exists \ell_1, P', R$ s.t.  \\
-			    (i)~$\stytra{\Gamma}{\ell_1}{\Delta_1}{P}{\Delta'_1}{P'}$,
+			   then $\exists \ell_1, P$ s.t.  
+			    (i)~$\stytra{\Gamma}{\ell_1}{\Delta_1}{P}{\Delta'_1}{P'}$, \\
 			    (ii)~$\ell_2 = \mapa{\ell_1}^{\mathsf{p}}$, 
-			    (iii)~$Q \Hby{} R$, and \\
-			    (iv)~$\wbb{\mapt{\Gamma}^{\mathsf{p}}}{\ell}{\mapt{\Delta'_1}^{\mathsf{p}}}{\map{P'}^{\mathsf{p}}}{\mapt{\Delta'_1}^{\mathsf{p}}}{Q}$.
+			    (iii)~$\wbb{\mapt{\Gamma}^{\mathsf{p}}}{\ell}{\mapt{\Delta'_1}^{\mathsf{p}}}{\map{P'}^{\mathsf{p}}}{\mapt{\Delta'_1}^{\mathsf{p}}}{Q}$.
 			    \end{enumerate}
 \end{proposition}
 
@@ -413,7 +418,7 @@ when $\ell_1 = \bactinp{n}{\abs{\tilde{x}}{P}}$, for the encoding of a polyadic 
 as many $\tau$-transitions (i.e., synchronizations on the restricted name $s$) 
 as polyadic parameters are involved.	\\
 
-\noi Part (a). We consider some non-trivial cases, using biadic communication:
+\noi Part (a). We consider two non-trivial cases, using biadic communication:
 \begin{enumerate}[1.]
 
 %% Biadic Output 
@@ -506,13 +511,47 @@ k:S}^{\mathsf{p}}
 which concludes the proof for this case.
 \end{enumerate}
 
-\noi Part (b). We consider some non-trivial cases, using biadic communication:
+\noi Part (b). We consider two non-trivial cases, using biadic communication:
 \begin{enumerate}[1.]
 
 %% Biadic Output 
-\item Case 
-
+\item Case $P =  \binp{k}{x_1, x_2} P' $, 
+$\map{P}^{\mathsf{p}} = 
+		\binp{k}{x_1}  \binp{k}{x_2}  \map{P'}^{\mathsf{p}}$,
+		and $\ell_2 = \bactinp{k}{k_1,   k_2}$. Then we have, for some $S$, $S_1$, $S_2$, and $\Delta$, the following transitions:
+\begin{eqnarray*}
+& & \mapt{\Gamma}^{\mathsf{p}}; 
+\mapt{\Delta}^{\mathsf{p}}, k:\mapt{\btinp{S_1, S_2}S}^{\mathsf{p}}
+\proves 
+\binp{k}{x_1} \binp{k}{x_2}\map{P'}^{\mathsf{p}} \\
+& \hby{\bactinp{k}{k_1}} & 
+\mapt{\Gamma}^{\mathsf{p}}; 
+\mapt{\Delta}^{\mathsf{p}}, k:\btinp{\tmap{S_2}{\mathsf{p}}}\tmap{S}{\mathsf{p}}, \,
+k_1:\mapt{S_1}^{\mathsf{p}}
+\proves 
+\binp{k}{x_2}\map{P'}^{\mathsf{p}} \subst{k_1}{x_1} \\
+& \hby{\bactinp{k}{k_2}} & 
+\mapt{\Gamma}^{\mathsf{p}}; 
+\mapt{\Delta}^{\mathsf{p}}, k:\tmap{S}{\mathsf{p}}, \,
+k_1:  \mapt{S_1}^{\mathsf{p}} , \,
+k_2: \mapt{S_2}^{\mathsf{p}}
+\proves 
+\map{P'}^{\mathsf{p}} \subst{k_1}{x_1}\subst{k_2}{x_2} = Q
+\end{eqnarray*}
+It is then immediate to infer the label for the source transition:
+$\ell_1 = \bactinp{k}{k_1,k_2}$. 
+Now, in the source term $P$ we can infer the following transition:
+$$
+\stytra{\Gamma}{\ell_1}{\Delta, k:\btinp{S_1, S_2}S}{\binp{k}{x_1, x_2} P' }{\Delta, k{:}S, k_1:S_1, k_2:S_2}{P'\subst{k_1,k_2}{x_1, x_2}}
+$$
+We conclude by observing that,
+letting
+ $\Delta^* = \mapt{\Delta}^{\mathsf{p}}, k:\tmap{S}{\mathsf{p}}, \,
+k_1:  \mapt{S_1}^{\mathsf{p}} , \,
+k_2: \mapt{S_2}^{\mathsf{p}}$, we have
+$$\wbb{\mapt{\Gamma}^{\mathsf{p}}}{\ell}{\Delta^*}{\map{P'\subst{k_1,k_2}{x_1, x_2}}^{\mathsf{p}}}{\Delta^*}{Q}$$
 \end{enumerate}
+as desired.
 \qed
 \end{proof}
 
