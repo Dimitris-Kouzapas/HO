@@ -203,6 +203,76 @@ reduction semantics $\red$, the typed behavioral equivalence $\wb$,
 and the type system $\proves$ are the same for all languages.
 \end{comment}
 
+\subsection*{Preliminaries}
+
+The following result may be related to Lemma~\ref{l:invariant}:
+
+\begin{lemma}[Inversion for (Untyped) Transitions]
+\begin{enumerate}[1.]
+% output
+\item If $\Gamma;\, \emptyset;\, \Delta_1 \cat \Delta_2 \cat k:\btout{U}S \proves \bout{k}{V}P' \hastype \Proc$
+and $\Gamma;\, \emptyset;\, \Delta_2 \cat k:S \proves V \hastype U$ then \\
+$\bout{k}{V}P' \by{\bactout{k}{V}} P'$
+and $\Gamma;\, \emptyset;\, \Delta_1 \proves P' \hastype \Proc$.
+
+\item If $\Gamma;\, \emptyset;\, \Delta_1 \cat \Delta_2 \cat k:\btout{U}S \proves \bout{k}{V}P' \hastype \Proc$
+and $\Gamma;\, \emptyset;\, \Delta_2 \proves V \hastype U$ (with $k:S \not\in \Delta_2$) then \\
+$\bout{k}{V}P' \by{\bactout{k}{V}} P'$
+and $\Gamma;\, \emptyset;\, \Delta_1 \cat k:S \proves P' \hastype \Proc$.
+
+% input
+\item If $\Gamma;\, \emptyset;\, \Delta \cat k:\btinp{\mytilde{C}}S \proves \binp{k}{\mytilde{x}}P' \hastype \Proc$
+ then \\
+$\binp{k}{\mytilde{x}}P' \by{\bactinp{k}{\mytilde{m}}} P'\subst{\mytilde{m}}{\mytilde{x}}$
+and $\Gamma;\, \emptyset;\, \Delta \cat k:S \cat \mytilde{m}:\mytilde{C} \proves P'\subst{\mytilde{m}}{\mytilde{x}} \hastype \Proc$
+
+
+\item If $\Gamma;\, \emptyset;\, \Delta_1 \setminus \Delta_2 \cat k:\btinp{L}S \proves \binp{k}{X}P' \hastype \Proc$
+and
+$\Gamma;\, \emptyset;\, \Delta_2   \proves X \hastype L$
+ then \\
+$\binp{k}{X}P' \by{\bactinp{k}{V}} P'\subst{V}{X}$
+and $\Gamma;\, \emptyset;\, \Delta_1 \cat k:S \proves P'\subst{V}{X} \hastype \Proc$
+
+% branch
+\item If $\Gamma;\, \emptyset;\, \Delta \cat k:\btbra{l_i:S_i}_{i \in I} \proves \bbra{k}{l_i : P_i}_{i \in I}  \hastype \Proc$
+ then, for any $j \in I$, we have \\
+$\bbra{k}{l_i : P_i}_{i \in I} \by{\bactbra{k}{l_j}} P_j $
+and $\Gamma;\, \emptyset;\, \Delta \cat k:S_j   \proves P_j \hastype \Proc$
+
+% selecy
+\item If $\Gamma;\, \emptyset;\, \Delta \cat k:\btsel{l_i:S_i}_{i \in I} \proves \bsel{k}{l_j} P_j  \hastype \Proc$
+ then \\
+$\bsel{k}{l_j} P_j \by{\bactsel{k}{l_j}} P_j $
+and $\Gamma;\, \emptyset;\, \Delta \cat k:S_j   \proves P_j \hastype \Proc$
+
+% bound output
+\item Suppose (i)~$\Gamma;\, \emptyset;\, (\Delta_1 \cat \Delta_2) \setminus \{k:S_0, s:T\} \cat k:\btout{U}S_0 
+\proves \news{s}\bout{k}{V}P' \hastype \Proc$, \\
+(ii)~$\Gamma;\, \emptyset;\, \Delta_2 \cat \dual{s}:S \proves V \hastype U$ (with $S \dualof T$),
+and (iii)~$\{k:S_0, s:T\} \in \Delta_1 \cat \Delta_2$. \\
+Then 
+$\news{s}\bout{k}{V}P' \by{\news{s}\bactout{k}{V}} P'$
+and $\Gamma;\, \emptyset;\, \Delta^* \proves P' \hastype \Proc$, with \\
+$(\Delta^* = \Delta_1 \cat k:S_0 \cat s:T) \lor (\Delta^* = \Delta_1 \cat k:S_0) \lor
+(\Delta^* = \Delta_1 \cat  s:T) \lor (\Delta^* = \Delta_1)$.
+
+
+% bound output
+\item Suppose (i)~$\Gamma;\, \emptyset;\, \Delta \cat k:\btout{U}S_0 
+\proves \news{s}\bout{k}{V}P' \hastype \Proc$
+(with $\{k:S_0, s:T\} \not\subseteq \Delta$), 
+(ii)~$\Gamma;\, \emptyset;\, \Delta_2 \cat \dual{s}:S \proves V \hastype U$ (with $S \dualof T$),
+and (iii)~$\Delta_2 \subseteq \Delta$. 
+Then $\news{s}\bout{k}{V}P' \by{\news{s}\bactout{k}{V}} P'$ and \\
+$\Gamma;\, \emptyset;\, \Delta^* \proves P' \hastype \Proc$, with \\
+$(\Delta^* = \Delta \setminus \Delta_2 \cat k:S_0 \cat s:T) \lor (\Delta^* = \Delta \setminus \Delta_2 \cat k:S_0) \lor
+(\Delta^* = \Delta \setminus \Delta_2 \cat  s:T) \lor (\Delta^* = \Delta \setminus \Delta_2)$.
+
+
+\end{enumerate}
+\end{lemma}
+
 \subsection{Encoding Polyadic Semantics (\HOp) to Monadic Semantics ($\HOp^{-\mathsf{p}}$)}\label{ss:polmon}
 
 %In the extension of \HOp with 
