@@ -5,9 +5,10 @@
 
 In this section we define a session type system for
 $\HOp$ and establish its main properties. We use as
-a reference type system the Higher Order type system
-developed by Mostrous and Yoshida~\cite{tlca07}, although
-our type system is simpler.
+a reference the type system for higher-order session processes 
+developed by Mostrous and Yoshida~\cite{tlca07}.
+Our system is simpler than that in~\cite{tlca07}, in order to distill the key
+features of higher-order communication in a session-typed setting.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %  SYNTAX FOR TYPES
@@ -36,39 +37,48 @@ The type syntax for values and sessions
 \]
 %
 \noi
-We give the polyadic definition of our type system since
-polyadic semantics subsumes monadic semantics.
-Symbol $C$ denotes first order channel types; session types $s$
+%We give the polyadic definition of our type system since
+%polyadic semantics subsumes monadic semantics.
+We write $C$ to denote first-order channel types; session types $S$
 for session channels and shared types $\chtype{S}$ for shared channels.
-Symbol $L$ types higher order types for abstractions,
-with $\shot{\tilde{C}}$ and $\lhot{\tilde{C}}$ to denote
+We write $L$ to denote types for abstractions (higher-order values): % In particular, 
+$\shot{\tilde{C}}$ and $\lhot{\tilde{C}}$ denote
 shared and linear abstraction types, respectively.
-Types for values are denoted with $U$ that denotes
-channel types, abstraction types and process types.
+%Types for values are denoted with $U$ that denotes
+%channel types, abstraction types and process types.
+We write $U$ to denote types for polyadic first-order values, higher-order values, and 
+types for processes (denoted $\Proc$).
 The shared channel type in $U$ is extended
 to include shared names that carry abstractions.
-Note that the session syntax dissalows types of
+Note that our type syntax disallows types of
 the form $\chtype{\chtype{U}}$, $\chtype{\tilde{U}}$
 and $\shot{(\shot{U})}$,
 meaning that shared names cannot carry shared names or
 polyadic values and
 we that do not apply abstractions over abstractions.
-
-Session $S$ types follow the standard syntax for
-binary session types syntax~\cite{}.
-Session send prefix $\btout{U} S$ denotes a session type that
-sends a value of type $U$ and continues as $S$.
-Dually, receive prefix $\btinp{U} S$ denotes a session type 
-that receives a value of type $U$ and continues as $S$. 
-Session types for labeled choice, and selection, and recursion
-are also standard---well-formedness conditions apply to recursive types.
-
-Our type structure is a subset of that defined by Mostrous and Yoshida in~\cite{tlca07}.
-In particular, we focus on having higher-order values with types
-$\shot{\tilde{C}}$ and $\lhot{\tilde{C}}$, in contrast with the the type structure
-in~\cite{tlca07} that supports general functions
+This is a main difference with respect to the type structure in~\cite{tlca07}, which 
+supports arrow types 
 $U \sharedop T$ and 
-$U \lollipop T$, where $T$ denotes a term, i.e., a value or a process.
+$U \lollipop T$, where $T$ denotes an arbitrary term (i.e., a value or a process).
+
+
+We write $S$ to denote usual (binary) session types with recursion, here including 
+polyadic communication. 
+Session type $\btout{U} S$ is assigned to a channel that first sends a value of type $U$ and then follows
+the protocol described by $S$.
+Dually, type $\btinp{U} S$ is assigned to a channel  
+that first receives a value of type $U$ and then continues as $S$. 
+Session types for labeled choice and selection are standard: they are 
+written $\btbra{l_i:S_i}_{i \in I}$ and $\btsel{l_i:S_i}_{i \in I}$ , respectively. 
+Recursive types are also as customary, considering usual 
+well-formedness conditions.
+
+%Our type structure is a subset of that defined by Mostrous and Yoshida in~\cite{tlca07}.
+%In particular, we focus on having higher-order values with types
+%$\shot{\tilde{C}}$ and $\lhot{\tilde{C}}$, in contrast with the the type structure
+%in~\cite{tlca07} that supports general functions
+%$U \sharedop T$ and 
+%$U \lollipop T$, where $T$ denotes a term, i.e., a value or a process.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %  DUALITY
@@ -101,20 +111,22 @@ the following definition establishes the key notion of duality on session types.
 
 
 \subsection{Environments and Judgments}
-Following our decision of focusing on functions
-$\shot{U}$ and $\lhot{U}$, our environments are
-simpler than those in~\cite{tlca07}:
+%Following our decision of focusing on functions
+%$\shot{U}$ and $\lhot{U}$, our environments are
+%simpler than those in~\cite{tlca07}:
 %
+Following~\cite{tlca07}, 
+our typing discipline relies on the following typing environments: %We consider the
 \[
 \begin{array}{llcl}
 	\text{Linear} & \Lambda & \bnfis & \emptyset \bnfbar \Lambda \cat \varp{X}: \lhot{\tilde{C}}\\
 	\text{Session} & \Delta & \bnfis & \emptyset \bnfbar \Delta \cat k:S \\
-	\text{Shared} & \Gamma & \bnfis & \emptyset \bnfbar \Gamma \cat \varp{X}: \shot{\tilde{C}} \bnfbar \Gamma \cat k: \chtype{S} \bnfbar \Gamma \cat k: \chtype{L} \bnfbar \Gamma \cat r: \Delta
+	\text{Shared} & \Gamma & \bnfis & \emptyset \bnfbar \Gamma \cat \varp{X}: \shot{\tilde{C}} \bnfbar \Gamma \cat k: \chtype{S} \bnfbar \Gamma \cat k: \chtype{L} \bnfbar \Gamma \cat \rvar{X}: \Delta
 \end{array}
 \]
 %
 \noi We define typing judgements for values $V$
-and processes $P$ following~\cite{tlca07}:
+and processes $P$: % following~\cite{tlca07}:
 %
 \[	\begin{array}{c}
 		\Gamma; \Lambda; \Delta \proves V \hastype U \qquad \qquad \qquad \Gamma; \Lambda; \Delta \proves P \hastype \Proc

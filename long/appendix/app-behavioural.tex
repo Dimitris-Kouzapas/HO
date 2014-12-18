@@ -102,8 +102,11 @@ definition.
 		S &=& \set{ \Gamma; \es; \Delta_1, \Delta_2 \proves \newsp{\tilde{s_1}}{P_1 \Par P_2 \subst{\abs{\tilde{x}}{R}}{X}}, \newsp{\tilde{s_2}}{Q_1 \Par Q_2 \subst{\abs{\tilde{x}}{R}}{X}} \setbar \\
 		&& \quad \forall R \textrm{ such that } \fv{R} = \tilde{x}, \fpv{P_2} = \fpv{Q_2} = \set{X}\\
 		&& \quad \Gamma; X: U; \Delta_1''' \proves P_2 \hastype \Proc, \Gamma; X: U; \Delta_2''' \proves Q_2 \hastype \Proc\\
-		&& \quad \textrm{for fresh } t, \Gamma; \es; \Delta_1' \wb \Delta_2' \proves \newsp{\tilde{s_1}}{P_1 \Par P_2 \subst{\subst{\tilde{x}}{\binp{t}{Y} \appl{Y}{\tilde{x}}}}{X}} \wb \newsp{\tilde{s_2}}{Q_1 \Par Q_2 \subst{\abs{\tilde{x}}{\binp{t}{Y} \appl{Y}{\tilde{x}}}}{X}}, \\
-		&& \quad \Gamma; \es; \Delta_1'' \wb \Delta_2'' \proves \newsp{\tilde{s_1}}{P_1 \Par P_2 \subst{\abs{\tilde{x}}{\map{U}^{\tilde{x}}}}{X}} \wb \newsp{\tilde{s_2}}{Q_1 \Par Q_2 \subst{\abs{\tilde{x}}{\map{U}^{\tilde{x}}}}{X}} \textrm{ for some } U \\
+		&& \quad \textrm{for fresh } t,\\
+		&& \quad \horel{\Gamma}{\Delta_1'}{\newsp{\tilde{s_1}}{P_1 \Par P_2 \subst{\subst{\tilde{x}}{\binp{t}{Y} \appl{Y}{\tilde{x}}}}{X}}}{\wb}{\Delta_2}{\newsp{\tilde{s_2}}{Q_1 \Par Q_2 \subst{\abs{\tilde{x}}{\binp{t}{Y} \appl{Y}{\tilde{x}}}}{X}}},\\
+%		\Gamma; \es; \Delta_1' \wb \Delta_2' \proves \newsp{\tilde{s_1}}{P_1 \Par P_2 \subst{\subst{\tilde{x}}{\binp{t}{Y} \appl{Y}{\tilde{x}}}}{X}} \wb \newsp{\tilde{s_2}}{Q_1 \Par Q_2 \subst{\abs{\tilde{x}}{\binp{t}{Y} \appl{Y}{\tilde{x}}}}{X}}, \\
+		&& \quad \horel{\Gamma}{\Delta_1''}{\newsp{\tilde{s_1}}{P_1 \Par P_2 \subst{\abs{\tilde{x}}{\map{U}^{\tilde{x}}}}{X}}}{\wb}{\Delta_2''}{\newsp{\tilde{s_2}}{Q_1 \Par Q_2 \subst{\abs{\tilde{x}}{\map{U}^{\tilde{x}}}}{X}} \textrm{ for some } U}\\
+%		&& \quad \Gamma; \es; \Delta_1'' \wb \Delta_2'' \proves \newsp{\tilde{s_1}}{P_1 \Par P_2 \subst{\abs{\tilde{x}}{\map{U}^{\tilde{x}}}}{X}} \wb \newsp{\tilde{s_2}}{Q_1 \Par Q_2 \subst{\abs{\tilde{x}}{\map{U}^{\tilde{x}}}}{X}} \textrm{ for some } U \\
 		&&}
 	\end{eqnarray*}
 
@@ -114,7 +117,8 @@ definition.
 	\noi We do a case analysis on the transition:
 %
 	\[
-		\Gamma; \es; \Delta_1 \by{\ell_1} \Delta_1' \proves \newsp{\tilde{s_1}}{P_1 \subst{\abs{\tilde{x}}{R}}{X} \Par P_2\subst{\abs{\tilde{x}}{R}}{X} } \by{\ell_1} P_1'
+		\horel{\Gamma}{\Delta_1}{\newsp{\tilde{s_1}}{P_1 \subst{\abs{\tilde{x}}{R}}{X} \Par P_2\subst{\abs{\tilde{x}}{R}}{X} }}{\by{\ell_1}}{\Delta_1'}{P_1'}
+%		\Gamma; \es; \Delta_1 \by{\ell_1} \Delta_1' \proves \newsp{\tilde{s_1}}{P_1 \subst{\abs{\tilde{x}}{R}}{X} \Par P_2\subst{\abs{\tilde{x}}{R}}{X} } \by{\ell_1} P_1'
 	\]
 %
 	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -124,15 +128,20 @@ definition.
 	\noi - Case: $P_2 \not= \appl{X}{\tilde{n}}$ for some $\tilde{n}$.
 %
 	\begin{eqnarray*}
-		&&\Gamma; \es; \Delta_1 \by{\ell_1} \Delta_1' \proves \newsp{\tilde{s_1}}{P_1 \Par P_2 \subst{\abs{\tilde{x}}{R}}{X} }
-		\by{\ell_1}
-		\newsp{\tilde{s_1'}}{P_1 \Par P_2' \subst{\abs{\tilde{x}}{R}}{X}}
+		&&	\horel{\Gamma}{\Delta_1}
+			{\newsp{\tilde{s_1}}{P_1 \Par P_2 \subst{\abs{\tilde{x}}{R}}{X} }}
+			{\by{\ell_1}}
+			{\Delta_1'}{\newsp{\tilde{s_1'}}{P_1 \Par P_2' \subst{\abs{\tilde{x}}{R}}{X}}}
+%		&&\Gamma; \es; \Delta_1 \by{\ell_1} \Delta_1' \proves \newsp{\tilde{s_1}}{P_1 \Par P_2 \subst{\abs{\tilde{x}}{R}}{X} }
+%		\by{\ell_1}
+%		\newsp{\tilde{s_1'}}{P_1 \Par P_2' \subst{\abs{\tilde{x}}{R}}{X}}
 	\end{eqnarray*}
 
 	\noi From the latter transition we get that
 %
 \[
 	\begin{array}{rcll}
+%		\horel{\Gamma}{\Delta_1}{\newsp{\tilde{s_1}}{P_1 \Par P_2 \subst{\abs{\tilde{x}}{\binp{t}{Y} \appl{Y}{\tilde{x}}}}{X}}}{\by{\ell_1}}{\Delta_1'}{P' \scong & \newsp{\tilde{s_1}}{P_1 \Par P_2' \subst{\abs{\tilde{x}}{\binp{t}{Y} \appl{Y}{\tilde{x}}}}{X}}}
 		\Gamma; \es; \Delta_1 &\by{\ell_1}& \Delta_1' \proves & \newsp{\tilde{s_1}}{P_1 \Par P_2 \subst{\abs{\tilde{x}}{\binp{t}{Y} \appl{Y}{\tilde{x}}}}{X}}\\
 		&\by{\ell_1}&
 		P' \scong & \newsp{\tilde{s_1}}{P_1 \Par P_2' \subst{\abs{\tilde{x}}{\binp{t}{Y} \appl{Y}{\tilde{x}}}}{X}}
@@ -146,7 +155,8 @@ definition.
 		&\By{\ell_2}&
 		Q' \scong \newsp{\tilde{s_2}}{Q_1' \Par Q_2' \subst{\abs{\tilde{x}}{\binp{t}{Y} \appl{Y}{\tilde{x}}}}{X}} \label{lem:subst_equiv1}
 		\\
-		&&\Gamma; \es; \Delta_1' \wb \Delta_2' \proves P' \Par C_1 \wb Q' \Par C_2 \label{lem:subst_equiv2}
+		&&\horel{\Gamma}{\Delta_1'}{P' \Par C_1}{\wb}{\Delta_2'}{Q' \Par C_2} \label{lem:subst_equiv2}
+%		\Gamma; \es; \Delta_1' \wb \Delta_2' \proves P' \Par C_1 \wb Q' \Par C_2 
 	\end{eqnarray}
 %
 	\noi Furthermore
@@ -165,19 +175,22 @@ definition.
 		\Gamma; \es; \Delta_2 &\By{\ell_2}& \Delta_2' \proves \newsp{\tilde{s_2}}{Q_1 \Par Q_2 \subst{\abs{\tilde{x}}{\map{U}^{\tilde{x}}}}{X}} \nonumber \\
 		&\By{\ell_2}& Q'' \scong \newsp{\tilde{s_2'}}{Q_1' \Par Q_2' \subst{\abs{\tilde{x}}{\map{U}^{\tilde{x}}}}{X}} \label{lem:subst_equiv3}
 		\\
-		&&\Gamma; \es; \Delta_1' \wb \Delta_2' \proves P'' \Par C_1 \wb Q'' \Par C_2 \label{lem:subst_equiv4}
+		&&\horel{\Gamma}{\Delta_1'}{P'' \Par C_1}{\wb}{\Delta_2'}{Q'' \Par C_2} \label{lem:subst_equiv4}
+%		&& \Gamma; \es; \Delta_1' \wb \Delta_2' \proves P'' \Par C_1 \wb Q'' \Par C_2 \label{lem:subst_equiv4}
 	\end{eqnarray}
 %
 	\noi From~\ref{lem:subst_equiv1} and~\ref{lem:subst_equiv3} we get that $\forall R$ with $\fv{R} = \tilde{x}$:
 %
 	\begin{eqnarray*}
-		\Gamma; \es; \Delta_2 \By{\ell_2} \Delta_2' \proves \newsp{\tilde{s_2}}{Q_1 \Par Q_2 \subst{\abs{\tilde{x}}{R}}{X}} \By{\ell_2} \newsp{\tilde{s_2'}}{Q_1' \Par Q_2' \subst{\abs{\tilde{x}}{R}}{X}}
+		\horel{\Gamma}{\Delta_2}{\newsp{\tilde{s_2}}{Q_1 \Par Q_2 \subst{\abs{\tilde{x}}{R}}{X}}}{\By{\ell_2}}{\Delta_2'}{\newsp{\tilde{s_2'}}{Q_1' \Par Q_2' \subst{\abs{\tilde{x}}{R}}{X}}}
+%		\Gamma; \es; \Delta_2 \By{\ell_2} \Delta_2' \proves \newsp{\tilde{s_2}}{Q_1 \Par Q_2 \subst{\abs{\tilde{x}}{R}}{X}} \By{\ell_2} \newsp{\tilde{s_2'}}{Q_1' \Par Q_2' \subst{\abs{\tilde{x}}{R}}{X}}
 	\end{eqnarray*}
 %
 	\noi The case concludes if we combine~\ref{lem:subst_equiv2} and~\ref{lem:subst_equiv4} to get that $\forall R$ with $\fv{R} = \tilde{x}$
 %
 	\begin{eqnarray*}
-		\Gamma' \es; \Delta_1''\ S\ \Delta_2'' \proves \newsp{\tilde{s_2'}}{P_1 \Par P_2' \subst{\abs{\tilde{x}}{R}}{X}} \Par C_1\ S\ \newsp{\tilde{s_2'}}{Q_1 \Par Q_2' \subst{\abs{\tilde{x}}{R}}{X}} \Par C_2
+		\horel{\Gamma'}{\Delta_1''}{\newsp{\tilde{s_2'}}{P_1 \Par P_2' \subst{\abs{\tilde{x}}{R}}{X}} \Par C_1}{\ S\ }{\Delta_2''}{\newsp{\tilde{s_2'}}{Q_1 \Par Q_2' \subst{\abs{\tilde{x}}{R}}{X}} \Par C_2}
+		%\Gamma' \es; \Delta_1''\ S\ \Delta_2'' \proves \newsp{\tilde{s_2'}}{P_1 \Par P_2' \subst{\abs{\tilde{x}}{R}}{X}} \Par C_1\ S\ \newsp{\tilde{s_2'}}{Q_1 \Par Q_2' \subst{\abs{\tilde{x}}{R}}{X}} \Par C_2
 	\end{eqnarray*}
 
 	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -242,13 +255,21 @@ definition.
 	\noi From the definition of $S$ and~\ref{lem:subst_equiv6}
 	we also conclude that
 	\begin{eqnarray*}
-		&&\Gamma; \es; \Delta_1'\ S\ \Delta_2' \proves 
-		\newsp{\tilde{s_1'}}{P_1 \Par \appl{X}{\tilde{n}} \subst{\abs{\tilde{x}}{R' \Par C}}{X}}\ S\ \newsp{s_2'}{Q_1' \Par \appl{X}{\tilde{m}} \subst{\abs{\tilde{x}}{R' \Par C}}{X}}
+		&& \horel{\Gamma}
+		{\Delta_1'}{\newsp{\tilde{s_1'}}{P_1 \Par \appl{X}{\tilde{n}} \subst{\abs{\tilde{x}}{R' \Par C}}{X}}}
+		{\ S\ }
+		{\Delta_2'}{\newsp{s_2'}{Q_1' \Par \appl{X}{\tilde{m}} \subst{\abs{\tilde{x}}{R' \Par C}}{X}}}
+%		&&\Gamma; \es; \Delta_1'\ S\ \Delta_2' \proves 
+%		\newsp{\tilde{s_1'}}{P_1 \Par \appl{X}{\tilde{n}} \subst{\abs{\tilde{x}}{R' \Par C}}{X}}\ S\ \newsp{s_2'}{Q_1' \Par \appl{X}{\tilde{m}} \subst{\abs{\tilde{x}}{R' \Par C}}{X}}
 	\end{eqnarray*}
 	\noi the latter substitution can be rewritten as
 	\begin{eqnarray*}
-		&&\Gamma; \es; \Delta_1'\ S\ \Delta_2' \proves 
-		\newsp{\tilde{s_1'}}{P_1 \Par \appl{X}{s} \subst{\abs{\tilde{x}}{R'}}{X} \Par C}\ S\ \newsp{s_2'}{Q_1' \Par \appl{X}{s'} \subst{\abs{\tilde{x}}{R'}}{X} \Par C}
+		&&\horel{\Gamma}
+		{\Delta_1'}{\newsp{\tilde{s_1'}}{P_1 \Par \appl{X}{s} \subst{\abs{\tilde{x}}{R'}}{X} \Par C}}
+		{\ S\ }
+		{\Delta_2'}{\newsp{s_2'}{Q_1' \Par \appl{X}{s'} \subst{\abs{\tilde{x}}{R'}}{X} \Par C}}
+%		&&\Gamma; \es; \Delta_1'\ S\ \Delta_2' \proves 
+%		\newsp{\tilde{s_1'}}{P_1 \Par \appl{X}{s} \subst{\abs{\tilde{x}}{R'}}{X} \Par C}\ S\ \newsp{s_2'}{Q_1' \Par \appl{X}{s'} \subst{\abs{\tilde{x}}{R'}}{X} \Par C}
 	\end{eqnarray*}
 	\noi with process $C$ being the process derived from action $\ell$
 	to complete the bisimulation closure.

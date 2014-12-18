@@ -19,7 +19,7 @@
 \newpage
 \section{Typed Encodings}\label{s:expr}
 
-In this section, we define the notion of \emph{typed encoding} that we
+We define the notion of \emph{typed encoding} that we
 shall use in the following section.
 %In general, we may define:
 
@@ -123,7 +123,7 @@ semantics.
 			\item	Completeness: 
 			   If  $\stytra{\Gamma}{\ell_1}{\Delta_1}{P}{\Delta'_1}{P'}$
 			   then \\ $\exists \ell_2$ s.t. 
-			    $\wtytra{\mapt{\Gamma}}{\ell_2}{\mapt{\Delta_1}}{\map{P_1}}{\mapt{\Delta'_1}}{\map{P_2}}$
+			    $\wtytra{\mapt{\Gamma}}{\ell_2}{\mapt{\Delta_1}}{\map{P}}{\mapt{\Delta'_1}}{\map{P'}}$
 			    and $\ell_2 = \mapa{\ell_1}$.
 			    				
 %			\item Soundness : \\
@@ -136,7 +136,7 @@ semantics.
 			   then $\exists \ell_1, P'$ s.t.  \\
 			    (i)~$\stytra{\Gamma}{\ell_1}{\Delta_1}{P}{\Delta'_1}{P'}$,
 			    (ii)~$\ell_2 = \mapa{\ell_1}$, and
-			    (iii)~$\wbb{\Gamma}{\ell}{\Delta'_1}{P'}{\mapt{\Delta'_1}}{Q}$.
+			    (iii)~$\wbb{\mapt{\Gamma}}{\ell}{\mapt{\Delta'_1}}{\map{P'}}{\mapt{\Delta'_1}}{Q}$.
 		\end{enumerate}
 		
 		\item \emph{Full Abstraction:} \\
@@ -147,7 +147,7 @@ semantics.
 	\end{enumerate}
 \end{definition}
 
-\begin{remark}
+\begin{remark}\label{r:multilabels}
 We  assume that if 
 $P \hby{\ell} P'$ and $\mapa{\ell} = \{\ell_1, \ell_2,  \cdots, \ell_m\}$ then
 $\map{P} \Hby{\mapa{\ell}} \map{P'}$
@@ -270,19 +270,19 @@ we may focus on monadic session processes,
 and rely on polyadic constructs simply as convenient syntactic sugar.
 In fact, we shall rely on polyadicity to encode recursive behaviors.
 %
-\begin{definition}[Polyadic Into Monadic]%\rm
+\begin{definition}[Polyadic Into Monadic]\label{d:enc:poltomon}
 Let 
 $\enco{\map{\cdot}^{\mathsf{p}}, \mapt{\cdot}^{\mathsf{p}}, \mapa{\cdot}^{\mathsf{p}}}: \HOp \to \HOp^{-\mathsf{p}}$
 be a typed encoding where
 	%$\auxmap{\cdot}{\mathsf{p}}:\pHOp \to \HOp$ as
+\begin{figure}[t]
 \[
 	\begin{array}{rcl}
 		\map{\bout{k}{k_1, \cdots, k_m} P}^{\mathsf{p}}
 		&\defeq&
 		\bout{k}{k_1} \cdots ;  \bout{k}{k_m} \map{P}^{\mathsf{p}}
 		\\
-
-		\map{\binp{k}{x_1, \cdots, x_m} P}^{\mathsf{p}}
+			\map{\binp{k}{x_1, \cdots, x_m} P}^{\mathsf{p}}
 		&\defeq&
 		\binp{k}{x_1} \cdots ; \binp{k}{x_m}  \map{P}^{\mathsf{p}}
 		\\
@@ -296,28 +296,54 @@ be a typed encoding where
         \\ % typed mapping starts here
 		\tmap{\btout{S_1, \cdots, S_m}S}{\mathsf{p}}
 		&\defeq&
-		\btout{\tmap{S_1}{\mathsf{p}}} \cdots \btout{\tmap{S_m}{\mathsf{p}}}\tmap{S}{\mathsf{p}}
+		\btout{\tmap{S_1}{\mathsf{p}}} \cdots ; \btout{\tmap{S_m}{\mathsf{p}}}\tmap{S}{\mathsf{p}}
 		\\
 		\tmap{\btinp{S_1, \cdots, S_m}S}{\mathsf{p}}
 		&\defeq&
-		\btinp{\tmap{S_1}{\mathsf{p}}} \cdots \btinp{\tmap{S_m}{\mathsf{p}}}\tmap{S}{\mathsf{p}}
+		\btinp{\tmap{S_1}{\mathsf{p}}} \cdots ; \btinp{\tmap{S_m}{\mathsf{p}}}\tmap{S}{\mathsf{p}}
 		\\
-		\tmap{\lhot{(S_1, \cdots, S_m)}}{\mathsf{p}}
+		\tmap{\bbtout{\lhot{(C_1, \cdots, C_m)}} S}{\mathsf{p}}
 		&\defeq&
-		\lhot{\big(\btinp{\tmap{S_1}{\mathsf{p}}} \cdots \btinp{\tmap{S_m}{\mathsf{p}}}\tinact\big)}
+		\bbtout{
+		\lhot{\big(\btinp{\tmap{C_1}{\mathsf{p}}} \cdots ;\btinp{\tmap{C_m}{\mathsf{p}}}\tinact\big)}}\mapt{S}^{\mathsf{p}}
 		\\
-		\tmap{\shot{(S_1, \cdots, S_m)}}{\mathsf{p}}
+		\tmap{\bbtinp{\lhot{(C_1, \cdots, C_m)}} S}{\mathsf{p}}
 		&\defeq&
-		\shot{\big(\btinp{\tmap{S_1}{\mathsf{p}}} \cdots \btinp{\tmap{S_m}{\mathsf{p}}}\tinact\big)}
+		\bbtinp{
+		\lhot{\big(\btinp{\tmap{C_1}{\mathsf{p}}} \cdots; \btinp{\tmap{C_m}{\mathsf{p}}}\tinact\big)}}\mapt{S}^{\mathsf{p}}
+		\\
+		\tmap{\bbtout{\shot{(C_1, \cdots, C_m)}} S}{\mathsf{p}}
+		&\defeq&
+		\bbtout{
+		\shot{\big(\btinp{\tmap{C_1}{\mathsf{p}}} \cdots; \btinp{\tmap{C_m}{\mathsf{p}}}\tinact\big)}}\mapt{S}^{\mathsf{p}}
+		\\
+		\tmap{\bbtinp{\shot{(C_1, \cdots, C_m)}} S}{\mathsf{p}}
+		&\defeq&
+		\bbtinp{
+		\shot{\big(\btinp{\tmap{C_1}{\mathsf{p}}} \cdots; \btinp{\tmap{C_m}{\mathsf{p}}}\tinact\big)}}\mapt{S}^{\mathsf{p}}
+%		\\
+%		\tmap{\lhot{(C_1, \cdots, C_m)}}{\mathsf{p}}
+%		&\defeq&
+%		\lhot{\big(\btinp{\tmap{C_1}{\mathsf{p}}} \cdots \btinp{\tmap{C_m}{\mathsf{p}}}\tinact\big)}
+%		\\
+%		\tmap{\shot{(C_1, \cdots, C_m)}}{\mathsf{p}}
+%		&\defeq&
+%		\shot{\big(\btinp{\tmap{C_1}{\mathsf{p}}} \cdots \btinp{\tmap{C_m}{\mathsf{p}}}\tinact\big)}
 		\\ % action mapping starts here
-		\mapa{\bactout{k}{k_1, \ldots, k_m}} &\defeq&   \big\{\bactout{k}{k_1}, \cdots, \bactout{k}{k_m}\big\} \\
-		\mapa{\bactinp{k}{k_1, \ldots, k_m}} &\defeq&   \big\{\bactinp{k}{k_1}, \cdots, \bactinp{k}{k_m} \big\}\\
-		\mapa{\bactout{k}{\abs{x_1, \ldots, x_m}{P}} } &\defeq&  \bactout{k}{\abs{z}\binp{z}{x_1} \cdots ; \binp{z}{x_m} \map{P}^{\mathsf{p}}} \\
-		\mapa{\bactinp{k}{\abs{x_1, \ldots, x_m}{P}} } &\defeq&  \bactinp{k}{\abs{z}\binp{z}{x_1} \cdots ; \binp{z}{x_m} \map{P}^{\mathsf{p}}} 
+		\mapa{\bactout{k}{k_1, \ldots, k_m}}^\mathsf{p} &\defeq&   \big\{\bactout{k}{k_1}, \cdots, \bactout{k}{k_m}\big\} \\
+		\mapa{\bactinp{k}{k_1, \ldots, k_m}}^\mathsf{p} &\defeq&   \big\{\bactinp{k}{k_1}, \cdots, \bactinp{k}{k_m} \big\}\\
+		\mapa{\bactout{k}{\abs{x_1, \ldots, x_m}{P}} }^\mathsf{p} &\defeq&  \bactout{k}{\abs{z}\binp{z}{x_1} \cdots ; \binp{z}{x_m} \map{P}^{\mathsf{p}}} \\
+		\mapa{\bactinp{k}{\abs{x_1, \ldots, x_m}{P}} }^\mathsf{p} &\defeq&  \bactinp{k}{\abs{z}\binp{z}{x_1} \cdots ; \binp{z}{x_m} \map{P}^{\mathsf{p}}} 
 	\end{array}
 \]
-and mappings $\map{\cdot}^{\mathsf{p}}$, $\mapt{\cdot}^{\mathsf{p}}$, $\mapa{\cdot}^{\mathsf{p}}$
-are homomorphisms for the other processes/types/labels. 
+\caption{
+Encoding of polyadic into monadic communication (cf.~Defintion \ref{d:enc:poltomon} \label{f:enc:poltomon}).
+The mappings are homomorphisms for the other processes/types/labels. 
+}
+\end{figure}
+mappings $\map{\cdot}^{\mathsf{p}}$, $\mapt{\cdot}^{\mathsf{p}}$, $\mapa{\cdot}^{\mathsf{p}}$
+are 
+as in Fig.~\ref{f:enc:poltomon}.
 	%\jp{I prefer to be explicit in the encoding of polyadic abstraction/applications. Previous version is commented.}
 \end{definition}
 %
@@ -352,34 +378,285 @@ If			$\Gamma; \emptyset; \Delta \proves P \hastype \Proc$ then
 \end{proposition}
 
 \begin{proof}
-By induction on the inference $\Gamma; \emptyset; \Delta \proves P \hastype \Proc$. TBD!
+By induction on the inference $\Gamma; \emptyset; \Delta \proves P \hastype \Proc$.
 	\qed
 \end{proof}
+
+\begin{proposition}\label{p:poltomo}
+If $\map{P\subst{\abs{x_1, \cdots, x_m} Q}{X}}^{\mathsf{p}} = \map{P}^{\mathsf{p}}\subst{\abs{z}\binp{z}{x_1} \cdots ; \binp{z}{x_m} \map{Q}^{\mathsf{p}}}{X}$.
+\end{proposition}
+\begin{proof}
+Immediate from the definition of $\map{\cdot}^{\mathsf{p}}$ (cf. Def.~\ref{d:enc:poltomon}).
+	\qed
+\end{proof}
+
 
 \begin{proposition}[Operational Correspondence, Polyadic to Monadic]
 Let $P$ be an  $\HOp$ process.
 If $\Gamma; \emptyset; \Delta \proves P \hastype \Proc$ then
-		\begin{enumerate}[(a)]
+		\begin{enumerate}[a)]
 			\item	 
-			   If  $\stytra{\Gamma}{\ell_1}{\Delta_1}{P}{\Delta'_1}{P'}$
+			   If  $\stytra{\Gamma}{\ell_1}{\Delta}{P}{\Delta'}{P'}$
 			   then  $\exists \ell_2$ s.t. 
-			    $\wtytra{\mapt{\Gamma}^{\mathsf{p}}}{\ell_2}{\mapt{\Delta_1}^{\mathsf{p}}}{\map{P_1}}{\mapt{\Delta'_1}^{\mathsf{p}}}{\map{P_2}}$
+			    $\wtytra{\mapt{\Gamma}^{\mathsf{p}}}{\ell_2}{\mapt{\Delta}^{\mathsf{p}}}{\map{P}}{\mapt{\Delta'}^{\mathsf{p}}}{\map{P'}}$
 			    and $\ell_2 = \mapa{\ell_1}^{\mathsf{p}}$.
+			    
 			\item   
 			If  $\wtytra{\mapt{\Gamma}^{\mathsf{p}}}{\ell_2}{\mapt{\Delta_1}^{\mathsf{p}}}{\map{P}}{\mapt{\Delta'_1}^{\mathsf{p}}}{Q}$
-			   then $\exists \ell_1, P'$ s.t.  
-			    (i)~$\stytra{\Gamma}{\ell_1}{\Delta_1}{P}{\Delta'_1}{P'}$,
-			    (ii)~$\ell_2 = \mapa{\ell_1}^{\mathsf{p}}$, and
-			    (iii)~$\wbb{\Gamma}{\ell}{\Delta'_1}{P'}{\mapt{\Delta'_1}^{\mathsf{p}}}{Q}$.
+			   then $\exists \ell_1, P$ s.t.  
+			    (i)~$\stytra{\Gamma}{\ell_1}{\Delta_1}{P}{\Delta'_1}{P'}$, \\
+			    (ii)~$\ell_2 = \mapa{\ell_1}^{\mathsf{p}}$, 
+			    (iii)~$\wbb{\mapt{\Gamma}^{\mathsf{p}}}{\ell}{\mapt{\Delta'_1}^{\mathsf{p}}}{\map{P'}^{\mathsf{p}}}{\mapt{\Delta'_1}^{\mathsf{p}}}{Q}$.
 			    \end{enumerate}
 \end{proposition}
 
 \begin{proof}
 By transition induction.
-TBD!
-	\qed
+%, considering Remark~\ref{r:multilabels} for weak transitions. All cases are easy;
+%we only remark that the additional $\tau$-transitions induced by the encoding 
+%are directly associated to the polyadicity involved. This is particularly relevant
+%when $\ell_1 = \bactinp{n}{\abs{\tilde{x}}{P}}$, for the encoding of a polyadic application involves
+%as many $\tau$-transitions (i.e., synchronizations on the restricted name $s$) 
+%as polyadic parameters are involved.	\\
+We consider parts (a) and (b) separately: \\
+\noi \textbf{Part (a)}. We consider two non-trivial cases, using biadic communication:
+\begin{enumerate}[1.]
+
+%% Biadic Output 
+\item Case  $P =\bout{k}{k_1, k_2} P'$ and $\ell_1 = \bactout{k}{k_1, k_2}$. By assumption, $P$ is well-typed. 
+We may have:
+			\[
+				\tree{
+					\Gamma; \emptyset; \Delta_0 \cat k:S  \proves  P' \hastype \Proc \quad 
+					\Gamma ; \emptyset ; k_1{:} S_1 \cat k_2{:}S_2 \proves  k_1,k_2 \hastype S_1,S_2}{
+					\Gamma; \emptyset; \Delta_0 \cat k_1{:}S_1 \cat k_2{:}S_2 \cat k:\btout{S_1,S_2}S \proves  
+					\bout{k}{k_1,k_2} P' \hastype \Proc}
+			\]
+for some $\Gamma, S, S_1, S_2, \Delta_0$, 
+such that $\Delta = \Delta_0 \cat k_1{:}S_1 \cat k_2{:}S_2 \cat k:\btout{S_1,S_2}S$.
+We may then have the following typed transition
+$$
+\stytra{\Gamma}{\ell_1}{\Delta_0 \cat k_1{:}S_1 \cat k_2{:}S_2 \cat k:\btout{S_1,S_2}S}{\bout{k}{k_1, k_2} P'}{\Delta_0 \cat k{:}S}{P'}
+$$
+The encoding of the source judgment for $P$ is as follows:
+$$
+\mapt{\Gamma}^{\mathsf{p}}; \emptyset; \mapt{\Delta_0 \cat k_1{:}S_1 \cat k_2{:}S_2 \cat k:\btout{S_1,S_2}S}^{\mathsf{p}} \proves \map{\bout{k}{k_1, k_2} P'}^{\mathsf{p}} \hastype \Proc
+$$
+which, using Def.~\ref{d:enc:poltomon}, can be equivalently expressed as 
+$$
+\mapt{\Gamma}^{\mathsf{p}}; \emptyset; \mapt{\Delta_0} 
+\cat k_1{:}\mapt{S_1}^{\mathsf{p}} \cat k_2{:}\mapt{S_2}^{\mathsf{p}} 
+\cat k:\btout{\mapt{S_1}^{\mathsf{p}}}\btout{\mapt{S_2}^{\mathsf{p}}}\mapt{S}^{\mathsf{p}}
+\proves 
+\bout{k}{k_1}\bout{k}{k_2} \map{P'}^{\mathsf{p}} 
+\hastype \Proc
+$$
+Now, $\mapa{\ell_1}^{\mathsf{p}} = \{ \bactout{k}{k_1 }, \bactout{k}{ k_2}\}$. 
+It is immediate to infer the following typed transitions for $\map{P}^{\mathsf{p}}  = \bout{k}{k_1}\bout{k}{k_2} \map{P'}^{\mathsf{p}} $:
+\begin{eqnarray*}
+& & \mapt{\Gamma}^{\mathsf{p}}; 
+\mapt{\Delta_0} \cat  k_1{:}\mapt{S_1}^{\mathsf{p}} \cat k_2{:}\mapt{S_2}^{\mathsf{p}} \cat
+k:\btout{\mapt{S_1}^{\mathsf{p}}}\btout{\mapt{S_2}^{\mathsf{p}}}\mapt{S}^{\mathsf{p}}
+\proves 
+\bout{k}{k_1}\bout{k}{k_2} \map{P'}^{\mathsf{p}}  \\
+& \hby{\bactout{k}{k_1}} & 
+\mapt{\Gamma}^{\mathsf{p}}; \mapt{\Delta_0} \cat  k_1{:}\mapt{S_1}^{\mathsf{p}} \cat k_2{:}\mapt{S_2}^{\mathsf{p}} \cat
+k:\btout{\mapt{S_2}^{\mathsf{p}}}\mapt{S}^{\mathsf{p}}
+\proves 
+\bout{k}{k_2} \map{P'}^{\mathsf{p}} \\
+& \hby{\bactout{k}{k_2}} & 
+\mapt{\Gamma}^{\mathsf{p}}; \mapt{\Delta_0} \cat  k_1{:}\mapt{S_1}^{\mathsf{p}} \cat k_2{:}\mapt{S_2}^{\mathsf{p}} \cat
+\mapt{S}^{\mathsf{p}}
+\proves 
+ \map{P'}^{\mathsf{p}} \\
+ & = & 
+ \mapt{\Gamma}^{\mathsf{p}}; \mapt{\Delta_0 \cat
+k:S \cat
+k_1{:}S_1 \cat
+k_2{:}S_2}^{\mathsf{p}}
+\proves 
+ \map{P'}^{\mathsf{p}}
+\end{eqnarray*}
+which concludes the proof for this case.
+
+%% Biadic Abstraction Output 
+\item Case  $P = \bbout{k}{\abs{x_1, x_2} Q} P' $ and $\ell_1 = \bactout{k}{\abs{x_1, x_2}{Q}}$. 
+By assumption, $P$ is well-typed. 
+We may have:
+			\[
+				\tree{
+					\Gamma; \emptyset; \Delta_0 \cat k:S  \proves  P' \hastype \Proc \quad 
+					\Gamma ; \emptyset ; \Delta_1 \proves  \abs{x_1,x_2}Q \hastype \lhot{(C_1,C_2)}}{
+					\Gamma; \emptyset; \Delta_0 \cat \Delta_1 \cat k:\btout{\lhot{(C_1,C_2)}}S \proves  
+					\bout{k}{\abs{x_1,x_2}Q} P' \hastype \Proc}
+			\]
+for some $\Gamma, S, C_1, C_2, \Delta_0, \Delta_1$, 
+such that $\Delta = \Delta_0 \cat \Delta_1 \cat  k:\btout{\lhot{(C_1,C_2)}}S$.
+(For simplicity, we consider only the case of a linear function.)
+We may have the following typed transition:
+$$
+\stytra{\Gamma}{\ell_1}{\Delta_0 \cat \Delta_1 \cat k:\bbtout{\lhot{(C_1, C_2)}}S}{\bbout{k}{\abs{x_1, x_2} Q} P' }{\Delta_0 \cat k{:}S}{P'}
+$$
+The encoding of the source judgment is
+$$
+\mapt{\Gamma}^{\mathsf{p}}; \emptyset; \mapt{\Delta_0 \cat \Delta_1 \cat k:\bbtout{\lhot{(C_1, C_2)}}S}^{\mathsf{p}} \proves \map{\bbout{k}{\abs{x_1, x_2} Q} P' }^{\mathsf{p}} \hastype \Proc
+$$
+which, using Def.~\ref{d:enc:poltomon}, can be equivalently expressed as 
+$$
+\mapt{\Gamma}^{\mathsf{p}}; \emptyset; \mapt{\Delta_0 \cat \Delta_1} \cat
+%k:\btout{\mapt{S_1}^{\mathsf{p}}}\btout{\mapt{S_2}^{\mathsf{p}}}\mapt{S}^{\mathsf{p}}
+k:\bbtout{
+		\lhot{\big(\btinp{\tmap{C_1}{\mathsf{p}}}\btinp{\tmap{C_2}{\mathsf{p}}}\tinact\big)}}\mapt{S}^{\mathsf{p}}
+\proves 
+\bbout{k}{\abs{z}\binp{z}{x_1} \binp{z}{x_2} \map{Q}^{\mathsf{p}}} \map{P'}^{\mathsf{p}}
+\hastype \Proc
+$$
+
+Now, $\mapa{\ell_1}^{\mathsf{p}} = \bactout{k}{\abs{z}\binp{z}{x_1}\binp{z}{x_2} \map{Q}^{\mathsf{p}}}$. 
+It is immediate to infer the following typed transition for $\map{P}^{\mathsf{p}}  = \bbout{k}{\abs{z}\binp{z}{x_1} \binp{z}{x_2} \map{Q}^{\mathsf{p}}} \map{P'}^{\mathsf{p}}$:
+\begin{eqnarray*}
+& & \mapt{\Gamma}^{\mathsf{p}}; \mapt{\Delta_0 \cat \Delta_1} \cat
+%k:\btout{\mapt{S_1}^{\mathsf{p}}}\btout{\mapt{S_2}^{\mathsf{p}}}\mapt{S}^{\mathsf{p}}
+k:\bbtout{
+		\lhot{\big(\btinp{\tmap{C_1}{\mathsf{p}}}\btinp{\tmap{C_2}{\mathsf{p}}}\tinact\big)}}\mapt{S}^{\mathsf{p}}
+\proves 
+\bbout{k}{\abs{z}\binp{z}{x_1} \binp{z}{x_2} \map{Q}^{\mathsf{p}}} \map{P'}^{\mathsf{p}} \\
+& \hby{\mapa{\ell_1}^{\mathsf{p}}} & 
+\mapt{\Gamma}^{\mathsf{p}}; \mapt{\Delta_0} \cat
+k:\mapt{S}^{\mathsf{p}}, \,
+\proves 
+\map{P'}^{\mathsf{p}} \\
+ & = & 
+ \mapt{\Gamma}^{\mathsf{p}}; 
+ \mapt{\Delta_0 \cat k:S}^{\mathsf{p}}
+\proves 
+ \map{P'}^{\mathsf{p}}
+\end{eqnarray*}
+which concludes the proof for this case.
+\end{enumerate}
+
+\noi \textbf{Part (b)}. We consider some non-trivial cases, using biadic communication:
+\begin{enumerate}[1.]
+
+%% Biadic Input 
+\item Case $P =  \binp{k}{x_1, x_2} P' $, 
+$\map{P}^{\mathsf{p}} = 
+		\binp{k}{x_1}  \binp{k}{x_2}  \map{P'}^{\mathsf{p}}$,
+		and $\ell_2 = \bactinp{k}{k_1}, \bactinp{k}{k_2}$. Then we have, for some $S$, $S_1$, $S_2$, and $\Delta$, the following typed transitions:
+\begin{eqnarray*}
+& & \mapt{\Gamma}^{\mathsf{p}}; 
+\mapt{\Delta}^{\mathsf{p}} \cat k:\mapt{\btinp{S_1, S_2}S}^{\mathsf{p}}
+\proves 
+\binp{k}{x_1} \binp{k}{x_2}\map{P'}^{\mathsf{p}} \\
+& \hby{\bactinp{k}{k_1}} & 
+\mapt{\Gamma}^{\mathsf{p}}; 
+\mapt{\Delta}^{\mathsf{p}} \cat k:\btinp{\tmap{S_2}{\mathsf{p}}}\tmap{S}{\mathsf{p}} \cat
+k_1:\mapt{S_1}^{\mathsf{p}}
+\proves 
+\binp{k}{x_2}\map{P'}^{\mathsf{p}} \subst{k_1}{x_1} \\
+& \hby{\bactinp{k}{k_2}} & 
+\mapt{\Gamma}^{\mathsf{p}}; 
+\mapt{\Delta}^{\mathsf{p}} \cat k:\tmap{S}{\mathsf{p}} \cat
+k_1:  \mapt{S_1}^{\mathsf{p}} \cat
+k_2: \mapt{S_2}^{\mathsf{p}}
+\proves 
+\map{P'}^{\mathsf{p}} \subst{k_1}{x_1}\subst{k_2}{x_2} = Q
+\end{eqnarray*}
+Considering Remark~\ref{r:multilabels} 
+it is then immediate to infer the label for the source transition:
+$\ell_1 = \bactinp{k}{k_1,k_2}$. 
+Now, in the source term $P$ we can infer the following transition:
+$$
+\stytra{\Gamma}{\ell_1}{\Delta \cat k:\btinp{S_1, S_2}S}{\binp{k}{x_1, x_2} P' }{\Delta\cat k{:}S \cat k_1:S_1 \cat k_2:S_2}{P'\subst{k_1,k_2}{x_1, x_2}}
+$$
+We now observe that, by
+letting
+ $\Delta^* = \mapt{\Delta}^{\mathsf{p}}\cat k:\tmap{S}{\mathsf{p}}, \,
+k_1:  \mapt{S_1}^{\mathsf{p}} \cat
+k_2: \mapt{S_2}^{\mathsf{p}}$, we have the desired conclusion:
+$$\wbb{\mapt{\Gamma}^{\mathsf{p}}}{\ell}{\Delta^*}{\map{P'\subst{k_1,k_2}{x_1, x_2}}^{\mathsf{p}}}{\Delta^*}{Q}$$
+
+%% Biadic Abstraction Output 
+\item Case $P =  \bbout{k}{\abs{x_1,x_2} Q} P' $, 
+$\map{P}^{\mathsf{p}} = 
+		\bbout{k}{\abs{z}\binp{z}{x_1}\binp{z}{x_2} \map{Q}^{\mathsf{p}}} \map{P'}^{\mathsf{p}}$,
+		and \\ $\ell_2 = \bactout{k}{\abs{z}\binp{z}{x_1} \binp{z}{x_2} \map{Q}^{\mathsf{p}}} $. Then we have, for some $S$, $C_1$, $C_2$, and $\Delta$, the following judgment and  typed transition:
+\begin{eqnarray*}
+& & \mapt{\Gamma}^{\mathsf{p}}; 
+\mapt{\Delta}^{\mathsf{p}}\cat k:\tmap{\bbtout{\lhot{(C_1,  C_2)}} S}{\mathsf{p}}
+\proves 
+\bbout{k}{\abs{z}\binp{z}{x_1}\binp{z}{x_2} \map{Q}^{\mathsf{p}}} \map{P'}^{\mathsf{p}} \\
+& \hby{\ell_2} & 
+\mapt{\Gamma}^{\mathsf{p}}; 
+\mapt{\Delta}^{\mathsf{p}}\cat k:\tmap{ S}{\mathsf{p}} 
+\proves 
+\map{P'}^{\mathsf{p}} = Q
+\end{eqnarray*}
+For simplicity, we consider only the case of linear functions.
+It is then immediate to infer the label for the source transition:
+$\ell_1 = \bactout{k}{\abs{x_1,  x_2}{Q}} $. 
+Now, in the source term $P$ we can infer the following transition:
+$$
+\stytra{\Gamma}{\ell_1}{\Delta\cat k:\bbtout{\lhot{(C_1,  C_2)}} S}{ \bbout{k}{\abs{x_1,x_2} Q} P'}{\Delta\cat k{:}S}{P'}
+$$
+Then we have the desired conclusion:
+$$\wbb{\mapt{\Gamma}^{\mathsf{p}}}{\ell}{\mapt{\Delta\cat k:S}^{\mathsf{p}}}{\map{P'}^{\mathsf{p}}}{\mapt{\Delta\cat k:S}^{\mathsf{p}}}{Q}$$
+
+
+%% Biadic Abstraction Input 
+\item Case $P =  \binp{k}{X} P' $, 
+$\map{P}^{\mathsf{p}} = 
+		\binp{k}{X} \map{P'}^{\mathsf{p}}$,
+		and  $\ell_2 = \bactinp{k}{\abs{z}\binp{z}{x_1} \binp{z}{x_2} \map{Q}^{\mathsf{p}}} $. Then we have, for some $S$, $C_1$, $C_2$, and $\Delta$, the following judgment and  typed transition:
+\begin{eqnarray*}
+& & \mapt{\Gamma}^{\mathsf{p}}; 
+\mapt{\Delta}^{\mathsf{p}}\cat k:\tmap{\bbtinp{\shot{(C_1,  C_2)}} S}{\mathsf{p}}
+\proves 
+\binp{k}{X} \map{P'}^{\mathsf{p}} \\
+& \hby{\ell_2} & 
+\mapt{\Gamma}^{\mathsf{p}}; 
+\mapt{\Delta}^{\mathsf{p}}\cat k:\tmap{ S}{\mathsf{p}} 
+\proves 
+\map{P'}^{\mathsf{p}}\subst{\abs{z}\binp{z}{x_1} \binp{z}{x_2} \map{Q}^{\mathsf{p}}}{X} = Q
+\end{eqnarray*}
+For simplicity, we consider only the case of shared functions.
+It is then immediate to infer the label for the source transition:
+$\ell_1 = \bactinp{k}{\abs{x_1,  x_2}{Q}} $. 
+Now, in the source term $P$ we can infer the following transition:
+$$
+\stytra{\Gamma}{\ell_1}{\Delta\cat k:\bbtinp{\shot{(C_1, C_2)}} S}{ \binp{k}{X} P'}{\Delta\cat k{:}S}{P'\subst{\abs{x_1,  x_2}{Q}}{X}}
+$$
+Then we have the desired conclusion:
+$$\wbb{\mapt{\Gamma}^{\mathsf{p}}}{\ell}{\mapt{\Delta\cat k:S}^{\mathsf{p}}}{\map{P'\subst{\abs{x_1,  x_2}{Q}}{X}}^{\mathsf{p}}}{\mapt{\Delta\cat k:S}^{\mathsf{p}}}{Q}$$
+We omit the (easy) conductive argument supporting the last claim,
+which uses Prop.~\ref{p:poltomo}.
+We content ourselves with noticing that the key difference between 
+${\map{P'\subst{\abs{x_1,  x_2}{Q}}{X}}^{\mathsf{p}}}$
+and $Q$ consists in the $\tau$-transitions present in $Q$  and absent in${\map{P'\subst{\abs{x_1,  x_2}{Q}}{X}}^{\mathsf{p}}}$, which are induced   by the monadic representation of polyadic communication.
+\end{enumerate}
+\qed
 \end{proof}
 
+\begin{conjecture}[Full Abstraction]
+\begin{enumerate}[a)]
+\item
+If
+$\wbb{ \Gamma}{\ell}{\Delta_1}{ P }{ \Delta_2}{Q}$
+then
+$\wbb{\mapt{\Gamma}^{\mathsf{p}}}{\ell}{\mapt{\Delta_1}^{\mathsf{p}}}{\map{P}^{\mathsf{p}}}{\mapt{\Delta_2}^{\mathsf{p}}}
+{\map{Q}^{\mathsf{p}}}$.
+\item  
+If 
+$\wbb{\mapt{\Gamma}^{\mathsf{p}}}{\ell}{\mapt{\Delta_1}^{\mathsf{p}}}{\map{P}^{\mathsf{p}}}{\mapt{\Delta_2}^{\mathsf{p}}}
+{\map{Q}^{\mathsf{p}}}$
+then 
+$\wbb{ \Gamma}{\ell}{\Delta_1}{ P }{ \Delta_2}{Q}$.
+\end{enumerate}
+While (a) is  completeness (easy in principle), (b) is soundness (non trivial).
+\end{conjecture}
+
+In the light of the tight operational correspondence for the polyadic/monadic encoding,
+in the following we restrict to consider monadic communications.
 
 \subsection{Encoding $\sessp^{-\mu}$  into \HO}
 
@@ -397,9 +674,10 @@ to give a sound encoding of the recursion semantics to $\HO$.
 We first encode the name passing semantics.
 %Below, we use $n$ to stand for either a linear channel $k'$ or a shared name $a$.
 
-\begin{definition}[Finite First-Order into Higher-Order]%\rm
+\begin{definition}[Finite First-Order into Higher-Order]\label{d:enc:fotoho}
    Let  $\enco{\map{\cdot}^{1}, \mapt{\cdot}^{1}, \mapa{\cdot}^{1}}: \sessp^{-\mu} \to \HO$ be a typed encoding where
 %	Define $\encod{\cdot}{\cdot}{1}: \sessp^{-\mu} \to \HO$  as follows:
+\begin{figure}[t]
 	\[
 	\begin{array}{rcl}
 		\pmap{\bout{k}{k'} P}{1}		&\defeq&	\bbout{k}{ \abs{z}{\,\binp{z}{X} \appl{X}{k'}} } \pmap{P}{1} \\
@@ -408,11 +686,19 @@ We first encode the name passing semantics.
 		\tmap{\btinp{S_1} S }{1}		&\defeq&	\btinp{\lhot{\btinp{\lhot{\tmap{S_1}{1}}}\tinact}} \tmap{S}{1} \\
 		\tmap{\bbtout{\chtype{S_1}}{S}}{1}	&\defeq&	\btout{\shot{\btinp{\shot{\chtype{\tmap{S_1}{1}}}}\tinact}} \tmap{S}{1}  \\
 		\tmap{\bbtinp{\chtype{S_1}}{S}}{1}	&\defeq&	\btinp{\shot{\btinp{\shot{\chtype{\tmap{S_1}{1}}}}\tinact}} \tmap{S}{1}  \\
-		\mapa{a} &\defeq& ---
+		\mapa{\bactout{k}{k_1}}^{1} &\defeq&   \bactout{k}{\abs{z}{\,\binp{z}{X} \appl{X}{k_1}}\, } \\
+		\mapa{\bactinp{k}{k_1}}^{1} &\defeq&   \bactinp{k}{\abs{z}{\,\binp{z}{X} \appl{X}{k_1}}\, }
 	\end{array}
 	\]
-and mappings $\map{\cdot}^{1}$, $\mapt{\cdot}^{1}$, $\mapa{\cdot}^{1}$
-are homomorphisms for the other processes/types/labels. 
+	\caption{
+Encoding of first-order communication into higher-order communication (cf.~Defintion~\ref{d:enc:fotoho} \label{f:enc:fotoho}).
+The mappings are homomorphisms for the other processes/types/labels. 
+}
+\end{figure}
+mappings $\map{\cdot}^{1}$, $\mapt{\cdot}^{1}$, $\mapa{\cdot}^{1}$
+%are homomorphisms for the other processes/types/labels. 
+are 
+as in Fig.~\ref{f:enc:fotoho}.
 \end{definition}
 
 In the higher-order setting, a name $k$ is being passed as an input
@@ -424,24 +710,103 @@ the input guarded abstraction, apply it on a fresh endpoint $s$ and use
 the dual endpoint $\dual{s}$ to send the continuation $P$ as the abstraction
 $\abs{x}{P}$. Name substitution is then achieved as application.
 
-\begin{proposition}\rm
-	Encoding $\encod{\cdot}{\cdot}{1}: \sessp^{-\mu} \to \HO$  is type-preserving (cf. Def.~\ref{def:ep}\,(1)).\rm
+\begin{proposition}[Type Preservation, First-Order into Higher-Order]
+Let $P$ be a  $\sessp^{-\mu}$ process.
+If			$\Gamma; \emptyset; \Delta \proves P \hastype \Proc$ then 
+			$\mapt{\Gamma}^{1}; \emptyset; \mapt{\Delta}^{1} \proves \map{P}^{1} \hastype \Proc$. 
 \end{proposition}
 
 \begin{proof}
-	Proof in Appendix~\ref{app:enc_sesspnr_to_ho} (Page~\pageref{app:enc_sesspnr_to_ho}).
+By induction on the inference $\Gamma; \emptyset; \Delta \proves P \hastype \Proc$. \\
+Some (old) details in Appendix~\ref{app:enc_sesspnr_to_ho} (Page~\pageref{app:enc_sesspnr_to_ho}).
 	\qed
 \end{proof}
 
-\begin{proposition}\rm
-	Encoding $\encod{\cdot}{\cdot}{1}: \sessp^{-\mu} \to \HO$  enjoys operational correspondence (cf. Def.~\ref{def:ep}\,(2)).
+\begin{proposition}[Operational Correspondence, First-Order into Higher-Order]
+Let $P$ be a  $\sessp^{-\mu}$ process.
+If $\Gamma; \emptyset; \Delta \proves P \hastype \Proc$ then
+		\begin{enumerate}[a)]
+			\item	 
+			   If  $\stytra{\Gamma}{\ell_1}{\Delta}{P}{\Delta'}{P'}$
+			   then  $\exists \ell_2$ s.t. \\
+			    $\wtytra{\mapt{\Gamma}^{1}}{\ell_2}{\mapt{\Delta}^{1}}{\map{P}^{1}}{\mapt{\Delta'}^{1}}{\map{P'}^{1}}$
+			    and $\ell_2 = \mapa{\ell_1}^{1}$.
+			\item   
+			If  $\wtytra{\mapt{\Gamma}^{1}}{\ell_2}{\mapt{\Delta}^{1}}{\map{P}^{1}}{\mapt{\Delta'}^{1}}{Q}$
+			   then $\exists \ell_1, P'$ s.t.  \\
+			    (i)~$\stytra{\Gamma}{\ell_1}{\Delta}{P}{\Delta'}{P'}$,
+			    (ii)~$\ell_2 = \mapa{\ell_1}^{1}$, 
+			    (iii)~$\wbb{\mapt{\Gamma}^{1}}{\ell}{\mapt{\Delta'}^{1}}{\map{P'}^{1}}{\mapt{\Delta'}^{1}}{Q}$.
+			    \end{enumerate}
 \end{proposition}
 
-
 \begin{proof}
-	Proof in Appendix~\ref{app:enc_sesspnr_to_ho} (Page~\pageref{app:enc_sesspnr_to_ho}).
-	\qed
+By transition induction. We consider parts (a) and (b) separately: \\
+\noi \textbf{Part (a)}. We consider two non-trivial cases, the rest is similar or simpler:
+\begin{enumerate}[1.]
+%%  Output 
+\item Case  $P =\bout{k}{k_1} P'$ and $\ell_1 = \bactout{k}{k_1}$. By assumption, $P$ is well-typed. 
+We may have:
+			\[
+				\tree{
+					\Gamma; \emptyset; \Delta_0 \cat k:S  \proves  P' \hastype \Proc \quad 
+					\Gamma ; \emptyset ; \{k_1{:} S_1\}  \proves   k_1 \hastype S_1 }{
+					\Gamma; \emptyset; \Delta_0 \cat k_1{:}S_1 \cat k:\btout{S_1 }S \proves  
+					\bout{k}{k_1} P' \hastype \Proc}
+			\]
+for some $\Gamma, S, S_1, \Delta_0$, 
+such that $\Delta = \Delta_0 \cat k_1{:}S_1  \cat k:\btout{S_1}S$.
+We may then have the following transition
+$$
+\stytra{\Gamma}{\ell_1}{\Delta_0 \cat k_1{:}S_1  \cat k:\btout{S_1}S}{\bout{k}{k_1} P'}{\Delta_0 \cat k{:}S }{P'}
+$$
+The encoding of the source judgment for $P$ is as follows:
+$$
+\mapt{\Gamma}^{\mathsf{p}}; \emptyset; \mapt{\Delta_0 \cat k_1{:}S_1  \cat k:\btout{S_1}S}^{\mathsf{p}} \proves \map{\bout{k}{k_1} P'}^{\mathsf{p}} \hastype \Proc
+$$
+which, using Def.~\ref{d:enc:fotoho}, can be equivalently expressed as 
+$$
+\mapt{\Gamma}^{\mathsf{p}}; \emptyset; \mapt{\Delta_0} 
+\cat k_1{:}\mapt{S_1}^{\mathsf{p}} 
+\cat k: \btout{\lhot{\btinp{\lhot{\tmap{S_1}{1}}}\tinact}} \tmap{S}{1}
+\proves 
+\bbout{k}{ \abs{z}{\,\binp{z}{X} \appl{X}{k_1}} } \pmap{P}{1}
+\hastype \Proc
+$$
+Now, $\mapa{\ell_1}^{\mathsf{p}} = \bactout{k}{\abs{z}{\,\binp{z}{X} \appl{X}{k_1}}\, } $. 
+It is immediate to infer the following transitions for $\map{P}^{\mathsf{p}}  = 
+\bbout{k}{ \abs{z}{\,\binp{z}{X} \appl{X}{k_1}} } \pmap{P}{1}$:
+
+TBC
+\end{enumerate}
+
+\noi \textbf{Part (b)}. We consider two non-trivial cases, the rest is similar or simpler:
+\begin{enumerate}[1.]
+%%  Output 
+\item TBC
+\end{enumerate}
+
+
 \end{proof}
+
+%\begin{conjecture}[Full Abstraction]
+%\begin{enumerate}[a)]
+%\item
+%If
+%$\wbb{ \Gamma}{\ell}{\Delta_1}{ P }{ \Delta_2}{Q}$
+%then
+%$\wbb{\mapt{\Gamma}^{1}}{\ell}{\mapt{\Delta_1}^{1}}{\map{P}^{1}}{\mapt{\Delta_2}^{1}}
+%{\map{Q}^{1}}$.
+%\item  
+%If 
+%$\wbb{\mapt{\Gamma}^{1}}{\ell}{\mapt{\Delta_1}^{1}}{\map{P}^{1}}{\mapt{\Delta_2}^{1}}
+%{\map{Q}^{1}}$
+%then 
+%$\wbb{ \Gamma}{\ell}{\Delta_1}{ P }{ \Delta_2}{Q}$.
+%\end{enumerate}
+%While (a) is  completeness, (b) is soundness.
+%
+%\end{conjecture}
 
 \begin{comment}
 \begin{proof}[Sketch]
@@ -790,11 +1155,12 @@ For the sake of completeness, we give again the encodings for
 finite processes and types, as
 formalized by $\encod{\cdot}{\cdot}{1}: \sessp^{-\mu} \to \HO$.
 
-\begin{definition}[Full First-Order into Higher-Order]%\rm
+\begin{definition}[Full First-Order into Higher-Order]\label{d:enc:fotohorec}
 	Let $f$ be a function from recursion variables to sequences of name variables.
 	%Define $\fencod{\cdot}{\cdot}{2}{f}: \sessp \to \HO$ as
 %
 Define the typed encoding $\enco{\map{\cdot}^{2}_f, \mapt{\cdot}^{2}, \mapa{\cdot}^{2}}: \sessp \to \HO$ as
+\begin{figure}[t]
 \[
 	\begin{array}{rcll}
 %	\map{\rec{X}{P}}^{2} &=& \newsp{s}{\binp{s}{\X} \map{P}^{2} \Par \bout{\dual{s}}{\abs{z \cat \vmap{\fn{P}}}{\binp{z}{\X} \map{P}^{\es}}} \inact}\\
@@ -808,12 +1174,18 @@ Define the typed encoding $\enco{\map{\cdot}^{2}_f, \mapt{\cdot}^{2}, \mapa{\cdo
 		\tmap{\btinp{S_1} S }{2}	&\defeq&	\bbtinp{\lhot{\btinp{\lhot{\tmap{S_1}{2}}}\tinact}} \tmap{S}{2} \\
 		\tmap{\bbtout{\chtype{S_1}} {S} }{2}	&\defeq&	\bbtout{\shot{\btinp{\shot{\chtype{\tmap{S_1}{2}}}}\tinact}} \tmap{S}{2}  \\
 		\tmap{\bbtinp{\chtype{S_1}} {S} }{2}	&\defeq&	\bbtinp{\shot{\btinp{\shot{\chtype{\tmap{S_1}{2}}}}\tinact}} \tmap{S}{2} \\
-				\mapa{a} &\defeq& ---
+		\mapa{\bactout{k}{k_1}}^{2} &\defeq&   \bactout{k}{\abs{z}{\,\binp{z}{X} \appl{X}{k_1}} } \\
+		\mapa{\bactinp{k}{k_1}}^{2} &\defeq&   \bactinp{k}{\abs{z}{\,\binp{z}{X} \appl{X}{k_1}} }
 	\end{array}
 \]
-%
+\caption{
+Encoding of first-order communication into higher-order communication (cf.~Defintion~\ref{d:enc:fotohorec} \label{f:enc:fotohorec}).
+The mappings are homomorphisms for the other processes/types/labels. 
+}
+
+\end{figure}
 and mappings $\map{\cdot}^{2}$, $\mapt{\cdot}^{2}$, $\mapa{\cdot}^{2}$
-are homomorphisms for the other processes/types/labels. 
+are as in Fig.~\ref{f:enc:fotohorec}.
 \end{definition}
 
 \begin{remark}\rm
@@ -828,19 +1200,45 @@ are homomorphisms for the other processes/types/labels.
 	$\tilde{S}_{\Sigma} = S_1, \ldots, S_m$ for any $\Sigma = \{n_1:S_1, \ldots, n_m:S_m\}$.
 \end{remark}
 
-\begin{proposition}\rm
-	Encoding $\fencod{\cdot}{\cdot}{2}{f}: \sessp \to \HO$  
-	is type-preserving (cf. Def.~\ref{def:ep}\,(1)).
+%\begin{proposition}\rm
+%	Encoding $\fencod{\cdot}{\cdot}{2}{f}: \sessp \to \HO$  
+%	is type-preserving (cf. Def.~\ref{def:ep}\,(1)).
+%\end{proposition}
+
+
+\begin{proposition}[Type Preservation, Full First-Order into Higher-Order]
+Let $P$ be a  $\sessp$ process.
+If			$\Gamma; \emptyset; \Delta \proves P \hastype \Proc$ then 
+			$\mapt{\Gamma}^{2}; \emptyset; \mapt{\Delta}^{2} \proves \map{P}_f^{2} \hastype \Proc$. 
 \end{proposition}
 
 \begin{proof}
-	Proof in Appendix~\ref{app:enc_sesp_to_HO}.
+By induction on the inference $\Gamma; \emptyset; \Delta \proves P \hastype \Proc$. \\
+Old details in Appendix~\ref{app:enc_sesp_to_HO}.
 	\qed
 \end{proof}
 
-\begin{proposition}\rm
-	Encoding $\fencod{\cdot}{\cdot}{2}{f}: \sessp \to \HO$ 
-	enjoys operational correspondence (cf. Def.~\ref{def:ep}\,(2)).
+%\begin{proposition}\rm
+%	Encoding $\fencod{\cdot}{\cdot}{2}{f}: \sessp \to \HO$ 
+%	enjoys operational correspondence (cf. Def.~\ref{def:ep}\,(2)).
+%\end{proposition}
+
+\begin{proposition}[Operational Correspondence, Full First-Order into Higher-Order]
+Let $P$ be a  $\sessp$ process.
+If $\Gamma; \emptyset; \Delta \proves P \hastype \Proc$ then
+		\begin{enumerate}[a)]
+			\item	 
+			   If  $\stytra{\Gamma}{\ell_1}{\Delta}{P}{\Delta'}{P'}$
+			   then  $\exists \ell_2$ s.t. \\
+			    $\wtytra{\mapt{\Gamma}^{2}}{\ell_2}{\mapt{\Delta}^{2}}{\map{P}_f^{2}}{\mapt{\Delta'}^{2}}{\map{P'}_f^{2}}$
+			    and $\ell_2 = \mapa{\ell_1}^{2}$.
+			\item   
+			If  $\wtytra{\mapt{\Gamma}^{2}}{\ell_2}{\mapt{\Delta}^{2}}{\map{P}^{2}_f}{\mapt{\Delta'}^{2}}{Q}$
+			   then $\exists \ell_1, P'$ s.t.  \\
+			    (i)~$\stytra{\Gamma}{\ell_1}{\Delta}{P}{\Delta'}{P'}$,
+			    (ii)~$\ell_2 = \mapa{\ell_1}^{2}$, 
+			    (iii)~$\wbb{\mapt{\Gamma}^{2}}{\ell}{\mapt{\Delta'}^{2}}{\map{P'}_f^{2}}{\mapt{\Delta'}^{2}}{Q}$.
+			    \end{enumerate}
 \end{proposition}
 
 \begin{proof}[Sketch]
@@ -901,9 +1299,12 @@ The correct approach would be to use replicated shared names
 as triggers instead of session names. 
 Below we write $\repl{} P$ as a shorthand notation for $\recp{X}{(P \Par \rvar{X})}$.
 
-\begin{definition}[Higher-Order into First-order]%\rm
+\begin{definition}[Higher-Order into First-order]\label{d:enc:hotofo}
 	Define $\encod{\cdot}{\cdot}{3}: \HO \to \sessp$ 
-	Let $\enco{\map{\cdot}^3, \mapa{\cdot}^3, \mapa{\cdot}^3,}$ be the typed encoding defined as
+	Let $\enco{\map{\cdot}^3, \mapa{\cdot}^3, \mapa{\cdot}^3,}$ be the typed encoding, with mappings 
+	$\map{\cdot}^{3}$, $\mapt{\cdot}^{3}$, $\mapa{\cdot}^{3}$ as
+	in Fig.~\ref{f:enc:hotofo}.
+	\begin{figure}[t]
 	\[
 	\begin{array}{rcl}
 		\pmap{\bout{k}{\abs{x}{Q}} P}{3} & \defeq &  \left\{
@@ -917,29 +1318,50 @@ Below we write $\repl{} P$ as a shorthand notation for $\recp{X}{(P \Par \rvar{X
 		\pmap{\appl{X}{k}}{3} & \defeq & \newsp{s}{\bout{x}{s} \bout{\dual{s}}{k} \inact}\\
 		\tmap{\btout{\lhot{S}}S_1}{3} & \defeq & \bbtout{\chtype{\btinp{\tmap{S}{3}}\tinact}}\tmap{S_1}{3} \\
 		\tmap{\btinp{\lhot{S}}S_1}{3} & \defeq & \bbtinp{\chtype{\btinp{\tmap{S}{3}}\tinact}}\tmap{S_1}{3} \\
-		\mapa{a}^3 &  \defeq & ----
+		\mapa{\bactout{k}{\abs{ x}{P}} }^3 &  \defeq & \news{a} \bactout{k}{a} \\
+		\mapa{\bactinp{k}{\abs{ x}{P}} }^3 &  \defeq & \bactinp{k}{a}
 	\end{array}
 	\]
-	and mappings $\map{\cdot}^{3}$, $\mapt{\cdot}^{3}$, $\mapa{\cdot}^{3}$
-are homomorphisms for the other processes/types/labels. 
+	\caption{
+Encoding of higher-order communication into first-order communication (cf.~Defintion~\ref{d:enc:hotofo}).
+\label{f:enc:hotofo}
+}
+\end{figure}
 \end{definition}
 
-\begin{proposition}\rm
-	Encoding $\encod{\cdot}{\cdot}{3}: \HO \to \sessp$  is type-preserving (cf. Def.~\ref{def:ep}\,(1)).
+\begin{proposition}[Type Preservation, Higher-Order into First-Order]
+Let $P$ be an  $\HO$ process. 
+If			$\Gamma; \emptyset; \Delta \proves P \hastype \Proc$ then 
+			$\mapt{\Gamma}^{3}; \emptyset; \mapt{\Delta}^{3} \proves \map{P}^{3} \hastype \Proc$. 
 \end{proposition}
 
 \begin{proof}
-	Proof in Appendix~\ref{app:enc_HO_to_sessp}.
+By induction on the inference $\Gamma; \emptyset; \Delta \proves P \hastype \Proc$. \\
+Some (old) details in Appendix~\ref{app:enc_HO_to_sessp} (Page~\pageref{app:enc_HO_to_sessp}).
 	\qed
 \end{proof}
 
-\begin{proposition}\rm
-	Encoding $\encod{\cdot}{\cdot}{3}: \HO \to \sessp$ 
-	enjoys operational correspondence (cf. Def.~\ref{def:ep}\,(2)).
+\begin{proposition}[Operational Correspondence, Higher-Order into First-Order]
+Let $P$ be an  $\HO$ process.
+If $\Gamma; \emptyset; \Delta \proves P \hastype \Proc$ then
+		\begin{enumerate}[a)]
+			\item	 
+			   If  $\stytra{\Gamma}{\ell_1}{\Delta}{P}{\Delta'}{P'}$
+			   then  $\exists \ell_2$ s.t. 
+			    $\wtytra{\mapt{\Gamma}^{3}}{\ell_2}{\mapt{\Delta}^{3}}{\map{P}^{3}}{\mapt{\Delta'}^{3}}{\map{P'}^{3}}$
+			    and $\ell_2 = \mapa{\ell_1}^{3}$.
+			\item   
+			If  $\wtytra{\mapt{\Gamma}^{3}}{\ell_2}{\mapt{\Delta}^{3}}{\map{P}^{3}}{\mapt{\Delta'}^{3}}{Q}$
+			   then $\exists \ell_1, P'$ s.t.  \\
+			    (i)~$\stytra{\Gamma}{\ell_1}{\Delta}{P}{\Delta'}{P'}$,
+			    (ii)~$\ell_2 = \mapa{\ell_1}^{3}$, 
+			    (iii)~$\wbb{\mapt{\Gamma}^{3}}{\ell}{\mapt{\Delta'}^{3}}{\map{P'}^{3}}{\mapt{\Delta'}^{3}}{Q}$.
+			    \end{enumerate}
 \end{proposition}
 
 \begin{proof}
-	Proof in Appendix~\ref{app:enc_HO_to_sessp}.
+By transition induction. TBC. \\
+Some (old) details in Appendix~\ref{app:enc_HO_to_sessp}.
 	\qed
 \end{proof}
 
