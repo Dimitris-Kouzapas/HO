@@ -30,7 +30,7 @@ The type syntax for values and sessions
 	U \bnfis &	\tilde{C} \bnfbar L \bnfbar \chtype{L} \bnfbar \Proc
 	\\
 
-	S \bnfis & 	\btout{U} S \bnfbar \btinp{U} S
+	S,T \bnfis & 	\btout{U} S \bnfbar \btinp{U} S
 			\bnfbar \btsel{l_i:S_i}_{i \in I} \bnfbar \btbra{l_i:S_i}_{i \in I}
 			\bnfbar \trec{t}{S} \bnfbar \vart{t}  \bnfbar \tinact
 \end{array}
@@ -85,23 +85,23 @@ well-formedness conditions.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \subsection{Duality}
-Assuming set $\mathsf{ST}$ to be the set of all well-formed session types,
-the following definition establishes the key notion of duality on session types.
+The following definition establishes the key notion of duality on session types.
 %
 \begin{definition}[Duality]\rm
-	Let function $F(R): \mathsf{ST} \longrightarrow \mathsf{ST}$ to be defined as:
+Let $\mathsf{ST}$ denote the set of well-formed session types.
+The function $F(R): \mathsf{ST} \longrightarrow \mathsf{ST}$ is defined as:
 
 	\begin{tabular}{rcl}
 		$F(R)$ &$=$&		$\set{(\tinact, \tinact), (\vart{t}, \vart{t})}$\\
-			&$\cup$&	$\set{(\btout{U} S_1, \btinp{U} S_2), (\btinp{U} S_1, \btout{U} S_2) \bnfbar S_1\ R\ S_2}$\\
-			&$\cup$&	$\set{(\btsel{l_i: S_i}_{i \in I}, \btbra{l_j: S_j'}_{j \in J}) \bnfbar I \subseteq J, S_i\ R\ S_j'}$\\
-			&$\cup$&	$\set{(\btbra{l_i: S_i}_{i \in I}, \btsel{l_j: S_j'}_{j \in J}) \bnfbar J \subseteq I, S_j\ R\ S_i'}$\\
-			&$\cup$&	$\set{(\trec{t}{S_1}, \trec{t}{S_2}) \cup (S_1 \subst{\trec{t}{S}}{\vart{t}}, S_2), (S_1, S_2\subst{\trec{t}{S}}{\vart{t}}) \bnfbar S_1\ R\ S_2)}$
+			&$\cup$&	$\set{(\btout{U} S, \btinp{U} T)\,,\, (\btinp{U} S, \btout{U} T) \bnfbar S\ R\ T}$\\
+			&$\cup$&	$\set{(\btsel{l_i: S_i}_{i \in I} \,,\, \btbra{l_j: T_j}_{j \in J}) \bnfbar I \subseteq J, S_i\ R\ T_j}$\\
+			&$\cup$&	$\set{(\btbra{l_i: S_i}_{i \in I}\,,\, \btsel{l_j: T_j}_{j \in J}) \bnfbar J \subseteq I, S_j\ R\ T_i}$\\
+			&$\cup$&	$\set{(\trec{t}{S}\,,\, \trec{t}{T}) \cup (S \subst{\trec{t}{S}}{\vart{t}}\,,\, T) \cup (S\,,\, T\subst{\trec{t}{T}}{\vart{t}}) \bnfbar S\ R\ T)}$
 	\end{tabular}
 	
 \noindent
-	Standard arguments ensure that $F$ is monotone, thus the greatest fix point
-	of $F$ exists and let duality defined as $\dualof = \nu X. F(X)$.
+	Standard arguments ensure that $F$ is monotone, thus the greatest fixed point
+	of $F$ exists. Let duality be defined as $\dualof = \nu X. F(X)$.
 \end{definition}
 %
 
@@ -237,9 +237,9 @@ Mostrous and Yoshida in the asynchronous case.
 \begin{lemma}[Substitution Lemma - Lemma C.10 in M\&Y]\rm
 	\label{lem:subst}
 	\begin{enumerate}[1.]
-		\item	Suppose $\Gamma; \Lambda; \Delta \cat x:S  \proves P \hastype \Proc$ and
-			$k \not\in \dom{\Gamma, \Lambda, \Delta}$. 
-			Then $\Gamma; \Lambda; \Delta \cat k:S  \vdash P\subst{k}{x} \hastype \Proc$.
+		\item	Suppose $\Gamma; \Lambda; \Delta \cat \widetilde{x}:\widetilde{S}  \proves P \hastype \Proc$ and
+			$\widetilde{k} \not\in \dom{\Gamma, \Lambda, \Delta}$. 
+			Then $\Gamma; \Lambda; \Delta \cat \widetilde{k}:S  \vdash P\subst{\widetilde{k}}{\widetilde{x}} \hastype \Proc$.
 
 		\item	Suppose $\Gamma \cat x:\chtype{U}; \Lambda; \Delta \proves P \hastype \Proc$ and
 			$a \notin \dom{\Gamma, \Lambda, \Delta}$. 
