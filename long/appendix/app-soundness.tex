@@ -134,8 +134,8 @@ Theorem~\ref{t:sr} in Page~\pageref{t:sr}:
 \end{theorem}
 
 \begin{proof}
-	Part (1) is standard, using weakening and strengthening lemmas. Part (2) proceeds by induction on the last reduction rule used:
-	\begin{enumerate}[$-$]
+	Part (1) is standard, using weakening and strengthening lemmas. Part (2) proceeds by induction on the last reduction rule used. Below, we give some details:
+	\begin{enumerate}[1.]
 		\item	Case \orule{NPass}:
 			Then there are two sub-cases, depending on whether the
 			communication subject is a shared name or a channel. 
@@ -167,21 +167,44 @@ Theorem~\ref{t:sr} in Page~\pageref{t:sr}:
 			we obtain 
 			$$\Gamma ; \emptyset ; \Delta_3, n:S  \proves  P_2\subst{n}{x} \hastype \Proc$$
 			and the case is completed by using rule~\trule{Par} with this judgment and
-			$\Gamma ; \emptyset ; \Delta_1 \proves   P_1 \hastype \Proc$.
+			$\Gamma ; \emptyset ; \Delta_1 \proves   P_1 \hastype \Proc$. NOT QUITE. \\
 			
-			The second case is...
-			
-			communicated name is a shared name or a channel, that is, i.e., $U = \mytilde{S}$ or $U = \chtype{S}$.
-			The proof is standard, using appropriate rules for typing reception of a name: when $U = S$ we use typing 
-			rule~\trule{RecvS} and Lemma~\ref{l:subst}(1); when $U = \chtype{S}$ we use typing 
-			rule~\trule{RecvShN} and Lemma~\ref{l:subst}(2). The session environment reduces.
+			In the second case we have the following reduction, with   $|\mytilde{h}| = |\mytilde{x}|$:
+			$$P = \bout{k}{\mytilde{h}} P_1 \Par \binp{k}{\mytilde{x}} P_2 \red P_1 \Par P_2\subst{\mytilde{h}}{\mytilde{x}} = P'$$ 
+			Also in this case the proof is standard, using rules~\trule{RcvS}, \trule{Send}, and \trule{Par} 
+			to type $P$, and using Lemma~\ref{lem:subst}(1) and rule~\trule{Par} to type $P'$. 
+			The session environment $\Delta$ reduces.
 
 		\item	Case \orule{APass}:
-			Then there are two sub-cases, depending on whether the
-			communicated process abstraction is a shared or linear, that is, i.e., $U = \shot{S}$ or $U = \lhot{S}$.
-			The proof is standard, using appropriate rules for typing reception of a process abstraction: 
-			when $U = \lhot{S}$ we use typing rule~\trule{RecvL} and Lemma~\ref{l:subst}(3); 
-			when $U = \shot{S}$ we use typing rule~\trule{RecvSh} and Lemma~\ref{l:subst}(4). The session environment reduces.
+		Then we have
+		$$
+		P = \bout{n}{\abs{\mytilde{x}}{Q}} P_1 \Par \binp{\dual{n}}{\X} P_2  \red  P_1 \Par P_2 \subst{\abs{\mytilde{x}}{Q}}{\X} = P'
+		$$
+		and we distinguish two cases, associated to the type of the higher-order value $\abs{\tilde{x}}{Q}$.
+		We describe the proof for the case in which the type is $\lhot{\mytilde{C}}$; the proof when 
+		the type is $\shot{\mytilde{C}}$ is analogous.
+		The typing of $P$ proceeds first by using rule~\trule{Send} on the left-hand side:
+		\[
+								\tree{
+					\Gamma;\, \emptyset;\, \Delta_1 \proves  P_1 \hastype \Proc \quad
+					\Gamma ;\, \emptyset ;\, \Delta_2 \proves   \abs{\mytilde{x}}{Q} \hastype \lhot{\mytilde{C}}					}{
+					\Gamma;\, \emptyset;\, \big((\Delta_1 \cat \Delta_2) \setminus \{n:S\}\big) \cat n:\btout{\lhot{\mytilde{C}}} S     \proves  
+ 					\bout{n}{\abs{\mytilde{x}}{Q}} P_1 \hastype \Proc} 
+			\]	
+			Then, by rule~\trule{RcvH} on the right-hand side we have (assuming $S \dualof T$):
+					\[
+					\tree{
+					\Gamma;\, X:\lhot{\mytilde{C}} ;\, \Delta_3 \cat n:T \proves  P_2 \hastype \Proc \quad
+					\Gamma ;\, \{X:\lhot{\mytilde{C}} \} ;\, \Delta_4 \proves   X \hastype \lhot{\mytilde{C}}					}{
+					\Gamma;\, \emptyset;\, \Delta_3 \setminus \Delta_4 \cat n:\btinp{\lhot{\mytilde{C}}} T     \proves  
+ 					\binp{n}{X} P_2 \hastype \Proc} 
+			\]	
+			Finally, we use rule~\trule{Par} to obtain the typing for $P$.
+			The typing of $P'$ is obtained by using the appropriate substitution lemma (Lemma~\ref{lem:subst}(3)) on the typing for $P_2$.
+			
+			When the type of the higher-order value is $\shot{\mytilde{C}}$,
+			the use of rules~\trule{Send} and~\trule{RcvH} for typing $P$ is similar; 
+			 one would use Lemma~\ref{lem:subst}(4) to type $P'$. The session environment reduces.
 
 		\item	Case \orule{Sel}:
 			The proof is standard, the session environment reduces.
