@@ -166,18 +166,52 @@ present in the session environment, since if it was present
 the only communication that could take place is the interaction
 between the two endpoints.
 Under the latter conditions the type tuple may output any
-value $V$ that is typed under a subset of the 
+value $V$ that is typed under a subset of $\Delta$ and
+the session environment that types the restricted names
+$\tilde{m}$. Scope extrusion of session names in $\tilde{m}$ requires
+that the dual endpoints of $\tilde{m}$ appear in
+the resulting session environment. Similarly for shared names
+in $\tilde{m}$ that are extruted.
+All free values used for typing $V$ are subtracted from the
+resulting type tuple. Also the prefix of session $s$ is consumed
+by the action.
+In a similar fashion output on a shared name is described
+with rule $\eltsrule{ShOut}$ where we require a shared name
+is typed with $\chtype{U}$. The requirements for
+the output $V$ are indentical with the requirements for
+rule $\eltsrule{SOut}$.
+Rules $\eltsrule{SRecv}$ and $\eltsrule{ShRecv}$ describe
+the input action $\bactinp{n}{V}$ ($n$ session or shared channel respectively)
+on the type tuple $(\Gamma, \Lambda, \Delta)$.
+We require the value $V$ has the same type as name $n$. Furthermore
+we expect the resulting type tuple to contain the values that
+consist value $V$.
+Rules $\eltsrule{Sel}$ and $\eltsrule{Bra}$ describe actions for
+select and branch. The only requirements for both
+rules is that the dual endpoint is not present in the session
+environment and furthermore the action labels are present
+in the type.
+Hidden transitions follow the reduction on the session
+environment (Definition~\ref{}) as we can see in rule
+$\eltsrule{Tau}$.
 
-
-\dk{describe env LTS}.
-
-A second environment LTS, denoted $\hby{\ell}$, is defined in the lower part of
-Figure~\ref{fig:envLTS}, by substituting the corresponding input cases
-of $\by{\ell}$ with the definitions of $\hby{\ell}$. All other 
-cases remain the same as relation $\by{\ell}. $Relation $\hby{\ell}$ 
-restricts higher order input; only characteristic processes and trigger processes
+A second environment LTS, denoted $\hby{\ell}$,
+is defined in the lower part of Figure~\ref{fig:envLTS}.
+The definition substitutes rules
+$\eltsrule{SRecv}$ and $\eltsrule{ShRecv}$
+of relation $\by{\ell}$ with rule $\eltsrule{RRcv}$.
+% the corresponding input cases
+%of $\by{\ell}$ with the definitions of $\hby{\ell}$.
+All other cases remain the same as the cases for
+relation $\by{\ell}$.
+Rule $\eltsrule{RRcv}$ restricts the higher-order input
+in relation $\hby{\ell}$;
+only characteristic processes and trigger processes
 are allowed to be received on a higher-order input.
-\dk{describe env LTS}. 
+Names can still be received as in the definition of
+the $\by{\ell}$ relation.
+The conditions for input follow the conditions
+for the $\by{\ell}$ definition.
 
 \paragraph{Typed Transition System}
 
@@ -495,7 +529,8 @@ of a bisimulation relation avoids the universal quantifier over processes.
 %			\end{eqnarray*}
 			and for fresh $t$
 			\[
-				\horel{\Gamma}{\Delta_1''}{\newsp{\tilde{m_1}}{P_2 \Par \fotrigger{t}{\tilde{m_1}}}}{\ \mathcal{R}\ }{\Delta_2''}{\newsp{\tilde{m_2}}{Q_2 \Par \fotrigger{t}{\tilde{m_2}}}}
+\dk{				\horel{\Gamma}{\Delta_1''}{\newsp{\tilde{m_1}}{P_2 \Par \fotrigger{t}{\tilde{m_1}}}}{\ \mathcal{R}\ }{\Delta_2''}{\newsp{\tilde{m_2}}{Q_2 \Par \fotrigger{t}{\tilde{m_2}}}}
+}
 %				\Gamma; \emptyset; \Delta_1''\ \mathcal{R}\ \Delta_2'' \proves
 %				\newsp{\tilde{m_1}'}{P_2 \Par \fotrigger{t}{\tilde{m_1}}}  % \map{S}^{s_1}}
 %				\ \mathcal{R}\ 
