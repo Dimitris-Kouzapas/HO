@@ -245,13 +245,13 @@ Mostrous and Yoshida in the asynchronous case.
 			$a \notin \dom{\Gamma, \Lambda, \Delta}$. 
 			Then $\Gamma \cat a:\chtype{U}; \Lambda; \Delta   \vdash P\subst{a}{x} \hastype \Proc$.
 
-		\item	Suppose $\Gamma; \Lambda_1 \cat X:\lhot{U}; \Delta_1  \proves P \hastype \Proc$ 
-			and $\Gamma; \Lambda_2; \Delta_2  \proves V \hastype \lhot{U}$ with 
+		\item	Suppose $\Gamma; \Lambda_1 \cat X:\lhot{\widetilde{C}}; \Delta_1  \proves P \hastype \Proc$ 
+			and $\Gamma; \Lambda_2; \Delta_2  \proves V \hastype \lhot{\widetilde{C}}$ with 
 			$\Lambda_1, \Lambda_2$ and $\Delta_1, \Delta_2$ defined.  
 			Then $\Gamma; \Lambda_1 \cat \Lambda_2; \Delta_1 \cat \Delta_2  \proves P\subst{V}{X} \hastype \Proc$.
 
-		\item	Suppose $\Gamma \cat X:\shot{U}; \Lambda; \Delta  \proves P \hastype \Proc$ and
-			$\Gamma; \emptyset ; \emptyset  \proves V \hastype \shot{U}$.
+		\item	Suppose $\Gamma \cat X:\shot{\widetilde{C}}; \Lambda; \Delta  \proves P \hastype \Proc$ and
+			$\Gamma; \emptyset ; \emptyset  \proves V \hastype \shot{\widetilde{C}}$.
 			Then $\Gamma; \Lambda; \Delta  \proves P\subst{V}{X} \hastype \Proc$.
 		\end{enumerate}
 \end{lemma}
@@ -261,18 +261,18 @@ By induction on the typing for $P$, with a case analysis on the last used rule.
 \qed
 \end{proof}
 
-\begin{definition}[Well-typed Session Environment]\rm
-	Let $\Delta$ a session environment.
+\begin{definition}[Well-typed Session Environment]%\rm
+	Let $\Delta$ be a session environment.
 	We say that $\Delta$ is {\em well-typed} if whenever
 	$s: S_1, \dual{s}: S_2 \in \Delta$ then $S_1 \dualof S_2$.
 \end{definition}
 
-\begin{definition}[Session Environment Reduction]\rm
-	We define relation $\red$ on session environments as:
-	\begin{itemize}
+\begin{definition}[Session Environment Reduction]%\rm
+	We define the relation $\red$ on session environments as:
+	\begin{enumerate}[$-$]
 		\item	$\Delta \cat s: \btout{U} S_1 \cat \dual{s}: \btinp{U} S_2 \red \Delta \cat s: S_1 \cat \dual{s}: S_2$
 		\item	$\Delta \cat s: \btsel{l_i: S_i}_{i \in I} \cat \dual{s}: \btbra{l_i: S_i'}_{i \in I} \red \Delta \cat s: S_k \cat \dual{s}: S_k', \quad k \in I$.
-	\end{itemize}
+	\end{enumerate}
 \end{definition}
 
 We now state the instance of type soundness that we can derived from the Mostrous and Yoshida system.
@@ -281,16 +281,16 @@ Also, their statement for subject reduction relies on an ordering on typings ass
 runtime elements (such extended typings are denoted $\Delta$ by M\&Y).
 Since we are synchronous we can omit such an ordering.
 
-\begin{theorem}[Type Soundness - Theorem 7.3 in M\&Y]\label{t:sr}\rm
+\begin{theorem}[Type Soundness - Theorem 7.3 in M\&Y]\label{t:sr}%\rm
 	\begin{enumerate}[1.]
 		\item	(Subject Congruence) Suppose $\Gamma; \es; \Delta \proves P \hastype \Proc$.
 			Then $P \scong P'$ implies $\Gamma; \es; \Delta \proves P' \hastype \Proc$.
 
 		\item	(Subject Reduction) Suppose $\Gamma; \es; \Delta \proves P \hastype \Proc$
 			with
-			well-typed $\Delta$.
-			Then $P \red P'$ implies $\Gamma; \es; \Delta_2  \proves P' \hastype \Proc$
-			and $\Delta_1 \red \Delta_2$ or $\Delta_1 = \Delta_2$.
+			well-typed $\Delta$. \\
+			Then $P \red P'$ implies $\Gamma; \es; \Delta'  \proves P' \hastype \Proc$
+			and $\Delta = \Delta'$ or $\Delta \red \Delta'$.
 	\end{enumerate}
 \end{theorem}
 
