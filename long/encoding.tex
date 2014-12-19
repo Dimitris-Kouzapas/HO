@@ -786,10 +786,10 @@ We first encode the name passing semantics.
 	\begin{array}{rcl}
 		\pmap{\bout{k}{k'} P}{1}		&\defeq&	\bbout{k}{ \abs{z}{\,\binp{z}{X} \appl{X}{k'}} } \pmap{P}{1} \\
 		\pmap{\binp{k}{x} Q}{1}			&\defeq&	\binp{k}{X} \newsp{s}{\appl{X}{s} \Par \bbout{\dual{s}}{\abs{x}{\pmap{Q}{1}}} \inact} \\
-		\tmap{\btout{S_1} {S} }{1}		&\defeq&	\btout{\lhot{\btinp{\lhot{\tmap{S_1}{1}}}\tinact}} \tmap{S}{1}  \\
-		\tmap{\btinp{S_1} S }{1}		&\defeq&	\btinp{\lhot{\btinp{\lhot{\tmap{S_1}{1}}}\tinact}} \tmap{S}{1} \\
-		\tmap{\bbtout{\chtype{S_1}}{S}}{1}	&\defeq&	\btout{\shot{\btinp{\shot{\chtype{\tmap{S_1}{1}}}}\tinact}} \tmap{S}{1}  \\
-		\tmap{\bbtinp{\chtype{S_1}}{S}}{1}	&\defeq&	\btinp{\shot{\btinp{\shot{\chtype{\tmap{S_1}{1}}}}\tinact}} \tmap{S}{1}  \\
+		\tmap{\btout{T} {S} }{1}		&\defeq&	\btout{\lhot{\btinp{\lhot{\tmap{T}{1}}}\tinact}} \tmap{S}{1}  \\
+		\tmap{\btinp{T} S }{1}		&\defeq&	\btinp{\lhot{\btinp{\lhot{\tmap{T}{1}}}\tinact}} \tmap{S}{1} \\
+		\tmap{\bbtout{\chtype{T}}{S}}{1}	&\defeq&	\btout{\shot{\btinp{\shot{\chtype{\tmap{T}{1}}}}\tinact}} \tmap{S}{1}  \\
+		\tmap{\bbtinp{\chtype{T}}{S}}{1}	&\defeq&	\btinp{\shot{\btinp{\shot{\chtype{\tmap{T}{1}}}}\tinact}} \tmap{S}{1}  \\
 		\mapa{\bactout{k}{k_1}}^{1} &\defeq&   \bactout{k}{\abs{z}{\,\binp{z}{X} \appl{X}{k_1}}\, } \\
 		\mapa{\bactinp{k}{k_1}}^{1} &\defeq&   \bactinp{k}{\abs{z}{\,\binp{z}{X} \appl{X}{k_1}}\, }
 	\end{array}
@@ -834,7 +834,7 @@ Some (old) details in Appendix~\ref{app:enc_sesspnr_to_ho} (Page~\pageref{app:en
 \begin{proposition}[Operational Correspondence, First-Order into Higher-Order]
 Let $P$ be a  $\sessp^{-\mu}$ process.
 If $\Gamma; \emptyset; \Delta \proves P \hastype \Proc$ then
-		\begin{enumerate}[a)]
+		\begin{enumerate}[1.]
 			\item	 
 			   If  $\stytra{\Gamma}{\ell_1}{\Delta}{P}{\Delta'}{P'}$
 			   then  $\exists \ell_2$ s.t. \\
@@ -850,8 +850,8 @@ If $\Gamma; \emptyset; \Delta \proves P \hastype \Proc$ then
 \end{proposition}
 
 \begin{proof}
-By transition induction. We consider parts (a) and (b) separately: \\
-\noi \textbf{Part (a)}. We consider two non-trivial cases, the rest is similar or simpler:
+By transition induction. We consider parts (1) and (2) separately: \\
+\noi \textbf{Part (1)}. We consider two non-trivial cases, the rest is similar or simpler:
 \begin{enumerate}[1.]
 %%  Output 
 \item Case  $P =\bout{k}{k_1} P'$ and $\ell_1 = \bactout{k}{k_1}$. By assumption, $P$ is well-typed. 
@@ -859,37 +859,78 @@ We may have:
 			\[
 				\tree{
 					\Gamma; \emptyset; \Delta_0 \cat k:S  \proves  P' \hastype \Proc \quad 
-					\Gamma ; \emptyset ; \{k_1{:} S_1\}  \proves   k_1 \hastype S_1 }{
-					\Gamma; \emptyset; \Delta_0 \cat k_1{:}S_1 \cat k:\btout{S_1 }S \proves  
-					\bout{k}{k_1} P' \hastype \Proc}
+					\Gamma ; \emptyset ; \{k_1{:} T\}  \proves   k_1 \hastype T }{
+					\Gamma; \emptyset; \Delta_0 \cat k_1{:}T \cat k:\btout{T}S \proves \bout{k}{k_1} P' \hastype \Proc}
 			\]
-for some $\Gamma, S, S_1, \Delta_0$, 
-such that $\Delta = \Delta_0 \cat k_1{:}S_1  \cat k:\btout{S_1}S$.
-We may then have the following transition
+for some $\Gamma, S, T, \Delta_0$, 
+such that $\Delta = \Delta_0 \cat k_1{:}T  \cat k:\btout{T}S$.
+We may then have the following transition:
 $$
-\stytra{\Gamma}{\ell_1}{\Delta_0 \cat k_1{:}S_1  \cat k:\btout{S_1}S}{\bout{k}{k_1} P'}{\Delta_0 \cat k{:}S }{P'}
+\stytra{\Gamma}{\ell_1}{\Delta_0 \cat k_1{:}T  \cat k:\btout{T}S}{\bout{k}{k_1} P'}{\Delta_0 \cat k{:}S }{P'}
 $$
 The encoding of the source judgment for $P$ is as follows:
 $$
-\mapt{\Gamma}^{\mathsf{p}}; \emptyset; \mapt{\Delta_0 \cat k_1{:}S_1  \cat k:\btout{S_1}S}^{\mathsf{p}} \proves \map{\bout{k}{k_1} P'}^{\mathsf{p}} \hastype \Proc
+\mapt{\Gamma}^{1}; \emptyset; \mapt{\Delta_0 \cat k_1{:}T  \cat k:\btout{T}S}^{1} \proves \map{\bout{k}{k_1} P'}^{1} \hastype \Proc
 $$
-which, using Def.~\ref{d:enc:fotoho}, can be equivalently expressed as 
+which, using Def.~\ref{d:enc:fotoho} can be expressed as 
 $$
 \mapt{\Gamma}^{\mathsf{p}}; \emptyset; \mapt{\Delta_0} 
-\cat k_1{:}\mapt{S_1}^{\mathsf{p}} 
-\cat k: \btout{\lhot{\btinp{\lhot{\tmap{S_1}{1}}}\tinact}} \tmap{S}{1}
+\cat k_1{:}\mapt{T}^{1} 
+\cat k: \btout{\lhot{\btinp{\lhot{\tmap{T}{1}}}\tinact}} \tmap{S}{1}
 \proves 
 \bbout{k}{ \abs{z}{\,\binp{z}{X} \appl{X}{k_1}} } \pmap{P}{1}
 \hastype \Proc
 $$
-Now, $\mapa{\ell_1}^{\mathsf{p}} = \bactout{k}{\abs{z}{\,\binp{z}{X} \appl{X}{k_1}}\, } $. 
-It is immediate to infer the following transitions for $\map{P}^{\mathsf{p}}  = 
-\bbout{k}{ \abs{z}{\,\binp{z}{X} \appl{X}{k_1}} } \pmap{P}{1}$:
+Now, $\mapa{\ell_1}^{1} = \bactout{k}{\abs{z}{\,\binp{z}{X} \appl{X}{k_1}}\, } $. 
+We may infer the following typed transition for $\map{P}^{1}$:
+\begin{eqnarray*}
+& & \mapt{\Gamma}^{1}; \emptyset; \mapt{\Delta}^{1} 
+\proves 
+\bbout{k}{ \abs{z}{\,\binp{z}{X} \appl{X}{k_1}} } \pmap{P}{1}
+\hastype \Proc \\
+& \hby{\mapa{\ell_1}^{1}} & \mapt{\Gamma}^{1}; \emptyset; \mapt{\Delta_0}^{1} 
+\cat k:  \tmap{S}{1}
+\proves  \pmap{P}{1}
+\hastype \Proc \\
+& = & \mapt{\Gamma}^{1}; \emptyset; \mapt{\Delta_0 \cat k:  S}^{1}
+\proves  \pmap{P}{1}
+\hastype \Proc 
+\end{eqnarray*}
+from which the thesis follows easily.
 
-TBC
+\item Case $P = \binp{k}{x} Q$	and $\ell_1 = \bactinp{k}{k_1}$.
+By assumption $P$ is well-typed.
+We may have:
+			\[
+				\tree{
+					\Gamma; \emptyset; \Delta_0 \cat x{:} T \cat k:S  \proves  P' \hastype \Proc \quad 
+					\Gamma ; \emptyset ; \{x{:} T\}  \proves   x\hastype T }{
+					\Gamma; \emptyset; \Delta_0 \cat   k:\btinp{T}S \proves \binp{k}{x} P' \hastype \Proc}
+			\]
+for some $\Gamma, S, T, \Delta_0$, 
+such that $\Delta = \Delta_0 \cat k:\btinp{T}S$.
+We may infer the following typed transition
+$$
+\Gamma; \emptyset; \Delta_0 \cat   k:\btinp{T}S \proves \binp{k}{x} P' \hastype \Proc
+\hby{\bactinp{k}{k_1}}
+\Gamma; \emptyset; \Delta_0 \cat   k:S \cat k_1:T \proves   P'\subst{k_1}{x} \hastype \Proc
+$$
+The encoding of the source judgment for $P$ is as follows:
+\begin{eqnarray*}
+& & \mapt{\Gamma}^{1}; \emptyset; \mapt{ \Delta_0 \cat   k:\btinp{T}S }^{1} \proves 
+\map{P}^{1}
+\hastype \Proc \\
+& = & \mapt{\Gamma}^{1}; \emptyset; \mapt{ \Delta_0 }^{1} \cat   k:\mapt{\btinp{T}S }^{1} \proves 
+\binp{k}{X} \newsp{s}{\appl{X}{s} \Par \bbout{\dual{s}}{\abs{x}{\pmap{Q}{1}}} \inact}
+\hastype \Proc \\
+& = & \mapt{\Gamma}^{1}; \emptyset; \mapt{ \Delta_0 }^{1} \cat   k: \btinp{\lhot{\btinp{\lhot{\tmap{T}{1}}}\tinact}} \tmap{S}{1} \proves 
+\binp{k}{X} \newsp{s}{\appl{X}{s} \Par \bbout{\dual{s}}{\abs{x}{\pmap{Q}{1}}} \inact}
+\hastype \Proc
+\end{eqnarray*}
+
 \end{enumerate}
 
-\noi \textbf{Part (b)}. We consider two non-trivial cases, the rest is similar or simpler:
+\noi \textbf{Part (2)}. We consider two non-trivial cases, the rest is similar or simpler:
 \begin{enumerate}[1.]
 %%  Output 
 \item TBC
