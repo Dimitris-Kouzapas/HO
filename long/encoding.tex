@@ -851,7 +851,7 @@ If $\Gamma; \emptyset; \Delta \proves P \hastype \Proc$ then
 
 \begin{proof}
 By transition induction. We consider parts (1) and (2) separately: \\
-\noi \textbf{Part (1)}. We consider two non-trivial cases, the rest is similar or simpler:
+\noi \textbf{Part (1)}. We consider the two most interesting cases, the rest is similar or simpler:
 \begin{enumerate}[1.]
 %%  Output 
 \item Case  $P =\bout{k}{k_1} P'$ and $\ell_1 = \bactout{k}{k_1}$. By assumption, $P$ is well-typed. 
@@ -903,31 +903,46 @@ By assumption $P$ is well-typed.
 We may have:
 			\[
 				\tree{
-					\Gamma; \emptyset; \Delta_0 \cat x{:} T \cat k:S  \proves  P' \hastype \Proc \quad 
+					\Gamma; \emptyset; \Delta_0 \cat x{:} T \cat k:S  \proves  Q \hastype \Proc \quad 
 					\Gamma ; \emptyset ; \{x{:} T\}  \proves   x\hastype T }{
-					\Gamma; \emptyset; \Delta_0 \cat   k:\btinp{T}S \proves \binp{k}{x} P' \hastype \Proc}
+					\Gamma; \emptyset; \Delta_0 \cat   k:\btinp{T}S \proves \binp{k}{x} Q \hastype \Proc}
 			\]
 for some $\Gamma, S, T, \Delta_0$, 
 such that $\Delta = \Delta_0 \cat k:\btinp{T}S$.
 We may infer the following typed transition
 $$
-\Gamma; \emptyset; \Delta_0 \cat   k:\btinp{T}S \proves \binp{k}{x} P' \hastype \Proc
+\Gamma; \emptyset; \Delta_0 \cat   k:\btinp{T}S \proves \binp{k}{x} Q \hastype \Proc
 \hby{\bactinp{k}{k_1}}
-\Gamma; \emptyset; \Delta_0 \cat   k:S \cat k_1:T \proves   P'\subst{k_1}{x} \hastype \Proc
+\Gamma; \emptyset; \Delta_0 \cat   k:S \cat k_1:T \proves   Q\subst{k_1}{x} \hastype \Proc
 $$
 The encoding of the source judgment for $P$ is as follows:
 \begin{eqnarray*}
 & & \mapt{\Gamma}^{1}; \emptyset; \mapt{ \Delta_0 \cat   k:\btinp{T}S }^{1} \proves 
 \map{P}^{1}
 \hastype \Proc \\
-& = & \mapt{\Gamma}^{1}; \emptyset; \mapt{ \Delta_0 }^{1} \cat   k:\mapt{\btinp{T}S }^{1} \proves 
-\binp{k}{X} \newsp{s}{\appl{X}{s} \Par \bbout{\dual{s}}{\abs{x}{\pmap{Q}{1}}} \inact}
-\hastype \Proc \\
 & = & \mapt{\Gamma}^{1}; \emptyset; \mapt{ \Delta_0 }^{1} \cat   k: \btinp{\lhot{\btinp{\lhot{\tmap{T}{1}}}\tinact}} \tmap{S}{1} \proves 
 \binp{k}{X} \newsp{s}{\appl{X}{s} \Par \bbout{\dual{s}}{\abs{x}{\pmap{Q}{1}}} \inact}
 \hastype \Proc
 \end{eqnarray*}
-
+Now, 
+ $\mapa{\ell_1}^{1} = 
+\bactinp{k}{\abs{z}{\,\binp{z}{X} \appl{X}{k_1}}\, }
+$
+and is immediate to infer the following 
+transition for $\map{P}^{1}$:
+\begin{eqnarray*}
+&  & \mapt{\Gamma}^{1}; \emptyset; \mapt{ \Delta_0 }^{1} \cat   k: \btinp{\lhot{\btinp{\lhot{\tmap{T}{1}}}\tinact}} \tmap{S}{1} \proves 
+\binp{k}{X} \newsp{s}{\appl{X}{s} \Par \bbout{\dual{s}}{\abs{x}{\pmap{Q}{1}}} \inact}
+\hastype \Proc \\
+& \hby{\mapa{\ell_1}^{1}}  & \mapt{\Gamma}^{1}; \emptyset; \mapt{ \Delta_0 }^{1} \cat   
+k:  \tmap{S}{1} \cat k_1:  \tmap{T}{1} \proves 
+ \newsp{s}{\appl{X}{s} \Par \bbout{\dual{s}}{\abs{x}{\pmap{Q}{1}}} \inact}\subst{\abs{z}{\,\binp{z}{X} \appl{X}{k_1}}}{X}
+\hastype \Proc 
+\end{eqnarray*}
+Let us write $R$ to stand for $\newsp{s}{\appl{X}{s} \Par \bbout{\dual{s}}{\abs{x}{\pmap{Q}{1}}} \inact}\subst{\abs{z}{\,\binp{z}{X} \appl{X}{k_1}}}{X}$.
+At this point it is not difficult to infer the 
+desired conclusion, using conductive arguments:
+$$\wbb{\mapt{\Gamma}^{1}}{\ell}{\mapt{\Delta\cat k:S \cat k_1:T}^{\mathsf{p}}}{\map{Q\subst{k_1}{x}}^{1}}{\mapt{\Delta\cat k:S \cat k_1:T}^{\mathsf{p}}}{R}$$
 \end{enumerate}
 
 \noi \textbf{Part (2)}. We consider two non-trivial cases, the rest is similar or simpler:
