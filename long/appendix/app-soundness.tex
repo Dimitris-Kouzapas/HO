@@ -1,3 +1,4 @@
+% !TEX root = ../main.tex
 \section{Type Soundness}
 \label{app:ts}
 
@@ -39,127 +40,196 @@ which have standard proofs.
 \begin{lemma}[Substitution Lemma - Lemma C.10 in M\&Y]\rm
 	\label{l:subst}
 	\begin{enumerate}[1.]
-		\item	Suppose
-			$\Gamma; \Lambda; \Delta \cat x:S \proves P \hastype \Proc$
-			and
-			$k \not\in \dom{\Gamma, \Lambda, \Delta}$.
-			Then
-			$\Gamma; \Lambda; \Delta \cat k:S  \vdash P\subst{k}{x} \hastype \Proc$.
+		\item	Suppose $\Gamma; \Lambda; \Delta \cat \mytilde{x}:\mytilde{S}  \proves P \hastype \Proc$ and
+			$\mytilde{k} \not\in \dom{\Gamma, \Lambda, \Delta}$. 
+			Then $\Gamma; \Lambda; \Delta \cat \mytilde{k}:\mytilde{S}  \vdash P\subst{\mytilde{k}}{\mytilde{x}} \hastype \Proc$.
 
-		\item	Suppose $\Gamma \cat x:\chtype{S}; \Lambda; \Delta \proves P \hastype \Proc$
-			and
-			$a \not\in \dom{\Gamma, \Lambda, \Delta}$. 
-			Then
-			$\Gamma \cat a:\chtype{S}; \Lambda; \Delta \vdash P\subst{a}{x} \hastype \Proc$.
+		\item	Suppose $\Gamma \cat x:\chtype{U}; \Lambda; \Delta \proves P \hastype \Proc$ and
+			$a \notin \dom{\Gamma, \Lambda, \Delta}$. 
+			Then $\Gamma \cat a:\chtype{U}; \Lambda; \Delta   \vdash P\subst{a}{x} \hastype \Proc$.
 
-		\item	Suppose $\Gamma; \Lambda_1 \cat X:\lhot{S}; \Delta_1  \proves P \hastype \Proc$ 
-			and
-			$\Gamma; \Lambda_2; \Delta_2  \proves V \hastype \lhot{S}$
-			with 
-			$\Lambda_1, \Lambda_2$ and $\Delta_1, \Delta_2$
-			defined.  
-			Then
-			$\Gamma; \Lambda_1 \cat \Lambda_2; \Delta_1 \cat \Delta_2  \proves P\subst{V}{X} \hastype \Proc$.
+		\item	Suppose $\Gamma; \Lambda_1 \cat X:\lhot{\mytilde{C}}; \Delta_1  \proves P \hastype \Proc$ 
+			and $\Gamma; \Lambda_2; \Delta_2  \proves V \hastype \lhot{\mytilde{C}}$ with 
+			$\Lambda_1, \Lambda_2$ and $\Delta_1, \Delta_2$ defined.  
+			Then $\Gamma; \Lambda_1 \cat \Lambda_2; \Delta_1 \cat \Delta_2  \proves P\subst{V}{X} \hastype \Proc$.
 
-		\item	Suppose
-			$\Gamma \cat X:\shot{S}; \Lambda; \Delta  \proves P \hastype \Proc$
-			and
-			$\Gamma; \emptyset ; \emptyset  \proves V \hastype \shot{S}$.
+		\item	Suppose $\Gamma \cat X:\shot{\mytilde{C}}; \Lambda; \Delta  \proves P \hastype \Proc$ and
+			$\Gamma; \emptyset ; \emptyset  \proves V \hastype \shot{\mytilde{C}}$.
 			Then $\Gamma; \Lambda; \Delta  \proves P\subst{V}{X} \hastype \Proc$.
-	\end{enumerate}
+		\end{enumerate}
 \end{lemma}
 
 \begin{proof}
 	In all four parts, we proceed by induction on the typing for $P$,
 	with a case analysis on the last applied rule. 
-	Parts (1) and (2) are standard and omitted. 
+	Parts (1) and (2) are standard and therefore omitted. 
 
 	In Part (3), we content ourselves by detailing only the case in
 	which the last applied rule is \trule{App}. 
-	Then we have $P = \appl{X}{k}$ and. By typing inversion on the first assumption we infer that
-	$\Lambda_1 = \emptyset$, $\Delta_1 = \{k : S\}$, and also
-%
-	\begin{eqnarray}
-		\Gamma; \{X : \lhot{S} \} ; \emptyset & \proves &  X \hastype \shot{S} \nonumber \\
-		\Gamma; \emptyset; \{k : S\} & \proves & k \hastype S  \label{eq:subseq1}
-	\end{eqnarray}
-%
+	Then we have $P = \appl{X}{\mytilde{k}}$. By inversion on the first assumption 
+	we infer:
+	\[
+	\tree{\tree{}{\Gamma;\, \{ X:\lhot{\mytilde{C}}\} ;\, \emptyset   \proves X \hastype \lhot{\mytilde{C}}} \quad
+	\tree{}{\Gamma;\,  \Lambda'   ;\, \Delta' \cat \mytilde{k}:\mytilde{C} \proves \mytilde{k} \hastype \mytilde{C}}
+	}{
+	\Gamma;\,  \Lambda' \cat X:\lhot{\mytilde{C}};\, \Delta' \cat \mytilde{k}:\mytilde{C}  \proves \appl{X}{\mytilde{k}} \hastype \Proc}
+	\]
 	By inversion on the second assumption we infer that either
 	(i)\,$V = Y$ (for some process variable $Y$) or 
-	(ii)\,$V = (z)Q$, for some $Q$ such that
+	(ii)\,$V = \abs{\mytilde{z}}Q$, for some $Q$ such that
 %
 	\begin{equation}
-		\Gamma; \Lambda_2 ; \Delta_2 \cat z:S  \proves Q \hastype \Proc \label{eq:subseq2}\\
+		\Gamma; \Lambda_2 ; \Delta_2 \cat \mytilde{z}:\mytilde{C}  \proves Q \hastype \Proc \label{eq:subseq2}\\
 	\end{equation}
 %
 	In possibility\,(i), we have a simple substitution on process variables and the thesis follows easily. 
-	In possibility\,(ii), we observe that $P\subst{V}{X} = \appl{X}{k}\subst{(z)Q}{X} = Q\subst{k}{z}$.
-	The thesis then follows by using Lemma~\ref{l:subst}\,(1) with \eqref{eq:subseq1} and \eqref{eq:subseq2} above to infer 
-%
+	In possibility\,(ii), we observe that $P\subst{V}{X} = \appl{X}{\mytilde{k}}\subst{\abs{\mytilde{z}}Q}{X} = Q\subst{\mytilde{k}}{\mytilde{z}}$.
+	The thesis then follows by using Lemma~\ref{lem:subst}\,(1) with 
+	the second premise of the typing of $\appl{X}{\mytilde{k}}$
+	and \eqref{eq:subseq2} above to infer 
 	\begin{equation*}
-		\Gamma; \Lambda_2 ; \Delta_2 \cat k:S  \proves Q \subst{k}{z} \hastype \Proc .
+		\Gamma; \Lambda_2 ; \Delta_2 \cat \mytilde{k}:\mytilde{C}  \proves Q \subst{\mytilde{k}}{\mytilde{z}} \hastype \Proc .
 	\end{equation*}
 %
 	The proof of Part (4) follows similar lines as that of Part (3).
 	\qed
 \end{proof}
 
-\begin{definition}[Well-typed Session Environment]\rm
-	Let $\Delta$ a session environment.
-	We say that $\Delta$ is {\em well-typed} if whenever
-	$s: S_1, \dual{s}: S_2 \in \Delta$ then $S_1 \dualof S_2$.
-\end{definition}
-
-\begin{definition}[Session Environment Reduction]\rm
-	We define relation $\red$ on session environments as:
-	\begin{itemize}
-		\item	$\Delta \cat s: \btout{U} S_1 \cat \dual{s}: \btinp{U} S_2 \red \Delta \cat s: S_1 \cat \dual{s}: S_2$
-		\item	$\Delta \cat s: \btsel{l_i: S_i}_{i \in I} \cat \dual{s}: \btbra{l_i: S_i'}_{i \in I} \red \Delta \cat s: S_j \cat \dual{s}: S_j', \quad (j \in I)$.
-	\end{itemize}
-\end{definition}
+%\begin{definition}[Well-typed Session Environment]%\rm
+%	Let $\Delta$ be a session environment.
+%	We say that $\Delta$ is {\em well-typed} if whenever
+%	$s: S_1, \dual{s}: S_2 \in \Delta$ then $S_1 \dualof S_2$.
+%\end{definition}
+%
+%\begin{definition}[Session Environment Reduction]%\rm
+%	We define the relation $\red$ on session environments as:
+%	\begin{enumerate}[$-$]
+%		\item	$\Delta \cat s: \btout{U} S_1 \cat \dual{s}: \btinp{U} S_2 \red \Delta \cat s: S_1 \cat \dual{s}: S_2$
+%		\item	$\Delta \cat s: \btsel{l_i: S_i}_{i \in I} \cat \dual{s}: \btbra{l_i: S_i'}_{i \in I} \red \Delta \cat s: S_k \cat \dual{s}: S_k', \quad k \in I$.
+%	\end{enumerate}
+%\end{definition}
 
 We now state the instance of type soundness that we
-can derived from the Mostrous and Yoshida system.
+can derive from the Mostrous and Yoshida system.
 It is worth noticing that M\&Y have a slightly richer
 definition of structural congruence.
 Also, their statement for subject reduction relies on an 
 ordering on typings associated to queues and other 
 runtime elements (such extended typings are denoted $\Delta$ by M\&Y).
-Since we are synchronous we can omit such an ordering.
+Since we are working with synchronous communication we can omit such an ordering.
 
 We now repeat the statement of
 Theorem~\ref{t:sr} in Page~\pageref{t:sr}:
 
-\begin{theorem}[Type Soundness - Theorem~\ref{t:sr}]\rm
+\begin{theorem}[Type Soundness - Theorem~\ref{t:sr}]%\rm
 	\begin{enumerate}[1.]
 		\item	(Subject Congruence) Suppose $\Gamma; \Lambda; \Delta \proves P \hastype \Proc$.
 			Then $P \scong P'$ implies $\Gamma; \Lambda; \Delta \proves P' \hastype \Proc$.
 
-		\item	(Subject Reduction) Suppose $\Gamma; \emptyset; \Delta \proves P \hastype \Proc$
+		\item	(Subject Reduction) Suppose $\Gamma; \es; \Delta \proves P \hastype \Proc$
 			with
-%			$\mathsf{balanced}(\Delta)$. 
-			well-typed $\Delta$.
-			Then $P \red P'$ implies $\Gamma; \emptyset; \Delta_2  \proves P' \hastype \Proc$
-			and $\Delta_1 \red \Delta_2$ or $\Delta_1 = \Delta_2$.
+			well-typed $\Delta$. \\
+			Then $P \red P'$ implies $\Gamma; \es; \Delta'  \proves P' \hastype \Proc$
+			and $\Delta = \Delta'$ or $\Delta \red \Delta'$.
 	\end{enumerate}
 \end{theorem}
 
 \begin{proof}
-	Part (1) is standard, using weakening and strengthening lemmas. Part (2) proceeds by induction on the last reduction rule used:
-	\begin{enumerate}[$-$]
+	Part (1) is standard, using weakening and strengthening lemmas. Part (2) proceeds by induction on the last reduction rule used. Below, we give some details:
+	\begin{enumerate}[1.]
 		\item	Case \orule{NPass}:
 			Then there are two sub-cases, depending on whether the
-			communicated name is a shared name or a channel, that is, i.e., $U = S$ or $U = \chtype{S}$.
-			The proof is standard, using appropriate rules for typing reception of a name: when $U = S$ we use typing 
-			rule~\trule{RecvS} and Lemma~\ref{l:subst}(1); when $U = \chtype{S}$ we use typing 
-			rule~\trule{RecvShN} and Lemma~\ref{l:subst}(2). The session environment reduces.
+			communication subject is a shared name or a channel. 
+			In the first case, we have 
+			$$P = \bout{\dual{k}}{n} P_1 \Par \binp{k}{x} P_2 \red P_1 \Par P_2\subst{n}{x} = P'$$ 
+			Suppose $\Gamma; \es; \Delta  \proves \bout{\dual{k}}{n} P_1 \Par \binp{k}{x} P_2 \hastype \Proc$. This assumption is derived first from rules~\trule{Req} and \trule{AccS}:
+			\[
+								\tree{
+					\Gamma; \emptyset; \emptyset  \proves  k \hastype \chtype{S} ~~~
+					\Gamma ; \emptyset ; \Delta_1 \proves   P_1 \hastype \Proc ~~~
+					\Gamma ; \emptyset ; \{n:S\} \proves   n \hastype S
+					}{
+					\Gamma; \emptyset; \Delta_1 \cat \{n:S\}    \proves  
+ 					\bout{\dual{k}}{n} P_1 \hastype \Proc} 
+			\]		
+			and
+			\[		~~ 
+				\tree{
+					\Gamma; \emptyset; \emptyset  \proves  k \hastype \chtype{S} \quad 
+					\Gamma ; \emptyset ; \Delta_2 \cat \{x:S\}  \proves  P_2 \hastype \Proc \quad
+					\Gamma ; \emptyset ; \{x:S\}  \proves  x \hastype S
+					}{
+					\Gamma; \emptyset; \Delta_2  \proves  
+ 					\binp{k}{x} P_2 \hastype \Proc} 
+			\]
+			and then rule~\trule{Par}, we obtain: %letting $\Delta = \Delta_1 \cat \Delta_2  \cat \Delta_3$.
+				\[		~~ 
+				\tree{
+					\Gamma; \emptyset; \Delta_1 \cat \{n:S\}    \proves  
+ 					\bout{\dual{k}}{n} P_1 \hastype \Proc\quad 
+					\Gamma; \emptyset;  \Delta_2 \proves  
+ 					\binp{k}{x} P_2 \hastype \Proc
+					}{
+					\Gamma; \emptyset; \Delta_1 \cat \{n:S\} \cat \Delta_2 \proves  
+ 					\bout{\dual{k}}{n} P_1  \Par \binp{k}{x} P_2 \hastype \Proc
+					} 
+			\]
+			
+			Now, by applying Lemma~\ref{lem:subst}(1) on $\Gamma ; \emptyset ; \Delta_2 \cat \{x:S\}  \proves  P_2 \hastype \Proc$
+			we obtain 
+			$$\Gamma ; \emptyset ; \Delta_2 \cat \{n:S\} \proves  P_2\subst{n}{x} \hastype \Proc$$
+			and the case is completed by using rule~\trule{Par} with this judgment:
+							\[		~~ 
+				\tree{
+					\Gamma; \emptyset; \Delta_1    \proves  
+ 					 P_1 \hastype \Proc\quad 
+					\Gamma; \emptyset;  \Delta_2 \cat \{n:S\}  \proves  
+ 					 P_2\subst{n}{x} \hastype \Proc
+					}{
+					\Gamma; \emptyset; \Delta_1 \cat \{n:S\} \cat \Delta_2 \proves  
+ 					P_1  \Par  P_2\subst{n}{x} \hastype \Proc
+					} 
+			\]
+			Observe how in this case the session environment does not reduce.\\
+			
+			In the second case we have the following reduction, with   $|\mytilde{h}| = |\mytilde{x}|$:
+			$$P = \bout{\dual{k}}{\mytilde{h}} P_1 \Par \binp{k}{\mytilde{x}} P_2 \red P_1 \Par P_2\subst{\mytilde{h}}{\mytilde{x}} = P'$$ 
+			Also in this case the proof is standard, using rules~\trule{RcvS}, \trule{Send}, and \trule{Par} 
+			to type $P$, and using Lemma~\ref{lem:subst}(1) and rule~\trule{Par} to type $P'$. 
+			In this case, the session environment $\Delta$ does reduce.
 
 		\item	Case \orule{APass}:
-			Then there are two sub-cases, depending on whether the
-			communicated process abstraction is a shared or linear, that is, i.e., $U = \shot{S}$ or $U = \lhot{S}$.
-			The proof is standard, using appropriate rules for typing reception of a process abstraction: 
-			when $U = \lhot{S}$ we use typing rule~\trule{RecvL} and Lemma~\ref{l:subst}(3); 
-			when $U = \shot{S}$ we use typing rule~\trule{RecvSh} and Lemma~\ref{l:subst}(4). The session environment reduces.
+		Then we have
+		$$
+		P = \bout{k}{\abs{\mytilde{x}}{Q}} P_1 \Par \binp{\dual{k}}{\X} P_2  \red  P_1 \Par P_2 \subst{\abs{\mytilde{x}}{Q}}{\X} = P'
+		$$
+		and we distinguish two cases, associated to the type of the higher-order value $\abs{\tilde{x}}{Q}$.
+		We describe the proof for the case in which the type is $\lhot{\mytilde{C}}$; the proof when 
+		the type is $\shot{\mytilde{C}}$ is analogous.
+		The typing of $P$ proceeds first by using rule~\trule{Send} on the left-hand side:
+		\[
+								\tree{
+					\Gamma;\, \emptyset;\, \Delta_1 \proves  P_1 \hastype \Proc \quad
+					\Gamma ;\, \emptyset ;\, \Delta_2 \proves   \abs{\mytilde{x}}{Q} \hastype \lhot{\mytilde{C}}					}{
+					\Gamma;\, \emptyset;\, \big((\Delta_1 \cat \Delta_2) \setminus \{k:S\}\big) \cat k:\btout{\lhot{\mytilde{C}}} S     \proves  
+ 					\bout{k}{\abs{\mytilde{x}}{Q}} P_1 \hastype \Proc} 
+			\]	
+			Then,
+			thanks to the well-typedness assumption for $\Delta$ (cf. Def.~\ref{d:wtenv}), 
+			 on the right-hand side we have the following typing (using rule~\trule{RcvH}  and assuming $S \dualof T$):
+					\[
+					\tree{
+					\Gamma;\, X:\lhot{\mytilde{C}} ;\, \Delta_3 \cat \dual{k}:T \proves  P_2 \hastype \Proc \quad
+					\Gamma ;\, \{X:\lhot{\mytilde{C}} \} ;\, \Delta_4 \proves   X \hastype \lhot{\mytilde{C}}					}{
+					\Gamma;\, \emptyset;\, \Delta_3 \setminus \Delta_4 \cat \dual{k}:\btinp{\lhot{\mytilde{C}}} T     \proves  
+ 					\binp{\dual{k}}{X} P_2 \hastype \Proc} 
+			\]	
+			Finally, we use rule~\trule{Par} to obtain the typing for $P$.
+			The typing of $P'$ is obtained by using the appropriate substitution lemma (Lemma~\ref{lem:subst}(3)) on the typing for $P_2$.
+			
+			When the type of the higher-order value is $\shot{\mytilde{C}}$,
+			the use of rules~\trule{Send} and~\trule{RcvH} for typing $P$ is similar; 
+			 one would use Lemma~\ref{lem:subst}(4) to type $P'$. The session environment reduces.
 
 		\item	Case \orule{Sel}:
 			The proof is standard, the session environment reduces.

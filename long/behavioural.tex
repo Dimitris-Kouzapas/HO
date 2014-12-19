@@ -1,3 +1,4 @@
+% !TEX root = main.tex
 \section{Behavioural Semantics}
 \label{sec:beh_sem}
 
@@ -74,13 +75,14 @@ any bound names with parallel processes. If two parallale processes can perform
 dual actions then the two actions can synchronise to observe an internal transition.
 Finally the LTS is closed under structural congruence.
 
-\subsection{Simple Process}
-We can use a session type to define the simplest process that is typed
+\subsection{Characteristic Processes}
+We can use a session type to define the a {\em characteristic process}
+which is the simplest process that is typed
 under the given session type.
 %
-\begin{definition}[Simple Process]\rm
-	Let name $k$ and type $\tilde{C}$; then we define a {\em simple process}
-	$\map{\tilde{C}}^{k}$:
+\begin{definition}[Characteristic Process]\rm
+	Let names $\tilde{k}$ and type $\tilde{C}$; then we define a {\em characteristic process}:
+	$\map{\tilde{C}}^{\tilde{k}}$:
 	\[
 		\map{C_1, \cdots, C_n}^{k_1 \cdots k_n} = \map{C_1}^{k_1} \Par \dots \Par \map{C_n}^{k_n}		
 	\]
@@ -122,11 +124,6 @@ under the given session type.
 		\map{\chtype{S}}^{k} &=& \bout{k}{s} \inact &s\textrm{ fresh}%\binp{k}{x} \map{S}^x 
 	\end{array}
 	\]
-%	We extend the {\em simple process} to the polyadic case:
-%\[
-%	\begin{array}{c}
-%	\end{array}
-%\]
 \end{definition}
 
 \begin{proposition}\rm
@@ -155,20 +152,67 @@ $ $
 We define two relations of the form:
 %
 \[
-	((\Gamma, \ell_1, \Delta_1), \ell, (\Gamma, \ell_2, \Delta_2)) \in R \textrm{ and }
+	((\Gamma, \Lambda_1, \Delta_1), \ell, (\Gamma, \Lambda_2, \Delta_2)) \in R \textrm{ and }
 \]
 %
 \noi over type tuples, that allows us to follow the progress of types over actions $\ell$.
 The upper part of Figure~\ref{fig:envLTS} describes relation $\by{\ell}$.
-\dk{describe env LTS}.
 
-A second environment LTS, denoted $\hby{\ell}$, is defined in the lower part of
-Figure~\ref{fig:envLTS}, by substituting the corresponding input cases
-of $\by{\ell}$ with the definitions of $\hby{\ell}$. All other 
-cases remain the same as relation $\by{\ell}. $Relation $\hby{\ell}$ 
-restricts higher order input; only simple processes and trigger processes
+Rule $\eltsrule{SOut}$ states the conditions for observing action
+$\news{\tilde{m}} \bactout{s}{V}$ on a type tuple $(\Gamma, \Lambda, \Delta)$. 
+The session environment $\Delta$ of the type tuple should include
+a type for $s$ that is prefixed on the output type of type $U$.
+Furthermore the dual channel $\dual{s}$ should not be
+present in the session environment, since if it was present
+the only communication that could take place is the interaction
+between the two endpoints.
+Under the latter conditions the type tuple may output any
+value $V$ that is typed under a subset of $\Delta$ and
+the session environment that types the restricted names
+$\tilde{m}$. Scope extrusion of session names in $\tilde{m}$ requires
+that the dual endpoints of $\tilde{m}$ appear in
+the resulting session environment. Similarly for shared names
+in $\tilde{m}$ that are extruted.
+All free values used for typing $V$ are subtracted from the
+resulting type tuple. Also the prefix of session $s$ is consumed
+by the action.
+Similarly, an output on a shared name is described
+with rule $\eltsrule{ShOut}$ where we require a shared name
+is typed with $\chtype{U}$. The requirements for
+the output $V$ are indentical with the requirements for
+rule $\eltsrule{SOut}$.
+Rules $\eltsrule{SRecv}$ and $\eltsrule{ShRecv}$ describe
+the input action $\bactinp{n}{V}$ ($n$ session or shared channel respectively)
+on the type tuple $(\Gamma, \Lambda, \Delta)$.
+We require the value $V$ has the same type as name $n$. Furthermore
+we expect the resulting type tuple to contain the values that
+consist value $V$.
+Rules $\eltsrule{Sel}$ and $\eltsrule{Bra}$ describe actions for
+select and branch. The only requirements for both
+rules is that the dual endpoint is not present in the session
+environment and furthermore the action labels are present
+in the type.
+Hidden transitions follow the reduction on the session
+environment (Definition~\ref{def:ses_red}) as we can see in rule
+$\eltsrule{Tau}$.
+
+A second environment LTS, denoted $\hby{\ell}$,
+is defined in the lower part of Figure~\ref{fig:envLTS}.
+The definition substitutes rules
+$\eltsrule{SRecv}$ and $\eltsrule{ShRecv}$
+of relation $\by{\ell}$ with rule $\eltsrule{RRcv}$.
+% the corresponding input cases
+%of $\by{\ell}$ with the definitions of $\hby{\ell}$.
+All other cases remain the same as the cases for
+relation $\by{\ell}$.
+Rule $\eltsrule{RRcv}$ restricts the higher-order input
+in relation $\hby{\ell}$;
+only characteristic processes and trigger processes
 are allowed to be received on a higher-order input.
-\dk{describe env LTS}. 
+Names can still be received as in the definition of
+the $\by{\ell}$ relation.
+The conditions for input follow the conditions
+for the $\by{\ell}$ definition.
 
 \paragraph{Typed Transition System}
 
@@ -177,7 +221,7 @@ of the untyped LTS and the LTS for typed environments:
 
 \begin{definition}[Typed Transition Systems]\label{d:tlts}\rm
 	We write
-	$\Gamma; \emptyset; \Delta_1 \proves P_1 \hastype \Proc \by{\ell} \Gamma; \emptyset; \Delta_1 \proves P_2 \hastype \Proc$
+	$\Gamma; \emptyset; \Delta_1 \proves P_1 \hastype \Proc \by{\ell} \Gamma; \emptyset; \Delta_2 \proves P_2 \hastype \Proc$
 	whenever:
 %
 	\begin{itemize}
@@ -187,7 +231,7 @@ of the untyped LTS and the LTS for typed environments:
 %
 
 	Furthermore we write
-	$\Gamma; \emptyset; \Delta_1 \proves P_1 \hastype \Proc \hby{\ell} \Gamma; \emptyset; \Delta_1 \proves P_2 \hastype \Proc$
+	$\Gamma; \emptyset; \Delta_1 \proves P_1 \hastype \Proc \hby{\ell} \Gamma; \emptyset; \Delta_2 \proves P_2 \hastype \Proc$
 	whenever:
 %
 	\begin{itemize}
@@ -200,14 +244,14 @@ of the untyped LTS and the LTS for typed environments:
 For notational convenience we can write:
 %$\Gamma; \emptyset; \Delta_1 \by{\ell} \Delta_2 \proves P_1 \by{\ell} P_2$,
 $\horel{\Gamma}{\Delta_1}{P_1}{\by{\ell}}{\Delta_2}{P_2}$,
-instead of $\Gamma; \emptyset; \Delta_1 \proves P_1 \hastype \Proc \by{\ell} \Gamma; \emptyset; \Delta_1 \proves P_2 \hastype \Proc$.
+instead of $\Gamma; \emptyset; \Delta_1 \proves P_1 \hastype \Proc \by{\ell} \Gamma; \emptyset; \Delta_2 \proves P_2 \hastype \Proc$.
 We extend to $\By{}$ (resp.\ $\Hby{}$) and $\By{\hat{\ell}}$ (resp.\ $\Hby{\hat{\ell}}$) in the \dk{standard way}.
 
 The next invariant clarifies the soundness of the
 typed transition system.
 
-\begin{lemma}[Invariant]
-	\begin{itemize}
+\begin{lemma}[Invariant]\label{l:invariant}
+	\begin{enumerate}[1.]
 		\item	If $\Gamma; \emptyset; \Delta_1 \proves P_1 \hastype \Proc$ and
 			$P_1 \by{\ell} P_2$ and $(\Gamma; \emptyset; \Delta_1) \by{\ell} (\Gamma; \emptyset; \Delta_2)$
 			then $\Gamma; \emptyset; \Delta_2 \proves P_2 \hastype \Proc$.
@@ -217,7 +261,7 @@ typed transition system.
 %		\item	If $\Gamma; \emptyset; \Delta_1 \hby{\ell} \Delta_2 \proves P_1 \hby{\ell} P_2$
 %			then $\Gamma; \emptyset; \Delta_1 \by{\ell} \Delta_2 \proves P_1 \by{\ell} P_2$
 
-	\end{itemize}
+	\end{enumerate}
 \end{lemma}
 
 \begin{proof}
@@ -486,7 +530,8 @@ of a bisimulation relation avoids the universal quantifier over processes.
 %			\end{eqnarray*}
 			and for fresh $t$
 			\[
-				\horel{\Gamma}{\Delta_1''}{\newsp{\tilde{m_1}}{P_2 \Par \fotrigger{t}{\tilde{m_1}}}}{\ \mathcal{R}\ }{\Delta_2''}{\newsp{\tilde{m_2}}{Q_2 \Par \fotrigger{t}{\tilde{m_2}}}}
+\dk{				\horel{\Gamma}{\Delta_1''}{\newsp{\tilde{m_1}}{P_2 \Par \fotrigger{t}{\tilde{m_1}}}}{\ \mathcal{R}\ }{\Delta_2''}{\newsp{\tilde{m_2}}{Q_2 \Par \fotrigger{t}{\tilde{m_2}}}}
+}
 %				\Gamma; \emptyset; \Delta_1''\ \mathcal{R}\ \Delta_2'' \proves
 %				\newsp{\tilde{m_1}'}{P_2 \Par \fotrigger{t}{\tilde{m_1}}}  % \map{S}^{s_1}}
 %				\ \mathcal{R}\ 
@@ -537,7 +582,7 @@ coincide with reduction closed, barbed congruence.
 	\qed
 \end{proof}
 
-Session types are inherintly $\tau$-inert.
+\dk{Session transitions are inherintly $\tau$-inert.}
 
 \begin{lemma}[$\tau$-inertness]\rm
 	\label{lem:tau_inert}
