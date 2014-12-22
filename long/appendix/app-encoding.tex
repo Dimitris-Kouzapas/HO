@@ -1,6 +1,136 @@
 % !TEX root = ../main.tex
 \section{Encoding Semantics}
 
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% POLYADIC TO MONADIC
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Properties for $\encod{\cdot}{\cdot}{\mathsf{p}}$}
+\label{app:polmon}
+We study the properties of the typed encoding in
+Def.~\ref{d:enc:poltomon} (Page~\pageref{d:enc:poltomon}).
+\begin{proposition}[Type Preservation, Polyadic to Monadic]
+Let $P$ be an  $\HOp$ process.
+If			$\Gamma; \emptyset; \Delta \proves P \hastype \Proc$ then 
+			$\mapt{\Gamma}^{\mathsf{p}}; \emptyset; \mapt{\Delta}^{\mathsf{p}} \proves \map{P}^{\mathsf{p}} \hastype \Proc$. 
+\end{proposition}
+
+\begin{proof}
+By induction on the inference $\Gamma; \emptyset; \Delta \proves P \hastype \Proc$.
+We examine two representative cases, using biadic communications.
+
+\begin{enumerate}[1.]
+\item Case 
+$P = \bout{k}{V} P'$ and 
+$\Gamma; \emptyset; \Delta_1 \cat \Delta_2 \cat k:\btout{\lhot{(C_1,C_2)}} S \proves \bout{k}{V} P' \hastype \Proc$. Then either $V = Y$ or $V = \abs{x_1,x_2}Q$, for some $Q$. The case $V = Y$ is immediate; we give details for the case $V = \abs{x_1,x_2}Q$, for which we have the following typing:
+\[
+\tree{
+\tree{}{
+\Gamma; \emptyset; \Delta_1 \cat k:S \proves P' \hastype \Proc}
+\quad
+\tree{
+\Gamma; \emptyset; \Delta_2 \cat x_1: C_1 \cat x_2:C_2 \proves Q \hastype \Proc
+}{
+\Gamma; \emptyset; \Delta_2 \proves \abs{x_1,x_2}Q \hastype \lhot{(C_1,C_2)}
+}
+}{
+\Gamma; \emptyset; \Delta_1 \cat \Delta_2 \cat k:\btout{\lhot{(C_1,C_2)}} S \proves \bout{k}{\abs{x_1,x_2}Q} P \hastype \Proc
+}
+\]
+We now show the typing for $\map{P}^{\mathsf{p}}$. By IH we have both:
+\[
+\mapt{\Gamma}^{\mathsf{p}}; \emptyset; \mapt{\Delta_1}^{\mathsf{p}} \cat k:\mapt{S}^{\mathsf{p}} \proves \map{P'}^{\mathsf{p}} \hastype \Proc
+\qquad
+\mapt{\Gamma}^{\mathsf{p}}; \emptyset; \mapt{\Delta_2}^{\mathsf{p}} \cat x_1: \mapt{C_1}^{\mathsf{p}} \cat x_2:\mapt{C_2}^{\mathsf{p}} \proves \map{Q}^{\mathsf{p}} \hastype \Proc
+\]
+Let $L = \lhot{(C_1,C_2)}$. 
+By Def.~\ref{d:enc:poltomon} 
+we have  
+$\mapt{L}^{\mathsf{p}} = \lhot{\big(\btinp{\tmap{C_1}{\mathsf{p}}} \btinp{\tmap{C_2}{\mathsf{p}}}\tinact\big)}$
+and
+$\map{P}^{\mathsf{p}} = \bbout{k}{\abs{z}\binp{z}{x_1}\binp{z}{x_2} \map{Q}^{\mathsf{p}}} \map{P'}^{\mathsf{p}}$.
+We can now infer the following typing derivation:
+\[
+\tree{
+\tree{}
+{
+\mapt{\Gamma}^{\mathsf{p}}; \emptyset; \mapt{\Delta_1}^{\mathsf{p}} \cat k:\mapt{S}^{\mathsf{p}} \proves \map{P'}^{\mathsf{p}} \hastype \Proc}
+\quad
+\tree{
+\tree{
+\tree{
+\tree{
+\tree{}{\mapt{\Gamma}^{\mathsf{p}}; \emptyset; \mapt{\Delta_2}^{\mathsf{p}} \cat x_1: \tmap{C_1}{\mathsf{p}} \cat x_2: \tmap{C_2}{\mathsf{p}} \proves 
+ \map{Q}^{\mathsf{p}} \hastype \Proc}
+}{
+\mapt{\Gamma}^{\mathsf{p}}; \emptyset; \mapt{\Delta_2}^{\mathsf{p}} \cat x_1: \tmap{C_1}{\mathsf{p}} \cat x_2: \tmap{C_2}{\mathsf{p}}
+\cat z:\tinact \proves 
+ \map{Q}^{\mathsf{p}} \hastype \Proc
+}
+}{
+\mapt{\Gamma}^{\mathsf{p}}; \emptyset; \mapt{\Delta_2}^{\mathsf{p}} \cat x_1: \tmap{C_1}{\mathsf{p}}\cat z:\btinp{\tmap{C_2}{\mathsf{p}}}\tinact \proves 
+\binp{z}{x_2} \map{Q}^{\mathsf{p}} \hastype \Proc
+}
+}{
+\mapt{\Gamma}^{\mathsf{p}}; \emptyset; \mapt{\Delta_2}^{\mathsf{p}} \cat z:\btinp{\tmap{C_1}{\mathsf{p}}}\btinp{\tmap{C_2}{\mathsf{p}}}\tinact \proves 
+\binp{z}{x_1}\binp{z}{x_2} \map{Q}^{\mathsf{p}} \hastype \Proc
+}
+}{
+\mapt{\Gamma}^{\mathsf{p}}; \emptyset; \mapt{\Delta_2}^{\mathsf{p}}  \proves 
+\abs{z}\binp{z}{x_1}\binp{z}{x_2} \map{Q}^{\mathsf{p}} \hastype \lhot{(\tmap{C_1}{\mathsf{p}},\tmap{C_2}{\mathsf{p}})}
+}
+}{
+\mapt{\Gamma}^{\mathsf{p}}; \emptyset; \mapt{\Delta_1}^{\mathsf{p}} \cat \mapt{\Delta_2}^{\mathsf{p}} \cat k:\btout{\mapt{L}^{\mathsf{p}}} \mapt{S}^{\mathsf{p}} \proves \map{P}^{\mathsf{p}} \hastype \Proc
+}
+\]
+
+\item Case $P = \binp{k}{x_1,x_2} P'$ 
+and
+$\Gamma; \emptyset; \Delta_1 \cat k: \btinp{(C_1, C_2)} S \proves \binp{k}{x_1,x_2} P' \hastype \Proc$.
+We have the following typing derivation:
+\[
+\tree{
+\Gamma; \emptyset; \Delta_1 \cat k:S \cat x_1: C_1 \cat x_2: C_2 \proves  P' \hastype \Proc
+\quad
+\Gamma; \emptyset;  \proves x_1, x_2 \hastype C_1,C_2
+}{
+\Gamma; \emptyset; \Delta_1 \cat k: \btinp{(C_1, C_2)} S \proves \binp{k}{x_1,x_2} P' \hastype \Proc
+}
+\]
+By Def.~\ref{d:enc:poltomon} we have 
+$\map{P}^{\mathsf{p}} = \binp{k}{x_1}\binp{k}{x_2}\map{P'}^{\mathsf{p}}$.
+By IH we have 
+$$
+\mapt{\Gamma}^{\mathsf{p}}; \emptyset; \mapt{\Delta_1}^{\mathsf{p}} \cat k:\mapt{S}^{\mathsf{p}} \cat x_1: \tmap{C_1}{\mathsf{p}} \cat x_2: \tmap{C_2}{\mathsf{p}} \proves  \map{P'}^{\mathsf{p}} \hastype \Proc
+$$
+and the following type derivation:
+\[
+\tree{
+\tree{
+\tree{
+}{
+\mapt{\Gamma}^{\mathsf{p}}; \emptyset; \mapt{\Delta_1}^{\mathsf{p}} \cat x_1:\tmap{C_1}{\mathsf{p}} \cat x_2:\tmap{C_2}{\mathsf{p}} \cat k:\mapt{S}^{\mathsf{p}}  \proves  \map{P'}^{\mathsf{p}} \hastype \Proc
+}
+%\quad
+%\tree{}{
+%\mapt{\Gamma}^{\mathsf{p}}; \emptyset; x_2:\tmap{C_2}{\mathsf{p}}  \proves  x_2 \hastype \tmap{C_2}{\mathsf{p}}}
+}{
+\mapt{\Gamma}^{\mathsf{p}}; \emptyset; \mapt{\Delta_1}^{\mathsf{p}} \cat x_1:\tmap{C_1}{\mathsf{p}} \cat k:\btinp{\tmap{C_2}{\mathsf{p}}}\mapt{S}^{\mathsf{p}}  \proves  \binp{k}{x_2}\map{P'}^{\mathsf{p}} \hastype \Proc
+}
+%\quad
+%\tree{}{
+%\mapt{\Gamma}^{\mathsf{p}}; \emptyset; x_1:\tmap{C_1}{\mathsf{p}}  \proves  x_1 \hastype \tmap{C_1}{\mathsf{p}}}
+}{
+\mapt{\Gamma}^{\mathsf{p}}; \emptyset; \mapt{\Delta_1}^{\mathsf{p}} \cat k:\btinp{\tmap{C_1}{\mathsf{p}}}\btinp{\tmap{C_2}{\mathsf{p}}}\mapt{S}^{\mathsf{p}}  \proves  \map{P}^{\mathsf{p}} \hastype \Proc
+}
+\]
+\end{enumerate}
+\qed
+\end{proof}
+
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % SESSPNR TO HO
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
