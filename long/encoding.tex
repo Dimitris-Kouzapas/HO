@@ -421,8 +421,8 @@ be a typed encoding where
 	\end{array}
 \]
 \caption{\label{f:enc:poltomon}
-Encoding of polyadic into monadic communication (cf.~Defintion \ref{d:enc:poltomon}). 
-The mappings 
+Typed encoding of polyadic into monadic communication (cf.~Defintion \ref{d:enc:poltomon}). 
+Mappings 
 $\map{\cdot}^\mathsf{p}$,
 $\mapt{\cdot}^\mathsf{p}$, 
 and 
@@ -468,7 +468,7 @@ If			$\Gamma; \emptyset; \Delta \proves P \hastype \Proc$ then
 
 \begin{proof}
 By induction on the inference $\Gamma; \emptyset; \Delta \proves P \hastype \Proc$.
-Details in Appendix~\ref{app:polmon}.
+Details in \S\,\ref{app:polmon}.
 	\qed
 \end{proof}
 
@@ -829,8 +829,8 @@ We first encode the name passing semantics.
 	\end{array}
 	\]
 	\caption{\label{f:enc:fotoho}
-Encoding of first-order communication into higher-order communication (cf.~Defintion~\ref{d:enc:fotoho}).
-The mappings 
+Typed encoding of first-order communication into higher-order communication (cf.~Defintion~\ref{d:enc:fotoho}).
+Mappings 
 $\map{\cdot}^1$,
 $\mapt{\cdot}^1$, 
 and 
@@ -860,7 +860,7 @@ If			$\Gamma; \emptyset; \Delta \proves P \hastype \Proc$ then
 \end{proposition}
 
 \begin{proof}
-By induction on the inference $\Gamma; \emptyset; \Delta \proves P \hastype \Proc$. Details in Appendix~\ref{app:enc_sesspnr_to_ho} (Page~\pageref{app:enc_sesspnr_to_ho}).
+By induction on the inference $\Gamma; \emptyset; \Delta \proves P \hastype \Proc$. Details in \S\,\ref{app:enc_sesspnr_to_ho} (Page~\pageref{app:enc_sesspnr_to_ho}).
 	\qed
 \end{proof}
 
@@ -980,19 +980,96 @@ $$\wbb{\mapt{\Gamma}^{1}}{\ell}{\mapt{\Delta\cat k:S \cat k_1:T}^{\mathsf{p}}}{\
 
 \noi \textbf{Part (2)}. We consider two non-trivial cases, the rest is similar or simpler:
 \begin{enumerate}[1.]
+%%%%%%%%%%%
 %%  Output 
-\item Case $P = \bout{k}{k'} P'$,  $\map{P}^{1} = \bbout{k}{ \abs{z}{\,\binp{z}{X} \appl{X}{k'}} } \pmap{P'}{1}$.
-Then we have the following typed transition for $\map{P}^{1}$:
+%%%%%%%%%%%
+\item Case $P = \bout{k}{k'} P'$.
+%,  $\map{P}^{1} = \bbout{k}{ \abs{z}{\,\binp{z}{X} \appl{X}{k'}} } \pmap{P'}{1}$.
+Then 
+we have: % the following typed transition for $\map{P}^{1}$:
 $$
-\bbout{k}{ \abs{z}{\,\binp{z}{X} \appl{X}{k'}} } \pmap{P'}{1} \hby{\bactout{k}{\abs{z}{\,\binp{z}{X} \appl{X}{k'}}}} \pmap{P'}{1} 
+\mapt{\Gamma}^{1};\, \emptyset;\, \mapt{\Delta_0}^{1} \cat 
+k: \btout{\lhot{\btinp{\lhot{\tmap{T}{1}}}\tinact}} \tmap{S}{1} 
+\proves 
+ \bbout{k}{ \abs{z}{\,\binp{z}{X} \appl{X}{k'}} } \pmap{P'}{1} 
+ \hastype \Proc
 $$
-and is easy to see that (i) $\bactout{k}{\abs{z}{\,\binp{z}{X} \appl{X}{k'}}} = \mapa{\bactout{k}{k'}}^{1}$
-and (ii)
-$$\bout{k}{k'} P' \hby{\bactout{k}{k'}} P'$$
-\jp{TBC.}
+for some $T, S$, and $\Delta_0$. 
+We may infer the following typed transition for $\pmap{P}{1}$:
+\begin{eqnarray*}
+& & \mapt{\Gamma}^{1};\, \mapt{\Delta_0}^{1} \cat k: \btout{\lhot{\btinp{\lhot{\tmap{T}{1}}}\tinact}} \tmap{S}{1} 
+\proves 
+ \bbout{k}{ \abs{z}{\,\binp{z}{X} \appl{X}{k'}} } \pmap{P'}{1} 
+ \\
+%& & \bbout{k}{ \abs{z}{\,\binp{z}{X} \appl{X}{k'}} } \pmap{P'}{1} \hby{\bactout{k}{\abs{z}{\,\binp{z}{X} \appl{X}{k'}}}} \pmap{P'}{1}  \\
+&\hby{\ell_2}& 
+\mapt{\Gamma}^{1};\, \mapt{\Delta_0}^{1} \cat k: \tmap{S}{1} 
+\proves  \pmap{P'}{1} 
+\end{eqnarray*}
+with $\ell_2 = \bactout{k}{\abs{z}{\,\binp{z}{X} \appl{X}{k'}}}$.
+Now, in the source term $P$ we can infer the following transition 
+$$
+\Gamma;\,  \Delta_0 \cat k:\btout{T} S \proves \bout{k}{k'} P'
+ \hby{\bactout{k}{k'}} 
+ \Gamma;\,  \Delta_0 \cat k: S \proves P'
+$$
+and thus the thesis follows easily by noticing that 
+$\mapa{\bactout{k}{k'}}^{1} = \bactout{k}{\abs{z}{\,\binp{z}{X} \appl{X}{k'}}}$.
 
-\item Case $P = \binp{k}{x} Q$,  $\map{P}^{1} =  \binp{k}{X} \newsp{s}{\appl{X}{s} \Par \bbout{\dual{s}}{\abs{x}{\pmap{Q}{1}}} \inact}$ \\
-\jp{TBC.}
+
+%%%%%%%%%%%
+%% Input
+%%%%%%%%%%%
+\item Case $P = \binp{k}{x} Q$.
+Then we have
+$$
+\mapt{\Gamma}^{1};\, \emptyset;\, \mapt{\Delta_0}^{1} \cat 
+k: \btinp{\lhot{\btinp{\lhot{\tmap{T}{1}}}\tinact}} \tmap{S}{1}
+\proves
+ \binp{k}{X} \newsp{s}{\appl{X}{s} \Par \bbout{\dual{s}}{\abs{x}{\pmap{Q}{1}}} \inact}
+ \hastype \Proc
+ $$
+for some $T$, $S$, $\Delta_0$.
+We may infer the following typed transitions for $\pmap{P}{1}$:
+\begin{eqnarray*}
+& & 
+\mapt{\Gamma}^{1};\, %\emptyset;\, 
+\mapt{\Delta_0}^{1} \cat 
+k: \btinp{\lhot{\btinp{\lhot{\tmap{T}{1}}}\tinact}} \tmap{S}{1}
+\proves
+ \binp{k}{X} \newsp{s}{\appl{X}{s} \Par \bbout{\dual{s}}{\abs{x}{\pmap{Q}{1}}} \inact} \\
+ & \hby{\ell_2} & 
+\mapt{\Gamma}^{1};\, %\emptyset;\, 
+\mapt{\Delta_0}^{1} \cat 
+k:\tmap{S}{1}
+\cat k_1:\tmap{T}{1}
+\proves
+  \newsp{s}{\appl{X}{s} \Par \bbout{\dual{s}}{\abs{x}{\pmap{Q}{1}}} \inact} \subst{\abs{z}\binp{z}{X}\appl{X}{k_1}}{X} \\
+ & = & 
+\mapt{\Gamma}^{1};\, %\emptyset;\, 
+\mapt{\Delta_0}^{1} 
+\cat k:\tmap{S}{1}
+\cat k_1:\tmap{T}{1}
+\proves
+  \newsp{s}{\binp{s}{X}\appl{X}{k_1} \Par \bbout{\dual{s}}{\abs{x}{\pmap{Q}{1}}} \inact}  \\
+ & \hby{\tau} & 
+\mapt{\Gamma}^{1};\, %\emptyset;\, 
+\mapt{\Delta_0}^{1} 
+\cat k:\tmap{S}{1}
+\cat k_1:\tmap{T}{1}
+\proves
+ \pmap{Q}{1}\subst{k_1}{x}   
+  \end{eqnarray*} 
+with $\ell_2 = \bactinp{k}{\abs{z}{\,\binp{z}{X} \appl{X}{k_1}}}$.
+Now, in the source term $P$ we can infer the following transition 
+$$
+\Gamma;\,  \Delta_0 \cat k:\btinp{T} S \proves \binp{k}{x} P'
+ \hby{\bactinp{k}{k_1}} 
+ \Gamma;\,  \Delta_0 \cat k: S \cat k_1: T \proves P'\subst{k_1}{x}
+$$
+and the thesis follows easily by noticing that 
+$\mapa{\bactinp{k}{k_1}}^{1} = \bactinp{k}{\abs{z}{\,\binp{z}{X} \appl{X}{k_1}}}$.
+
 \end{enumerate}
 \qed
 \end{proof}
@@ -1394,8 +1471,8 @@ Define the typed encoding $\enco{\map{\cdot}^{2}_f, \mapt{\cdot}^{2}, \mapa{\cdo
 	\end{array}
 \]
 \caption{\label{f:enc:fotohorec}
-Encoding of first-order communication into higher-order communication (cf.~Defintion~\ref{d:enc:fotohorec}).
-The mappings 
+Typed encoding of first-order communication into higher-order communication (cf.~Defintion~\ref{d:enc:fotohorec}).
+Mappings 
 $\map{\cdot}^2$,
 $\mapt{\cdot}^2$, 
 and 
@@ -1543,9 +1620,9 @@ Below we write $\repl{} P$ as a shorthand notation for $\recp{X}{(P \Par \rvar{X
 	\end{array}
 	\]
 	\caption{
-Encoding of higher-order  into first-order communication (cf.~Defintion~\ref{d:enc:hotofo}).
+Typed encoding of higher-order  into first-order communication (cf.~Defintion~\ref{d:enc:hotofo}).
 \label{f:enc:hotofo}
-The mappings 
+Mappings 
 $\map{\cdot}^3$,
 $\mapt{\cdot}^3$, 
 and 
@@ -1563,7 +1640,7 @@ If			$\Gamma; \emptyset; \Delta \proves P \hastype \Proc$ then
 
 \begin{proof}
 By induction on the inference $\Gamma; \emptyset; \Delta \proves P \hastype \Proc$. 
-Details in Appendix~\ref{app:enc_HO_to_sessp} (Page~\pageref{app:enc_HO_to_sessp}).
+Details in \S\,\ref{app:enc_HO_to_sessp} (Page~\pageref{app:enc_HO_to_sessp}).
 	\qed
 \end{proof}
 
