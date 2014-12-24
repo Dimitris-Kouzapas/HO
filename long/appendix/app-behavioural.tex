@@ -578,7 +578,8 @@ definition.
 	\[
 	\begin{array}{rcl}
 		\mathcal{S} &=&	\set{(\Gamma; \emptyset; \Delta_1 \cat \Delta_3 \proves \newsp{\tilde{s_1}}{P_1 \Par R} \hastype \Proc, \Gamma; \emptyset; \Delta_2 \cat \Delta_3 \proves \newsp{\tilde{s_2}}{P_2 \Par R}) \setbar \\
-		& &	\Gamma;\emptyset;\Delta_1 \wbc \Delta_2 \proves P_1 \wbc P_2, \forall \Gamma; \emptyset; \Delta_3 \proves R \hastype \Proc}
+		& &	\horel{\Gamma}{\Delta_1}{P_1}{\wbc}{\Delta_2}{P_2}, \forall \Gamma; \emptyset; \Delta_3 \proves R \hastype \Proc\\
+		& &}
 	\end{array}
 	\]
 	\noi We need to show that the above congruence is a bisimulation.
@@ -591,32 +592,32 @@ definition.
 
 	\noi - Case: 
 	\[
-		\Gamma; \emptyset; \Delta_1 \cat \Delta_3 \by{\ell} \Delta_1' \cat \Delta_3 \proves \newsp{\tilde{s_1}}{P_1 \Par R} \by{\ell} \newsp{\tilde{s_1'}}{P_1' \Par R}
+		\horel{\Gamma}{\Delta_1 \cat \Delta_3}{\newsp{\tilde{s_1}}{P_1 \Par R}}{\by{\ell}}{\Delta_1' \cat \Delta_3}{\newsp{\tilde{s_1'}}{P_1' \Par R}}
 	\]
 
 	\noi The case is divided into three subcases:
 
 	\noi Subcase i: $\ell \notin \set{\news{\tilde{m}} \bactout{n}{\abs{\tilde{x}}{Q}}, \news{\tilde{s}} \bactout{n}{\tilde{m_1}}}$
 
-	\noi From the definition of typed transition we get
+	\noi From the definition of typed transition we get:
 	\[
-		\Gamma; \emptyset; \Delta_1 \by{\ell} \Delta_1' \proves P_1 \by{\ell} P_1'
+		\horel{\Gamma}{\Delta_1}{P_1}{\by{\ell}}{\Delta_1'}{P_1'}
 	\]
 	\noi which implies that
 %
 	\begin{eqnarray}
-		\Gamma; \emptyset; \Delta_1 \By{\ell} \Delta_2' \proves P_2 \By{\ell} P_2' \label{lem:wbc_is_cong1}\\
-		\Gamma; \emptyset; \Delta_1' \wbc \Delta_2'' \proves P_1' \wbc P_2' \label{lem:wbc_is_cong2}
+		\horel{\Gamma}{\Delta_1}{P_2}{\By{\ell}}{\Delta_2'}{P_2'} \label{lem:wbc_is_cong1}\\
+		\horel{\Gamma}{\Delta_1'}{P_1'}{\wbc}{\Delta_2''}{P_2'} \label{lem:wbc_is_cong2}
 	\end{eqnarray}
 %
 	\noi From transition~\ref{lem:wbc_is_cong1} we conclude that 
 	\[
-		\Gamma;\emptyset; \Delta_2 \cat \Delta_3 \By{\ell} \Delta_2' \cat \Delta_3 \proves \newsp{\tilde{s_2}}{P_2 \Par R} \By{\ell} \newsp{\tilde{s_2'}}{P_2' \Par R}
+		\horel{\Gamma}{\Delta_2 \cat \Delta_3}{\newsp{\tilde{s_2}}{P_2 \Par R}}{\By{\ell}}{\Delta_2' \cat \Delta_3}{\newsp{\tilde{s_2'}}{P_2' \Par R}}
 	\]
 %
 	\noi Furthermore from~\ref{lem:wbc_is_cong2} and the definition of $\mathcal{S}$ we conlude that
 	\[
-		\Gamma; \emptyset; \Delta_1' \cat \Delta_3\ \mathcal{S}\ \Delta_2' \cat \Delta_3 \proves \newsp{\tilde{s_1'}}{P_1' \Par R}\ \mathcal{S}\ \newsp{\tilde{s_2'}}{P_2' \Par R}
+		\horel{\Gamma}{\Delta_1' \cat \Delta_3}{\newsp{\tilde{s_1'}}{P_1' \Par R}}{\ \mathcal{S}\ }{\Delta_2' \cat \Delta_3}{\newsp{\tilde{s_2'}}{P_2' \Par R}}
 	\]
 
 	\noi Subcase ii: $\ell = \news{\tilde{m_1}} \bactout{n}{\abs{\tilde{x}}{Q_1}}$
@@ -851,9 +852,7 @@ definition.
 %
 	\begin{itemize}
 		\item	If $\horel{\Gamma}{\Delta_1}{P}{\by{\ell}}{\Delta_1'}{P'}$ and
-%			If $\Gamma; \emptyset; \Delta_1 \by{\ell} \Delta_1' \proves P \by{\ell} P'$ and
 			$\ell \in \set{\bactsel{n}{\ell}, \bactbra{n}{\ell}, \bactinp{n}{\tilde{m}}, \bactinp{n}{\abs{\tilde{x}}{Q}}}$
-			%\news{\tilde{s}}\bactout{s}{\abs{x}{Q}}, \news{\tilde{s}} \bactout{s}{s_1}}$
 			then:
 %
 \[
@@ -869,10 +868,8 @@ definition.
 			\begin{eqnarray*}
 				& & P \Par T\lrangle{\news{\tilde{m}}\bactout{n}{\abs{\tilde{x}}{Q}}, \suc} \red
 				\newsp{\tilde{m}}{P' \Par \hotrigger{t}{\abs{\tilde{x}}{Q}} \Par \bout{\suc}{\dual{n}, \tilde{m}'} \inact}\\
-%				\binp{t}{X} \newsp{s}{\appl{X}{s} \Par \bout{s}{\abs{\tilde{x}}{Q}} \inact} \Par \bout{\suc}{\dual{n}, \tilde{m}'} \inact}\\
 				& & \Gamma; \emptyset; \Delta_1' \cat \Delta_2' \proves
 				\newsp{\tilde{m}}{P' \Par \hotrigger{t}{\abs{\tilde{x}}{Q}} \Par  \bout{\suc}{\dual{n}, \tilde{m}'} \inact} \hastype \Proc\\
-%				\binp{t}{X} \newsp{s}{\appl{X}{s} \Par \bout{s}{\abs{\tilde{x}}{Q}} \inact} \Par \bout{\suc}{\dual{n}, \tilde{m}'} \inact} \hastype \Proc
 			\end{eqnarray*}
 %
 		\item	If $\horel{\Gamma}{\Delta_1}{P}{\by{\news{\tilde{m}'}\bactout{n}{\tilde{m}}}}{P'}$,
@@ -882,30 +879,26 @@ definition.
 %
 			\begin{eqnarray*}
 				& & P \Par T\lrangle{\news{\tilde{s}}\bactout{n}{\tilde{m}}, \suc} \red \newsp{\tilde{m}'}{P' \Par \fotrigger{t}{\tilde{U}}{\tilde{m}} \Par \bout{\suc}{\dual{n}, \tilde{m}''} \inact}\\
-%				\binp{t}{X} \appl{X}{\tilde{m}} \Par \bout{\suc}{\dual{n}, \tilde{s}'} \inact}\\
 				& & \Gamma; \emptyset; \Delta_1' \cat \Delta_2' \proves \newsp{\tilde{m}'}{P' \Par \fotrigger{t}{\tilde{U}}{\tilde{m}}  \Par \bout{\suc}{\dual{n}, \tilde{m}''} \inact} \hastype \Proc
-%				\binp{t}{X} \appl{X}{\tilde{m}} \Par \bout{\suc}{\dual{n}, \tilde{s}'} \inact} \hastype \Proc
 			\end{eqnarray*}
 %
 		\item	Let $\ell \in \set{\bactsel{n}{\ell}, \bactbra{n}{\ell}, \bactinp{n}{\tilde{m}}, \bactinp{n}{(\tilde{x}) Q}}$.
 			If $P \Par T\lrangle{\ell, \suc} \red Q$ with			
 			$\Gamma; \emptyset; \Delta \proves Q \hastype \Proc \barb{\suc}$ then 
-			$\Gamma; \emptyset; \Delta_1 \By{\ell} \Delta_1' \proves P \By{\ell} P' \hastype \Proc$
+			$\horel{\Gamma}{\Delta_1}{P}{\By{\ell}}{\Delta_1'}{P'}$
 			and $Q \scong P' \Par \bout{\suc}{\dual{n}} \inact$.
 
 		\item	If $P \Par T\lrangle{\news{\tilde{m}}\bactout{n}{\abs{\tilde{x}}{Q}}, \suc} \red Q$
 			with $\Gamma; \emptyset; \Delta \proves Q \hastype \Proc \barb{\suc}$ then
-			$\Gamma; \emptyset; \Delta_1 \proves P \By{\news{\tilde{m}}\bactout{n}{\abs{\tilde{x}}{Q}}} \Delta_1' \proves P' \hastype \Proc$
+			$\horel{\Gamma}{\Delta_1}{P}{\By{\news{\tilde{m}}\bactout{n}{\abs{\tilde{x}}{Q}}}}{\Delta_1'}{P'}$
 			and $Q \scong \newsp{\tilde{m}}{P' \Par \hotrigger{t}{\abs{\tilde{x}}{Q}} \Par \bout{\suc}{\dual{n}, \tilde{m}'} \inact}$
 			with $t$ fresh and $\tilde{m}' \subseteq \tilde{m}$.
 
 		\item	If $P \Par T\lrangle{\news{\tilde{m}'}\bactout{n}{\tilde{m}}, \suc} \red Q $
 			and $\Gamma; \emptyset; \Delta \proves Q \hastype \Proc \barb{\suc}$ then
-			$\Gamma; \emptyset; \Delta_1 \proves P \By{\news{\tilde{s}}\bactout{n}{\tilde{m}}} \Delta_1' \proves P' \hastype \Proc$
+			$\horel{\Gamma}{\Delta_1}{P}{\By{\news{\tilde{s}}\bactout{n}{\tilde{m}}}}{\Delta_1'}{P'}$
 			and $Q \scong \newsp{\tilde{m}'}{P' \Par \fotrigger{t}{\tilde{U}}{\tilde{m}} \Par \bout{\suc}{\dual{n}, \tilde{m}''} \inact}$
 			with $t$ fresh and $\tilde{m}'' \subseteq \tilde{m}'$.
-
-
 	\end{itemize}	
 %
 \end{definition}
@@ -948,12 +941,10 @@ We first show that every external action $\ell$ is {\em definable}.
 	If 
 	\[
 		\horel{\Gamma}{\Delta_1'}{\newsp{\tilde{m_1}'}{P \Par \bout{\suc}{\dual{n}, \tilde{m_1}''} \inact}}{\cong}{\Delta_2}{\newsp{\tilde{m_2}'}{Q \Par \bout{\suc}{\dual{n}, \tilde{m_2}''} \inact}}
-%		\Gamma; \es; \Delta_1' \cong \Delta_2 \proves \newsp{\tilde{m_1}'}{P \Par \bout{\suc}{\dual{n}, \tilde{m_1}''} \inact} \cong \newsp{\tilde{m_2}'}{Q \Par \bout{\suc}{\dual{n}, \tilde{m_2}''} \inact}
 	\]
 	then
 	\[
 		\horel{\Gamma}{\Delta_1}{P}{\cong}{\Delta_2}{Q}
-%		\Gamma; \es; \Delta_1 \cong \Delta_2 \proves P \cong Q
 	\]
 \end{lemma}
 
@@ -965,7 +956,6 @@ We first show that every external action $\ell$ is {\em definable}.
 					\set{\Gamma; \es; \Delta_1 \proves P \hastype \Proc, \Gamma; \es; \Delta_2 \proves Q \hastype \Proc \setbar \\
 				& &	\horel{\Gamma}{\Delta_1'}{\newsp{\tilde{m_1}'}{P \Par \bout{\suc}{\dual{n}, \tilde{m_1}''} \inact}}
 					{\cong}{\Delta_2}{\newsp{\tilde{m_2}'}{Q \Par \bout{\suc}{\dual{n}, \tilde{m_2}''} \inact}} \\
-%\Gamma; \es; \Delta_1' \cong \Delta_2' \proves \newsp{\tilde{m_1}'}{P \Par \bout{\suc}{\dual{n}, \tilde{m_1}''} \inact} \cong \newsp{\tilde{m_2}'}{Q \Par \bout{\suc}{\dual{n}, \tilde{m_2}''} \inact}
 		&&}
 	\end{eqnarray*}
 %
@@ -1204,32 +1194,18 @@ Session types are inherintly $\tau$-inert.
 	Let $P$ an $\HOp$ process
 	and $\Gamma; \emptyset; \Delta \proves P \hastype \Proc$
 	\begin{enumerate}
-		\item	If $P \red P'$ then $\Gamma; \empty; \Delta \wb \Delta' \proves P \wb P'$.
-		\item	If $P \red^* P'$ then $\Gamma; \empty; \Delta \wb \Delta' \proves P \wb P'$.
+		\item	If $P \red P'$ then $\horel{\Gamma}{\Delta}{P}{\wb}{\Delta'}{P'}$.
+		\item	If $P \red^* P'$ then $\horel{\Gamma}{\Delta}{P}{\wb}{\Delta'}{P'}$.
 	\end{enumerate}
 \end{lemma}
 
 \begin{proof}
 	The proof for part 1 is done by induction on the structure of $\red$.
 
-
-%	The proof is a double induction first on the length and then on the structure of $\red$.
-%	Induction on the length of $\red$.
-
-%	The basic step is trivial
-%	Induction hypothesis:
-%	If $P \red^* P''$ then
-%	$\Gamma; \ell; \Delta \proves P \wbc \Gamma''; \ell''; \Delta'' \proves P'' \hastype \Proc$.
-%
-%	Induction step:
-%	Let $P'' \red P'$. We do an induction on the structure of $\red$
-%	to show that $\Gamma'; \ell'; \Delta' \proves P'' \wbc \Gamma'; \ell'; \Delta' \proves P' \hastype \Proc$.
-%
 	Basic step:
 
 	\Case{$P = \bout{s}{V} P_1 \Par \binp{\dual{s}}{X} P_2$}
 	\[
-%		\Gamma; \emptyset; \Delta \red \Delta' \proves
 		\bout{s}{V} P_1 \Par \binp{\dual{s}}{X} P_2 \red P_1 \Par P_2
 	\]
 	The proof follows from the fact that we can only observe a $\tau$
@@ -1238,7 +1214,7 @@ Session types are inherintly $\tau$-inert.
 	Actions $\bactout{s}{V}$ and $\bactinp{\dual{s}}{V}$
 	are forbiden by the LTS for typed environments.
 
-	It is easy to conclude then that $\Gamma; \emptyset; \Delta \wb \Delta' \proves P \wb P'$.
+	It is easy to conclude then that ${\Gamma}{\Delta}{P}{\wb}{\Delta'}{P'}$.
 
 	\Case{$P = \bsel{s}{l} P_1 \Par \bbra{\dual{s}}{l_i: P_i}_{i \in I}$}
 
@@ -1246,32 +1222,30 @@ Session types are inherintly $\tau$-inert.
 
 	Induction hypothesis:
 	If $P_1 \red P_2$ then
-	$\Gamma_1; \emptyset; \Delta_1 \wb \Delta_2 \proves P_1 \wb P_2$.
+	$\horel{\Gamma_1}{\Delta_1}{P_1}{\wb}{\Delta_2}{P_2}$.
 
 	Induction Step:
 
 	\Case{$P = \news{s} P_1$}
 	\[
-%		\Gamma; \emptyset; \Delta \red \Delta' \proves
 		\news{s}{P_1} \red \news{s} P_2
 	\]
 	From the induction hypothesis and the fact that bisimulation is a congruence
-	we get that $\Gamma; \emptyset; \Delta \wb \Delta' \proves P \wb P'$.
+	we get that $\horel{\Gamma}{\Delta}{P}{\wb}{\Delta'}{P'}$.
 
 	\Case{$P = P_1 \Par P_3$}
 
 	\[
-%		\Gamma; \emptyset; \Delta \red \Delta' \proves
 		P_1 \Par P_3 \red P_2 \Par P_3
 	\]
 	From the induction hypothesis and the fact that bisimulation is a congruence
-	we get that $\Gamma; \emptyset; \Delta \wb \Delta' \proves P \wb P'$.
+	we get that $\horel{\Gamma}{\Delta}{P}{\wb}{\Delta'}{P'}$.
 
 	\Case{$P \scong P_1$}
 
 	From the induction hypothesis and the facts that bisimulation is a congruence
 	and structural congruence preserves $\wb$
-	we get that $\Gamma; \emptyset; \Delta \wb \Delta' \proves P \wb P'$.
+	we get that $\horel{\Gamma}{\Delta}{P}{\wb}{\Delta'}{P'}$.
 
 
 	The proof for part two is an induction on the length of $\red^*$.
