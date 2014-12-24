@@ -865,6 +865,7 @@ By induction on the inference $\Gamma; \emptyset; \Delta \proves P \hastype \Pro
 \end{proof}
 
 \begin{proposition}[Operational Correspondence, First-Order into Higher-Order]
+\label{p:opcorrfho}
 Let $P$ be a  $\sessp^{-\mu}$ process.
 If $\Gamma; \emptyset; \Delta \proves P \hastype \Proc$ then
 		\begin{enumerate}[1.]
@@ -1401,7 +1402,8 @@ with free session names into abstractions:
 %		\auxmapp{P \Par Q}{\mathsf{v}}{\sigma} &\bnfis& \auxmapp{P}{\mathsf{v}}{\sigma} \Par \auxmapp{Q}{\mathsf{v}}{\sigma} 
 	\end{array}
 \]
-\caption{\label{f:auxmap} Auxiliary Map (cf. Def.~\ref{d:auxmap})
+\caption{\label{f:auxmap} The auxiliary map (cf. Def.~\ref{d:auxmap}) 
+used in the encoding of first-order communication with recursive definitions into higher-order communication (Def.~\ref{d:enc:fotohorec}).
 The mapping is defined homomorphically for inaction and parallel composition.}
 \end{figure}
 \end{definition}
@@ -1520,7 +1522,35 @@ Details in Appendix~\ref{app:enc_sesp_to_HO}.
 %	enjoys operational correspondence (cf. Def.~\ref{def:ep}\,(2)).
 %\end{proposition}
 
+The following proposition formalizes our strategy  for encoding recursive definitions
+as passing of polyadic abstractions:
+\begin{proposition}[Operational Correspondence for Recursive Processes]
+Let $P$ and $P_1$ be $\sessp$ processes s.t. $P =\recp{X}{P'}$ and $P_1 = P'\subst{\recp{X}{P'}}{\rvar{X}} \scong P$. \\
+If $P_1 \hby{\ell} P_2$ then there exist
+processes $R_1$, $R_2$,
+context $C$, 
+action $\ell'$,
+and 
+mapping $f_1$
+such that: 
+(1)~$\map{P}_f^{2} \hby{\tau} \map{P'}_{f_1}^{2}\subst{\context{C}{\map{P'}_{f_1}^{2}}}{X} = R_1$; and
+(2)~$R_1 \Hby{\ell'} R_2$, with $\ell' = \mapa{\ell}^{2}$.
+\end{proposition}
+
+\begin{proof}[Sketch]
+Part (1) follows directly from the definition of typed encoding for processes $\map{\cdot}_f^{2}$
+(Defintion~\ref{d:enc:fotohorec}).
+We have that 
+context $\context{C}{\cdot} = \abs{\tilde{m}}\binp{z}{X}\auxmapp{\cdot}{\mathsf{v}}{\sigma}$
+(where $\tilde{m} = \ofn{P'},z$)
+and
+$f_1 = f, \{\rvar{X} \to \ofn{P'}\}$.
+Part (2) relies on  Prop.~\ref{p:opcorrfho}.
+\qed
+\end{proof}
+
 \begin{proposition}[Operational Correspondence, Full First-Order into Higher-Order]
+\label{p:auxfullfho}
 Let $P$ be a  $\sessp$ process.
 If $\Gamma; \emptyset; \Delta \proves P \hastype \Proc$ then
 		\begin{enumerate}[a)]
@@ -1539,8 +1569,9 @@ If $\Gamma; \emptyset; \Delta \proves P \hastype \Proc$ then
 \end{proposition}
 
 \begin{proof}[Sketch]
-	%Proof in Appendix~\ref{app:enc_sesp_to_HO}.
-	\jp{TO BE TYPESET!}
+The proof follows similar lines as the proof of Prop.~\ref{p:opcorrfho},
+using 
+Prop.~\ref{p:auxfullfho} in the extra cases $P =\recp{X}{P'}$ and $P = \rvar{X}$.
 	\qed
 \end{proof}
 
@@ -1663,7 +1694,7 @@ If $\Gamma; \emptyset; \Delta \proves P \hastype \Proc$ then
 \end{proposition}
 
 \begin{proof}
-By transition induction. 
+By transition induction, following expected lines.
 \jp{TO BE TYPESET!}
 	\qed
 \end{proof}
