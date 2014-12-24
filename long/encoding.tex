@@ -460,7 +460,7 @@ The polyadic mapping, as presented here, is sound only on session names.
 %	$\Gamma; \emptyset; \Sigma \proves \map{P}^{p} \hastype \Proc$
 %\end{proposition}
 
-\begin{proposition}[Type Preservation, Polyadic to Monadic]
+\begin{proposition}[Type Preservation, Polyadic to Monadic]\label{prop:typepresp}
 Let $P$ be an  $\HOp$ process.
 If			$\Gamma; \emptyset; \Delta \proves P \hastype \Proc$ then 
 			$\mapt{\Gamma}^{\mathsf{p}}; \emptyset; \mapt{\Delta}^{\mathsf{p}} \proves \map{P}^{\mathsf{p}} \hastype \Proc$. 
@@ -550,7 +550,9 @@ We consider parts (1) and (2) separately: \\
 \begin{enumerate}[1.]
 
 %% Biadic Output 
-\item Case  $P =\bout{k}{k_1, k_2} P'$ and $\ell_1 = \bactout{k}{k_1, k_2}$. By assumption, $P$ is well-typed. 
+\item Case  $P =\bout{k}{k_1, k_2} P'$ and $\ell_1 = \bactout{k}{k_1, k_2}$. 
+We show that this case falls under part (b) of the thesis.
+By assumption, $P$ is well-typed. 
 As one particular possibility, we may have:
 			\[
 				\tree{
@@ -605,6 +607,7 @@ which concludes the proof for this case.
 
 %% Biadic Abstraction Output 
 \item Case  $P = \bbout{k}{\abs{x_1, x_2} Q} P' $ and $\ell_1 = \bactout{k}{\abs{x_1, x_2}{Q}}$. 
+We show that this case falls under part (a) of the thesis.
 By assumption, $P$ is well-typed. 
 We may have:
 			\[
@@ -825,8 +828,8 @@ We first encode the name passing semantics.
 		\mapa{\bactinp{k}{k_1}}^{1} &\defeq&   \bactinp{k}{\abs{z}{\,\binp{z}{X} \appl{X}{k_1}}\, }
 	\end{array}
 	\]
-	\caption{
-Encoding of first-order communication into higher-order communication (cf.~Defintion~\ref{d:enc:fotoho} \label{f:enc:fotoho}).
+	\caption{\label{f:enc:fotoho}
+Encoding of first-order communication into higher-order communication (cf.~Defintion~\ref{d:enc:fotoho}).
 The mappings 
 $\map{\cdot}^1$,
 $\mapt{\cdot}^1$, 
@@ -850,15 +853,14 @@ the input guarded abstraction, apply it on a fresh endpoint $s$ and use
 the dual endpoint $\dual{s}$ to send the continuation $P$ as the abstraction
 $\abs{x}{P}$. Name substitution is then achieved as application.
 
-\begin{proposition}[Type Preservation, First-Order into Higher-Order]
+\begin{proposition}[Type Preservation, First-Order into Higher-Order]\label{prop:typepres1}
 Let $P$ be a  $\sessp^{-\mu}$ process.
 If			$\Gamma; \emptyset; \Delta \proves P \hastype \Proc$ then 
 			$\mapt{\Gamma}^{1}; \emptyset; \mapt{\Delta}^{1} \proves \map{P}^{1} \hastype \Proc$. 
 \end{proposition}
 
 \begin{proof}
-By induction on the inference $\Gamma; \emptyset; \Delta \proves P \hastype \Proc$. \\
-Some (old) details in Appendix~\ref{app:enc_sesspnr_to_ho} (Page~\pageref{app:enc_sesspnr_to_ho}).
+By induction on the inference $\Gamma; \emptyset; \Delta \proves P \hastype \Proc$. Details in Appendix~\ref{app:enc_sesspnr_to_ho} (Page~\pageref{app:enc_sesspnr_to_ho}).
 	\qed
 \end{proof}
 
@@ -1251,13 +1253,15 @@ Given a process $P$, we write $\ofn{P}$ to denote the
 Intuitively, the following mapping transforms processes
 with free session names into abstractions:
 %
-\begin{definition}\label{d:trabs}\rm
+\begin{definition}\label{d:trabs}\label{d:auxmap}
 	Let $\sigma$ be a set of session names.
-	Define $\auxmapp{\cdot}{\mathsf{v}}{\sigma}: \HOp \to \HOp$  as follows
+	Define $\auxmapp{\cdot}{\mathsf{v}}{\sigma}: \HOp \to \HOp$  as in Fig.~\ref{f:auxmap}.
 %
+\begin{figure}[t]
 \[
 	\begin{array}{rcl}
-		\auxmapp{\news{n} P}{\sigma}{\mathsf{v}} &\bnfis& \news{n} \auxmapp{P}{\mathsf{v}}{{\sigma \cat n}}\\
+		\auxmapp{\news{n} P}{\sigma}{\mathsf{v}} &\bnfis& \news{n} \auxmapp{P}{\mathsf{v}}{{\sigma \cat n}}
+		\vspace{1mm} \\
 		\auxmapp{\bout{n}{\abs{x}{Q}} P}{\mathsf{v}}{\sigma} &\bnfis&
 		\left\{
 		\begin{array}{rl}
@@ -1265,31 +1269,7 @@ with free session names into abstractions:
 			\bout{n}{\abs{x,\vmap{\ofn{P}}}{\auxmapp{Q}{\mathsf{v}}{\sigma}}} \auxmapp{P}{\mathsf{v}}{\sigma} & n \in \sigma
 		\end{array}
 		\right.
-		\\
-		\auxmapp{\binp{n}{X} P}{\mathsf{v}}{\sigma} &\bnfis&
-		\left\{
-		\begin{array}{rl}
-			\binp{x_n}{X} \auxmapp{P}{\mathsf{v}}{\sigma} & n \notin \sigma\\
-			\binp{n}{X} \auxmapp{P}{\mathsf{v}}{\sigma} & n \in \sigma
-		\end{array}
-		\right.
-		\\
-		\auxmapp{\bsel{n}{l} P}{\mathsf{v}}{\sigma} &\bnfis&
-		\left\{
-		\begin{array}{rl}
-			\bsel{x_n}{l} \auxmapp{P}{\mathsf{v}}{\sigma} & n \notin \sigma\\
-			\bsel{n}{l} \auxmapp{P}{\mathsf{v}}{\sigma} & n \in \sigma
-		\end{array}
-		\right.
-		\\
-		\auxmapp{\bsel{n}{l} P}{\mathsf{v}}{\sigma} &\bnfis&
-		\left\{
-		\begin{array}{rl}
-			\bsel{x_n}{l} \auxmapp{P}{\mathsf{v}}{\sigma} & n \notin \sigma\\
-			\bsel{n}{l} \auxmapp{P}{\mathsf{v}}{\sigma} & n \in \sigma
-		\end{array}
-		\right.
-		\\
+			\vspace{1mm}	\\ 
 		\auxmapp{\bout{n}{m} P}{\mathsf{v}}{\sigma} &\bnfis&
 		\left\{
 		\begin{array}{rl}
@@ -1299,7 +1279,15 @@ with free session names into abstractions:
 		    \bout{x_n}{x_m}\auxmapp{P}{\mathsf{v}}{\sigma} & n, m \not\in \sigma 
 		\end{array}
 		\right.
-		\\
+		\vspace{1mm} \\ 
+				\auxmapp{\binp{n}{X} P}{\mathsf{v}}{\sigma} &\bnfis&
+		\left\{
+		\begin{array}{rl}
+			\binp{x_n}{X} \auxmapp{P}{\mathsf{v}}{\sigma} & n \notin \sigma\\
+			\binp{n}{X} \auxmapp{P}{\mathsf{v}}{\sigma} & n \in \sigma
+		\end{array}
+		\right.
+			\vspace{1mm}	\\ 
 		\auxmapp{\binp{n}{x}P}{\mathsf{v}}{\sigma} &\bnfis&
 		\left\{
 		\begin{array}{rl}
@@ -1307,7 +1295,24 @@ with free session names into abstractions:
 		    \binp{x_n}{x}\auxmapp{P}{\mathsf{v}}{\sigma} & n \not\in \sigma 
 		\end{array}
 		\right.
-		\\
+		\vspace{1mm} \\ 
+		\auxmapp{\bsel{n}{l} P}{\mathsf{v}}{\sigma} &\bnfis&
+		\left\{
+		\begin{array}{rl}
+			\bsel{x_n}{l} \auxmapp{P}{\mathsf{v}}{\sigma} & n \notin \sigma\\
+			\bsel{n}{l} \auxmapp{P}{\mathsf{v}}{\sigma} & n \in \sigma
+		\end{array}
+		\right.
+		\vspace{1mm} \\
+		\auxmapp{\bbra{n}{l_i:P_i}_{i \in I}}{\mathsf{v}}{\sigma} &\bnfis&
+		%\auxmapp{\bsel{n}{l} P}{\mathsf{v}}{\sigma} &\bnfis&
+		\left\{
+		\begin{array}{rl}
+			\bbra{x_n}{l_i:\auxmapp{P_i}{\mathsf{v}}{\sigma}}_{i \in I}  & n \notin \sigma\\
+			\bbra{n}{l_i:\auxmapp{P_i}{\mathsf{v}}{\sigma}}_{i \in I}  & n \in \sigma
+		\end{array}
+		\right.
+		\vspace{1mm} \\
 		\auxmapp{\appl{\X}{n}}{\mathsf{v}}{\sigma} &\bnfis&
 		\left\{
 		\begin{array}{rl}
@@ -1319,7 +1324,9 @@ with free session names into abstractions:
 %		\auxmapp{P \Par Q}{\mathsf{v}}{\sigma} &\bnfis& \auxmapp{P}{\mathsf{v}}{\sigma} \Par \auxmapp{Q}{\mathsf{v}}{\sigma} 
 	\end{array}
 \]
-and homomorphically for inaction and parallel composition.
+\caption{\label{f:auxmap} Auxiliary Map (cf. Def.~\ref{d:auxmap})
+The mapping is defined homomorphically for inaction and parallel composition.}
+\end{figure}
 \end{definition}
 
 Given a process $P$ with $\ofn{P} = m_1, \cdots, m_n$, we are interested in its associated (polyadic) abstraction, which is defined as
@@ -1359,13 +1366,15 @@ Thanks to the encoding in \S\,\ref{ss:polmon}, we may use polyadicity in abstrac
 as syntactic sugar.
 For the sake of completeness, we give again the encodings for 
 finite processes and types, as
-formalized by $\encod{\cdot}{\cdot}{1}: \sessp^{-\mu} \to \HO$.
+formalized 
+in \S\,\ref{ss:ffotoho}.
+%by $\encod{\cdot}{\cdot}{1}: \sessp^{-\mu} \to \HO$.
 
 \begin{definition}[Full First-Order into Higher-Order]\label{d:enc:fotohorec}
 	Let $f$ be a function from recursion variables to sequences of name variables.
 	%Define $\fencod{\cdot}{\cdot}{2}{f}: \sessp \to \HO$ as
 %
-Define the typed encoding $\enco{\map{\cdot}^{2}_f, \mapt{\cdot}^{2}, \mapa{\cdot}^{2}}: \sessp \to \HO$ as
+Define the typed encoding $\enco{\map{\cdot}^{2}_f, \mapt{\cdot}^{2}, \mapa{\cdot}^{2}}: \sessp \to \HO$,
 \begin{figure}[t]
 \[
 	\begin{array}{rcll}
@@ -1395,20 +1404,20 @@ are homomorphisms for the other processes/types/labels.
 }
 
 \end{figure}
-and mappings $\map{\cdot}^{2}$, $\mapt{\cdot}^{2}$, $\mapa{\cdot}^{2}$
+where mappings $\map{\cdot}^{2}$, $\mapt{\cdot}^{2}$, $\mapa{\cdot}^{2}$
 are as in Fig.~\ref{f:enc:fotohorec}.
 \end{definition}
 
-\begin{remark}\rm
-	Furthermore we define a mapping for environments $\Gamma$, as follows:
-	\[
-		\tmap{\Gamma \cat \rvar{X}:\Sigma}{2} = \tmap{\Gamma}{2} \cat X:\shot{(\tilde{S}_{\Sigma}, S^*)}
-		%X:\trec{t}{\big(\shot{(\tilde{S}_{\Sigma}, \btinp{\vart{t}}\tinact)}\big)}
-	\]
-	where
-	$S^* = \trec{t}{\big((\tilde{S}_{\Sigma}, \btinp{\vart{t}}\tinact)\big)}$
-	and
-	$\tilde{S}_{\Sigma} = S_1, \ldots, S_m$ for any $\Sigma = \{n_1:S_1, \ldots, n_m:S_m\}$.
+\begin{remark}
+Let $\Delta = \{n_1:S_1, \ldots, n_m:S_m\}$ be a session environment.
+Write $\tilde{S}_{\Delta} = S_1, \ldots, S_m$.
+	We define  mapping $\mapt{\cdot}^{2}$ on (first-order) shared environments $\Gamma$ as follows:
+	\begin{eqnarray*}
+	\mapt{\Gamma \cat k:\chtype{S}}^{2} & =  & \mapt{\Gamma}^{2} \cat k:\mapt{\chtype{S}}^{2} \\
+	\tmap{\Gamma \cat \rvar{X}:\Delta}{2} & = & \tmap{\Gamma}{2} \cat X:\shot{(\tilde{S}_{\Delta}\,,\,S^*)}\qquad 
+		\text{where
+	$S^* = \trec{t}{\big((\tilde{S}_{\Delta}\,,\, \btinp{\vart{t}}\tinact)\big)}$}
+	\end{eqnarray*}
 \end{remark}
 
 %\begin{proposition}\rm
@@ -1417,15 +1426,15 @@ are as in Fig.~\ref{f:enc:fotohorec}.
 %\end{proposition}
 
 
-\begin{proposition}[Type Preservation, Full First-Order into Higher-Order]
+\begin{proposition}[Type Preservation, Full First-Order into Higher-Order]\label{prop:typepres2}
 Let $P$ be a  $\sessp$ process.
 If			$\Gamma; \emptyset; \Delta \proves P \hastype \Proc$ then 
 			$\mapt{\Gamma}^{2}; \emptyset; \mapt{\Delta}^{2} \proves \map{P}_f^{2} \hastype \Proc$. 
 \end{proposition}
 
 \begin{proof}
-By induction on the inference $\Gamma; \emptyset; \Delta \proves P \hastype \Proc$. \\
-Old details in Appendix~\ref{app:enc_sesp_to_HO}.
+By induction on the inference $\Gamma; \emptyset; \Delta \proves P \hastype \Proc$. 
+Details in Appendix~\ref{app:enc_sesp_to_HO}.
 	\qed
 \end{proof}
 
@@ -1454,7 +1463,7 @@ If $\Gamma; \emptyset; \Delta \proves P \hastype \Proc$ then
 
 \begin{proof}[Sketch]
 	%Proof in Appendix~\ref{app:enc_sesp_to_HO}.
-	\jp{TO BE DONE!}
+	\jp{TO BE TYPESET!}
 	\qed
 \end{proof}
 
@@ -1546,15 +1555,15 @@ are homomorphisms for the other processes/types/labels.
 \end{figure}
 \end{definition}
 
-\begin{proposition}[Type Preservation, Higher-Order into First-Order]
+\begin{proposition}[Type Preservation, Higher-Order into First-Order]\label{prop:typepres3}
 Let $P$ be an  $\HO$ process. 
 If			$\Gamma; \emptyset; \Delta \proves P \hastype \Proc$ then 
 			$\mapt{\Gamma}^{3}; \emptyset; \mapt{\Delta}^{3} \proves \map{P}^{3} \hastype \Proc$. 
 \end{proposition}
 
 \begin{proof}
-By induction on the inference $\Gamma; \emptyset; \Delta \proves P \hastype \Proc$. \\
-Some (old) details in Appendix~\ref{app:enc_HO_to_sessp} (Page~\pageref{app:enc_HO_to_sessp}).
+By induction on the inference $\Gamma; \emptyset; \Delta \proves P \hastype \Proc$. 
+Details in Appendix~\ref{app:enc_HO_to_sessp} (Page~\pageref{app:enc_HO_to_sessp}).
 	\qed
 \end{proof}
 
@@ -1578,7 +1587,7 @@ If $\Gamma; \emptyset; \Delta \proves P \hastype \Proc$ then
 
 \begin{proof}
 By transition induction. 
-\jp{TO BE DONE!}
+\jp{TO BE TYPESET!}
 	\qed
 \end{proof}
 

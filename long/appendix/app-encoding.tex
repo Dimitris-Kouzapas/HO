@@ -11,6 +11,8 @@
 \label{app:polmon}
 We study the properties of the typed encoding in
 Def.~\ref{d:enc:poltomon} (Page~\pageref{d:enc:poltomon}).
+
+We repeat the statement of Prop.~\ref{prop:typepresp}, as in Page \pageref{prop:typepresp}:
 \begin{proposition}[Type Preservation, Polyadic to Monadic]
 Let $P$ be an  $\HOp$ process.
 If			$\Gamma; \emptyset; \Delta \proves P \hastype \Proc$ then 
@@ -139,13 +141,22 @@ and the following type derivation:
 \subsection{Properties for $\encod{\cdot}{\cdot}{1}: \sessp^{-\mu} \to \HO$}
 \label{app:enc_sesspnr_to_ho}
 
-\begin{proposition}\rm
-	\label{app:enc_sesspnr_to_ho_typing}
-	Encoding $\encod{\cdot}{\cdot}{1}: \sessp^{-\mu} \to \HO$  is type-preserving (cf. Def.~\ref{def:ep}\,(1)).\rm
+%\begin{proposition}\rm
+%	\label{app:enc_sesspnr_to_ho_typing}
+%	Encoding $\encod{\cdot}{\cdot}{1}: \sessp^{-\mu} \to \HO$  is type-preserving (cf. Def.~\ref{def:ep}\,(1)).\rm
+%\end{proposition}
+
+We repeat the statement of Prop.~\ref{prop:typepres1}, as in Page \pageref{prop:typepres1}:
+
+\begin{proposition}[Type Preservation, First-Order into Higher-Order]
+Let $P$ be a  $\sessp^{-\mu}$ process.
+If			$\Gamma; \emptyset; \Delta \proves P \hastype \Proc$ then 
+			$\mapt{\Gamma}^{1}; \emptyset; \mapt{\Delta}^{1} \proves \map{P}^{1} \hastype \Proc$. 
 \end{proposition}
 
+
 \begin{proof}
-	By induction on the structure of $\sessp^{-\mu}$ process $P$. \jp{TO BE ADJUSTED!}
+	By induction on the   inference of $\Gamma; \emptyset; \Delta \proves P \hastype \Proc$. %\jp{TO BE ADJUSTED!}
 %
 	\begin{enumerate}[1.]
 		%%%% Output of (linear) channel
@@ -159,9 +170,13 @@ and the following type derivation:
 					\Gamma; \emptyset; \Delta \cat k':S_1 \cat k:\btout{S_1}S \proves  \bout{k}{k'} P' \hastype \Proc}
 			\]
 			}
-			The corresponding typing in the target language is as follows --- we write $U_1$
-			to stand for $\lhot{\btinp{\lhot{\tmap{S_1}{1}}}\tinact}$:
-%
+			Thus, by IH we have
+			$$
+			\tmap{\Gamma}{1}; \emptyset ; \tmap{\Delta}{1} \cat k:\tmap{S}{1} \proves \pmap{P'}{1} \hastype \Proc
+			$$
+			Let us write $U_1$
+			to stand for $\lhot{\btinp{\lhot{\tmap{S_1}{1}}}\tinact}$.
+			The corresponding typing in the target language is as follows:
 			\begin{eqnarray}
 				\label{prop:sesspnr_to_HO_t1}
 				\tree{
@@ -188,7 +203,7 @@ and the following type derivation:
 				\tree{
 					\tmap{\Gamma}{1}; \emptyset ; \tmap{\Delta}{1} \cat k:\tmap{S}{1} \proves \pmap{P'}{1} \hastype \Proc
 					\qquad
-					\tmap{\Gamma}{1} ; \emptyset; k' : \tmap{S_1}{1} \proves \abs{z}{\binp{z}{X} \appl{\X}{k'}} \hastype U_1 \ \ref{prop:sesspnr_to_HO_t1}
+					\tmap{\Gamma}{1} ; \emptyset; k' : \tmap{S_1}{1} \proves \abs{z}{\binp{z}{X} \appl{\X}{k'}} \hastype U_1 \ \eqref{prop:sesspnr_to_HO_t1}
 				}{
 					\tmap{\Gamma}{1}; \emptyset; \tmap{\Delta}{1} \cat k':\tmap{S_1}{1} \cat k:\btout{U_1}\tmap{S}{1} \proves  \bbout{k}{\abs{z}{\binp{z}{X} \appl{\X}{k'}}} \pmap{P'}{1} \hastype \Proc
 				}
@@ -223,7 +238,12 @@ and the following type derivation:
 				}
 			\]
 			 }
-			 The corresponding typing in the target language is as follows --- we write $U_1$ to stand for $\lhot{\btinp{\lhot{\tmap{S_1}{1}}}\tinact}$:
+			 Thus, by IH we have
+			 $$
+			 \tmap{\Gamma}{1}; \emptyset;  \tmap{\Delta}{1} \cat k:\tmap{S}{1}  \cat x:\tmap{S_1}{1} \proves  \pmap{Q}{1}   \hastype \Proc
+			 $$
+			 Let us write $U_1$ to stand for $\lhot{\btinp{\lhot{\tmap{S_1}{1}}}\tinact}$.
+			 The corresponding typing in the target language is as follows:
 			{\small
 %
 			\begin{eqnarray}
@@ -261,11 +281,11 @@ and the following type derivation:
 		 		\tree{
 					\begin{array}{cl}
 						\tmap{\Gamma}{1}; \{X: U_1\}; \cat s: \btinp{\lhot{\tmap{S_1}{1}}}\tinact \ \proves \appl{X}{s}  \hastype \Proc
-						& \ref{prop:sesspnr_to_HO_t2}
+						& \eqref{prop:sesspnr_to_HO_t2}
 						\\
 						\tmap{\Gamma}{1}; \emptyset; \tmap{\Delta}{1} \cat k:\tmap{S}{1} \cat \dual{s}: \btout{\lhot{\tmap{S_1}{1}}}\tinact \proves
 						\bbout{\dual{s}}{\abs{x}{\pmap{Q}{1}}} \inact  \hastype \Proc
-						& \ref{prop:sesspnr_to_HO_t3}
+						& \eqref{prop:sesspnr_to_HO_t3}
 					\end{array}
 				}{
 					\tmap{\Gamma}{1}; \{X: U_1\};  \tmap{\Delta}{1} \cat k:\tmap{S}{1} \cat s: \btinp{\lhot{\tmap{S_1}{1}}}\tinact \cat \dual{s}: \btout{\lhot{\tmap{S_1}{1}}}\tinact\proves \appl{X}{s} \Par \bbout{\dual{s}}{\abs{x}{\pmap{Q}{1}}} \inact  \hastype \Proc
@@ -276,7 +296,7 @@ and the following type derivation:
 			\\
 			 \tree{
 				 \tree{
-					\tmap{\Gamma}{1}; \{X: U_1\};  \tmap{\Delta}{1} \cat k:\tmap{S}{1} \cat s: \btinp{\lhot{\tmap{S_1}{1}}}\tinact \cat \dual{s}: \btout{\lhot{\tmap{S_1}{1}}}\tinact\proves \appl{X}{s} \Par \bbout{\dual{s}}{\abs{x}{\pmap{Q}{1}}} \inact  \hastype \Proc \quad \ref{prop:sesspnr_to_HO_t4}
+					\tmap{\Gamma}{1}; \{X: U_1\};  \tmap{\Delta}{1} \cat k:\tmap{S}{1} \cat s: \btinp{\lhot{\tmap{S_1}{1}}}\tinact \cat \dual{s}: \btout{\lhot{\tmap{S_1}{1}}}\tinact\proves \appl{X}{s} \Par \bbout{\dual{s}}{\abs{x}{\pmap{Q}{1}}} \inact  \hastype \Proc \quad \eqref{prop:sesspnr_to_HO_t4}
 				}{
 					\tmap{\Gamma}{1}; \{X: U_1\};  \tmap{\Delta}{1} \cat k:\tmap{S}{1} \proves \newsp{s}{\appl{X}{s} \Par \bbout{\dual{s}}{\abs{x}{\pmap{Q}{1}}} \inact}  \hastype \Proc
 				}
@@ -336,14 +356,16 @@ and the following type derivation:
 \subsection{Properties for $\fencod{\cdot}{\cdot}{2}{f}: \sessp \to \HO$}
 \label{app:enc_sesp_to_HO}
 
-\begin{proposition}\rm
-	\label{app:enc_sesp_to_HO_t}
-	Encoding $\fencod{\cdot}{\cdot}{2}{f}: \sessp \to \HO$  
-	is type-preserving (cf. Def.~\ref{def:ep}\,(1)).
+We repeat the statement of Prop.~\ref{prop:typepres2}, as in Page \pageref{prop:typepres2}:
+
+\begin{proposition}[Type Preservation, Full First-Order into Higher-Order]
+Let $P$ be a  $\sessp$ process.
+If			$\Gamma; \emptyset; \Delta \proves P \hastype \Proc$ then 
+			$\mapt{\Gamma}^{2}; \emptyset; \mapt{\Delta}^{2} \proves \map{P}_f^{2} \hastype \Proc$. 
 \end{proposition}
 
 \begin{proof}
-	By induction on the structure of \sessp process $P_0$.  \jp{TO BE ADJUSTED!}
+By induction on the inference $\Gamma; \emptyset; \Delta \proves P \hastype \Proc$.
 	\begin{enumerate}[1.]
 		\item	Case $P_0 = \rvar{X}$.
 			Then we have the following typing in the source language:
@@ -427,12 +449,12 @@ and the following type derivation:
 						\Gamma  ;\, \es ;\, \Delta_{\tilde{n}}, s:\btinp{\shot{\tilde{T}}}\tinact
 						\proves  
 						\appl{\X}{\tilde{n}, s} \hastype \Proc
-						& \ref{prop:sessp_to_HO_t1}
+						& \eqref{prop:sessp_to_HO_t1}
 						\\ 
 						\Gamma  ;\, \es ;\,   \dual{s}: \btout{\shot{\tilde{T}}}\tinact
 						\proves 
 						\bbout{\dual{s}}{ \abs{\tilde{x},z}\,\,{\appl{X}{ \tilde{x}, z}}} \inact \hastype \Proc
-						& \ref{prop:sessp_to_HO_t2}
+						& \eqref{prop:sessp_to_HO_t2}
 					\end{array}
 				}{
 					\Gamma  ;\, \es ;\, \Delta_{\tilde{n}}, s:\btinp{\shot{\tilde{T}}}\tinact, \, \dual{s}: \btout{\shot{\tilde{T}}}\tinact
@@ -527,12 +549,12 @@ and the following type derivation:
 						\tmap{\Gamma}{2};\, \es;\, \tmap{\Delta_{\tilde{n}}}{2}, s:\btinp{\shot{\tilde{T}}}\tinact 
 						\proves
 						\binp{s}{\X} R  \hastype \Proc
-						& \ref{prop:sessp_to_HO_t4}
+						& \eqref{prop:sessp_to_HO_t4}
 						\\
 						\tmap{\Gamma}{2};\, \es;\, \dual{s}:\btout{\shot{\tilde{T}}}\tinact
 						\proves
 						\bbout{\dual{s}}{\abs{\tilde{x}, z } \,{\binp{z}{\X} \auxmapp{R}{\mathsf{v}}{\es}}} \inact \hastype \Proc
-						& \ref{prop:sessp_to_HO_t5}
+						& \eqref{prop:sessp_to_HO_t5}
 					\end{array}
 				}{
 					\tmap{\Gamma}{2};\, \es;\, \tmap{\Delta_{\tilde{n}}}{2}, s:\btinp{\shot{\tilde{T}}}\tinact , \dual{s}:\btout{\shot{\tilde{T}}}\tinact
@@ -567,13 +589,22 @@ and the following type derivation:
 \subsection{Properties for $\encod{\cdot}{\cdot}{3}: \HO \to \sessp$}
 \label{app:enc_HO_to_sessp}
 
-\begin{proposition}\rm
-	\label{app:enc_HO_to_sessp_t}
-	Encoding $\encod{\cdot}{\cdot}{3}: \HO \to \sessp$  is type-preserving (cf. Def.~\ref{def:ep}\,(1)).
+We repeat the statement of Prop.~\ref{prop:typepres3}, as in Page \pageref{prop:typepres3}:
+
+%\begin{proposition}\rm
+%	\label{app:enc_HO_to_sessp_t}
+%	Encoding $\encod{\cdot}{\cdot}{3}: \HO \to \sessp$  is type-preserving (cf. Def.~\ref{def:ep}\,(1)).
+%\end{proposition}
+
+\begin{proposition}[Type Preservation, Higher-Order into First-Order]
+Let $P$ be an  $\HO$ process. 
+If			$\Gamma; \emptyset; \Delta \proves P \hastype \Proc$ then 
+			$\mapt{\Gamma}^{3}; \emptyset; \mapt{\Delta}^{3} \proves \map{P}^{3} \hastype \Proc$. 
 \end{proposition}
 
 \begin{proof}
-	By induction on the structure of \HO process $P$.  \jp{TO BE ADJUSTED!}
+By induction on the inference $\Gamma; \emptyset; \Delta \proves P \hastype \Proc$.
+%	By induction on the structure of \HO process $P$.  \jp{TO BE ADJUSTED!}
 	\begin{enumerate}[1.]
 
 	%%%% Output of (linear) channel
@@ -594,10 +625,17 @@ and the following type derivation:
 					\Gamma; \emptyset; \Delta_1 \cat \Delta_2 \cat k:\btout{\lhot{S_1}}S \proves  \bbout{k}{\abs{x}{Q}} P \hastype \Proc
 				}
 			\]
-%
-			The corresponding typing in the target language is as follows --- we write $U_1$ to stand for 
+%			
+			This way, by IH we have
+			$$
+			\tmap{\Gamma}{3}; \es ; \tmap{\Delta_2}{3}, x:\tmap{S_1}{3}
+									\proves 
+									\pmap{Q}{3} \hastype \Proc
+			$$
+			Let us write 
+			 $U_1$ to stand for 
 			$\chtype{\btinp{\tmap{S_1}{3}}\tinact}$.
-			We also write 
+			The corresponding typing in the target language is as follows: 
 %
 			\begin{eqnarray*}
 				\tmap{\Gamma_1}{3} & = & \tmap{\Gamma}{3} \cup a:\chtype{\btinp{\tmap{S_1}{3}}\tinact} \\
@@ -668,7 +706,7 @@ and the following type derivation:
 						\tmap{\Gamma_1}{3}; \es ; \tmap{\Delta_2}{3} 
 						\proves 
 						\recp{X}{(\binp{a}{y}\binp{y}{x}\pmap{Q}{3} \Par \rvar{X})} \hastype \Proc
-						\quad \ref{prop:HO_to_sessp_t1}
+						\quad \eqref{prop:HO_to_sessp_t1}
 					\end{array}
 				}{
 					\tmap{\Gamma_1}{3}; \es ; \tmap{\Delta_1, \Delta_2}{3}, k:\tmap{S}{3} 
@@ -688,7 +726,7 @@ and the following type derivation:
 							\proves 
 							\pmap{P}{3} \Par 
 							\recp{X}{(\binp{a}{y}\binp{y}{x}\pmap{Q}{3} \Par \rvar{X})} \hastype \Proc
-							\quad \ref{prop:HO_to_sessp_t2}
+							\quad \eqref{prop:HO_to_sessp_t2}
 						\end{array}
 					}{
 						\tmap{\Gamma_1}{3}; \es ; \tmap{\Delta_1, \Delta_2}{3}, k:\bbtout{U_1}\tmap{S}{3} 
@@ -743,7 +781,7 @@ and the following type derivation:
 %
 			\[
 				\tree{
-					\tmap{\Gamma}{3} \cat x : \chtype{\btinp{\tmap{S_1}{3}}\tinact};\, \emptyset ;\, \Delta \cat k:\tmap{S}{3} \proves  \tmap{P}{3} \hastype \Proc
+					\tree{}{\tmap{\Gamma}{3} \cat x : \chtype{\btinp{\tmap{S_1}{3}}\tinact};\, \emptyset ;\, \Delta \cat k:\tmap{S}{3} \proves  \tmap{P}{3} \hastype \Proc}
 				}{
 					\tmap{\Gamma}{3};\, \emptyset; \, \tmap{\Delta}{3}\cat k:\bbtinp{\chtype{\btinp{\tmap{S_1}{3}}\tinact}}\tmap{S}{3} \proves
 					\binp{k}{x} \pmap{P}{3} \hastype \Proc
@@ -783,8 +821,9 @@ and the following type derivation:
 				}{
 					\Gamma;\, \{X : \lhot{S_1}\};\, k:S_1 \proves  \appl{X}{k} \hastype \Proc}
 			\]
-			The corresponding typing in the target language is as follows  --- below we write
-			$\tmap{\Gamma_1}{3}$ to stand for $\tmap{\Gamma}{3} \cat x:\chtype{\btout{\tmap{S_1}{3}}\tinact}$:
+			Let us write
+			$\tmap{\Gamma_1}{3}$ to stand for $\tmap{\Gamma}{3} \cat x:\chtype{\btout{\tmap{S_1}{3}}\tinact}$.
+			The corresponding typing in the target language is as follows:
 %
 			\begin{eqnarray}
 				\label{prop:HO_to_sessp_t11}
@@ -807,7 +846,7 @@ and the following type derivation:
 						\begin{array}{c}
 							\tmap{\Gamma_1}{3};\, \es;\,\, k:\tmap{S_1}{3},\,  \dual{s}:\btout{\tmap{S_1}{3}}\tinact \proves
 							\bout{\dual{s}}{k}\inact \hastype \Proc
-							\quad \ref{prop:HO_to_sessp_t11}
+							\quad \eqref{prop:HO_to_sessp_t11}
 							\\
 							\tmap{\Gamma_1}{3} ;\, \es ;\, \es \proves x \hastype \chtype{\btout{\tmap{S_1}{3}}\tinact}
 						\end{array}
