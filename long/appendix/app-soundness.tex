@@ -40,21 +40,21 @@ which have standard proofs.
 \begin{lemma}[Substitution Lemma - Lemma C.10 in M\&Y]\rm
 	\label{l:subst}
 	\begin{enumerate}[1.]
-		\item	Suppose $\Gamma; \Lambda; \Delta \cat \mytilde{x}:\mytilde{S}  \proves P \hastype \Proc$ and
-			$\mytilde{k} \not\in \dom{\Gamma, \Lambda, \Delta}$. 
-			Then $\Gamma; \Lambda; \Delta \cat \mytilde{k}:\mytilde{S}  \vdash P\subst{\mytilde{k}}{\mytilde{x}} \hastype \Proc$.
+		\item	Suppose $\Gamma; \Lambda; \Delta \cat x:S  \proves P \hastype \Proc$ and
+			$k \not\in \dom{\Gamma, \Lambda, \Delta}$. 
+			Then $\Gamma; \Lambda; \Delta \cat k:S  \vdash P\subst{k}{x} \hastype \Proc$.
 
 		\item	Suppose $\Gamma \cat x:\chtype{U}; \Lambda; \Delta \proves P \hastype \Proc$ and
 			$a \notin \dom{\Gamma, \Lambda, \Delta}$. 
 			Then $\Gamma \cat a:\chtype{U}; \Lambda; \Delta   \vdash P\subst{a}{x} \hastype \Proc$.
 
-		\item	Suppose $\Gamma; \Lambda_1 \cat X:\lhot{\mytilde{C}}; \Delta_1  \proves P \hastype \Proc$ 
-			and $\Gamma; \Lambda_2; \Delta_2  \proves V \hastype \lhot{\mytilde{C}}$ with 
+		\item	Suppose $\Gamma; \Lambda_1 \cat X:\lhot{C}; \Delta_1  \proves P \hastype \Proc$ 
+			and $\Gamma; \Lambda_2; \Delta_2  \proves V \hastype \lhot{C}$ with 
 			$\Lambda_1, \Lambda_2$ and $\Delta_1, \Delta_2$ defined.  
 			Then $\Gamma; \Lambda_1 \cat \Lambda_2; \Delta_1 \cat \Delta_2  \proves P\subst{V}{X} \hastype \Proc$.
 
-		\item	Suppose $\Gamma \cat X:\shot{\mytilde{C}}; \Lambda; \Delta  \proves P \hastype \Proc$ and
-			$\Gamma; \emptyset ; \emptyset  \proves V \hastype \shot{\mytilde{C}}$.
+		\item	Suppose $\Gamma \cat X:\shot{C}; \Lambda; \Delta  \proves P \hastype \Proc$ and
+			$\Gamma; \emptyset ; \emptyset  \proves V \hastype \shot{C}$.
 			Then $\Gamma; \Lambda; \Delta  \proves P\subst{V}{X} \hastype \Proc$.
 		\end{enumerate}
 \end{lemma}
@@ -131,12 +131,161 @@ Theorem~\ref{t:sr} in Page~\pageref{t:sr}:
 			well-typed $\Delta$. \\
 			Then $P \red P'$ implies $\Gamma; \es; \Delta'  \proves P' \hastype \Proc$
 			and $\Delta = \Delta'$ or $\Delta \red \Delta'$.
+
 	\end{enumerate}
 \end{theorem}
 
 \begin{proof}
 	Part (1) is standard, using weakening and strengthening lemmas. Part (2) proceeds by induction on the last reduction rule used. Below, we give some details:
 	\begin{enumerate}[1.]
+	   \item
+	   Case \orule{App}: Then we have
+	   $$
+	   P = (\abs{x}{Q}) \, u   \red  Q \subst{u}{x} = P'
+	   $$
+	   Suppose $\Gamma;\, \emptyset ;\, \Delta \proves (\abs{x}{Q}) \, u \hastype \Proc$. 
+	   We examine one possible way in which 
+	   this assumption can be derived; other cases are similar or simpler:
+	   \[
+	   \tree{
+	   \tree{\Gamma;\, \emptyset ;\, \Delta \cat x:S \proves Q  \hastype \Proc }
+	   {
+	   \Gamma;\, \emptyset ;\, \Delta \proves \abs{x}{Q}  \hastype \lhot{S} }
+	   \qquad
+	   \tree{}{
+	   \Gamma;\, \emptyset ;\, \{u:S\} \proves   u \hastype S}
+	   }{
+	   \Gamma;\, \emptyset ;\, \Delta \cat u:S \proves (\abs{x}{Q}) \, u \hastype \Proc
+	   }
+	   \]
+	  Then, by combining premise
+	   $\Gamma;\, \emptyset ;\, \Delta \cat x:S \proves Q  \hastype \Proc$
+	   with
+	   the substitution lemma (Lemma~\ref{lem:subst}(1)),
+	   we obtain 
+	    $\Gamma;\, \emptyset ;\, \Delta \cat u:S \proves Q\subst{u}{x}  \hastype \Proc$, as desired.
+	    
+	    \item Case \orule{Pass}: 
+	    There are several sub-cases, depending on the type of the communication 
+	    subject $n$ and the type of the object $V$. We analyze some of these sub-cases.
+	    
+	    \begin{enumerate}[(a)]
+	    \item $n$ is a shared name and $V$ is a name $v$. 
+	    Then we have the following reduction: 
+	    $$
+	    P = \bout{n}{v} Q_1 \Par \binp{n}{x} Q_2  \red  Q_1 \Par Q_2 \subst{v}{x} = P'
+	    $$
+	    By assumption, we have 
+	    the following typing derivation:
+	    \[	    \hspace{-12mm}
+	    \tree{
+	    \tree{
+	     \Gamma' \cat n:\chtype{S};\, \emptyset ;\, \emptyset  \proves n  \hastype \chtype{S}
+	     \quad
+	      \Gamma;\, \emptyset ;\, \Delta_1    \proves   Q_1  \hastype \Proc
+	      \quad
+	       \Gamma;\, \emptyset ;\, \{v:S\}  \proves v  \hastype S	    
+	    }{
+	    \Gamma;\, \emptyset ;\, \Delta_1 \cat \{v:S\}  \proves \bout{n}{v} Q_1  \hastype \Proc
+	    } 
+	    \quad 
+	    	    \tree{
+	    \Gamma' \cat n:\chtype{S};\, \emptyset ;\, \emptyset  \proves n  \hastype \chtype{S}
+	     \quad
+	      \Gamma;\, \emptyset ;\, \Delta_3 \cat x:S    \proves   Q_2  \hastype \Proc
+	    }{
+	    \Gamma;\, \emptyset ;\, \Delta_3 \proves  \binp{n}{x} Q_2 \hastype \Proc
+	   }
+	    }{
+	    \Gamma;\, \emptyset ;\, \Delta_1 \cat \{v:S\} \cat \Delta_3 \proves \bout{n}{v} Q_1 \Par \binp{n}{x} Q_2 \hastype \Proc
+	    }
+	    \]
+	    
+	    
+	    Now, by applying Lemma~\ref{lem:subst}(1) on $\Gamma;\, \emptyset ;\, \Delta_3 \cat x:S    \proves   Q_2  \hastype \Proc$
+			we obtain 
+	   $$
+	   \Gamma;\, \emptyset ;\, \Delta_3 \cat v:S    \proves   Q_2\subst{v}{x}  \hastype \Proc
+	   $$
+	   
+	   			and the case is completed by using rule~\trule{Par} with this judgment:
+							\[		~~ 
+				\tree{
+					\Gamma; \emptyset; \Delta_1    \proves  
+ 					 Q_1 \hastype \Proc
+					 \quad 
+					\Gamma;\, \emptyset ;\, \Delta_3 \cat v:S    \proves   Q_2\subst{v}{x}  \hastype \Proc
+					}{
+					\Gamma; \emptyset; \Delta_1 \cat \Delta_3  \cat v:S \proves  
+ 					Q_1  \Par  Q_2\subst{v}{x} \hastype \Proc
+					} 
+			\]
+			Observe how in this case the session environment does not reduce.\\
+			
+			%%%%%%%%%%%%%%%%%%%%%%%%
+			
+		\item $n$ is a shared name and $V$ is a higher-order value. 
+	    Then we have the following reduction: 
+	    $$
+	    P = \bout{n}{V} Q_1 \Par \binp{n}{x} Q_2  \red  Q_1 \Par Q_2 \subst{V}{x} = P'
+	    $$
+	    By assumption, we have 
+	    the following typing derivation (below, we write 
+	    $L$ to stand for $\shot{C}$ and 
+	    $\Gamma$ to stand for $ \Gamma' \setminus \{x:L\}$).
+	    \[	    \hspace{-12mm}
+	    \tree{
+	    \tree{
+	     \Gamma;\, \emptyset ;\, \emptyset  \proves n  \hastype \chtype{L}
+	     \quad
+	      \Gamma;\, \emptyset ;\, \Delta_1    \proves   Q_1  \hastype \Proc
+	      \quad
+	       \Gamma;\, \emptyset ;\, \emptyset  \proves V  \hastype L	    
+	    }{
+	    \Gamma;\, \emptyset ;\, \Delta_1    \proves \bout{n}{V} Q_1  \hastype \Proc
+	    } 
+	    \quad 
+	    	    \tree{
+	    \Gamma' ;\, \emptyset ;\, \emptyset  \proves n  \hastype \chtype{L}
+	     \quad
+	      \Gamma';\, \emptyset ;\, \Delta_3    \proves   Q_2  \hastype \Proc
+	      	     \quad
+	      	    \Gamma' ;\, \emptyset ;\, \emptyset  \proves x  \hastype L
+	    }{
+	    \Gamma;\, \emptyset ;\, \Delta_3 \proves  \binp{n}{x} Q_2 \hastype \Proc
+	   }
+	    }{
+	    \Gamma;\, \emptyset ;\, \Delta_1 \cat \Delta_3 \proves \bout{n}{v} Q_1 \Par \binp{n}{x} Q_2 \hastype \Proc
+	    }
+	    \]
+	    
+	    
+	    Now, by applying Lemma~\ref{lem:subst}(4) on 
+	    $\Gamma' \setminus \{x:L\};\, \emptyset ;\, \Delta_3    \proves   Q_2  \hastype \Proc$
+	    and
+	    $\Gamma;\, \emptyset ;\, \emptyset  \proves V  \hastype L$
+	    we obtain 
+	   $$
+	   \Gamma;\, \emptyset ;\, \Delta_3  \proves   Q_2\subst{V}{x}  \hastype \Proc
+	   $$
+	   
+	   and the case is completed by using rule~\trule{Par} with this judgment:
+							\[		~~ 
+				\tree{
+					\Gamma; \emptyset; \Delta_1    \proves  
+ 					 Q_1 \hastype \Proc
+					 \quad 
+					\Gamma;\, \emptyset ;\, \Delta_3     \proves   Q_2\subst{V}{x}  \hastype \Proc
+					}{
+					\Gamma; \emptyset; \Delta_1 \cat \Delta_3   \proves  
+ 					Q_1  \Par  Q_2\subst{V}{x} \hastype \Proc
+					} 
+			\]
+			Observe how in this case the session environment does not reduce.\\
+			
+
+	\end{enumerate}
+
 		\item	Case \orule{NPass}:
 			Then there are two sub-cases, depending on whether the
 			communication subject is a shared name or a channel. 
