@@ -1,9 +1,10 @@
 \subsection{Syntax of \HOp}
 \label{subsec:syntax}
 \[ 
-\begin{array}{rcllrcl}
-u,w & ::= & a, b \bnfbar s,\dual{s} \bnfbar x,y,z
-& \quad & V,W & ::= &  u \bnfbar \abs{x}{P}
+\begin{array}{lll}
+u,w  ::=  n \ | \ x,y,z
+& n ::= a,b  \ | \ s, \dual{s} 
+& V,W  ::=   u \ | \ \abs{x}{P}
 \end{array}
 \]
 \[
@@ -14,8 +15,9 @@ P,Q & ::= &  P\Par Q \bnfbar
       & \bnfbar & \appl{x}{u} \bnfbar \rvar{X} \bnfbar \recp{X}{P}
 \end{array}
 \]
-We define the dual operation over channels $\dual{\dual{s}} = s$. 
-Intuitively, names $s$ and $\dual{s}$ are dual \emph{endpoints}.
+We define the dual operation over (1) session channels $\dual{\dual{s}} = s$
+(session channel $s$ and $\dual{s}$ are dual \emph{endpoints}); and 
+(2) $\dual{a} = a$ (dual of a shared channel is itself).  
 
 \subsection{Operational Semantics}
 
@@ -39,14 +41,14 @@ P \Par \news{n} Q \scong \news{n}(P \Par Q)
 (\abs{x}{P}) \, u  & \red & P \subst{u}{x} 
 & \orule{App}
 		\\[1mm]
-\bout{a}{V} P \Par \binp{a}{x} Q & \red & P \Par Q \subst{V}{x} 
-& \orule{Com}
-		\\[1mm]
-\bout{s}{V} P \Par \binp{\dual{s}}{x} Q & \red & P \Par Q \subst{V}{x} 
+%\bout{a}{V} P \Par \binp{a}{x} Q & \red & P \Par Q \subst{V}{x} 
+%& \orule{Com}
+%		\\[1mm]
+\bout{n}{V} P \Par \binp{\dual{n}}{x} Q & \red & P \Par Q \subst{V}{x} 
 & \orule{Pass}
 		\\[1mm]
-			\bsel{s}{l_j} Q \Par \bbra{\dual{s}}{l_i : P_i}_{i \in I} & \red & Q \Par P_j ~~(j \in I)~~  & \orule{Sel}\\[1mm]
-		P \red P' & \Rightarrow & \news{n} P  \red  \news{n} P'  & \orule{Sess}\\[1mm]
+			\bsel{n}{l_j} Q \Par \bbra{\dual{n}}{l_i : P_i}_{i \in I} & \red & Q \Par P_j ~~(j \in I)~~  & \orule{Sel}\\[1mm]
+		P \red P' & \Rightarrow & \news{n} P  \red  \news{n} P'  & \orule{Res}\\[1mm]
 			P \red P' & \Rightarrow  &  P \Par Q  \red   P' \Par Q  & \orule{Par}\\[1mm]
 			P \scong Q \red Q' \scong P' & \Rightarrow & P  \red  P' & \orule{Cong}
 	\end{array}
