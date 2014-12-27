@@ -167,7 +167,7 @@ Theorem~\ref{t:sr} in Page~\pageref{t:sr}:
 	    
 	    \item Case \orule{Pass}: 
 	    There are several sub-cases, depending on the type of the communication 
-	    subject $n$ and the type of the object $V$. We analyze some of these sub-cases.
+	    subject $n$ and the type of the object $V$. We analyze two representative sub-cases:
 	    
 	    \begin{enumerate}[(a)]
 	    \item $n$ is a shared name and $V$ is a name $v$. 
@@ -286,99 +286,99 @@ Theorem~\ref{t:sr} in Page~\pageref{t:sr}:
 
 	\end{enumerate}
 
-		\item	Case \orule{NPass}:
-			Then there are two sub-cases, depending on whether the
-			communication subject is a shared name or a channel. 
-			In the first case, we have 
-			$$P = \bout{\dual{k}}{n} P_1 \Par \binp{k}{x} P_2 \red P_1 \Par P_2\subst{n}{x} = P'$$ 
-			Suppose $\Gamma; \es; \Delta  \proves \bout{\dual{k}}{n} P_1 \Par \binp{k}{x} P_2 \hastype \Proc$. This assumption is derived first from rules~\trule{Req} and \trule{AccS}:
-			\[
-								\tree{
-					\Gamma; \emptyset; \emptyset  \proves  k \hastype \chtype{S} ~~~
-					\Gamma ; \emptyset ; \Delta_1 \proves   P_1 \hastype \Proc ~~~
-					\Gamma ; \emptyset ; \{n:S\} \proves   n \hastype S
-					}{
-					\Gamma; \emptyset; \Delta_1 \cat \{n:S\}    \proves  
- 					\bout{\dual{k}}{n} P_1 \hastype \Proc} 
-			\]		
-			and
-			\[		~~ 
-				\tree{
-					\Gamma; \emptyset; \emptyset  \proves  k \hastype \chtype{S} \quad 
-					\Gamma ; \emptyset ; \Delta_2 \cat \{x:S\}  \proves  P_2 \hastype \Proc \quad
-					\Gamma ; \emptyset ; \{x:S\}  \proves  x \hastype S
-					}{
-					\Gamma; \emptyset; \Delta_2  \proves  
- 					\binp{k}{x} P_2 \hastype \Proc} 
-			\]
-			and then rule~\trule{Par}, we obtain: %letting $\Delta = \Delta_1 \cat \Delta_2  \cat \Delta_3$.
-				\[		~~ 
-				\tree{
-					\Gamma; \emptyset; \Delta_1 \cat \{n:S\}    \proves  
- 					\bout{\dual{k}}{n} P_1 \hastype \Proc\quad 
-					\Gamma; \emptyset;  \Delta_2 \proves  
- 					\binp{k}{x} P_2 \hastype \Proc
-					}{
-					\Gamma; \emptyset; \Delta_1 \cat \{n:S\} \cat \Delta_2 \proves  
- 					\bout{\dual{k}}{n} P_1  \Par \binp{k}{x} P_2 \hastype \Proc
-					} 
-			\]
-			
-			Now, by applying Lemma~\ref{lem:subst}(1) on $\Gamma ; \emptyset ; \Delta_2 \cat \{x:S\}  \proves  P_2 \hastype \Proc$
-			we obtain 
-			$$\Gamma ; \emptyset ; \Delta_2 \cat \{n:S\} \proves  P_2\subst{n}{x} \hastype \Proc$$
-			and the case is completed by using rule~\trule{Par} with this judgment:
-							\[		~~ 
-				\tree{
-					\Gamma; \emptyset; \Delta_1    \proves  
- 					 P_1 \hastype \Proc\quad 
-					\Gamma; \emptyset;  \Delta_2 \cat \{n:S\}  \proves  
- 					 P_2\subst{n}{x} \hastype \Proc
-					}{
-					\Gamma; \emptyset; \Delta_1 \cat \{n:S\} \cat \Delta_2 \proves  
- 					P_1  \Par  P_2\subst{n}{x} \hastype \Proc
-					} 
-			\]
-			Observe how in this case the session environment does not reduce.\\
-			
-			In the second case we have the following reduction, with   $|\mytilde{h}| = |\mytilde{x}|$:
-			$$P = \bout{\dual{k}}{\mytilde{h}} P_1 \Par \binp{k}{\mytilde{x}} P_2 \red P_1 \Par P_2\subst{\mytilde{h}}{\mytilde{x}} = P'$$ 
-			Also in this case the proof is standard, using rules~\trule{RcvS}, \trule{Send}, and \trule{Par} 
-			to type $P$, and using Lemma~\ref{lem:subst}(1) and rule~\trule{Par} to type $P'$. 
-			In this case, the session environment $\Delta$ does reduce.
-
-		\item	Case \orule{APass}:
-		Then we have
-		$$
-		P = \bout{k}{\abs{\mytilde{x}}{Q}} P_1 \Par \binp{\dual{k}}{\X} P_2  \red  P_1 \Par P_2 \subst{\abs{\mytilde{x}}{Q}}{\X} = P'
-		$$
-		and we distinguish two cases, associated to the type of the higher-order value $\abs{\tilde{x}}{Q}$.
-		We describe the proof for the case in which the type is $\lhot{\mytilde{C}}$; the proof when 
-		the type is $\shot{\mytilde{C}}$ is analogous.
-		The typing of $P$ proceeds first by using rule~\trule{Send} on the left-hand side:
-		\[
-								\tree{
-					\Gamma;\, \emptyset;\, \Delta_1 \proves  P_1 \hastype \Proc \quad
-					\Gamma ;\, \emptyset ;\, \Delta_2 \proves   \abs{\mytilde{x}}{Q} \hastype \lhot{\mytilde{C}}					}{
-					\Gamma;\, \emptyset;\, \big((\Delta_1 \cat \Delta_2) \setminus \{k:S\}\big) \cat k:\btout{\lhot{\mytilde{C}}} S     \proves  
- 					\bout{k}{\abs{\mytilde{x}}{Q}} P_1 \hastype \Proc} 
-			\]	
-			Then,
-			thanks to the well-typedness assumption for $\Delta$ (cf. Def.~\ref{d:wtenv}), 
-			 on the right-hand side we have the following typing (using rule~\trule{RcvH}  and assuming $S \dualof T$):
-					\[
-					\tree{
-					\Gamma;\, X:\lhot{\mytilde{C}} ;\, \Delta_3 \cat \dual{k}:T \proves  P_2 \hastype \Proc \quad
-					\Gamma ;\, \{X:\lhot{\mytilde{C}} \} ;\, \Delta_4 \proves   X \hastype \lhot{\mytilde{C}}					}{
-					\Gamma;\, \emptyset;\, \Delta_3 \setminus \Delta_4 \cat \dual{k}:\btinp{\lhot{\mytilde{C}}} T     \proves  
- 					\binp{\dual{k}}{X} P_2 \hastype \Proc} 
-			\]	
-			Finally, we use rule~\trule{Par} to obtain the typing for $P$.
-			The typing of $P'$ is obtained by using the appropriate substitution lemma (Lemma~\ref{lem:subst}(3)) on the typing for $P_2$.
-			
-			When the type of the higher-order value is $\shot{\mytilde{C}}$,
-			the use of rules~\trule{Send} and~\trule{RcvH} for typing $P$ is similar; 
-			 one would use Lemma~\ref{lem:subst}(4) to type $P'$. The session environment reduces.
+%		\item	Case \orule{NPass}:
+%			Then there are two sub-cases, depending on whether the
+%			communication subject is a shared name or a channel. 
+%			In the first case, we have 
+%			$$P = \bout{\dual{k}}{n} P_1 \Par \binp{k}{x} P_2 \red P_1 \Par P_2\subst{n}{x} = P'$$ 
+%			Suppose $\Gamma; \es; \Delta  \proves \bout{\dual{k}}{n} P_1 \Par \binp{k}{x} P_2 \hastype \Proc$. This assumption is derived first from rules~\trule{Req} and \trule{AccS}:
+%			\[
+%								\tree{
+%					\Gamma; \emptyset; \emptyset  \proves  k \hastype \chtype{S} ~~~
+%					\Gamma ; \emptyset ; \Delta_1 \proves   P_1 \hastype \Proc ~~~
+%					\Gamma ; \emptyset ; \{n:S\} \proves   n \hastype S
+%					}{
+%					\Gamma; \emptyset; \Delta_1 \cat \{n:S\}    \proves  
+% 					\bout{\dual{k}}{n} P_1 \hastype \Proc} 
+%			\]		
+%			and
+%			\[		~~ 
+%				\tree{
+%					\Gamma; \emptyset; \emptyset  \proves  k \hastype \chtype{S} \quad 
+%					\Gamma ; \emptyset ; \Delta_2 \cat \{x:S\}  \proves  P_2 \hastype \Proc \quad
+%					\Gamma ; \emptyset ; \{x:S\}  \proves  x \hastype S
+%					}{
+%					\Gamma; \emptyset; \Delta_2  \proves  
+% 					\binp{k}{x} P_2 \hastype \Proc} 
+%			\]
+%			and then rule~\trule{Par}, we obtain: %letting $\Delta = \Delta_1 \cat \Delta_2  \cat \Delta_3$.
+%				\[		~~ 
+%				\tree{
+%					\Gamma; \emptyset; \Delta_1 \cat \{n:S\}    \proves  
+% 					\bout{\dual{k}}{n} P_1 \hastype \Proc\quad 
+%					\Gamma; \emptyset;  \Delta_2 \proves  
+% 					\binp{k}{x} P_2 \hastype \Proc
+%					}{
+%					\Gamma; \emptyset; \Delta_1 \cat \{n:S\} \cat \Delta_2 \proves  
+% 					\bout{\dual{k}}{n} P_1  \Par \binp{k}{x} P_2 \hastype \Proc
+%					} 
+%			\]
+%			
+%			Now, by applying Lemma~\ref{lem:subst}(1) on $\Gamma ; \emptyset ; \Delta_2 \cat \{x:S\}  \proves  P_2 \hastype \Proc$
+%			we obtain 
+%			$$\Gamma ; \emptyset ; \Delta_2 \cat \{n:S\} \proves  P_2\subst{n}{x} \hastype \Proc$$
+%			and the case is completed by using rule~\trule{Par} with this judgment:
+%							\[		~~ 
+%				\tree{
+%					\Gamma; \emptyset; \Delta_1    \proves  
+% 					 P_1 \hastype \Proc\quad 
+%					\Gamma; \emptyset;  \Delta_2 \cat \{n:S\}  \proves  
+% 					 P_2\subst{n}{x} \hastype \Proc
+%					}{
+%					\Gamma; \emptyset; \Delta_1 \cat \{n:S\} \cat \Delta_2 \proves  
+% 					P_1  \Par  P_2\subst{n}{x} \hastype \Proc
+%					} 
+%			\]
+%			Observe how in this case the session environment does not reduce.\\
+%			
+%			In the second case we have the following reduction, with   $|\mytilde{h}| = |\mytilde{x}|$:
+%			$$P = \bout{\dual{k}}{\mytilde{h}} P_1 \Par \binp{k}{\mytilde{x}} P_2 \red P_1 \Par P_2\subst{\mytilde{h}}{\mytilde{x}} = P'$$ 
+%			Also in this case the proof is standard, using rules~\trule{RcvS}, \trule{Send}, and \trule{Par} 
+%			to type $P$, and using Lemma~\ref{lem:subst}(1) and rule~\trule{Par} to type $P'$. 
+%			In this case, the session environment $\Delta$ does reduce.
+%
+%		\item	Case \orule{APass}:
+%		Then we have
+%		$$
+%		P = \bout{k}{\abs{\mytilde{x}}{Q}} P_1 \Par \binp{\dual{k}}{\X} P_2  \red  P_1 \Par P_2 \subst{\abs{\mytilde{x}}{Q}}{\X} = P'
+%		$$
+%		and we distinguish two cases, associated to the type of the higher-order value $\abs{\tilde{x}}{Q}$.
+%		We describe the proof for the case in which the type is $\lhot{\mytilde{C}}$; the proof when 
+%		the type is $\shot{\mytilde{C}}$ is analogous.
+%		The typing of $P$ proceeds first by using rule~\trule{Send} on the left-hand side:
+%		\[
+%								\tree{
+%					\Gamma;\, \emptyset;\, \Delta_1 \proves  P_1 \hastype \Proc \quad
+%					\Gamma ;\, \emptyset ;\, \Delta_2 \proves   \abs{\mytilde{x}}{Q} \hastype \lhot{\mytilde{C}}					}{
+%					\Gamma;\, \emptyset;\, \big((\Delta_1 \cat \Delta_2) \setminus \{k:S\}\big) \cat k:\btout{\lhot{\mytilde{C}}} S     \proves  
+% 					\bout{k}{\abs{\mytilde{x}}{Q}} P_1 \hastype \Proc} 
+%			\]	
+%			Then,
+%			thanks to the well-typedness assumption for $\Delta$ (cf. Def.~\ref{d:wtenv}), 
+%			 on the right-hand side we have the following typing (using rule~\trule{RcvH}  and assuming $S \dualof T$):
+%					\[
+%					\tree{
+%					\Gamma;\, X:\lhot{\mytilde{C}} ;\, \Delta_3 \cat \dual{k}:T \proves  P_2 \hastype \Proc \quad
+%					\Gamma ;\, \{X:\lhot{\mytilde{C}} \} ;\, \Delta_4 \proves   X \hastype \lhot{\mytilde{C}}					}{
+%					\Gamma;\, \emptyset;\, \Delta_3 \setminus \Delta_4 \cat \dual{k}:\btinp{\lhot{\mytilde{C}}} T     \proves  
+% 					\binp{\dual{k}}{X} P_2 \hastype \Proc} 
+%			\]	
+%			Finally, we use rule~\trule{Par} to obtain the typing for $P$.
+%			The typing of $P'$ is obtained by using the appropriate substitution lemma (Lemma~\ref{lem:subst}(3)) on the typing for $P_2$.
+%			
+%			When the type of the higher-order value is $\shot{\mytilde{C}}$,
+%			the use of rules~\trule{Send} and~\trule{RcvH} for typing $P$ is similar; 
+%			 one would use Lemma~\ref{lem:subst}(4) to type $P'$. The session environment reduces.
 
 		\item	Case \orule{Sel}:
 			The proof is standard, the session environment reduces.
