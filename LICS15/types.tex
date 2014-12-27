@@ -21,15 +21,24 @@ $T$ ranged over all types
 \]
 
 \begin{definition}[Duality]
-Let $\mathsf{ST}$ denote the set of well-formed session types.
-The function $F(R): \mathsf{ST} \longrightarrow \mathsf{ST}$ is defined as:
+Let $\mathsf{ST}$ a set of closed session types. 
+Two types $S$ and $S'$ are said to be {\em dual} if a pair $(S,S')$ is 
+in the largest fixed point of the monotone function 
+$F:\mathcal{P}(\mathsf{ST}\times \mathsf{ST}) \to 
+\mathcal{P}(\mathsf{ST}\times \mathsf{ST})$ defined by:
 
 	\begin{tabular}{rcl}
-		$F(R)$ &$=$&		$\set{(\tinact, \tinact), (\vart{t}, \vart{t})}$\\
-			&$\cup$&	$\set{(\btout{U} S, \btinp{U} T)\,,\, (\btinp{U} S, \btout{U} T) \bnfbar S\ R\ T}$\\
-			&$\cup$&	$\set{(\btsel{l_i: S_i}_{i \in I} \,,\, \btbra{l_j: T_j}_{j \in J}) \bnfbar I \subseteq J, S_i\ R\ T_j}$\\
-			&$\cup$&	$\set{(\btbra{l_i: S_i}_{i \in I}\,,\, \btsel{l_j: T_j}_{j \in J}) \bnfbar J \subseteq I, S_j\ R\ T_i}$\\
-			&$\cup$&	$\set{(\trec{t}{S}\,,\, \trec{t}{T}) \cup (S \subst{\trec{t}{S}}{\vart{t}}\,,\, T) \cup (S\,,\, T\subst{\trec{t}{T}}{\vart{t}}) \bnfbar S\ R\ T)}$
+	$F(R)$ &$=$&	$\set{(\tinact, \tinact)}$\\
+ 	       &$\cup$&	$\set{(\btout{U} S_1, \btinp{U} S_2)
+\bnfbar(S_1, S_2)\in R}$\\ 
+  	       &$\cup$&	$\set{(\btinp{U} S_1, \btout{U} S_2)
+\bnfbar(S_1, S_2)\in R}$\\ 
+			&$\cup$&	$\set{(\btsel{l_i: S_i}_{i \in I} \,,\, \btbra{l_i: S_i'}_{i \in I}) \bnfbar \forall i\in I. (S_i, S_i')\in R}$\\
+			&$\cup$&	$\set{(\btbra{l_i: S_i}_{i \in I}\,,\, \btsel{l_i: S_i'}_{i \in I}) \bnfbar \forall i\in I. (S_i, S_i')\in R}$\\
+			&$\cup$&	$\set{(\trec{t}{S}, S')
+\bnfbar (S\subst{\trec{t}{S}}{\vart{t}},S')\in R}$\\
+			&$\cup$&	$\set{(S,\trec{t}{S'})
+\bnfbar (S,S'\subst{\trec{t}{S'}}{\vart{t}})\in R}$
 	\end{tabular}
 	
 \noindent
@@ -345,12 +354,33 @@ The judgements
 
 
 
-\subsection{Sub-Calculi}
-\label{subsec:subcalculi}
 
 
+\begin{definition}[Well-typed Session Environment]\label{d:wtenv}%\rm
+	Let $\Delta$ be a session environment.
+	We say that $\Delta$ is {\em well-typed} if whenever
+	$s: S_1, \dual{s}: S_2 \in \Delta$ then $S_1 \dualof S_2$.
+\end{definition}
 
+\begin{definition}[Session Environment Reduction]%\rm
+\label{def:ses_red}
+	We define the relation $\red$ on session environments as:
+	\begin{enumerate}[$-$]
+		\item	$\Delta \cat s: \btout{U} S_1 \cat \dual{s}: \btinp{U} S_2 \red \Delta \cat s: S_1 \cat \dual{s}: S_2$
+		\item	$\Delta \cat s: \btsel{l_i: S_i}_{i \in I} \cat \dual{s}: \btbra{l_i: S_i'}_{i \in I} \red \Delta \cat s: S_k \cat \dual{s}: S_k', \quad k \in I$.
+	\end{enumerate}
+\end{definition}
 
+\begin{theorem}[Type Soundness - Theorem 7.3 in M\&Y]\label{t:sr}%\rm
+	\begin{enumerate}[1.]
+		\item	(Subject Congruence) Suppose $\Gamma; \es; \Delta \proves P \hastype \Proc$.
+			Then $P \scong P'$ implies $\Gamma; \es; \Delta \proves P' \hastype \Proc$.
 
-
-
+		\item	(Subject Reduction) Suppose $\Gamma; \es; \Delta \proves P \hastype \Proc$
+			with
+			well-typed $\Delta$. 
+			Then $P \red P'$ implies $\Gamma; \es; \Delta'  \proves P' \hastype \Proc$
+			and $\Delta = \Delta'$ or $\Delta \red \Delta'$
+with $\Delta'$ well-formed. 
+	\end{enumerate}
+\end{theorem}
