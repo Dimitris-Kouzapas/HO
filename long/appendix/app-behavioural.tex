@@ -11,6 +11,96 @@ Lemmas which we prove independently.
 The combination of the lemmas is the proof for the parts
 of the theorem.
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%  WB = WBF
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\begin{lemma}\rm
+	\label{lem:wb_eq_wbf}
+	$\wb = \wbf$
+\end{lemma}
+
+\begin{proof}
+	\noi We first prove the direction $\wb \subseteq \wbf$.
+
+	\noi Consider $\horel{\Gamma}{\Delta_1}{P}{\wb}{\Delta_2}{Q}$.
+	The proof does a case analysis on the transition label $\ell$.
+
+	\noi - Case $\ell = \news{\tilde{m_1}} \bactout{n}{V_1}$ is the non-trivial case.
+
+	\noi If
+%
+	\begin{eqnarray}
+		\horel{\Gamma}{\Delta_1}{P}{\hby{\news{\tilde{m_1}} \bactout{n}{V_1}}}{\Delta_1'}{P'}
+		\label{lem:wb_eq_wbf1}
+	\end{eqnarray}
+	then $\exists Q, V_2$ such that
+%
+	\begin{eqnarray}
+		\horel{\Gamma}{\Delta_2}{Q}{\Hby{\news{\tilde{m_2}} \bactout{n}{V_2}}}{\Delta_2'}{Q'}
+		\label{lem:wb_eq_wbf2}
+	\end{eqnarray}
+%
+	and for fresh $t$:
+	\[
+		\mhorel{\Gamma}{\Delta_1'}{\newsp{\tilde{m_1}}{P' \Par \hotrigger{t}{V_1}}}
+		{\wb}
+		{\Delta_2}{}{\newsp{\tilde{m_2}}{Q' \Par \hotrigger{t}{V_2}}}
+	\]
+%
+	From the latter result we can derive that for $\Gamma; \es; \Delta \proves V_1 \hastype U$:
+%
+	\[
+		\mhorel{\Gamma}{\Delta_1'}{\newsp{\tilde{m_1}}{P' \Par \hotrigger{t}{V_1}}}
+		{\hby{\bactinp{t}{\map{\btinp{U} \tinact}^{x}}}}
+		{\Delta_1''}{}{\newsp{\tilde{m_1}}{P' \Par \newsp{s}{\map{\btinp{U} \inact}^{s} \Par \bout{\dual{s}}{V_1} \inact}}}
+	\]
+%
+	\noi implies
+%
+	\[
+		\mhorel{\Gamma}{\Delta_2'}{\newsp{\tilde{m_2}}{Q' \Par \hotrigger{t}{V_2}}}
+		{\hby{\bactinp{t}{\map{\btinp{U} \tinact}^{x}}}}
+		{\Delta_2''}{}{\newsp{\tilde{m_2}}{Q' \Par \newsp{s}{\map{\btinp{U} \inact}^{s} \Par \bout{\dual{s}}{V_2} \inact}}}
+	\]
+%
+	\noi and $\Gamma; \es; \Delta' \proves V_2 \hastype U$.
+
+	\noi Transition~\ref{lem:wb_eq_wbf1} implies transition~\ref{lem:wb_eq_wbf2}. It remains to
+	show that for fresh $t$:
+%
+	\[
+		\mhorel{\Gamma}{\Delta_1'}{\newsp{\tilde{m_1}}{P' \Par \fotrigger{t}{x}{s}{\btinp{U} \inact}{V_1}}}
+		{\wb}
+		{\Delta_2}{}{\newsp{\tilde{m_2}}{Q' \Par \fotrigger{t}{x}{s}{\btinp{U} \inact}{V_2}}}
+	\]
+%
+	The freshness of $t$ implies that
+	\[
+		\mhorel{\Gamma}{\Delta_1'}{\newsp{\tilde{m_1}}{P' \Par \fotrigger{t}{x}{s}{\btinp{U} \inact}{V_1}}}
+		{\hby{\bactinp{t}{m'}}}
+		{\Delta_1''}{}{\newsp{\tilde{m_1}}{P' \Par \newsp{s}{\map{\btinp{U} \inact}^{s} \Par \bout{\dual{s}}{V_1} \inact}}}
+	\]
+	\noi and
+%
+	\[
+		\mhorel{\Gamma}{\Delta_2'}{\newsp{\tilde{m_2}}{Q' \Par \fotrigger{t}{x}{s}{\btinp{U} \inact}{V_2}}}
+		{\hby{\bactinp{t}{m'}}}
+		{\Delta_2''}{}{\newsp{\tilde{m_2}}{Q' \Par \newsp{s}{\map{\btinp{U} \inact}^{s} \Par \bout{\dual{s}}{V_2} \inact}}}
+	\]
+%
+	\noi which coincides with the transitions for $\wb$.
+
+	\noi - The rest of the cases are trivial.
+
+	\noi The direction $\wbf \subseteq \wb$ is very similar with the
+	direction $\wb \subseteq \wbf$. It requires a case analysis
+	on the transition label $\ell$. Again the non-trivial case is
+	$\ell = \news{\tilde{m_1}} \bactout{n}{V_1}$.
+	\qed
+\end{proof}
+
 \begin{comment}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %  Auxiliary Lemma
@@ -289,8 +379,8 @@ definition.
 %	Substitution Corollary
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\begin{corollary}[Process Substitution]\rm
-	\label{cor:subst_equiv}
+\begin{lemma}[Process Substitution]\rm
+	\label{proc:subst_equiv}
 	If 
 %
 	\begin{enumerate}
@@ -305,7 +395,7 @@ definition.
 \[
 	\horel{\Gamma}{\Delta_1}{P \subst{\abs{\tilde{x}}{R}}{X}}{\wb}{\Delta_2}{Q \subst{\abs{\tilde{x}}{R}}{X}}
 \]
-\end{corollary}
+\end{lemma}
 
 
 \begin{proof}
@@ -648,7 +738,7 @@ definition.
 %
 	\noi From transition~\ref{lem:wbc_is_cong3} conclude that 
 	\[
-		\horel{\Gamma}{\Delta_2 \cat \Delta_3}{\newsp{\tilde{n_2}}{P_2 \Par R}}{\By{\news{\tilde{m_2}} \bactout{n}{\abs{\tilde{x}}{Q_2}}}}{\Delta_2' \cup \Delta_3}{\newsp{\tilde{n_2}'}{P_2' \Par R}}
+		\horel{\Gamma}{\Delta_2 \cat \Delta_3}{\newsp{\tilde{n_2}}{P_2 \Par R}}{\By{\news{\tilde{m_2}} \bactout{n}{\abs{\tilde{x}}{Q_2}}}}{\Delta_2' \cat \Delta_3}{\newsp{\tilde{n_2}'}{P_2' \Par R}}
 	\]
 %
 	\noi Furthermore from~\ref{lem:wbc_is_cong4} we conlude that $\forall Q$ with $\set{X} = \fpv{Q}$
@@ -893,52 +983,34 @@ definition.
 			$\ell \in \set{\bactsel{n}{\ell}, \bactbra{n}{\ell}, \bactinp{n}{\tilde{m}}, \bactinp{n}{\abs{\tilde{x}}{Q}}}$
 			then:
 %
-\[
+		\[
 			P \Par T\lrangle{\ell, \suc} \red P' \Par \bout{\suc}{\dual{m}} \inact \textrm{ and }
 			\Gamma; \emptyset; \Delta_1' \cat \Delta_2' \proves P' \Par \bout{\suc}{\dual{m}} \inact
-\]
+		\]
 %
-		\item	If $\horel{\Gamma}{\Delta_1}{P}{\by{\news{\tilde{m}}\bactout{n}{\abs{\tilde{x}}{Q}}}}{\Delta_1'}{P'}$,
+		\item	If $\horel{\Gamma}{\Delta_1}{P}{\by{\news{\tilde{m}}\bactout{n}{V}}}{\Delta_1'}{P'}$,
 			$t$ fresh
 			and $\tilde{m}' \subseteq \tilde{m}$
 			then:
 %
 			\begin{eqnarray*}
-				& & P \Par T\lrangle{\news{\tilde{m}}\bactout{n}{\abs{\tilde{x}}{Q}}, \suc} \red
-				\newsp{\tilde{m}}{P' \Par \hotrigger{t}{\abs{\tilde{x}}{Q}} \Par \bout{\suc}{\dual{n}, \tilde{m}'} \inact}\\
+				& & P \Par T\lrangle{\news{\tilde{m}}\bactout{n}{V}, \suc} \red
+				\newsp{\tilde{m}}{P' \Par \hotrigger{t}{V} \Par \bout{\suc}{\dual{n}, \tilde{m}'} \inact}\\
 				& & \Gamma; \emptyset; \Delta_1' \cat \Delta_2' \proves
-				\newsp{\tilde{m}}{P' \Par \hotrigger{t}{\abs{\tilde{x}}{Q}} \Par  \bout{\suc}{\dual{n}, \tilde{m}'} \inact} \hastype \Proc\\
+				\newsp{\tilde{m}}{P' \Par \hotrigger{t}{V} \Par  \bout{\suc}{\dual{n}, \tilde{m}'} \inact} \hastype \Proc\\
 			\end{eqnarray*}
-%
-		\item	If $\horel{\Gamma}{\Delta_1}{P}{\by{\news{\tilde{m}'}\bactout{n}{\tilde{m}}}}{P'}$,
-			$\Gamma; \es; \Delta \proves \tilde{m} \hastype \tilde{U}$, $t$ fresh
-			and $\tilde{m}'' \subseteq \tilde{m}'$
-			then:
-%
-			\begin{eqnarray*}
-				& & P \Par T\lrangle{\news{\tilde{s}}\bactout{n}{\tilde{m}}, \suc}
-				\red
-				\newsp{\tilde{m}'}{P' \Par \fotrigger{t}{\tilde{U}}{\tilde{m}} \Par \bout{\suc}{\dual{n}, \tilde{m}''} \inact}\\
-				& & \Gamma; \emptyset; \Delta_1' \cat \Delta_2' \proves \newsp{\tilde{m}'}{P' \Par \fotrigger{t}{\tilde{U}}{\tilde{m}} \Par \bout{\suc}{\dual{n}, \tilde{m}''} \inact} \hastype \Proc
-			\end{eqnarray*}
-%
+
 		\item	Let $\ell \in \set{\bactsel{n}{\ell}, \bactbra{n}{\ell}, \bactinp{n}{\tilde{m}}, \bactinp{n}{(\tilde{x}) Q}}$.
 			If $P \Par T\lrangle{\ell, \suc} \red Q$ with			
 			$\Gamma; \emptyset; \Delta \proves Q \hastype \Proc \barb{\suc}$ then 
 			$\horel{\Gamma}{\Delta_1}{P}{\By{\ell}}{\Delta_1'}{P'}$
 			and $Q \scong P' \Par \bout{\suc}{\dual{n}} \inact$.
 
-		\item	If $P \Par T\lrangle{\news{\tilde{m}}\bactout{n}{\abs{\tilde{x}}{Q}}, \suc} \red Q$
+		\item	If $P \Par T\lrangle{\news{\tilde{m}}\bactout{n}{V}, \suc} \red Q$
 			with $\Gamma; \emptyset; \Delta \proves Q \hastype \Proc \barb{\suc}$ then
-			$\horel{\Gamma}{\Delta_1}{P}{\By{\news{\tilde{m}}\bactout{n}{\abs{\tilde{x}}{Q}}}}{\Delta_1'}{P'}$
-			and $Q \scong \newsp{\tilde{m}}{P' \Par \hotrigger{t}{\abs{\tilde{x}}{Q}} \Par \bout{\suc}{\dual{n}, \tilde{m}'} \inact}$
+			$\horel{\Gamma}{\Delta_1}{P}{\By{\news{\tilde{m}}\bactout{n}{V}}}{\Delta_1'}{P'}$
+			and $Q \scong \newsp{\tilde{m}}{P' \Par \hotrigger{t}{V} \Par \bout{\suc}{\dual{n}, \tilde{m}'} \inact}$
 			with $t$ fresh and $\tilde{m}' \subseteq \tilde{m}$.
-
-		\item	If $P \Par T\lrangle{\news{\tilde{m}'}\bactout{n}{\tilde{m}}, \suc} \red Q $
-			and $\Gamma; \emptyset; \Delta \proves Q \hastype \Proc \barb{\suc}$ then
-			$\horel{\Gamma}{\Delta_1}{P}{\By{\news{\tilde{s}}\bactout{n}{\tilde{m}}}}{\Delta_1'}{P'}$
-			and $Q \scong \newsp{\tilde{m}'}{P' \Par \fotrigger{t}{\tilde{U}}{\tilde{m}} \Par \bout{\suc}{\dual{n}, \tilde{m}''} \inact}$
-			with $t$ fresh and $\tilde{m}'' \subseteq \tilde{m}'$.
 	\end{itemize}	
 %
 \end{definition}
@@ -954,18 +1026,18 @@ We first show that every external action $\ell$ is {\em definable}.
 	\noi We define $T\lrangle{\ell, \suc}$:
 %
 	\begin{itemize}
-		\item	$T\lrangle{\bactinp{n}{\tilde{m}}, \suc} = \bout{\dual{n}}{\tilde{m}} \bout{\suc}{\dual{n}} \inact$.
+		\item	$T\lrangle{\bactinp{n}{V}, \suc} = \bout{\dual{n}}{V} \bout{\suc}{\dual{n}} \inact$.
 
 		\item	$T\lrangle{\bactbra{n}{l}, \suc} = \bsel{\dual{n}}{l} \bout{\suc}{\dual{n}} \inact$.
 
-		\item	$T\lrangle{\bactinp{n}{\abs{\tilde{x}} Q}, \suc} = \bout{\dual{n}}{\abs{\tilde{x}}{Q}} \bout{\suc}{\dual{n}} \inact$.
+%		\item	$T\lrangle{\bactinp{n}{\abs{\tilde{x}} Q}, \suc} = \bout{\dual{n}}{\abs{\tilde{x}}{Q}} \bout{\suc}{\dual{n}} \inact$.
 
-		\item	$T\lrangle{\news{\tilde{m}'} \bactout{n}{\tilde{m}}, \suc} = \binp{\dual{n}}{\tilde{y}} (\fotrigger{t}{\tilde{U}}{\tilde{y}} \Par \bout{\suc}{\dual{n}, \tilde{m}''} \inact)$
+		\item	$T\lrangle{\news{\tilde{m}'} \bactout{n}{\tilde{m}}, \suc} = \binp{\dual{n}}{\tilde{x}} (\hotrigger{t}{\tilde{x}} \Par \bout{\suc}{\dual{n}, \tilde{m}''} \inact)$
 			with $\tilde{m}'' \subseteq \tilde{m}'$.
 
-		\item	$T\lrangle{\bactsel{n}{l}, \suc} = \bbra{\dual{n}}{l: \bout{\suc}{\dual{n}} \inact), l_i: \newsp{a}{\binp{a}{y} \bout{\suc}{\dual{n}} \inact}}_{i \in I}$.
-
 		\item	$T\lrangle{\news{\tilde{m}} \bactout{n}{\abs{x}{Q}}, \suc} = \binp{\dual{n}}{Y} (\hotrigger{t}{\abs{\tilde{x}}{\appl{Y}{\tilde{x}}}} \Par \bout{\suc}{\dual{n}, \tilde{m}'} \inact)$ with $\tilde{m}' \subseteq \tilde{m}$.
+
+		\item	$T\lrangle{\bactsel{n}{l}, \suc} = \bbra{\dual{n}}{l: \bout{\suc}{\dual{n}} \inact), l_i: \newsp{a}{\binp{a}{y} \bout{\suc}{\dual{n}} \inact}}_{i \in I}$.
 	\end{itemize}
 
 	\noi Assuming a process 
@@ -1019,9 +1091,11 @@ We first show that every external action $\ell$ is {\em definable}.
 
 	\noi $\Gamma; \es; \Delta_1 \proves P \barb{s}$
 	implies
-\[
-	\Gamma; \es; \Delta_1' \proves \newsp{\tilde{m_1}'}{P \Par \bout{\suc}{\dual{n}, \tilde{m_1}''} \inact} \barb{s}
-\]
+%
+	\[
+		\Gamma; \es; \Delta_1' \proves \newsp{\tilde{m_1}'}{P \Par \bout{\suc}{\dual{n}, \tilde{m_1}''} \inact} \barb{s}
+	\]
+%
 	\noi implies
 	$\Gamma; \es; \Delta_2' \proves \newsp{\tilde{m_2}'}{Q \Par \bout{\suc}{\dual{n}, \tilde{m_2}''} \inact} \Barb{s}$
 	implies from the freshness of $\suc$ that
@@ -1030,19 +1104,25 @@ We first show that every external action $\ell$ is {\em definable}.
 	\noi - Case: $s = n$ and $\Gamma; \es; \Delta_1 \proves P \barb{n}$
 
 	\noi We compose with $\binp{\dual{\suc}}{x, \tilde{y}} T\lrangle{\ell, \suc'}$ with $\subj{\ell} = x$ to get
-\[
-	\Gamma; \es; \Delta_1' \proves \newsp{\tilde{m_1}'}{P \Par \bout{\suc}{\dual{n}, \tilde{m_1}''} \inact} \Par \binp{\dual{\suc}}{x, \tilde{y}} T\lrangle{\ell, \suc'}
-\]
+%
+	\[
+		\Gamma; \es; \Delta_1' \proves \newsp{\tilde{m_1}'}{P \Par \bout{\suc}{\dual{n}, \tilde{m_1}''} \inact} \Par \binp{\dual{\suc}}{x, \tilde{y}} T\lrangle{\ell, \suc'}
+	\]
+%
 	\noi Which implies from the fact that $\Gamma; \es; \Delta_1 \proves P \barb{n}$ that
-\[
+%
+	\[
 		\newsp{\tilde{m_1}'}{P \Par \bout{\suc}{\dual{n}, \tilde{m_1}''} \inact} \Par \binp{\dual{\suc}}{x, \tilde{y}} T\lrangle{\ell, \suc'} \Red 
-	\newsp{\tilde{m_1}'}{P' \Par \bout{\suc'}{\dual{n}, \tilde{m_1}''} \inact}
-\]
+		\newsp{\tilde{m_1}'}{P' \Par \bout{\suc'}{\dual{n}, \tilde{m_1}''} \inact}
+	\]
+%
 	\noi and furthermore
-\[
-	\newsp{\tilde{m_2}'}{Q \Par \bout{\suc}{\dual{n}, \tilde{m_2}''} \inact} \Par \binp{\dual{\suc}}{x, \tilde{y}} T\lrangle{\ell, \suc'} \Red 
-	\newsp{\tilde{m_2}'}{Q' \Par \bout{\suc'}{\dual{n}, \tilde{m_2}''} \inact}
-\]
+%
+	\[
+		\newsp{\tilde{m_2}'}{Q \Par \bout{\suc}{\dual{n}, \tilde{m_2}''} \inact} \Par \binp{\dual{\suc}}{x, \tilde{y}} T\lrangle{\ell, \suc'} \Red 
+		\newsp{\tilde{m_2}'}{Q' \Par \bout{\suc'}{\dual{n}, \tilde{m_2}''} \inact}
+	\]
+%
 	\noi The last reduction implies that
 	$\Gamma; \es; \Delta_2 \proves Q \Barb{n}$ as required.
 
@@ -1053,34 +1133,39 @@ We first show that every external action $\ell$ is {\em definable}.
 	\begin{eqnarray*}
 		\mathcal{C} &=&	\set{ \Gamma; \es; \Delta_1 \cat \Delta_3 \proves P \Par R \hastype \Proc,  \Gamma; \es; \Delta_2 \cat \Delta_3 \proves Q \Par R \hastype \Proc \setbar \\
 		& &	\forall R,\\
-		& &	\Gamma; \es; \Delta_1' \cong \Delta_2' \proves \newsp{\tilde{m_1}'}{P \Par \bout{\suc}{\dual{n}, \tilde{m_1}''} \inact} \cong \newsp{\tilde{m_2}'}{Q \Par \bout{\suc}{\dual{n}, \tilde{m_2}''} \inact}}
+		& &	\horel{\Gamma}{\Delta_1'}{\newsp{\tilde{m_1}'}{P \Par \bout{\suc}{\dual{n}, \tilde{m_1}''} \inact}}{\cong}{\Delta_2'}{\newsp{\tilde{m_2}'}{Q \Par \bout{\suc}{\dual{n}, \tilde{m_2}''} \inact}}}
 	\end{eqnarray*}
 %
-	We show that $\mathcal{C}$ is a congruence.
-	We distinguish two cases:
-	- Case: $\dual{n}, \tilde{m_1}'', \tilde{m_2}'' \notin \fn{R}$	
+	\noi We show that $\mathcal{C}$ is a congruence.
+
+	\noi We distinguish two cases:
+
+	\noi - Case: $\dual{n}, \tilde{m_1}'', \tilde{m_2}'' \notin \fn{R}$	
 
 	\noi From the definition of $\mathcal{C}$ we can deduce that $\forall R$:
-\[
-	\Gamma; \es; \Delta_1'' \cong \Delta_2'' \proves \newsp{\tilde{m_1}'}{P \Par \bout{\suc}{\dual{n}, \tilde{m_1}''} \inact} \Par R \cong \newsp{\tilde{m_2}'}{Q \Par \bout{\suc}{\dual{n}, \tilde{m_2}''} \inact} \Par R
-\]
+%
+	\[
+		\horel{\Gamma}{\Delta_1''}{\newsp{\tilde{m_1}'}{P \Par \bout{\suc}{\dual{n}, \tilde{m_1}''} \inact} \Par R}{\cong}{\Delta_2''}{\newsp{\tilde{m_2}'}{Q \Par \bout{\suc}{\dual{n}, \tilde{m_2}''} \inact} \Par R}
+	\]
 	\noi The conclusion is then trivial.
 
-	- Case: $\tilde{s} = \set{\dual{n}, \tilde{m_1}''} \cap \set{\dual{n}, \tilde{m_2}''} \in \fn{R}$
+	\noi - Case: $\tilde{s} = \set{\dual{n}, \tilde{m_1}''} \cap \set{\dual{n}, \tilde{m_2}''} \in \fn{R}$
 
 	\noi From the definition of $\mathcal{C}$ we can deduce that $\forall R^{y_1}$ such that $R = R^{y_1}\subst{\tilde{s}}{\tilde{y_1}}$
 	and $\suc'$ fresh and $\set{\tilde{y}} = \set{\tilde{y_1}} \cup \set{\tilde{y_2}}$:
-	\begin{eqnarray*}
-		&& \Gamma; \es; \Delta_1'' \cong \Delta_2'' \proves\\
-		&& \newsp{\tilde{m_1}'}{P \Par \bout{\suc}{\dual{n}, \tilde{m_1}''} \inact} \Par \binp{\dual{\suc}}{\tilde{y}} (R^{y_1} \Par \bout{\suc'}{\tilde{y_2}} \inact) \cong\\
-		&& \newsp{\tilde{m_2}'}{Q \Par \bout{\suc}{\dual{n}, \tilde{m_2}''} \inact} \Par \binp{\dual{\suc}}{\tilde{y}} (R^{y_1} \Par \bout{\suc'}{\tilde{y_2}} \inact)
-	\end{eqnarray*}
-	Applying reduction closeness to the above pair we get:
-	\begin{eqnarray*}
-		&& \Gamma; \es; \Delta_1'' \cong \Delta_2'' \proves
-		\newsp{\tilde{m_1}'}{P \Par R \Par \bout{\suc'}{\tilde{s_2}}} \inact \cong
-		\newsp{\tilde{m_2}'}{Q \Par R \Par \bout{\suc'}{\tilde{s_2}}} \inact
-	\end{eqnarray*}
+%
+	\[
+		\mhorel{\Gamma}{\Delta_1''}{\newsp{\tilde{m_1}'}{P \Par \bout{\suc}{\dual{n}, \tilde{m_1}''} \inact} \Par \binp{\dual{\suc}}{\tilde{y}} (R^{y_1} \Par \bout{\suc'}{\tilde{y_2}} \inact)}
+		{\cong}
+		{\Delta_2''}{}{\newsp{\tilde{m_2}'}{Q \Par \bout{\suc}{\dual{n}, \tilde{m_2}''} \inact} \Par \binp{\dual{\suc}}{\tilde{y}} (R^{y_1} \Par \bout{\suc'}{\tilde{y_2}} \inact)}
+	\]
+%
+	\noi Applying reduction closeness to the above pair we get:
+%
+	\[
+		\horel{\Gamma}{\Delta_1''}{\newsp{\tilde{m_1}'}{P \Par R \Par \bout{\suc'}{\tilde{s_2}} \inact}}{\cong}{\Delta_2''}{\newsp{\tilde{m_2}'}{Q \Par R \Par \bout{\suc'}{\tilde{s_2}} \inact}}
+	\]
+%
 	\noi The conclusion then follows.
 	\qed
 \end{proof}
@@ -1094,34 +1179,36 @@ We first show that every external action $\ell$ is {\em definable}.
 \begin{proof}
 	\noi Let
 	\[
-		\Gamma; \es; \Delta_1 \cong \Delta_2 \proves P_1 \cong P_2
+		\horel{\Gamma}{\Delta_1}{P_1}{\cong}{\Delta_2}{P_2}
 	\]
 	\noi We distinguish two cases:
 
 %% Case tau
 	\noi - Case:
 	\[
-		\Gamma; \es; \Delta_1 \by{\tau} \Delta_1' \cong P_1 \by{\tau} P_1' 
+		\horel{\Gamma}{\Delta_1}{P_1}{\by{\tau}}{\Delta_1'}{P_1'}
 	\]
-	\noi The result follow the reduction close property of $\cong$ since
+	\noi The result follows the reduction closeness property of $\cong$ since
 	\[
-		\Gamma; \es; \Delta_2 \By{\tau} \Delta_2' \cong P_2 \By{\tau} P_2' 
+		\horel{\Gamma}{\Delta_2}{P_2}{\By{\tau}}{\Delta_2'}{P_2'}
 	\]
 	\noi and
 	\[
-		\Gamma; \es; \Delta_1' \cong \Delta_2' \proves P_1' \cong P_2'
+		\horel{\Gamma}{\Delta_1'}{P_1'}{\cong}{\Delta_2'}{P_2'}
 	\]
 
 %% Case ell
 	\noi - Case:
+%
 	\begin{eqnarray}
-		\Gamma; \es; \Delta_1 \by{\ell} \Delta_1' \proves P_1 \by{\tau} P_1'
+		\horel{\Gamma}{\Delta_1}{P_1}{\by{\ell}}{\Delta_1'}{P_1'}
 		\label{lem:cong_is_wb1}
 	\end{eqnarray}
-	We choose test $T\lrangle{\ell, \suc}$ to get
-	\noi Let
+%
+	\noi We choose test $T\lrangle{\ell, \suc}$ to get
+%
 	\begin{eqnarray}
-		\Gamma; \es; \Delta_1 \cat \Delta_3 \cong \Delta_2 \cat \Delta_3 \proves P_1 \Par T\lrangle{\ell, \suc} \cong P_2 \Par T\lrangle{\ell, \suc}
+		\horel{\Gamma}{\Delta_1 \cat \Delta_3}{P_1 \Par T\lrangle{\ell, \suc}}{\cong}{\Delta_2 \cat \Delta_3}{P_2 \Par T\lrangle{\ell, \suc}}
 		\label{lem:cong_is_wb2}
 	\end{eqnarray}
 %
@@ -1131,27 +1218,36 @@ We first show that every external action $\ell$ is {\em definable}.
 	\noi Subcase i: $\ell \in \set{\bactinp{n}{\tilde{m}}, \bactinp{n}{\abs{\tilde{x}}{Q}}, \bactsel{n}{l}, \bactbra{n}{l}}$
 
 	\noi By reducing~\ref{lem:cong_is_wb1} we get
+%
 	\begin{eqnarray*}
-		&&P_1 \Par T\lrangle{\ell, \suc} \red P_1' \Par \bout{\suc}{\dual{n}} \inact \\
-		&&\Gamma; \es; \Delta_1' \cat \Delta_3' \proves P_1' \Par \bout{\suc}{\dual{n}} \inact \barb{\suc}
+		&& P_1 \Par T\lrangle{\ell, \suc} \red P_1' \Par \bout{\suc}{\dual{n}} \inact \\
+		&& \Gamma; \es; \Delta_1' \cat \Delta_3' \proves P_1' \Par \bout{\suc}{\dual{n}} \inact \barb{\suc}
 	\end{eqnarray*}
+%
 	\noi implies from~\ref{lem:cong_is_wb2}
+%
 	\begin{eqnarray*}
-		&&\Gamma; \es; \Delta_2 \cat \Delta_3 \proves P_2 \Par T\lrangle{\ell, \suc} \Barb{\suc}
+		&& \Gamma; \es; \Delta_2 \cat \Delta_3 \proves P_2 \Par T\lrangle{\ell, \suc} \Barb{\suc}
 	\end{eqnarray*}
+%
 	\noi implies from Lemma~\ref{lem:definibility}
+%
 	\begin{eqnarray*}
-		&&\Gamma; \es; \Delta_2 \By{\ell} \Delta_2' \proves P_2 \By{\ell} P_2'\\
-		&&P_2 \Par T \lrangle{\ell, \suc} \Red P_2' \Par \bout{\suc}{\dual{n}} \inact
+		&& \horel{\Gamma}{\Delta_2}{P_2}{\By{\ell}}{\Delta_2'}{P_2'}\\
+		&& P_2 \Par T \lrangle{\ell, \suc} \Red P_2' \Par \bout{\suc}{\dual{n}} \inact
 	\end{eqnarray*}
+%
 	\noi and
+%
 	\[
-		\Gamma; \es; \Delta_1' \cat \Delta_3' \cong \Delta_2' \cat \Delta_3' \proves P_1' \Par \bout{\suc}{\dual{n}} \cong P_2' \Par \bout{\suc}{\dual{n}} \inact
+		\horel{\Gamma}{\Delta_1' \cat \Delta_3'}{P_1' \Par \bout{\suc}{\dual{n}}}{\cong}{\Delta_2' \cat \Delta_3'}{P_2' \Par \bout{\suc}{\dual{n}} \inact}
 	\]
 	We then apply Lemma~\ref{lem:extrusion} to get
+%
 	\[
-		\Gamma; \es; \Delta_1' \cong \Delta_2' \proves P_1' \cong P_2'
+		\horel{\Gamma}{\Delta_1'}{P_1'}{\cong}{\Delta_2'}{P_2'}
 	\]
+%
 	\noi as required.
 
 %% Subcase ii
@@ -1160,38 +1256,51 @@ We first show that every external action $\ell$ is {\em definable}.
 	\noi Note that $T\lrangle{\news{\tilde{m_1}} \bactout{n}{(\tilde{x}) Q_1}, \suc} = T\lrangle{\news{\tilde{m_2}} \bactout{n}{\abs{\tilde{x}}{Q_2}}, \suc}$
 
 	\noi Transition~\ref{lem:cong_is_wb1} becomes
+%
 	\begin{eqnarray}
-		\Gamma; \es; \Delta_1 \by{\news{\tilde{m_1}} \bactout{n}{\abs{\tilde{x}}{Q_1}}} \Delta_1' \proves P_1 \by{\news{\tilde{m_1}} \bactout{n}{\abs{\tilde{x}}{Q_1}}} P_1'
+		\horel{\Gamma}{\Delta_1}{P_1}{\by{\news{\tilde{m_1}} \bactout{n}{\abs{\tilde{x}}{Q_1}}}}{\Delta_1'}{P_1'}
 		\label{lem:cong_is_wb3}
 	\end{eqnarray}
+%
 	\noi By reducing~\ref{lem:cong_is_wb1} we get
+%
 	\begin{eqnarray*}
-		&&P_1 \Par T\lrangle{\news{\tilde{m_1}} \bactout{n}{\abs{\tilde{x}}{Q_1}}, \suc} \red \newsp{m_1}{P_1' \Par \hotrigger{t}{\abs{\tilde{x}}{Q_1}}} \Par \bout{\suc}{\dual{n}, \tilde{m_1}'} \inact \\
-%		\binp{t}{X} \newsp{s}{\appl{X}{s} \Par \bout{s}{\abs{\tilde{x}}{Q_1}} \inact}} \Par \bout{\suc}{\dual{n}, \tilde{m_1}'} \inact \\
-		&&\Gamma; \es; \Delta_1' \cat \Delta_3' \proves \newsp{m_1}{P_1' \Par \hotrigger{t}{\abs{\tilde{x}}{Q_1}}} \Par \bout{\suc}{\dual{n}, \tilde{m_1}'} \inact \barb{\suc}
+		&& P_1 \Par T\lrangle{\news{\tilde{m_1}} \bactout{n}{\abs{\tilde{x}}{Q_1}}, \suc}
+		\red
+		\newsp{m_1}{P_1' \Par \hotrigger{t}{\abs{\tilde{x}}{Q_1}}} \Par \bout{\suc}{\dual{n}, \tilde{m_1}'} \inact \\
+		&& \Gamma; \es; \Delta_1' \cat \Delta_3' \proves \newsp{m_1}{P_1' \Par \hotrigger{t}{\abs{\tilde{x}}{Q_1}}} \Par \bout{\suc}{\dual{n}, \tilde{m_1}'} \inact \barb{\suc}
 	\end{eqnarray*}
+%
 	\noi implies from~\ref{lem:cong_is_wb2}
-	\begin{eqnarray*}
-		&&\Gamma; \es; \Delta_2 \cat \Delta_3 \proves P_2 \Par T\lrangle{\news{\tilde{m_2}} \bactout{n}{\abs{\tilde{x}}{Q_2}}, \suc} \Barb{\suc}
-	\end{eqnarray*}
+%
+	\[
+		\Gamma; \es; \Delta_2 \cat \Delta_3 \proves P_2 \Par T\lrangle{\news{\tilde{m_2}} \bactout{n}{\abs{\tilde{x}}{Q_2}}, \suc} \Barb{\suc}
+	\]
+%
 	\noi implies from Lemma~\ref{lem:definibility}
+%
 	\begin{eqnarray}
-		&&\Gamma; \es; \Delta_2 \By{\news{\tilde{m_2}} \bactout{n}{\abs{\tilde{x}}{Q_2}}} \Delta_2' \proves P_2 \By{\news{\tilde{m_2}} \bactout{n}{\abs{\tilde{x}}{Q_2}}} P_2'
+		&& \horel{\Gamma}{\Delta_2}{P_2}{\By{\news{\tilde{m_2}} \bactout{n}{\abs{\tilde{x}}{Q_2}}}}{\Delta_2'}{P_2'}
 		\label{lem:cong_is_wb4}\\
-		&&P_2 \Par T \lrangle{\ell, \suc} \Red \newsp{m_2}{P_2' \Par \hotrigger{t}{\abs{\tilde{x}}{Q_2}}} \Par \bout{\suc}{\dual{n}, \tilde{m_2}'} \inact \nonumber
+		&& P_2 \Par T \lrangle{\ell, \suc} \Red \newsp{m_2}{P_2' \Par \hotrigger{t}{\abs{\tilde{x}}{Q_2}}} \Par \bout{\suc}{\dual{n}, \tilde{m_2}'} \inact \nonumber
 	\end{eqnarray}
+%
 	\noi and
-	\begin{eqnarray*}
-		\Gamma; \es; \Delta_1' \cat \Delta_3' \cong \Delta_2' \cat \Delta_3' \proves\\
-		&& \newsp{m_1}{P_1' \Par \hotrigger{t}{\abs{\tilde{x}}{Q_1}}} \Par \bout{\suc}{\dual{n}, \tilde{m_1}'} \inact \cong\\
-		&& \newsp{m_2}{P_2' \Par \hotrigger{t}{\abs{\tilde{x}}{Q_2}}} \Par \bout{\suc}{\dual{n}, \tilde{m_2}'} \inact
-	\end{eqnarray*}
-	We then apply Lemma~\ref{lem:extrusion} to get
-	\begin{eqnarray*}
-		\Gamma; \es; \Delta_1' \cong \Delta_2' \proves\\
-		&& \newsp{m_1}{P_1' \Par \binp{t}{X} \hotrigger{t}{\abs{\tilde{x}}{Q_1}}} \cong\\
-		&& \newsp{m_2}{P_2' \Par \binp{t}{X} \hotrigger{t}{\abs{\tilde{x}}{Q_2}}}
-	\end{eqnarray*}
+%
+	\[
+		\mhorel{\Gamma}{\Delta_1' \cat \Delta_3'}{\newsp{m_1}{P_1' \Par \hotrigger{t}{\abs{\tilde{x}}{Q_1}}} \Par \bout{\suc}{\dual{n}, \tilde{m_1}'} \inact}
+		{\cong}
+		{\Delta_2' \cat \Delta_3'}{}{\newsp{m_2}{P_2' \Par \hotrigger{t}{\abs{\tilde{x}}{Q_2}}} \Par \bout{\suc}{\dual{n}, \tilde{m_2}'} \inact}
+	\]
+%
+	\noi We then apply Lemma~\ref{lem:extrusion} to get
+%
+	\[
+		\mhorel{\Gamma}{\Delta_1'}{\newsp{m_1}{P_1' \Par \binp{t}{X} \hotrigger{t}{\abs{\tilde{x}}{Q_1}}}}
+		{\cong}
+		{\Delta_2'}{}{\newsp{m_2}{P_2' \Par \binp{t}{X} \hotrigger{t}{\abs{\tilde{x}}{Q_2}}}}
+	\]
+%
 	\noi as required.
 
 	\noi -Case: $\ell = \news{\tilde{s}} \bactout{n}{\tilde{m}}$
@@ -1212,11 +1321,12 @@ We first show that every external action $\ell$ is {\em definable}.
 \end{theorem}
 
 \begin{proof}
-	\noi	Lemma~\ref{lem:cong_is_wb} proves $\cong \subseteq \wb$.
-		Lemma~\ref{lem:wb_is_wbc} proves $\wb \subseteq \wbc$.
-		Lemma~\ref{lem:wbc_is_cong} proves $\wbc \subseteq \cong$.
+	\noi	Lemma~\ref{lem:wb_eq_wbf} proves $\wb\ =\ \wbf$.
+		Lemma~\ref{lem:cong_is_wb} proves $\cong\ \subseteq\ \wb$.
+		Lemma~\ref{lem:wb_is_wbc} proves $\wb\ \subseteq\ \wbc$.
+		Lemma~\ref{lem:wbc_is_cong} proves $\wbc\ \subseteq\ \cong$.
 
-	\noi From the above results we conclude $\cong \subseteq \wb \subseteq \wbc \subseteq \cong$. 
+	\noi From the above results we conclude $\cong\ \subseteq\ \wb\ =\ \wbf\ \subseteq\ \wbc\ \subseteq\ \cong$. 
 	\qed
 \end{proof}
 
