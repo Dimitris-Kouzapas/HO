@@ -67,15 +67,15 @@ The judgements
 
 \begin{figure}[t]
 \[
-	\begin{array}{c}
-	\trule{Session}~~\Gamma; \emptyset; \set{u:S} \proves u \hastype S 
+	\begin{array}{ll}
+	\trule{Sess}& \Gamma; \emptyset; \set{u:S} \proves u \hastype S 
 		\quad
-		\trule{Shared}~~\Gamma \cat u : U; \emptyset; \emptyset \proves u \hastype U
+		\trule{Sh}~~\Gamma \cat u : U; \emptyset; \emptyset \proves u \hastype U
 \\[4mm]
-	\trule{LVar}~~\Gamma; \set{x: \lhot{C}}; \emptyset \proves x \hastype \lhot{C}
+	\trule{LVar}& \Gamma; \set{x: \lhot{C}}; \emptyset \proves x \hastype \lhot{C}
 		\\[4mm]
 
-		\trule{Prom}~~\tree{
+		\trule{Prom}& \tree{
 			\Gamma; \emptyset; \emptyset \proves V \hastype 
                          \lhot{C}
 		}{
@@ -83,7 +83,7 @@ The judgements
                          \shot{C}
 		} 
 		\quad
-		\trule{Dlin}~~\tree{
+		\trule{EProm}\tree{
 		\Gamma; \Lambda \cat x : \lhot{C}; \Delta \proves P \hastype \Proc
 		}{
 			\Gamma \cat x:\shot{C}; \Lambda; \Delta \proves P \hastype \Proc
@@ -99,7 +99,7 @@ The judgements
 %		}
 %		\\[6mm]
 
-		\trule{Abs}~~\tree{
+		\trule{Abs}& \tree{
 			\Gamma; \Lambda; \Delta_1 \proves P \hastype \Proc
 			\quad
 			\Gamma; \es; \Delta_2 \proves x \hastype C
@@ -108,7 +108,7 @@ The judgements
 		}
 		\\[6mm]
 
-		\trule{App}~~\tree{
+		\trule{App}& \tree{
 			\begin{array}{c}
 				U = \lhot{C} \lor \shot{C}
 				\quad
@@ -128,7 +128,7 @@ The judgements
 %		}
 %		\\[4mm]
 
-		\trule{Send}~~\tree{
+		\trule{Send}& \tree{
 			\Gamma; \Lambda_1; \Delta_1 \proves P \hastype \Proc
 			\quad
 			\Gamma; \Lambda_2; \Delta_2 \proves V \hastype U
@@ -139,7 +139,7 @@ The judgements
 		}
 		\\[6mm]
 
-		\trule{RcvS}~~\tree{
+		\trule{RvS}& \tree{
 		\Gamma; \Lambda; \Delta_1 \cat u: S \proves P \hastype \Proc
 			\quad
 			\Gamma; \es; \Delta_2 \proves {x} \hastype {C}
@@ -147,7 +147,7 @@ The judgements
 			\Gamma \backslash x; \Lambda; \Delta_1\backslash \Delta_2 \cat u: \btinp{C} S \vdash \binp{u}{{x}} P \hastype \Proc
 		}
 \\[6mm]
-		\trule{RcvH}~~\tree{
+		\trule{RvH}& \tree{
 			\Gamma; \Lambda_1; \Delta \cat u: S \proves P \hastype \Proc
 			\quad
 			\Gamma; \Lambda_2; \es \proves x \hastype L
@@ -181,7 +181,7 @@ The judgements
 %		}
 %		\\[4mm]
 
-		\trule{Req}~~\tree{
+		\trule{Req}& \tree{
 			\begin{array}{c}
 				\Gamma; \es; \es \proves u \hastype U_1
 				\quad
@@ -214,7 +214,7 @@ The judgements
 %		}
 %		\\[6mm]
 
-		\trule{AccS}~~\tree{
+		\trule{AcS}& \tree{
 			\Gamma; \emptyset; \emptyset \proves u \hastype \chtype{S}
 			\quad
 			\Gamma; \Lambda_1; \Delta_1 \proves P \hastype \Proc
@@ -225,7 +225,7 @@ The judgements
 		}
 		\\[6mm]
 
-		\trule{AccH}~~\tree{
+		\trule{AcH}& \tree{
 			\Gamma; \emptyset; \emptyset \proves u \hastype \chtype{L}
 			\quad
 			\Gamma; \Lambda_1; \Delta \proves P \hastype \Proc
@@ -236,13 +236,13 @@ The judgements
 		}
 		\\[6mm]
 
-		\trule{Bra}~~\tree{
+		\trule{Bra}& \tree{
 			 \forall i \in I \quad \Gamma; \Lambda; \Delta \cat u:S_i \proves P_i \hastype \Proc
 		}{
 			\Gamma; \Lambda; \Delta \cat u: \btbra{l_i:S_i}_{i \in I} \proves \bbra{u}{l_i:P_i}_{i \in I}\hastype \Proc
 		}
 \\[6mm]
-	 	\trule{Sel}~~\tree{
+	 	\trule{Sel}& \tree{
 			\Gamma; \Lambda; \Delta \cat u: S_j  \proves P \hastype \Proc \quad j \in I
 		}{
 			\Gamma; \Lambda; \Delta \cat u:\btsel{l_i:S_i}_{i \in I} \proves \bsel{u}{l_j} P \hastype \Proc
@@ -275,43 +275,43 @@ The judgements
 %		}
 %		\\[4mm]
 
-		\trule{NewSh}~~\tree{
+		\trule{Res}& \tree{
 			\Gamma\cat a:\chtype{S} ; \Lambda; \Delta \proves P \hastype \Proc
 		}{
 			\Gamma; \Lambda; \Delta \proves \news{a} P \hastype \Proc}
 \\[6mm]
-		\trule{NewS}~~\tree{
+		\trule{ResS}& \tree{
 			\Gamma; \Lambda; \Delta \cat s:S_1 \cat \dual{s}: S_2 \proves P \hastype \Proc \quad S_1 \dualof S_2
 		}{
 			\Gamma; \Lambda; \Delta \proves \news{s} P \hastype \Proc
 		}
 		\\[6mm]
 
-		\trule{Par}~~\tree{
+		\trule{Par}& \tree{
 			\Gamma; \Lambda_{1}; \Delta_{1} \proves P_{1} \hastype \Proc \quad \Gamma; \Lambda_{2}; \Delta_{2} \proves P_{2} \hastype \Proc
 		}{
 			\Gamma; \Lambda_{1} \cat \Lambda_2; \Delta_{1} \cat \Delta_2 \proves P_1 \Par P_2 \hastype \Proc
 		}
 \\[6mm]
-		\trule{Close}~~\tree{
+		\trule{Weak}& \tree{
 			\Gamma; \Lambda; \Delta  \proves P \hastype T \quad u \not\in \dom{\Gamma, \Lambda,\Delta}
 		}{
 			\Gamma; \Lambda; \Delta \cat u: \tinact  \proves P \hastype \Proc
 		}
 		\\[6mm]
 
-		\trule{Nil}~~\Gamma; \emptyset; \emptyset \proves \inact \hastype \Proc
+		\trule{Nil}& \Gamma; \emptyset; \emptyset \proves \inact \hastype \Proc
 \quad 
 		\trule{RVar}~~\Gamma \cat \rvar{X}: \Delta; \emptyset; \Delta  \proves \rvar{X} \hastype \Proc
 \\[4mm]
-%	 	\trule{Rec}~~\tree{
+%	 	\trule{Rec}& \tree{
 %			\Gamma \cat \rvar{X}: \Delta; \emptyset; \emptyset  \proves P \hastype \Proc
 %		}{
 %			\Gamma ; \emptyset; \emptyset  \proves \recp{X}{P} \hastype \Proc
 %		}
 %		\\[4mm]
 
-	 	\trule{Rec}~~\tree{
+	 	\trule{Rec}& \tree{
 			\Gamma \cat \rvar{X}: \Delta; \emptyset; \Delta  \proves P \hastype \Proc
 		}{
 			\Gamma ; \emptyset; \Delta  \proves \recp{X}{P} \hastype \Proc
