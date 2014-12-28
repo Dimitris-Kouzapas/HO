@@ -1,0 +1,493 @@
+\subsection{Labelled Transition Semantics}\label{ss:lts}
+\[
+\begin{array}{l}
+		\ell	\bnfis   \tau 
+		\bnfbar\bactinp{n}{V} 
+			\bnfbar \news{\tilde{m}} \bactout{n}{V}
+			\bnfbar  \bactsel{n}{l} 
+			\bnfbar \bactbra{n}{l} 
+\end{array}
+\]
+\[
+	\bactsel{n}{l} \asymp \bactbra{\dual{n}}{l}
+	\qquad
+	\news{\tilde{m}} \bactout{n}{V} \asymp \bactinp{\dual{n}}{V}
+\]
+
+\begin{figure}[t]
+	\[
+	\begin{array}{ll}
+\ltsrule{Out}\	\bout{n}{V} P \by{\bactout{n}{V}} P 
+&
+\ltsrule{In}\	\binp{n}{x} P \by{\bactinp{n}{V}} P\subst{V}{x} 
+\\[3mm]
+ \ltsrule{Sel}\ \bsel{s}{l}{P} \by{\bactsel{s}{l}} P
+&
+\hspace{-1cm}
+\ltsrule{Bra}\ \bbra{s}{l_i:P_i}_{i \in I} \by{\bactbra{s}{l_j}} P_j
+\quad (j\in I)
+\\[3mm]
+ \ltsrule{Res}	\tree{
+			P \by{\ell} P' \quad n \notin \fn{\ell}
+		}{
+			\news{n} P \by{\ell} \news{n} P' 
+		}
+&
+\ltsrule{Alpha}
+		\tree{
+			P \scong_\alpha Q \quad Q\by{\ell} P'
+		}{
+			P \by{\ell} P'
+		}
+\end{array}
+\]
+\[
+\begin{array}{ll}
+\ltsrule{New}&	\tree{
+		P \by{\news{\tilde{m}} \bactout{n}{V}} P' \quad 
+               m \in \fn{V}
+		}{
+			\news{m} P \by{\news{m\cat\tilde{m}'} 
+\bactout{n}{V}} P'
+		}
+		\\[6mm]
+\ltsrule{Tau}	& \tree{
+			P \by{\ell_1} P' \qquad Q \by{\ell_2} Q' \qquad \ell_1 \asymp \ell_2
+		}{
+			P \Par Q \by{\tau} \newsp{\bn{\ell_1} \cup \bn{\ell_2}}{P' \Par Q'}
+		} 
+		\\[6mm]
+ \ltsrule{Par${}_L$}	& \tree{
+
+			P \by{\ell} P' \quad \bn{\ell} \cap \fn{Q} = \es
+		}{
+			P \Par Q \by{\ell} P' \Par Q
+		}
+
+%\\[3mm]
+%		\tree{
+%			Q \by{\ell} Q' \quad \bn{\ell} \cap \fn{P} = \es
+%		}{
+%			P \Par Q \by{\ell} P \Par Q'
+%		}\ \ltsrule{RPar}
+	\end{array}
+	\]
+We omit $\ltsrule{Par${}_R$}$. 
+	\caption{The Untyped (Early) Labelled Transition System \label{fig:untyped_LTS}}
+\end{figure}
+
+\begin{definition}[Characteristic Process]\rm
+%	Let names $\tilde{k}$ and type $\tilde{C}$; then we define a {\em characteristic process}:
+%	$\map{\tilde{C}}^{\tilde{k}}$:
+%	\[
+%		\map{C_1, \cdots, C_n}^{k_1 \cdots k_n} = \map{C_1}^{k_1} \Par \dots \Par \map{C_n}^{k_n}		
+%	\]
+%	with 
+We define a {\em characteristic process}:
+of type $C$ with name $u$ written by 
+$\map{C}^u$ as:
+	\[
+	\begin{array}{rcllrcll}
+		\map{\btinp{C} S}^{u} &=& \binp{u}{x} (\map{S}^{u} \Par 
+\map{{C}}^{x})\\
+		\map{\btout{C} S}^{u} &=& \bout{u}{n} \map{S}^{u} & n\textrm{ fresh}
+		\\
+		\map{\btsel{l : S}}^{u} &=& \bsel{u}{l} \map{S}^{u}
+\\
+		\map{\btbra{l_i: S_i}_{i \in I}}^{u} &=& \bbra{k}{l_i: \map{S_i}^{u}}_{i \in I}
+		\\
+
+		\map{\tvar{t}}^{u} &=& \rvar{X}_t
+\\
+		\map{\trec{t}{S}}^{u} &=& \mu \rvar{X}_t.\map{S}^{u}
+		\\
+
+		\map{\btout{\lhot{C}} S}^{u} &=& \bout{u}{\abs{x}{\map{C}^{x}}} \map{S}^u
+\\
+		\map{\btinp{\lhot{C}} S}^{u} &=& \binp{u}{x} (\map{S}^u \Par \appl{x}{n}) & {n}\textrm{ fresh}
+		\\
+		\map{\btout{\shot{C}} S}^{u} &=& \bout{u}{\abs{x}{\map{C}^{x}}}
+\map{S}^u \\
+		\map{\btinp{\shot{C}} S}^{u} &=& \binp{u}{x} (\map{S}^u \Par \appl{x}{n}) & n\textrm{ fresh}
+		\\
+
+%		\map{\btinp{\chtype{S}} S}^{k} &=& \binp{k}{x} (\map{S}^k \Par \map{\chtype{S}}^y)
+%		&&
+%		\map{\btout{\chtype{S}} S}^{k} &=& \bout{k}{a} \map{S}^k  & a\textrm{ fresh}
+%		\\
+		\map{\tinact}^{k} &=& \inact
+\\
+		\map{\chtype{S}}^{u} &=& \bout{u}{s} \inact &s\textrm{ fresh}%\binp{k}{x} \map{S}^x 
+	\end{array}
+	\]
+\end{definition}
+
+\begin{proposition}\rm
+{\rm (1)} $\Gamma; \emptyset; \Delta \cat u:S \proves \map{S}^u \hastype \Proc$; and\\{\rm (2)} 
+$\Gamma \cat u:\chtype{S}; \emptyset; \Delta \proves \map{\chtype{S}}^u \hastype \Proc$
+\end{proposition}
+
+\begin{IEEEproof}
+	By induction on the definition $\map{S}^k$ and $\map{\chtype{S}}^k$.
+\end{IEEEproof}
+
+\begin{corollary}\rm
+	If $\Gamma; \emptyset; \Delta \proves \map{C}^{u} \hastype \Proc$
+	then
+	$\Gamma; \es; \Delta \proves u \hastype C$.
+\end{corollary}
+
+\begin{figure}[t]
+	\[
+	\begin{array}{l}
+		\eltsrule{SOut}\\
+\tree{
+			\begin{array}{ll}
+				\dual{s} \notin \dom{\Delta}
+& 
+			\Gamma \cat \Gamma'; \Lambda'; \Delta' \proves V \hastype U
+				\\
+				\Gamma'; \es; \Delta_j \proves m_j  \hastype U_j
+& 
+			\Gamma'; \es; \Delta_j' \proves \dual{m}_j  \hastype U_j'
+\\
+				\Lambda' \subseteq \Lambda
+& 
+				\Delta'\backslash \cup_j \Delta_j 
+\subseteq (\Delta \cat s: S)
+%				\dual{s} \notin \dom{\Delta}
+%				\qquad 
+%				\Gamma \cat \Gamma'; \Lambda'; \Delta_1 \cat \Delta_2 \proves V \hastype U
+%				\qquad
+%				\tilde{m} = m_1 \dots m_n
+%				\\
+%				\Gamma'; \es; \Delta_2 \proves m_1 \dots m_n \hastype U_1
+%				\qquad
+%				\Gamma'; \es; \Delta_3 \proves \dual{m}_1 \dots \dual{m}_n \hastype U_2
+%				\qquad
+%				\Lambda' \subseteq \Lambda
+%				\qquad
+%				\Delta_1 \subseteq (\Delta \cat s: S)
+			\end{array}
+		}{
+			(\Gamma; \Lambda; \Delta \cat s: \btout{U} S) \by{\news{\tilde{m}} \bactout{s}{V}} (\Gamma \cat \Gamma'; \Lambda\backslash\Lambda';
+			(\Delta \cat s: S \cat \cup_j \Delta_j') \backslash \Delta')
+		}
+\end{array}
+\]
+\[
+	\begin{array}{lc}
+		\eltsrule{ShOut}&
+\tree{
+		\begin{array}{ll}
+			\Gamma \cat \Gamma' ; \Lambda'; \Delta' \proves V \hastype U &  \Gamma ; \es ; \es \proves a \hastype \chtype{U}
+				\\
+		\Gamma'; \es; \Delta_j \proves m_j \hastype U_j
+& 
+		\Gamma'; \es; \Delta_j' \proves \dual{m}_j\hastype U_j'
+\\
+				\Lambda' \subseteq \Lambda
+& 
+			\Delta'\backslash \cup_j \Delta_j 
+                         \subseteq \Delta
+			\end{array}
+%			\begin{array}{c}
+%				\Gamma \cat \Gamma' \cat a: \chtype{U}; \Lambda'; \Delta_1 \cat \Delta_2 \proves V \hastype U
+%				\qquad
+%				\tilde{m} = m_1 \dots m_n
+%				\\
+%				\Gamma'; \es; \Delta_2 \proves m_1 \dots m_n \hastype U_1
+%				\qquad
+%				\Gamma'; \es; \Delta_3 \proves \dual{m}_1 \dots \dual{m}_n \hastype U_2
+%				\qquad
+%				\Lambda' \subseteq \Lambda
+%				\qquad
+%				\Delta_1 \subseteq \Delta
+%			\end{array}
+		}{
+			(\Gamma ; \Lambda; \Delta) \by{\news{\tilde{m}} \bactout{a}{V}} (\Gamma \cat \Gamma' ; \Lambda\backslash\Lambda';
+			(\Delta \cat \cup_j \Delta_j') \backslash \Delta')
+		}
+		\\[8mm]
+	\eltsrule{SRv}&\tree{
+			\dual{s} \notin \dom{\Delta} \quad \Gamma; \Lambda'; \Delta' \proves V \hastype U
+		}{
+			(\Gamma; \Lambda; \Delta \cat s: \btinp{U} S) \by{\bactinp{s}{V}} (\Gamma; \Lambda\cat\Lambda'; \Delta\cat\Delta' \cat s: S)
+		}
+		\\[8mm]
+		\eltsrule{ShRv}&\tree{
+			\Gamma; \es; \es \proves a \hastype \chtype{U}
+			\quad
+			\Gamma; \Lambda'; \Delta' \proves V \hastype U
+		}{
+			(\Gamma; \Lambda; \Delta) \by{\bactinp{a}{\tilde{V}}} (\Gamma; \Lambda\cat\Lambda'; \Delta\cat\Delta')
+		}
+		\\[8mm]
+
+		\eltsrule{Sel}&\tree{
+			\dual{s} \notin \dom{\Delta} \quad j \in I
+		}{
+			(\Gamma; \Lambda; \Delta \cat s: \btsel{l_i: S_i}_{i \in I}) \by{\bactsel{s}{l_j}} (\Gamma; \Lambda; \Delta \cat s:S_j)
+		}
+\\[8mm]
+		\eltsrule{Bra}&\tree{
+			\dual{s} \notin \dom{\Delta} \quad j \in I
+		}{
+			(\Gamma; \Lambda; \Delta \cat s: \btbra{l_i: T_i}_{i \in I}) \by{\bactbra{s}{l_j}} (\Gamma; \Lambda; \Delta \cat s:S_j)
+		}
+		\\[8mm]
+		\eltsrule{Tau}&\tree{
+			\Delta_1 \red \Delta_2 \vee \Delta_1 = \Delta_2
+		}{
+			(\Gamma; \Lambda; \Delta_1) \by{\tau} (\Gamma; \Lambda; \Delta_2)
+		}
+\\[6mm]
+		\eltsrule{RRcv}&\tree {
+\begin{array}{c}
+(\Gamma_1; \Lambda_1; \Delta_1) \by{\bactinp{n}{V}} (\Gamma_2; \Lambda_2; \Delta_2)
+\\
+			\begin{array}{crcl}
+				& V & = & \abs{\tilde{x}}{\binp{t}{X} \appl{X}{\tilde{x}}} \wedge t \textrm{ fresh} \\
+& & \vee & \abs{\tilde{x}}{\map{U}^{\tilde{x}}}  \vee V = \tilde{m}
+			\end{array}
+			\end{array}
+		}{
+			(\Gamma_1; \Lambda_1; \Delta_1) \hby{\bactinp{n}{V}} (\Gamma_2; \Lambda_1; \Delta_2)
+		}
+	\end{array}
+	\]
+	\caption{Labelled Transition Semantics for Typed Environments \label{fig:envLTS}}
+\end{figure}
+
+\begin{definition}[Typed Transition Systems]\label{d:tlts}\rm
+We write: 
+\begin{enumerate}
+\item 
+$\horel{\Gamma}{\Delta_1}{P_1}{\by{\ell}}{\Delta_2}{P_2}$
+%$\Gamma; \emptyset; \Delta_1 \proves P_1 \hastype \Proc \by{\ell} \Gamma; \emptyset; \Delta_2 \proves P_2 \hastype \Proc$
+	whenever:
+%
+$P_1 \by{\ell} P_2$, $(\Gamma, \emptyset, \Delta_1) \by{\ell} (\Gamma, \emptyset, \Delta_2)$ and $\Gamma; \emptyset; \Delta_i \proves P_i \hastype \Proc$ 
+($i=1,2$)
+%
+\item 
+$\horel{\Gamma}{\Delta_1}{P_1}{\hby{\ell}}{\Delta_2}{P_2}$
+%$\Gamma; \emptyset; \Delta_1 \proves P_1 \hastype \Proc \hby{\ell} \Gamma; \emptyset; \Delta_2 \proves P_2 \hastype \Proc$ 
+whenever: 
+$P_1 \by{\ell} P_2$, 
+$(\Gamma, \emptyset, \Delta_1) \hby{\ell} (\Gamma, \emptyset, \Delta_2)$, 
+and $\Gamma; \emptyset; \Delta_i \proves P_i \hastype \Proc$ 
+($i=1,2$)
+\end{enumerate}
+%
+We extend to $\By{}$ (resp.\ $\Hby{}$) and $\By{\hat{\ell}}$ (resp.\ $\Hby{\hat{\ell}}$) in the standard way.
+\end{definition}
+%For notational convenience we write: 
+%$\horel{\Gamma}{\Delta_1}{P_1}{\by{\ell}}{\Delta_2}{P_2}$
+%instead of $\Gamma; \emptyset; \Delta_1 \proves P_1 \hastype \Proc \by{\ell} \Gamma; \emptyset; \Delta_2 \proves P_2 \hastype \Proc$.
+%We extend to $\By{}$ (resp.\ $\Hby{}$) and $\By{\hat{\ell}}$ (resp.\ $\Hby{\hat{\ell}}$) in the standard way.
+
+
+
+\begin{lemma}[Invariant]\label{l:invariant}
+	If $\horel{\Gamma}{\Delta_1}{P_1}{\hby{\ell}}{\Delta_2}{P_2}$
+	then $\horel{\Gamma}{\Delta_1}{P_1}{\by{\ell}}{\Delta_2}{P_2}$.
+\end{lemma}
+
+\begin{IEEEproof}
+	The proof is straightforward from the definition of rule $\eltsrule{RRcv}$.
+\end{IEEEproof}
+
+
+\subsection{Reduction-Closed Congruence}
+\label{subsec:rc}
+
+\begin{definition}[Session Environment Confluence]\rm
+	We denote $\Delta_1 \bistyp \Delta_2$ whenever $\exists \Delta$ such that
+	$\Delta_1 \red^\ast \Delta$ and $\Delta_2 \red^\ast \Delta$.
+\end{definition}
+
+\begin{definition}[Typed Relation]\rm
+	We say that
+	$\Gamma; \emptyset; \Delta_1 \proves P_1 \hastype \Proc\ \Re \ \Gamma; \emptyset; \Delta_2 \proves P_2 \hastype \Proc$
+	is a typed relation whenever $P_1$ and $P_2$ are programs; 
+		$\Delta_1$ and $\Delta_2$ are well typed; and 
+		$\Delta_1 \bistyp \Delta_2$.
+We write
+$\horel{\Gamma}{\Delta_1}{P_1}{\ \Re \ }{\Delta_2}{P_2}$
+for the typed relation $\Gamma; \emptyset; \Delta_1 \proves P_1 \hastype \Proc\ \Re \ \Gamma; \emptyset; \Delta_2 \proves P_2 \hastype \Proc$.
+\end{definition}
+
+
+\begin{definition}[Barbs]\rm
+	Let program $P$.
+	\begin{enumerate}
+		\item	We write $P \barb{n}$ if $P \scong \newsp{\tilde{m}}{\bout{n}{V} P_2 \Par P_3}, n \notin \tilde{m}$.
+			We write $P \Barb{n}$ if $P \red^* \barb{n}$.
+
+		\item	We write $\Gamma; \emptyset; \Delta \proves P \barb{n}$ if
+			$\Gamma; \emptyset; \Delta \proves P \hastype \Proc$ with $P \barb{n}$ and $\dual{n} \notin \Delta$.
+			We write $\Gamma; \emptyset; \Delta \proves P \Barb{n}$ if $P \red^* P'$ and
+			$\Gamma; \emptyset; \Delta' \proves P' \barb{n}$.			
+	\end{enumerate}
+\end{definition}
+
+\begin{definition}[Context]\rm
+	A context $\C$ is defined as:
+	\begin{tabular}{rcl}
+	$\C$ & $::=$ & $\hole \bnfbar \bout{u}{V} \C \bnfbar \binp{u}{x} \C
+\bnfbar \bout{u}{\lambda x.\C} P
+\bnfbar \news{n} \C$\\ 
+             & $\bnfbar$ & $\C \Par P \bnfbar P \Par \C 
+\bnfbar \bsel{u}{l} \C \bnfbar \bbra{u}{l_1:P_1,..,l_i:\C,..l_n:P_n}$
+	\end{tabular}
+
+	Notation $\context{\C}{P}$ replaces $\hole$ in $\C$ with $P$.
+\end{definition}
+
+\begin{definition}[Barbed Reduction-Closed Congruence]\rm
+	Typed relation
+	$\horel{\Gamma}{\Delta_1}{P_1}{\ \Re\ }{\Delta_2}{P_2}$
+	is a {\em barbed reduction-closed congruence} whenever:
+	\begin{enumerate}
+	\item	If $P_1 \red P_1'$ then there exists $P_2'$ such that $P_2 \red^* P_2'$ and
+	$\horel{\Gamma}{\Delta_1'}{P_1'}{\ \Re\ }{\Delta_2'}{P_2'}$; 
+and its symmetric case;
+%		\item	If $P_2 \red P_2'$ then $\exists P_1', P_1 \red^* P_1'$ and
+%		$\horel{\Gamma}{\Delta_1'}{P_1'}{\ \Re\ }{\Delta_2'}{P_2'}$
+%		\end{itemize}
+
+%		\item
+%		\begin{itemize}
+			\item	If $\Gamma;\emptyset;\Delta \proves P_1 \barb{n}$ then $\Gamma;\emptyset;\Delta \proves P_2 \Barb{n}$; and its symmetric case; and 
+
+%			\item	If $\Gamma;\emptyset;\Delta \proves P_2 \barb{s}$ then $\Gamma;\emptyset;\Delta \proves P_1 \Barb{s}$.
+%		\end{itemize}
+
+		\item	for all $\C$, $\horel{\Gamma}{\Delta_1'}{\context{\C}{P_1}}{\ \Re\ }{\Delta_2'}{\context{\C}{P_2}}$
+	\end{enumerate}
+	The largest such congruence is denoted with $\cong$.
+\end{definition}
+
+\subsection{Three Bisimulations}
+\label{subsec:bisimulation}
+The second behavioural relation is contextual bisimulation:
+%
+\begin{definition}[Contextual Bisimulation]\rm
+A typed relation $\Re$ is {\em a contextual bisimulation} if
+for all $\horel{\Gamma}{\Delta_1}{P_1}{\ \Re \ }{\Delta_2}{Q_1}$, 
+	\begin{enumerate} 
+	\item	whenever 
+$\horel{\Gamma}{\Delta_1}{P_1}
+        {\by{\news{\tilde{m_1}} \bactout{n}{V}}}{\Delta_1'}{P_2}$,
+there exists $\horel{\Gamma}{\Delta_2}{Q_1}{\By{\news{\tilde{m_2}} \bactout{n}{W}}}{\Delta_2'}{Q_2}$ such that, 
+for all $R$ with $\fv{R}=x$:
+\[\horel{\Gamma}{\Delta_1''}{\newsp{\tilde{m_1}}{P_2 \Par R\subst{V}{x}}}
+				{\ \mathcal{R}\ }
+				{\Delta_2''}{\newsp{\tilde{m_2}}{Q_2 \Par R\subst{W}{x}}};\]  
+%\item	$\forall \news{\tilde{m_1}'} \bactout{n}{\tilde{m_1}}$ such that
+%			\[
+%				\horel{\Gamma}{\Delta_1}{P_1}{\by{\news{\tilde{m_1}'} \bactout{n}{\tilde{m_1}}}}{\Delta_1'}{P_2}
+%			\]
+%			implies that $\exists Q_2, \tilde{m_2}$ such that
+%			\[
+%				\horel{\Gamma}{\Delta_2}{Q_1}{\By{\news{\tilde{m_2}'} \bactout{n}{\tilde{m_2}}}}{\Delta_2'}{Q_2}
+%			\]
+%			and $\forall R$ with $\tilde{x} = \fn{R}$, 
+%			then
+%			\[
+%				\horel{\Gamma}{\Delta_1''}{\newsp{\tilde{m_1}'}{P_2 \Par R \subst{\tilde{m_1}}{\tilde{x}}}}
+%				{\ \mathcal{R}\ }
+%				{\Delta_2''}{\newsp{\tilde{m_2}'}{Q_2 \Par R \subst{\tilde{m_2}}{\tilde{x}}}}
+%			\]
+		\item	
+for all $\horel{\Gamma}{\Delta_1}{P_1}{\by{\ell}}{\Delta_1'}{P_2}$ such that 
+$\ell$ is not an output, 
+ there exists $Q_2$ such that 
+$\horel{\Gamma}{\Delta_1}{Q_1}{\By{\ell}}{\Delta_1'}{Q_2}$
+			and
+			$\horel{\Gamma}{\Delta_1'}{P_2}{\ \mathcal{R}\ }{\Delta_2'}{Q_2}$; and  
+
+                      \item	The symmetric cases of 1 and 2.                
+	\end{enumerate}
+	The Knaster Tarski theorem ensures that the largest contextual bisimulation exists,
+	it is called contextual bisimilarity and is denoted by $\wb^c$.
+\end{definition}
+
+The contextual bisimulation in the general case is a hard relation to be computed
+since it is universaly quantified over substituting processes. The next definition
+of a bisimulation relation avoids the universal quantifier over processes.
+
+
+\begin{definition}[Higher-Order Bisimulation]\rm
+	\label{d:bisim}
+A typed relation $\Re$ is {\em the HO bisimulation} if
+for all $\horel{\Gamma}{\Delta_1}{P_1}{\ \mathcal{R}\ }{\Delta_2}{Q_1}$, 
+	\begin{enumerate}
+		\item	whenever 
+$\horel{\Gamma}{\Delta_1}{P_1}{\hby{\news{\tilde{m_1}} \bactout{n}{V_1}}}{\Delta_1'}{P_2}$, there exits 
+$\horel{\Gamma}{\Delta_2}{Q_1}{\Hby{\news{\tilde{m_2}} \bactout{n}{V_2}}}{\Delta_2'}{Q_2}$ such that, for fresh $t,x,s$, 
+\[
+\begin{array}{lrlll}
+& \Gamma; \Delta''_1  \proves & 
+{\newsp{\tilde{m_1}}{P_2 \Par \hotrigger{t}{V_1}}}\\ 
+\Re & 
+\Delta''_2 \proves & {\newsp{\tilde{m_2}}{Q_2 \Par \hotrigger{t}{V_2}}}
+\end{array}
+\]
+		\item	
+for all $\horel{\Gamma}{\Delta_1}{P_1}{\hby{\ell}}{\Delta_1'}{P_2}$ such that 
+$\ell$ is not an output, 
+ there exists $Q_2$ such that 
+$\horel{\Gamma}{\Delta_1}{Q_1}{\Hby{\ell}}{\Delta_1'}{Q_2}$
+			and
+			$\horel{\Gamma}{\Delta_1'}{P_2}{\ \mathcal{R}\ }{\Delta_2'}{Q_2}$; and 
+
+                      \item	The symmetric cases of 1 and 2.                
+	\end{enumerate}
+	The Knaster Tarski theorem ensures that the largest bisimulation exists,
+	it is called bisimilarity and is denoted by $\wb$.
+\end{definition}
+
+
+A different variant of the bisimulation based on a first order
+output trigger.
+
+\begin{definition}[FO-Bisimulation]\rm
+	Let typed relation $\mathcal{R}$ such that
+	$\horel{\Gamma}{\Delta_1}{P_1}{\ \mathcal{R}\ }{\Delta_2}{Q_1}$.
+	$\mathcal{R}$ is a {\em bisimulation} whenever:
+	\begin{enumerate}
+		\item	$\forall \news{\tilde{m_1}} \bactout{n}{V_1}$ with $\Gamma; \es; \Delta \proves V_1 \hastype U$ such that
+			\[
+				\horel{\Gamma}{\Delta_1}{P_1}{\hby{\news{\tilde{m_1}} \bactout{n}{V_1}}}{\Delta_1'}{P_2}
+			\]
+			implies that $\exists Q_2, V_2$ with $\Gamma; \es; \Delta' \proves V_2 \hastype U$ such that
+			\[
+				\horel{\Gamma}{\Delta_2}{Q_1}{\Hby{\news{\tilde{m_2}} \bactout{n}{V_2}}}{\Delta_2'}{Q_2}
+			\]
+			and for fresh $t$
+			\[
+				\mhorel{\Gamma}{\Delta_1''}{\newsp{\tilde{m_1}}{P_2 \Par \fotrigger{t}{x}{s}{\btinp{U} \inact}{V_1}}}
+				{\ \mathcal{R}\ }
+				{\Delta_2''}{}{\newsp{\tilde{m_2}}{Q_2 \Par \fotrigger{t}{x}{s}{\btinp{U} \inact}{V_2}}}
+			\]
+
+		\item	$\forall \ell \notin \set{\news{\tilde{m}'} \bactout{n}{m}, \news{\tilde{m}} \bactout{n}{\abs{x}{P}}}$ such that
+			\[
+				\horel{\Gamma}{\Delta_1}{P_1}{\hby{\ell}}{\Delta_1'}{P_2}
+			\]
+			implies that $\exists Q_2$ such that 
+			\[
+				\horel{\Gamma}{\Delta_1}{Q_1}{\Hby{\ell}}{\Delta_1'}{Q_2}
+			\]
+			and
+			$\horel{\Gamma}{\Delta_1'}{P_2}{\ \mathcal{R}\ }{\Delta_2'}{Q_2}$
+
+		\item	The symmetric cases of 1 and 2.
+	\end{enumerate}
+	The Knaster Tarski theorem ensures that the largest bisimulation exists,
+	it is called bisimilarity and is denoted by $\wb^f$.
+\end{definition}
+
+
