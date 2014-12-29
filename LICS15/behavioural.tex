@@ -337,11 +337,11 @@ for the typed relation $\Gamma; \emptyset; \Delta_1 \proves P_1 \hastype \Proc\ 
 
 \begin{definition}[Context]\rm
 	A context $\C$ is defined as:
-	\begin{tabular}{rcl}
-	$\C$ & $::=$ & $\hole \bnfbar \bout{u}{V} \C \bnfbar \binp{u}{x} \C
+	\begin{tabular}{rl}
+	$\C$ $::=$ & $\hole \bnfbar \bout{u}{V} \C \bnfbar \binp{u}{x} \C
 \bnfbar \bout{u}{\lambda x.\C} P
 \bnfbar \news{n} \C$\\ 
-             & $\bnfbar$ & $\C \Par P \bnfbar P \Par \C 
+             $\bnfbar$ & $\C \Par P \bnfbar P \Par \C 
 \bnfbar \bsel{u}{l} \C \bnfbar \bbra{u}{l_1:P_1,..,l_i:\C,..l_n:P_n}$
 	\end{tabular}
 
@@ -493,45 +493,44 @@ We present a result on process substitution.
 
 \begin{lemma}[Process Substitution]\rm
 	\label{lem:proc_subst}
-	If 
-%
 	\begin{enumerate}
-		\item	$\horel{\Gamma}{\Delta_1'}{P \subst{\subst{\tilde{x}}{\binp{t}{Y} \appl{Y}{\tilde{x}}}}{X}}{\wb}{\Delta_2}{Q \subst{\abs{\tilde{x}}{\binp{t}{Y} \appl{Y}{\tilde{x}}}}{X}}$
-			for some fresh $t$.
-
-		\item	$\horel{\Gamma}{\Delta_1''}{P \subst{\abs{\tilde{x}}{\map{U}^{\tilde{x}}}}{X}}{\wb}{\Delta_2''}{Q \subst{\abs{\tilde{x}}{\map{U}^{\tilde{x}}}}{X}}$
-			for some $U$.
-	\end{enumerate}
-%
-	then $\forall R$ such that $\fv{R} = \tilde{x}$
+		\item	If $\horel{\Gamma}{\Delta_1'}{P \subst{\abs{x}{\binp{t}{y} (\appl{y}{x})}}{z}}{\wb}{\Delta_2'}{Q \subst{\abs{x}{\binp{t}{y} (\appl{y}{{x}})}}{z}}$ for fresh $t$, 
+then for all $R$ such that $\fv{R} = {x}$, 
 \[
-	\horel{\Gamma}{\Delta_1}{P \subst{\abs{\tilde{x}}{R}}{X}}{\wb}{\Delta_2}{Q \subst{\abs{\tilde{x}}{R}}{X}}
+\horel{\Gamma}{\Delta_1}{P \subst{\abs{{x}}{R}}{z}}{\wb}{\Delta_2}{Q \subst{\abs{{x}}{R}}{z}}
 \]
+		\item	If 
+$\horel{\Gamma}{\Delta_1'}{P \subst{\abs{{x}}{\map{U}^{{x}}}}{z}}{\wb}{\Delta_2'}{Q \subst{\abs{{x}}{\map{U}^{{x}}}}{z}}$ for some $U$, 
+then for all $R$ such that $\fv{R} = {x}$, 
+\[
+\horel{\Gamma}{\Delta_1}{P \subst{\abs{{x}}{R}}{z}}{\wb}{\Delta_2}{Q \subst{\abs{{x}}{R}}{z}}
+\]
+\end{enumerate}
 \end{lemma}
-\begin{IEEEproof}
-	The details of the proof can be found in Appendix~\ref{app:sub_coinc}.
-\end{IEEEproof}
+%\begin{IEEEproof}
+%	The details of the proof can be found in Appendix~\ref{app:sub_coinc}.
+%\end{IEEEproof}
 
 \begin{theorem}[Coincidence]\rm
 	\label{the:coincidence}
 	Relations $\hwb, \fwb, \wbc$ and $\cong$ coincide.
 \end{theorem}
 
-\begin{IEEEproof}
-	The full details of the proof are in Appendix~\ref{app:sub_coinc}.
-	The theorem is split into a hierarchy of Lemmas. Specifically
-	Lemma~\ref{lem:wb_eq_wbf} proves 
-	$\wb$ coincides with $\fwb$; 
-	Lemma~\ref{lem:wb_is_wbc} exploits the process substitution result
-	(Lemma~\ref{lem:proc_subst}) to prove that $\hwb \subseteq \wbc$.
-	Lemma~\ref{lem:wbc_is_cong} shows that $\wbc$ is a congruence
-	which implies $\wbc \subseteq \cong$.
-	The final result comes from Lemma~\ref{lem:cong_is_wb} where
-	we use label testing to show that $\cong \subseteq \fwb$ using
-	the technique in developed in~\cite{Hennessy07}. The formulation of input
-	triggers in the bisimulation relation allows us to prove
-	the latter result without using a matching operator.
-\end{IEEEproof}
+%\begin{IEEEproof}
+%	The full details of the proof are in Appendix~\ref{app:sub_coinc}.
+%	The theorem is split into a hierarchy of Lemmas. Specifically
+%	Lemma~\ref{lem:wb_eq_wbf} proves 
+%	$\wb$ coincides with $\fwb$; 
+%	Lemma~\ref{lem:wb_is_wbc} exploits the process substitution result
+%	(Lemma~\ref{lem:proc_subst}) to prove that $\hwb \subseteq \wbc$.
+%	Lemma~\ref{lem:wbc_is_cong} shows that $\wbc$ is a congruence
+%	which implies $\wbc \subseteq \cong$.
+%	The final result comes from Lemma~\ref{lem:cong_is_wb} where
+%	we use label testing to show that $\cong \subseteq \fwb$ using
+%	the technique in developed in~\cite{Hennessy07}. The formulation of input
+%	triggers in the bisimulation relation allows us to prove
+%	the latter result without using a matching operator.
+%\end{IEEEproof}
 
 Processes that do not use shared names, (i.e.~they are typed with
 $\proves_s$ type system), are inherintly $\tau$-inert.
