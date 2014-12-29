@@ -150,7 +150,7 @@ definition.
 			&&}
 	\end{eqnarray*}
 %
-	\noi  We show that $\mathcal{S}$ is a bisimulation.
+	\noi  We show that $\mathcal{S}$ is a HO-bisimulation.
 
 	\noi We do a case analysis on the transition:
 %
@@ -181,9 +181,10 @@ definition.
 	\noi which implies
 %
 	\begin{eqnarray}
-		\Gamma; \es; \Delta_2 &\Hby{\ell_2}& \Delta_2' \proves \newsp{\tilde{m_2}}{Q_1 \Par Q_2 \subst{\abs{\tilde{x}}{\binp{t}{Y} \appl{Y}{\tilde{x}}}}{X}} \nonumber \\
-		&\Hby{\ell_2}&
-		Q' \scong \newsp{\tilde{m_2}}{Q_1' \Par Q_2' \subst{\abs{\tilde{x}}{\binp{t}{Y} \appl{Y}{\tilde{x}}}}{X}} \label{lem:subst_equiv1}
+		\Gamma; \es; &\Delta_2& \proves \newsp{\tilde{m_2}}{Q_1 \Par Q_2 \subst{\abs{\tilde{x}}{\binp{t}{Y} \appl{Y}{\tilde{x}}}}{X}} \nonumber \\
+		\Hby{\ell_2}&
+		\Delta_2'& \proves Q' \scong \newsp{\tilde{m_2}}{Q_1' \Par Q_2' \subst{\abs{\tilde{x}}{\binp{t}{Y} \appl{Y}{\tilde{x}}}}{X}}
+		\label{lem:subst_equiv1}
 		\\
 		&&\horel{\Gamma}{\Delta_1'}{P' \Par C_1}{\wb}{\Delta_2'}{Q' \Par C_2} \label{lem:subst_equiv2}
 	\end{eqnarray}
@@ -198,87 +199,127 @@ definition.
 	\noi which implies
 %
 	\begin{eqnarray}
-		\Gamma; \es; \Delta_2 &\Hby{\ell_2}& \Delta_2' \proves \newsp{\tilde{m_2}}{Q_1 \Par Q_2 \subst{\abs{\tilde{x}}{\map{U}^{\tilde{x}}}}{X}} \nonumber \\
-		&\Hby{\ell_2}& Q'' \scong \newsp{\tilde{m_2}'}{Q_1' \Par Q_2' \subst{\abs{\tilde{x}}{\map{U}^{\tilde{x}}}}{X}} \label{lem:subst_equiv3}
+		\Gamma; \es; &\Delta_2& \proves \newsp{\tilde{m_2}}{Q_1 \Par Q_2 \subst{\abs{\tilde{x}}{\map{U}^{\tilde{x}}}}{X}} \nonumber \\
+		\Hby{\ell_2} &\Delta_2'& \proves  Q'' \scong \newsp{\tilde{m_2}'}{Q_1' \Par Q_2' \subst{\abs{\tilde{x}}{\map{U}^{\tilde{x}}}}{X}}
+		\label{lem:subst_equiv3}
 		\\
 		&&\horel{\Gamma}{\Delta_1'}{P'' \Par C_1}{\wb}{\Delta_2'}{Q'' \Par C_2} \label{lem:subst_equiv4}
 	\end{eqnarray}
 %
 	\noi From~\ref{lem:subst_equiv1} and~\ref{lem:subst_equiv3} we get that $\forall R$ with $\fv{R} = \tilde{x}$:
 %
-	\begin{eqnarray*}
+	\[
 		\horel{\Gamma}{\Delta_2}{\newsp{\tilde{m_2}}{Q_1 \Par Q_2 \subst{\abs{\tilde{x}}{R}}{X}}}
 		{\Hby{\ell_2}}
 		{\Delta_2'}{\newsp{\tilde{m_2}'}{Q_1' \Par Q_2' \subst{\abs{\tilde{x}}{R}}{X}}}
-	\end{eqnarray*}
+	\]
 %
 	\noi The case concludes if we combine~\ref{lem:subst_equiv2} and~\ref{lem:subst_equiv4} to get that $\forall R$ with $\fv{R} = \tilde{x}$
 %
-	\begin{eqnarray*}
+	\[
 		\horel{\Gamma'}{\Delta_1''}{\newsp{\tilde{m_1}'}{P_1' \Par P_2' \subst{\abs{\tilde{x}}{R}}{X}} \Par C_1}
 		{\ \mathcal{S}\ }
 		{\Delta_2''}{\newsp{\tilde{m_2}'}{Q_1 \Par Q_2' \subst{\abs{\tilde{x}}{R}}{X}} \Par C_2}
-	\end{eqnarray*}
+	\]
 
 	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	%          Case
 	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 	\noi - Case: $P_2 = \appl{X}{\tilde{n}}$ for some $\tilde{n}$.
+
+	\noi We do a case analysis on action $\ell$.
+
+	\noi - Subcase: $\ell \not= \tau$.
+
+	\noi $\forall R$ with $\fv{R} = \tilde{x}$
 %
-	Let $\forall R$ with $\fv{R} = \tilde{x}$ and $\ell$ such that
-%
-\[
-	\mhorel{\Gamma}{\Delta_1}{\newsp{\tilde{m_1}}{P_1 \Par \appl{X}{\tilde{n}} \subst{\abs{\tilde{x}}{R}}{X}}}{\hby{\ell}}
-	{\Delta_1'}{}{\newsp{\tilde{m_1'}}{P_1' \Par \appl{X}{\tilde{n}} \subst{\abs{\tilde{x}}{R'}}{X}}}
-\]
+	\[
+		\mhorel{\Gamma}{\Delta_1}{\newsp{\tilde{m_1}}{P_1 \Par \appl{X}{\tilde{n}} \subst{\abs{\tilde{x}}{R}}{X}}}
+		{\hby{\ell}}
+		{\Delta_1'}{}{\newsp{\tilde{m_1'}}{P_1 \Par \appl{X}{\tilde{n}} \subst{\abs{\tilde{x}}{R'}}{X}}}
+	\]
 %
 	\noi From the latter transition we get that:
 %
-	\begin{eqnarray}
-		\Gamma; \es; \Delta_1 &\hby{\bactinp{t}{\abs{\tilde{x}}{\binp{t'}{Y} \appl{Y}{\tilde{x}}}}}& \Delta_1' \proves
-		\newsp{\tilde{m_1}}{P_1 \Par \appl{X}{\tilde{n}} \subst{\abs{\tilde{x}}{\binp{t}{Y} \appl{Y}{\tilde{x}}}}{X}} \nonumber \\
-		&\hby{\bactinp{t}{\abs{\tilde{x}}{\binp{t'}{Y} \appl{Y}{\tilde{x}}}}}& 
-		\newsp{\tilde{m_1'}}{P_1 \Par \appl{X}{\tilde{n}} \subst{\abs{\tilde{x}}{\binp{t'}{Y} \appl{Y}{\tilde{x}}}}{X}}
-		\label{lem:subst_equiv5}
-	\end{eqnarray}
+	\nhorel{\Gamma}{\Delta_1}{\newsp{\tilde{m_1}}{P_1 \Par \appl{X}{\tilde{n}} \subst{\abs{\tilde{x}}{\binp{t}{Y} \appl{Y}{\tilde{x}}}}{X}}}
+	{\hby{\bactinp{t}{\abs{\tilde{x}}{\binp{t'}{Y} \appl{Y}{\tilde{x}}}}}}
+	{\Delta_1'}{\newsp{\tilde{m_1'}}{P_1 \Par \appl{X}{\tilde{n}} \subst{\abs{\tilde{x}}{\binp{t'}{Y} \appl{Y}{\tilde{x}}}}{X}}}
+	{lem:subst_equiv5}
+%
+%	\begin{eqnarray}
+%		\Gamma; \es; \Delta_1 &\hby{\bactinp{t}{\abs{\tilde{x}}{\binp{t'}{Y} \appl{Y}{\tilde{x}}}}}& \Delta_1' \proves
+%		\newsp{\tilde{m_1}}{P_1 \Par \appl{X}{\tilde{n}} \subst{\abs{\tilde{x}}{\binp{t}{Y} \appl{Y}{\tilde{x}}}}{X}} \nonumber \\
+%		&\hby{\bactinp{t}{\abs{\tilde{x}}{\binp{t'}{Y} \appl{Y}{\tilde{x}}}}}& 
+%		\newsp{\tilde{m_1'}}{P_1 \Par \appl{X}{\tilde{n}} \subst{\abs{\tilde{x}}{\binp{t'}{Y} \appl{Y}{\tilde{x}}}}{X}}
+%		\label{lem:subst_equiv5}
+%	\end{eqnarray}
 %
 	\noi and $t'$ a fresh name. From the freshness of $t$ and the fact that $X$ is linear in $Q_2$
 	it has to be the case that:
 %
-\[
-	\begin{array}{rcll}
-		\Gamma; \es; \Delta_2' &\Hby{\bactinp{t}{\abs{\tilde{x}}{\binp{t'}{Y} \appl{Y}{\tilde{x}}}}}& \Delta_2'' \proves &
-		\newsp{\tilde{m_2'}}{Q_1 \Par Q_2 \subst{\abs{\tilde{x}}{\binp{t}{Y} \appl{Y}{\tilde{x}}}}{X}}\\
-		&\Hby{}& &
-		\newsp{\tilde{m_2'}}{Q_1'' \Par Q_3 \Par \appl{X}{\tilde{m}} \subst{\abs{\tilde{x}}{\binp{t}{Y} \appl{Y}{\tilde{x}}}}{X}} \\
-		&\hby{\bactinp{t}{\abs{\tilde{x}}{\binp{t'}{Y} \appl{Y}{\tilde{x}}}}}& &
-		\newsp{\tilde{m_2'}}{Q_1' \Par \appl{X}{\tilde{m}} \subst{\abs{\tilde{x}}{\binp{t'}{Y} \appl{Y}{\tilde{x}}}}{X}} \\
-	\end{array}
-\]
+	\[
+		\begin{array}{crll}
+			&\Gamma; \es; \Delta_2'& \proves &
+			\newsp{\tilde{m_2'}}{Q_1 \Par Q_2 \subst{\abs{\tilde{x}}{\binp{t}{Y} \appl{Y}{\tilde{x}}}}{X}}\\
+			\Hby{} & & &
+			\newsp{\tilde{m_2'}}{Q_1'' \Par Q_3 \Par \appl{X}{\tilde{m}} \subst{\abs{\tilde{x}}{\binp{t}{Y} \appl{Y}{\tilde{x}}}}{X}} \\
+			\hby{\bactinp{t}{\abs{\tilde{x}}{\binp{t'}{Y} \appl{Y}{\tilde{x}}}}}
+			& \Delta_2''& \proves& \newsp{\tilde{m_2'}}{Q_1' \Par \appl{X}{\tilde{m}} \subst{\abs{\tilde{x}}{\binp{t'}{Y} \appl{Y}{\tilde{x}}}}{X}}
+		\end{array}
+	\]
+%
+%
+%	\[
+%		\begin{array}{rcll}
+%			\Gamma; \es; \Delta_2' &\Hby{\bactinp{t}{\abs{\tilde{x}}{\binp{t'}{Y} \appl{Y}{\tilde{x}}}}}& \Delta_2'' \proves &
+%			\newsp{\tilde{m_2'}}{Q_1 \Par Q_2 \subst{\abs{\tilde{x}}{\binp{t}{Y} \appl{Y}{\tilde{x}}}}{X}}\\
+%			&\Hby{}& &
+%			\newsp{\tilde{m_2'}}{Q_1'' \Par Q_3 \Par \appl{X}{\tilde{m}} \subst{\abs{\tilde{x}}{\binp{t}{Y} \appl{Y}{\tilde{x}}}}{X}} \\
+%			&\hby{\bactinp{t}{\abs{\tilde{x}}{\binp{t'}{Y} \appl{Y}{\tilde{x}}}}}& &
+%			\newsp{\tilde{m_2'}}{Q_1' \Par \appl{X}{\tilde{m}} \subst{\abs{\tilde{x}}{\binp{t'}{Y} \appl{Y}{\tilde{x}}}}{X}} \\
+%		\end{array}
+%	\]
 %
 	\noi and
 %
-	\begin{eqnarray}
-		\Gamma; \es; \Delta_1' &\wb& \Delta_2' \proves 
-		\newsp{\tilde{m_1'}}{P_1 \Par \appl{X}{\tilde{n}} \subst{\abs{\tilde{x}}{\binp{t'}{Y} \appl{Y}{\tilde{x}}}}{X}} \nonumber \\
-		& \wb &
-		\newsp{\tilde{m_2}'}{Q_1' \Par \appl{X}{\tilde{m}} \subst{\abs{\tilde{x}}{\binp{t'}{Y} \appl{Y}{\tilde{x}}}}{X}}
-		\label{lem:subst_equiv6}
-	\end{eqnarray} 
+	\nhorel{\Gamma}{\Delta_1'}{\newsp{\tilde{m_1'}}{P_1 \Par \appl{X}{\tilde{n}} \subst{\abs{\tilde{x}}{\binp{t'}{Y} \appl{Y}{\tilde{x}}}}{X}}}
+	{\wb}
+	{\Delta_2'}{\newsp{\tilde{m_2}'}{Q_1' \Par \appl{X}{\tilde{m}} \subst{\abs{\tilde{x}}{\binp{t'}{Y} \appl{Y}{\tilde{x}}}}{X}}}
+	{lem:subst_equiv6}
+%
+%
+%	\begin{eqnarray}
+%		\Gamma; \es; \Delta_1' &\wb& \Delta_2' \proves 
+%		\newsp{\tilde{m_1'}}{P_1 \Par \appl{X}{\tilde{n}} \subst{\abs{\tilde{x}}{\binp{t'}{Y} \appl{Y}{\tilde{x}}}}{X}} \nonumber \\
+%		& \wb &
+%		\newsp{\tilde{m_2}'}{Q_1' \Par \appl{X}{\tilde{m}} \subst{\abs{\tilde{x}}{\binp{t'}{Y} \appl{Y}{\tilde{x}}}}{X}}
+%		\label{lem:subst_equiv6}
+%	\end{eqnarray} 
 %
 	\noi From the latter transition we can conclude that $\forall R$ with $\fv{R} = \set{x}$:
 %
-\[
-	\begin{array}{rcll}
-		\Gamma; \es; \Delta_2' &\Hby{\ell}& \Delta_2'' \proves &
-		\newsp{\tilde{m_2'}}{Q_1 \Par Q_2 \subst{\abs{\tilde{x}}{R}}{X}}\\
-		&\Hby{}& &
-		\newsp{\tilde{m_2'}}{Q_1' \Par \appl{X}{\tilde{m}} \subst{\abs{\tilde{x}}{R}}{X}} \\
-		&\hby{\ell}& &
-		\newsp{\tilde{m_2'}}{Q_1'' \Par \appl{X}{\tilde{m}} \subst{\abs{\tilde{x}}{R'}}{X}} \\
-	\end{array}
-\]
+	\[
+		\begin{array}{crll}
+			&\Gamma; \es; \Delta_2'& \proves & 
+			\newsp{\tilde{m_2'}}{Q_1 \Par Q_2 \subst{\abs{\tilde{x}}{R}}{X}}\\
+			\Hby{} & & &
+			\newsp{\tilde{m_2'}}{Q_1' \Par \appl{X}{\tilde{m}} \subst{\abs{\tilde{x}}{R}}{X}} \\
+			\hby{\ell}
+			&\Delta_2''& \proves & \newsp{\tilde{m_2'}}{Q_1' \Par \appl{X}{\tilde{m}} \subst{\abs{\tilde{x}}{R'}}{X}}
+		\end{array}
+	\]
+%
+%	\[
+%		\begin{array}{rcll}
+%			\Gamma; \es; \Delta_2' &\Hby{\ell}& \Delta_2'' \proves &
+%			\newsp{\tilde{m_2'}}{Q_1 \Par Q_2 \subst{\abs{\tilde{x}}{R}}{X}}\\
+%			&\Hby{}& &
+%			\newsp{\tilde{m_2'}}{Q_1' \Par \appl{X}{\tilde{m}} \subst{\abs{\tilde{x}}{R}}{X}} \\
+%			&\hby{\ell}& &
+%			\newsp{\tilde{m_2'}}{Q_1' \Par \appl{X}{\tilde{m}} \subst{\abs{\tilde{x}}{R'}}{X}} \\
+%		\end{array}
+%	\]
 %
 	\noi From the definition of $S$ and~\ref{lem:subst_equiv6}
 	we also conclude that
@@ -300,6 +341,58 @@ definition.
 %
 	\noi with process $C$ being the process derived from action $\ell$
 	to complete the bisimulation closure.
+
+	\noi - Subcase: $\ell = \tau$.
+
+	\noi $\forall R$ with $\fv{R} = \tilde{x}$
+%
+	\[
+		\mhorel{\Gamma}{\Delta_1}{\newsp{\tilde{m_1}}{P_1 \Par \appl{X}{\tilde{n}} \subst{\abs{\tilde{x}}{R}}{X}}}
+		{\hby{\tau}}
+		{\Delta_1'}{}{\newsp{\tilde{m_1'}}{P_1' \Par \appl{X}{\tilde{n}} \subst{\abs{\tilde{x}}{R'}}{X}}}
+	\]
+%
+	\noi The last transition implies
+	\[
+		\mhorel{\Gamma}{\Delta_1}{\newsp{\tilde{m_1}}{P_1 \Par \appl{X}{\tilde{n}} \subst{\abs{\tilde{x}}{R}}{X}}}
+		{\hby{\ell_1}}
+		{\Delta_1'}{}{\newsp{\tilde{m_1'}}{P_1 \Par \appl{X}{\tilde{n}} \subst{\abs{\tilde{x}}{R'}}{X}}}
+	\]
+%
+	\noi and
+%
+	\[
+		\mhorel{\Gamma}{\Delta_1}{\newsp{\tilde{m_1}}{P_1 \Par \appl{X}{\tilde{n}} \subst{\abs{\tilde{x}}{R}}{X}}}
+		{\hby{\ell_2}}
+		{\Delta_1'}{}{\newsp{\tilde{m_1'}}{P_1' \Par \appl{X}{\tilde{n}} \subst{\abs{\tilde{x}}{R}}{X}}}
+	\]
+%
+	\noi We also get that:
+%
+	\begin{eqnarray*}
+		\Gamma; \es; \Delta_1 &\hby{\bactinp{t}{\abs{\tilde{x}}{\binp{t'}{Y} \appl{Y}{\tilde{x}}}}}& \Delta_1' \proves
+		\newsp{\tilde{m_1}}{P_1 \Par \appl{X}{\tilde{n}} \subst{\abs{\tilde{x}}{\binp{t}{Y} \appl{Y}{\tilde{x}}}}{X}} \\
+		&\hby{\ell_1}& \newsp{\tilde{m_1}}{P_1' \Par \appl{X}{\tilde{n}} \subst{\abs{\tilde{x}}{\binp{t}{Y} \appl{Y}{\tilde{x}}}}{X}} \\
+		&\hby{\bactinp{t}{\abs{\tilde{x}}{\binp{t'}{Y} \appl{Y}{\tilde{x}}}}}& 
+		\newsp{\tilde{m_1'}}{P_1' \Par \appl{X}{\tilde{n}} \subst{\abs{\tilde{x}}{\binp{t'}{Y} \appl{Y}{\tilde{x}}}}{X}}
+%		\label{lem:subst_equiv5}
+	\end{eqnarray*}
+%
+	\noi and $t'$ a fresh name. From the freshness of $t$ and the fact that $X$ is linear in $Q_2$
+	it has to be the case that:
+%
+\[
+	\begin{array}{rcll}
+		\Gamma; \es; \Delta_2' &\Hby{\bactinp{t}{\abs{\tilde{x}}{\binp{t'}{Y} \appl{Y}{\tilde{x}}}}}& \Delta_2'' \proves &
+		\newsp{\tilde{m_2'}}{Q_1 \Par Q_2 \subst{\abs{\tilde{x}}{\binp{t}{Y} \appl{Y}{\tilde{x}}}}{X}}\\
+		&\Hby{\ell_2}& &
+		\newsp{\tilde{m_2'}}{Q_1'' \Par Q_3 \Par \appl{X}{\tilde{m}} \subst{\abs{\tilde{x}}{\binp{t}{Y} \appl{Y}{\tilde{x}}}}{X}} \\
+		&\hby{\bactinp{t}{\abs{\tilde{x}}{\binp{t'}{Y} \appl{Y}{\tilde{x}}}}}& &
+		\newsp{\tilde{m_2'}}{Q_1' \Par \appl{X}{\tilde{m}} \subst{\abs{\tilde{x}}{\binp{t'}{Y} \appl{Y}{\tilde{x}}}}{X}} \\
+	\end{array}
+\]
+%
+	\noi From here the proof is similar with the previous case.
 	\qed
 \end{proof}
 
@@ -309,7 +402,7 @@ definition.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{lemma}[Process Substitution]\rm
-	\label{proc:subst_equiv}
+	\label{lem:proc_subst}
 	If 
 %
 	\begin{enumerate}
@@ -338,6 +431,8 @@ definition.
 		&& \quad \newsp{\tilde{m_1}}{P_1 \subst{\abs{\tilde{x}}{\map{U}^x}}{X} \Par P_2 \subst{\abs{\tilde{x}}{\map{U}^x}}{X}} \wb \newsp{\tilde{m_2}}{Q_1 \subst{\abs{\tilde{x}}{\map{U}^x}}{X} \Par Q_2 \subst{\abs{\tilde{x}}{\map{U}^x}}{X}} \\
 		&&}
 	\end{eqnarray*}
+%
+	\noi We show that $\mathcal{S}$ is a HO-bisimulation.
 
 	\noi - Case: $P_2 \not= \appl{X}{\tilde{n}}$ for some $\tilde{n}$.
 %
@@ -380,19 +475,20 @@ definition.
 		\newsp{\tilde{m_2}'}{(Q_1' \Par Q_2') \subst{\abs{\tilde{x}}{\binp{t}{Y} \appl{Y}{\tilde{x}}}}{X} \Par \appl{Y}{\tilde{m}} \subst{\abs{\tilde{x}}{\binp{t'}{Y} \appl{Y}{\tilde{x}}}}{Y}}
 	\end{array}
 \]
-%	Let $Q_3$ such that
-%	\[
-%		\mhorel{\Gamma}{\Delta}{\newsp{\tilde{m_2}'}{Q_1 \Par Q_3} \subst{\abs{\tilde{x}}{\binp{t}{Y} \appl{Y}{\tilde{x}}}}{X} \subst{\abs{\tilde{x}}{\binp{t'}{Y} \appl{Y}{\tilde{x}}}}{Y}}
-%		{\Hby{}}
-%		{\Delta'}{}{\newsp{\tilde{m_2}'}{(Q_1' \Par Q_2') \subst{\abs{\tilde{x}}{\binp{t}{Y} \appl{Y}{\tilde{x}}}}{X} \Par \appl{Y}{\tilde{m}} \subst{\abs{\tilde{x}}{\binp{t'}{Y} \appl{Y}{\tilde{x}}}}{Y}}}
-%	\]
+	Let $Q_3$ such that
+	\[
+		\mhorel{\Gamma}{\Delta}{\newsp{\tilde{m_2}'}{Q_1 \Par Q_3} \subst{\abs{\tilde{x}}{\binp{t}{Y} \appl{Y}{\tilde{x}}}}{X} \subst{\abs{\tilde{x}}{\binp{t'}{Y} \appl{Y}{\tilde{x}}}}{Y}}
+		{\Hby{}}
+		{\Delta'}{}{\newsp{\tilde{m_2}'}{(Q_1' \Par Q_2') \subst{\abs{\tilde{x}}{\binp{t}{Y} \appl{Y}{\tilde{x}}}}{X} \Par \appl{Y}{\tilde{m}} \subst{\abs{\tilde{x}}{\binp{t'}{Y} \appl{Y}{\tilde{x}}}}{Y}}}
+	\]
 %
+	\noi From Lemma~\ref{lem:subst_equiv} we get that $\forall R$ with $\fv{R} = x$
 %
-%	\begin{eqnarray*}
-%		\mhorel{\Gamma}{\Delta_1'''}{\newsp{\tilde{m_1}'}{P_1 \subst{\abs{\tilde{x}}{\binp{t}{Y} \appl{Y}{\tilde{x}}}}{X} \Par \appl{Y}{\tilde{n}} \subst{\abs{\tilde{x}}{R}}{Y}}}
-%		{\wb}
-%		{\Delta'}{}{\newsp{\tilde{m_2}'}{(Q_1 \Par Q_3) \subst{\abs{\tilde{x}}{\binp{t}{Y} \appl{Y}{\tilde{x}}}}{X} \subst{\abs{\tilde{x}}{R}}{Y}}}
-%	\end{eqnarray*}
+	\begin{eqnarray*}
+		\mhorel{\Gamma}{\Delta_1'''}{\newsp{\tilde{m_1}'}{P_1 \subst{\abs{\tilde{x}}{\binp{t}{Y} \appl{Y}{\tilde{x}}}}{X} \Par \appl{Y}{\tilde{n}} \subst{\abs{\tilde{x}}{R}}{Y}}}
+		{\wb}
+		{\Delta'}{}{\newsp{\tilde{m_2}'}{(Q_1 \Par Q_3) \subst{\abs{\tilde{x}}{\binp{t}{Y} \appl{Y}{\tilde{x}}}}{X} \subst{\abs{\tilde{x}}{R}}{Y}}}
+	\end{eqnarray*}
 %
 	\noi From Lemma~\ref{lem:subst_equiv} we get that $\forall R$ with $\fv{R} = x$
 %
@@ -473,7 +569,7 @@ definition.
 	\end{array}
 \]
 %
-	\noi To conlude from Corollary~\ref{cor:subst_equiv} that
+	\noi To conlude from Lemma~\ref{lem:proc_subst} that
 	$\forall R$ with $\fv{R} = \tilde{x}$
 %
 \[
