@@ -1,0 +1,93 @@
+\begin{definition}[Typed Calculus]\label{d:tcalculus}\rm
+	A \emph{typed calculus} $\tyl{L}$ is a tuple
+          $\calc{\CAL}{\cal{T}}{\hby{\ell}}{\wb}{\proves}$
+	where $\CAL$ and $\cal{T}$ are set of processes and types, 
+respectively; and $\hby{\ell}$, $\wb$, and $\proves$ 
+	denote a transition system, a typed process equivalence, and a type system for $\CAL$ processes, respectively. 
+\end{definition}
+
+\begin{definition}[Typed Encoding]\rm
+	Let  $\tyl{L}_i =  \calc{L_i}{T_i}{\hby{\ell}}{\wb_i}{\proves_i}$ 
+        ($i=1,2$) be typed calculi. 
+	Given mappings $\map{\cdot}: \CAL_1 \to \CAL_2$, 
+	$\mapt{\cdot}: {\cal{T}}_1 \to {\cal{T}}_2$, and 
+	$\mapa{\cdot}: \ell \to \tilde{\ell}$, 
+	we write 
+	$\enco{\map{\cdot}, \mapt{\cdot}, \mapa{\cdot}} : \tyl{L}_1 \to \tyl{L}_2$ to denote the \emph{typed encoding} of $\tyl{L}_1$ into $\tyl{L}_2$.
+\end{definition}
+
+Below 
+we  assume that if 
+$P \hby{\ell} P'$ and $\mapa{\ell} = \{\ell_1, \ell_2,  \cdots, \ell_m\}$ then
+$\map{P} \Hby{\mapa{\ell}} \map{P'}$
+should be understood as
+$\map{P} \Hby{\ell_1} P_1 \Hby{\ell_2} P_2 \cdots \Hby{\ell_m} P_m =  \map{P'}$,
+for some
+$P_1, P_2, \ldots, P_m$.
+
+
+\begin{definition}[Semantic Preserving Encoding]\rm
+	\label{def:ep}
+	We say that $\enco{\map{\cdot}, \mapt{\cdot}, \mapa{\cdot}}: \tyl{L}_1 \to \tyl{L}_2$ is a \emph{semantic preserving encoding}
+	if it satisfies the following properties:
+	
+	\begin{enumerate}[1.]
+		\item \emph{Type preservation}:
+		if
+			$\Gamma; \emptyset; \Delta \proves P \hastype \Proc$ then 
+			$\mapt{\Gamma}; \emptyset; \mapt{\Delta} \proves \map{P} \hastype \Proc$,  
+			for any   $P$ in $L_1$.
+
+		\item \emph{Operational Correspondence}: If $\Gamma; \emptyset; \Delta \proves P \hastype \Proc$ then
+		\begin{enumerate}[-]
+%			\item	Completeness: \\
+%			    If $P \red_1 P'$ then $\exists\, \Delta'$ s.t.
+%				$\map{P} \Red_2 \map{P'}$ and
+%				$\mapt{\Gamma}; \emptyset; \mapt{\Delta'} \proves_2 \map{P'} \hastype \Proc$.
+			\item	Completeness: 
+			   If  $\stytra{\Gamma}{\ell_1}{\Delta_1}{P}{\Delta'_1}{P'}$
+			   then $\exists \ell_2$ s.t. 
+			    $\wtytra{\mapt{\Gamma}}{\ell_2}{\mapt{\Delta_1}}{\map{P}}{\mapt{\Delta'_1}}{\map{P'}}$
+			    and $\ell_2 = \mapa{\ell_1}$.
+			    				
+%			\item Soundness : \\
+%			    If $\map{P} \red_2 Q$ then
+%				$\exists P'$ s.t. $P \red_1 P'$ and 
+%				$\mapt{\Gamma}; \mapt{\Delta_1} \wb_2 \mapt{\Delta_2} \proves_2 \map{P'} \wb_2 Q$.
+				
+			\item Soundness:   
+			If  $\wtytra{\mapt{\Gamma}}{\ell_2}{\mapt{\Delta_1}}{\map{P}}{\mapt{\Delta'_1}}{Q}$
+			   then $\exists \ell_1, P'$ s.t.  
+			    (i)~$\stytra{\Gamma}{\ell_1}{\Delta_1}{P}{\Delta'_1}{P'}$,
+			    (ii)~$\ell_2 = \mapa{\ell_1}$, and
+			    (iii)~$\wbb{\mapt{\Gamma}}{\ell}{\mapt{\Delta'_1}}{\map{P'}}{\mapt{\Delta'_1}}{Q}$.
+		\end{enumerate}
+		
+		\item \emph{Full Abstraction:} 
+%		$\Gamma; \Delta_1 \wb \Delta_2 \proves P \wb Q $ if and only if $\mapt{\Gamma}; \mapt{\Delta_1} \wb \mapt{\Delta_2} \proves \map{P} \wb \map{Q} $.
+		\wbb{\Gamma}{}{\Delta_1}{P}{\Delta_2}{Q}
+		if and only if
+		\wbb{\mapt{\Gamma}}{}{\mapt{\Delta_1}}{\map{P}}{\mapt{\Delta_2}}{\map{Q}}.
+	\end{enumerate}
+\end{definition}
+
+\begin{remark}[Polyadic \HOp] We can trivially define 
+a semantic and type preserving encoding from 
+a polyadic version of \HOp ($\bout{s}{\tilde{V}}P$, $\binp{s}{\tilde{x}} P$ and $\abs{\tilde{x}}{Q}$) into the monadic \HOp.  
+Hence we use the polyadic 
+version of \HOp in the encodings.  
+\end{remark}
+
+\begin{proposition}[Composability of Semantic Preserving Encodings]
+	Let 
+	$\enco{\map{\cdot}^{1}, \mapt{\cdot}^{1}, \mapa{\cdot}^{1}}: \tyl{L}_1 \to \tyl{L}_2$
+	and 
+	$\enco{\map{\cdot}^{2}, \mapt{\cdot}^{2}, \mapa{\cdot}^{2}}: \tyl{L}_2 \to \tyl{L}_3$
+%	$\enco{\cdot}{\cdot}{1}: \tyl{L}_1 \to \tyl{L}_2$ and $\encod{\cdot}{\cdot}{2}: \tyl{L}_2 \to \tyl{L}_3$
+	be two semantic preserving encodings.
+	Then their composition, denoted 
+	$\enco{\map{\cdot}^{1} \circ \map{\cdot}^{2}, \mapt{\cdot}^{1} \circ \mapt{\cdot}^{2}, \mapa{\cdot}^{1}\circ \mapa{\cdot}^{2}}: \tyl{L}_1 \to \tyl{L}_3$
+	is also a semantic preserving encoding.
+\end{proposition}
+
+
