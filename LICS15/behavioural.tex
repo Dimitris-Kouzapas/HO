@@ -486,4 +486,67 @@ $\horel{\Gamma}{\Delta_1}{Q_1}{\Hby{\ell}}{\Delta_1'}{Q_2}$
 	it is called bisimilarity and is denoted by $\fwb$.
 \end{definition}
 
+We present a result on process substitution.
+
+\begin{lemma}[Process Substitution]\rm
+	\label{lem:proc_subst}
+	If 
+%
+	\begin{enumerate}
+		\item	$\horel{\Gamma}{\Delta_1'}{P \subst{\subst{\tilde{x}}{\binp{t}{Y} \appl{Y}{\tilde{x}}}}{X}}{\wb}{\Delta_2}{Q \subst{\abs{\tilde{x}}{\binp{t}{Y} \appl{Y}{\tilde{x}}}}{X}}$
+			for some fresh $t$.
+
+		\item	$\horel{\Gamma}{\Delta_1''}{P \subst{\abs{\tilde{x}}{\map{U}^{\tilde{x}}}}{X}}{\wb}{\Delta_2''}{Q \subst{\abs{\tilde{x}}{\map{U}^{\tilde{x}}}}{X}}$
+			for some $U$.
+	\end{enumerate}
+%
+	then $\forall R$ such that $\fv{R} = \tilde{x}$
+\[
+	\horel{\Gamma}{\Delta_1}{P \subst{\abs{\tilde{x}}{R}}{X}}{\wb}{\Delta_2}{Q \subst{\abs{\tilde{x}}{R}}{X}}
+\]
+\end{lemma}
+\begin{IEEEproof}
+	The details of the proof can be found in Appendix~\ref{app:sub_coinc}.
+\end{IEEEproof}
+
+\begin{theorem}[Coincidence]\rm
+	\label{the:coincidence}
+	Relations $\hwb, \fwb, \wbc$ and $\cong$ coincide.
+\end{theorem}
+
+\begin{IEEEproof}
+	The full details of the proof are in Appendix~\ref{app:sub_coinc}.
+	The theorem is split into a hierarchy of Lemmas. Specifically
+	Lemma~\ref{lem:wb_eq_wbf} proves 
+	$\wb$ coincides with $\fwb$; 
+	Lemma~\ref{lem:wb_is_wbc} exploits the process substitution result
+	(Lemma~\ref{lem:proc_subst}) to prove that $\hwb \subseteq \wbc$.
+	Lemma~\ref{lem:wbc_is_cong} shows that $\wbc$ is a congruence
+	which implies $\wbc \subseteq \cong$.
+	The final result comes from Lemma~\ref{lem:cong_is_wb} where
+	we use label testing to show that $\cong \subseteq \fwb$ using
+	the technique in developed in~\cite{Hennessy07}. The formulation of input
+	triggers in the bisimulation relation allows us to prove
+	the latter result without using a matching operator.
+\end{IEEEproof}
+
+Processes that do not use shared names, (i.e.~they are typed with
+$\proves_s$ type system), are inherintly $\tau$-inert.
+
+\begin{lemma}[$\tau$-inertness]\rm
+	\label{lem:tau_inert}
+	Let $P \in \HOp^{-\mathsf{sh}}$
+and $\Gamma; \emptyset; \Delta \proves P \hastype \Proc$. Then 
+$P \red^\ast P'$ implies $\Gamma; \Delta \proves 
+P \hwb \Delta'\proves P'$ with $\Delta \red^\ast \Delta'$. 
+\end{lemma}
+
+%\begin{IEEEproof}
+%	The proof is relied on the fact that processes of the
+%	form $\Gamma; \es; \Delta \proves_s \bout{s}{V} P_1 \Par \binp{k}{x} P_2$
+%	cannot have any typed transition observables and the fact
+%	that bisimulation is a congruence.
+%	See details in Appendix~\ref{app:sub_tau_inert}.
+%	\qed
+%\end{IEEEproof}
 
