@@ -1,14 +1,119 @@
 We present two encodings:
 \begin{enumerate}
-\item The first-order name-passing communication with recursions into 
+\item The first-order name-passing communication with recursions (\sessp) into 
 the higher-order communication without name-passing nor 
-recursions (\S\,\ref{ss:ffotoho})
+recursions (\HO) (\S\,\ref{ss:ffotoho})
 \item the higher-order communication without 
-name-passing and recursions into the first-order name-passing communication
-with recursions (\S\,\ref{ss:hotofo})
+name-passing and recursions (\HO)
+into the first-order name-passing communication
+with recursions (\sessp) (\S\,\ref{ss:hotofo})
 \end{enumerate}
 By (1), we can encode \HOp into \HO, hence \HOp can be encoded into 
 $\sessp$. Note that it is obvious that $\sessp$ can be encoded into \HOp
 by the identitiy mapping. 
+
+\subsection{From \sessp to \HO}
+\label{subsec:sesspHO}
+
+\begin{definition}\rm 
+	Let $\vmap{\cdot}: 2^{\mathcal{N}} \longrightarrow \mathcal{V}^\omega$
+	be a map of sequences of 
+lexicographically ordered names to sequences of variables, defined
+	inductively as: 
+	$\vmap{\epsilon} = \epsilon$ and $\vmap{n \cat \tilde{m}} = x_n \cat \vmap{\tilde{m}}$. 
+\end{definition}
+
+\begin{definition}\label{d:trabs}\label{d:auxmap}
+	Let $\sigma$ be a set of session names.
+	Define $\auxmapp{\cdot}{\mathsf{v}}{\sigma}: \HOp \to \HOp$  as in Fig.~\ref{f:auxmap}.
+%
+\begin{figure}[t]
+\[
+	\begin{array}{rcl}
+		\auxmapp{\news{n} P}{\sigma}{\mathsf{v}} &\bnfis& \news{n} \auxmapp{P}{\mathsf{v}}{{\sigma \cat n}}
+		\vspace{1mm} \\
+		\auxmapp{\bout{n}{\abs{x}{Q}} P}{\mathsf{v}}{\sigma} &\bnfis&
+		\left\{
+		\begin{array}{rl}
+			\bout{x_n}{\abs{x,\vmap{\fn{P}}}{\auxmapp{Q}{\mathsf{v}}{\sigma}}} \auxmapp{P}{\mathsf{v}}{\sigma} & n \notin \sigma\\
+			\bout{n}{\abs{x,\vmap{\fn{P}}}{\auxmapp{Q}{\mathsf{v}}{\sigma}}} \auxmapp{P}{\mathsf{v}}{\sigma} & n \in \sigma
+		\end{array}
+		\right.
+			\vspace{1mm}	\\ 
+		\auxmapp{\bout{n}{m} P}{\mathsf{v}}{\sigma} &\bnfis&
+		\left\{
+		\begin{array}{rl}
+		    \bout{n}{m}\auxmapp{P}{\mathsf{v}}{\sigma} & n, m \in \sigma \\
+		    \bout{x_n}{m}\auxmapp{P}{\mathsf{v}}{\sigma} & n \not\in \sigma, m \in \sigma \\
+		    \bout{n}{x_m}\auxmapp{P}{\mathsf{v}}{\sigma} & n \in \sigma, m \not\in \sigma \\
+		    \bout{x_n}{x_m}\auxmapp{P}{\mathsf{v}}{\sigma} & n, m \not\in \sigma 
+		\end{array}
+		\right.
+		\vspace{1mm} \\ 
+				\auxmapp{\binp{n}{X} P}{\mathsf{v}}{\sigma} &\bnfis&
+		\left\{
+		\begin{array}{rl}
+			\binp{x_n}{X} \auxmapp{P}{\mathsf{v}}{\sigma} & n \notin \sigma\\
+			\binp{n}{X} \auxmapp{P}{\mathsf{v}}{\sigma} & n \in \sigma
+		\end{array}
+		\right.
+			\vspace{1mm}	\\ 
+		\auxmapp{\binp{n}{x}P}{\mathsf{v}}{\sigma} &\bnfis&
+		\left\{
+		\begin{array}{rl}
+		    \binp{n}{x}\auxmapp{P}{\mathsf{v}}{\sigma} & n \in \sigma \\
+		    \binp{x_n}{x}\auxmapp{P}{\mathsf{v}}{\sigma} & n \not\in \sigma 
+		\end{array}
+		\right.
+		\vspace{1mm} \\ 
+		\auxmapp{\bsel{n}{l} P}{\mathsf{v}}{\sigma} &\bnfis&
+		\left\{
+		\begin{array}{rl}
+			\bsel{x_n}{l} \auxmapp{P}{\mathsf{v}}{\sigma} & n \notin \sigma\\
+			\bsel{n}{l} \auxmapp{P}{\mathsf{v}}{\sigma} & n \in \sigma
+		\end{array}
+		\right.
+		\vspace{1mm} \\
+		\auxmapp{\bbra{n}{l_i:P_i}_{i \in I}}{\mathsf{v}}{\sigma} &\bnfis&
+		%\auxmapp{\bsel{n}{l} P}{\mathsf{v}}{\sigma} &\bnfis&
+		\left\{
+		\begin{array}{rl}
+			\bbra{x_n}{l_i:\auxmapp{P_i}{\mathsf{v}}{\sigma}}_{i \in I}  & n \notin \sigma\\
+			\bbra{n}{l_i:\auxmapp{P_i}{\mathsf{v}}{\sigma}}_{i \in I}  & n \in \sigma
+		\end{array}
+		\right.
+		\vspace{1mm} \\
+		\auxmapp{\appl{\X}{n}}{\mathsf{v}}{\sigma} &\bnfis&
+		\left\{
+		\begin{array}{rl}
+			\appl{\X}{x_n} & n \notin \sigma\\
+			\appl{\X}{n} & n \in \sigma\\
+		\end{array}
+		\right. 
+%		\auxmapp{\inact}{\mathsf{v}}{\sigma} &\bnfis& \inact\\
+%		\auxmapp{P \Par Q}{\mathsf{v}}{\sigma} &\bnfis& \auxmapp{P}{\mathsf{v}}{\sigma} \Par \auxmapp{Q}{\mathsf{v}}{\sigma} 
+	\end{array}
+\]
+\caption{\label{f:auxmap} The auxiliary map (cf. Definition~\ref{d:auxmap}) 
+used in the encoding of first-order communication with recursive definitions into higher-order communication (Definition~\ref{d:enc:fotohorec}).
+We assume $\fn{P}$ denotes a sequence of lexicopraphically ordered 
+free names in $P$. 
+The mapping is defined homomorphically for inaction and parallel composition.}
+\end{figure}
+\end{definition}
+
+Given a process $P$ with $\fn{P} = m_1, \cdots, m_n$, we are interested in its associated abstraction, which is defined as
+$\abs{x_1, \cdots, x_n}{\auxmapp{P}{\mathsf{v}}{\epsilon} }$, where $\vmap{m_j} = x_j$, for all $j \in \{1, \ldots, n\}$.
+This transformation from processes into abstractions can be reverted by
+using abstraction and application with an appropriate sequence of session names:
+%
+\begin{proposition}\rm
+	Let $P$ be a \HOp process and 
+	suppose $\tilde{x} = \vmap{\tilde{n}}$ where 
+$\tilde{n} = \fn{P}$.
+	Then $P \scong \appl{(\abs{\tilde{x}}{\auxmapp{P}{{}}{\emptyset}})}{\tilde{n}}$.
+%	$\appl{X}{\smap{\fn{P}}} \subst{(\vmap{\fn{P}}) \map{P}^{\emptyset}}{X} \scong P$
+\end{proposition}
+
 
 
