@@ -35,8 +35,11 @@ lexicographically ordered names to sequences of variables, defined
 	\auxmapp{\bout{n}{\abs{x}{Q}} P}{{}}{\sigma} &\!\!\defeq\!\!&
 		\bout{u}{\abs{(x,\vmap{\fn{P}})}{\auxmapp{Q}{{}}{\sigma}}} \auxmapp{P}{{}}{\sigma}
 \\[1mm]
-\auxmapp{\bout{n}{m} P}{{}}{\sigma} \defeq
-	    \bout{u}{v}\auxmapp{P}{{}}{\sigma} 
+%\auxmapp{\bout{n}{m} P}{{}}{\sigma} \defeq
+%	    \bout{u}{v}\auxmapp{P}{{}}{\sigma} 
+	\auxmapp{\appl{x}{n}}{{}}{\sigma}  \defeq
+		\appl{x}{u} \quad 
+	\auxmapp{\inact}{{}}{\sigma}  \defeq  \inact
 & & 
 			\auxmapp{\binp{n}{x} P}{{}}{\sigma}\defeq
 		\binp{u}{x} \auxmapp{P}{{}}{\sigma} 
@@ -47,12 +50,8 @@ lexicographically ordered names to sequences of variables, defined
 	\auxmapp{\bbra{n}{l_i:P_i}_{i \in I}}{{}}{\sigma}  \defeq 
 		\bbra{u}{l_i:\auxmapp{P_i}{{}}{\sigma}}_{i \in I}
 	\vspace{1mm} \\
-	\auxmapp{\appl{x}{n}}{{}}{\sigma}  \defeq
-		\appl{x}{u} 
-& & 
 \auxmapp{\news{n} P}{{}}{\sigma}  \defeq  \news{n} \auxmapp{P}{{}}{{\sigma \cat n}}
-	\vspace{1mm} \\
-	\auxmapp{\inact}{{}}{\sigma}  \defeq  \inact & & 
+& & 
 	\auxmapp{P \Par Q}{{}}{\sigma}  \defeq  \auxmapp{P}{{}}{\sigma} \Par \auxmapp{Q}{{}}{\sigma} 
 \end{array}
 \]
@@ -151,9 +150,10 @@ $\tilde{n} = \fn{P}$.
 
 
 \begin{figure}[t]
-{\bf Types:}
 \[
+\begin{array}{c}
 \begin{array}{rcll}
+\noindent{\bf Types:} \quad 
 		\tmap{\btout{S_1} {S} }{1}	&\!\!\defeq\!\!&	\bbtout{\lhot{\btinp{\lhot{\tmap{S_1}{1}}}\tinact}} \tmap{S}{1}  \\
 		\tmap{\btinp{S_1} S }{1}	&\!\!\defeq\!\!&	\bbtinp{\lhot{\btinp{\lhot{\tmap{S_1}{1}}}\tinact}} \tmap{S}{1} \\
 		\tmap{\bbtout{\chtype{S_1}} {S} }{1}	&\!\!\defeq\!\!&	\bbtout{\shot{\btinp{\shot{\chtype{\tmap{S_1}{1}}}}\tinact}} \tmap{S}{1}  \\
@@ -165,35 +165,40 @@ $\tilde{n} = \fn{P}$.
 \tmap{\vart{t}}{1} \defeq \vart{t} \quad 
 		\tmap{\trec{t}{S}}{1}  &\!\!\defeq\!\!&
 \trec{t}{\tmap{S}{1}}\quad 
-\tmap{\tinact}{1}  \defeq  \tinact
-\end{array}
-\]
-{\bf Labels:}
-\[
-\begin{array}{rcll}
-		\pmapp{\recp{X}{P}}{1}{f} &\defeq&
-		\newsp{s}{\binp{s}{\X} \pmapp{P}{1}{{f,\{\rvar{X}\to \tilde{n}\}}} \Par \bout{\dual{s}}{\abs{\vmap{\tilde{n}}, z } \,{\binp{z}{\X} \auxmapp{\pmapp{P}{1}{{f,\{\rvar{X}\to \tilde{n}\}}}}{\mathsf{v}}{\es}}} \inact} & \quad \tilde{n} = \ofn{P} \\ 
-		\pmapp{\rvar{X}}{1}{f} &\defeq& \newsp{s}{\appl{\X}{\tilde{n}, s} \Par \bbout{\dual{s}}{ \abs{\vmap{\tilde{n}},z}\,\,{\appl{X}{ \vmap{\tilde{n}}, z}}} \inact} & \quad \tilde{n} = f(\rvar{X}) \\
-		\pmapp{\bout{k}{n} P}{1}{f}	&\defeq&	\bout{k}{ \abs{z}{\,\binp{z}{X} \appl{X}{n}} } \pmapp{P}{1}{f} \\
-		\pmapp{\binp{k}{x} Q}{1}{f}	&\defeq&	\binp{k}{X} \newsp{s}{\appl{X}{s} \Par \bout{\dual{s}}{\abs{x}{\pmapp{Q}{1}{f}}} \inact} \\
+\tmap{\tinact}{1}  \defeq  \tinact\\[1mm]
+\hline
+%\end{array}
+%\]
+%\[
+%\begin{array}{rcll}
+\noindent{\bf Labels:} \quad \quad 
+	\mapa{\bactout{n}{m}}^{1} &\!\!\defeq\!\!&   \bactout{n}{\abs{z}{\,\binp{z}{x} \appl{x}{m}} } \\
+	\mapa{\bactinp{n}{m}}^{1} &\!\!\defeq\!\!&   \bactinp{n}{\abs{z}{\,\binp{z}{x} \appl{x}{m}} } \\
 
-
-		\pmapp{\bsel{s}{l} P}{1}{f} &\defeq& \bsel{s}{l} \pmapp{P}{1}{f} \qquad
-		\pmapp{\bbra{s}{l_i: P_i}_i \in I}{1}{f} \defeq \bbra{s}{l_i: \pmapp{P_i}{1}{f}}_i \in I\\
-		\pmapp{\bout{k}{\abs{\tilde{x}}{Q}} P}{1}{f} &\defeq& \bout{k}{\abs{\tilde{x}}{\pmapp{Q}{1}{f}}} \pmapp{P}{1}{f} \qquad
-		\pmapp{\binp{k}{X} P}{1}{f} \defeq \binp{k}{X} \pmapp{P}{1}{f}\\
-
-		\pmapp{P \Par Q}{1}{f} &\defeq& \pmapp{P}{1}{f} \Par \pmapp{Q}{1}{f} \qquad
-		\pmapp{\news{n} P}{1}{f} \defeq \news{n} \pmapp{P}{1}{f} \qquad
-
-		\pmapp{\inact}{1}{f} \defeq \inact\\
-		\mapa{\bactout{n}{m}}^{1} &\defeq&   \bactout{n}{\abs{z}{\,\binp{z}{X} \appl{X}{m}} } \\
-		\mapa{\bactinp{n}{m}}^{1} &\defeq&   \bactinp{n}{\abs{z}{\,\binp{z}{X} \appl{X}{m}} } \\
-
-		\mapa{\bactout{n}{\abs{\tilde{x}}{P}}}^{1} &\defeq& \bactout{n}{\abs{\tilde{x}}{\pmapp{P}{1}{\es}}} \qquad
-		\mapa{\bactinp{n}{\abs{\tilde{x}}{P}}}^{1} \defeq \bactinp{n}{\abs{\tilde{x}}{\pmapp{P}{1}{\es}}}\\
-		\mapa{\tau} &\defeq& \tau
+		\mapa{\bactout{n}{\abs{{x}}{P}}}^{1} &\!\!\defeq\!\!& \bactout{n}{\abs{{x}}{\pmapp{P}{1}{\es}}}\\
+		\mapa{\bactinp{n}{\abs{{x}}{P}}}^{1} &\!\!\defeq\!\!& \bactinp{n}{\abs{{x}}{\pmapp{P}{1}{\es}}}\\
+		\mapa{\tau}^{1} &\!\!\defeq\!\!& \tau
+\\[1mm]
+\hline
 	\end{array}
+\\
+\begin{array}{rcll}
+		\pmapp{\bout{k}{n} P}{1}{f}	&\!\!\defeq\!\!&	\bout{k}{ \abs{z}{\,\binp{z}{X} \appl{X}{n}} } \pmapp{P}{1}{f} \\
+		\pmapp{\binp{k}{x} Q}{1}{f}	&\!\!\defeq\!\!&	\binp{k}{X} \newsp{s}{\appl{X}{s} \Par \bout{\dual{s}}{\abs{x}{\pmapp{Q}{1}{f}}} \inact} \\
+		\pmapp{\bout{k}{\abs{\tilde{x}}{Q}} P}{1}{f}  
+&\!\!\defeq\!\!& \bout{k}{\abs{\tilde{x}}{\pmapp{Q}{1}{f}}} \pmapp{P}{1}{f} \\
+		\pmapp{\binp{k}{X} P}{1}{f} &\!\!\defeq\!\!& \binp{k}{X} \pmapp{P}{1}{f}\\
+		\pmapp{\bsel{s}{l} P}{1}{f} &\!\!\defeq\!\!& \bsel{s}{l} \pmapp{P}{1}{f}\\
+		\pmapp{\bbra{s}{l_i: P_i}_i \in I}{1}{f} &\!\!\defeq\!\!& \bbra{s}{l_i: \pmapp{P_i}{1}{f}}_i \in I\\
+
+		\pmapp{P \Par Q}{1}{f} &\!\!\defeq\!\!& \pmapp{P}{1}{f} \Par \pmapp{Q}{1}{f}\\
+		\pmapp{\news{n} P}{1}{f} &\!\!\defeq\!\!& \news{n} \pmapp{P}{1}{f}\\
+		\pmapp{\inact}{1}{f} &\!\!\defeq\!\!&\inact\\
+		\pmapp{\recp{X}{P}}{1}{f} &\!\!\defeq\!\!&
+		\newsp{s}{\binp{s}{\X} \pmapp{P}{1}{{f,\{\rvar{X}\to \tilde{n}\}}} \Par \bout{\dual{s}}{\abs{\vmap{\tilde{n}}, z } \,{\binp{z}{\X} \auxmapp{\pmapp{P}{1}{{f,\{\rvar{X}\to \tilde{n}\}}}}{\mathsf{v}}{\es}}} \inact} & \quad \tilde{n} = \ofn{P} \\ 
+		\pmapp{\rvar{X}}{1}{f} &\!\!\defeq\!\!& \newsp{s}{\appl{\X}{\tilde{n}, s} \Par \bbout{\dual{s}}{ \abs{\vmap{\tilde{n}},z}\,\,{\appl{X}{ \vmap{\tilde{n}}, z}}} \inact} & \quad \tilde{n} = f(\rvar{X}) \\
+	\end{array}
+\end{array}
 \]
 \caption{\label{f:enc:fotohorec}
 Typed encoding of first-order communication into higher-order communication (cf.~Defintion~\ref{d:enc:fotohorec}).
