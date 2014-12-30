@@ -1328,8 +1328,8 @@ with free session names into abstractions:
 			\bout{n}{\abs{x,\vmap{\ofn{P}}}{\auxmapp{Q}{\mathsf{v}}{\sigma}}} \auxmapp{P}{\mathsf{v}}{\sigma} & n \in \sigma
 		\end{array}
 		\right.
-			\vspace{1mm}	\\ 
-		\auxmapp{\bout{n}{m} P}{\mathsf{v}}{\sigma} &\bnfis&
+		\vspace{1mm}	\\ 
+		\dk{\auxmapp{\bout{n}{m} P}{\mathsf{v}}{\sigma}} &\bnfis&
 		\left\{
 		\begin{array}{rl}
 		    \bout{n}{m}\auxmapp{P}{\mathsf{v}}{\sigma} & n, m \in \sigma \\
@@ -1346,8 +1346,8 @@ with free session names into abstractions:
 			\binp{n}{X} \auxmapp{P}{\mathsf{v}}{\sigma} & n \in \sigma
 		\end{array}
 		\right.
-			\vspace{1mm}	\\ 
-		\auxmapp{\binp{n}{x}P}{\mathsf{v}}{\sigma} &\bnfis&
+		\vspace{1mm}	\\ 
+		\dk{\auxmapp{\binp{n}{x}P}{\mathsf{v}}{\sigma}} &\bnfis&
 		\left\{
 		\begin{array}{rl}
 		    \binp{n}{x}\auxmapp{P}{\mathsf{v}}{\sigma} & n \in \sigma \\
@@ -1438,19 +1438,46 @@ Define the typed encoding $\enco{\map{\cdot}^{2}_f, \mapt{\cdot}^{2}, \mapa{\cdo
 \begin{figure}[t]
 \[
 	\begin{array}{rcll}
-%	\map{\rec{X}{P}}^{2} &=& \newsp{s}{\binp{s}{\X} \map{P}^{2} \Par \bout{\dual{s}}{\abs{z \cat \vmap{\fn{P}}}{\binp{z}{\X} \map{P}^{\es}}} \inact}\\
-%	\map{r}^{2} &=& \newsp{s}{\appl{\X}{s \cat \smap{\fn{P}}} \Par \bout{\dual{s}}{ \abs{z \cat \vmap{\fn{P}}}{\appl{X}{z \cat \vmap{\fn{P}}}}} \inact} \\
+%		\map{\rec{X}{P}}^{2} &=& \newsp{s}{\binp{s}{\X} \map{P}^{2} \Par \bout{\dual{s}}{\abs{z \cat \vmap{\fn{P}}}{\binp{z}{\X} \map{P}^{\es}}} \inact}\\
+%		\map{r}^{2} &=& \newsp{s}{\appl{\X}{s \cat \smap{\fn{P}}} \Par \bout{\dual{s}}{ \abs{z \cat \vmap{\fn{P}}}{\appl{X}{z \cat \vmap{\fn{P}}}}} \inact} \\
 		\pmapp{\recp{X}{P}}{2}{f} &\defeq&
 		\newsp{s}{\binp{s}{\X} \pmapp{P}{2}{{f,\{\rvar{X}\to \tilde{n}\}}} \Par \bout{\dual{s}}{\abs{\vmap{\tilde{n}}, z } \,{\binp{z}{\X} \auxmapp{\pmapp{P}{2}{{f,\{\rvar{X}\to \tilde{n}\}}}}{\mathsf{v}}{\es}}} \inact} & \quad \tilde{n} = \ofn{P} \\ 
 		\pmapp{\rvar{X}}{2}{f} &\defeq& \newsp{s}{\appl{\X}{\tilde{n}, s} \Par \bbout{\dual{s}}{ \abs{\vmap{\tilde{n}},z}\,\,{\appl{X}{ \vmap{\tilde{n}}, z}}} \inact} & \quad \tilde{n} = f(\rvar{X}) \\
 		\pmapp{\bout{k}{n} P}{2}{f}	&\defeq&	\bout{k}{ \abs{z}{\,\binp{z}{X} \appl{X}{n}} } \pmapp{P}{2}{f} \\
 		\pmapp{\binp{k}{x} Q}{2}{f}	&\defeq&	\binp{k}{X} \newsp{s}{\appl{X}{s} \Par \bout{\dual{s}}{\abs{x}{\pmapp{Q}{2}{f}}} \inact} \\
+
+
+		\pmapp{\bsel{s}{l} P}{2}{f} &\defeq& \bsel{s}{l} \pmapp{P}{2}{f} \qquad
+		\pmapp{\bbra{s}{l_i: P_i}_i \in I}{2}{f} \defeq \bbra{s}{l_i: \pmapp{P_i}{2}{f}}_i \in I\\
+		\pmapp{\bout{k}{\abs{\tilde{x}}{Q}} P}{2}{f} &\defeq& \bout{k}{\abs{\tilde{x}}{Q}} \pmapp{P}{2}{f} \qquad
+		\pmapp{\binp{k}{X} P}{2}{f} \defeq \binp{k}{X} \pmapp{P}{2}{f}\\
+
+		\pmapp{P \Par Q}{2}{f} &\defeq& \pmapp{P}{2}{f} \Par \pmapp{Q}{2}{f} \qquad
+		\pmapp{\news{n} P}{2}{f} \defeq \news{n} \pmapp{P}{2}{f} \qquad
+
+		\pmapp{\inact}{2}{f} \defeq \inact\\
+
+
 		\tmap{\btout{S_1} {S} }{2}	&\defeq&	\bbtout{\lhot{\btinp{\lhot{\tmap{S_1}{2}}}\tinact}} \tmap{S}{2}  \\
 		\tmap{\btinp{S_1} S }{2}	&\defeq&	\bbtinp{\lhot{\btinp{\lhot{\tmap{S_1}{2}}}\tinact}} \tmap{S}{2} \\
 		\tmap{\bbtout{\chtype{S_1}} {S} }{2}	&\defeq&	\bbtout{\shot{\btinp{\shot{\chtype{\tmap{S_1}{2}}}}\tinact}} \tmap{S}{2}  \\
 		\tmap{\bbtinp{\chtype{S_1}} {S} }{2}	&\defeq&	\bbtinp{\shot{\btinp{\shot{\chtype{\tmap{S_1}{2}}}}\tinact}} \tmap{S}{2} \\
-		\mapa{\bactout{k}{k_1}}^{2} &\defeq&   \bactout{k}{\abs{z}{\,\binp{z}{X} \appl{X}{k_1}} } \\
-		\mapa{\bactinp{k}{k_1}}^{2} &\defeq&   \bactinp{k}{\abs{z}{\,\binp{z}{X} \appl{X}{k_1}} }
+
+		\tmap{\btout{L} S}{2} &\defeq& \btout{L} \tmap{S}{2}\\
+		\tmap{\btinp{L} S}{2} &\defeq& \btinp{L} \tmap{S}{2}\\
+		\tmap{\btsel{l_i: S_i}_{i \in I}}{2} &\defeq& \btsel{l_i: \tmap{S_i}{2}}_{i \in I}\\
+		\tmap{\btbra{l_i: S_i}_{i \in I}}{2} &\defeq& \btbra{l_i: \tmap{S_i}{2}}_{i \in I}\\
+
+		\tmap{\vart{t}}{2} &\defeq& {t} \qquad
+		\tmap{\trec{t}{S}}{2} \defeq \trec{t}{\tmap{S}{2}} \qquad
+		\tmap{\tinact}{2} \defeq \tinact\\
+
+		\mapa{\bactout{n}{m}}^{2} &\defeq&   \bactout{n}{\abs{z}{\,\binp{z}{X} \appl{X}{m}} } \\
+		\mapa{\bactinp{n}{m}}^{2} &\defeq&   \bactinp{n}{\abs{z}{\,\binp{z}{X} \appl{X}{m}} } \\
+
+		\mapa{\bactout{n}{\abs{\tilde{x}}{P}}}^{2} &\defeq& \bactout{n}{\abs{\tilde{x}}{P}} \qquad
+		\mapa{\bactinp{n}{\abs{\tilde{x}}{P}}}^{2} \defeq \bactinp{n}{\abs{\tilde{x}}{P}}\\
+		\mapa{\tau} &\defeq& \tau
 	\end{array}
 \]
 \caption{\label{f:enc:fotohorec}
