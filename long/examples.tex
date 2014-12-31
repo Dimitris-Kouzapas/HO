@@ -3,6 +3,8 @@
 
 \subsection{$\recp{X}{\bout{a}{m} \rvar{X}}$}
 
+\subsubsection{Encoding}
+
 \[
 	\begin{array}{rcl}
 		\pmapp{\recp{X}{\bout{a}{m} \rvar{X}}}{2}{f} & = &
@@ -33,6 +35,8 @@
 	\end{array}
 \]
 
+\subsubsection{Transition}
+
 \noi We can observe $P$ as:
 \[
 	\begin{array}{rcl}
@@ -51,6 +55,84 @@
 		&\by{\bactout{a}{\abs{x}{\binp{x}{X} \appl{X}{m}}}}& P
 	\end{array}
 \]
+
+\subsubsection{Types}
+
+\begin{eqnarray}
+	\tree{
+		\begin{array}{l}
+			\Gamma; \es; \es \proves a \hastype U_1 = \chtype{\lhot{\btinp{\lhot{U_2}} \tinact}} \\
+			\Gamma; \es; \es \proves m \hastype U_2\\
+			\Gamma; \es; s_2: \proves s_2 : \btinp{L} \tinact \proves s_2 \hastype \btinp{L} \tinact\\ 
+			\Gamma; \es; \es \proves X \hastype \shot{(U_1, U_2, \btinp{L} \tinact)}
+		\end{array}
+	}{
+		\Gamma; \es; s_2 : \btinp{L} \tinact \proves \appl{X}{a,m, s_2} \hastype \Proc
+	}
+	\label{ex:type1}
+\end{eqnarray}
+
+\begin{eqnarray}
+	\tree{
+		\tree{
+			\begin{array}{l}
+				\Gamma \cat x_a: U_1 \cat x_m: U_2; \es; \es \proves x_a \hastype U_1 = \chtype{\lhot{\btinp{\lhot{U_2}} \tinact}} \\
+				\Gamma \cat x_a: U_1 \cat x_m: U_2 ; \es; \es \proves x_m \hastype U_2\\
+				\Gamma; \es; z: \btinp{L} \tinact \proves z \hastype \btinp{L} \tinact\\
+				\Gamma; \es; \es \proves X \hastype \shot{(U_1, U_2, \btinp{L} \tinact)}
+			\end{array}
+		}{
+			\Gamma \cat x_a: U_1 \cat x_m: U_2 ; \es; z: \btinp{L} \tinact \proves \appl{X}{x_a x_m z} \hastype \Proc
+		}
+	}{
+		\Gamma; \es; \es \proves \abs{x_a x_m z}{\appl{X}{x_a x_m z}} \hastype \shot{(U_1, U_2, \btinp{L} \tinact)}
+	}
+	\label{ex:type2}
+\end{eqnarray}
+
+\begin{eqnarray}
+	\tree{
+		\textrm{Result}~\ref{ex:type1}
+		\quad
+		\tree{
+			\textrm{Result}~\ref{ex:type2}
+			\quad
+			\Gamma; \es; \dual{s_2} : \btout{\shot{(U_1, U_2, \btinp{L} \tinact)}} \tinact \proves \dual{s_2} \hastype \btout{\shot{(U_1, U_2, \btinp{L} \tinact)}} \tinact
+		}{
+			\Gamma; \es; \dual{s_2} : \btout{\shot{(U_1, U_2, \btinp{L} \tinact)}} \tinact \proves \bout{\dual{s_2}}{\abs{x_a x_m z}{\appl{X}{x_a x_m z}}} \inact \hastype \Proc
+		}
+	}{
+		\Gamma; \es; s_2: \btinp{L} \tinact \cat \dual{s_2}: \btout{\shot{(U_1, U_2, \btinp{L} \tinact)}} \tinact \proves \bout{\dual{s_2}}{\abs{x_a x_m z}{\appl{X}{x_a x_m z}}} \inact \Par \appl{X}{a,m, s_2} \hastype \Proc
+	}
+	\label{ex:type3}
+\end{eqnarray}
+
+
+\begin{eqnarray}
+	\tree{
+		\begin{array}{l}
+			\textrm{Result}~\ref{ex:type3}
+			\quad
+			\btinp{L} \tinact \dualof \btout{\shot{(U_1, U_2, \btinp{L} \tinact)}} \tinact\\
+			L = \shot{(U_1, U_2, \btinp{L} \tinact)} \textrm{ implies }\\
+			\btinp{L} \tinact = \trec{t}{\btinp{\shot{(U_1, U_2, t)}} \tinact}
+%			= \btinp{\shot{(U_1, U_2, \btinp{\trec{t}{\btinp{\shot{(U_1, U_2, \btinp{t} \tinact)}} \tinact}} \tinact)}} \tinact	
+		\end{array}
+	}{
+		\Gamma; \es; \es \proves \newsp{s_2}{\bout{\dual{s_2}}{\abs{x_a x_m z}{\appl{X}{x_a x_m z}}} \inact \Par \appl{X}{a,m, s_2} \hastype \Proc}
+	}
+\end{eqnarray}
+
+
+
+%\[
+%	\begin{array}{l}
+%		\Gamma = a: \chtype{\lhot{\btinp{\lhot{U}} \tinact}} \cat m: U\\
+%		\Gamma \cat X : \shot{(\chtype{U}, U, \trec{t}{\btinp{\chtype{U}, U, \vart{t}}} \tinact)} ; \es; \es \proves \newsp{s_2}{\bout{\dual{s_2}}{\abs{x_a x_m z}{\appl{X}{x_a x_m z}}} \inact \Par \appl{X}{a,m, s_2}} \hastype \Proc\\
+%		\Gamma \cat X : \shot{(\chtype{U}, U, \trec{t}{\btinp{\chtype{U}, U, \vart{t}}} \tinact)} ; \es; \es \proves \bout{a}{\abs{x}{\binp{x}{X} \appl{X}{m}}} \newsp{s_2}{\bout{\dual{s_2}}{\abs{x_a x_m z}{\appl{X}{x_a x_m z}}} \inact \Par \appl{X}{a,m, s_2}} \hastype \Proc\\
+%		\Gamma; \es; \es \proves \newsp{s_1}{\bout{\dual{s_1}}{V} \inact \Par \binp{s_1}{X} \bout{a}{\abs{x}{\binp{x}{X} \appl{X}{m}}} \newsp{s_2}{\bout{\dual{s_2}}{\abs{x_a x_m z}{\appl{X}{x_a x_m z}}} \inact} \Par \appl{X}{a,m, s_2}} \hastype \Proc
+%	\end{array}
+%\]
 
 
 
