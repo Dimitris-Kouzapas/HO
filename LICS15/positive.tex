@@ -2,19 +2,19 @@ We present two encodings:
 \begin{enumerate}
 \item The higher-order name-passing communication (\HOp) into 
 the higher-order communication without name-passing nor 
-recursions (\HO) (\S\,\ref{ss:ffotoho})
+recursions (\HO) (\S\,\ref{subsec:HOpi_to_HO})
 \item the higher-order communication without 
 name-passing and recursions (\HO)
 into the first-order name-passing communication
-with recursions (\sessp) (\S\,\ref{ss:hotofo})
+with recursions (\sessp) (\S\,\ref{subsec:HO_to_sesspi})
 \end{enumerate}
 By (1), we can encode \sessp into \HO and by (2), 
 we can encode \HOp into \sessp.  
 Note that it is obvious that \HOp can encode both 
 $\HO$ and $\sessp$ by the identitiy mapping. 
 
-\subsection{From \sessp to \HO}
-\label{subsec:sesspHO}
+\subsection{From \HOp to \HO}
+\label{subsec:HOpi_to_HO}
 
 \begin{definition}\rm 
 	Let $\vmap{\cdot}: 2^{\mathcal{N}} \longrightarrow \mathcal{V}^\omega$
@@ -33,7 +33,7 @@ lexicographically ordered names to sequences of variables, defined
 \small
 \begin{array}{rcl}
 	\auxmapp{\bout{n}{\abs{x}{Q}} P}{{}}{\sigma} &\!\!\defeq\!\!&
-		\bout{u}{\abs{(x,\vmap{\fn{P}})}{\auxmapp{Q}{{}}{\sigma}}} \auxmapp{P}{{}}{\sigma}
+		\bout{u}{\abs{x}{\auxmapp{Q}{{}}{\sigma}}} \auxmapp{P}{{}}{\sigma}
 \\[1mm]
 %\auxmapp{\bout{n}{m} P}{{}}{\sigma} \defeq
 %	    \bout{u}{v}\auxmapp{P}{{}}{\sigma} 
@@ -125,9 +125,8 @@ lexicographically ordered names to sequences of variables, defined
 %used in the encoding of the higher-order communication 
 %with recursive definitions into higher-order communication 
 %without recursive definitions and (Definition~\ref{d:enc:fotohorec}).
-In each mapping, $u = n$ if $n\in \sigma$; otherwise $u = x_n$; and  
-$v = m$ if $m\in \sigma$; otherwise $v = x_m$. 
-We assume $\fn{P}$ denotes a sequence of lexicopraphically ordered 
+$u = n$ if $n\in \sigma$; otherwise $u = x_n$, and  
+$\fn{P}$ denotes a sequence of lexicopraphically ordered 
 free names in $P$. 
 %The mapping is defined homomorphically for inaction and parallel composition.
 \caption{\label{f:auxmap} A triger mapping}
@@ -191,20 +190,26 @@ $\tilde{n} = \fn{P}$.
 		\pmapp{\binp{u}{\AT{x}{L}} P}{1}{f} &\!\!\defeq\!\!& \binp{u}{x} \pmapp{P}{1}{f}\\
 		\pmapp{\bsel{s}{l} P}{1}{f} &\!\!\defeq\!\!& \bsel{s}{l} \pmapp{P}{1}{f}\\
 		\pmapp{\bbra{s}{l_i: P_i}_{i \in I}}{1}{f} &\!\!\defeq\!\!& \bbra{s}{l_i: \pmapp{P_i}{1}{f}}_{i \in I}\\
-
-		\pmapp{P \Par Q}{1}{f} &\!\!\defeq\!\!& \pmapp{P}{1}{f} \Par \pmapp{Q}{1}{f}\\
-		\pmapp{\news{n} P}{1}{f} &\!\!\defeq\!\!& \news{n} \pmapp{P}{1}{f}\\
-		\pmapp{\inact}{1}{f} &\!\!\defeq\!\!&\inact\\
-		\pmapp{\recp{X}{P}}{1}{f} &\!\!\defeq\!\!&
-		\newsp{s}{
-\bout{\dual{s}}{\abs{(\vmap{\tilde{n}}, z)} \,{\binp{z}{\X} \auxmapp{\pmapp{P}{1}{{f,\{\rvar{X}\to \tilde{n}\}}}}{{}}{\es}}} \inact
-\\ & & 
-\quad\quad \Par 
-\binp{s}{\X} \pmapp{P}{1}{{f,\{\rvar{X}\to \tilde{n}\}}}
+		\pmapp{\inact}{1}{f} \!\!\defeq\!\!\inact
+& & 
+		\pmapp{\news{n} P}{1}{f} \!\!\defeq\!\! \news{n} \pmapp{P}{1}{f}\\
+\pmapp{{x}\, {u}}{1}{f}
+ \!\!\defeq\!\!
+{x}\, {u}
+& & 		\pmapp{P \Par Q}{1}{f} \!\!\defeq\!\! \pmapp{P}{1}{f} \Par \pmapp{Q}{1}{f} \\
+		\pmapp{\recp{X}{P}}{1}{f} &\!\!\defeq\!\!&\!\!\!\!\!\!
+	\newsp{s}{\\
+& &\!\!\!\!\!\!\bout{\dual{s}}{\abs{(\vmap{\tilde{n}}, y)} 
+\,{\binp{y}{z_\X} \auxmapp{\pmapp{P\subst{z_\X}{\X}}{1}{{f,\{z_\rvar{X}\to \tilde{n}\}}}}{{}}{\es}}} \inact
+\\ 
+& & \!\!\!\!\!\!
+ \Par 
+\binp{s}{z_\X} \pmapp{P\subst{z_X}{X}}{1}{{f,\{z_\rvar{X}\to \tilde{n}\}}}
 } 
 \quad \tilde{n} = \fn{P} \\ 
-\pmapp{\rvar{X}}{1}{f} &\!\!\defeq\!\!& \newsp{s}{\appl{X}{(\tilde{n}, s)}\\
-& &  \Par \bbout{\dual{s}}{ \abs{(\vmap{\tilde{n}},z)}{\appl{X}{(\vmap{\tilde{n}}, z)}}} \inact}  \quad \tilde{n} = f(\rvar{X}) \\
+\pmapp{z_\rvar{X}}{1}{f} &\!\!\defeq\!\!& \newsp{s}{
+\appl{z_X}{(\tilde{n}, s)}\\
+& &  \Par \bbout{\dual{s}}{ \abs{(\vmap{\tilde{n}},y)}{\appl{z_X}{(\vmap{\tilde{n}}, y)}}} \inact}  \quad \tilde{n} = f(z_\rvar{X}) \\
 	\end{array}
 \end{array}
 \]
