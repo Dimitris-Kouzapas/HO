@@ -150,7 +150,6 @@ $\tilde{n} = \fn{P}$.
 
 \begin{figure}[t]
 \[
-\begin{array}{l}
 \begin{array}{rcll}
 \noindent{\bf Types:} \quad 
 		\tmap{\btout{S_1} {S} }{1}	&\!\!\defeq\!\!&	\bbtout{\lhot{\btinp{\lhot{\tmap{S_1}{1}}}\tinact}} \tmap{S}{1}  \\
@@ -179,8 +178,9 @@ $\tilde{n} = \fn{P}$.
 \\[1mm]
 \hline
 \end{array}
-\\[1mm]
-\noindent{\bf Terms:}\\
+\]
+\noindent{\bf Terms:}
+\[
 \begin{array}{rcll}
   \pmapp{\bout{u}{w} P}{1}{f}	&\!\!\defeq\!\!&	\bout{u}{ \abs{z}{\,\binp{z}{x} (\appl{x}{w})} } \pmapp{P}{1}{f} \\
   \pmapp{\binp{u}{\AT{x}{C}} Q}{1}{f}	&\!\!\defeq\!\!&	\binp{u}{y} \newsp{s}{\appl{y}{s} \Par \bout{\dual{s}}{\abs{x}{\pmapp{Q}{1}{f}}} \inact} \\
@@ -205,11 +205,10 @@ $\tilde{n} = \fn{P}$.
  \Par 
 \binp{s}{z_\X} \pmapp{P\subst{z_X}{X}}{1}{{f,\{z_\rvar{X}\to \tilde{n}\}}}
 } 
-\quad \tilde{n} = \fn{P} \\ 
+\quad (\tilde{n} = \fn{P}) \\ 
 \pmapp{z_\rvar{X}}{1}{f} &\!\!\defeq\!\!& \newsp{s}{
 \appl{z_X}{(\tilde{n}, s)}\\
-& &  \Par \bbout{\dual{s}}{ \abs{(\vmap{\tilde{n}},y)}{\appl{z_X}{(\vmap{\tilde{n}}, y)}}} \inact}  \quad \tilde{n} = f(z_\rvar{X}) \\
-	\end{array}
+& &  \Par \bbout{\dual{s}}{ \abs{(\vmap{\tilde{n}},y)}{\appl{z_X}{(\vmap{\tilde{n}}, y)}}} \inact}  \quad (\tilde{n} = f(z_\rvar{X})) \\
 \end{array}
 \]
 The input bound variable $x$ is annotated by a type to distinct the first-order and higher-order cases.
@@ -245,6 +244,75 @@ is semantic preserving.
 \subsection{From \HO to \sessp}
 \label{subsec:HO_to_sessp}
 
+\begin{definition}[Higher-Order into First-Order Pi]
+\label{d:enc:hopitopi}
+%
+We define the typed encoding $\enco{\map{\cdot}^{2}, \mapt{\cdot}^{2}, \mapa{\cdot}^{2}}: \HO \to \sessp$,
+where mappings $\map{\cdot}^{2}$, $\mapt{\cdot}^{2}$, $\mapa{\cdot}^{2}$
+are defined in Fig.~\ref{f:enc:ho_to_sessp}, the typing is defined in 
+Fig.~\ref{fig:typerulesmy} 
+and the equivalence $\fwb$ is defined in Definition~\ref{d:fwb}.
+\end{definition}
+
+\begin{figure}[t]
+\[
+\begin{array}{l}
+	\begin{array}{rcl}
+\noindent{\bf Types:}\quad 
+		\tmap{\btout{\lhot{S}}S_1}{2} & \defeq & \bbtout{\chtype{\btinp{\tmap{S}{2}}\tinact}}\tmap{S_1}{2} \\
+		\tmap{\btinp{\lhot{S}}S_1}{2} & \defeq & \bbtinp{\chtype{\btinp{\tmap{S}{2}}\tinact}}\tmap{S_1}{2} 
+\\[1mm]
+\hline
+%\end{array}
+%\]
+%\[
+%\begin{array}{rcll}
+\noindent{\bf Labels:}\quad \quad 
+		\mapa{\bactout{u}{\abs{ x}{P}} }^2  & \defeq & \news{a} \bactout{u}{a} \\
+		\mapa{\bactinp{u}{\abs{ x}{P}} }^2 &  \defeq & \bactinp{u}{a}
+\\[1mm]
+\hline
+\end{array}
+\end{array}
+\]
+\noindent{\bf Terms:}
+\[
+\begin{array}{rcll}
+		\pmap{\bout{u}{\abs{x}{Q}} P}{2} &\!\!\!\! \defeq \!\!\!\!&  \left\{
+		\begin{array}{r}
+			\newsp{a}{\bout{u}{a} (\pmap{P}{2} \Par \repl{} \binp{a}{y} \binp{y}{x} \pmap{Q}{2})\,}\\
+                  (s \notin \fn{Q}) \\
+			\newsp{a}{\bout{u}{a} (\pmap{P}{2} \Par \binp{a}{y} \binp{y}{x} \pmap{Q}{2})\,}\quad\\
+            \textrm{(otherwise)} %\dk{Q \textrm{ linear}} \\
+		\end{array}
+		\right.
+		\\
+\pmap{\binp{u}{x} P}{2} &\!\!\!\! \defeq \!\!\!\! &  \binp{u}{x} \pmap{P}{2}\\
+\pmap{\appl{x}{u}}{2} & \!\!\!\! \defeq \!\!\!\! & \newsp{s}{\bout{x}{s} \bout{\dual{s}}{u} \inact}\\
+
+	\end{array}
+	\]
+$\map{\cdot}^2$,
+$\mapt{\cdot}^2$, 
+and 
+$\mapa{\cdot}^2$
+are homomorphisms for the other types, labels and processes.   
+	\caption{
+Encoding of \HO into \sessp.
+\label{f:enc:ho_to_sessp}
+}
+\end{figure}
+
+\begin{theorem}[Encoding of Higher-Order into First-Order Pi]
+\label{f:enc:hotopi}
+defined in 
+Definition~\ref{d:enc:hopitopi} 
+is semantic preserving. 
+\end{theorem}
+
+\begin{corollary}[Encoding of Higher-Order Pi into First-Order Pi]
+The encoding from $\HOpi$ into $\sessp$ is semantic preserving. 
+\end{corollary}
 
 
 
