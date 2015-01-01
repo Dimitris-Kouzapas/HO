@@ -7,47 +7,49 @@ respectively; and $\hby{\ell}$, $\wb$, and $\proves$
 \end{definition}
 
 \begin{definition}[Typed Encoding]\rm
-	Let  $\tyl{L}_i =  \calc{L_i}{T_i}{\hby{\ell}}{\wb_i}{\proves_i}$ 
+        Let  $\tyl{L}_i=\calc{\CAL_i}{{\cal{T}}_i}{\hby{\ell}}{\wb_i}{\proves_i}$
         ($i=1,2$) be typed calculi. 
 	Given mappings $\map{\cdot}: \CAL_1 \to \CAL_2$, 
 	$\mapt{\cdot}: {\cal{T}}_1 \to {\cal{T}}_2$, and 
-	$\mapa{\cdot}: \ell \to \tilde{\ell}$, 
+	$\mapa{\cdot}: \ell \to \ell$, 
 	we write 
 	$\enco{\map{\cdot}, \mapt{\cdot}, \mapa{\cdot}} : \tyl{L}_1 \to \tyl{L}_2$ to denote the \emph{typed encoding} of $\tyl{L}_1$ into $\tyl{L}_2$.
 \end{definition}
 
-Below 
-we  assume that if 
-$P \hby{\ell} P'$ and $\mapa{\ell} = \{\ell_1, \ell_2,  \cdots, \ell_m\}$ then
-$\map{P} \Hby{\mapa{\ell}} \map{P'}$
-should be understood as
-$\map{P} \Hby{\ell_1} P_1 \Hby{\ell_2} P_2 \cdots \Hby{\ell_m} P_m =  \map{P'}$,
-for some
-$P_1, P_2, \ldots, P_m$.
+%Below 
+%we  assume that if 
+%$P \hby{\ell} P'$ and $\mapa{\ell} = \{\ell_1, \ell_2,  \cdots, \ell_m\}$ then
+%$\map{P} \Hby{\mapa{\ell}} \map{P'}$
+%should be understood as
+%$\map{P} \Hby{\ell_1} P_1 \Hby{\ell_2} P_2 \cdots \Hby{\ell_m} P_m =  \map{P'}$,
+%for some
+%$P_1, P_2, \ldots, P_m$.
 
 
 \begin{definition}[Semantic Preserving Encoding]\rm
-	\label{def:ep}
-	We say that $\enco{\map{\cdot}, \mapt{\cdot}, \mapa{\cdot}}: \tyl{L}_1 \to \tyl{L}_2$ is a \emph{semantic preserving encoding}
-	if it satisfies the following properties:
+\label{def:ep}
+       Let  $\tyl{L}_i=\calc{\CAL_i}{{\cal{T}}_i}{\hby{\ell}}{\wb_i}{\proves_i}$
+       ($i=1,2$) be typed calculi. 
+We say that $\enco{\map{\cdot}, \mapt{\cdot}, \mapa{\cdot}}: \tyl{L}_1 \to \tyl{L}_2$ is a \emph{semantic preserving encoding}
+if it satisfies the following properties:
 	
 	\begin{enumerate}[1.]
 		\item \emph{Type preservation}:
-		if
-			$\Gamma; \emptyset; \Delta \proves P \hastype \Proc$ then 
-			$\mapt{\Gamma}; \emptyset; \mapt{\Delta} \proves \map{P} \hastype \Proc$,  
-			for any   $P$ in $L_1$.
+	if
+	$\Gamma; \emptyset; \Delta \proves_1 P \hastype \Proc$ then 
+	$\mapt{\Gamma}; \emptyset; \mapt{\Delta} \proves_2 \map{P} \hastype \Proc$,  
+	for any   $P$ in $\CAL_1$.
 
-		\item \emph{Operational Correspondence}: If $\Gamma; \emptyset; \Delta \proves P \hastype \Proc$ then
+	\item \emph{Operational Correspondence}: If $\Gamma; \emptyset; \Delta \proves_1 P \hastype \Proc$ then
 		\begin{enumerate}[-]
 %			\item	Completeness: \\
 %			    If $P \red_1 P'$ then $\exists\, \Delta'$ s.t.
 %				$\map{P} \Red_2 \map{P'}$ and
 %				$\mapt{\Gamma}; \emptyset; \mapt{\Delta'} \proves_2 \map{P'} \hastype \Proc$.
 			\item	Completeness: 
-			   If  $\stytra{\Gamma}{\ell_1}{\Delta_1}{P}{\Delta'_1}{P'}$
+			   If  $\stytraarg{\Gamma}{\ell_1}{\Delta_1}{P}{\Delta'_1}{P'}{1}$
 			   then $\exists \ell_2$ s.t. 
-			    $\wtytra{\mapt{\Gamma}}{\ell_2}{\mapt{\Delta_1}}{\map{P}}{\mapt{\Delta'_1}}{\map{P'}}$
+			    $\wtytraarg{\mapt{\Gamma}}{\ell_2}{\mapt{\Delta_1}}{\map{P}}{\mapt{\Delta'_1}}{\map{P'}}{2}$
 			    and $\ell_2 = \mapa{\ell_1}$.
 			    				
 %			\item Soundness : \\
@@ -55,25 +57,36 @@ $P_1, P_2, \ldots, P_m$.
 %				$\exists P'$ s.t. $P \red_1 P'$ and 
 %				$\mapt{\Gamma}; \mapt{\Delta_1} \wb_2 \mapt{\Delta_2} \proves_2 \map{P'} \wb_2 Q$.
 				
-			\item Soundness:   
-			If  $\wtytra{\mapt{\Gamma}}{\ell_2}{\mapt{\Delta_1}}{\map{P}}{\mapt{\Delta'_1}}{Q}$
-			   then $\exists \ell_1, P'$ s.t.  
-			    (i)~$\stytra{\Gamma}{\ell_1}{\Delta_1}{P}{\Delta'_1}{P'}$,
-			    (ii)~$\ell_2 = \mapa{\ell_1}$, and
-			    (iii)~$\wbb{\mapt{\Gamma}}{\ell}{\mapt{\Delta'_1}}{\map{P'}}{\mapt{\Delta'_1}}{Q}$.
+			\item	Soundness:   
+				If  $\horel{\mapt{\Gamma}}{\mapt{\Delta_1}}{\map{P}}{\hby{\ell_1}}{\Delta''_1}{Q'}$
+				then $\exists \ell, P'$ s.t.  \\
+				(i)~$\stytra{\Gamma}{\ell}{\Delta_1}{P}{\Delta'_1}{P'}$,
+				(ii)~$\horel{\mapt{\Gamma}}{\Delta''_1}{Q'}{\Hby{\ell_2}}{\mapt{\Delta'_1}}{Q}$,
+				(iii)~$\Hby{\mapa{\ell}} = \hby{\ell_1} \Hby{\ell_2}$, and
+%				(iv)~$\ell_2 = \mapa{\ell_1}$, and
+				(iv)~$\horel{\mapt{\Gamma}}{\mapt{\Delta'_1}}{\map{P'}}{\wb_2}{\mapt{\Delta'_1}}{Q}$.
+%			If  $\wtytraarg{\mapt{\Gamma}}{\ell_2}{\mapt{\Delta_1}}{\map{P}}{\mapt{\Delta'_1}}{Q}{2}$
+%			   then $\exists \ell_1, P'$ s.t.  
+%			    (i)~$\stytraarg{\Gamma}{\ell_1}{\Delta_1}{P}{\Delta'_1}{P'}{1}$,
+%			    (ii)~~$\Hby{\mapa{\ell}} = \hby{\ell_1} \Hby{\ell_2}$ and 
+%			    (iii)~
+%				$\mapt{\Gamma}; \mapt{\Delta_1} 
+%\proves_2 \map{P'}  \wb_2 \mapt{\Delta_2} \proves_2 Q$.
+%$\wbb{\mapt{\Gamma}}{\ell}{\mapt{\Delta'_1}}{\map{P'}}{\mapt{\Delta'_1}}{Q}$.
 		\end{enumerate}
 		
 		\item \emph{Full Abstraction:} 
 %		$\Gamma; \Delta_1 \wb \Delta_2 \proves P \wb Q $ if and only if $\mapt{\Gamma}; \mapt{\Delta_1} \wb \mapt{\Delta_2} \proves \map{P} \wb \map{Q} $.
-		\wbb{\Gamma}{}{\Delta_1}{P}{\Delta_2}{Q}
+		\wbbarg{\Gamma}{}{\Delta_1}{P}{\Delta_2}{Q}{1}
 		if and only if
-		\wbb{\mapt{\Gamma}}{}{\mapt{\Delta_1}}{\map{P}}{\mapt{\Delta_2}}{\map{Q}}.
+		\wbbarg{\mapt{\Gamma}}{}{\mapt{\Delta_1}}{\map{P}}{\mapt{\Delta_2}}{\map{Q}}{2}.
 	\end{enumerate}
 \end{definition}
 
 \begin{remark}[Polyadic \HOp] We can trivially define 
 a semantic and type preserving encoding from 
-a polyadic version of \HOp ($\bout{s}{\tilde{V}}P$, $\binp{s}{\tilde{x}} P$ and $\abs{\tilde{x}}{Q}$) into the monadic \HOp.  
+a polyadic version of \HOp (which extends $\HOp$ to 
+$V$ to $\tilde{n}$ and $\abs{\tilde{x}}{Q}$) into the monadic \HOp.  
 Hence we use the polyadic 
 version of \HOp in the encodings.  
 \end{remark}
