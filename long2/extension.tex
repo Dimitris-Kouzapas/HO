@@ -1,0 +1,157 @@
+\newcommand{\HOpp}{\ensuremath{\mathsf{HO\pi^{+}}}\xspace}
+\section{Extension of \HOp to \HOpp}
+
+In this section we extend the \HOp calculus to include higher order applications.
+
+\subsection{Extending the Semantics}
+
+\paragraph{Syntax and Operational Semantics.}
+
+The syntax of Figure~\ref{fig:syntax} is changed to include $\appl{x}{V}$
+instead of $\appl{x}{u}$.
+The structural congruence in Section~\ref{subsec:reduction_semantics}
+is changed to include $\appl{(\abs{x} P)}{V} \scong P \subst{x}{V}$
+instead of $\appl{(\abs{x} P)}{u} \scong P \subst{x}{u}$.
+
+\paragraph{Types.}
+
+The syntax of types changes to include $L \bnfis \shot{U} \bnfbar \lhot{U}$
+instead of $L \bnfis \shot{C} \bnfbar \lhot{C}$. We expect the obvious
+extension for type equivalence (Definition~\ref{def:type_equiv})
+and for the definition of type environments.
+
+We also expect the straightforward extension of the type 
+system to accomodate the new type syntax. The two
+most characterestic rules $\trule{Abs}$ and $\trule{App}$ 
+for application and abstraction, respectively, now become:
+\[
+	\begin{array}{c}
+		\trule{Abs}~~\tree{
+			\Gamma; \Lambda; \Delta_1 \proves P \hastype \Proc
+			\quad
+			\Gamma; \es; \Delta_2 \proves x \hastype U
+		}{
+			\Gamma; \Lambda; \Delta_1 \backslash \Delta_2 \proves \abs{x}{P} \hastype \lhot{U}
+		}
+		\\[6mm]
+
+		\trule{App}~~\tree{
+			\begin{array}{c}
+				U = \lhot{U'} \lor \shot{U'}
+				\quad
+				\Gamma; \Lambda; \Delta_1 \proves x \hastype U
+				\quad
+				\Gamma; \es; \Delta_2 \proves u \hastype U'
+			\end{array}
+		}{
+			\Gamma; \Lambda; \Delta_1 \cat \Delta_2 \proves \appl{x}{u} \hastype \Proc
+		} 
+	\end{array}
+\]
+
+\dk{prove subject reduction for the extension}
+
+\paragraph{Behavioural Semantics}
+
+Labels and untyped LTS remain the same. The definition of the
+characteristic process~\ref{def:characteristic_process} should be:
+%
+\begin{definition}[Extended Characteristic Process]\rm
+	Let name $u$ and type $U$; then we define a {\em characteristic process}:
+	$\map{U}^k$ as:
+%
+	\[
+	\begin{array}{rclcl}
+		\map{\btinp{C} S}^{u} &=& \binp{u}{x} (\map{S}^{u} \Par \map{C}^{x})
+		\\
+		\map{\btout{C} S}^{u} &=& \bout{u}{n} \map{S}^{u} & & n \textrm{ fresh}
+		\\
+		\map{\btsel{l : S}}^{u} &=& \bsel{u}{l} \map{S}^{u}
+		\\
+		\map{\btbra{l_i: S_i}_{i \in I}}^{u} &=& \bbra{u}{l_i: \map{S_i}^{u}}_{i \in I}
+		\\
+		\map{\tvar{t}}^{k} &=& \varp{X}_t
+		\\
+		\map{\trec{t}{S}}^{u} &=& \recp{X_t}{\map{S}^{u}}
+		\\
+		\map{\btout{\lhot{C}} S}^{u} &=& \bout{u}{\abs{x}{\map{C}^{x}}} \map{S}^u
+		\\
+		\map{\btinp{\lhot{C}} S}^{u} &=& \binp{u}{x} (\map{S}^u \Par \appl{x}{n}) & & n \textrm{ fresh}
+		\\
+		\map{\btout{\shot{C}} S}^{u} &=& \bout{u}{\abs{x}{\map{C}^{x}}} \map{S}^u
+		\\
+		\map{\btinp{\shot{C}} S}^{u} &=& \binp{u}{x} (\map{S}^u \Par \appl{x}{n}) & & n \textrm{ fresh}
+		\\
+		\\
+		\map{\shot{L}}^x &=& \abs{x}{\map{L}^x}
+		\\
+		\map{\lhot{L}}^x &=& \abs{x}{\map{L}^x}
+		\\
+		\\
+
+		\map{\btout{\lhot{L}} S}^{u} &=& \bout{u}{\map{L}^x} \map{S}^u
+		\\
+		\map{\btinp{\lhot{L}} S}^{u} &=& \binp{u}{x} (\map{S}^u \Par \appl{x}{\map{L}^y}) %& & %n \textrm{ fresh}
+		\\
+		\map{\btout{\shot{L}} S}^{u} &=& \bout{u}{\map{L}^x} \map{S}^u
+		\\
+		\map{\btinp{\shot{L}} S}^{u} &=& \binp{u}{x} (\map{S}^u \Par \appl{x}{\map{L}^y}) %& & n \textrm{ fresh}
+		\\
+		\\
+
+		\map{\tinact}^{u} &=& \inact
+		\\
+		\map{\chtype{S}}^{u} &=& \bout{u}{s} \inact & & s \textrm{ fresh}
+		\\
+		\map{\chtype{\lhot{C}}}^{u} &=& \bout{u}{\abs{x} \map{C}^{x}} \inact
+		\\
+		\map{\chtype{\shot{C}}}^{u} &=& \bout{u}{\abs{x} \map{C}^{x}} \inact
+		\\
+		\map{\chtype{\shot{L}}}^{u} &=& \bout{u}{\map{L}^x} \inact
+		\\
+		\map{\chtype{\lhot{L}}}^{u} &=& \bout{u}{\map{L}^x} \inact
+	\end{array}
+	\]
+\end{definition}
+
+The rest of the behavioural definitions remain intact. 
+\dk{prove all cases}
+
+\subsection{Encoding from \HOpp to \HOp}
+
+We now present an encoding from \HOpp to \HOp.
+
+\[
+\begin{array}{rcl}
+	\pmap{\appl{x}{\abs{x} P}}{3} &\defeq& \newsp{s}{\appl{x}{s} \Par \bout{\dual{s}}{\abs{x} \pmap{P}{3}} \inact}
+	\\
+	\pmap{\bout{u}{\abs{x: L}{Q}} P}{3} &\defeq& \bout{u}{\abs{z}{\binp{z}{x} \pmap{Q}{3}}} \pmap{P}{3}
+	\\
+	\\
+	\tmap{\shot{L}}{3} &\defeq& \shot{\btinp{L} \tinact}
+	\\
+	\tmap{\lhot{L}}{3} &\defeq& \lhot{\btinp{L} \tinact}
+	\\
+	\tmap{\btout{\shot{L}} S}{3} &\defeq& \btout{\tmap{\shot{L}}{3}} \tmap{S}{3}
+	\\
+	\tmap{\btout{\lhot{L}} S}{3} &\defeq& \btout{\tmap{\lhot{L}}{3}} \tmap{S}{3}
+	\\
+	\tmap{\btinp{\shot{L}} S}{3} &\defeq& \btinp{\tmap{\shot{L}}{3}} \tmap{S}{3}
+	\\
+	\tmap{\btinp{\lhot{L}} S}{3} &\defeq& \btinp{\tmap{\lhot{L}}{3}} \tmap{S}{3}
+	\\
+	\\
+	\mapa{\bactout{n}{\abs{x:C}{P}}}^{3} &\defeq& \bactout{n}{\abs{x}{\pmap{P}{3}}}
+	\\
+	\mapa{\bactinp{n}{\abs{x:C}{P}}}^{3} &\defeq& \bactinp{n}{\abs{x}{\pmap{P}{3}}}
+	\\
+	\mapa{\bactout{n}{\abs{x:L}{P}}}^{3} &\defeq& \bactout{n}{\abs{z}{\binp{z}{x} \pmap{P}{3}}}
+	\\
+	\mapa{\bactinp{n}{\abs{x:L}{P}}}^{3} &\defeq& \bactinp{n}{\abs{z}{\binp{z}{x} \pmap{P}{3}}}
+
+\end{array}
+\]
+\noi We assume that the rest of the encoding is homomorphic on the syntax of
+processes, types and labels, respectively.
+
+\dk{Show type preservarnce, operatational correspondence and full abstraction}.
