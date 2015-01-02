@@ -1,10 +1,31 @@
+\noindent This section introduces a core higher-order 
+calculus (called \HO) which is a sub-calculus of 
+{\em Full Higher-Order Session $\pi$-Calculus} ($\HOp$).
+$\HO$ features minimum constructs: it includes only session establishments 
+and communications 
+with single name-abstraction, but  
+without recursions nor name-passing.  
+On the other hand, $\HOp$ includes both name and abstraction-passing 
+with recursions; 
+it corresponds to a sub-calculus studied 
+in~\cite{tlca07}. As the higher-order functional types can be encoded in 
+the second-order higher-order $\pi$-calculus 
+\cite{JeffreyR05,SangiorgiD:picatomp}, 
+we concentrate on the second-order. 
+%Although minimal, in \S\ref{s:expr}
+%the abstraction-passing capabilities of \HOp will prove 
+%expressive enough to capture key features of session communication, 
+%such as delegation and recursion.
+
 \subsection{Syntax of \HOp}
 \label{subsec:syntax}
+\noindent The syntax of \HOp is defined in Fig.~\ref{fig:syntax}
+\begin{figure}[t]
 \[ 
 \begin{array}{lll}
 u,w  ::=  n \ | \ x,y,z
 & n ::= a,b  \ | \ s, \dual{s} 
-& V,W  ::=   u \ | \ \abs{x}{P}
+& V,W  ::=   \nonhosyntax{u} \ | \ \abs{x}{P}
 \end{array}
 \]
 \[
@@ -14,54 +35,73 @@ P,Q & ::= &  P\Par Q \bnfbar
  & \bnfbar & \bout{u}{V}{P} \bnfbar \binp{u}{x}{P} \bnfbar \news{n} P 
 \bnfbar \appl{x}{u} 
 \\[1mm]
-     & \bnfbar & \rvar{X} \bnfbar \recp{X}{P}
+     & \bnfbar & \nonhosyntax{\rvar{X} \bnfbar \recp{X}{P}}
 \end{array}
 \]
-We define the dual operation over (1) session channels $\dual{\dual{s}} = s$
-(session channel $s$ and $\dual{s}$ are dual \emph{endpoints}); and 
-(2) $\dual{a} = a$ (dual of a shared channel is itself).  
+The syntax of \HO is given by excluding \nonhosyntax{\text{boxed syntax}}. 
+\caption{Syntax of \HOp}
+\label{fig:syntax}
+\Hline
+\end{figure}
+We use $a,b,c, \dots$ (resp.~$s, \dual{s}, \dots$) 
+to range over shared (resp. session) names. 
+We use $m, n, \dots$ for session or shared names. 
+We define the dual operation over channels $n$ as $\dual{n}$ with
+$\dual{\dual{s}} = s$ and $\dual{a} = a$.
+Intuitively, names $s$ and $\dual{s}$ are dual (two) \emph{endpoints} while 
+shared names repsent shared (non-deterministic) points. 
+Variables are denoted with $x, y, z, \dots$, 
+and recursive variables are denoted with $\varp{X}, \varp{Y} \dots$.
+An abstraction $\abs{x}{P}$ is a process $P$ with name parameter $x$.
+Symbols $u, v, \dots$ range over identifiers; and  
+$V, W, \dots$ to denote values. 
 
-We assume $V$ in $\bout{u}{V}{P}$ does not include free process recursive 
+The syntax of \HOp includes the
+$\pi$-calculus prefixes for sending and receiving values $V$.
+Process $\bout{u}{V} P$ denotes the output of value $V$
+over channel $u$, with continuation $P$;
+process $\binp{u}{x} P$ denotes the input prefix on channel $u$ of a value
+that it is going to be substituted on variable $x$ in continuation $P$. 
+Recursion is expressed by $\recp{X}{P}$,
+which binds the recursive variable $\varp{X}$ in process $P$.
+Process $\appl{x}{u}$ is the application
+process which binds channel $u$ on the abstraction that
+substitutes variable $X$.
+Prefix $\bsel{u}{l} P$ selects label $l$ on channel $u$ and then behaves as $P$.
+Given $i \in I$ process $\bbra{u}{l_i: P_i}_{i \in I}$ offers a choice on labels $l_i$ with
+continuation $P_i$.
+Others are standard constructs for 
+inaction $\inact$,  parallel composition $P_1 \Par P_2$, and 
+name restriction $\news{n} P$.
+Session name restriction $\news{s} P$ simultaneously binds endpoints $s$ and $\dual{s}$ in $P$.
+%A well-formed process relies on assumptions for
+%guarded recursive processes.
+We use $\fv{P}$ and $\fn{P}$ to denote a set of free variables and names; 
+and assume $V$ in $\bout{u}{V}{P}$ does not include free process recursive 
 variables $\rvar{X}$. 
-
-We call processes which do not include free variables {\em programs}.
+If $\fv{P} = \emptyset$, we call $P$ {\em closed}; and closed $P$ without 
+free session channels a {\em program}. 
 
 \subsection{Subcalculi of \HOp}
 \label{subsec:subcalculi}
-\begin{enumerate}[$\bullet$]
-\item \HO: no name passing 
-(i.e. values are defined as $V,W :: = \abs{x}{P}$)
-and no recursion (we delete $\mu X.P$ and $X$ from $P$).   
-\item \sessp: no HO value passing (i.e. 
-values are defined as:
-$V,W :: = u$) and no application (we delete $x\, u$ from $P$). 
-\item Let $\CAL \in \{\HOp, \HO, \sessp\}$. 
-\begin{enumerate}[-]
-\item $\HOp^{-\mu}$ means 
-$\HOp$ without recursions (we delete $\mu X.P$ and $X$ from $P$).   
-\item 
-$\CAL^{-\mathsf{sh}}$ means $\CAL$ without shared channels (i.e. 
-$n ::= s, \dual{s}$). More precisely, $\CAL$ which restricts 
-the syntax of channel types as $C::= S$.  
-\end{enumerate}
-\end{enumerate}
+\noindent 
+We now define several sub-calculi of \HOp. 
+The {\em core higher-order calculus} (denoted by \HO) has 
+no name passing and no recursion. The syntax deleted from \HOp
+is \nonhosyntax{\text{boxed}} in Fig.~\ref{fig:syntax}. 
+Another sub-calculus we use is the {\em session $\pi$-calculus} 
+(dentoed by $\sessp$) which does not include the higher-order constructions 
+(i.e. abstraction passing and application), but include recursions. 
+Let $\CAL \in \{\HOp, \HO, \sessp\}$. We write 
+$\CAL^{-\mathsf{sh}}$ for $\CAL$ without shared channels
+ (we delete $a,b$ from $n$). In the subsequent sections, 
+we show $\HOp$, $\HO$ and $\sessp$ have the same expressiveness. 
 
 \subsection{Operational Semantics}
 \label{subsec:semantics}
-\[
-	\begin{array}{c}
-	P \Par \inact \scong P
-	\quad
-	P_1 \Par P_2 \scong P_2 \Par P_1
-	\quad
-	P_1 \Par (P_2 \Par P_3) \scong (P_1 \Par P_2) \Par P_3\\[1mm]
-	\news{n} \inact \scong \inact
-\quad 
-P \Par \news{n} Q \scong \news{n}(P \Par Q)
-\quad	(n \notin \fn{P})\\[1mm]
-\recp{X}{P} \scong P\subst{\recp{X}{P}}{\rvar{X}}
-\end{array}
-\]
+\noindent Fig.~\ref{fig:reduction} defines operational semantics 
+of the calculus.   
+\begin{figure}
 \[
 \begin{array}{rclrcrclr}
 (\abs{x}{P}) \, u  & \red & P \subst{u}{x} 
@@ -79,4 +119,31 @@ P \Par \news{n} Q \scong \news{n}(P \Par Q)
 			P \scong Q \red Q' \scong P' & \Rightarrow & P  \red  P' & \orule{Cong}
 	\end{array}
 \]
-
+{\small
+\[
+	\begin{array}{c}
+	P \Par \inact \scong P
+	\quad
+	P_1 \Par P_2 \scong P_2 \Par P_1
+	\quad
+	P_1 \Par (P_2 \Par P_3) \scong (P_1 \Par P_2) \Par P_3\\[1mm]
+	\news{n} \inact \scong \inact
+\quad 
+P \Par \news{n} Q \scong \news{n}(P \Par Q)
+\	(n \notin \fn{P})\quad 
+\recp{X}{P} \scong P\subst{\recp{X}{P}}{\rvar{X}}
+\end{array}
+\]
+}
+\caption{Operational Sematincs of $\HOp$ \label{fig:reduction}}
+\Hline
+\end{figure}
+$\orule{App}$ is an name application; 
+$\orule{Pass}$ defines a shared interaction at $n$ 
+($\dual{n}=n$) or session interaction;  
+$\orule{Sel}$ is the standard rule for labeled choice/selection:
+given an index set $I$, 
+a process selects label $l_j$ on channel $n$ over a set of
+labels $\set{l_i}_{i \in I}$ offered by a branching 
+on the dual endpoint $\dual{n}$; and other rules are standard
+with sturcture rules defined in the bottom of Fig.~\ref{fig:reduction}. 
