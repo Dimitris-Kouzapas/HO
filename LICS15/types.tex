@@ -1,10 +1,14 @@
+This section defines a type system for
+$\HOp$ and establishes its main properties. 
+Our system is simpler than that in~\cite{tlca07}, in order to distill the key
+features of higher-order communication in a session-typed setting.
+
 \subsection{Types}
 \label{subsec:types}
-$T$ ranged over all types 
-\label{subsec:types}
+The syntax of types of \HOp is given below: 
 \[
 \begin{array}{lrl}
-\text{(value)}	& U \bnfis &	C \bnfbar L  % \bnfbar \Proc
+\text{(value)}	& U \bnfis &	\nonhosyntax{C} \bnfbar L  % \bnfbar \Proc
 \quad\quad \text{(chan)}  \quad	 C  \bnfis 	S \bnfbar \chtype{U}
 	\\[1mm]
 \text{(lambda)} & L \bnfis &	\shot{C} \bnfbar \lhot{C}
@@ -15,32 +19,30 @@ $T$ ranged over all types
 	  \bnfbar  \trec{t}{S} \bnfbar \vart{t}  \bnfbar \tinact
 \end{array}
 \]
+The types of \HO excludes $\nonhosyntax{C}$ from 
+value types of \HOp; and the types of \sessp exludes $L$. 
+In channel types, $\chtype{U}$ is shared channel types 
+which are sent via shared channels. 
+$\shot{C}$ and $\lhot{C}$ denote
+{\em shared} and {\em linear} function types, respectively.
+$\lhot{C}$ \cite{tlca07} ensures values which contain free 
+session channels used once. 
+ 
+We write $S$ to denote binary session types. 
+{\em Output type} $\btout{U} S$ is assigned to a channel that first sends a 
+value of type $U$ and then follows
+the protocol described by $S$.
+Dually, $\btinp{U} S$ denotes an {\em input type}. 
+{\em Branching type} $\btbra{l_i:S_i}_{i \in I}$ and 
+{\em selection type} $\btsel{l_i:S_i}_{i \in I}$ are standard.   
+We assume {\em recursive type} $\trec{t}{S}$ is guarded, i.e. 
+$\trec{t}{\vart{t}}$ is not allowed. 
+Note that we allow carried type 
+$U$ in $\btout{U} S$ and $\btinp{U} S$ contains 
+free recursive type variables, which is crucial to encode 
+$\HOp$ into $\HO$. Type $\tinact$ represents 
+the terminaition. We denote 
 
-\begin{definition}[Duality]
-Let $\mathsf{ST}$ a set of closed session types. 
-Two types $S$ and $S'$ are said to be {\em dual} if a pair $(S,S')$ is 
-in the largest fixed point of the monotone function 
-$F:\mathcal{P}(\mathsf{ST}\times \mathsf{ST}) \to 
-\mathcal{P}(\mathsf{ST}\times \mathsf{ST})$ defined by:
-
-	\begin{tabular}{rcl}
-	$F(\Re)$ &$=$&	$\set{(\tinact, \tinact)}$\\
- 	       &$\cup$&	$\set{(\btout{U} S_1, \btinp{U} S_2)
-\bnfbar(S_1, S_2)\in \Re}$\\ 
-  	       &$\cup$&	$\set{(\btinp{U} S_1, \btout{U} S_2)
-\bnfbar(S_1, S_2)\in \Re}$\\ 
-			&$\cup$&	$\set{(\btsel{l_i: S_i}_{i \in I} \,,\, \btbra{l_i: S_i'}_{i \in I}) \bnfbar \forall i\in I. (S_i, S_i')\in \Re}$\\
-			&$\cup$&	$\set{(\btbra{l_i: S_i}_{i \in I}\,,\, \btsel{l_i: S_i'}_{i \in I}) \bnfbar \forall i\in I. (S_i, S_i')\in \Re}$\\
-			&$\cup$&	$\set{(\trec{t}{S}, S')
-\bnfbar (S\subst{\trec{t}{S}}{\vart{t}},S')\in \Re}$\\
-			&$\cup$&	$\set{(S,\trec{t}{S'})
-\bnfbar (S,S'\subst{\trec{t}{S'}}{\vart{t}})\in \Re}$
-	\end{tabular}
-	
-\noindent
-	Standard arguments ensure that $F$ is monotone, thus the greatest fixed point
-	of $F$ exists. Let duality be defined as $\dualof = \nu X. F(X)$.
-\end{definition}
 
 \subsection{Typing System}
 \label{subsec:typing}
