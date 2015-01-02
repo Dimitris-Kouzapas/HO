@@ -1047,7 +1047,7 @@ recursive definitions as passing of polyadic abstractions:
 
 
 
-\begin{proposition}[Operational Correspondence, \HOp into \HO]
+\begin{proposition}[Operational Correspondence, \HOp into \HO]\rm
 	\label{prop:op_corr_HOp_to_HO}
 	Let $P$ be a \HOp process.
 	If $\Gamma; \emptyset; \Delta \proves P \hastype \Proc$ then
@@ -1307,6 +1307,246 @@ By transition induction. We consider parts (1) and (2) separately:
 		and uses Prop.~\ref{prop:op_corr_HOprec_to_HO} whenever nescessary.
 \end{enumerate}
 \qed
+\end{proof}
+
+
+\begin{proposition}[Full Abstraction, \HOp into \HO]\rm
+	$\horel{\Gamma}{\Delta_1}{P_1}{\wb}{\Delta_2}{Q_1}$
+	if and only if
+	$\horel{\mapt{\Gamma}^{1}}{\mapt{\Delta_1}^{1}}{\pmapp{P_1}{1}{f}}{\wb}{\mapt{\Delta_2}^{1}}{\pmapp{Q_2}{1}{f}}$.
+\end{proposition}
+
+\begin{proof}
+	\noi {\bf Proof of Soundness Direction.}
+
+	\noi Let
+%
+	\[
+		\Re = \set{\horel{\Gamma}{\Delta_1}{P_1}{\wb}{\Delta_2}{Q_1} \setbar \horel{\mapt{\Gamma}^{1}}{\mapt{\Delta_1}^{1}}{\pmapp{P_1}{1}{f}}{\wb}{\mapt{\Delta_2}^{1}}{\pmapp{Q_1}{1}{f}}}
+	\]
+%
+	\noi	The proof considers a case analysis on the transition $\hby{\ell}$ and
+		uses the soundness direction of operational correspondence (cf.~Proposition~\ref{prop:op_corr_HOp_to_HO}).
+		We give an interesting case. The others are similar of easier.
+
+	\noi	- Case: $\ell = \news{\tilde{m_1}'} \bactout{n}{m_1}$.
+
+	\noi Proposition~\ref{prop:op_corr_HOp_to_HO} implies that
+%
+	\[
+		\horel{\Gamma}{\Delta_1}{P_1}{\hby{\news{\tilde{m_1}'} \bactout{n}{m_1}}}{\Delta_1'}{P_2}
+	\]
+%
+	\noi implies
+%
+	\[
+		\horel{\mapt{\Gamma}^{1}}{\mapt{\Delta_1}^{1}}{\pmapp{P_1}{1}{f}}{\hby{\news{\tilde{m_1}'} \bactout{n}{\abs{z}{\binp{z}{x} \appl{x}{m_1}}}}}{\mapt{\Delta_1'}^{1}}{\pmapp{P_2}{1}{f}}
+	\]
+%
+	\noi that in combination with the definition of $\Re$ we get
+%
+	\begin{eqnarray}
+		\horel{\mapt{\Gamma}^{1}}{\mapt{\Delta_2}^{1}}{\pmapp{Q_1}{1}{f}}{\Hby{\news{\tilde{m_2}'} \bactout{n}{\abs{z}{\binp{z}{x} \appl{x}{m_2}}}}}{\mapt{\Delta_2'}^{1}}{\pmapp{Q_2}{1}{f}}
+		\label{prop:HOp_to_HO:full_abs11}
+	\end{eqnarray}
+%
+	\noi and
+%
+	\[
+		\mhorel{\mapt{\Gamma}^{1}}{\mapt{\Delta_1'}^{1}}{\newsp{\tilde{m_1}'}{\pmapp{P_2}{1}{f} \Par \hotrigger{t}{\abs{z}{\binp{z}{x} \appl{x}{m_1}}} }}
+		{\wb}{\mapt{\Delta_2'}^{1}}{}{\newsp{\tilde{m_2}'}{\pmapp{Q_2}{1}{f} \Par \hotrigger{t}{\abs{z}{\binp{z}{x} \appl{x}{m_2}}}}}
+	\]
+%
+	\noi We rewrite the last result as
+	\[
+		\mhorel{\mapt{\Gamma}^{1}}{\mapt{\Delta_1'}^{1}}{\pmapp{\newsp{\tilde{m_1}'}{P_2 \Par \hotrigger{t}{m_1}}}{1}{f}}
+		{\wb}{\mapt{\Delta_2'}^{1}}{}{\pmapp{\newsp{\tilde{m_2}'}{Q_2 \Par \hotrigger{t}{m_2}}}{1}{f}}
+	\]
+%
+	\noi to conclude that
+%
+	\[
+		\mhorel{\Gamma}{\Delta_1'}{\newsp{\tilde{m_1}'}{P_2 \Par \hotrigger{t}{m_1}}}
+		{\ \Re\ }{\Delta_2'}{}{\newsp{\tilde{m_2}'}{Q_2 \Par \hotrigger{t}{m_2}}}
+	\]
+%
+	\noi as required
+
+
+	\noi {\bf Proof of Completeness Direction.}
+
+	\noi Let
+%
+	\[
+		\Re = \set{\horel{\mapt{\Gamma}^{1}}{\mapt{\Delta_1}^{1}}{\pmapp{P_1}{1}{f}}{,}{\mapt{\Delta_2}^{1}}{\pmapp{Q_1}{1}{f}} \setbar \horel{\Gamma}{\Delta_1}{P_1}{\wb}{\Delta_2}{Q_1}}
+	\]
+%
+	We show that $\Re \subset \wb$ by a case analysis on the action $\ell$
+
+	\noi - Case: $\ell \notin \set{\news{\tilde{m}} \bactout{n}{\abs{x}{P}}, \bactinp{n}{\abs{x}{P}}}$.
+
+	\noi The proof of Proposition~\ref{prop:op_corr_HOp_to_HO} implies that
+%
+	\[
+		\horel{\mapt{\Gamma}^{1}}{\mapt{\Delta_1}^{1}}{\pmapp{P_1}{1}{f}}{\hby{\ell}}{\mapt{\Delta_1'}^{1}}{\pmapp{P_2}{1}{f}}
+	\]
+%
+	\noi implies
+%
+	\[
+		\horel{\Gamma}{\Delta_1}{P_1}{\hby{\ell}}{\Delta_1'}{P_2}
+	\]
+%
+	\noi From the latter transition and the definition of $\Re$ we imply
+%
+	\begin{eqnarray}
+		&&\horel{\Gamma}{\Delta_2}{Q_1}{\Hby{\ell}}{\Delta_2'}{Q_2}
+		\label{prop:HOp_to_HO:full_abs1}
+		\\
+		&&\horel{\Gamma}{\Delta_1'}{P_2}{\wb}{\Delta_2'}{Q_2}
+		\label{prop:HOp_to_HO:full_abs2}
+	\end{eqnarray}
+%
+	\noi From~\ref{prop:HOp_to_HO:full_abs1} and proposition~\ref{prop:op_corr_HOp_to_HO} we get
+%
+	\[
+		\horel{\mapt{\Gamma}^{1}}{\mapt{\Delta_2}^{1}}{\pmapp{Q_1}{1}{f}}{\Hby{\ell}}{\mapt{\Delta_2'}^{1}}{\pmapp{Q_2}{1}{f}}
+	\]
+%
+	\noi Furthermore, from~\ref{prop:HOp_to_HO:full_abs2} and the definition of $\Re$ we get
+%
+	\[
+		\horel{\mapt{\Gamma}^{1}}{\mapt{\Delta_1'}^{1}}{\pmapp{P_2}{1}{f}}{\ \Re\ }{\mapt{\Delta_2'}^{1}}{\pmapp{Q_2}{1}{f}}
+	\]
+%
+	\noi as required.
+
+	\noi - Case: $\ell = \news{\tilde{m}} \bactout{n}{\abs{x}{P}}$
+
+	\noi There are two subcases:
+
+	\noi -Subcase:
+
+	\noi The proof of Proposition~\ref{prop:op_corr_HOp_to_HO} implies that
+%
+	\[
+		\horel{\mapt{\Gamma}^{1}}{\mapt{\Delta_1}^{1}}{\pmapp{P_1}{1}{f}}{\hby{\ell}}{\mapt{\Delta_1'}^{1}}{\pmapp{P_2}{1}{f}}
+	\]
+%
+	\noi implies
+%
+	\[
+		\horel{\Gamma}{\Delta_1}{P_1}{\hby{\ell}}{\Delta_1'}{P_2}
+	\]
+%
+	\noi where the proof is similar with the previous case.
+
+	\noi - Subcase:
+
+	\noi The proof of Proposition~\ref{prop:op_corr_HOp_to_HO} implies that
+%
+	\[
+		\horel{\mapt{\Gamma}^{1}}{\mapt{\Delta_1}^{1}}{\pmapp{P_1}{1}{f}}{\hby{\news{\tilde{m_1}'} \bactout{n}{\abs{z}{\binp{z}{x} \appl{x}{m_1}}}}}{\mapt{\Delta_1'}^{1}}{\pmapp{P_2}{1}{f}}
+	\]
+%
+	\noi implies
+%
+	\[
+		\horel{\Gamma}{\Delta_1}{P_1}{\hby{\news{\tilde{m_1}'} \bactout{n}{m_1}}}{\Delta_1'}{P_2}
+	\]
+%
+	\noi From the latter transition and the definition of $\Re$ we imply
+%
+	\begin{eqnarray}
+		&&\horel{\Gamma}{\Delta_2}{Q_1}{\Hby{\news{\tilde{m_2}'} \bactout{n}{m_2}}}{\Delta_2'}{Q_2}
+		\label{prop:HOp_to_HO:full_abs3}
+	\end{eqnarray}
+%
+	\noi and
+%
+	\begin{eqnarray}
+		& \Gamma; \es; \Delta_1' & \proves \newsp{\tilde{m_1}'}{P_2 \Par \hotrigger{t}{m_1}} \nonumber \\
+		& \wb & \Delta_2' \proves \newsp{\tilde{m_2}'}{Q_2 \Par \hotrigger{t}{m_2}}
+		\label{prop:HOp_to_HO:full_abs4}
+	\end{eqnarray}
+%
+	\noi From~\ref{prop:HOp_to_HO:full_abs3} and proposition~\ref{prop:op_corr_HOp_to_HO} we get
+%
+	\[
+		\horel{\mapt{\Gamma}^{1}}{\mapt{\Delta_2}^{1}}{\pmapp{Q_1}{1}{f}}{\Hby{\news{\tilde{m_2}'} \bactout{n}{\abs{z}{\binp{z}{x} \appl{x}{m_2}}}}}{\mapt{\Delta_2'}^{1}}{\pmapp{Q_2}{1}{f}}
+	\]
+%
+	\noi Furthermore, from~\ref{prop:HOp_to_HO:full_abs4} and the definition of $\Re$ we get
+%
+	\[
+		\mhorel{\mapt{\Gamma}^{1}}{\mapt{\Delta_1'}^{1}}{\pmapp{\newsp{\tilde{m_1}'}{P_2 \Par \hotrigger{t}{m_1}}}{1}{f}}
+		{\ \Re\ }{\mapt{\Delta_2'}^{1}}{}{\pmapp{\newsp{\tilde{m_2}'}{Q_2 \Par \hotrigger{t}{m_2}}}{1}{f}}
+	\]
+%
+	\noi as required.
+
+	\noi - Case: $\ell = \bactinp{n}{\abs{x}{P}}$
+
+	\noi We have two subcases.
+
+	\noi - Subcase: Similar with the first subcase of the previous case.
+
+	\noi - Subcase:
+	\noi The proof of Proposition~\ref{prop:op_corr_HOp_to_HO} implies that
+%
+	\[
+		\horel{\mapt{\Gamma}^{1}}{\mapt{\Delta_1}^{1}}{\pmapp{P_1}{1}{f}}{\hby{\bactinp{n}{\abs{z}{ \binp{z}{x} \appl{x}{s}}}}}{\mapt{\Delta_1''}^{1}} R %{\pmapp{P_2}{1}{f}}
+	\]
+%
+	\noi implies
+%
+	\begin{eqnarray}
+		\horel{\Gamma}{\Delta_1}{P_1}{\hby{\bactinp{n}{m_1}}}{\Delta_1'}{P_2}
+		\label{prop:HOp_to_HO:full_abs7}
+	\end{eqnarray}
+%
+	\noi and
+%
+	\begin{eqnarray}
+		\horel{\mapt{\Gamma}^{1}}{\mapt{\Delta_1''}^{1}}{R}{\hby{\tau}}{\mapt{\Delta_1'}^{1}}{\pmapp{P_2}{1}{f}}
+		\label{prop:HOp_to_HO:full_abs8}
+	\end{eqnarray}
+%
+	\noi With the last transition happening on a restricted session channel.
+	From \dk{Lemma~\ref{lem:tau_inert}} we can conclude that
+	\begin{eqnarray}
+		\horel{\mapt{\Gamma}^{1}}{\mapt{\Delta_1''}^{1}}{R}{\wb}{\mapt{\Delta_1'}^{1}}{\pmapp{P_2}{1}{f}}
+		\label{prop:HOp_to_HO:full_abs9}
+	\end{eqnarray}
+%
+	\noi From the transition~\ref{prop:HOp_to_HO:full_abs7} and the definition of $\Re$ we imply
+%
+	\begin{eqnarray}
+		&&\horel{\Gamma}{\Delta_2}{Q_1}{\Hby{\bactinp{n}{m_2}}}{\Delta_2'}{Q_2}
+		\label{prop:HOp_to_HO:full_abs5}
+		\\
+		&&\horel{\Gamma}{\Delta_1'}{P_2}{\wb}{\Delta_2'}{Q_2}
+		\label{prop:HOp_to_HO:full_abs6}
+	\end{eqnarray}
+%
+	\noi From~\ref{prop:HOp_to_HO:full_abs5} and proposition~\ref{prop:op_corr_HOp_to_HO} we get
+%
+	\[
+		\horel{\mapt{\Gamma}^{1}}{\mapt{\Delta_2}^{1}}{\pmapp{Q_1}{1}{f}}{\Hby{\bactinp{n}{\abs{z}{\binp{z}{x} \appl{x}{s}}}}}{\mapt{\Delta_2'}^{1}}{\pmapp{Q_2}{1}{f}}
+	\]
+%
+	\noi Furthermore, from~\ref{prop:HOp_to_HO:full_abs6} and the definition of $\Re$ we get
+%
+	\[
+		\horel{\mapt{\Gamma}^{1}}{\mapt{\Delta_1'}^{1}}{\pmapp{P_2}{1}{f}}{\ \Re\ }{\mapt{\Delta_2'}^{1}}{\pmapp{Q_2}{1}{f}}
+	\]
+%
+	\noi If we consider result~\ref{prop:HOp_to_HO:full_abs8} we get.
+%
+	\[
+		\horel{\mapt{\Gamma}^{1}}{\mapt{\Delta_1''}^{1}}{R}{\hby{\tau}\ \Re\ }{\mapt{\Delta_2'}^{1}}{\pmapp{Q_2}{1}{f}}
+	\]
+	\qed
 \end{proof}
 
 %\begin{conjecture}[Full Abstraction]
