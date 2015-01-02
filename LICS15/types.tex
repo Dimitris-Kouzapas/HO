@@ -8,8 +8,8 @@ features of higher-order communication in a session-typed setting.
 The syntax of types of \HOp is given below: 
 \[
 \begin{array}{lrl}
-\text{(value)}	& U \bnfis &	\nonhosyntax{C} \bnfbar L  % \bnfbar \Proc
-\quad\quad \text{(chan)}  \quad	 C  \bnfis 	S \bnfbar \chtype{U}
+\text{(value)}	& U \bnfis &	\nonhosyntax{C} \bnfbar L\\[1mm]  % \bnfbar \Proc
+\text{(chan)}   & C  \bnfis &	S \bnfbar \chtype{S}\bnfbar \chtype{L}
 	\\[1mm]
 \text{(lambda)} & L \bnfis &	\shot{C} \bnfbar \lhot{C}
 	\\[1mm]
@@ -28,25 +28,26 @@ $\shot{C}$ and $\lhot{C}$ denote
 $\lhot{C}$ \cite{tlca07} ensures values which contain free 
 session channels used once. 
  
-We write $S$ to denote binary session types. 
-{\em Output type} $\btout{U} S$ is assigned to a channel that first sends a 
-value of type $U$ and then follows
-the protocol described by $S$.
-Dually, $\btinp{U} S$ denotes an {\em input type}. 
-{\em Branching type} $\btbra{l_i:S_i}_{i \in I}$ and 
-{\em selection type} $\btsel{l_i:S_i}_{i \in I}$ are standard.   
-We assume {\em recursive type} $\trec{t}{S}$ is guarded, i.e. 
-$\trec{t}{\vart{t}}$ is not allowed. 
-Note that we allow carried type 
-$U$ in $\btout{U} S$ and $\btinp{U} S$ contains 
-free recursive type variables, which is crucial to encode 
-$\HOp$ into $\HO$. Type $\tinact$ represents 
-the terminaition. We denote 
-
+We write $S$ to denote binary session types.  {\em Output type}
+$\btout{U} S$ is assigned to a channel that first sends a value of
+type $U$ and then follows the protocol described by $S$.  Dually,
+$\btinp{U} S$ denotes an {\em input type}.  {\em Branching type}
+$\btbra{l_i:S_i}_{i \in I}$ and {\em selection type}
+$\btsel{l_i:S_i}_{i \in I}$ are standard.  We assume {\em recursive
+  type} $\trec{t}{S}$ is guarded, i.e.  $\trec{t}{\vart{t}}$ is not
+allowed.  Note that we allow carried type $U$ in $\btout{U} S$ and
+$\btinp{U} S$ contains free recursive type variables, which is crucial
+to encode $\HOp$ into $\HO$. Type $\tinact$ represents the
+terminaition. We define $\dual{S}$ as a type given by duallising $!$
+by $?$, $?$ by $!$, $\oplus$ by $\&$ and $\&$ by $\oplus$. 
+Then we write $S_1 \dualof S_2$ if 
+$S_1$ is dual of $S_2$ following \cite{TGC14} 
+(Definition~\ref{def:dual} in Appendix).
 
 \subsection{Typing System}
 \label{subsec:typing}
-\paragraph{Environments}
+\paragraph{Typing Judgements}
+We first define the environments where  
 \[
 \begin{array}{l}
  \Lambda \bnfis  \emptyset \bnfbar \Lambda \cat \AT{x}{\lhot{C}}
@@ -55,6 +56,27 @@ the terminaition. We denote
         \bnfbar \Gamma \cat \rvar{X}: \Delta
 \end{array}
 \]
+\noi We define typing judgements for values $V$
+and processes $P$:
+%
+\[	\begin{array}{c}
+		\Gamma; \Lambda; \Delta \proves V \hastype U \qquad \qquad \qquad \Gamma; \Lambda; \Delta \proves P \hastype \Proc
+	\end{array}
+\]
+%
+\noi 
+$\Gamma$ is a mapping from variables, shared channels and recursive 
+process variables;  $\Lambda$ 
+As expected, weakening, contraction, and exchange principles apply to
+$\Gamma$; environments $\Lambda$ and $\Delta$ behave linearly, and are
+only subject to exchange.  We require that the domains of $\Gamma,
+\Lambda$ and $\Delta$ are pairwise distinct. $\Delta_1\cdot \Delta_2$ means 
+a disjoint union of $\Delta_1$ and $\Delta_2$.  The first judgement
+states that under environment $\Gamma; \Lambda; \Delta$ values $V$
+have type $U$, whereas the second judgement states that under
+environment $\Gamma; \Lambda; \Delta$ process $P$ has the process type
+$\Proc$.
+
 
 \paragraph{Typing System}
 The judgements 
@@ -409,7 +431,8 @@ U_1
 	\end{enumerate}
 \end{definition}
 
-\begin{theorem}[Type Soundness - Theorem 7.3 in M\&Y]\label{t:sr}%\rm
+%Theorem 7.3 in M\&Y
+\begin{theorem}[Type Soundness]\label{t:sr}%\rm
 	\begin{enumerate}[1.]
 		\item	(Subject Congruence) Suppose $\Gamma; \es; \Delta \proves P \hastype \Proc$.
 			Then $P \scong P'$ implies $\Gamma; \es; \Delta \proves P' \hastype \Proc$.
