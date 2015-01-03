@@ -79,40 +79,40 @@ under the given session type.
 \begin{definition}[Characteristic Process]\rm
 	\label{def:characteristic_process}
 	Let name $u$ and type $U$; then we define a {\em characteristic process}:
-	$\map{U}^k$ as:
+	$\mapchar{U}{k}$ as:
 %
 	\[
 	\begin{array}{cc}
 		\begin{array}{rclcl}
-			\map{\btinp{U} S}^{u} &=& \binp{u}{x} (\map{S}^{u} \Par \map{U}^{x})
+			\mapchar{\btinp{U} S}{u} &\defeq& \binp{u}{x} (\mapchar{S}{u} \Par \mapchar{U}{x})
 			\\
-			\map{\btout{U} S}^{u} &=& \bout{u}{\omap{U}} \map{S}^{u} %& & n \textrm{ fresh}
+			\mapchar{\btout{U} S}{u} &\defeq& \bout{u}{\omapchar{U}} \mapchar{S}{u} %& & n \textrm{ fresh}
 			\\
-			\map{\btsel{l : S}}^{u} &=& \bsel{u}{l} \map{S}^{u}
+			\mapchar{\btsel{l : S}}{u} &\defeq& \bsel{u}{l} \mapchar{S}{u}
 			\\
-			\map{\btbra{l_i: S_i}_{i \in I}}^{u} &=& \bbra{u}{l_i: \map{S_i}^{u}}_{i \in I}
+			\mapchar{\btbra{l_i: S_i}_{i \in I}}{u} &\defeq& \bbra{u}{l_i: \mapchar{S_i}{u}}_{i \in I}
 			\\
-			\map{\tvar{t}}^{k} &=& \varp{X}_{\vart{t}}
+			\mapchar{\tvar{t}}{u} &\defeq& \varp{X}_{\vart{t}}
 			\\
-			\map{\trec{t}{S}}^{u} &=& \recp{X_{\vart{t}}}{\map{S}^{u}}
+			\mapchar{\trec{t}{S}}{u} &\defeq& \recp{X_{\vart{t}}}{\mapchar{S}{u}}
 			\\
-			\map{\tinact}^{u} &=& \inact
+			\mapchar{\tinact}{u} &\defeq& \inact
 			\\
 		\end{array}
 		&
 		\begin{array}{rcrclcl}
-			&&\map{\chtype{S}}^{u} &=& \bout{u}{\omap{S}} \inact
+			&&\mapchar{\chtype{S}}{u} &\defeq& \bout{u}{\omapchar{S}} \inact
 			\\
-			&&\map{\chtype{L}}^{u} &=& \bout{u}{\omap{L}} \inact
+			&&\mapchar{\chtype{L}}{u} &\defeq& \bout{u}{\omapchar{L}} \inact
 			\\
-			\map{\shot{C}}^{x} &=& \map{\lhot{C}}^{x} &=& \appl{x}{\omap{C}}
+			\mapchar{\shot{C}}{x} &\defeq& \mapchar{\lhot{C}}{x} &\defeq& \appl{x}{\omapchar{C}}
 			\\
 			\\
-			&&\omap{S} &=& s && s \textrm{ fresh}
+			&&\omapchar{S} &\defeq& s && s \textrm{ fresh}
 			\\
-			\omap{\chtype{S}} &=& \omap{\chtype{L}} &=& a && a \textrm{ fresh}
+			\omapchar{\chtype{S}} &\defeq& \omapchar{\chtype{L}} &\defeq& a && a \textrm{ fresh}
 			\\
-			\omap{\shot{C}} &=& \omap{\lhot{C}} &=& \abs{x}{\map{C}^x} 
+			\omapchar{\shot{C}} &\defeq& \omapchar{\lhot{C}} &\defeq& \abs{x}{\mapchar{C}{x}}
 		\end{array}
 	\end{array}
 	\]
@@ -167,17 +167,17 @@ under the given session type.
 \begin{proposition}\rm
 $ $
 	\begin{itemize}
-		\item	$\Gamma; \emptyset; \Delta \cat u:S \proves \map{S}^u \hastype \Proc$
-		\item	$U = \chtype{S}$ or $U = \chtype{L}$ implies $\Gamma \cat u:U; \emptyset; \Delta \proves \map{U}^u \hastype \Proc$
+		\item	$\Gamma; \emptyset; \Delta \cat u:S \proves \mapchar{S}{u} \hastype \Proc$
+		\item	$U = \chtype{S}$ or $U = \chtype{L}$ implies $\Gamma \cat u:U; \emptyset; \Delta \proves \mapchar{U}{u} \hastype \Proc$
 	\end{itemize}
 \end{proposition}
 
 \begin{proof}
-	By induction on the definition of $\map{S}^u$ and $\map{U}^u$.
+	By induction on the definition of $\mapchar{S}{u}$ and $\mapchar{U}{u}$.
 \end{proof}
 
 \begin{corollary}\rm
-	If $\Gamma; \emptyset; \Delta \proves \map{C}^{u} \hastype \Proc$
+	If $\Gamma; \emptyset; \Delta \proves \mapchar{C}{u} \hastype \Proc$
 	then
 	$\Gamma; \es; \Delta \proves u \hastype C$.
 \end{corollary}
@@ -595,7 +595,7 @@ We present a result on process substitution.
 		\item	$\horel{\Gamma}{\Delta_1'}{P \subst{\abs{z}{\binp{t}{y} \appl{y}{z}}}{x}}{\wb}{\Delta_2}{Q \subst{\abs{z}{\binp{t}{y} \appl{y}{z}}}{x}}$
 			for some fresh $t$.
 
-		\item	$\horel{\Gamma}{\Delta_1''}{P \subst{\abs{z}{\map{U}^{z}}}{x}}{\wb}{\Delta_2''}{Q \subst{\abs{z}{\map{U}^{z}}}{x}}$
+		\item	$\horel{\Gamma}{\Delta_1''}{P \subst{\abs{z}{\mapchar{U}{z}}}{x}}{\wb}{\Delta_2''}{Q \subst{\abs{z}{\mapchar{U}{z}}}{x}}$
 			for some $U$.
 	\end{enumerate}
 %
@@ -636,16 +636,34 @@ coincide with reduction closed, barbed congruence.
 	\qed
 \end{proof}
 
+%\begin{definition}[Session Transition]\rm
+%	Let well-typed \HOp process $\Gamma; \es; \Delta \proves P \hastype \Proc$.
+%	We write {\em session transition} 
+%	$\horel{\Gamma}{\Delta}{P}{\shby{\ell}}{\Delta'}{P'}$ if
+%	$\horel{\Gamma}{\Delta}{P}{\hby{\ell}}{\Delta'}{P'}$
+%	is derived by not using the environment label transition rules $\eltsrule{ShOut}$
+%	and $\eltsrule{ShRv}$.
+%\end{definition}
+%
+%\begin{lemma}[$\tau$-inertness]\rm
+%	\label{lem:tau_inert}
+%	Let $\Gamma; \es; \Delta \proves P \hastype \Proc$.
+%	$\horel{\Gamma}{\Delta}{P}{\shby{\ell}}{\Delta'}{P'}$
+%	implies
+%	$\horel{\Gamma}{\Delta}{P}{\wb}{\Delta'}{P'}$
+%\end{lemma}
+
 Processes that do not use shared names are inherintly $\tau$-inert.
 
 \begin{lemma}[$\tau$-inertness]\rm
 	\label{lem:tau_inert}
 	Let $P$ an $\HOp^{\minussh}$ process
-	and $\Gamma; \emptyset; \Delta \proves P \hastype \Proc$
-	\begin{enumerate}
-		\item	If $P \red P'$ then $\Gamma; \es; \Delta \wb \Delta' \proves P \wb P'$.
-		\item	If $P \red^* P'$ then $\Gamma; \es; \Delta \wb \Delta' \proves P \wb P'$.
-	\end{enumerate}
+	and $\Gamma; \emptyset; \Delta \proves P \hastype \Proc$.
+%	\begin{enumerate}
+%		\item
+	If $\horel{\Gamma}{\Delta}{P}{\by{\tau}}{\Delta'}{P'}$ then $\horel{\Gamma}{\Delta}{P}{\wb}{\Delta'}{P'}$.
+%		\item	If $P \red^* P'$ then $\Gamma; \es; \Delta \wb \Delta' \proves P \wb P'$.
+%	\end{enumerate}
 \end{lemma}
 
 \begin{proof}
@@ -656,5 +674,4 @@ Processes that do not use shared names are inherintly $\tau$-inert.
 	See details in Appendix~\ref{app:sub_tau_inert}.
 	\qed
 \end{proof}
-
 

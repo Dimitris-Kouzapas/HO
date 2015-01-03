@@ -58,40 +58,40 @@ characteristic process~\ref{def:characteristic_process} should be:
 %
 \begin{definition}[Characteristic Process]\rm
 	Let name $u$ and type $U$; then we define a {\em characteristic process}:
-	$\map{U}^k$ as:
+	$\mapchar{U}{k}$ as:
 %
 	\[
 	\begin{array}{cc}
 		\begin{array}{rclcl}
-			\map{\btinp{U} S}^{u} &=& \binp{u}{x} (\map{S}^{u} \Par \map{U}^{x})
+			\mapchar{\btinp{U} S}{u} &\defeq& \binp{u}{x} (\mapchar{S}{u} \Par \mapchar{U}{x})
 			\\
-			\map{\btout{U} S}^{u} &=& \bout{u}{\omap{U}} \map{S}^{u} %& & n \textrm{ fresh}
+			\mapchar{\btout{U} S}{u} &\defeq& \bout{u}{\omapchar{U}} \mapchar{S}{u} %& & n \textrm{ fresh}
 			\\
-			\map{\btsel{l : S}}^{u} &=& \bsel{u}{l} \map{S}^{u}
+			\mapchar{\btsel{l : S}}{u} &\defeq& \bsel{u}{l} \mapchar{S}{u}
 			\\
-			\map{\btbra{l_i: S_i}_{i \in I}}^{u} &=& \bbra{u}{l_i: \map{S_i}^{u}}_{i \in I}
+			\mapchar{\btbra{l_i: S_i}_{i \in I}}{u} &\defeq& \bbra{u}{l_i: \mapchar{S_i}{u}}_{i \in I}
 			\\
-			\map{\tvar{t}}^{k} &=& \varp{X}_{\vart{t}}
+			\mapchar{\tvar{t}}{u} &\defeq& \varp{X}_{\vart{t}}
 			\\
-			\map{\trec{t}{S}}^{u} &=& \recp{X_{\vart{t}}}{\map{S}^{u}}
+			\mapchar{\trec{t}{S}}{u} &\defeq& \recp{X_{\vart{t}}}{\mapchar{S}{u}}
 			\\
-			\map{\tinact}^{u} &=& \inact
+			\mapchar{\tinact}{u} &\defeq& \inact
 			\\
 		\end{array}
 		&
 		\begin{array}{rcrclcl}
-			&&\map{\chtype{S}}^{u} &=& \bout{u}{\omap{S}} \inact
+			&&\mapchar{\chtype{S}}{u} &\defeq& \bout{u}{\omapchar{S}} \inact
 			\\
-			&&\map{\chtype{L}}^{u} &=& \bout{u}{\omap{L}} \inact
+			&&\mapchar{\chtype{L}}{u} &\defeq& \bout{u}{\omapchar{L}} \inact
 			\\
-			\map{\shot{U}}^{x} &=& \map{\lhot{U}}^{x} &=& \appl{x}{\omap{U}}
+			\mapchar{\shot{U}}{x} &\defeq& \mapchar{\lhot{U}}{x} &\defeq& \appl{x}{\omapchar{U}}
 			\\
 			\\
-			&&\omap{S} &=& s && s \textrm{ fresh}
+			&&\omapchar{S} &\defeq& s && s \textrm{ fresh}
 			\\
-			\omap{\chtype{S}} &=& \omap{\chtype{L}} &=& a && a \textrm{ fresh}
+			\omapchar{\chtype{S}} &\defeq& \omapchar{\chtype{L}} &\defeq& a && a \textrm{ fresh}
 			\\
-			\omap{\shot{U}} &=& \omap{\lhot{U}} &=& \abs{x}{\map{U}^x}
+			\omapchar{\shot{U}} &\defeq& \omapchar{\lhot{U}} &\defeq& \abs{x}{\mapchar{U}{x}}
 		\end{array}
 	\end{array}
 	\]
@@ -109,6 +109,8 @@ We now present an encoding from \HOpp to \HOp.
 	\pmap{\appl{x}{\abs{x} P}}{3} &\defeq& \newsp{s}{\appl{x}{s} \Par \bout{\dual{s}}{\abs{x} \pmap{P}{3}} \inact}
 	\\
 	\pmap{\bout{u}{\abs{x: L}{Q}} P}{3} &\defeq& \bout{u}{\abs{z}{\binp{z}{x} \pmap{Q}{3}}} \pmap{P}{3}
+	\\
+	\pmap{\bout{u}{\abs{x: C}{Q}} P}{3} &\defeq& \bout{u}{\abs{x}{\pmap{Q}{3}}} \pmap{P}{3}
 	\\
 	\\
 	\tmap{\shot{L}}{3} &\defeq& \shot{\btinp{L} \tinact}
