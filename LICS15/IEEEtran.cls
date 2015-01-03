@@ -4175,11 +4175,11 @@ between column types.}%
 % V1.8 allow long theorem names to break across lines.
 % Thanks to Miquel Payaro for reporting this.
 \def\@begintheorem#1#2{\@IEEEtmpitemindent\itemindent\relax\topsep 0pt\rmfamily\trivlist%
-    \item[]\textit{\indent\bf #1~#2}: \itemindent\@IEEEtmpitemindent\relax}
+    \item[]\hspace*{-0.19em}\textit{\bf #1#2}: \itemindent\@IEEEtmpitemindent\relax}
 \def\@opargbegintheorem#1#2#3{\@IEEEtmpitemindent\itemindent\relax\topsep 0pt\rmfamily \trivlist%
 % V1.6 IEEE is back to using () around theorem names which are also in italics
 % Thanks to Christian Peel for reporting this.
-    \item[]\textit{\indent\bf #1~#2}~(#3): \itemindent\@IEEEtmpitemindent\relax}
+    \item[]\hspace*{-0.19em}\textit{\bf #1#2}~(#3): \itemindent\@IEEEtmpitemindent\relax}
 % V1.7 remove bogus \unskip that caused equations in theorems to collide with
 % lines below.
 \def\@endtheorem{\endtrivlist}
@@ -4214,7 +4214,6 @@ between column types.}%
      \fi
      \global\@namedef{#1}{\@thm{#1}{#2}}%
      \global\@namedef{end#1}{\@endtheorem}}}
-
 
 
 %% SET UP THE DEFAULT PAGESTYLE

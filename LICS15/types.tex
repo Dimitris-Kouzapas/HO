@@ -1,6 +1,6 @@
 This section defines a type system for
 $\HOp$ and establishes its main properties. 
-Our system is simpler than that in~\cite{tlca07}, in order to distill the key
+Our system is simpler than that in~\cite{tlca07,mostrous_phd}, in order to distill the key
 features of higher-order communication in a session-typed setting.
 
 \subsection{Types}
@@ -23,7 +23,7 @@ In channel types, $\chtype{U}$ is shared channel types
 which are sent via shared channels. 
 $\shot{C}$ and $\lhot{C}$ denote
 {\em shared} and {\em linear} function types, respectively.
-$\lhot{C}$ \cite{tlca07} ensures values which contain free 
+$\lhot{C}$ \cite{tlca07,mostrous_phd} ensures values which contain free 
 session channels used once. 
  
 We write $S$ to denote binary session types.  {\em Output type}
@@ -97,33 +97,37 @@ are dual each other.
 \end{definition}
 
 \paragraph{The Typing System of \HOp}
-Since the typing system is similar to~\cite{tlca07}, we leave the full
+Since the typing system is similar to~\cite{tlca07,mostrous_phd}, we leave the full
 typing sistem in Appendix~\ref{app:types}.  The rest of the paper can
 be read without knowing the details of the typing system. We list the
 key properties.
 
-
-
-\begin{definition}[Session Environment Reduction]%\rm
+\begin{definition}[Reduction of Session Environment]%\rm
 \label{def:ses_red}
-	We define the relation $\red$ on session environments as:
-	\begin{enumerate}[$-$]
-		\item	$\Delta \cat s: \btout{U} S_1 \cat \dual{s}: \btinp{U} S_2 \red \Delta \cat s: S_1 \cat \dual{s}: S_2$
-		\item	$\Delta \cat s: \btsel{l_i: S_i}_{i \in I} \cat \dual{s}: \btbra{l_i: S_i'}_{i \in I} \red \Delta \cat s: S_k \cat \dual{s}: S_k', \quad k \in I$.
-	\end{enumerate}
+We define the relation $\red$ on session environments as:
+\[
+\begin{array}{rcl}
+\Delta \cat s: \btout{U} S_1 \cat \dual{s}: \btinp{U} S_2 & \red & 
+\Delta \cat s: S_1 \cat \dual{s}: S_2\\[1mm]
+\Delta \cat s: \btsel{l_i: S_i}_{i \in I} \cat \dual{s}: \btbra{l_i: S_i'}_{i \in I} & \red & \Delta \cat s: S_k \cat \dual{s}: S_k' \ (k \in I)
+\end{array}
+\]
 \end{definition}
 
-%Theorem 7.3 in M\&Y
+%The following result %Theorem 7.3 in M\&Y
+We state the type soundness results of \HOp (which implies 
+the type soundness of the sub-calculi, \HO, \sessp and $\CAL^{-\mathsf{sh}}$). 
+
 \begin{theorem}[Type Soundness]\label{t:sr}%\rm
 	\begin{enumerate}[1.]
-		\item	(Subject Congruence) Suppose $\Gamma; \es; \Delta \proves P \hastype \Proc$.
-			Then $P \scong P'$ implies $\Gamma; \es; \Delta \proves P' \hastype \Proc$.
+	\item	(Subject Congruence) Suppose $\Gamma; \es; \Delta \proves P \hastype \Proc$.
+		Then $P \scong P'$ implies $\Gamma; \es; \Delta \proves P' \hastype \Proc$.
 
-		\item	(Subject Reduction) Suppose $\Gamma; \es; \Delta \proves P \hastype \Proc$
+	\item	(Subject Reduction) Suppose $\Gamma; \es; \Delta \proves P \hastype \Proc$
 			with
-			well-typed $\Delta$. 
+			$\Delta$ balanced. 
 			Then $P \red P'$ implies $\Gamma; \es; \Delta'  \proves P' \hastype \Proc$
 			and $\Delta = \Delta'$ or $\Delta \red \Delta'$
-with $\Delta'$ well-formed. 
+with $\Delta'$ balanced. 
 	\end{enumerate}
 \end{theorem}
