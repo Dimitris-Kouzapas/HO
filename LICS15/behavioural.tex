@@ -1,4 +1,18 @@
+\noi This section develops a theory for observational equivalence over
+session typed \HOp processes. The theory follows the principles
+laid by the previous work of the authors
+\cite{DBLP:conf/forte/KouzapasYH11,KY13,dkphdthesis}.
+We introduce three different bisimulations and prove 
+all of them coinside with typed, reduction-closed,
+barbed congruence. 
+
 \subsection{Labelled Transition Semantics}\label{ss:lts}
+\paragraph{Labelles}
+\noi We define a labelled transition relation (LTR) over
+untyped processes. Later with the environment transition semantics, 
+we can define a typed transition relation which represents 
+how a process may interact with a process in its enviroment. The interaction
+is defined on action $\ell$:
 \[
 \begin{array}{l}
 		\ell	\bnfis   \tau 
@@ -8,11 +22,50 @@
 			\bnfbar \bactbra{n}{l} 
 \end{array}
 \]
+\noi The internal action is defined on label $\tau$.
+Action $\news{\tilde{m}} \bactout{n}{V}$ denotes the sending of value $V$ over channel $n$ with
+names $\tilde{m}$ being restricted.
+Dually the action for the reception of values is 
+$\bactinp{n}{V}$.
+We also defined actions for selecting a label $l$, 
+$\bactsel{n}{l}$ and branching on a label
+$n$, $\bactbra{s}{l}$.
+
+The dual action relation is the symmetric relation $\asymp$, that satisfies the rules:
 \[
 	\bactsel{n}{l} \asymp \bactbra{\dual{n}}{l}
 	\qquad
 	\news{\tilde{m}} \bactout{n}{V} \asymp \bactinp{\dual{n}}{V}
 \]
+Dual actions happen on subjects that are dual between them and carry the same
+object. Furthermore output action is dual with input action and 
+select action is dual with branch action.
+
+\paragraph{LTS over Untyped Processes}
+The labelled transition system, LTS, is defined in
+Fig.~\ref{fig:untyped_LTS}. The rules are standard 
+\cite{DBLP:conf/forte/KouzapasYH11,KY13,dkphdthesis}.
+A process with a send prefix can
+interact with the environment with a send action that carries a value
+$V$ as in rule $\ltsrule{Out}$.  Dually in rule $\ltsrule{In}$ a
+received prefixed process can observe a receive action of a value $V$.
+Select and branch prefixed processes observe the select and branch
+actions in rules $\ltsrule{Sel}$ and $\ltsrule{Bra}$ respectively.
+Rule $\ltsrule{Res}$ closes the LTS under the name creation operator
+provided that the restricted name does not occur free in the
+observable action. 
+Rule $\ltsrule{Alpha}$ closes the LTS
+under alpha-renaiming.
+If a restricted name occurs free in and an output
+action then the name is added as in the bound name list of the action
+and the continuation process performs scope opening as described in
+rule $\ltsrule{New}$.  
+Rule $\ltsrule{Tau}$ states that if two parallel processes can perform
+dual actions then the two actions can synchronise to observe an
+internal transition.  Rules $\ltsrule{Par${}_L$}$ 
+closes the LTS under the parallel operator provided that the observable
+action does not shared any bound names with the parallel processes.
+
 
 \begin{figure}[t]
 \[
@@ -78,7 +131,15 @@
 	\]
 We omit $\ltsrule{Par${}_R$}$. 
 	\caption{The Untyped (Early) Labelled Transition System \label{fig:untyped_LTS}}
+\Hline
 \end{figure}
+
+
+\paragraph{Characteristic Processes}
+We can use a session type to define the a {\em characteristic process}
+which is the simplest process which inhabits a 
+a given session type. 
+\dk{The characteristic processes are used to define the simple LTS.}
 
 \begin{definition}[Characteristic Process]\rm
 %	Let names $\tilde{k}$ and type $\tilde{C}$; then we define a {\em characteristic process}:
@@ -130,20 +191,22 @@ $\map{C}^u$ as:
 	\]
 \end{definition}
 
-\begin{proposition}\rm
-{\rm (1)} $\Gamma; \emptyset; \Delta \cat u:S \proves \map{S}^u \hastype \Proc$; and\\{\rm (2)} 
-$\Gamma \cat u:\chtype{S}; \emptyset; \Delta \proves \map{\chtype{S}}^u \hastype \Proc$
-\end{proposition}
-
-\begin{IEEEproof}
-	By induction on the definition $\map{S}^k$ and $\map{\chtype{S}}^k$.
-\end{IEEEproof}
-
-\begin{corollary}\rm
-	If $\Gamma; \emptyset; \Delta \proves \map{C}^{u} \hastype \Proc$
+\begin{proposition}[Characteristic Processes]\rm
+\label{pro:characteristic}
+\begin{enumerate}
+\item $\Gamma; \emptyset; \Delta \cat u:S \proves \map{S}^u \hastype \Proc$ 
+\item $\Gamma \cat u:\chtype{S}; \emptyset; \Delta \proves \map{\chtype{S}}^u \hastype \Proc$
+\item 	If $\Gamma; \emptyset; \Delta \proves \map{C}^{u} \hastype \Proc$
 	then
 	$\Gamma; \es; \Delta \proves u \hastype C$.
-\end{corollary}
+\end{enumerate}
+\end{proposition}
+\begin{IEEEproof}
+	By induction on the definition $\map{S}^u$, $\map{\chtype{S}}^u$
+and $\map{C}^u$. 
+\end{IEEEproof}
+
+
 
 \begin{figure}[t]
 	\[
