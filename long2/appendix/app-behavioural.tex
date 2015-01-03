@@ -1438,71 +1438,75 @@ We first show that every external action $\ell$ is {\em definable}.
 \subsection{$\tau$-inertness}
 \label{app:sub_tau_inert}
 
-Session types are inherintly $\tau$-inert.
-
 \begin{lemma}[$\tau$-inertness]\rm
-	\label{lem:tau_inert}
-	Let $P$ an $\HOp$ process
-	and $\Gamma; \emptyset; \Delta \proves P \hastype \Proc$
-	\begin{enumerate}
-		\item	If $P \red P'$ then $\horel{\Gamma}{\Delta}{P}{\wb}{\Delta'}{P'}$.
-		\item	If $P \red^* P'$ then $\horel{\Gamma}{\Delta}{P}{\wb}{\Delta'}{P'}$.
-	\end{enumerate}
+	Let $P$ an $\HOp^{\minussh}$ process
+	and $\Gamma; \emptyset; \Delta \proves P \hastype \Proc$.
+%	\begin{enumerate}
+%		\item
+	If $\horel{\Gamma}{\Delta}{P}{\by{\tau}}{\Delta'}{P'}$ then $\horel{\Gamma}{\Delta}{P}{\wb}{\Delta'}{P'}$.
+%		\item	If $P \red^* P'$ then $\Gamma; \es; \Delta \wb \Delta' \proves P \wb P'$.
+%	\end{enumerate}
 \end{lemma}
 
 \begin{proof}
-	The proof for part 1 is done by induction on the structure of $\red$.
+	\noi The proof is done by induction on the structure of $\by{\tau}$
+	which coincides the reduction $\red$.
 
-	Basic step:
+	\noi Basic step:
 
-	\Case{$P = \bout{s}{V} P_1 \Par \binp{\dual{s}}{X} P_2$}
+	\noi - Case: $P = \bout{s}{V} P_1 \Par \binp{\dual{s}}{X} P_2$:
+%
 	\[
-		\bout{s}{V} P_1 \Par \binp{\dual{s}}{X} P_2 \red P_1 \Par P_2
+		\horel{\Gamma}{\Delta}{\bout{s}{V} P_1 \Par \binp{\dual{s}}{X} P_2}{\by{\tau}}{\Delta'}{P_1 \Par P_2}
 	\]
-	The proof follows from the fact that we can only observe a $\tau$
+%
+	\noi The proof follows from the fact that we can only observe a $\tau$
 	action on typed process
 	$\Gamma; \emptyset; \Delta \proves P \hastype \Proc$.
 	Actions $\bactout{s}{V}$ and $\bactinp{\dual{s}}{V}$
 	are forbiden by the LTS for typed environments.
 
-	It is easy to conclude then that ${\Gamma}{\Delta}{P}{\wb}{\Delta'}{P'}$.
+	\noi It is easy to conclude then that $\horel{\Gamma}{\Delta}{P}{\wb}{\Delta'}{P'}$.
 
-	\Case{$P = \bsel{s}{l} P_1 \Par \bbra{\dual{s}}{l_i: P_i}_{i \in I}$}
+	\noi - Case: $P = \bsel{s}{l} P_1 \Par \bbra{\dual{s}}{l_i: P_i}_{i \in I}$
 
-	Similar arguments as the previous case.
+	\noi Similar arguments as the previous case.
 
-	Induction hypothesis:
-	If $P_1 \red P_2$ then
-	$\horel{\Gamma_1}{\Delta_1}{P_1}{\wb}{\Delta_2}{P_2}$.
+	\noi Induction hypothesis:
 
-	Induction Step:
+	\noi If $P_1 \red P_2$ then $\horel{\Gamma_1}{\Delta_1}{P_1}{\wb}{\Delta_2}{P_2}$.
 
-	\Case{$P = \news{s} P_1$}
+	\noi Induction Step:
+
+	\noi - Case: $P = \news{s} P_1$
+%
 	\[
-		\news{s}{P_1} \red \news{s} P_2
+		\horel{\Gamma}{\Delta}{\news{s}{P_1}}{\by{\tau}}{\Delta'}{\news{s} P_2}
 	\]
-	From the induction hypothesis and the fact that bisimulation is a congruence
+%
+	\noi From the induction hypothesis and the fact that bisimulation is a congruence
 	we get that $\horel{\Gamma}{\Delta}{P}{\wb}{\Delta'}{P'}$.
 
-	\Case{$P = P_1 \Par P_3$}
-
+	\noi - Case: $P = P_1 \Par P_3$
+%
 	\[
-		P_1 \Par P_3 \red P_2 \Par P_3
+		\horel{\Gamma}{\Delta}{P_1 \Par P_3}{\hby{\tau}}{\Delta'}{P_2 \Par P_3}
 	\]
-	From the induction hypothesis and the fact that bisimulation is a congruence
+%
+	\noi From the induction hypothesis and the fact that bisimulation is a congruence
 	we get that $\horel{\Gamma}{\Delta}{P}{\wb}{\Delta'}{P'}$.
 
-	\Case{$P \scong P_1$}
+	\noi - Case: $P \scong P_1$
 
 	From the induction hypothesis and the facts that bisimulation is a congruence
 	and structural congruence preserves $\wb$
 	we get that $\horel{\Gamma}{\Delta}{P}{\wb}{\Delta'}{P'}$.
 
 
-	The proof for part two is an induction on the length of $\red^*$.
-	The basic step is trivial and the inductive step
-	deploys part 1 of this lemma and the fact that bisimulation is
-	transitive to conclude.
+%	The proof for part two is an induction on the length of $\red^*$.
+%	The basic step is trivial and the inductive step
+%	deploys part 1 of this lemma and the fact that bisimulation is
+%	transitive to conclude.
 %	We can now conclude that
 %	$P \wbc P'$ because $P \wbc P''$ and $P'' \wbc P'$.
 	\qed
