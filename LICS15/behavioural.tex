@@ -262,39 +262,48 @@ a mapping $\omapchar{U}$ in Fig.~\ref{fig:char}.
 and $\mapchar{C}{u}$. 
 \end{IEEEproof}
 
-\subsection{Labelled Transition System for Environments}
+\subsection{Two Labelled Transition Systems for Environments}
 \label{ss:elts}
 \noi 
-We define the labelled transition relation 
+We define the two labelled transition relations between 
+a triple of environemnts. The first one is standard 
+linear LTS; and the second one is more {\em efficient} since 
+it limits the input labels based on the notion of triggers and 
+characteristic processes. 
+
+\myparagraph{Transition System (1)}
+We define the first transition system 
 between a triple of environemnts, written by  
 $(\Gamma, \Lambda_1, \Delta_1) \by{\ell} (\Gamma, \Lambda_2, \Delta_2)$, 
 in Fig.~\ref{fig:envLTS}.
 
-Rules $\eltsrule{SRecv}$ and $\eltsrule{ShRecv}$ describe
-the input action $\bactinp{n}{V}$ ($n$ session or shared channel respectively)
-on the type tuple $(\Gamma, \Lambda, \Delta)$.
-We require the value $V$ has the same type as name $n$. Furthermore
-we expect the resulting type tuple to contain the values that
-consist value $V$.
-
-Rule $\eltsrule{SOut}$ states the conditions for observing action
-$\news{\tilde{m}} \bactout{s}{V}$ on a type tuple $(\Gamma, \Lambda, \Delta)$. 
-The session environment $\Delta$ of the type tuple should include
-a type for $s$ that is prefixed on the output type of type $U$.
-Furthermore the dual channel $\dual{s}$ should not be
+Rules $\eltsrule{SRv}$ and $\eltsrule{ShRv}$ describe the input action
+$\bactinp{n}{V}$ ($n$ session or shared channel respectively) on the
+type tuple $(\Gamma, \Lambda, \Delta)$.  We require the value $V$ has
+the same type as name $s$ and $a$, respectively.  Furthermore we
+expect the resulting type tuple to contain the values that consist
+with value $V$. Note that the condition $\dual{s} \notin \dom{\Delta}$
+in $\eltsrule{SRv}$ ensures that 
+the dual channel $\dual{s}$ should not be
 present in the session environment, since if it was present
 the only communication that could take place is the interaction
-between the two endpoints.
-Under the latter conditions the type tuple may output any
-value $V$ that is typed under a subset of $\Delta$ and
-the session environment that types the restricted names
-$\tilde{m}$. Scope extrusion of session names in $\tilde{m}$ requires
+between the two endpoints (using $\eltsrule{Tau}$ below).
+
+Rule $\eltsrule{SOut}$ states the conditions for observing action
+$\news{\tilde{m}} \bactout{s}{V}$ on a type tuple $(\Gamma, \Lambda, \Delta\cdot \AT{s}{S})$. 
+The session environment $\Delta$ with $\AT{s}{S}$ 
+should include the session environment of sent value $V$, 
+{\em excluding} the session environments of the name $n_j$ 
+in $\tilde{m}$ which restrict the scope of value $V$. 
+Similarly the linear variable environment 
+$\Lambda'$ of $V$ should be included in $\Lambda$. 
+Scope extrusion of session names in $\tilde{m}$ requires
 that the dual endpoints of $\tilde{m}$ appear in
-the resulting session environment. Similarly for shared names
-in $\tilde{m}$ that are extruted.
+the resulting session environment. 
 All free values used for typing $V$ are subtracted from the
 resulting type tuple. Also the prefix of session $s$ is consumed
 by the action.
+
 Similarly, an output on a shared name is described
 with rule $\eltsrule{ShOut}$ where we require a shared name
 is typed with $\chtype{U}$. The requirements for
@@ -308,7 +317,7 @@ environment and furthermore the action labels are present
 in the type.
 Hidden transitions do not change the session environment
 or they follow the reduction on the session
-environment (Definition~\ref{def:ses_red}) as we can see in rule
+environment (Definition~\ref{def:ses_red}) as seen in rule
 $\eltsrule{Tau}$.
 
 %A second environment LTS, denoted $\hby{\ell}$,
@@ -469,6 +478,13 @@ $\eltsrule{Tau}$.
 \Hline
 \end{figure}
 
+\smallskip
+
+\myparagraph{Efficient Transition System}
+
+
+
+
 \begin{definition}[Typed Transition Systems]\label{d:tlts}\rm
 We write: 
 \begin{enumerate}
@@ -492,11 +508,7 @@ and $\Gamma; \emptyset; \Delta_i \proves P_i \hastype \Proc$
 %
 We extend to $\By{}$ (resp.\ $\Hby{}$) and $\By{\hat{\ell}}$ (resp.\ $\Hby{\hat{\ell}}$) in the standard way.
 \end{definition}
-%For notational convenience we write: 
-%$\horel{\Gamma}{\Delta_1}{P_1}{\by{\ell}}{\Delta_2}{P_2}$
-%instead of $\Gamma; \emptyset; \Delta_1 \proves P_1 \hastype \Proc \by{\ell} \Gamma; \emptyset; \Delta_2 \proves P_2 \hastype \Proc$.
-%We extend to $\By{}$ (resp.\ $\Hby{}$) and $\By{\hat{\ell}}$ (resp.\ $\Hby{\hat{\ell}}$) in the standard way.
-
+\smallskip
 
 
 \begin{lemma}[Invariant]\label{l:invariant}
