@@ -31,6 +31,9 @@ $\bactinp{n}{V}$.
 We also defined actions for selecting a label $l$, 
 $\bactsel{n}{l}$ and branching on a label
 $n$, $\bactbra{s}{l}$.
+We use $\fn{\ell}$ and $\bn{\ell}$ to denote 
+a set of free and bound names in $\ell$. 
+%and set $\mathsf{n}(\ell)=\bn{\ell}\cup \fn{\ell}$. 
 
 The dual action relation is the symmetric relation $\asymp$, that satisfies the rules:
 \[
@@ -137,145 +140,17 @@ internal transition.  Rules $\ltsrule{Par${}_L$}$
 closes the LTS under the parallel operator provided that the observable
 action does not shared any bound names with the parallel processes.
 
-\smallskip
-
-\subsection{Characteristic Processes}\label{ss:char}
-\noi We can use a session type to define the a {\em characteristic process}
-which is the smallest process which inhabits a given session type. 
-Later we define the bisimulation ($\fwb$) which only needs to check 
-a characteristic process as an input. This reduces an amount of 
-checking $V$ in $\bactout{n}{V}$  and $\bactinp{n}{V}$ in the labelled 
-input and output transtions. 
-
-\smallskip
-
-
-\begin{definition}[Characteristic Process]\rm
-%	Let names $\tilde{k}$ and type $\tilde{C}$; then we define a {\em characteristic process}:
-%	$\map{\tilde{C}}^{\tilde{k}}$:
-%	\[
-%		\map{C_1, \cdots, C_n}^{k_1 \cdots k_n} = \map{C_1}^{k_1} \Par \dots \Par \map{C_n}^{k_n}		
-%	\]
-%	with 
-We define a {\em characteristic process}
-of type $C$ with name $u$ written by 
-$\mapchar{C}{u}$ together with  
-a mapping $\omapchar{U}$ in Fig.~\ref{fig:char}. 
-\end{definition}
-
-\smallskip
-
-\begin{figure}[t]
-	\[
-	\begin{array}{c}
-		\begin{array}{rclcl}
-			\mapchar{\btinp{U} S}{u} &\!\!\defeq\!\!
-& \binp{u}{x} (\mapchar{S}{u} \Par \mapchar{U}{x})
-			\\
-			\mapchar{\btout{U} S}{u} &\!\!\defeq\!\!& \bout{u}{\omapchar{U}} \mapchar{S}{u} %& & n \textrm{ fresh}
-			\\
-			\mapchar{\btsel{l : S}}{u} &\!\!\defeq\!\!& \bsel{u}{l} \mapchar{S}{u}
-			\\
-			\mapchar{\btbra{l_i: S_i}_{i \in I}}{u} &\!\!\defeq\!\!& \bbra{u}{l_i: \mapchar{S_i}{u}}_{i \in I}
-			\\
-		\mapchar{\tvar{t}}{u} \!\defeq\! \varp{X}_{\vart{t}}
-& & 
-			\mapchar{\trec{t}{S}}{u} \!\defeq\! \recp{X_{\vart{t}}}{\mapchar{S}{u}}
-			\\
-			\mapchar{\tinact}{u} &\!\!\defeq\!\!& \inact
-			\\
-\mapchar{\chtype{S}}{u} \!\defeq\! \bout{u}{\omapchar{S}} \inact & & 
-\quad\mapchar{\chtype{L}}{u} \!\defeq\! \bout{u}{\omapchar{L}} \inact
-			\\
-\mapchar{\shot{C}}{u} & \!\!\defeq\!\! & \mapchar{\lhot{C}}{u} \!\defeq\! 
-\appl{u}{\omapchar{C}}
-\end{array}
-\\
-\Hline
-\\
-		\begin{array}{rcll}
-\omapchar{S} &\!\!\defeq\!\!& s & (s \textrm{ fresh})
-			\\
-\omapchar{\chtype{S}} \defeq \omapchar{\chtype{L}} &\!\!\defeq\!\!& a & 
-(a \textrm{ fresh})\quad\quad
-			\\
-			\omapchar{\shot{C}} \defeq \omapchar{\lhot{C}} &\!\!\defeq\!\!& \abs{x}{\mapchar{C}{x}}
-		\end{array}
-	\end{array}
-	\]
-\caption{Characteristic Processes\label{fig:char}}
-\Hline
-\end{figure}
-
-%	\[
-%	\begin{array}{rcllrcll}
-%		\map{\btinp{C} S}^{u} &=& \binp{u}{x} (\map{S}^{u} \Par 
-%\map{{C}}^{x})\\
-%		\map{\btout{C} S}^{u} &=& \bout{u}{n} \map{S}^{u} & n\textrm{ fresh}
-%		\\
-%		\map{\btsel{l : S}}^{u} &=& \bsel{u}{l} \map{S}^{u}
-%\\
-%		\map{\btbra{l_i: S_i}_{i \in I}}^{u} &=& \bbra{k}{l_i: \map{S_i}^{u}}_{i \in I}
-%		\\
-
-%		\map{\tvar{t}}^{u} &=& \rvar{X}_{\tvar{t}}
-%\\
-%		\map{\trec{t}{S}}^{u} &=& \mu \rvar{X}_{\tvar{t}}.\map{S}^{u}
-%		\\
-
-%		\map{\btout{\lhot{C}} S}^{u} &=& \bout{u}{\abs{x}{\map{C}^{x}}} \map{S}^u
-%\\
-%		\map{\btinp{\lhot{C}} S}^{u} &=& \binp{u}{x} (\map{S}^u \Par \appl{x}{n}) & {n}\textrm{ fresh}
-%		\\
-%		\map{\btout{\shot{C}} S}^{u} &=& \bout{u}{\abs{x}{\map{C}^{x}}}
-%\map{S}^u \\
-%		\map{\btinp{\shot{C}} S}^{u} &=& \binp{u}{x} (\map{S}^u \Par \appl{x}{n}) & n\textrm{ fresh}
-%		\\
-
-%%		\map{\btinp{\chtype{S}} S}^{k} &=& \binp{k}{x} (\map{S}^k \Par \map{\chtype{S}}^y)
-%%		&&
-%%		\map{\btout{\chtype{S}} S}^{k} &=& \bout{k}{a} \map{S}^k  & a\textrm{ fresh}
-%%		\\
-%		\map{\tinact}^{u} &=& \inact
-%\\
-%		\map{\chtype{S}}^{u} &=& \bout{u}{s} \inact &s\textrm{ fresh}
-%\\
-%		\map{\chtype{\lhot{C}}}^{u} &=& \bout{u}{\abs{x} \map{C}^{x}} \inact
-%		\\
-%		\map{\chtype{\shot{C}}}^{u} &=& \bout{u}{\abs{x} \map{C}^{x}} \inact
-%	\end{array}
-%	\]
-%\end{definition}
-
-\begin{proposition}[Characteristic Processes]\rm
-\label{pro:characteristic}
-\begin{enumerate}
-\item $\Gamma; \emptyset; \Delta \cat u:S \proves \mapchar{S}{u} \hastype \Proc$ 
-\item $\Gamma \cat u:\chtype{S}; \emptyset; \Delta \proves \mapchar{\chtype{S}}{u} \hastype \Proc$
-\item 	If $\Gamma; \emptyset; \Delta \proves \mapchar{C}{u} \hastype \Proc$
-	then
-	$\Gamma; \es; \Delta \proves u \hastype C$.
-\end{enumerate}
-\end{proposition}
-\begin{IEEEproof}
-	By induction on $\mapchar{S}{u}$, $\mapchar{\chtype{S}}{u}$
-and $\mapchar{C}{u}$. 
-\end{IEEEproof}
-
-\subsection{Two Labelled Transition Systems for Environments}
+\subsection{Environment Labelled Transition System}
 \label{ss:elts}
 \noi 
-We define the two labelled transition relations between 
-a triple of environemnts. The first one is standard 
-linear LTS; and the second one is more {\em efficient} since 
-it limits the input labels based on the notion of triggers and 
-characteristic processes. 
-
-\myparagraph{Transition System (1)}
-We define the first transition system 
-between a triple of environemnts, written by  
+We define a labelled transition relations between 
+a triple of environemnts, 
+written by  
 $(\Gamma, \Lambda_1, \Delta_1) \by{\ell} (\Gamma, \Lambda_2, \Delta_2)$, 
-in Fig.~\ref{fig:envLTS}.
+in Fig.~\ref{fig:envLTS}, 
+as the extension of the transition systems
+in \cite{DBLP:conf/forte/KouzapasYH11,KY13,dkphdthesis} 
+to the higher-order sessions. 
 
 Rules $\eltsrule{SRv}$ and $\eltsrule{ShRv}$ describe the input action
 $\bactinp{n}{V}$ ($n$ session or shared channel respectively) on the
@@ -299,7 +174,8 @@ Similarly the linear variable environment
 $\Lambda'$ of $V$ should be included in $\Lambda$. 
 Scope extrusion of session names in $\tilde{m}$ requires
 that the dual endpoints of $\tilde{m}$ appear in
-the resulting session environment. 
+the resulting session environment. Similarly for shared 
+names in $\tilde{m}$ that are extruted.  
 All free values used for typing $V$ are subtracted from the
 resulting type tuple. Also the prefix of session $s$ is consumed
 by the action.
@@ -478,56 +354,61 @@ $\eltsrule{Tau}$.
 \Hline
 \end{figure}
 
+Below we define the typed LTS combining 
+the LTS of processes and the LTS of environments. 
+
 \smallskip
-
-\myparagraph{Efficient Transition System}
-
-
-
 
 \begin{definition}[Typed Transition Systems]\label{d:tlts}\rm
-We write: 
-\begin{enumerate}
-\item 
+A {\em typed transition relation} is a typed relation
+%\begin{enumerate}
+%\item 
 $\horel{\Gamma}{\Delta_1}{P_1}{\by{\ell}}{\Delta_2}{P_2}$
 %$\Gamma; \emptyset; \Delta_1 \proves P_1 \hastype \Proc \by{\ell} \Gamma; \emptyset; \Delta_2 \proves P_2 \hastype \Proc$
-	whenever:
+	where:
 %
-$P_1 \by{\ell} P_2$, $(\Gamma, \emptyset, \Delta_1) \by{\ell} (\Gamma, \emptyset, \Delta_2)$ and $\Gamma; \emptyset; \Delta_i \proves P_i \hastype \Proc$ 
-($i=1,2$)
+(1) $P_1 \by{\ell} P_2$ and (2) 
+$(\Gamma, \emptyset, \Delta_1) \by{\ell} (\Gamma, \emptyset, \Delta_2)$ 
+with $\Gamma; \emptyset; \Delta_i \proves P_i \hastype \Proc$ 
+($i=1,2$). 
 %
-\item 
-$\horel{\Gamma}{\Delta_1}{P_1}{\hby{\ell}}{\Delta_2}{P_2}$
-%$\Gamma; \emptyset; \Delta_1 \proves P_1 \hastype \Proc \hby{\ell} \Gamma; \emptyset; \Delta_2 \proves P_2 \hastype \Proc$ 
-whenever: 
-$P_1 \by{\ell} P_2$, 
-$(\Gamma, \emptyset, \Delta_1) \hby{\ell} (\Gamma, \emptyset, \Delta_2)$, 
-and $\Gamma; \emptyset; \Delta_i \proves P_i \hastype \Proc$ 
-($i=1,2$)
-\end{enumerate}
+% Efficient 
+%\item 
+%$\horel{\Gamma}{\Delta_1}{P_1}{\hby{\ell}}{\Delta_2}{P_2}$
+%whenever: 
+%$P_1 \by{\ell} P_2$, 
+%$(\Gamma, \emptyset, \Delta_1) \hby{\ell} (\Gamma, \emptyset, \Delta_2)$, 
+%and $\Gamma; \emptyset; \Delta_i \proves P_i \hastype \Proc$ 
+%($i=1,2$)
+%\end{enumerate}
 %
-We extend to $\By{}$ (resp.\ $\Hby{}$) and $\By{\hat{\ell}}$ (resp.\ $\Hby{\hat{\ell}}$) in the standard way.
+We extend to $\By{}$ 
+%(resp.\ $\Hby{}$) and  
+and $\By{\hat{\ell}}$ 
+%(resp.\ $\Hby{\hat{\ell}}$) 
+where we write 
+$\By{}$ for the reflexive and
+transitive closure of $\by{}$, $\By{\ell}$ for the transitions
+$\By{}\by{\ell}\By{}$ and $\By{\hat{\ell}}$ for $\By{\ell}$ if
+$\ell\not = \tau$ otherwise $\By{}$. 
+%We extend to $\By{}$ 
+%(resp.\ $\Hby{}$) and  and 
+%$\By{\hat{\ell}}$ 
+%(resp.\ $\Hby{\hat{\ell}}$) 
+%in the standard way.
 \end{definition}
-\smallskip
-
-
-\begin{lemma}[Invariant]\label{l:invariant}
-	If $\horel{\Gamma}{\Delta_1}{P_1}{\hby{\ell}}{\Delta_2}{P_2}$
-	then $\horel{\Gamma}{\Delta_1}{P_1}{\by{\ell}}{\Delta_2}{P_2}$.
-\end{lemma}
-
-\begin{IEEEproof}
-	The proof is straightforward from the definition of rule $\eltsrule{RRcv}$.
-\end{IEEEproof}
-
 
 \subsection{Reduction-Closed Congruence}
 \label{subsec:rc}
-
-\begin{definition}[Session Environment Confluence]\rm
-	We denote $\Delta_1 \bistyp \Delta_2$ whenever $\exists \Delta$ such that
+\noi We define the typed relation and the contextual equivalence.  
+%\begin{definition}[Session Environment Confluence]\rm
+We begin with a definition of a notion of confluence
+over session environments $\Delta$:
+we denote $\Delta_1 \bistyp \Delta_2$ whenever $\exists \Delta$ such that
 	$\Delta_1 \red^\ast \Delta$ and $\Delta_2 \red^\ast \Delta$.
-\end{definition}
+%\end{definition}
+
+\smallskip 
 
 \begin{definition}[Typed Relation]\rm
 	We say that
@@ -540,10 +421,19 @@ $\horel{\Gamma}{\Delta_1}{P_1}{\ \Re \ }{\Delta_2}{P_2}$
 for the typed relation $\Gamma; \emptyset; \Delta_1 \proves P_1 \hastype \Proc\ \Re \ \Gamma; \emptyset; \Delta_2 \proves P_2 \hastype \Proc$.
 \end{definition}
 
+\smallskip 
+
+Type relations relate only programs (i.e.\ processes with no free variables) with
+well typed session environments and furthermore the two session environments
+are confluent.
+Next we define the {\em barb} \cite{MiSa92} 
+with respect to the judgement. 
+
+\smallskip 
 
 \begin{definition}[Barbs]\rm
-	Let $P$ closed.
-	\begin{enumerate}
+Let $P$ closed.
+\begin{enumerate}
 		\item	We write $P \barb{n}$ if $P \scong \newsp{\tilde{m}}{\bout{n}{V} P_2 \Par P_3}, n \notin \tilde{m}$.
 			We write $P \Barb{n}$ if $P \red^* \barb{n}$.
 
@@ -554,20 +444,34 @@ for the typed relation $\Gamma; \emptyset; \Delta_1 \proves P_1 \hastype \Proc\ 
 	\end{enumerate}
 \end{definition}
 
-\begin{definition}[Context]\rm
-	A context $\C$ is defined as:
-	\begin{tabular}{rl}
+\smallskip 
+
+A barb $\barb{n}$ is an observable on an output prefix with subject $n$.
+Similarly a weak barb $\Barb{n}$ is a barb after a number of reduction steps.
+Typed barbs $\barb{n}$ (resp.\ $\Barb{n}$)
+happen on typed processes $\Gamma; \emptyset; \Delta \proves P \hastype \Proc$
+where we require that the corresponding dual endpoint $\dual{n}$ is not present
+in the session type $\Delta$.
+
+To define a congruent relation, we introduce the context $\C$:\\  
+
+%\begin{definition}[Context]\rm
+%	A context $\C$ is defined as:
+\noi	\begin{tabular}{rl}
 	$\C$ $::=$ & $\hole \bnfbar \bout{u}{V} \C \bnfbar \binp{u}{x} \C
 \bnfbar \bout{u}{\lambda x.\C} P
 \bnfbar \news{n} \C$\\ 
              $\bnfbar$ & $\C \Par P \bnfbar P \Par \C 
-\bnfbar \bsel{u}{l} \C \bnfbar \bbra{u}{l_1:P_1,..,l_i:\C,..l_n:P_n}$
+\bnfbar \bsel{u}{l} \C \bnfbar \bbra{u}{l_1:P_1,..,l_i:\C,..l_n:P_n}$\\
 	\end{tabular}
 
-	Notation $\context{\C}{P}$ replaces $\hole$ in $\C$ with $P$.
-\end{definition}
+\noi Notation $\context{\C}{P}$ replaces $\hole$ in $\C$ with $P$.
+%\end{definition}
+
+The first behavioural relation we define is reduction-closed, barbed congruence \cite{HondaKYoshida95}. 
 
 \begin{definition}[Barbed Reduction-Closed Congruence]\rm
+\label{def:rc}
 	Typed relation
 	$\horel{\Gamma}{\Delta_1}{P_1}{\ \Re\ }{\Delta_2}{P_2}$
 	is a {\em barbed reduction-closed congruence} whenever:
@@ -591,9 +495,11 @@ and its symmetric case;
 	The largest such congruence is denoted with $\cong$.
 \end{definition}
 
-\subsection{Three Bisimulations}
+
+\subsection{Contextual Bisimulation: $\wbc$}
 \label{subsec:bisimulation}
-The second behavioural relation is contextual bisimulation:
+\noi The first bisimulation which we define 
+is the standard contextual bisimulation. 
 %
 \begin{definition}[Contextual Bisimulation]\rm
 A typed relation $\Re$ is {\em a contextual bisimulation} if
@@ -601,12 +507,12 @@ for all $\horel{\Gamma}{\Delta_1}{P_1}{\ \Re \ }{\Delta_2}{Q_1}$,
 	\begin{enumerate} 
 	\item	whenever 
 $\horel{\Gamma}{\Delta_1}{P_1}
-        {\by{\news{\tilde{m_1}} \bactout{n}{V}}}{\Delta_1'}{P_2}$,
-there exists $\horel{\Gamma}{\Delta_2}{Q_1}{\By{\news{\tilde{m_2}} \bactout{n}{W}}}{\Delta_2'}{Q_2}$ such that, 
+        {\by{\news{\tilde{m_1}} \bactout{n}{V_1}}}{\Delta_1'}{P_2}$,
+there exists $\horel{\Gamma}{\Delta_2}{Q_1}{\By{\news{\tilde{m_2}} \bactout{n}{V_2}}}{\Delta_2'}{Q_2}$ such that, 
 for all $R$ with $\fv{R}=x$:
-\[\horel{\Gamma}{\Delta_1''}{\newsp{\tilde{m_1}}{P_2 \Par R\subst{V}{x}}}
+\[\horel{\Gamma}{\Delta_1''}{\newsp{\tilde{m_1}}{P_2 \Par R\subst{V_1}{x}}}
 				{\ \Re\ }
-				{\Delta_2''}{\newsp{\tilde{m_2}}{Q_2 \Par R\subst{W}{x}}};\]  
+				{\Delta_2''}{\newsp{\tilde{m_2}}{Q_2 \Par R\subst{V_2}{x}}};\]  
 %\item	$\forall \news{\tilde{m_1}'} \bactout{n}{\tilde{m_1}}$ such that
 %			\[
 %				\horel{\Gamma}{\Delta_1}{P_1}{\by{\news{\tilde{m_1}'} \bactout{n}{\tilde{m_1}}}}{\Delta_1'}{P_2}
@@ -632,14 +538,188 @@ $\horel{\Gamma}{\Delta_2}{Q_1}{\By{\ell}}{\Delta_2'}{Q_2}$
 
                       \item	The symmetric cases of 1 and 2.                
 	\end{enumerate}
-	The Knaster Tarski theorem ensures that the largest contextual bisimulation exists,
-	it is called contextual bisimilarity and is denoted by $\wbc$.
+The Knaster Tarski theorem ensures that the largest contextual bisimulation exists, it is called contextual bisimilarity and is denoted by $\wbc$.
 \end{definition}
 
-The contextual bisimulation in the general case is a hard relation to be computed
-since it is universaly quantified over substituting processes. The next definition
-of a bisimulation relation avoids the universal quantifier over processes.
+The contextual bisimulation in the general case
+is a hard relation to compute due to: i) the universal
+quantifier over contexts in the output case;
+and ii) a higher order input prefix which can observe
+infinetely many different input actions (since
+infinetely many different processes can match
+the session type of an input prefix).
 
+\subsection{The HO Bisimulation: $\hwb$}\label{ss:hwb}
+\noi 
+To overcome the problem of $\wbc$, we introduce two 
+higher-order bisimulations. The first one is 
+is called the {\em higher-order bisimulation}. 
+We observe that 
+the output action case of $\wbc$ 
+can be equivalently be defined as follows:\\
+
+\noi whenever 
+$\horel{\Gamma}{\Delta_1}{P_1}{\hby{\news{\tilde{m_1}} \bactout{n}{V_1}}}{\Delta_1'}{P_2}$, there exits 
+$\horel{\Gamma}{\Delta_2}{Q_1}{\Hby{\news{\tilde{m_2}} \bactout{n}{V_2}}}{\Delta_2'}{Q_2}$ such that, for fresh $t,x,s$, 
+\[
+\begin{array}{lrlll}
+& \Gamma; \Delta''_1  \proves & 
+{\newsp{\tilde{m_1}}{P_2 \Par \hotrigger{t}{V_1}}}\\ 
+\Re & 
+\Delta''_2 \proves & {\newsp{\tilde{m_2}}{Q_2 \Par \hotrigger{t}{V_2}}}
+\end{array}
+\]
+%
+This is because we can observe an input on a fresh name $t$
+of any process $R$ such that $\set{x} = \fv{R}$, and the 
+reduction between $s$ and $\dual{s}$ is deterministic. 
+
+To formalise this idea, we introduce the following restricted 
+environment transition relation. 
+
+\begin{definition}
+
+\end{definition}
+
+
+
+
+
+
+
+
+\subsection{Characteristic Processes}\label{ss:char}
+\noi We can use a session type to define the a {\em characteristic process}
+which is the smallest process which inhabits a given session type. 
+Later we define the bisimulation ($\fwb$) which only needs to check 
+a characteristic process as an input. This reduces an amount of 
+checking $V$ in $\bactout{n}{V}$  and $\bactinp{n}{V}$ in the labelled 
+input and output transtions. 
+
+\smallskip
+
+
+\begin{definition}[Characteristic Process]\rm
+%	Let names $\tilde{k}$ and type $\tilde{C}$; then we define a {\em characteristic process}:
+%	$\map{\tilde{C}}^{\tilde{k}}$:
+%	\[
+%		\map{C_1, \cdots, C_n}^{k_1 \cdots k_n} = \map{C_1}^{k_1} \Par \dots \Par \map{C_n}^{k_n}		
+%	\]
+%	with 
+We define a {\em characteristic process}
+of type $C$ with name $u$ written by 
+$\mapchar{C}{u}$ together with  
+a mapping $\omapchar{U}$ in Fig.~\ref{fig:char}. 
+\end{definition}
+
+\smallskip
+
+\begin{figure}[t]
+	\[
+	\begin{array}{c}
+		\begin{array}{rclcl}
+			\mapchar{\btinp{U} S}{u} &\!\!\defeq\!\!
+& \binp{u}{x} (\mapchar{S}{u} \Par \mapchar{U}{x})
+			\\
+			\mapchar{\btout{U} S}{u} &\!\!\defeq\!\!& \bout{u}{\omapchar{U}} \mapchar{S}{u} %& & n \textrm{ fresh}
+			\\
+			\mapchar{\btsel{l : S}}{u} &\!\!\defeq\!\!& \bsel{u}{l} \mapchar{S}{u}
+			\\
+			\mapchar{\btbra{l_i: S_i}_{i \in I}}{u} &\!\!\defeq\!\!& \bbra{u}{l_i: \mapchar{S_i}{u}}_{i \in I}
+			\\
+		\mapchar{\tvar{t}}{u} \!\defeq\! \varp{X}_{\vart{t}}
+& & 
+			\mapchar{\trec{t}{S}}{u} \!\defeq\! \recp{X_{\vart{t}}}{\mapchar{S}{u}}
+			\\
+			\mapchar{\tinact}{u} &\!\!\defeq\!\!& \inact
+			\\
+\mapchar{\chtype{S}}{u} \!\defeq\! \bout{u}{\omapchar{S}} \inact & & 
+\quad\mapchar{\chtype{L}}{u} \!\defeq\! \bout{u}{\omapchar{L}} \inact
+			\\
+\mapchar{\shot{C}}{u} & \!\!\defeq\!\! & \mapchar{\lhot{C}}{u} \!\defeq\! 
+\appl{u}{\omapchar{C}}
+\end{array}
+\\
+\Hline
+\\
+		\begin{array}{rcll}
+\omapchar{S} &\!\!\defeq\!\!& s & (s \textrm{ fresh})
+			\\
+\omapchar{\chtype{S}} \defeq \omapchar{\chtype{L}} &\!\!\defeq\!\!& a & 
+(a \textrm{ fresh})\quad\quad
+			\\
+			\omapchar{\shot{C}} \defeq \omapchar{\lhot{C}} &\!\!\defeq\!\!& \abs{x}{\mapchar{C}{x}}
+		\end{array}
+	\end{array}
+	\]
+\caption{Characteristic Processes\label{fig:char}}
+\Hline
+\end{figure}
+
+%	\[
+%	\begin{array}{rcllrcll}
+%		\map{\btinp{C} S}^{u} &=& \binp{u}{x} (\map{S}^{u} \Par 
+%\map{{C}}^{x})\\
+%		\map{\btout{C} S}^{u} &=& \bout{u}{n} \map{S}^{u} & n\textrm{ fresh}
+%		\\
+%		\map{\btsel{l : S}}^{u} &=& \bsel{u}{l} \map{S}^{u}
+%\\
+%		\map{\btbra{l_i: S_i}_{i \in I}}^{u} &=& \bbra{k}{l_i: \map{S_i}^{u}}_{i \in I}
+%		\\
+
+%		\map{\tvar{t}}^{u} &=& \rvar{X}_{\tvar{t}}
+%\\
+%		\map{\trec{t}{S}}^{u} &=& \mu \rvar{X}_{\tvar{t}}.\map{S}^{u}
+%		\\
+
+%		\map{\btout{\lhot{C}} S}^{u} &=& \bout{u}{\abs{x}{\map{C}^{x}}} \map{S}^u
+%\\
+%		\map{\btinp{\lhot{C}} S}^{u} &=& \binp{u}{x} (\map{S}^u \Par \appl{x}{n}) & {n}\textrm{ fresh}
+%		\\
+%		\map{\btout{\shot{C}} S}^{u} &=& \bout{u}{\abs{x}{\map{C}^{x}}}
+%\map{S}^u \\
+%		\map{\btinp{\shot{C}} S}^{u} &=& \binp{u}{x} (\map{S}^u \Par \appl{x}{n}) & n\textrm{ fresh}
+%		\\
+
+%%		\map{\btinp{\chtype{S}} S}^{k} &=& \binp{k}{x} (\map{S}^k \Par \map{\chtype{S}}^y)
+%%		&&
+%%		\map{\btout{\chtype{S}} S}^{k} &=& \bout{k}{a} \map{S}^k  & a\textrm{ fresh}
+%%		\\
+%		\map{\tinact}^{u} &=& \inact
+%\\
+%		\map{\chtype{S}}^{u} &=& \bout{u}{s} \inact &s\textrm{ fresh}
+%\\
+%		\map{\chtype{\lhot{C}}}^{u} &=& \bout{u}{\abs{x} \map{C}^{x}} \inact
+%		\\
+%		\map{\chtype{\shot{C}}}^{u} &=& \bout{u}{\abs{x} \map{C}^{x}} \inact
+%	\end{array}
+%	\]
+%\end{definition}
+
+\begin{proposition}[Characteristic Processes]\rm
+\label{pro:characteristic}
+\begin{enumerate}
+\item $\Gamma; \emptyset; \Delta \cat u:S \proves \mapchar{S}{u} \hastype \Proc$ 
+\item $\Gamma \cat u:\chtype{S}; \emptyset; \Delta \proves \mapchar{\chtype{S}}{u} \hastype \Proc$
+\item 	If $\Gamma; \emptyset; \Delta \proves \mapchar{C}{u} \hastype \Proc$
+	then
+	$\Gamma; \es; \Delta \proves u \hastype C$.
+\end{enumerate}
+\end{proposition}
+\begin{IEEEproof}
+	By induction on $\mapchar{S}{u}$, $\mapchar{\chtype{S}}{u}$
+and $\mapchar{C}{u}$. 
+\end{IEEEproof}
+
+
+\begin{lemma}[Invariant]\label{l:invariant}
+	If $\horel{\Gamma}{\Delta_1}{P_1}{\hby{\ell}}{\Delta_2}{P_2}$
+	then $\horel{\Gamma}{\Delta_1}{P_1}{\by{\ell}}{\Delta_2}{P_2}$.
+\end{lemma}
+
+\begin{IEEEproof}
+	The proof is straightforward from the definition of rule $\eltsrule{RRcv}$.
+\end{IEEEproof}
 
 \begin{definition}[Higher-Order Bisimulation]\rm
 	\label{d:bisim}
