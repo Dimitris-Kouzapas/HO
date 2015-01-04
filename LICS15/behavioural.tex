@@ -6,10 +6,11 @@ We introduce three different bisimulations and prove
 all of them coinside with typed, reduction-closed,
 barbed congruence. 
 
-\subsection{Labelled Transition Semantics}\label{ss:lts}
+\subsection{Labelled Transition Semantics for Processes}\label{ss:lts}
 \myparagraph{Labelles}
 \noi We define a labelled transition relation (LTS) over
-untyped processes. Later with the environment transition semantics, 
+untyped processes. 
+Later with the environment transition semantics, 
 we can define a typed transition relation to formalise 
 how a process interacts with a process in its enviroment. The interaction
 is defined on action $\ell$:
@@ -110,8 +111,10 @@ We omit $\ltsrule{Par${}_R$}$.
 \Hline
 \end{figure}
 \myparagraph{LTS over Untyped Processes}
-The labelled transition system (LTS) over untyped processes is defined in
-Fig.~\ref{fig:untyped_LTS}. The rules are standard 
+The labelled transition system (LTS) over untyped processes, 
+written by $P_1 \by{\ell} P_2$,  is defined in
+Fig.~\ref{fig:untyped_LTS}. 
+The rules are standard 
 \cite{DBLP:conf/forte/KouzapasYH11,KY13,dkphdthesis}.
 A process with a send prefix can
 interact with the environment with a send action that carries a value
@@ -136,12 +139,13 @@ action does not shared any bound names with the parallel processes.
 
 \smallskip
 
-\myparagraph{Characteristic Processes}
-We can use a session type to define the a {\em characteristic process}
+\subsection{Characteristic Processes}\label{ss:char}
+\noi We can use a session type to define the a {\em characteristic process}
 which is the smallest process which inhabits a given session type. 
-Later we define the bisimulation ($\fwb$) which needs to check only 
+Later we define the bisimulation ($\fwb$) which only needs to check 
 a characteristic process as an input. This reduces an amount of 
-checking $V$ of in the input transtion. 
+checking $V$ in $\bactout{n}{V}$  and $\bactinp{n}{V}$ in the labelled 
+input and output transtions. 
 
 \smallskip
 
@@ -155,8 +159,11 @@ checking $V$ of in the input transtion.
 %	with 
 We define a {\em characteristic process}
 of type $C$ with name $u$ written by 
-$\mapchar{C}{u}$ in Fig.~\ref{fig:char}.
+$\mapchar{C}{u}$ together with  
+a mapping $\omapchar{U}$ in Fig.~\ref{fig:char}. 
 \end{definition}
+
+\smallskip
 
 \begin{figure}[t]
 	\[
@@ -243,21 +250,117 @@ $\mapchar{C}{u}$ in Fig.~\ref{fig:char}.
 \begin{proposition}[Characteristic Processes]\rm
 \label{pro:characteristic}
 \begin{enumerate}
-\item $\Gamma; \emptyset; \Delta \cat u:S \proves \map{S}^u \hastype \Proc$ 
-\item $\Gamma \cat u:\chtype{S}; \emptyset; \Delta \proves \map{\chtype{S}}^u \hastype \Proc$
-\item 	If $\Gamma; \emptyset; \Delta \proves \map{C}^{u} \hastype \Proc$
+\item $\Gamma; \emptyset; \Delta \cat u:S \proves \mapchar{S}{u} \hastype \Proc$ 
+\item $\Gamma \cat u:\chtype{S}; \emptyset; \Delta \proves \mapchar{\chtype{S}}{u} \hastype \Proc$
+\item 	If $\Gamma; \emptyset; \Delta \proves \mapchar{C}{u} \hastype \Proc$
 	then
 	$\Gamma; \es; \Delta \proves u \hastype C$.
 \end{enumerate}
 \end{proposition}
 \begin{IEEEproof}
-	By induction on the definition $\map{S}^u$, $\map{\chtype{S}}^u$
-and $\map{C}^u$. 
+	By induction on $\mapchar{S}{u}$, $\mapchar{\chtype{S}}{u}$
+and $\mapchar{C}{u}$. 
 \end{IEEEproof}
 
+\subsection{Labelled Transition System for Environments}
+\label{ss:elts}
+\noi 
+We define the labelled transition relation 
+between a triple of environemnts, written by  
+$(\Gamma, \Lambda_1, \Delta_1) \by{\ell} (\Gamma, \Lambda_2, \Delta_2)$, 
+in Fig.~\ref{fig:envLTS}.
+
+Rules $\eltsrule{SRecv}$ and $\eltsrule{ShRecv}$ describe
+the input action $\bactinp{n}{V}$ ($n$ session or shared channel respectively)
+on the type tuple $(\Gamma, \Lambda, \Delta)$.
+We require the value $V$ has the same type as name $n$. Furthermore
+we expect the resulting type tuple to contain the values that
+consist value $V$.
+
+Rule $\eltsrule{SOut}$ states the conditions for observing action
+$\news{\tilde{m}} \bactout{s}{V}$ on a type tuple $(\Gamma, \Lambda, \Delta)$. 
+The session environment $\Delta$ of the type tuple should include
+a type for $s$ that is prefixed on the output type of type $U$.
+Furthermore the dual channel $\dual{s}$ should not be
+present in the session environment, since if it was present
+the only communication that could take place is the interaction
+between the two endpoints.
+Under the latter conditions the type tuple may output any
+value $V$ that is typed under a subset of $\Delta$ and
+the session environment that types the restricted names
+$\tilde{m}$. Scope extrusion of session names in $\tilde{m}$ requires
+that the dual endpoints of $\tilde{m}$ appear in
+the resulting session environment. Similarly for shared names
+in $\tilde{m}$ that are extruted.
+All free values used for typing $V$ are subtracted from the
+resulting type tuple. Also the prefix of session $s$ is consumed
+by the action.
+Similarly, an output on a shared name is described
+with rule $\eltsrule{ShOut}$ where we require a shared name
+is typed with $\chtype{U}$. The requirements for
+the output $V$ are indentical with the requirements for
+rule $\eltsrule{SOut}$.
+
+Rules $\eltsrule{Sel}$ and $\eltsrule{Bra}$ describe actions for
+select and branch. The only requirements for both
+rules is that the dual endpoint is not present in the session
+environment and furthermore the action labels are present
+in the type.
+Hidden transitions do not change the session environment
+or they follow the reduction on the session
+environment (Definition~\ref{def:ses_red}) as we can see in rule
+$\eltsrule{Tau}$.
+
+%A second environment LTS, denoted $\hby{\ell}$,
+%is defined in the lower part of Figure~\ref{fig:envLTS}.
+%The definition substitutes rules
+%$\eltsrule{SRecv}$ and $\eltsrule{ShRecv}$
+%of relation $\by{\ell}$ with rule $\eltsrule{RRcv}$.
+%% the corresponding input cases
+%%of $\by{\ell}$ with the definitions of $\hby{\ell}$.
+%All other cases remain the same as the cases for
+%relation $\by{\ell}$.
+%Rule $\eltsrule{RRcv}$ restricts the higher-order input
+%in relation $\hby{\ell}$;
+%only characteristic processes and trigger processes
+%are allowed to be received on a higher-order input.
+%Names can still be received as in the definition of
+%the $\by{\ell}$ relation.
+%The conditions for input follow the conditions
+%for the $\by{\ell}$ definition.
 
 
 \begin{figure}[t]
+\[
+\begin{array}{lc}
+	\eltsrule{SRv}&\tree{
+			\dual{s} \notin \dom{\Delta} \quad \Gamma; \Lambda'; \Delta' \proves V \hastype U
+		}{
+			(\Gamma; \Lambda; \Delta \cat s: \btinp{U} S) \by{\bactinp{s}{V}} (\Gamma; \Lambda\cat\Lambda'; \Delta\cat\Delta' \cat s: S)
+		}
+		\\[8mm]
+		\eltsrule{ShRv}&\tree{
+			\Gamma; \es; \es \proves a \hastype \chtype{U}
+			\quad
+			\Gamma; \Lambda'; \Delta' \proves V \hastype U
+		}{
+			(\Gamma; \Lambda; \Delta) \by{\bactinp{a}{{V}}} (\Gamma; \Lambda\cat\Lambda'; \Delta\cat\Delta')
+		}
+%		\eltsrule{RRcv}&\tree {
+%\begin{array}{c}
+%(\Gamma_1; \Lambda_1; \Delta_1) \by{\bactinp{n}{V}} (\Gamma_2; \Lambda_2; \Delta_2)
+%\\
+%			\begin{array}{lll}
+%				 V  =  
+%(\abs{{x}}{\binp{t}{y} (\appl{y}{{x}})}
+% \vee  \abs{{x}}{\map{U}^{{x}}}  \vee m)  \textrm{ with } t \textrm{ fresh} 
+%			\end{array}
+%			\end{array}
+%		}{
+%			(\Gamma_1; \Lambda_1; \Delta_1) \hby{\bactinp{n}{V}} (\Gamma_2; \Lambda_1; \Delta_2)
+%		}
+	\end{array}
+	\]
 	\[
 	\begin{array}{l}
 		\eltsrule{SOut}\\
@@ -292,10 +395,7 @@ and $\map{C}^u$.
 			(\Gamma; \Lambda; \Delta \cat s: \btout{U} S) \by{\news{\tilde{m}} \bactout{s}{V}} (\Gamma \cat \Gamma'; \Lambda\backslash\Lambda';
 			(\Delta \cat s: S \cat \cup_j \Delta_j') \backslash \Delta')
 		}
-\end{array}
-\]
-\[
-\begin{array}{l}
+\\[6mm]
 \eltsrule{ShOut}\\
 \tree{
 		\begin{array}{lll}
@@ -331,21 +431,6 @@ and $\map{C}^u$.
 \]
 \[
 \begin{array}{lc}
-	\eltsrule{SRv}&\tree{
-			\dual{s} \notin \dom{\Delta} \quad \Gamma; \Lambda'; \Delta' \proves V \hastype U
-		}{
-			(\Gamma; \Lambda; \Delta \cat s: \btinp{U} S) \by{\bactinp{s}{V}} (\Gamma; \Lambda\cat\Lambda'; \Delta\cat\Delta' \cat s: S)
-		}
-		\\[8mm]
-		\eltsrule{ShRv}&\tree{
-			\Gamma; \es; \es \proves a \hastype \chtype{U}
-			\quad
-			\Gamma; \Lambda'; \Delta' \proves V \hastype U
-		}{
-			(\Gamma; \Lambda; \Delta) \by{\bactinp{a}{{V}}} (\Gamma; \Lambda\cat\Lambda'; \Delta\cat\Delta')
-		}
-		\\[8mm]
-
 		\eltsrule{Sel}&\tree{
 			\dual{s} \notin \dom{\Delta} \quad j \in I
 		}{
@@ -363,23 +448,25 @@ and $\map{C}^u$.
 		}{
 			(\Gamma; \Lambda; \Delta_1) \by{\tau} (\Gamma; \Lambda; \Delta_2)
 		}
-\\[6mm]
-		\eltsrule{RRcv}&\tree {
-\begin{array}{c}
-(\Gamma_1; \Lambda_1; \Delta_1) \by{\bactinp{n}{V}} (\Gamma_2; \Lambda_2; \Delta_2)
-\\
-			\begin{array}{lll}
-				 V  =  
-(\abs{{x}}{\binp{t}{y} (\appl{y}{{x}})}
- \vee  \abs{{x}}{\map{U}^{{x}}}  \vee m)  \textrm{ with } t \textrm{ fresh} 
-			\end{array}
-			\end{array}
-		}{
-			(\Gamma_1; \Lambda_1; \Delta_1) \hby{\bactinp{n}{V}} (\Gamma_2; \Lambda_1; \Delta_2)
-		}
+%\\[6mm]
+%		\eltsrule{RRcv}&\tree {
+%\begin{array}{c}
+%(\Gamma_1; \Lambda_1; \Delta_1) \by{\bactinp{n}{V}} (\Gamma_2; \Lambda_2; \Delta_2)
+%\\
+%			\begin{array}{lll}
+%				 V  =  
+%(\abs{{x}}{\binp{t}{y} (\appl{y}{{x}})}
+% \vee  \abs{{x}}{\map{U}^{{x}}}  \vee m)  \textrm{ with } t \textrm{ fresh} 
+%			\end{array}
+%			\end{array}
+%		}{
+%			(\Gamma_1; \Lambda_1; \Delta_1) \hby{\bactinp{n}{V}} (\Gamma_2; \Lambda_1; \Delta_2)
+%		}
 	\end{array}
 	\]
-	\caption{Labelled Transition Semantics for Typed Environments \label{fig:envLTS}}
+\caption{Labelled Transition Semantics for Typed Environments 
+\label{fig:envLTS}}
+\Hline
 \end{figure}
 
 \begin{definition}[Typed Transition Systems]\label{d:tlts}\rm
