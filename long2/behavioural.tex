@@ -71,10 +71,10 @@ Rule $\ltsrule{Tau}$ states that if two parallel processes can perform dual acti
 then the two actions  can synchronise to observe an internal transition. 
 Finally rule $\ltsrule{Alpha}$ closes  the LTS under alpha-renaiming.
 
-\subsection{Characteristic Processes}
-We can use a session type to define the a {\em characteristic process}
-which is the simplest process that is typed
-under the given session type.
+%\subsection{Characteristic Processes}
+%We can use a session type to define the a {\em characteristic process}
+%which is the simplest process that is typed
+%under the given session type.
 %
 \begin{definition}[Characteristic Process]\rm
 	\label{def:characteristic_process}
@@ -434,9 +434,127 @@ The second behavioural relation is contextual bisimulation:
 	it is called contextual bisimilarity and is denoted by $\wbc$.
 \end{definition}
 
-The contextual bisimulation in the general case is a hard relation to be computed
-since it is universaly quantified over substituting processes. The next definition
-of a bisimulation relation avoids the universal quantifier over processes.
+The contextual bisimulation in the general case
+is a hard relation to compute due to: i) the universal
+quantifier over contexts in the output case;
+and ii) the set of higher order input actions
+on an input prefix is infite since infinetely
+many processes can match the session type of
+the input prefix.
+
+To define a easy to compute bisimulation we need to
+avoid the universal quantifier on theb output case and
+restrict the set of input processes on an input
+prefix.
+
+Towards this direction we define the {\em characteristic
+process} which is the {\em simplest} process that
+satisfies a session type.
+
+For example the simplest process that satisfies the type
+$\btinp{\shot{S_1}} \btout{S_2} \tinact$ is
+$\binp{u}{x} (\bout{u}{s_2} \tinact \Par \appl{x}{s_1})$.
+
+We formalise the last intuition in the next definition.
+%
+\begin{definition}[Characteristic Process]\rm
+	\label{def:characteristic_process}
+	\noi Let name $u$ and type $U$; then we define a {\em characteristic process}:
+	$\mapchar{U}{k}$ as:
+%
+	\[
+	\begin{array}{cc}
+		\begin{array}{rclcl}
+			\mapchar{\btinp{U} S}{u} &\defeq& \binp{u}{x} (\mapchar{S}{u} \Par \mapchar{U}{x})
+			\\
+			\mapchar{\btout{U} S}{u} &\defeq& \bout{u}{\omapchar{U}} \mapchar{S}{u} %& & n \textrm{ fresh}
+			\\
+			\mapchar{\btsel{l : S}}{u} &\defeq& \bsel{u}{l} \mapchar{S}{u}
+			\\
+			\mapchar{\btbra{l_i: S_i}_{i \in I}}{u} &\defeq& \bbra{u}{l_i: \mapchar{S_i}{u}}_{i \in I}
+			\\
+			\mapchar{\tvar{t}}{u} &\defeq& \varp{X}_{\vart{t}}
+			\\
+			\mapchar{\trec{t}{S}}{u} &\defeq& \recp{X_{\vart{t}}}{\mapchar{S}{u}}
+			\\
+			\mapchar{\tinact}{u} &\defeq& \inact
+			\\
+		\end{array}
+		&
+		\begin{array}{rcrclcl}
+			&&\mapchar{\chtype{S}}{u} &\defeq& \bout{u}{\omapchar{S}} \inact
+			\\
+			&&\mapchar{\chtype{L}}{u} &\defeq& \bout{u}{\omapchar{L}} \inact
+			\\
+			\mapchar{\shot{C}}{x} &\defeq& \mapchar{\lhot{C}}{x} &\defeq& \appl{x}{\omapchar{C}}
+			\\
+			\\
+			&&\omapchar{S} &\defeq& s && s \textrm{ fresh}
+			\\
+			\omapchar{\chtype{S}} &\defeq& \omapchar{\chtype{L}} &\defeq& a && a \textrm{ fresh}
+			\\
+			\omapchar{\shot{C}} &\defeq& \omapchar{\lhot{C}} &\defeq& \abs{x}{\mapchar{C}{x}}
+		\end{array}
+	\end{array}
+	\]
+\end{definition}
+
+\begin{proposition}\rm
+$ $
+	\begin{itemize}
+		\item	$\Gamma; \emptyset; \Delta \cat u:S \proves \mapchar{S}{u} \hastype \Proc$
+		\item	$U = \chtype{S}$ or $U = \chtype{L}$ implies $\Gamma \cat u:U; \emptyset; \Delta \proves \mapchar{U}{u} \hastype \Proc$
+	\end{itemize}
+\end{proposition}
+
+\begin{proof}
+	By induction on the definition of $\mapchar{S}{u}$ and $\mapchar{U}{u}$.
+\end{proof}
+
+\begin{corollary}\rm
+	If $\Gamma; \emptyset; \Delta \proves \mapchar{C}{u} \hastype \Proc$
+	then
+	$\Gamma; \es; \Delta \proves u \hastype C$.
+\end{corollary}
+
+The aim is to use the characteristic process as a basis for
+restricting the input action on processes so we can define
+a bisimulation relation that does not suffer from infitely
+many input abstractions.
+
+Following the characteristing process intuition it turns out
+the usage of a characteristic process
+alone as an input set for the input prefix of a process
+is not enough to define bisimulation.
+
+Consider typed processes:
+%
+\begin{eqnarray*}
+	\Gamma; \es; \Delta s: \btinp{\shot{\btinp{C} \tinact}} \tinact \proves \binp{s}{x} (\appl{x}{s_1} \Par \appl{x}{s_2})\\
+	\Gamma; \es; \Delta s: \btinp{\shot{\btinp{C} \tinact}} \tinact \proves \binp{s}{x} (\appl{x}{s_1} \Par \binp{s_2}{y} \inact)
+\end{eqnarray*}
+%
+In the restricted input setting both process can input the
+characteristic abstraction $\abs{x}{\binp{x}{y}} \inact$
+to get
+%
+\begin{eqnarray*}
+	\Gamma; \es; \Delta \proves \binp{s_1}{y} \inact \Par \binp{s_2}{y} \inact\\
+	\Gamma; \es; \Delta \proves \binp{s_1}{y} \inact \Par \binp{s_2}{y} \inact
+\end{eqnarray*}
+%
+with both process being obviously bisimilar.
+%
+But the former process are not contextualy bisimimilar since
+for numerous other input process they can be distinguished,
+i.e.~input $\abs{x} \bout{a}{b} \btinp{x}{y} \inact$.
+
+To solve this problem we introduce the trigger input.
+\dk{Put intuition about trigger input}
+
+%The contextual bisimulation in the general case is a hard relation to be computed
+%since it is universaly quantified over substituting processes. The next definition
+%of a bisimulation relation avoids the universal quantifier over processes.
 
 \begin{definition}[Higher-Order Bisimulation]\rm
 	\label{def:HO_bisim}
