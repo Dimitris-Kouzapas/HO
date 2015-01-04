@@ -7,11 +7,11 @@ all of them coinside with typed, reduction-closed,
 barbed congruence. 
 
 \subsection{Labelled Transition Semantics}\label{ss:lts}
-\paragraph{Labelles}
-\noi We define a labelled transition relation (LTR) over
+\myparagraph{Labelles}
+\noi We define a labelled transition relation (LTS) over
 untyped processes. Later with the environment transition semantics, 
-we can define a typed transition relation which represents 
-how a process may interact with a process in its enviroment. The interaction
+we can define a typed transition relation to formalise 
+how a process interacts with a process in its enviroment. The interaction
 is defined on action $\ell$:
 \[
 \begin{array}{l}
@@ -41,31 +41,7 @@ Dual actions happen on subjects that are dual between them and carry the same
 object. Furthermore output action is dual with input action and 
 select action is dual with branch action.
 
-\paragraph{LTS over Untyped Processes}
-The labelled transition system, LTS, is defined in
-Fig.~\ref{fig:untyped_LTS}. The rules are standard 
-\cite{DBLP:conf/forte/KouzapasYH11,KY13,dkphdthesis}.
-A process with a send prefix can
-interact with the environment with a send action that carries a value
-$V$ as in rule $\ltsrule{Out}$.  Dually in rule $\ltsrule{In}$ a
-received prefixed process can observe a receive action of a value $V$.
-Select and branch prefixed processes observe the select and branch
-actions in rules $\ltsrule{Sel}$ and $\ltsrule{Bra}$ respectively.
-Rule $\ltsrule{Res}$ closes the LTS under the name creation operator
-provided that the restricted name does not occur free in the
-observable action. 
-Rule $\ltsrule{Alpha}$ closes the LTS
-under alpha-renaiming.
-If a restricted name occurs free in and an output
-action then the name is added as in the bound name list of the action
-and the continuation process performs scope opening as described in
-rule $\ltsrule{New}$.  
-Rule $\ltsrule{Tau}$ states that if two parallel processes can perform
-dual actions then the two actions can synchronise to observe an
-internal transition.  Rules $\ltsrule{Par${}_L$}$ 
-closes the LTS under the parallel operator provided that the observable
-action does not shared any bound names with the parallel processes.
-
+\smallskip
 
 \begin{figure}[t]
 \[
@@ -84,17 +60,17 @@ action does not shared any bound names with the parallel processes.
 \ltsrule{Bra}\ \bbra{s}{l_i:P_i}_{i \in I} \by{\bactbra{s}{l_j}} P_j
 \quad (j\in I)
 \\[3mm]
- \ltsrule{Res}	\tree{
-			P \by{\ell} P' \quad n \notin \fn{\ell}
-		}{
-			\news{n} P \by{\ell} \news{n} P' 
-		}
-&
 \ltsrule{Alpha}
 		\tree{
 			P \scong_\alpha Q \quad Q\by{\ell} P'
 		}{
 			P \by{\ell} P'
+		}
+&
+ \ltsrule{Res}	\tree{
+			P \by{\ell} P' \quad n \notin \fn{\ell}
+		}{
+			\news{n} P \by{\ell} \news{n} P' 
 		}
 \end{array}
 \]
@@ -133,13 +109,42 @@ We omit $\ltsrule{Par${}_R$}$.
 	\caption{The Untyped (Early) Labelled Transition System \label{fig:untyped_LTS}}
 \Hline
 \end{figure}
+\myparagraph{LTS over Untyped Processes}
+The labelled transition system (LTS) over untyped processes is defined in
+Fig.~\ref{fig:untyped_LTS}. The rules are standard 
+\cite{DBLP:conf/forte/KouzapasYH11,KY13,dkphdthesis}.
+A process with a send prefix can
+interact with the environment with a send action that carries a value
+$V$ as in rule $\ltsrule{Out}$.  Dually in rule $\ltsrule{In}$ a
+received prefixed process can observe a receive action of a value $V$.
+Select and branch prefixed processes observe the select and branch
+actions in rules $\ltsrule{Sel}$ and $\ltsrule{Bra}$ respectively.
+Rule $\ltsrule{Alpha}$ closes the LTS
+under alpha-renaiming.
+Rule $\ltsrule{Res}$ closes the LTS under the name creation operator
+provided that the restricted name does not occur free in the
+observable action. 
+If a restricted name occurs free in and an output
+action then the name is added as in the bound name list of the action
+and the continuation process performs scope opening as described in
+rule $\ltsrule{New}$.  
+Rule $\ltsrule{Tau}$ states that if two parallel processes can perform
+dual actions then the two actions can synchronise to observe an
+internal transition.  Rules $\ltsrule{Par${}_L$}$ 
+closes the LTS under the parallel operator provided that the observable
+action does not shared any bound names with the parallel processes.
 
+\smallskip
 
-\paragraph{Characteristic Processes}
+\myparagraph{Characteristic Processes}
 We can use a session type to define the a {\em characteristic process}
-which is the simplest process which inhabits a 
-a given session type. 
-\dk{The characteristic processes are used to define the simple LTS.}
+which is the smallest process which inhabits a given session type. 
+Later we define the bisimulation ($\fwb$) which needs to check only 
+a characteristic process as an input. This reduces an amount of 
+checking $V$ of in the input transtion. 
+
+\smallskip
+
 
 \begin{definition}[Characteristic Process]\rm
 %	Let names $\tilde{k}$ and type $\tilde{C}$; then we define a {\em characteristic process}:
@@ -148,48 +153,92 @@ a given session type.
 %		\map{C_1, \cdots, C_n}^{k_1 \cdots k_n} = \map{C_1}^{k_1} \Par \dots \Par \map{C_n}^{k_n}		
 %	\]
 %	with 
-We define a {\em characteristic process}:
+We define a {\em characteristic process}
 of type $C$ with name $u$ written by 
-$\map{C}^u$ as:
+$\mapchar{C}{u}$ in Fig.~\ref{fig:char}.
+\end{definition}
+
+\begin{figure}[t]
 	\[
-	\begin{array}{rcllrcll}
-		\map{\btinp{C} S}^{u} &=& \binp{u}{x} (\map{S}^{u} \Par 
-\map{{C}}^{x})\\
-		\map{\btout{C} S}^{u} &=& \bout{u}{n} \map{S}^{u} & n\textrm{ fresh}
-		\\
-		\map{\btsel{l : S}}^{u} &=& \bsel{u}{l} \map{S}^{u}
+	\begin{array}{c}
+		\begin{array}{rclcl}
+			\mapchar{\btinp{U} S}{u} &\!\!\defeq\!\!
+& \binp{u}{x} (\mapchar{S}{u} \Par \mapchar{U}{x})
+			\\
+			\mapchar{\btout{U} S}{u} &\!\!\defeq\!\!& \bout{u}{\omapchar{U}} \mapchar{S}{u} %& & n \textrm{ fresh}
+			\\
+			\mapchar{\btsel{l : S}}{u} &\!\!\defeq\!\!& \bsel{u}{l} \mapchar{S}{u}
+			\\
+			\mapchar{\btbra{l_i: S_i}_{i \in I}}{u} &\!\!\defeq\!\!& \bbra{u}{l_i: \mapchar{S_i}{u}}_{i \in I}
+			\\
+		\mapchar{\tvar{t}}{u} \!\defeq\! \varp{X}_{\vart{t}}
+& & 
+			\mapchar{\trec{t}{S}}{u} \!\defeq\! \recp{X_{\vart{t}}}{\mapchar{S}{u}}
+			\\
+			\mapchar{\tinact}{u} &\!\!\defeq\!\!& \inact
+			\\
+\mapchar{\chtype{S}}{u} \!\defeq\! \bout{u}{\omapchar{S}} \inact & & 
+\quad\mapchar{\chtype{L}}{u} \!\defeq\! \bout{u}{\omapchar{L}} \inact
+			\\
+\mapchar{\shot{C}}{u} & \!\!\defeq\!\! & \mapchar{\lhot{C}}{u} \!\defeq\! 
+\appl{u}{\omapchar{C}}
+\end{array}
 \\
-		\map{\btbra{l_i: S_i}_{i \in I}}^{u} &=& \bbra{k}{l_i: \map{S_i}^{u}}_{i \in I}
-		\\
-
-		\map{\tvar{t}}^{u} &=& \rvar{X}_{\tvar{t}}
+\Hline
 \\
-		\map{\trec{t}{S}}^{u} &=& \mu \rvar{X}_{\tvar{t}}.\map{S}^{u}
-		\\
-
-		\map{\btout{\lhot{C}} S}^{u} &=& \bout{u}{\abs{x}{\map{C}^{x}}} \map{S}^u
-\\
-		\map{\btinp{\lhot{C}} S}^{u} &=& \binp{u}{x} (\map{S}^u \Par \appl{x}{n}) & {n}\textrm{ fresh}
-		\\
-		\map{\btout{\shot{C}} S}^{u} &=& \bout{u}{\abs{x}{\map{C}^{x}}}
-\map{S}^u \\
-		\map{\btinp{\shot{C}} S}^{u} &=& \binp{u}{x} (\map{S}^u \Par \appl{x}{n}) & n\textrm{ fresh}
-		\\
-
-%		\map{\btinp{\chtype{S}} S}^{k} &=& \binp{k}{x} (\map{S}^k \Par \map{\chtype{S}}^y)
-%		&&
-%		\map{\btout{\chtype{S}} S}^{k} &=& \bout{k}{a} \map{S}^k  & a\textrm{ fresh}
-%		\\
-		\map{\tinact}^{u} &=& \inact
-\\
-		\map{\chtype{S}}^{u} &=& \bout{u}{s} \inact &s\textrm{ fresh}
-\\
-		\map{\chtype{\lhot{C}}}^{u} &=& \bout{u}{\abs{x} \map{C}^{x}} \inact
-		\\
-		\map{\chtype{\shot{C}}}^{u} &=& \bout{u}{\abs{x} \map{C}^{x}} \inact
+		\begin{array}{rcll}
+\omapchar{S} &\!\!\defeq\!\!& s & (s \textrm{ fresh})
+			\\
+\omapchar{\chtype{S}} \defeq \omapchar{\chtype{L}} &\!\!\defeq\!\!& a & 
+(a \textrm{ fresh})\quad\quad
+			\\
+			\omapchar{\shot{C}} \defeq \omapchar{\lhot{C}} &\!\!\defeq\!\!& \abs{x}{\mapchar{C}{x}}
+		\end{array}
 	\end{array}
 	\]
-\end{definition}
+\caption{Characteristic Processes\label{fig:char}}
+\Hline
+\end{figure}
+
+%	\[
+%	\begin{array}{rcllrcll}
+%		\map{\btinp{C} S}^{u} &=& \binp{u}{x} (\map{S}^{u} \Par 
+%\map{{C}}^{x})\\
+%		\map{\btout{C} S}^{u} &=& \bout{u}{n} \map{S}^{u} & n\textrm{ fresh}
+%		\\
+%		\map{\btsel{l : S}}^{u} &=& \bsel{u}{l} \map{S}^{u}
+%\\
+%		\map{\btbra{l_i: S_i}_{i \in I}}^{u} &=& \bbra{k}{l_i: \map{S_i}^{u}}_{i \in I}
+%		\\
+
+%		\map{\tvar{t}}^{u} &=& \rvar{X}_{\tvar{t}}
+%\\
+%		\map{\trec{t}{S}}^{u} &=& \mu \rvar{X}_{\tvar{t}}.\map{S}^{u}
+%		\\
+
+%		\map{\btout{\lhot{C}} S}^{u} &=& \bout{u}{\abs{x}{\map{C}^{x}}} \map{S}^u
+%\\
+%		\map{\btinp{\lhot{C}} S}^{u} &=& \binp{u}{x} (\map{S}^u \Par \appl{x}{n}) & {n}\textrm{ fresh}
+%		\\
+%		\map{\btout{\shot{C}} S}^{u} &=& \bout{u}{\abs{x}{\map{C}^{x}}}
+%\map{S}^u \\
+%		\map{\btinp{\shot{C}} S}^{u} &=& \binp{u}{x} (\map{S}^u \Par \appl{x}{n}) & n\textrm{ fresh}
+%		\\
+
+%%		\map{\btinp{\chtype{S}} S}^{k} &=& \binp{k}{x} (\map{S}^k \Par \map{\chtype{S}}^y)
+%%		&&
+%%		\map{\btout{\chtype{S}} S}^{k} &=& \bout{k}{a} \map{S}^k  & a\textrm{ fresh}
+%%		\\
+%		\map{\tinact}^{u} &=& \inact
+%\\
+%		\map{\chtype{S}}^{u} &=& \bout{u}{s} \inact &s\textrm{ fresh}
+%\\
+%		\map{\chtype{\lhot{C}}}^{u} &=& \bout{u}{\abs{x} \map{C}^{x}} \inact
+%		\\
+%		\map{\chtype{\shot{C}}}^{u} &=& \bout{u}{\abs{x} \map{C}^{x}} \inact
+%	\end{array}
+%	\]
+%\end{definition}
 
 \begin{proposition}[Characteristic Processes]\rm
 \label{pro:characteristic}
