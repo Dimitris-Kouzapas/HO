@@ -143,7 +143,7 @@ action does not shared any bound names with the parallel processes.
 \subsection{Environment Labelled Transition System}
 \label{ss:elts}
 \noi 
-We define a labelled transition relations between 
+We define a labelled transition relation between 
 a triple of environemnts, 
 written by  
 $(\Gamma, \Lambda_1, \Delta_1) \by{\ell} (\Gamma, \Lambda_2, \Delta_2)$, 
@@ -437,10 +437,10 @@ Let $P$ closed.
 		\item	We write $P \barb{n}$ if $P \scong \newsp{\tilde{m}}{\bout{n}{V} P_2 \Par P_3}, n \notin \tilde{m}$.
 			We write $P \Barb{n}$ if $P \red^* \barb{n}$.
 
-		\item	We write $\Gamma; \emptyset; \Delta \proves P \barb{n}$ if
+		\item	We write $\Gamma; \Delta \proves P \barb{n}$ if
 			$\Gamma; \emptyset; \Delta \proves P \hastype \Proc$ with $P \barb{n}$ and $\dual{n} \notin \Delta$.
-			We write $\Gamma; \emptyset; \Delta \proves P \Barb{n}$ if $P \red^* P'$ and
-			$\Gamma; \emptyset; \Delta' \proves P' \barb{n}$.			
+			We write $\Gamma; \Delta \proves P \Barb{n}$ if $P \red^* P'$ and
+			$\Gamma; \Delta' \proves P' \barb{n}$.			
 	\end{enumerate}
 \end{definition}
 
@@ -485,7 +485,7 @@ and its symmetric case;
 
 %		\item
 %		\begin{itemize}
-			\item	If $\Gamma;\emptyset;\Delta \proves P_1 \barb{n}$ then $\Gamma;\emptyset;\Delta \proves P_2 \Barb{n}$; and its symmetric case; and 
+			\item	If $\Gamma;\Delta \proves P_1 \barb{n}$ then $\Gamma;\Delta \proves P_2 \Barb{n}$; and its symmetric case; and 
 
 %			\item	If $\Gamma;\emptyset;\Delta \proves P_2 \barb{s}$ then $\Gamma;\emptyset;\Delta \proves P_1 \Barb{s}$.
 %		\end{itemize}
@@ -496,12 +496,13 @@ and its symmetric case;
 \end{definition}
 
 
-\subsection{Contextual Bisimulation: $\wbc$}
+\subsection{Contextual Bisimulation ($\wbc$)}
 \label{subsec:bisimulation}
 \noi The first bisimulation which we define 
 is the standard contextual bisimulation. 
 %
 \begin{definition}[Contextual Bisimulation]\rm
+\label{def:wbc}
 A typed relation $\Re$ is {\em a contextual bisimulation} if
 for all $\horel{\Gamma}{\Delta_1}{P_1}{\ \Re \ }{\Delta_2}{Q_1}$, 
 	\begin{enumerate} 
@@ -542,19 +543,29 @@ The Knaster Tarski theorem ensures that the largest contextual bisimulation exis
 \end{definition}
 
 The contextual bisimulation in the general case
-is a hard relation to compute due to: i) the universal
+is hard to compute due to: (1) the universal
 quantifier over contexts in the output case;
-and ii) a higher order input prefix which can observe
+and (2) a higher order input prefix which can observe
 infinetely many different input actions (since
 infinetely many different processes can match
 the session type of an input prefix).
 
-\subsection{The HO Bisimulation: $\hwb$}\label{ss:hwb}
+\subsection{HO Bisimulation ($\hwb$) and FO Bisimulation ($\fwb$)}\label{ss:hwb}
 \noi 
-To overcome the problem of $\wbc$, we introduce two 
-higher-order bisimulations. The first one is 
-is called the {\em higher-order bisimulation}. 
-We observe that 
+To overcome the problem of $\wbc$, we introduce two bisimulations.
+Our aim to limit the input transition so that we can define a
+bisimulation relation for the output clause without observing
+infinitely many input actions on the same input prefix. Concretely we
+take the following two steps to propose more tractable bisimulations:
+\begin{enumerate}
+\item limit the input value $V$ in $n?\ENCan{V}$ in 
+rules $\eltsrule{SRv}$ and $\eltsrule{ShRv}$ in Fig.~\ref{fig:envLTS}; and 
+\item replace 
+the output action case (Clause 1) in Definition~\ref{def:wbc}) 
+by a more efficient closuer. 
+\end{enumerate}
+For 1), we first 
+observe that 
 the output action case of $\wbc$ 
 can be equivalently be defined as follows:\\
 
@@ -574,29 +585,37 @@ This is because we can observe an input on a fresh name $t$
 of any process $R$ such that $\set{x} = \fv{R}$, and the 
 reduction between $s$ and $\dual{s}$ is deterministic. 
 
-To formalise this idea, we introduce the following restricted 
-environment transition relation. 
-
-\begin{definition}
-
-\end{definition}
+On the other hand, only observing a trigger value and channel 
+is not enough is not sufficient since we equate too many processes
+(see Example  
 
 
 
+The reason will be explain in 
+Example~\ref{ex:motivation}. 
 
 
+\myparagraph{Characteristic Processes}
+\noi 
 
 
+uses even simpler values which are defined 
+using session types. This simple process, called a {\em characteristic process}, 
+inhabits a given session type. For example, consider 
+session type $\btinp{\shot{S_1}} \btout{S_2} \tinact$. 
+Then the simplest process inhabits this type at name $u$ is:
+\[
+\Gamma; \es; \Delta \cat s_1: S_1 \cat s_2: S_2 \cat u: \btinp{\shot{S_1}} \btout{S_2} \tinact \proves \binp{u}{x} (\bout{u}{s_2} \tinact \Par \appl{x}{s_1})
+\]
+We formalise this idea in the next definition. 
 
-\subsection{Characteristic Processes}\label{ss:char}
-\noi We can use a session type to define the a {\em characteristic process}
-which is the smallest process which inhabits a given session type. 
-Later we define the bisimulation ($\fwb$) which only needs to check 
-a characteristic process as an input. This reduces an amount of 
-checking $V$ in $\bactout{n}{V}$  and $\bactinp{n}{V}$ in the labelled 
-input and output transtions. 
+\smallskip  
+   
+%\subsection{Characteristic Processes}
+\label{ss:char}
 
 \smallskip
+
 
 
 \begin{definition}[Characteristic Process]\rm
