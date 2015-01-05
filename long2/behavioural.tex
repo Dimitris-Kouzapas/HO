@@ -449,33 +449,59 @@ the session type of an input prefix.
 %many processes can match the session type of
 %the input prefix.
 
-The output action case of the contextual bisimulation
-can be equivalently be defined as:
+%The output action case of the contextual bisimulation
+%can be equivalently be defined as:
 
-$\forall \news{\tilde{m_1}} \bactout{n}{V_1}$ such that
-%
-\[
-	\horel{\Gamma}{\Delta_1}{P_1}{\by{\news{\tilde{m_1}} \bactout{n}{V_1}}}{\Delta_1'}{P_2}
-\]
-%
-\noi implies that $\exists Q_2, \abs{x}{Q}$ such that
-%
-\[
-	\horel{\Gamma}{\Delta_2}{Q_1}{\By{\news{\tilde{m_2}} \bactout{n}{V_2}}}{\Delta_2'}{Q_2}
-\]
-%
-for fresh name $t$: %and $\forall R$ with $\set{x} = \fv{R}$, then
-%
-\[
-	\horel{\Gamma}{\Delta_1''}{\newsp{\tilde{m_1}}{P_2 \Par \hotrigger{t}{V_1}}}
-	{\ \Re\ }
-	{\Delta_2''}{\newsp{\tilde{m_2}}{Q_2 \Par \hotrigger{t}{V_1}}}
-\]
+Consider an alternative contextual bisimulation definition
 
+Typed relation 
+$\Re$ is a {\em contextual bisimulation} if whenever
+$\horel{\Gamma}{\Delta_1}{P_1}{\ \Re\ }{\Delta_2}{P_2}$ implies:
+\begin{enumerate}
+	\item	$\forall \news{\tilde{m_1}} \bactout{n}{V_1}$ such that
+		\[
+			\horel{\Gamma}{\Delta_1}{P_1}{\by{\news{\tilde{m_1}} \bactout{n}{V_1}}}{\Delta_1'}{P_2}
+		\]
+		implies that $\exists Q_2, \abs{x}{Q}$ such that
+		\[
+			\horel{\Gamma}{\Delta_2}{Q_1}{\By{\news{\tilde{m_2}} \bactout{n}{V_2}}}{\Delta_2'}{Q_2}
+		\]
+		for fresh name $t$: %and $\forall R$ with $\set{x} = \fv{R}$, then
+	%
+		\[
+			\mhorel{\Gamma}{\Delta_1''}{\newsp{\tilde{m_1}}{P_2 \Par \hotrigger{t}{V_1}}}
+			{\ \Re\ }
+			{\Delta_2''}{}{\newsp{\tilde{m_2}}{Q_2 \Par \hotrigger{t}{V_2}}}
+		\]
+	%
+	\item	$\forall \ell \not= \news{\tilde{m}} \bactout{n}{V}$
+		\[
+			\horel{\Gamma}{\Delta_1}{P_1}{\by{\ell}}{\Delta_1'}{P_2}
+		\]
+		implies that $\exists Q_2$ such that
+		\[
+			\horel{\Gamma}{\Delta_1}{Q_1}{\by{\ell}}{\Delta_2'}{Q_2}
+		\]
+		and
+		$\horel{\Gamma}{\Delta_1'}{P_2}{\ \Re\ }{\Delta_2'}{Q_2}$
+
+	\item	The symmetric cases of 1 and 2.
+\end{enumerate}
+%
+The largest such bisimulation is denoted by $\wb^{\mathsf{altr}}$.
+
+It is very easy to see that $\wbc\ =\ \wb^{\mathsf{altr}}$ because
+%
+\begin{eqnarray*}
+	\horel{\Gamma}{\Delta_1}{\newsp{\tilde{m_1}}{P_2 \Par \hotrigger{t}{V_1}}}{\by{ \bactinp{t}{\abs{z}{\binp{z}{x} R}} } \by{\tau}}{\Delta_1'}{\newsp{\tilde{m_1}}{P_2 \Par R\subst{V_1}{x}}}
+	\\
+	\horel{\Gamma}{\Delta_2}{\newsp{\tilde{m_2}}{Q_2 \Par \hotrigger{t}{V_2}}}{\by{ \bactinp{t}{\abs{z}{\binp{z}{x} R}} } \by{\tau}}{\Delta_2'}{\newsp{\tilde{m_1}}{Q_2 \Par R\subst{V_2}{x}}}
+\end{eqnarray*}
+%
 The latter definition is equivalent to the output
 case of the contextual bisimulation
 because we can observe an input on a fresh name $t$
-of any process $R$ such that $\set{x} = \fv{R}$.
+of any abstraction process $\abs{z}{\binp{z}{x} R}$ such that $\set{x} = \fv{R}$.
 
 To define an easy to compute bisimulation we still need to
 restrict the input actions that can happen on an input
@@ -622,13 +648,29 @@ In fact the input trigger can be observed on any input prefix
 of any type. For example processes:
 %
 \begin{eqnarray*}
-	\Gamma \cat m: C_1 \cat n: \chtype{\shot{C_1}}; \es; \Delta &\proves& \binp{n}{x} \appl{x}{m} \hastype \Proc
+	\Gamma; \es; \Delta \proves \newsp{s}{\binp{n}{x} \appl{x}{s} \Par \bout{\dual{s}}{\abs{x} P} \inact} \hastype \Proc
 	\\
-	\Gamma \cat m: C_2 \cat n: \chtype{\shot{C_2}}; \es; \Delta &\proves& \binp{n}{x} \appl{x}{m} \hastype \Proc
+	\Gamma; \es; \Delta \proves \newsp{s}{\binp{n}{x} \appl{x}{s} \Par \bout{\dual{s}}{\abs{x} Q} \inact}
 \end{eqnarray*}
 %
-\noi can both observe the trigger input 
-and shown to be bisimilar regardless of the type of $n$.
+\noi can both observe the trigger input and get
+\begin{eqnarray*}
+	\Gamma; \es; \Delta \proves \newsp{s}{\binp{t}{x} \appl{x}{s} \Par \bout{\dual{s}}{\abs{x} P} \inact} \hastype \Proc
+	\\
+	\Gamma; \es; \Delta \proves \newsp{s}{\binp{t}{x} \appl{x}{s} \Par \bout{\dual{s}}{\abs{x} Q} \inact} \hastype \Proc
+\end{eqnarray*}
+%
+\noi so they can be shown to be bisimilar,
+but for input $\abs{z}{\binp{z}{x} \appl{x}{m}}$
+the resulting processes:
+\begin{eqnarray*}
+	\Gamma; \es; \Delta \proves \newsp{s}{\binp{s}{x} \appl{x}{m} \Par \bout{\dual{s}}{\abs{x} P} \inact} \by{\tau} \Delta \proves P \subst{m}{x}
+	\\
+	\Gamma; \es; \Delta \proves \newsp{s}{\binp{s}{x} \appl{x}{m} \Par \bout{\dual{s}}{\abs{x} Q} \inact} \by{\tau} \Delta \proves Q \subst{m}{x}
+\end{eqnarray*}
+\noi are not bisimilar if $P \subst{m}{x}$ is not bisimilar with $Q \subst{m}{x}$.
+
+%and shown to be bisimilar regardless of the type of $n$.
 
 We formalise the restricted input action with the definition of a
 new environment transition relation
