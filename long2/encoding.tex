@@ -1,11 +1,20 @@
+% !TEX root = main.tex
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % ENCODING DEFINITION AND PROPERTIESs
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \section{Typed Encodings}\label{s:expr}
 
-We define the notion of \emph{typed encoding} that we
+We define the formal notion of \emph{encoding} that we
 shall use in the following section.
+Known definitions of encodings are given for untyped calculi,
+and are thus inappropriate for our purposes.
+To this end, 
+here we introduce abstract notions of calculi and encodings which are suited to our typed setting: they
+essentially extend known criteria for calculi comparison, with 
+additional information provided by types.
+
+
 %In general, we may define:
 
 \begin{definition}[Typed Calculus]\label{d:tcalculus}\rm
@@ -27,10 +36,10 @@ derive from the definition of \HOp.
 type system (as in \S\,\ref{s:types}),
 transition semantics (cf.~Def.~\ref{d:tlts}) 
 with labels $\ell$ (as in  \S\,\ref{ss:lts}).
-Furthermore, they use the Higher-Order Bisimulation
-(cf.~\ref{def:HO_bisim}) except in the case
-of the \sessp sub-calculus that uses the
-First-Order Bisimulation (cf.~\ref{def:FO_bisim})
+We use Higher-Order Bisimulation
+(cf.~Def.~\ref{def:HO_bisim}) except in the case
+of the sub-calculus  \sessp, which uses the
+First-Order Bisimulation (cf.~Def.~\ref{def:FO_bisim})
 
 In the following, when writing $\tyl{L}_i$ we tacitly
 assume the existence of appropriate 
@@ -67,7 +76,9 @@ semantics.
 
 \begin{definition}[Semantic Preserving Encoding]\rm
 	\label{def:ep}
-	We say that $\enco{\map{\cdot}, \mapt{\cdot}, \mapa{\cdot}}: \tyl{L}_1 \to \tyl{L}_2$ is a \emph{semantic preserving encoding}
+	We say that 
+	the typed encoding 
+	$\enco{\map{\cdot}, \mapt{\cdot}, \mapa{\cdot}}: \tyl{L}_1 \to \tyl{L}_2$ is \emph{semantic preserving}
 	if it satisfies the following properties:
 	
 	\begin{enumerate}[1.]
@@ -79,26 +90,26 @@ semantics.
 		\item \emph{Operational Correspondence}: If $\Gamma; \emptyset; \Delta \proves P \hastype \Proc$ then
 		\begin{enumerate}[-]
 			\item	Completeness: 
-				If  $\stytra{\Gamma}{\ell_1}{\Delta_1}{P}{\Delta'_1}{P'}$
+				If  $\stytra{\Gamma}{\ell_1}{\Delta}{P}{\Delta'}{P'}$
 				then \\ $\exists \ell_2$ s.t. 
-				$\wtytra{\mapt{\Gamma}}{\ell_2}{\mapt{\Delta_1}}{\map{P}}{\mapt{\Delta'_1}}{\map{P'}}$
+				$\wtytra{\mapt{\Gamma}}{\ell_2}{\mapt{\Delta}}{\map{P}}{\mapt{\Delta'}}{\map{P'}}$
 				and $\ell_2 = \mapa{\ell_1}$.
 
-			\item	Soundness:   
-				If  $\horel{\mapt{\Gamma}}{\mapt{\Delta_1}}{\map{P}}{\hby{\ell_1}}{\Delta''_1}{Q'}$
-				then $\exists \ell, P'$ s.t.  \\
-				(i)~$\stytra{\Gamma}{\ell}{\Delta_1}{P}{\Delta'_1}{P'}$,
-				(ii)~$\horel{\mapt{\Gamma}}{\Delta''_1}{Q'}{\Hby{\ell_2}}{\mapt{\Delta'_1}}{Q}$,
-				(iii)~$\Hby{\mapa{\ell}} = \hby{\ell_1} \Hby{\ell_2}$, and
-%				(iv)~$\ell_2 = \mapa{\ell_1}$, and
-				(iv)~$\horel{\mapt{\Gamma}}{\mapt{\Delta'_1}}{\map{P'}}{\wb_2}{\mapt{\Delta'_1}}{Q}$.
-			    				
 %			\item	Soundness:   
-%				If  $\wtytra{\mapt{\Gamma}}{\ell_2}{\mapt{\Delta_1}}{\map{P}}{\mapt{\Delta'_1}}{Q}$
-%				then $\exists \ell_1, P'$ s.t.  \\
-%				(i)~$\stytra{\Gamma}{\ell_1}{\Delta_1}{P}{\Delta'_1}{P'}$,
-%				(ii)~$\ell_2 = \mapa{\ell_1}$, and
-%				(iii)~$\horel{\mapt{\Gamma}}{\mapt{\Delta'_1}}{\map{P'}}{\wb_2}{\mapt{\Delta'_1}}{Q}$.
+%				If  $\horel{\mapt{\Gamma}}{\mapt{\Delta_1}}{\map{P}}{\hby{\ell_1}}{\Delta''_1}{Q'}$
+%				then $\exists \ell, P'$ s.t.  \\
+%				(i)~$\stytra{\Gamma}{\ell}{\Delta_1}{P}{\Delta'_1}{P'}$,
+%				(ii)~$\horel{\mapt{\Gamma}}{\Delta''_1}{Q'}{\Hby{\ell_2}}{\mapt{\Delta'_1}}{Q}$,
+%				(iii)~$\Hby{\mapa{\ell}} = \hby{\ell_1} \Hby{\ell_2}$, and
+%%				(iv)~$\ell_2 = \mapa{\ell_1}$, and
+%				(iv)~$\horel{\mapt{\Gamma}}{\mapt{\Delta'_1}}{\map{P'}}{\wb_2}{\mapt{\Delta'_1}}{Q}$.
+			    				
+			\item	Soundness:   
+				If  $\wtytra{\mapt{\Gamma}}{\ell_2}{\mapt{\Delta}}{\map{P}}{\mapt{\Delta'}}{Q}$
+				then $\exists \ell_1, P'$ s.t.  \\
+				(i)~$\stytra{\Gamma}{\ell_1}{\Delta}{P}{\Delta'}{P'}$,
+				(ii)~$\ell_2 = \mapa{\ell_1}$, and
+				(iii)~$\horel{\mapt{\Gamma}}{\mapt{\Delta'}}{\map{P'}}{\wb_2}{\mapt{\Delta'}}{Q}$.
 		\end{enumerate}
 		
 		\item	\emph{Full Abstraction:} \\
@@ -107,6 +118,16 @@ semantics.
 			$\horel{\mapt{\Gamma}}{\mapt{\Delta_1}}{\map{P}}{\wb_2}{\mapt{\Delta_2}}{\map{Q}}$.
 	\end{enumerate}
 \end{definition}
+
+The conditions are natural. Type preservation enables us to focus on encodings which retain the communication structures denoted by (session) types.
+Our definition of typed operational correspondence builds upon analogous definitions in the untyped setting (cf. Gorla's).
+We used labeled transitions, and so correspondences involve the mapping $\mapa{\cdot}$.
+Soundness ensures that typed behaviors in the source process are mimicked 
+by its associated encoding. Completeness concerns the opposite direction.
+We present generic definitions for soundness and completeness: in the encodability results presented below
+we will be able to give stronger statements for these criteria, tailored to the specifics of each encoding.
+Finally, we consider full abstraction as a criteria for typed encodings. This is sensible in our setting, as we are interested in transferring tractable reasoning techniques between different typed calculi.
+
 
 %\begin{remark}\label{r:multilabels}
 %	We  assume that if 
@@ -1511,16 +1532,16 @@ By transition induction. We consider parts (1) and (2) separately:
 	\noi and
 %
 	\begin{eqnarray}
-		\horel{\mapt{\Gamma}^{1}}{\mapt{\Delta_1''}^{1}}{R}{\hby{\tau}}{\mapt{\Delta_1'}^{1}}{\pmapp{P_2}{1}{f}}
+		\horel{\mapt{\Gamma}^{1}}{\mapt{\Delta_1''}^{1}}{R}{\shby{\tau}}{\mapt{\Delta_1'}^{1}}{\pmapp{P_2}{1}{f}}
 		\label{prop:HOp_to_HO:full_abs8}
 	\end{eqnarray}
 %
-	\noi With the last transition happening on a restricted session channel.
-	From \dk{Lemma~\ref{lem:tau_inert}} we can conclude that
-	\begin{eqnarray}
-		\horel{\mapt{\Gamma}^{1}}{\mapt{\Delta_1''}^{1}}{R}{\wb}{\mapt{\Delta_1'}^{1}}{\pmapp{P_2}{1}{f}}
-		\label{prop:HOp_to_HO:full_abs9}
-	\end{eqnarray}
+%	\noi With the last transition happening on a restricted session channel.
+%	From \dk{Lemma~\ref{lem:tau_inert}} we can conclude that
+%	\begin{eqnarray}
+%		\horel{\mapt{\Gamma}^{1}}{\mapt{\Delta_1''}^{1}}{R}{\wb}{\mapt{\Delta_1'}^{1}}{\pmapp{P_2}{1}{f}}
+%		\label{prop:HOp_to_HO:full_abs9}
+%	\end{eqnarray}
 %
 	\noi From the transition~\ref{prop:HOp_to_HO:full_abs7} and the definition of $\Re$ we imply
 %
@@ -1547,8 +1568,9 @@ By transition induction. We consider parts (1) and (2) separately:
 	\noi If we consider result~\ref{prop:HOp_to_HO:full_abs8} we get.
 %
 	\[
-		\horel{\mapt{\Gamma}^{1}}{\mapt{\Delta_1''}^{1}}{R}{\hby{\tau}\ \Re\ }{\mapt{\Delta_2'}^{1}}{\pmapp{Q_2}{1}{f}}
+		\horel{\mapt{\Gamma}^{1}}{\mapt{\Delta_1''}^{1}}{R}{\shby{\tau}\ \Re\ }{\mapt{\Delta_2'}^{1}}{\pmapp{Q_2}{1}{f}}
 	\]
+	where following Lemma~\ref{lem:up_to_session_transition} we show that $R$ is a bisimulation an up to $\SHby{}$.
 	\qed
 \end{proof}
 
