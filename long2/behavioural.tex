@@ -572,8 +572,8 @@ is not enough to define bisimulation.
 	Consider typed processes:
 	%
 	\begin{eqnarray*}
-		\Gamma; \es; \Delta s: \btinp{\shot{\btinp{C} \tinact}} \tinact \proves \binp{s}{x} (\appl{x}{s_1} \Par \appl{x}{s_2})\\
-		\Gamma; \es; \Delta s: \btinp{\shot{\btinp{C} \tinact}} \tinact \proves \binp{s}{x} (\appl{x}{s_1} \Par \binp{s_2}{y} \inact)
+		\Gamma; \es; \Delta \cat s: \btinp{\shot{\btinp{C} \tinact}} \tinact &\proves& \binp{s}{x} (\appl{x}{s_1} \Par \appl{x}{s_2})\\
+		\Gamma; \es; \Delta \cat s: \btinp{\shot{\btinp{C} \tinact}} \tinact &\proves& \binp{s}{x} (\appl{x}{s_1} \Par \binp{s_2}{y} \inact)
 	\end{eqnarray*}
 	%
 	In the restricted input setting both process can input the
@@ -589,15 +589,13 @@ is not enough to define bisimulation.
 	%
 	But the former process are not contextualy bisimimilar since
 	for numerous other input process they can be distinguished,
-	i.e.~input $\abs{x} \bout{a}{b} \btinp{x}{y} \inact$.
+	i.e.~input $\abs{x} \bout{a}{s_3} \btinp{x}{y} \inact$.
 \end{example}
 
 Allowing only the characteristic as an input action
 results in an over-discriminating bisimulation.
-
 To solve this problem we introduce the trigger abstraction
 that can be observed as the object of an input action.
-
 An input trigger is an abstraction prefix on a fresh name $t$
 that has the form:
 \[
@@ -624,12 +622,13 @@ In fact the input trigger can be observed on any input prefix
 of any type. For example processes:
 %
 \begin{eqnarray*}
-	\Gamma; \es; \Delta &\proves& \binp{n}{x} P \hastype \Proc
+	\Gamma \cat m: C_1; \es; \Delta \cat n: \btinp{\shot{C_1}} \tinact &\proves& \binp{n}{x} \appl{x}{m} \hastype \Proc
 	\\
-	\Gamma; \es; \Delta &\proves& \binp{n}{x} Q \hastype \Proc
+	\Gamma \cat m: C_2; \es; \Delta \cat n: \btinp{\shot{C_2}} \tinact &\proves& \binp{n}{x} \appl{x}{m} \hastype \Proc
 \end{eqnarray*}
 %
-\noi can both observe the trigger input regardless of the type of $x$.
+\noi can both observe the trigger input 
+and shown to be bisimilar regardless of the type of $n$.
 
 We formalise the restricted input action with the definition of a
 new environment transition relation
@@ -645,8 +644,8 @@ $\eltsrule{ShRv}$ with the rule:
 		(\Gamma_1; \Lambda_1; \Delta_1) \by{\bactinp{n}{V}} (\Gamma_2; \Lambda_2; \Delta_2)
 		\quad
 		\begin{array}{crcl}
-			& (V & \scong & \abs{x}{\binp{t}{X} \appl{X}{x}} \wedge t \textrm{ fresh}) \\
-			\vee & V &\scong& \omapchar{U}  \vee V = m
+			& (V & = & \abs{x}{\binp{t}{X} \appl{X}{x}} \wedge t \textrm{ fresh}) \\
+			\vee & (V & = &  \abs{x}{P} \wedge P \scong \mapchar{U}{x}) \vee V = m
 		\end{array}
 	}{
 		(\Gamma_1; \Lambda_1; \Delta_1) \hby{\bactinp{n}{V}} (\Gamma_2; \Lambda_1; \Delta_2)
