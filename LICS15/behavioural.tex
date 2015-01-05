@@ -562,11 +562,11 @@ take the following two steps to propose more tractable bisimulations:
 rules $\eltsrule{SRv}$ and $\eltsrule{ShRv}$ in Fig.~\ref{fig:envLTS}; and 
 \item replace 
 the output action case (Clause 1) in Definition~\ref{def:wbc}) 
-by a more efficient closuer. 
+by a more tactable closuer. 
 \end{enumerate}
 For 1), we first 
 observe that a substitution $R\subst{V1}{x}$ in 
-Clause 1) in Definition~\ref{def:wbc} is bisimular to the following process, with fresh $s$,  
+Clause 1) in Definition~\ref{def:wbc} is contextual bisimular to the following process, with fresh $s$,  
 \begin{equation}\label{eq:1}
 P = \newsp{s}{\appl{(\abs{z}{\binp{z}{x}{R}})}{s} \Par \bout{\dual{s}}{V_1} \inact}
 \end{equation}
@@ -589,7 +589,8 @@ $\bactinp{t}{\abs{z}{\binp{z}{x} R}}$ since:
 \wbc 
 \newsp{\tilde{m_1}}{P_2 \Par R\subst{V_1}{x}}
 \end{eqnarray*}
-The process in (\ref{eq:1}) is regarded as a {\em trigger process} which 
+The process in (\ref{eq:2}) is regarded 
+as a {\em trigger process} which 
 offers value $V_1$ at $t$ \cite{JeffreyR05}, so that we write as: 
 \begin{equation}\label{eq:3}
 		\htrigger{t}{V_1} \defeq \hotrigger{t}{V_1} 
@@ -747,7 +748,7 @@ and $\mapchar{C}{u}$.
 
 \smallskip 
 
-For the third bisimulation, called the {\em first-order bisimulation}, 
+For the first-order bisimulation, 
 denoted by $\fwb$, we limit the input transtion to 
 the characteristic process, $\lambda x.\mapchar{U}{x}$. 
 Hence with the same reasoninig as (\ref{eq:1})--(\ref{eq:3}), 
@@ -802,7 +803,7 @@ to define the following two bisimulations.
 \smallskip 
 
 \myparagraph{The Two Bisimulations} We now define 
-the second bisimulation. 
+the higher-order bisimulation. 
 
 \smallskip 
 
@@ -837,7 +838,7 @@ $\horel{\Gamma}{\Delta_2}{Q_1}{\Hby{\ell}}{\Delta_2'}{Q_2}$
 	it is called bisimilarity and is denoted by $\hwb$.
 \end{definition}
 
-The third bisimulation is given using the characteristic processes. 
+The first-order bisimulation is given using the characteristic processes. 
 
 \begin{definition}[First-Order Bisimulation]\rm
 \label{d:fwb}
@@ -870,6 +871,96 @@ Below we state the main theorem.
 	\label{the:coincidence}
 	Relations $\hwb, \fwb, \wbc$ and $\cong$ coincide.
 \end{theorem}
+
+\smallskip 
+
+Below we list the examples to justify rule \eltsrule{RRcv} in 
+Definition~\ref{def:rlts}. 
+
+\begin{example}[Restricted Typed Labelled Transition Relation]
+\label{ex:motivation}
+We show that either a characteristic process or 
+a trigger process alone as the observable input 
+is not enough to define meaningful bisimulations. 
+
+	Consider typed processes:
+	%
+	\begin{eqnarray}
+&& 	\Gamma; \es; \Delta \cat s: \btinp{\shot{\btinp{C} \tinact}} \tinact \proves \binp{s}{x} (\appl{x}{s_1} \Par \appl{x}{s_2})
+\label{eq:5}
+\\
+&&		\Gamma; \es; \Delta \cat s: \btinp{\shot{\btinp{C} \tinact}} \tinact \proves \binp{s}{x} (\appl{x}{s_1} \Par \binp{s_2}{y} \inact)\quad\quad
+\label{eq:6}
+	\end{eqnarray}
+	%
+	If the above processes input and substitute  
+	characteristic  process $\abs{z}{\binp{z}{y}} \inact$ into $x$, 
+then the processes (\ref{eq:5}) and (\ref{eq:6}) in become:
+	\begin{eqnarray*}
+		\Gamma; \es; \Delta \proves \binp{s_1}{y} \inact \Par \binp{s_2}{y} \inact
+	\end{eqnarray*}
+hence after inputting $\abs{x}{\binp{x}{y}} \inact$, 
+both process become contextual bisimilar. 
+The processes in (\ref{eq:5}) and (\ref{eq:6}) 
+are obviously {\em not} contextualy bisimimilar since
+for other numerous input processes, they can be distinguished. 
+For example, if we input $\abs{x} \bout{a}{s_3} \binp{x}{y} \inact$, 
+the results are {\em not} bisimilar. 
+
+Allowing only the characteristic as an input action
+results in an over-discriminating bisimulation.
+To solve this problem, we can use the trigger process. 
+The trigger process can distinguish 
+the processes in (\ref{eq:5}) and (\ref{eq:6}) 
+that is if a value of the trigger process is received, 
+we obtain:
+%
+\begin{eqnarray*}
+	\Gamma; \es; \Delta &\proves& \binp{t}{x} \appl{x}{s_1} \Par \binp{t}{x} \appl{x}{s_2}
+	\\
+	\Gamma; \es; \Delta &\proves& \binp{t}{x} \appl{x}{s_1} \Par \binp{s_2}{y} \inact
+\end{eqnarray*}
+\noi that can be distinguished by the freshness of name $t$.
+
+One question that arises here is whether the trigger input is enough
+to distinguish two processes, hence no need of 
+characteristic processes as the input. 
+This is not the case since the trigger input 
+alone also results in an over-discriminating bisimulation relation.
+In fact the input trigger can be observed on any input prefix
+of {\em any type}. For example, consider the following processes:
+%
+\begin{eqnarray*}
+	\Gamma; \es; \Delta \proves \newsp{s}{\binp{n}{x} \appl{x}{s} \Par \bout{\dual{s}}{\abs{x} P} \inact} \hastype \Proc
+	\\
+	\Gamma; \es; \Delta \proves \newsp{s}{\binp{n}{x} \appl{x}{s} \Par \bout{\dual{s}}{\abs{x} Q} \inact} \hastype \Proc
+\end{eqnarray*}
+%
+\noi if both processes input the trigger abstraction, we obtain: 
+\begin{eqnarray*}
+	\Gamma; \es; \Delta \proves \newsp{s}{\binp{t}{x} \appl{x}{s} \Par \bout{\dual{s}}{\abs{x} P} \inact} \hastype \Proc
+	\\
+	\Gamma; \es; \Delta \proves \newsp{s}{\binp{t}{x} \appl{x}{s} \Par \bout{\dual{s}}{\abs{x} Q} \inact} \hastype \Proc
+\end{eqnarray*}
+%
+\noi so they can be shown to be bisimilar. 
+However if they input $\abs{z}{\binp{z}{x} (\appl{x}{m})}$,  
+the resulting processes become:
+\begin{eqnarray*}
+	\Gamma; \es; \Delta \proves \newsp{s}{\binp{s}{x} \appl{x}{m} \Par \bout{\dual{s}}{\abs{x} P} \inact} \by{\tau} \Delta \proves P \subst{m}{x}
+	\\
+	\Gamma; \es; \Delta \proves \newsp{s}{\binp{s}{x} \appl{x}{m} \Par \bout{\dual{s}}{\abs{x} Q} \inact} \by{\tau} \Delta \proves Q \subst{m}{x}
+\end{eqnarray*}
+\noi which are not bisimilar if $P \subst{m}{x}$ is not with $Q \subst{m}{x}$.
+
+In conclusion, these examples offer the reason why we need to use both 
+$\abs{{x}}{\binp{t}{y} (\appl{y}{{x}})}$  and 
+$\abs{{x}}{\mapchar{U}{x}}$ as an input observation in \eltsrule{RRcv}.  
+\end{example}
+
+
+\smallskip 
+
 
 %\begin{IEEEproof}
 %	The full details of the proof are in Appendix~\ref{app:sub_coinc}.
