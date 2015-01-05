@@ -882,13 +882,35 @@ in abstraction and application.
 %formalized 
 %in \S\,\ref{ss:ffotoho}.
 %by $\encod{\cdot}{\cdot}{1}: \sessp^{-\mu} \to \HO$.
-
+Given a session environment
+$\Delta = \{n_1:S_1, \ldots, n_m:S_m\}$, 
+in the following definition
+we write
+$\tilde{S}_{\Delta}$ to stand for $S_1, \ldots, S_m$.
 \begin{definition}[\HOp into \HO]\rm
 	\label{def:enc:HOp_to_HO}
 	Let $f$ be a function from recursion variables to sequences of name variables.
 	Define the typed encoding $\enco{\map{\cdot}^{1}_f, \mapt{\cdot}^{1}, \mapa{\cdot}^{1}}: \HOp \to \HO$,
-	where mappings $\map{\cdot}^{2}$, $\mapt{\cdot}^{2}$, $\mapa{\cdot}^{2}$
+	where mappings $\map{\cdot}^{1}$, $\mapt{\cdot}^{1}$, $\mapa{\cdot}^{1}$
 	are as in Fig.~\ref{fig:enc:HOp_to_HO}.
+    We assume that the mapping $\mapt{\cdot}^{1}$ on types is extended to 
+    session environments $\Delta$
+  and
+    shared environments $\Gamma$ 
+      as follows:
+\[
+	\begin{array}{rcll}
+	    \mapt{\Delta \cat s: S}^{1} & =  & \mapt{\Delta}^{1} \cat s:\mapt{S}^{1} & \\
+		\mapt{\Gamma \cat u: \chtype{S}}^{1} & =  & \mapt{\Gamma}^{1} \cat u:\chtype{\mapt{S}^{1}} & \\
+		\mapt{\Gamma \cat u: \chtype{L}}^{1} & = &  \mapt{\Gamma}^{1} \cat u:\chtype{\dk{\mapt{L}^{1}}} & \\
+		\tmap{\Gamma \cat \varp{X}:\Delta}{1} & = & \tmap{\Gamma}{1} \cat x:\shot{(\tilde{S}_{\Delta}\,,\,S^*)} & 
+		\quad\text{(where $ 
+%		S^* = \trec{t}{\big((\tilde{S}_{\Delta}\,,\, \btinp{\vart{t}}\tinact)\big)}
+		S^* = \trec{t}{\btinp{\shot{(\tilde{S}_{\Delta}\,,\,\vart{t})}} \tinact}$)}
+	\end{array}
+\]
+%\end{remark}
+
 \end{definition}
 
 \begin{figure}[h!]
@@ -987,21 +1009,7 @@ in abstraction and application.
 	}
 \end{figure}
 
-\begin{remark}
-	Let $\Delta = \{n_1:S_1, \ldots, n_m:S_m\}$ be a session environment.
-	Write $\tilde{S}_{\Delta} = S_1, \ldots, S_m$.
-	We define  mapping $\mapt{\cdot}^{1}$ on shared environments $\Gamma$ as follows:
-\[
-	\begin{array}{rclcrcl}
-		\mapt{\Gamma \cat u: \chtype{S}}^{1} & =  & \mapt{\Gamma}^{1} \cat u:\chtype{\mapt{S}^{1}} & &
-		\mapt{\Gamma \cat u: \chtype{L}}^{1} & = &  \mapt{\Gamma}^{1} \cat u:\chtype{\dk{\mapt{L}^{1}}}\\
-		\tmap{\Gamma \cat \varp{X}:\Delta}{1} & = & \tmap{\Gamma}{1} \cat x:\shot{(\tilde{S}_{\Delta}\,,\,S^*)} & \qquad &
-		\text{where }
-%		S^* = \trec{t}{\big((\tilde{S}_{\Delta}\,,\, \btinp{\vart{t}}\tinact)\big)}
-		S^* &=& \trec{t}{\btinp{\shot{(\tilde{S}_{\Delta}\,,\,\vart{t})}} \tinact}
-	\end{array}
-\]
-\end{remark}
+
 
 In the higher-order setting, a name $v$ is being passed as an input
 guarded abstraction. The input prefix receives an abstraction and
@@ -1050,12 +1058,19 @@ recursive definitions as passing of polyadic abstractions:
 	$P =\recp{X}{P'}$ and
 	$P_1 = P'\subst{\recp{X}{P'}}{\varp{X}} \scong P$.
 
-	\noi If $P_1 \hby{\ell} P_2$ then,  there exist
+	\noi If %$P_1 \hby{\ell} P_2$ 
+	$\stytra{\Gamma}{\ell}{\Delta}{P}{\Delta'}{P'}$
+	then,  there exist
 	processes $R_1$, $R_2$,  $R_3$, action $\ell'$,
 	and mappings $f, f_1$, such that: 
-	\begin{enumerate}[1.]
-	\item $\pmapp{P}{1}{f} \hby{\tau} \map{P'}^{1}_{f_{1}} \subst{R_3}{X} = R_1$;
-	\item $R_1 \Hby{\ell'} R_2$, with $\ell' = \mapa{\ell}^{1}$;
+	\begin{enumerate}[(i)]
+	\item 
+	%$\pmapp{P}{1}{f} \hby{\tau} \map{P'}^{1}_{f_{1}} \subst{R_3}{X} = R_1$;
+	$\stytra{\mapt{\Gamma}^{1}}{\tau}{\mapt{\Delta}^{1}}{P}{\mapt{\Delta}^{1}}{\map{P'}^{1}\subst{R_3}{X}} = R_1$;
+	\item 
+	%$R_1 \Hby{\ell'} R_2$, with $\ell' = \mapa{\ell}^{1}$;
+	$\wtytra{\mapt{\Gamma}^{1}}{\ell'}{\mapt{\Delta}^{1}}{R_1}{\mapt{\Delta}^{1}}{R_2} $,  with $\ell' = \mapa{\ell}^{1}$;
+	
 	\item $R_3 = \abs{\tilde{m}}\binp{z}{X}\auxmap{\map{P'}^{1}_{f_{1}}}{\sigma}$, with $\tilde{m} = \ofn{P'},z$)
 	and
 	$f_1 = f, \{\rvar{X} \to \ofn{P'}\}$.
@@ -1063,9 +1078,10 @@ recursive definitions as passing of polyadic abstractions:
 \end{proposition}
 
 \begin{proof}[Sketch]
-	Parts (1) and (3) follow directly from the definition of typed encoding for processes $\pmapp{\cdot}{1}{f}$
-	(Definition~\ref{def:enc:HOp_to_HO}).
-	Part (2) relies on  Prop.~\ref{prop:op_corr_HOp_to_HO}.
+	Part~(1) follow directly from the definition of typed encoding for processes $\pmapp{\cdot}{1}{f}$ (Definition~\ref{def:enc:HOp_to_HO}),
+	observing that the reduction occurs along a restricted name, and so the session environment remains unchanged.
+	Part~(2) relies on  Prop.~\ref{prop:op_corr_HOp_to_HO}.
+	Part~(3) is immediate from Definition~\ref{def:enc:HOp_to_HO}.
 	\qed
 \end{proof}
 
@@ -1097,7 +1113,7 @@ recursive definitions as passing of polyadic abstractions:
 	\begin{enumerate}[1.]
 		\item
 			Suppose $\stytra{\Gamma}{\ell_1}{\Delta}{P}{\Delta'}{P'}$. Then we have:
-			\begin{enumerate}[(a)]
+			\begin{enumerate}[a)]
 		    \item 
 			If $\ell_1 \in \{\bactout{n}{m}, \,\bactout{n}{\abs{x}Q}, \,\bactsel{s}{l}, \,\bactbra{s}{l}   \}$
 			then $\exists \ell_2$ s.t. \\
@@ -1129,7 +1145,7 @@ recursive definitions as passing of polyadic abstractions:
 			\item If $\ell_1 = \tau$
 			and $P' \scong P_1 \Par P_2\subst{\abs{y}Q}{x}$
 			then \\
-			$\wtytra{\mapt{\Gamma}^{1}}{}{\mapt{\Delta}^{1}}{\pmapp{P}{1}{f}}{\mapt{\Delta'_1}^{1}}{\pmapp{P_1}{1}{f}
+			$\stytra{\mapt{\Gamma}^{1}}{\tau}{\mapt{\Delta}^{1}}{\pmapp{P}{1}{f}}{\mapt{\Delta_1}^{1}}{\pmapp{P_1}{1}{f}
 			\Par \pmapp{P_2}{1}{f}\subst{\abs{y}\pmapp{Q}{1}{\emptyset}}{x}
 			}$.
 			
@@ -1138,15 +1154,61 @@ recursive definitions as passing of polyadic abstractions:
 			then \\
 			$\stytra{\mapt{\Gamma}^{1}}{\tau}{\mapt{\Delta}^{1}}{\pmapp{P}{1}{f}}{\mapt{\Delta'_1}^{1}}{ \pmapp{P'}{1}{f}
 			}$.
-
-					
 			\end{enumerate}
-		\item   
-			If  $\wtytra{\mapt{\Gamma}^{1}}{\ell_2}{\mapt{\Delta}^{1}}{\pmapp{P}{1}{f}}{\mapt{\Delta'}^{1}}{Q}$
-			then $\exists \ell_1, P'$ s.t.  \\
-			(i)~$\stytra{\Gamma}{\ell_1}{\Delta}{P}{\Delta'}{P'}$,
-			(ii)~$\ell_2 = \mapa{\ell_1}^{1}$, 
-			(iii)~$\wbb{\mapt{\Gamma}^{1}}{\ell}{\mapt{\Delta'}^{1}}{\pmapp{P'}{1}{f}}{\mapt{\Delta'}^{1}}{Q}$.
+			
+		\item Suppose $\stytra{\mapt{\Gamma}^{1}}{\ell_2}{\mapt{\Delta}^{1}}{\pmapp{P}{1}{f}}{\mapt{\Delta'}^{1}}{Q}$.
+		Then we have:
+			\begin{enumerate}[a)]
+		    \item 
+		    If $\ell_2 \in \{\bactout{n}{\abs{z}{\,\binp{z}{x} \appl{x}{m}}}, \,\bactout{n}{\abs{x}R}, \,\bactsel{s}{l}, \,\bactbra{s}{l}   \}$
+			then $\exists \ell_1, P'$ s.t. \\
+			$\stytra{ \Gamma }{\ell_1}{ \Delta }{ P}{ \Delta' }{ P'}$, 
+			$\ell_1 = \mapa{\ell_2}^{1}$, 
+			and
+			$\map{P'}^{1}_f = Q$.
+			
+			\item 
+		    If $\ell_2 = \bactinp{n}{\abs{y}R}$ (with $R \neq \binp{y}{x} \appl{x}{m}$)
+			then $\exists \ell_1, x, P', P''$ s.t. \\
+			$\stytra{ \Gamma }{\ell_1}{ \Delta }{ P}{ \Delta' }{ P'\subst{\abs{y}P''}{x}}$, 
+			$\ell_1 = \mapa{\ell_2}^{1}$, 
+						$\map{P''}^{1}_\es = R$, and 			$\map{P'}^{1}_f = Q$.		
+						
+			\item 
+		    If $\ell_2 = \bactinp{n}{\abs{y}\binp{y}{x} \appl{x}{m}}$ 
+			then $\exists \ell_1, x, m, P'$ s.t. \\
+			$\stytra{ \Gamma }{\ell_1}{ \Delta }{ P}{ \Delta' }{ P'\subst{m}{x}}$, 
+			$\ell_1 = \mapa{\ell_2}^{1}$,
+			and 
+			$Q \Hby{} \map{P'\subst{m}{x}}^{1}_f$.	
+		
+			%$\horel{\mapt{\Gamma}^{1}}{\mapt{\Delta'}^{1}}{\map{P'}^{1}}{\wbf}{\mapt{\Delta'}^{1}}{Q}$.
+			
+			\item 
+		    If $\ell_2 = \tau$ 
+			then $\Delta' = \Delta$ and 
+			either
+			\begin{enumerate}[-]
+			\item $\exists P'$ s.t. 
+			$\stytra{ \Gamma }{\tau}{ \Delta }{ P}{ \Delta}{ P'}$, and $Q = \map{P'}^{1}_f$.	
+
+			\item $\exists P_1, P_2, x, m, Q'$ s.t. 
+			$\stytra{ \Gamma }{\tau}{ \Delta }{ P}{ \Delta}{ P_1 \Par P_2\subst{m}{x} }$, and 
+			$Q = \map{P_1}^{1}_f \Par Q'$, where $Q'  \Hby{} \map{P_2\subst{m}{x}}^{1}_f$.
+
+			\item $\exists P_1, P_2, x, R$ s.t. 
+			$\stytra{ \Gamma }{\tau}{ \Delta }{ P}{ \Delta}{ P_1 \Par P_2\subst{\abs{y}R}{x} }$, and 
+			$Q = \map{P_1 \Par P_2\subst{\abs{y}R}{x}}^{1}_f$.
+
+			\end{enumerate}
+		    \end{enumerate}
+		    
+%		\item   
+%			If  $\wtytra{\mapt{\Gamma}^{1}}{\ell_2}{\mapt{\Delta}^{1}}{\pmapp{P}{1}{f}}{\mapt{\Delta'}^{1}}{Q}$
+%			then $\exists \ell_1, P'$ s.t.  \\
+%			(i)~$\stytra{\Gamma}{\ell_1}{\Delta}{P}{\Delta'}{P'}$,
+%			(ii)~$\ell_2 = \mapa{\ell_1}^{1}$, 
+%			(iii)~$\wbb{\mapt{\Gamma}^{1}}{\ell}{\mapt{\Delta'}^{1}}{\pmapp{P'}{1}{f}}{\mapt{\Delta'}^{1}}{Q}$.
 	\end{enumerate}
 \end{proposition}
 
@@ -1158,7 +1220,7 @@ By transition induction. We consider parts (1) and (2) separately:
 %
 \begin{enumerate}[1.]
 	%%  Output 
-	\item	Case  $P =\bout{k}{k_1} P'$ and $\ell_1 = \bactout{k}{k_1}$. By assumption, $P$ is well-typed. 
+	\item	Subcase  (a): $P =\bout{k}{k_1} P'$ and $\ell_1 = \bactout{k}{k_1}$. By assumption, $P$ is well-typed. 
 		We may have:
 %
 		\[
@@ -1212,7 +1274,7 @@ By transition induction. We consider parts (1) and (2) separately:
 %
 		\noi from which the thesis follows easily.
 
-	\item	Case $P = \binp{k}{x} Q$	and $\ell_1 = \bactinp{k}{k_1}$.
+	\item	Subcase (c): $P = \binp{k}{x} Q$	and $\ell_1 = \bactinp{k}{k_1}$.
 		By assumption $P$ is well-typed.
 		We may have:
 %
@@ -1270,10 +1332,11 @@ By transition induction. We consider parts (1) and (2) separately:
 		%%  Recursion
 		%%%%%%%%%%%
 
-	\item	Case $P =\recp{X}{P'}$ and $P = \rvar{X}$.
-
-		It follows similar arguments with the previous case
-		and uses Prop.~\ref{prop:op_corr_HOprec_to_HO} whenever nescessary.
+%	\item	Case $P =\recp{X}{P'}$ and $P = \rvar{X}$.
+%
+%		It follows similar arguments with the previous cases
+%		and uses Prop.~\ref{prop:op_corr_HOprec_to_HO} whenever necessary.
+		
 \end{enumerate}
 %
 \noi \textbf{Part (2)}. We consider two non-trivial cases, the rest is similar or simpler:
@@ -1282,7 +1345,7 @@ By transition induction. We consider parts (1) and (2) separately:
 		%%%%%%%%%%%
 		%%  Output 
 		%%%%%%%%%%%
-	\item	Case $P = \bout{k}{k'} P'$.
+	\item Subcase (a): $P = \bout{k}{k'} P'$.
 		%,  $\map{P}^{1} = \bbout{k}{ \abs{z}{\,\binp{z}{X} \appl{X}{k'}} } \pmap{P'}{1}$.
 		Then 
 		we have: % the following typed transition for $\map{P}^{1}$:
@@ -1325,7 +1388,7 @@ By transition induction. We consider parts (1) and (2) separately:
 		%%%%%%%%%%%
 		%% Input
 		%%%%%%%%%%%
-	\item	Case $P = \binp{k}{x} Q$.
+	\item	Subcase (c): $P = \binp{k}{x} Q$.
 		Then we have
 %
 		\[
@@ -1384,10 +1447,10 @@ By transition induction. We consider parts (1) and (2) separately:
 		%%%%%%%%%%%
 		%%  Recursion
 		%%%%%%%%%%%
-	\item	Case $P =\recp{X}{P'}$ and $P = \rvar{X}$.
-
-		It follows similar arguments with the previous case
-		and uses Prop.~\ref{prop:op_corr_HOprec_to_HO} whenever nescessary.
+%	\item	Case $P =\recp{X}{P'}$ and $P = \rvar{X}$.
+%
+%		It follows similar arguments with the previous case
+%		and uses Prop.~\ref{prop:op_corr_HOprec_to_HO} whenever nescessary.
 \end{enumerate}
 \qed
 \end{proof}
@@ -2474,6 +2537,10 @@ Below we write $\repl{} P$ as a shorthand notation for $\recp{X}{(P \Par \rvar{X
 
 \begin{proposition}[Operational Correspondence, \HOp into \sessp]\rm
 	Let $P$ be an  $\HO$ process such that  $\Gamma; \emptyset; \Delta \proves P \hastype \Proc$.
+	
+	\begin{enumerate}[1.]
+	\item Suppose $\stytra{\Gamma}{\ell_1}{\Delta}{P}{\Delta'}{P'}$.
+	
 	\begin{enumerate}[a)]
 %			\item	 
 %			   If  $\stytra{\Gamma}{\bactout{k}{\abs{x}Q}}{\Delta}{P}{\Delta'}{P'}$
@@ -2527,7 +2594,10 @@ Below we write $\repl{} P$ as a shorthand notation for $\recp{X}{(P \Par \rvar{X
 %			   then  $\exists \ell_2$ s.t. 
 %			    $\wtytra{\mapt{\Gamma}^{3}}{\ell_2}{\mapt{\Delta}^{3}}{\map{P}^{3}}{\mapt{\Delta'}^{3}}{\map{P'}^{3}}$
 %			    and $\ell_2 = \mapa{\ell_1}^{3}$.
-
+		\end{enumerate}
+		\item Suppose 
+		$\stytra{\mapt{\Gamma}^{2}}{\ell_2}{\mapt{\Delta}^{2}}{\map{P}^{2}}{\mapt{\Delta'}^{2}}{R}$.s
+		\begin{enumerate}[a)]
 		\item
 			\footnote{$\mapt{\Gamma}^{2}$ in the following three items need adjustments.}
 			If  $\stytra{\mapt{\Gamma}^{2}}{\news{m}\bactout{n}{m}}{\mapt{\Delta}^{2}}{\map{P}^{2}}{\mapt{\Delta'}^{2}}{R}$
@@ -2549,6 +2619,7 @@ Below we write $\repl{} P$ as a shorthand notation for $\recp{X}{(P \Par \rvar{X
 			then exists a $P'$ such that 
 			$P \hby{\tau} P'$
 			and $\horel{\mapt{\Gamma}^{2}}{\mapt{\Delta'}^{2}}{\map{P'}^{2}}{\wbf}{\mapt{\Delta'}^{2}}{R}$.
+	\end{enumerate}
 	\end{enumerate}
 \end{proposition}
 
