@@ -74,6 +74,22 @@ preserve not only the syntax but
 also the operational, typing and behavioural
 semantics. 
 
+\begin{definition}[Syntax Preserving Encoding]\rm
+	\label{def:sep}
+	We say that 
+	the typed encoding 
+	$\enco{\map{\cdot}, \mapt{\cdot}, \mapa{\cdot}}: \tyl{L}_1 \to \tyl{L}_2$ is \emph{syntax preserving}
+	if it satisfies:
+	
+	\begin{enumerate}[1.]
+		\item	\emph{Homomorphism wrt Parallel}: If 
+		$\mapt{\Gamma}; \emptyset; \mapt{\Delta_1 \cat \Delta_2} \proves \map{P_1 \Par P_2} \hastype \Proc$
+		then \\
+		$\mapt{\Gamma}; \emptyset; \mapt{\Delta_1} \cat \mapt{\Delta_2} \proves \map{P_1} \Par \map{P_2} \hastype \Proc$.
+		
+	\end{enumerate}
+\end{definition}
+
 \begin{definition}[Semantic Preserving Encoding]\rm
 	\label{def:ep}
 	We say that 
@@ -878,6 +894,14 @@ in abstraction and application.
 \begin{figure}[h!]
 \[
 	\begin{array}{rcll}
+			\pmapp{\bout{u}{v} P}{1}{f}	&\defeq&	\bout{u}{ \abs{z}{\,\binp{z}{x} \appl{x}{v}} } \pmapp{P}{1}{f}
+		\\
+		\pmapp{\binp{u}{x: C} Q}{1}{f}	&\defeq&	\binp{u}{x} \newsp{s}{\appl{x}{s} \Par \bout{\dual{s}}{\abs{x}{\pmapp{Q}{1}{f}}} \inact}
+		\\
+				\pmapp{\bout{u}{\abs{x}{Q}} P}{1}{f} &\defeq& \bout{u}{\abs{x}{\pmapp{Q}{1}{f}}} \pmapp{P}{1}{f}
+		\\
+		\pmapp{\binp{u}{x: L} P}{1}{f}	&\defeq&	\binp{u}{x: L} \pmapp{P}{1}{f}
+		\\
 		\pmapp{\recp{X}{P}}{1}{f} &\defeq&
 		\newsp{s}{\binp{s}{x} \pmapp{P}{1}{{f,\{\varp{X}\to \tilde{n}\}}} \Par
 		\bout{\dual{s}}{\abs{\vmap{\tilde{n}}, z } \,{\binp{z}{x} \auxmap{\pmapp{P}{1}{{f,\{\varp{X}\to \tilde{n}\}}}}{\es}}} \inact} &
@@ -886,18 +910,9 @@ in abstraction and application.
 		\pmapp{\varp{X}}{1}{f} &\defeq& \newsp{s}{\appl{x}{\tilde{n}, s} \Par \bbout{\dual{s}}{ \abs{\vmap{\tilde{n}},z}\,\,{\appl{x}{ \vmap{\tilde{n}}, z}}} \inact} &
 		\quad \tilde{n} = f(\varp{X})
 		\\
-		\pmapp{\bout{u}{v} P}{1}{f}	&\defeq&	\bout{u}{ \abs{z}{\,\binp{z}{x} \appl{x}{v}} } \pmapp{P}{1}{f}
-		\\
-		\pmapp{\binp{u}{x: C} Q}{1}{f}	&\defeq&	\binp{u}{x} \newsp{s}{\appl{x}{s} \Par \bout{\dual{s}}{\abs{x}{\pmapp{Q}{1}{f}}} \inact}
-		\\
-
 		\pmapp{\bsel{s}{l} P}{1}{f}	&\defeq&	\bsel{s}{l} \pmapp{P}{1}{f}
 		\\
 		\pmapp{\bbra{s}{l_i: P_i}_i \in I}{1}{f} &\defeq& \bbra{s}{l_i: \pmapp{P_i}{1}{f}}_i \in I
-		\\
-		\pmapp{\bout{u}{\abs{x}{Q}} P}{1}{f} &\defeq& \bout{u}{\abs{x}{\pmapp{Q}{1}{f}}} \pmapp{P}{1}{f}
-		\\
-		\pmapp{\binp{u}{x: L} P}{1}{f}	&\defeq&	\binp{u}{x: L} \pmapp{P}{1}{f}
 		\\
 		\pmapp{\appl{x}{u}}{1}{f}	&\defeq&	\appl{x}{u}
 		\\
@@ -974,8 +989,8 @@ in abstraction and application.
 	We define  mapping $\mapt{\cdot}^{1}$ on shared environments $\Gamma$ as follows:
 \[
 	\begin{array}{rclcrcl}
-		\mapt{\Gamma \cat k: \chtype{S}}^{1} & =  & \mapt{\Gamma}^{1} \cat k:\chtype{\mapt{S}^{1}} & &
-		\mapt{\Gamma \cat k: \chtype{L}}^{1} & = &  \mapt{\Gamma}^{1} \cat k:\chtype{\dk{\mapt{L}^{1}}}\\
+		\mapt{\Gamma \cat u: \chtype{S}}^{1} & =  & \mapt{\Gamma}^{1} \cat u:\chtype{\mapt{S}^{1}} & &
+		\mapt{\Gamma \cat u: \chtype{L}}^{1} & = &  \mapt{\Gamma}^{1} \cat u:\chtype{\dk{\mapt{L}^{1}}}\\
 		\tmap{\Gamma \cat \varp{X}:\Delta}{1} & = & \tmap{\Gamma}{1} \cat x:\shot{(\tilde{S}_{\Delta}\,,\,S^*)} & \qquad &
 		\text{where }
 %		S^* = \trec{t}{\big((\tilde{S}_{\Delta}\,,\, \btinp{\vart{t}}\tinact)\big)}
