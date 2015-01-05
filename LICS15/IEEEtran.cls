@@ -3902,7 +3902,8 @@ between column types.}%
 % so that spacing is more tightly controlled.
 \def\abstract{\normalfont
     \if@twocolumn
-      \@IEEEabskeysecsize\bfseries\textit{\abstractname}---\relax
+%      \@IEEEabskeysecsize\bfseries\textit{\abstractname}---\relax
+\@IEEEabskeysecsize%{\textbf{\abstractname}}
     \else
       \bgroup\par\addvspace{0.5\baselineskip}\centering\vspace{-1.78ex}\@IEEEabskeysecsize\textbf{\abstractname}\par\addvspace{0.5\baselineskip}\egroup\quotation\@IEEEabskeysecsize
     \fi\@IEEEgobbleleadPARNLSP}
@@ -4200,7 +4201,7 @@ between column types.}%
 % redefine the #1#2[#3] form of newtheorem to use a hook to \@IEEEthmcounterinsection
 % if section in_counter is used
 \def\@xnthm#1#2[#3]{%
-  \expandafter\@ifdefinable\csname #1\endcsname
+  \expandafter\@ifdefinable\csname #1\endcsname%
     {\@definecounter{#1}\@newctr{#1}[#3]%
      \edef\@IEEEstringtmp{#3}
      \ifx\@IEEEstringtmp\@IEEEstringsection
@@ -4209,7 +4210,7 @@ between column types.}%
           \@thmcounter{#1}}%
      \else
      \expandafter\xdef\csname the#1\endcsname{%
-       \expandafter\noexpand\csname the#3\endcsname \@thmcountersep
+       \expandafter\noexpand\csname the#3\endcsname \@thmcountersep%
           \@thmcounter{#1}}%
      \fi
      \global\@namedef{#1}{\@thm{#1}{#2}}%
