@@ -552,7 +552,7 @@ the session type of an input prefix).
 
 \subsection{HO Bisimulation ($\hwb$) and FO Bisimulation ($\fwb$)}\label{ss:hwb}
 \noi 
-To overcome the problem of $\wbc$, we introduce two bisimulations.
+To overcome the problems of $\wbc$, we introduce two bisimulations.
 Our aim to limit the input transition so that we can define a
 bisimulation relation for the output clause without observing
 infinitely many input actions on the same input prefix. Concretely we
@@ -566,35 +566,28 @@ by a more efficient closuer.
 \end{enumerate}
 For 1), we first 
 observe that a substitution $R\subst{V1}{x}$ in 
-Clause 1) in Definition~\ref{def:wbc} is equivalent to 
+Clause 1) in Definition~\ref{def:wbc} is equivalent to the following process, with fresh $s$,  
 \begin{equation}\label{eq:1}
-\newsp{s}{\appl{(\abs{x}{R})}{s} \Par \bout{\dual{s}}{V_1} \inact}
+P = \newsp{s}{\appl{(\abs{z}{\binp{z}{x}{R}})}{s} \Par \bout{\dual{s}}{V_1} \inact}
 \end{equation}
-since $s$ is a session name. Hence using the fresh trigger name $t$, 
-if $\hotrigger{t}{V_1}$ receives
-$\abs{x}{\binp{t}{X} \appl{X}{x}}$ 
-
-
- 
-
-the output action case of $\wbc$ 
-can be equivalently be defined as follows:\\
-
-\noi whenever 
-$\horel{\Gamma}{\Delta_1}{P_1}{\hby{\news{\tilde{m_1}} \bactout{n}{V_1}}}{\Delta_1'}{P_2}$, there exits 
-$\horel{\Gamma}{\Delta_2}{Q_1}{\Hby{\news{\tilde{m_2}} \bactout{n}{V_2}}}{\Delta_2'}{Q_2}$ such that, for fresh $t,x,s$, 
-\[
-\begin{array}{lrlll}
-& \Gamma; \Delta''_1  \proves & 
-{\newsp{\tilde{m_1}}{P_2 \Par \hotrigger{t}{V_1}}}\\ 
-\Re & 
-\Delta''_2 \proves & {\newsp{\tilde{m_2}}{Q_2 \Par \hotrigger{t}{V_2}}}
-\end{array}
-\]
-%
-This is because we can observe an input on a fresh name $t$
-of any process $R$ such that $\set{x} = \fv{R}$, and the 
-reduction between $s$ and $\dual{s}$ is deterministic. 
+since the reduction at $s$ and application are deterministic.  
+Hence using the fresh trigger name $t$, if we input a specific input, 
+we can simulate the substitution:
+\begin{equation}\label{eq:1}
+\hotrigger{t}{V_1} 
+\by{ \bactinp{t}{\abs{z}{\binp{z}{x} R}}} P 
+\red^\ast 
+R\subst{V_1}{x}
+\end{equation}
+Thus if we check the closure 
+$\newsp{\tilde{m_1}}{P_1 \Par \hotrigger{t}{V_1}}$ instead 
+of Clause 1) in Definition \ref{def:wbc}, 
+we can limit the input observation to  
+$\bactinp{t}{\abs{z}{\binp{z}{x} R}}$ since: 
+\begin{eqnarray*}
+{\newsp{\tilde{m_1}}{P_1 \Par \hotrigger{t}{V_1}}}{\by{ \bactinp{t}{\abs{z}{\binp{z}{x} R}} }}\newsp{\tilde{m_1}}{P_2 \Par P}
+\end{eqnarray*}
+where $P$ is equivalent to $R\subst{V_1}{x}$. 
 
 Unfortunately only observing a trigger value and channel 
 is not sufficient since we equate too many processes
@@ -602,6 +595,8 @@ is not sufficient since we equate too many processes
 We need additionally observe very simple 
 processes called {\em characteristic processes} which are explained 
 below. 
+
+\smallskip
 
 \myparagraph{Characteristic Processes}
 \label{ss:char}
@@ -613,7 +608,7 @@ inhabits a given session type. For example, consider
 session type $\btinp{\shot{S_1}} \btout{S_2} \tinact$. 
 Then the simplest process inhabits this type at name $u$ is:
 \[
-\Gamma; \es; \Delta \cat s_1: S_1 \cat s_2: S_2 \cat u: \btinp{\shot{S_1}} \btout{S_2} \tinact \proves \binp{u}{x} (\bout{u}{s_2} \tinact \Par \appl{x}{s_1})
+\Gamma; \es; s_1: S_1 \cat s_2: S_2 \cat u: \btinp{\shot{S_1}} \btout{S_2} \tinact \proves \binp{u}{x} (\bout{u}{s_2} \inact \Par \appl{x}{s_1})
 \]
 We formalise this idea in the next definition. 
 
@@ -790,16 +785,17 @@ for all $\horel{\Gamma}{\Delta_1}{P_1}{\ \Re \ }{\Delta_2}{Q_1}$,
 		\item	whenever 
 $\horel{\Gamma}{\Delta_1}{P_1}{\hby{\news{\tilde{m_1}} \bactout{n}{V_1}}}{\Delta_1'}{P_2}$ with $\Gamma; \es; \Delta \proves V_1 \hastype U$,  
 there exits 
-$\horel{\Gamma}{\Delta_2}{Q_1}{\Hby{\news{\tilde{m_2}} \bactout{n}{V_2}}}{\Delta_2'}{Q_2}$ with $\Gamma; \es; \Delta' \proves V_2 \hastype U$,  
+$\horel{\Gamma}{\Delta_2}{Q_1}{\Hby{\news{\tilde{m_2}}\bactout{n}{V_2}}}{\Delta_2'}{Q_2}$ with $\Gamma; \es; \Delta' \proves V_2 \hastype U$,  
 such that, for fresh $t,x,s$, 
+
 \[
-\begin{array}{lrlll}
+\hspace*{-1cm}\begin{array}{lrlll}
 & \Gamma; \Delta''_1  \proves & 
 {\newsp{\tilde{m_1}}
-{P_2 \Par \fotrigger{t}{x}{s}{\btinp{U} \inact}{V_1}}}\\ 
+{P_2 \Par \fotrigger{t}{x}{s}{\btinp{U} \tinact}{V_1}}}\\ 
 \Re & 
 \Delta''_2 \proves & {\newsp{\tilde{m_2}}{Q_2 \Par 
-\fotrigger{t}{x}{s}{\btinp{U} \inact}{V_2}}}
+\fotrigger{t}{x}{s}{\btinp{U} \tinact}{V_2}}}
 \end{array}
 \]
 	\item	
