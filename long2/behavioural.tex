@@ -14,7 +14,7 @@ barbed congruence relation.
 
 \subsection{Labelled Transition Semantics}\label{ss:lts}
 
-We define a relation $(P_1, \ell, P_2) \in R$ over
+We define the relation $P_1 \by{\ell} P_2$ over
 (untyped) processes, that allows us to follow how a process may
 interact with a process in its enviroment. The interaction
 is defined on action $\ell$:
@@ -76,6 +76,7 @@ Finally rule $\ltsrule{Alpha}$ closes  the LTS under alpha-renaiming.
 %which is the simplest process that is typed
 %under the given session type.
 %
+\begin{comment}
 \begin{definition}[Characteristic Process]\rm
 	\label{def:characteristic_process}
 	Let name $u$ and type $U$; then we define a {\em characteristic process}:
@@ -117,6 +118,7 @@ Finally rule $\ltsrule{Alpha}$ closes  the LTS under alpha-renaiming.
 	\end{array}
 	\]
 \end{definition}
+\end{comment}
 %
 \begin{comment}
 \begin{definition}[Characteristic Process]\rm
@@ -164,37 +166,34 @@ Finally rule $\ltsrule{Alpha}$ closes  the LTS under alpha-renaiming.
 \end{definition}
 \end{comment}
 
-\begin{proposition}\rm
-$ $
-	\begin{itemize}
-		\item	$\Gamma; \emptyset; \Delta \cat u:S \proves \mapchar{S}{u} \hastype \Proc$
-		\item	$U = \chtype{S}$ or $U = \chtype{L}$ implies $\Gamma \cat u:U; \emptyset; \Delta \proves \mapchar{U}{u} \hastype \Proc$
-	\end{itemize}
-\end{proposition}
-
-\begin{proof}
-	By induction on the definition of $\mapchar{S}{u}$ and $\mapchar{U}{u}$.
-\end{proof}
-
-\begin{corollary}\rm
-	If $\Gamma; \emptyset; \Delta \proves \mapchar{C}{u} \hastype \Proc$
-	then
-	$\Gamma; \es; \Delta \proves u \hastype C$.
-\end{corollary}
+%\begin{proposition}\rm
+%$ $
+%	\begin{itemize}
+%		\item	$\Gamma; \emptyset; \Delta \cat u:S \proves \mapchar{S}{u} \hastype \Proc$
+%		\item	$U = \chtype{S}$ or $U = \chtype{L}$ implies $\Gamma \cat u:U; \emptyset; \Delta \proves \mapchar{U}{u} \hastype \Proc$
+%	\end{itemize}
+%\end{proposition}
+%
+%\begin{proof}
+%	By induction on the definition of $\mapchar{S}{u}$ and $\mapchar{U}{u}$.
+%\end{proof}
+%
+%\begin{corollary}\rm
+%	If $\Gamma; \emptyset; \Delta \proves \mapchar{C}{u} \hastype \Proc$
+%	then
+%	$\Gamma; \es; \Delta \proves u \hastype C$.
+%\end{corollary}
 
 \subsection{Typed Labeled Transition System}
 
 \input{figures/fig-envLTS}
 
-We define two relations of the form:
-%
-\[
-	((\Gamma, \Lambda_1, \Delta_1), \ell, (\Gamma, \Lambda_2, \Delta_2)) \in R \textrm{ and }
-\]
-%
-\noi over type tuples, that allows us to follow the progress of types over actions $\ell$.
-The upper part of Figure~\ref{fig:envLTS} describes relation $\by{\ell}$.
+We define a relation of the form
+$(\Gamma, \Lambda_1, \Delta_1) \by{\ell} (\Gamma, \Lambda_2, \Delta_2)$
+over type tuples, that follows the progress of types over
+actions $\ell$.
 
+Figure~\ref{fig:envLTS} describes relation $\by{\ell}$.
 Rule $\eltsrule{SOut}$ states the conditions for observing action
 $\news{\tilde{m}} \bactout{s}{V}$ on a type tuple $(\Gamma, \Lambda, \Delta)$. 
 The session environment $\Delta$ of the type tuple should include
@@ -234,6 +233,7 @@ or they follow the reduction on the session
 environment (Definition~\ref{def:ses_red}) as we can see in rule
 $\eltsrule{Tau}$.
 
+\begin{comment}
 A second environment LTS, denoted $\hby{\ell}$,
 is defined in the lower part of Figure~\ref{fig:envLTS}.
 The definition substitutes rules
@@ -251,42 +251,44 @@ Names can still be received as in the definition of
 the $\by{\ell}$ relation.
 The conditions for input follow the conditions
 for the $\by{\ell}$ definition.
+\end{comment}
 
 \paragraph{Typed Transition System}
 
-We define two transition systems over processes, as a combination
-of the untyped LTS and the LTS for typed environments:
+We define a typed labelled transition system over typed processes,
+as a combination of the untyped LTS and the LTS for typed environments:
 
-\begin{definition}[Typed Transition Systems]\label{d:tlts}\rm
+\begin{definition}[Typed Transition System]\label{d:tlts}\rm
 	We write
 %
-	\begin{enumerate}
-		\item	$\horel{\Gamma}{\Delta_1}{P_1}{\by{\ell}}{\Delta_2}{P_2}$
-			whenever
-			$P_1 \by{\ell} P_2$,
-			$(\Gamma, \emptyset, \Delta_1) \by{\ell} (\Gamma, \emptyset, \Delta_2)$
-			and $\Gamma; \emptyset; \Delta_2 \proves P_2 \hastype \Proc$.
+%	\begin{enumerate}
+%		\item
+	$\horel{\Gamma}{\Delta_1}{P_1}{\by{\ell}}{\Delta_2}{P_2}$
+	whenever
+	$P_1 \by{\ell} P_2$,
+	$(\Gamma, \emptyset, \Delta_1) \by{\ell} (\Gamma, \emptyset, \Delta_2)$
+	and $\Gamma; \emptyset; \Delta_2 \proves P_2 \hastype \Proc$.
 
-		\item	$\horel{\Gamma}{\Delta_1}{P_1}{\hby{\ell}}{\Delta_2}{P_2}$
-			whenever
-			$P_1 \by{\ell} P_2$,
-			$(\Gamma, \emptyset, \Delta_1) \hby{\ell} (\Gamma, \emptyset, \Delta_2)$
-			and
-			$\Gamma; \emptyset; \Delta_2 \proves P_2 \hastype \Proc$.
-	\end{enumerate}
+%		\item	$\horel{\Gamma}{\Delta_1}{P_1}{\hby{\ell}}{\Delta_2}{P_2}$
+%			whenever
+%			$P_1 \by{\ell} P_2$,
+%			$(\Gamma, \emptyset, \Delta_1) \hby{\ell} (\Gamma, \emptyset, \Delta_2)$
+%			and
+%			$\Gamma; \emptyset; \Delta_2 \proves P_2 \hastype \Proc$.
+%	\end{enumerate}
 %
 \end{definition}
 
-We extend to $\By{}$ (resp.\ $\Hby{}$) and $\By{\hat{\ell}}$ (resp.\ $\Hby{\hat{\ell}}$) in the standard way.
+We extend to $\By{}$ and $\By{\hat{\ell}}$ in the standard way.
 
-\begin{lemma}[Invariant]\label{l:invariant}
-	If $\horel{\Gamma}{\Delta_1}{P_1}{\hby{\ell}}{\Delta_2}{P_2}$
-	then $\horel{\Gamma}{\Delta_1}{P_1}{\by{\ell}}{\Delta_2}{P_2}$.
-\end{lemma}
+%\begin{lemma}[Invariant]\label{l:invariant}
+%	If $\horel{\Gamma}{\Delta_1}{P_1}{\hby{\ell}}{\Delta_2}{P_2}$
+%	then $\horel{\Gamma}{\Delta_1}{P_1}{\by{\ell}}{\Delta_2}{P_2}$.
+%\end{lemma}
 
-\begin{proof}
-	The proof is straightforward from the definition of rule $\eltsrule{RRcv}$.
-\end{proof}
+%\begin{proof}
+%	The proof is straightforward from the definition of rule $\eltsrule{RRcv}$.
+%\end{proof}
 
 \subsection{Behavioural Semantics}
 
@@ -437,30 +439,65 @@ The second behavioural relation is contextual bisimulation:
 The contextual bisimulation in the general case
 is a hard relation to compute due to: i) the universal
 quantifier over contexts in the output case;
-and ii) the set of higher order input actions
-on an input prefix is infite since infinetely
-many processes can match the session type of
-the input prefix.
+and ii) a higher order input prefix can observe
+infinetely many different input actions, since
+infinetely many different processes can match
+the session type of an input prefix.
 
-To define a easy to compute bisimulation we need to
-avoid the universal quantifier on theb output case and
-restrict the set of input processes on an input
+%the set of higher order input actions
+%on an input prefix is infite since infinetely
+%many processes can match the session type of
+%the input prefix.
+
+The output action case of the contextual bisimulation
+can be equivalently be defined as:
+
+$\forall \news{\tilde{m_1}} \bactout{n}{V_1}$ such that
+%
+\[
+	\horel{\Gamma}{\Delta_1}{P_1}{\by{\news{\tilde{m_1}} \bactout{n}{V_1}}}{\Delta_1'}{P_2}
+\]
+%
+\noi implies that $\exists Q_2, \abs{x}{Q}$ such that
+%
+\[
+	\horel{\Gamma}{\Delta_2}{Q_1}{\By{\news{\tilde{m_2}} \bactout{n}{V_2}}}{\Delta_2'}{Q_2}
+\]
+%
+for fresh name $t$: %and $\forall R$ with $\set{x} = \fv{R}$, then
+%
+\[
+	\horel{\Gamma}{\Delta_1''}{\newsp{\tilde{m_1}}{P_2 \Par \hotrigger{t}{V_1}}}
+	{\ \Re\ }
+	{\Delta_2''}{\newsp{\tilde{m_2}}{Q_2 \Par \hotrigger{t}{V_1}}}
+\]
+
+The latter definition is equivalent to the output
+case of the contextual bisimulation
+because we can observe an input on a fresh name $t$
+of any process $R$ such that $\set{x} = \fv{R}$.
+
+To define an easy to compute bisimulation we still need to
+restrict the input actions that can happen on an input
 prefix.
-
 Towards this direction we define the {\em characteristic
 process} which is the {\em simplest} process that
 satisfies a session type.
 
-For example the simplest process that satisfies the type
-$\btinp{\shot{S_1}} \btout{S_2} \tinact$ is
-$\binp{u}{x} (\bout{u}{s_2} \tinact \Par \appl{x}{s_1})$.
+As an of example the simplest process that satisfies a
+session type, consider the type
+$\btinp{\shot{S_1}} \btout{S_2} \tinact$. The last type
+types name $u$ satisfied in the typed process
+\[
+	\Gamma; \es; \Delta \cat s_1: S_1 \cat s_2: S_2 \cat u: \btinp{\shot{S_1}} \btout{S_2} \tinact \proves \binp{u}{x} (\bout{u}{s_2} \tinact \Par \appl{x}{s_1})
+\]
 
 We formalise the last intuition in the next definition.
 %
 \begin{definition}[Characteristic Process]\rm
 	\label{def:characteristic_process}
 	\noi Let name $u$ and type $U$; then we define a {\em characteristic process}:
-	$\mapchar{U}{k}$ as:
+	$\mapchar{U}{u}$ as:
 %
 	\[
 	\begin{array}{cc}
@@ -497,6 +534,7 @@ We formalise the last intuition in the next definition.
 		\end{array}
 	\end{array}
 	\]
+	\noi with $\omapchar{U}$ being the characterstic value definition.
 \end{definition}
 
 \begin{proposition}\rm
@@ -509,6 +547,7 @@ $ $
 
 \begin{proof}
 	By induction on the definition of $\mapchar{S}{u}$ and $\mapchar{U}{u}$.
+	\qed
 \end{proof}
 
 \begin{corollary}\rm
@@ -517,40 +556,147 @@ $ $
 	$\Gamma; \es; \Delta \proves u \hastype C$.
 \end{corollary}
 
-The aim is to use the characteristic process as a basis for
-restricting the input action on processes so we can define
-a bisimulation relation that does not suffer from infitely
-many input abstractions.
+The aim is to use a characteristic input value
+to restrict the input actions that can be observed on an
+input prefix, so we can define
+a bisimulation relation that does not suffer from the observation of 
+of infitely many input actions on the same input prefix.
 
-Following the characteristing process intuition it turns out
-the usage of a characteristic process
+Following the intuition of characteristing value input,
+it turns out the usage of a characteristic process
 alone as an input set for the input prefix of a process
 is not enough to define bisimulation.
 
-Consider typed processes:
-%
-\begin{eqnarray*}
-	\Gamma; \es; \Delta s: \btinp{\shot{\btinp{C} \tinact}} \tinact \proves \binp{s}{x} (\appl{x}{s_1} \Par \appl{x}{s_2})\\
-	\Gamma; \es; \Delta s: \btinp{\shot{\btinp{C} \tinact}} \tinact \proves \binp{s}{x} (\appl{x}{s_1} \Par \binp{s_2}{y} \inact)
-\end{eqnarray*}
-%
-In the restricted input setting both process can input the
-characteristic abstraction $\abs{x}{\binp{x}{y}} \inact$
-to get
-%
-\begin{eqnarray*}
-	\Gamma; \es; \Delta \proves \binp{s_1}{y} \inact \Par \binp{s_2}{y} \inact\\
-	\Gamma; \es; \Delta \proves \binp{s_1}{y} \inact \Par \binp{s_2}{y} \inact
-\end{eqnarray*}
-%
-with both process being obviously bisimilar.
-%
-But the former process are not contextualy bisimimilar since
-for numerous other input process they can be distinguished,
-i.e.~input $\abs{x} \bout{a}{b} \btinp{x}{y} \inact$.
+\begin{example}
+	\label{ex:char_proc}
+	Consider typed processes:
+	%
+	\begin{eqnarray*}
+		\Gamma; \es; \Delta s: \btinp{\shot{\btinp{C} \tinact}} \tinact \proves \binp{s}{x} (\appl{x}{s_1} \Par \appl{x}{s_2})\\
+		\Gamma; \es; \Delta s: \btinp{\shot{\btinp{C} \tinact}} \tinact \proves \binp{s}{x} (\appl{x}{s_1} \Par \binp{s_2}{y} \inact)
+	\end{eqnarray*}
+	%
+	In the restricted input setting both process can input the
+	characteristic value $\abs{x}{\binp{x}{y}} \inact$
+	to get
+	%
+	\begin{eqnarray*}
+		\Gamma; \es; \Delta \proves \binp{s_1}{y} \inact \Par \binp{s_2}{y} \inact\\
+		\Gamma; \es; \Delta \proves \binp{s_1}{y} \inact \Par \binp{s_2}{y} \inact
+	\end{eqnarray*}
+	%
+	with both process being obviously bisimilar.
+	%
+	But the former process are not contextualy bisimimilar since
+	for numerous other input process they can be distinguished,
+	i.e.~input $\abs{x} \bout{a}{b} \btinp{x}{y} \inact$.
+\end{example}
 
-To solve this problem we introduce the trigger input.
-\dk{Put intuition about trigger input}
+Allowing only the characteristic as an input action
+results in an over-discriminating bisimulation.
+
+To solve this problem we introduce the trigger abstraction
+that can be observed as the object of an input action.
+
+An input trigger is an abstraction prefix on a fresh name $t$
+that has the form:
+\[
+	\Gamma; \es; \Delta \proves \abs{z}{\binp{t}{x} \appl{x}{z}} \hastype U
+\]
+where $U = \shot{C}$ or $U = \lhot{C}$.
+
+The input trigger can distinguish the processes in Example~\ref{ex:char_proc},
+that is if the input trigger is received by both processes in Example~\ref{ex:char_proc}
+we get processes:
+%
+\begin{eqnarray*}
+	\Gamma; \es; \Delta &\proves& \binp{t}{x} \appl{x}{s_1} \Par \binp{t}{x} \appl{x}{s_2}
+	\\
+	\Gamma; \es; \Delta &\proves& \binp{t}{x} \appl{x}{s_1} \Par \binp{s_2}{y} \inact
+\end{eqnarray*}
+\noi that can be distinguished by the freshness of name $t$.
+
+One question that arises here is whether the input trigger is enough
+to distinguish two processes so that there is no need for a
+characteristic process. This is not true since the input trigger
+alone also results in an over-discriminating bisimulation relation.
+In fact the input trigger can be observed on any input prefix
+of any type. For example processes:
+%
+\begin{eqnarray*}
+	\Gamma; \es; \Delta &\proves& \binp{n}{x} P \hastype \Proc
+	\\
+	\Gamma; \es; \Delta &\proves& \binp{n}{x} Q \hastype \Proc
+\end{eqnarray*}
+%
+\noi can both observe the trigger input regardless of the type of $x$.
+
+We formalise the restricted input action with the definition of a
+new environment transition relation
+\[
+	(\Gamma, \Lambda_1, \Delta_1) \hby{\ell} (\Gamma, \Lambda_2, \Delta_2)
+\]
+\noi which is defined using the $\by{\ell}$ relation.
+The definition uses the same rules for defining the $\by{\ell}$ relation,
+but it requires the substitution of rules $\eltsrule{SRv}$ and
+$\eltsrule{ShRv}$ with the rule:
+\[
+	\eltsrule{RRv}~~\tree {
+		(\Gamma_1; \Lambda_1; \Delta_1) \by{\bactinp{n}{V}} (\Gamma_2; \Lambda_2; \Delta_2)
+		\quad
+		\begin{array}{crcl}
+			& (V & \scong & \abs{x}{\binp{t}{X} \appl{X}{x}} \wedge t \textrm{ fresh}) \\
+			\vee & V &\scong& \omapchar{U}  \vee V = m
+		\end{array}
+	}{
+		(\Gamma_1; \Lambda_1; \Delta_1) \hby{\bactinp{n}{V}} (\Gamma_2; \Lambda_1; \Delta_2)
+	}
+\]
+\noi The new receive rule is defined on rules
+$\eltsrule{SRv}$ and $\eltsrule{ShRv}$. It
+allows only a characteristic value (fresh name or abstraction)
+or a trigger input on a fresh name $t$ as a higher order input.
+%Input of names remains as defined in the rules 
+%$\eltsrule{SRv}$ and $\eltsrule{ShRv}$.
+%Rule $\eltsrule{RRcv}$ restricts the higher-order input
+%in relation $\hby{\ell}$;
+%only characteristic processes and trigger processes
+%are allowed to be received on a higher-order input.
+Non fresh names can still be received as in the definition of
+the $\by{\ell}$ relation.
+%The conditions for input follow the conditions
+%for the $\by{\ell}$ definition.
+All other cases of the $\hby{\ell}$ definition 
+remain the same as the cases for relation $\by{\ell}$.
+
+The new typed relation derived from the $\hby{\ell}$ environment LTS is
+defined as:
+
+\begin{definition}[Restricted Typed Transition]\rm
+	We write
+%
+	$\horel{\Gamma}{\Delta_1}{P_1}{\hby{\ell}}{\Delta_2}{P_2}$
+	whenever
+	$P_1 \by{\ell} P_2$,
+	$(\Gamma, \emptyset, \Delta_1) \hby{\ell} (\Gamma, \emptyset, \Delta_2)$
+	and
+	$\Gamma; \emptyset; \Delta_2 \proves P_2 \hastype \Proc$.
+%
+\end{definition}
+
+We extend to $\Hby{}$ and $\Hby{\hat{\ell}}$ in the standard way.
+
+\begin{lemma}[Invariant]\label{l:invariant}
+	If $\horel{\Gamma}{\Delta_1}{P_1}{\hby{\ell}}{\Delta_2}{P_2}$
+	then $\horel{\Gamma}{\Delta_1}{P_1}{\by{\ell}}{\Delta_2}{P_2}$.
+\end{lemma}
+
+\begin{proof}
+	The proof is straightforward from the definition of rule $\eltsrule{RRv}$.
+\end{proof}
+
+We are now ready to define a bisimulation relation which is not
+contextual.
 
 %The contextual bisimulation in the general case is a hard relation to be computed
 %since it is universaly quantified over substituting processes. The next definition
@@ -703,7 +849,12 @@ output triggers solves this problem.
 \end{definition}
 \end{comment}
 
-We present a result on process substitution.
+The next result clarifies our choice of restricting
+the higher order input action with the input trigger and
+the characteristic process; if under the substitution
+of the characteristic abstraction and the trigger
+input two processes remain bisimilar then they
+are bisimilar under any abstraction substitution.
 
 \begin{lemma}[Process Substitution]\rm
 	\label{lem:proc_subst}
@@ -771,18 +922,22 @@ coincide with reduction closed, barbed congruence.
 %	$\horel{\Gamma}{\Delta}{P}{\wb}{\Delta'}{P'}$
 %\end{lemma}
 
-Processes that do not use shared names are inherintly $\tau$-inert.
+\begin{definition}[Session Transition]\rm
+	Let balanced \HOp process $\Gamma; \es; \Delta \proves P \hastype \Proc$.
+	We say that transition
+	$\horel{\Gamma}{\Delta}{P}{\hby{\ell}}{\Delta'}{P'}$ is
+	a {\em session transition}, written
+	$\horel{\Gamma}{\Delta}{P}{\shby{\ell}}{\Delta'}{P'}$,
+	whenever the untyped transition $P \by{\tau} P'$
+	is derived on visible actions with a session subject.
+\end{definition}
 
-\begin{lemma}[$\tau$-inertness]\rm
+\begin{proposition}[$\tau$-inertness]\rm
 	\label{lem:tau_inert}
-	Let $P$ an $\HOp^{\minussh}$ process
-	and $\Gamma; \emptyset; \Delta \proves P \hastype \Proc$.
-%	\begin{enumerate}
-%		\item
-	If $\horel{\Gamma}{\Delta}{P}{\by{\tau}}{\Delta'}{P'}$ then $\horel{\Gamma}{\Delta}{P}{\wb}{\Delta'}{P'}$.
-%		\item	If $P \red^* P'$ then $\Gamma; \es; \Delta \wb \Delta' \proves P \wb P'$.
-%	\end{enumerate}
-\end{lemma}
+	Let balanced \HOp process $\Gamma; \es; \Delta \proves P \hastype \Proc$.
+	$\horel{\Gamma}{\Delta}{P}{\shby{\ell}}{\Delta'}{P'}$ implies
+	$\horel{\Gamma}{\Delta}{P}{\wb}{\Delta'}{P'}$.
+\end{proposition}
 
 \begin{proof}
 	The proof is relied on the fact that processes of the
@@ -793,3 +948,77 @@ Processes that do not use shared names are inherintly $\tau$-inert.
 	\qed
 \end{proof}
 
+Processes that do not use shared names are inherintly $\tau$-inert.
+
+\begin{corollary}[$\mathsf{C}^{\minussh}$ $\tau$-inertness]\rm
+	\label{cor:tau_inert}
+	Let $\Gamma; \es; \Delta \proves P \hastype \Proc$ an $\mathsf{C}^{\minussh}$ process.
+%
+	\begin{itemize}
+		\item	$\horel{\Gamma}{\Delta}{P}{\hby{\tau}}{\Delta'}{P'}$ if and only if $\horel{\Gamma}{\Delta}{P}{\shby{\tau}}{\Delta'}{P'}$.
+		\item	$\horel{\Gamma}{\Delta}{P}{\shby{\tau}}{\Delta'}{P'}$ implies $\horel{\Gamma}{\Delta}{P}{\wb}{\Delta'}{P'}$.
+	\end{itemize}
+%	\begin{enumerate}
+%		\item
+%	If $\horel{\Gamma}{\Delta}{P}{\by{\tau}}{\Delta'}{P'}$ then $\horel{\Gamma}{\Delta}{P}{\wb}{\Delta'}{P'}$.
+%		\item	If $P \red^* P'$ then $\Gamma; \es; \Delta \wb \Delta' \proves P \wb P'$.
+%	\end{enumerate}
+\end{corollary}
+
+\begin{lemma}[Up-to Session Transition]\rm
+	\label{lem:up_to_session_transition}
+	Let $\horel{\Gamma}{\Delta_1}{P_1}{\ \Re\ }{\Delta_2'}{Q_1}$ such
+	that if whenever:
+%
+	\begin{enumerate}
+		\item	$\forall \news{\tilde{m_1}} \bactout{n}{V_1}$ such that
+			\[
+				\horel{\Gamma}{\Delta_1}{P_1}{\hby{\news{\tilde{m_1}} \bactout{n}{V_1}}}{\Delta_3}{P_3}
+			\]
+			implies that $\exists Q_2, V_2$ such that
+			\[
+				\horel{\Gamma}{\Delta_2}{Q_1}{\Hby{\news{\tilde{m_2}} \bactout{n}{V_2}}}{\Delta_2'}{Q_2}
+			\]
+			and
+			\[
+				\horel{\Gamma}{\Delta_3}{P_3}{\SHby{}}{\Delta_1'}{P_2}
+			\]
+			and for fresh $t$:
+			\[
+				\mhorel{\Gamma}{\Delta_1''}{\newsp{\tilde{m_1}}{P_2 \Par \hotrigger{t}{V_1}}}
+				{\ \Re\ }
+				{\Delta_2''}{}{\newsp{\tilde{m_2}}{Q_2 \Par \hotrigger{t}{V_2}}}
+			\]
+%
+		\item	$\forall \ell \not= \news{\tilde{m}} \bactout{n}{V}$ such that
+			\[
+				\horel{\Gamma}{\Delta_1}{P_1}{\hby{\ell}}{\Delta_3}{P_3}
+			\]
+			implies that $\exists Q_2$ such that 
+			\[
+				\horel{\Gamma}{\Delta_1}{Q_1}{\Hby{\ell}}{\Delta_2'}{Q_2}
+			\]
+			and
+			\[
+				\horel{\Gamma}{\Delta_3}{P_3}{\SHby{}}{\Delta_1'}{P_2}
+			\]
+			and
+			$\horel{\Gamma}{\Delta_1'}{P_2}{\ \Re\ }{\Delta_2'}{Q_2}$
+
+		\item	The symmetric cases of 1 and 2.
+	\end{enumerate}
+	Then $\Re\ \subseteq\ \wb$.
+\end{lemma}
+
+
+\begin{proof}
+	The proof is very easy if we consider the
+	closure
+	\[
+		\Re^{\SHby{}} = \set{ \horel{\Gamma}{\Delta_1'}{P_2}{,}{\Delta_2'}{Q_1} \setbar \horel{\Gamma}{\Delta_1}{P_1}{\ \Re\ }{\Delta_2'}{Q_1},
+		\horel{\Gamma}{\Delta_1}{P_1}{\SHby{}}{\Delta_1'}{P_2} }
+	\]
+	We verify that $\Re^{\SHby{}}$ is a bisimulation with
+	the use of Proposition~\ref{lem:tau_inert}.
+	\qed
+\end{proof}
