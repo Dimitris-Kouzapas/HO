@@ -882,13 +882,35 @@ in abstraction and application.
 %formalized 
 %in \S\,\ref{ss:ffotoho}.
 %by $\encod{\cdot}{\cdot}{1}: \sessp^{-\mu} \to \HO$.
-
+Given a session environment
+$\Delta = \{n_1:S_1, \ldots, n_m:S_m\}$, 
+in the following definition
+we write
+$\tilde{S}_{\Delta}$ to stand for $S_1, \ldots, S_m$.
 \begin{definition}[\HOp into \HO]\rm
 	\label{def:enc:HOp_to_HO}
 	Let $f$ be a function from recursion variables to sequences of name variables.
 	Define the typed encoding $\enco{\map{\cdot}^{1}_f, \mapt{\cdot}^{1}, \mapa{\cdot}^{1}}: \HOp \to \HO$,
-	where mappings $\map{\cdot}^{2}$, $\mapt{\cdot}^{2}$, $\mapa{\cdot}^{2}$
+	where mappings $\map{\cdot}^{1}$, $\mapt{\cdot}^{1}$, $\mapa{\cdot}^{1}$
 	are as in Fig.~\ref{fig:enc:HOp_to_HO}.
+    We assume that the mapping $\mapt{\cdot}^{1}$ on types is extended to 
+    session environments $\Delta$
+  and
+    shared environments $\Gamma$ 
+      as follows:
+\[
+	\begin{array}{rcll}
+	    \mapt{\Delta \cat s: S}^{1} & =  & \mapt{\Delta}^{1} \cat s:\mapt{S}^{1} & \\
+		\mapt{\Gamma \cat u: \chtype{S}}^{1} & =  & \mapt{\Gamma}^{1} \cat u:\chtype{\mapt{S}^{1}} & \\
+		\mapt{\Gamma \cat u: \chtype{L}}^{1} & = &  \mapt{\Gamma}^{1} \cat u:\chtype{\dk{\mapt{L}^{1}}} & \\
+		\tmap{\Gamma \cat \varp{X}:\Delta}{1} & = & \tmap{\Gamma}{1} \cat x:\shot{(\tilde{S}_{\Delta}\,,\,S^*)} & 
+		\quad\text{(where $ 
+%		S^* = \trec{t}{\big((\tilde{S}_{\Delta}\,,\, \btinp{\vart{t}}\tinact)\big)}
+		S^* = \trec{t}{\btinp{\shot{(\tilde{S}_{\Delta}\,,\,\vart{t})}} \tinact}$)}
+	\end{array}
+\]
+%\end{remark}
+
 \end{definition}
 
 \begin{figure}[h!]
@@ -987,21 +1009,7 @@ in abstraction and application.
 	}
 \end{figure}
 
-\begin{remark}
-	Let $\Delta = \{n_1:S_1, \ldots, n_m:S_m\}$ be a session environment.
-	Write $\tilde{S}_{\Delta} = S_1, \ldots, S_m$.
-	We define  mapping $\mapt{\cdot}^{1}$ on shared environments $\Gamma$ as follows:
-\[
-	\begin{array}{rclcrcl}
-		\mapt{\Gamma \cat u: \chtype{S}}^{1} & =  & \mapt{\Gamma}^{1} \cat u:\chtype{\mapt{S}^{1}} & &
-		\mapt{\Gamma \cat u: \chtype{L}}^{1} & = &  \mapt{\Gamma}^{1} \cat u:\chtype{\dk{\mapt{L}^{1}}}\\
-		\tmap{\Gamma \cat \varp{X}:\Delta}{1} & = & \tmap{\Gamma}{1} \cat x:\shot{(\tilde{S}_{\Delta}\,,\,S^*)} & \qquad &
-		\text{where }
-%		S^* = \trec{t}{\big((\tilde{S}_{\Delta}\,,\, \btinp{\vart{t}}\tinact)\big)}
-		S^* &=& \trec{t}{\btinp{\shot{(\tilde{S}_{\Delta}\,,\,\vart{t})}} \tinact}
-	\end{array}
-\]
-\end{remark}
+
 
 In the higher-order setting, a name $v$ is being passed as an input
 guarded abstraction. The input prefix receives an abstraction and
