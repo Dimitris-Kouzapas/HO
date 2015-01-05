@@ -545,7 +545,7 @@ The Knaster Tarski theorem ensures that the largest contextual bisimulation exis
 The contextual bisimulation in the general case
 is hard to compute due to: (1) the universal
 quantifier over contexts in the output case;
-and (2) a higher order input prefix which can observe
+and (2) a higher-order input prefix which can observe
 infinetely many different input actions (since
 infinetely many different processes can match
 the session type of an input prefix).
@@ -562,21 +562,21 @@ take the following two steps to propose more tractable bisimulations:
 rules $\eltsrule{SRv}$ and $\eltsrule{ShRv}$ in Fig.~\ref{fig:envLTS}; and 
 \item replace 
 the output action case (Clause 1) in Definition~\ref{def:wbc}) 
-by a more efficient closuer. 
+by a more tactable closuer. 
 \end{enumerate}
 For 1), we first 
 observe that a substitution $R\subst{V1}{x}$ in 
-Clause 1) in Definition~\ref{def:wbc} is equivalent to the following process, with fresh $s$,  
+Clause 1) in Definition~\ref{def:wbc} is contextual bisimular to the following process, with fresh $s$,  
 \begin{equation}\label{eq:1}
 P = \newsp{s}{\appl{(\abs{z}{\binp{z}{x}{R}})}{s} \Par \bout{\dual{s}}{V_1} \inact}
 \end{equation}
 since the reduction at $s$ and application are deterministic.  
 Hence using the fresh trigger name $t$, if we input a specific input, 
 we can simulate the substitution:
-\begin{equation}\label{eq:1}
+\begin{equation}\label{eq:2}
 \hotrigger{t}{V_1} 
-\by{ \bactinp{t}{\abs{z}{\binp{z}{x} R}}} P 
-\red^\ast 
+\by{\bactinp{t}{\abs{z}{\binp{z}{x} R}}} P 
+\wbc 
 R\subst{V_1}{x}
 \end{equation}
 Thus if we check the closure 
@@ -585,16 +585,37 @@ of Clause 1) in Definition \ref{def:wbc},
 we can limit the input observation to  
 $\bactinp{t}{\abs{z}{\binp{z}{x} R}}$ since: 
 \begin{eqnarray*}
-{\newsp{\tilde{m_1}}{P_1 \Par \hotrigger{t}{V_1}}}{\by{ \bactinp{t}{\abs{z}{\binp{z}{x} R}} }}\newsp{\tilde{m_1}}{P_2 \Par P}
+{\newsp{\tilde{m_1}}{P_1 \Par \hotrigger{t}{V_1}}}{\by{ \bactinp{t}{\abs{z}{\binp{z}{x} R}} }}\newsp{\tilde{m_1}}{P_2 \Par P}\\
+\wbc 
+\newsp{\tilde{m_1}}{P_2 \Par R\subst{V_1}{x}}
 \end{eqnarray*}
-where $P$ is equivalent to $R\subst{V_1}{x}$. 
+The process in (\ref{eq:2}) is regarded 
+as a {\em trigger process} which 
+offers value $V_1$ at $t$ \cite{JeffreyR05}, so that we write as: 
+\begin{equation}\label{eq:3}
+		\htrigger{t}{V_1} \defeq \hotrigger{t}{V_1} 
+\end{equation}
+We use the above trigger process for the second bisimulation, called 
+higher-order bisimulation, denoted by $\hwb$.  
 
-Unfortunately only observing a trigger value and channel 
-is not sufficient since we equate too many processes
+
+%\begin{definition}[Output Trigger]\rm
+%	Let $\Gamma; \es; \Delta \proves V \hastype U$.
+%	We write $\trigger{t}{V}{U}$ for either
+%\[
+%	\begin{array}{lcl}
+%		\htrigger{t}{V} &=& \hotrigger{t}{x}{s}{V} \textrm{ or}\\
+%		\ftrigger{t}{V}{U} &=& \fotrigger{t}{x}{s}{\btinp{U} \inact}{V}
+%	\end{array}
+%\]
+%\end{definition}
+
+Unfortunately only observing a trigger value as an input 
+is not sufficient to reason about the \sessp-calculus 
 (see Example~\ref{ex:motivation}). 
 We need additionally observe very simple 
 processes called {\em characteristic processes} which are explained 
-below. 
+in the next paragraph. 
 
 \smallskip
 
@@ -614,13 +635,6 @@ We formalise this idea in the next definition.
 
 \smallskip  
    
-%\subsection{Characteristic Processes}
-
-
-\smallskip
-
-
-
 \begin{definition}[Characteristic Process]\rm
 %	Let names $\tilde{k}$ and type $\tilde{C}$; then we define a {\em characteristic process}:
 %	$\map{\tilde{C}}^{\tilde{k}}$:
@@ -635,7 +649,6 @@ a mapping $\omapchar{U}$ in Fig.~\ref{fig:char}.
 \end{definition}
 
 \smallskip
-
 \begin{figure}[t]
 	\[
 	\begin{array}{c}
@@ -733,30 +746,82 @@ a mapping $\omapchar{U}$ in Fig.~\ref{fig:char}.
 and $\mapchar{C}{u}$. 
 \end{IEEEproof}
 
+\smallskip 
 
-\begin{lemma}[Invariant]\label{l:invariant}
-	If $\horel{\Gamma}{\Delta_1}{P_1}{\hby{\ell}}{\Delta_2}{P_2}$
+For the first-order bisimulation, 
+denoted by $\fwb$, we limit the input transtion to 
+the characteristic process, $\lambda x.\mapchar{U}{x}$. 
+Hence with the same reasoninig as (\ref{eq:1})--(\ref{eq:3}), 
+we define the trigger process with type 
+$U$, and replace Clause 1) in Definition~\ref{def:wbc}:
+\begin{equation}\label{eq:4}
+	\ftrigger{t}{V}{U} \defeq 
+\fotrigger{t}{x}{s}{\btinp{U} \tinact}{V}
+\end{equation}
+
+\myparagraph{Restricted Input Transition Rule}
+By summing up, we define the typed relation which limits 
+the input values. 
+
+\begin{definition}[Restricted Typed Labelled Transition Relation]
+\label{def:rlts}
+We define the restricted environment transition relation with the following 
+rules using the environment transition relation defined in 
+Fig.~\ref{fig:envLTS}: 
+\[
+\begin{array}{rl}
+		\eltsrule{RRcv}&\tree {
+\begin{array}{c}
+(\Gamma_1; \Lambda_1; \Delta_1) \by{\bactinp{n}{V}} (\Gamma_2; \Lambda_2; \Delta_2)
+\\
+			\begin{array}{lll}
+				 V  \scong
+(\abs{{x}}{\binp{t}{y} (\appl{y}{{x}})}
+ \vee  \abs{{x}}{\map{U}^{{x}}}  \vee m)  \textrm{ with } t \textrm{ fresh} 
+			\end{array}
+			\end{array}
+		}{
+			(\Gamma_1; \Lambda_1; \Delta_1) \hby{\bactinp{n}{V}} (\Gamma_2; \Lambda_1; \Delta_2)
+		}
+\end{array}
+\]
+We then define 
+$\horel{\Gamma}{\Delta_1}{P_1}{\hby{\ell}}{\Delta_2}{P_2}$
+by replacing $\by{\ell}$ by $\hby{\ell}$ in Definition~\ref{d:tlts}. 
+\end{definition}
+
+\smallskip 
+
+\noi Note 
+$\horel{\Gamma}{\Delta_1}{P_1}{\hby{\ell}}{\Delta_2}{P_2}$ implies  
 	then $\horel{\Gamma}{\Delta_1}{P_1}{\by{\ell}}{\Delta_2}{P_2}$.
-\end{lemma}
+See Example~\ref{ex:motivation} for the reason why {\em both} 
+the trigger processes ($\binp{t}{y} (\appl{y}{{x}})$) 
+and characteristic processes ($\map{U}^{{x}}$) are required 
+to define the following two bisimulations. 
 
-\begin{IEEEproof}
-	The proof is straightforward from the definition of rule $\eltsrule{RRcv}$.
-\end{IEEEproof}
+\smallskip 
+
+\myparagraph{The Two Bisimulations} We now define 
+the higher-order bisimulation. 
+
+\smallskip 
 
 \begin{definition}[Higher-Order Bisimulation]\rm
-	\label{d:bisim}
-A typed relation $\Re$ is {\em the HO bisimulation} if
-for all $\horel{\Gamma}{\Delta_1}{P_1}{\ \Re \ }{\Delta_2}{Q_1}$, 
-	\begin{enumerate}
-		\item	whenever 
+	\label{d:hbw}
+A typed relation $\Re$ is {\em the HO bisimulation} if 
+for all $\horel{\Gamma}{\Delta_1}{P_1}{\ \Re \ }{\Delta_2}{Q_1}$ 
+\begin{enumerate}
+\item 
+whenever 
 $\horel{\Gamma}{\Delta_1}{P_1}{\hby{\news{\tilde{m_1}} \bactout{n}{V_1}}}{\Delta_1'}{P_2}$, there exits 
-$\horel{\Gamma}{\Delta_2}{Q_1}{\Hby{\news{\tilde{m_2}} \bactout{n}{V_2}}}{\Delta_2'}{Q_2}$ such that, for fresh $t,x,s$, 
+$\horel{\Gamma}{\Delta_2}{Q_1}{\Hby{\news{\tilde{m_2}} \bactout{n}{V_2}}}{\Delta_2'}{Q_2}$ such that, for fresh $t$, 
 \[
 \begin{array}{lrlll}
-& \Gamma; \Delta''_1  \proves & 
-{\newsp{\tilde{m_1}}{P_2 \Par \hotrigger{t}{V_1}}}\\ 
-\Re & 
-\Delta''_2 \proves & {\newsp{\tilde{m_2}}{Q_2 \Par \hotrigger{t}{V_2}}}
+\Gamma; \Delta''_1  \proves  {\newsp{\tilde{m_1}}{P_2 \Par 
+\htrigger{t}{V_1}}}
+\ \Re 
+\ \Delta''_2 \proves {\newsp{\tilde{m_2}}{Q_2 \Par \htrigger{t}{V_2}}}
 \end{array}
 \]
 		\item	
@@ -773,71 +838,129 @@ $\horel{\Gamma}{\Delta_2}{Q_1}{\Hby{\ell}}{\Delta_2'}{Q_2}$
 	it is called bisimilarity and is denoted by $\hwb$.
 \end{definition}
 
-
-A different variant of the bisimulation based on a first order
-output trigger.
+The first-order bisimulation is given using the characteristic processes. 
 
 \begin{definition}[First-Order Bisimulation]\rm
 \label{d:fwb}
-A typed relation $\Re$ is {\em the first-order bisimulation} if
-for all $\horel{\Gamma}{\Delta_1}{P_1}{\ \Re \ }{\Delta_2}{Q_1}$, 
+The first order bisimilarity, denoted by $\fwb$, is defined replacing 
+Clause 1) in Definition~\ref{d:hbw} by the following clause:
 	\begin{enumerate}
 		\item	whenever 
 $\horel{\Gamma}{\Delta_1}{P_1}{\hby{\news{\tilde{m_1}} \bactout{n}{V_1}}}{\Delta_1'}{P_2}$ with $\Gamma; \es; \Delta \proves V_1 \hastype U$,  
 there exits 
 $\horel{\Gamma}{\Delta_2}{Q_1}{\Hby{\news{\tilde{m_2}}\bactout{n}{V_2}}}{\Delta_2'}{Q_2}$ with $\Gamma; \es; \Delta' \proves V_2 \hastype U$,  
-such that, for fresh $t,x,s$, 
-
+such that, for fresh $t$, 
 \[
-\hspace*{-1cm}\begin{array}{lrlll}
-& \Gamma; \Delta''_1  \proves & 
-{\newsp{\tilde{m_1}}
-{P_2 \Par \fotrigger{t}{x}{s}{\btinp{U} \tinact}{V_1}}}\\ 
-\Re & 
-\Delta''_2 \proves & {\newsp{\tilde{m_2}}{Q_2 \Par 
-\fotrigger{t}{x}{s}{\btinp{U} \tinact}{V_2}}}
+\hspace{-0.5cm}\begin{array}{lrlll}
+\Gamma; \Delta''_1  \proves  {\newsp{\tilde{m_1}}{P_2 \Par 
+\ftrigger{t}{V_1}{U_1}}}
+\ \Re 
+\ \Delta''_2 \proves {\newsp{\tilde{m_2}}{Q_2 \Par \ftrigger{t}{V_2}{U_2}}}
 \end{array}
 \]
-	\item	
-for all $\horel{\Gamma}{\Delta_1}{P_1}{\hby{\ell}}{\Delta_1'}{P_2}$ such that 
-$\ell$ is not an output, 
- there exists $Q_2$ such that 
-$\horel{\Gamma}{\Delta_1}{Q_1}{\Hby{\ell}}{\Delta_1'}{Q_2}$
-			and
-			$\horel{\Gamma}{\Delta_1'}{P_2}{\ \Re \ }{\Delta_2'}{Q_2}$; and 
-
-                      \item	The symmetric cases of 1 and 2.                
-	\end{enumerate}
-	The Knaster Tarski theorem ensures that the largest bisimulation exists,
-	it is called bisimilarity and is denoted by $\fwb$.
+\end{enumerate}
 \end{definition}
 
-We present a result on process substitution.
+\smallskip 
 
-\begin{lemma}[Process Substitution]\rm
-	\label{lem:proc_subst}
-	\begin{enumerate}
-		\item	If $\horel{\Gamma}{\Delta_1'}{P \subst{\abs{x}{\binp{t}{y} (\appl{y}{x})}}{z}}{\wb}{\Delta_2'}{Q \subst{\abs{x}{\binp{t}{y} (\appl{y}{{x}})}}{z}}$ for fresh $t$, 
-then for all $R$ such that $\fv{R} = {x}$, 
-\[
-\horel{\Gamma}{\Delta_1}{P \subst{\abs{{x}}{R}}{z}}{\wb}{\Delta_2}{Q \subst{\abs{{x}}{R}}{z}}
-\]
-		\item	If 
-$\horel{\Gamma}{\Delta_1'}{P \subst{\abs{{x}}{\map{U}^{{x}}}}{z}}{\wb}{\Delta_2'}{Q \subst{\abs{{x}}{\map{U}^{{x}}}}{z}}$ for some $U$, 
-then for all $R$ such that $\fv{R} = {x}$, 
-\[
-\horel{\Gamma}{\Delta_1}{P \subst{\abs{{x}}{R}}{z}}{\wb}{\Delta_2}{Q \subst{\abs{{x}}{R}}{z}}
-\]
-\end{enumerate}
-\end{lemma}
-%\begin{IEEEproof}
-%	The details of the proof can be found in Appendix~\ref{app:sub_coinc}.
-%\end{IEEEproof}
+Below we state the main theorem.
+
+\smallskip 
 
 \begin{theorem}[Coincidence]\rm
 	\label{the:coincidence}
 	Relations $\hwb, \fwb, \wbc$ and $\cong$ coincide.
 \end{theorem}
+
+\smallskip 
+
+Below we list the examples to justify rule \eltsrule{RRcv} in 
+Definition~\ref{def:rlts}. 
+
+\begin{example}[Restricted Typed Labelled Transition Relation]
+\label{ex:motivation}
+We show that either a characteristic process or 
+a trigger process alone as the observable input 
+is not enough to define meaningful bisimulations. 
+
+	Consider typed processes:
+	%
+	\begin{eqnarray}
+&& 	\Gamma; \es; \Delta \cat s: \btinp{\shot{\btinp{C} \tinact}} \tinact \proves \binp{s}{x} (\appl{x}{s_1} \Par \appl{x}{s_2})
+\label{eq:5}
+\\
+&&		\Gamma; \es; \Delta \cat s: \btinp{\shot{\btinp{C} \tinact}} \tinact \proves \binp{s}{x} (\appl{x}{s_1} \Par \binp{s_2}{y} \inact)\quad\quad
+\label{eq:6}
+	\end{eqnarray}
+	%
+	If the above processes input and substitute  
+	characteristic  process $\abs{z}{\binp{z}{y}} \inact$ into $x$, 
+then the processes (\ref{eq:5}) and (\ref{eq:6}) in become:
+	\begin{eqnarray*}
+		\Gamma; \es; \Delta \proves \binp{s_1}{y} \inact \Par \binp{s_2}{y} \inact
+	\end{eqnarray*}
+hence after inputting $\abs{x}{\binp{x}{y}} \inact$, 
+both process become contextual bisimilar. 
+The processes in (\ref{eq:5}) and (\ref{eq:6}) 
+are obviously {\em not} contextualy bisimimilar since
+for other numerous input processes, they can be distinguished. 
+For example, if we input $\abs{x} \bout{a}{s_3} \binp{x}{y} \inact$, 
+the results are {\em not} bisimilar. 
+
+Allowing only the characteristic as an input action
+results in an over-discriminating bisimulation.
+To solve this problem, we can use the trigger process. 
+The trigger process can distinguish 
+the processes in (\ref{eq:5}) and (\ref{eq:6}) 
+that is if a value of the trigger process is received, 
+we obtain:
+%
+\begin{eqnarray*}
+	\Gamma; \es; \Delta &\proves& \binp{t}{x} \appl{x}{s_1} \Par \binp{t}{x} \appl{x}{s_2}
+	\\
+	\Gamma; \es; \Delta &\proves& \binp{t}{x} \appl{x}{s_1} \Par \binp{s_2}{y} \inact
+\end{eqnarray*}
+\noi that can be distinguished by the freshness of name $t$.
+
+One question that arises here is whether the trigger input is enough
+to distinguish two processes, hence no need of 
+characteristic processes as the input. 
+This is not the case since the trigger input 
+alone also results in an over-discriminating bisimulation relation.
+In fact the input trigger can be observed on any input prefix
+of {\em any type}. For example, consider the following processes:
+%
+\begin{eqnarray*}
+	\Gamma; \es; \Delta \proves \newsp{s}{\binp{n}{x} \appl{x}{s} \Par \bout{\dual{s}}{\abs{x} P} \inact} \hastype \Proc
+	\\
+	\Gamma; \es; \Delta \proves \newsp{s}{\binp{n}{x} \appl{x}{s} \Par \bout{\dual{s}}{\abs{x} Q} \inact} \hastype \Proc
+\end{eqnarray*}
+%
+\noi if both processes input the trigger abstraction, we obtain: 
+\begin{eqnarray*}
+	\Gamma; \es; \Delta \proves \newsp{s}{\binp{t}{x} \appl{x}{s} \Par \bout{\dual{s}}{\abs{x} P} \inact} \hastype \Proc
+	\\
+	\Gamma; \es; \Delta \proves \newsp{s}{\binp{t}{x} \appl{x}{s} \Par \bout{\dual{s}}{\abs{x} Q} \inact} \hastype \Proc
+\end{eqnarray*}
+%
+\noi so they can be shown to be bisimilar. 
+However if they input $\abs{z}{\binp{z}{x} (\appl{x}{m})}$,  
+the resulting processes become:
+\begin{eqnarray*}
+	\Gamma; \es; \Delta \proves \newsp{s}{\binp{s}{x} \appl{x}{m} \Par \bout{\dual{s}}{\abs{x} P} \inact} \by{\tau} \Delta \proves P \subst{m}{x}
+	\\
+	\Gamma; \es; \Delta \proves \newsp{s}{\binp{s}{x} \appl{x}{m} \Par \bout{\dual{s}}{\abs{x} Q} \inact} \by{\tau} \Delta \proves Q \subst{m}{x}
+\end{eqnarray*}
+\noi which are not bisimilar if $P \subst{m}{x}$ is not with $Q \subst{m}{x}$.
+
+In conclusion, these examples offer the reason why we need to use both 
+$\abs{{x}}{\binp{t}{y} (\appl{y}{{x}})}$  and 
+$\abs{{x}}{\mapchar{U}{x}}$ as an input observation in \eltsrule{RRcv}.  
+\end{example}
+
+
+\smallskip 
+
 
 %\begin{IEEEproof}
 %	The full details of the proof are in Appendix~\ref{app:sub_coinc}.
@@ -855,17 +978,20 @@ then for all $R$ such that $\fv{R} = {x}$,
 %	the latter result without using a matching operator.
 %\end{IEEEproof}
 
-Processes that do not use shared names, (i.e.~they are typed with
-$\proves_s$ type system), are inherintly $\tau$-inert.
+\smallskip 
+
+\noi Processes that do not use shared names, are inherintly $\tau$-inert.
+
+\smallskip 
 
 \begin{lemma}[$\tau$-inertness]\rm
 	\label{lem:tau_inert}
 	Let $P$ is the $\HOp^{-\mathsf{sh}}$-calculus. 
-% {\em without shared channels}, i.e.~we restrict a grammer of channel types to $C::= S$. 
 Assume $\Gamma; \emptyset; \Delta \proves P \hastype \Proc$. Then 
 $P \red^\ast P'$ implies $\Gamma; \Delta \proves 
-P \hwb \Delta'\proves P'$ with $\Delta \red^\ast \Delta'$. 
+P \cong \Delta'\proves P'$ with $\Delta \red^\ast \Delta'$. 
 \end{lemma}
+
 
 %\begin{IEEEproof}
 %	The proof is relied on the fact that processes of the

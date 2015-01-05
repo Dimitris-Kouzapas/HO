@@ -1,11 +1,12 @@
 % !TEX root = main.tex
 \section{The Full Higher-Order Session $\pi$-Calculus (\HOp)}
 
-We introduce the {\em Full Higher-Order Session $\pi$-calculus} ($\HOp$ in the following).
-$\HOp$ features constructs for both name- and abstraction-passing; it corresponds to a sub-calculus 
+We introduce the {\em Full Higher-Order Session $\pi$-calculus}
+($\HOp$ in the following).
+$\HOp$ features constructs for both name- and abstraction-passing;
+it corresponds to a sub-calculus 
 of the higher-order language studied by Mostrous and Yoshida in~\cite{tlca07}.
-Although minimal, 
-in \S\ref{s:expr}
+Although minimal, in \S\ref{s:expr}
 the abstraction-passing capabilities of \HOp will prove 
 expressive enough to capture key features of session communication, 
 such as delegation and recursion.
@@ -14,12 +15,13 @@ such as delegation and recursion.
 
 The syntax for $\HOp$ processes is given in Figure~\ref{fig:syntax}.
 We assume a set of names $N$, defined as $N = S \cup \dual{S}$.
-We use $s, s_1, \dots$ 
-and $\dual{s}, \dual{s_1}, \dots$
+We use $a,b,c, \dots, m, n, \dots, s, t, \dots$ 
+and $\dual{a}, \dots, \dual{m}, \dual{s}, \dots$
 to range over elements of $S$ and $\dual{S}$, respectively.
-Intuitively, names $s$ and $\dual{s}$ are dual \emph{endpoints}.
-Note that $N$ includes session and shared names:
-we sometimes write  $a,b, \dots$ to denote shared names, although $a, b, \dots \in S$.
+Intuitively, names $n$ and $\dual{n}$ are dual \emph{endpoints}.
+Note that $N$ includes both session and shared names:
+we sometimes write  $a,b, \dots$ to denote shared names,
+although $a, b, \dots \in S$.
 Name variables $x, y,  \dots$, 
 process variables $X, Y,  \dots$,
 and recursive variables $\rvar{X}, \rvar{Y}, \dots$ 
@@ -31,33 +33,40 @@ We write $V, V', \ldots$ to denote
 transmittable \emph{values}, i.e., 
 name variables, process variables, recursive variables, or abstractions.
 
-The name-passing constructs of \HOp include the standard $\pi$-calculus prefixes for sending and receiving names.
-Process $\bout{k}{k'} P$ denotes the output of name $k'$ over channel $k$, with continuation $P$;
+The name-passing construcsts of \HOp include the standard $\pi$-calculus prefixes
+for sending and receiving names.
+Process $\bout{k}{k'} P$ denotes the output of name $k'$ over channel $k$,
+with continuation $P$;
 process $\binp{k}{x} P$ denotes the input along  of a value
 on channel $k$ over variable $x$, with continuation $P$. 
-Recursion is expressed by the primitive recursor $\recp{X}{P}$, which binds the recursive variable $\rvar{X}$ in process $P$. The abstraction-passing constructs of \HOp include 
+Recursion is expressed by the primitive recursor $\recp{X}{P}$,
+which binds the recursive variable $\rvar{X}$ in process $P$.
+The abstraction-passing constructs of \HOp include 
 the output prefix $\bbout{k}{\abs{x}{Q}} P$, which 
 sends out abstraction $\abs{x}{Q}$ over channel $k$ and then continues as $P$. 
 Process $\binp{k}{X} P$ denotes the reception of an abstraction
-on channel $k$ and over the process variable $\X$. Process $\appl{X}{k}$ is the application
-process which is used to bind channel $k$ on the process substituting process variable $\X$.
+on channel $k$ and over the process variable $\X$.
+Process $\appl{X}{k}$ is the application
+process which is used to bind channel $k$ on the process
+substituting process variable $\X$.
 
 \HOp also contains usual session constructs for $n$-ary labeled choice.
 %We assume the standard session syntax for selection and branching. 
 Process $\bsel{k}{l} P$ selects label $l$ on channel $k$ and then behaves as $P$. 
 Given $i \in I$, 
-process $\bbra{k}{l_i:P_i}_{i \in I}$ offers a choice on labels $l_i$ with continuation $P_i$.
+process $\bbra{k}{l_i:P_i}_{i \in I}$ offers a choice on labels $l_i$ with
+continuation $P_i$.
 The calculus also includes standard constructs for 
 inaction $\inact$, 
 parallel composition $P_1 \Par P_2$, and 
 name restriction $\news{s} P$, which simultaneously binds endpoints $s$ and $\dual{s}$ in $P$.
 
-%The calculus is extended with the standard polyadic name passing where
-%we allow list of names to be sent and received as messages. 
-%The calculus is also extended with polyadic abstractions and applications,
-%where we allow for a process to be abstracted on a list of
-%bound variables and dualy we can apply a list of names
-%over a polyadic abstraction.
+The calculus is extended with the standard polyadic name passing where
+we allow list of names to be send and received as messages. 
+The calculus is also extended with polyadic abstractions and applications,
+where we allow for a process to be abstracted on a list of
+bound variables and dualy we can apply a list of names
+over a polyadic abstraction.
 
 A well-formed process relies on assumptions for guarded recursive processes.
 A \emph{program} is a process without free 
