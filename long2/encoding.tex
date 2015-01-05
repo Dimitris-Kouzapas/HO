@@ -179,7 +179,7 @@ We show that the composition of encodings is closed on the above properties.
 
 \section{Positive Expressiveness Results}
 In this section we present a study of the expressiveness of $\HOp$ and its subcalculi. 
-We present four encodings:
+We present two encodings:
 %
 \begin{enumerate}[1.]
 %	\item Polyadic into Monadic Communication (\S\,\ref{ss:polmon})
@@ -199,6 +199,7 @@ Full abstraction results are conjectured, for the moment.
 	and input prefix as $\binp{n}{\tilde{x}} P$.
 \end{remark}
 
+\begin{comment}
 \subsection*{Preliminaries}
 
 The following result may be related to Lemma~\ref{l:invariant}: \jp{TO BE ADJUSTED with new typed LTS!}
@@ -269,7 +270,7 @@ $(\Delta^* = \Delta \setminus \Delta_2 \cat k:S_0 \cat s:T) \lor (\Delta^* = \De
 \end{enumerate}
 \end{lemma}
 
-\begin{comment}
+
 
 \subsection{Encoding Polyadic Semantics (\HOp) to Monadic Semantics ($\HOp^{-\mathsf{p}}$)}\label{ss:polmon}
 
@@ -1014,11 +1015,13 @@ $\tilde{S}_{\Delta}$ to stand for $S_1, \ldots, S_m$.
 In the higher-order setting, a name $v$ is being passed as an input
 guarded abstraction. The input prefix receives an abstraction and
 continues with the application of $v$ over the received abstraction.
-On the reception side $\binp{u}{x} P$ 
-the encoding develops a mechanism that will receive
-the input guarded abstraction, apply it on a fresh session endpoint $s$ and use
+On the receiver side $\binp{u}{x} P$ 
+the encoding realizes a mechanism that (i) receives
+the input guarded abstraction, then (ii) applies it on a fresh session endpoint $s$, 
+and (iii) uses
 the dual endpoint $\dual{s}$ to send the continuation $P$ as the abstraction
-$\abs{x}{P}$. Name substitution is then achieved as name application.
+$\abs{x}{P}$. 
+As a result, name substitution is achieved via name application.
 
 
 \begin{proposition}[Type Preservation, \HOp into \HO]
@@ -1104,7 +1107,8 @@ recursive definitions as passing of polyadic abstractions:
 %			    \end{enumerate}
 %\end{proposition}
 
-
+The following proposition formalizes completeness and soundness results for the encoding of 
+\HOp into \HO.
 
 \begin{proposition}[Operational Correspondence, \HOp into \HO]\rm
 	\label{prop:op_corr_HOp_to_HO}
@@ -1130,17 +1134,20 @@ recursive definitions as passing of polyadic abstractions:
 			and 
 			$P' = P_0\subst{m}{x}$
 			then $\exists \ell_2$, $R$ s.t. \\
-			$\stytra{\mapt{\Gamma}^{1}}{\ell_2}{\mapt{\Delta}^{1}}{\pmapp{P}{1}{f}}{\mapt{\Delta'_1}^{1}}{R}$,
+			$\stytra{\mapt{\Gamma}^{1}}{\ell_2}{\mapt{\Delta}^{1}}{\pmapp{P}{1}{f}}{\mapt{\Delta'}^{1}}{R}$,
 			with $\ell_2 = \mapa{\ell_1}^{1}$, \\
 			and
-			$\wtytra{\mapt{\Gamma}^{1}}{}{\mapt{\Delta'_1}^{1}}{R}{\mapt{\Delta'}^{1}}{\pmapp{P_0}{1}{f}\subst{m}{x}}$.	
+			$\wtytra{\mapt{\Gamma}^{1}}{}{\mapt{\Delta'}^{1}}{R}{\mapt{\Delta'}^{1}}{\pmapp{P_0}{1}{f}\subst{m}{x}}$.	
 						
 			\item If $\ell_1 = \tau$
 			and $P' \scong P_1 \Par P_2\subst{m}{x}$
-			then 
-			$\wtytra{\mapt{\Gamma}^{1}}{}{\mapt{\Delta}^{1}}{\pmapp{P}{1}{f}}{\mapt{\Delta'_1}^{1}}{\pmapp{P_1}{1}{f}
-			\Par \pmapp{P_2}{1}{f}\subst{m}{x}
-			}$.
+			then $\exists R$ s.t. \\
+			$\stytra{\mapt{\Gamma}^{1}}{\tau}{\mapt{\Delta}^{1}}{\pmapp{P}{1}{f}}{\mapt{\Delta}^{1}}{\pmapp{P_1}{1}{f}
+			\Par R
+			}$, where $R \Hby{} \pmapp{P_2}{1}{f}\subst{m}{x}$.
+
+			
+			
 			
 			\item If $\ell_1 = \tau$
 			and $P' \scong P_1 \Par P_2\subst{\abs{y}Q}{x}$
@@ -1176,11 +1183,11 @@ recursive definitions as passing of polyadic abstractions:
 						
 			\item 
 		    If $\ell_2 = \bactinp{n}{\abs{y}\binp{y}{x} \appl{x}{m}}$ 
-			then $\exists \ell_1, x, m, P'$ s.t. \\
-			$\stytra{ \Gamma }{\ell_1}{ \Delta }{ P}{ \Delta' }{ P'\subst{m}{x}}$, 
+			then $\exists \ell_1, z, P'$ s.t. \\
+			$\stytra{ \Gamma }{\ell_1}{ \Delta }{ P}{ \Delta' }{ P'\subst{m}{z}}$, 
 			$\ell_1 = \mapa{\ell_2}^{1}$,
 			and 
-			$Q \Hby{} \map{P'\subst{m}{x}}^{1}_f$.	
+			$Q \Hby{} \map{P'\subst{m}{z}}^{1}_f$.	
 		
 			%$\horel{\mapt{\Gamma}^{1}}{\mapt{\Delta'}^{1}}{\map{P'}^{1}}{\wbf}{\mapt{\Delta'}^{1}}{Q}$.
 			
@@ -1216,117 +1223,122 @@ recursive definitions as passing of polyadic abstractions:
 
 By transition induction. We consider parts (1) and (2) separately:
 
-\noi \textbf{Part (1)}. We consider the the most interesting cases, the rest is similar or simpler:
+\noi \textbf{Part (1) - Completeness}. We consider two representative cases, the rest is similar or simpler:
 %
 \begin{enumerate}[1.]
 	%%  Output 
-	\item	Subcase  (a): $P =\bout{k}{k_1} P'$ and $\ell_1 = \bactout{k}{k_1}$. By assumption, $P$ is well-typed. 
+	\item	Subcase  (a): $P =\bout{s}{n} P'$ and $\ell_1 = \bactout{s}{n}$. By assumption, $P$ is well-typed. 
 		We may have:
 %
 		\[
 			\tree{
-				\Gamma; \emptyset; \Delta_0 \cat k:S  \proves  P' \hastype \Proc \quad 
-				\Gamma ; \emptyset ; \{k_1{:} T\}  \proves   k_1 \hastype T }{
-				\Gamma; \emptyset; \Delta_0 \cat k_1{:}T \cat k:\btout{T}S \proves \bout{k}{k_1} P' \hastype \Proc}
+				\Gamma; \emptyset; \Delta_0 \cat s:S_1  \proves  P' \hastype \Proc \quad 
+				\Gamma ; \emptyset ; \{n{:} S\}  \proves   n \hastype S }{
+				\Gamma; \emptyset; \Delta_0 \cat n{:}S \cat s:\btout{S}S_1 \proves \bout{s}{n} P' \hastype \Proc}
 		\]
 %
-		\noi for some $\Gamma, S, T, \Delta_0$, 
-		such that $\Delta = \Delta_0 \cat k_1{:}T  \cat k:\btout{T}S$.
+		\noi for some $S, S_1, \Delta_0$.
+		%such that $\Delta = \Delta_0 \cat k_1{:}T  \cat k:\btout{T}S$.
 		We may then have the following transition:
 %
 		\[
-			\stytra{\Gamma}{\ell_1}{\Delta_0 \cat k_1{:}T  \cat k:\btout{T}S}{\bout{k}{k_1} P'}{\Delta_0 \cat k{:}S }{P'}
+			\stytra{\Gamma}{\ell_1}{\Delta_0 \cat n{:}S \cat s:\btout{S}S_1 }{\bout{s}{n} P'}{\Delta_0 \cat s{:}S_1 }{P'}
 		\]
 %
 		\noi The encoding of the source judgment for $P$ is as follows:
 %
 		\[
-			\mapt{\Gamma}^{1}; \emptyset; \mapt{\Delta_0 \cat k_1{:}T  \cat k:\btout{T}S}^{1} \proves \map{\bout{k}{k_1} P'}^{1} \hastype \Proc
+			\mapt{\Gamma}^{1}; \emptyset; \mapt{\Delta_0 \cat n{:}S \cat s:\btout{S}S_1}^{1} \proves \map{\bout{s}{n} P'}^{1} \hastype \Proc
 		\]
 %
 		\noi which, using Def.~\ref{def:enc:HOp_to_HO} can be expressed as 
 %
 		\[
 			\mapt{\Gamma}^{\mathsf{p}}; \emptyset; \mapt{\Delta_0} 
-			\cat k_1{:}\mapt{T}^{1} 
-			\cat k: \btout{\lhot{\btinp{\lhot{\tmap{T}{1}}}\tinact}} \tmap{S}{1}
+			\cat n{:}\mapt{S}^{1} 
+			\cat s: \btout{\lhot{\btinp{\lhot{\tmap{S}{1}}}\tinact}} \tmap{S_1}{1}
 			\proves 
-			\bbout{k}{ \abs{z}{\,\binp{z}{X} \appl{X}{k_1}} } \pmap{P}{1}
+			\bbout{s}{ \abs{z}{\,\binp{z}{x} \appl{x}{n}} } \pmap{P'}{1}
 			\hastype \Proc
 		\]
 %
-		\noi Now, $\mapa{\ell_1}^{1} = \bactout{k}{\abs{z}{\,\binp{z}{X} \appl{X}{k_1}}\, } $. 
-		We may infer the following typed transition for $\map{P}^{1}$:
+		\noi Now, $\mapa{\ell_1}^{1} = \bactout{s}{\abs{z}{\,\binp{z}{x} \appl{x}{n}}\, } $. 
+		We may infer the following  transition for $\map{P}^{1}$:
 %
 		\begin{eqnarray*}
 			& & \mapt{\Gamma}^{1}; \emptyset; \mapt{\Delta}^{1} 
 			\proves 
-			\bbout{k}{ \abs{z}{\,\binp{z}{X} \appl{X}{k_1}} } \pmap{P}{1}
+			\bbout{s}{ \abs{z}{\,\binp{z}{x} \appl{x}{n}} } \pmap{P'}{1}
 			\hastype \Proc \\
 			& \hby{\mapa{\ell_1}^{1}} & \mapt{\Gamma}^{1}; \emptyset; \mapt{\Delta_0}^{1} 
-			\cat k:  \tmap{S}{1}
-			\proves  \pmap{P}{1}
+			\cat s:  \tmap{S_1}{1}
+			\proves  \pmap{P'}{1}
 			\hastype \Proc \\
-			& = & \mapt{\Gamma}^{1}; \emptyset; \mapt{\Delta_0 \cat k:  S}^{1}
-			\proves  \pmap{P}{1}
+			& = & \mapt{\Gamma}^{1}; \emptyset; \mapt{\Delta_0 \cat s:  S_1}^{1}
+			\proves  \pmap{P'}{1}
 			\hastype \Proc 
 		\end{eqnarray*}
 %
 		\noi from which the thesis follows easily.
 
-	\item	Subcase (c): $P = \binp{k}{x} Q$	and $\ell_1 = \bactinp{k}{k_1}$.
+	\item	Subcase (c): $P = \binp{n}{x} P'$	and $\ell_1 = \bactinp{n}{m}$.
 		By assumption $P$ is well-typed.
 		We may have:
 %
 		\[
 			\tree{
-				\Gamma; \emptyset; \Delta_0 \cat x{:} T \cat k:S  \proves  Q \hastype \Proc \quad 
-				\Gamma ; \emptyset ; \{x{:} T\}  \proves   x\hastype T }{
-				\Gamma; \emptyset; \Delta_0 \cat   k:\btinp{T}S \proves \binp{k}{x} Q \hastype \Proc}
+				\Gamma; \emptyset; \Delta_0 \cat x:S \cat n:S_1  \proves  P' \hastype \Proc \quad 
+				\Gamma ; \emptyset ; \{x: S\}  \proves   x\hastype S}{
+				\Gamma; \emptyset; \Delta_0 \cat   n:\btinp{S}S_1 \proves \binp{n}{x} P' \hastype \Proc}
 		\]
 %
-		for some $\Gamma, S, T, \Delta_0$, 
-		such that $\Delta = \Delta_0 \cat k:\btinp{T}S$.
-		We may infer the following typed transition
+		for some  $S, S_1, \Delta_0$.
+%		such that $\Delta = \Delta_0 \cat k:\btinp{T}S$.
+		We may infer the following typed transition:
 %
 		\[
-			\Gamma; \emptyset; \Delta_0 \cat   k:\btinp{T}S \proves \binp{k}{x} Q \hastype \Proc
-			\hby{\bactinp{k}{k_1}}
-			\Gamma; \emptyset; \Delta_0 \cat   k:S \cat k_1:T \proves   Q\subst{k_1}{x} \hastype \Proc
+			\Gamma; \emptyset; \Delta_0 \cat   n:\btinp{S}S_1 \proves \binp{n}{x} P' \hastype \Proc
+			\hby{\bactinp{n}{m}}
+			\Gamma; \emptyset; \Delta_0 \cat  n:S_1 \cat m:S \proves   P'\subst{m}{x} \hastype \Proc
 		\]
 %
 		The encoding of the source judgment for $P$ is as follows:
 %
 		\begin{eqnarray*}
-			& & \mapt{\Gamma}^{1}; \emptyset; \mapt{ \Delta_0 \cat   k:\btinp{T}S }^{1} \proves 
+			& & \mapt{\Gamma}^{1}; \emptyset; \mapt{ \Delta_0 \cat   n:\btinp{S}S_1 }^{1} \proves 
 			\map{P}^{1}
 			\hastype \Proc \\
-			& = & \mapt{\Gamma}^{1}; \emptyset; \mapt{ \Delta_0 }^{1} \cat   k: \btinp{\lhot{\btinp{\lhot{\tmap{T}{1}}}\tinact}} \tmap{S}{1} \proves 
-			\binp{k}{X} \newsp{s}{\appl{X}{s} \Par \bbout{\dual{s}}{\abs{x}{\pmap{Q}{1}}} \inact}
+			& = & \mapt{\Gamma}^{1}; \emptyset; \mapt{ \Delta_0 }^{1} \cat   n: \btinp{\lhot{\btinp{\lhot{\tmap{S}{1}}}\tinact}} \tmap{S_1}{1} \proves 
+			\binp{n}{x} \newsp{s}{\appl{x}{s} \Par \bbout{\dual{s}}{\abs{x}{\pmap{P'}{1}}} \inact}
 			\hastype \Proc
 		\end{eqnarray*}
 %
 		Now, 
-		$\mapa{\ell_1}^{1} = \bactinp{k}{\abs{z}{\,\binp{z}{X} \appl{X}{k_1}}\, }$
-		and is immediate to infer the following 
+		$\mapa{\ell_1}^{1} = \bactinp{n}{\abs{z}{\,\binp{z}{x} \appl{x}{m}}\, }$
+		and it is immediate to infer the following 
 		transition for $\map{P}^{1}$:
 %
 		\begin{eqnarray*}
-			&  & \mapt{\Gamma}^{1}; \emptyset; \mapt{ \Delta_0 }^{1} \cat   k: \btinp{\lhot{\btinp{\lhot{\tmap{T}{1}}}\tinact}} \tmap{S}{1} \proves 
-			\binp{k}{X} \newsp{s}{\appl{X}{s} \Par \bbout{\dual{s}}{\abs{x}{\pmap{Q}{1}}} \inact}
+			&  & \mapt{\Gamma}^{1}; \emptyset; \mapt{ \Delta_0 }^{1} \cat   
+			n: \btinp{\lhot{\btinp{\lhot{\tmap{S}{1}}}\tinact}} \tmap{S_1}{1} \proves 
+			\binp{n}{x} \newsp{s}{\appl{x}{s} \Par \bbout{\dual{s}}{\abs{x}{\pmap{P'}{1}}} \inact}
 			\hastype \Proc \\
 			& \hby{\mapa{\ell_1}^{1}}  & \mapt{\Gamma}^{1}; \emptyset; \mapt{ \Delta_0 }^{1} \cat   
-			k:  \tmap{S}{1} \cat k_1:  \tmap{T}{1} \proves 
-			 \newsp{s}{\appl{X}{s} \Par \bbout{\dual{s}}{\abs{x}{\pmap{Q}{1}}} \inact}\subst{\abs{z}{\,\binp{z}{X} \appl{X}{k_1}}}{X}
+			n:  \tmap{S_1}{1} \cat m:  \tmap{S}{1} \proves 
+			 \newsp{s}{\appl{x}{s} \Par \bbout{\dual{s}}{\abs{x}{\pmap{P'}{1}}} \inact}\subst{\abs{z}{\,\binp{z}{x} \appl{x}{m}}}{x}
 			\hastype \Proc 
 		\end{eqnarray*}
 %
-		Let us write $R$ to stand for $\newsp{s}{\appl{X}{s} \Par \bbout{\dual{s}}{\abs{x}{\pmap{Q}{1}}} \inact}\subst{\abs{z}{\,\binp{z}{X} \appl{X}{k_1}}}{X}$.
-		At this point it is not difficult to infer the 
-		desired conclusion, using conductive arguments:
-		\[
-			\wbb{\mapt{\Gamma}^{1}}{\ell}{\mapt{\Delta\cat k:S \cat k_1:T}^{\mathsf{p}}}{\map{Q\subst{k_1}{x}}^{1}}{\mapt{\Delta\cat k:S \cat k_1:T}^{\mathsf{p}}}{R}
-		\]
+		Let us write $R$ to stand for process 
+		$\newsp{s}{\appl{x}{s} \Par \bbout{\dual{s}}{\abs{x}{\pmap{P'}{1}}} \inact}\subst{\abs{z}{\,\binp{z}{x} \appl{x}{m}}}{x}$. 
+		%$\newsp{s}{\appl{X}{s} \Par \bbout{\dual{s}}{\abs{x}{\pmap{Q}{1}}} \inact}\subst{\abs{z}{\,\binp{z}{X} \appl{X}{k_1}}}{X}$.
+		We then have:
+		\begin{eqnarray*}
+		R & \by{\tau} & \newsp{s}{\binp{s}{x} \appl{x}{m} \Par \bbout{\dual{s}}{\abs{x}{\pmap{P'}{1}}} \inact} \\
+		& \by{\tau} &  \appl{(\abs{x}{\pmap{P'}{1}})}{m} \Par \inact \\
+		& \by{\tau} & \pmap{P'}{1}\subst{m}{x}
+		\end{eqnarray*}
+		and so the thesis follows.
 
 		%%%%%%%%%%%
 		%%  Recursion
@@ -1339,110 +1351,117 @@ By transition induction. We consider parts (1) and (2) separately:
 		
 \end{enumerate}
 %
-\noi \textbf{Part (2)}. We consider two non-trivial cases, the rest is similar or simpler:
+\noi \textbf{Part (2) - Soundness}. We consider two representative cases, the rest is similar or simpler:
 %
 \begin{enumerate}[1.]
 		%%%%%%%%%%%
 		%%  Output 
 		%%%%%%%%%%%
-	\item Subcase (a): $P = \bout{k}{k'} P'$.
+	\item Subcase (a): $P = \bout{n}{m} P'$ and $\ell_2 = \bactout{n}{\abs{z}{\,\binp{z}{x} \appl{x}{m}}}$.
 		%,  $\map{P}^{1} = \bbout{k}{ \abs{z}{\,\binp{z}{X} \appl{X}{k'}} } \pmap{P'}{1}$.
 		Then 
 		we have: % the following typed transition for $\map{P}^{1}$:
 %
 		\[
 			\mapt{\Gamma}^{1};\, \emptyset;\, \mapt{\Delta_0}^{1} \cat 
-			k: \btout{\lhot{\btinp{\lhot{\tmap{T}{1}}}\tinact}} \tmap{S}{1} 
+			n: \btout{\lhot{\btinp{\lhot{\tmap{S}{1}}}\tinact}} \tmap{S_1}{1} 
 			\proves 
-			 \bbout{k}{ \abs{z}{\,\binp{z}{X} \appl{X}{k'}} } \pmap{P'}{1} 
+			 \bbout{n}{ \abs{z}{\,\binp{z}{x} \appl{x}{m}} } \pmap{P'}{1} 
 			 \hastype \Proc
 		\]
 %
-		for some $T, S$, and $\Delta_0$. 
+		for some $S, S_1$, and $\Delta_0$. 
 		We may infer the following typed transition for $\pmap{P}{1}$:
 %
 		\begin{eqnarray*}
-			& & \mapt{\Gamma}^{1};\, \mapt{\Delta_0}^{1} \cat k: \btout{\lhot{\btinp{\lhot{\tmap{T}{1}}}\tinact}} \tmap{S}{1} 
+			& & \mapt{\Gamma}^{1};\, \mapt{\Delta_0}^{1} \cat n: \btout{\lhot{\btinp{\lhot{\tmap{S}{1}}}\tinact}} \tmap{S_1}{1} 
 			\proves 
-			 \bbout{k}{ \abs{z}{\,\binp{z}{X} \appl{X}{k'}} } \pmap{P'}{1} 
+			 \bbout{n}{ \abs{z}{\,\binp{z}{x} \appl{x}{m}} } \pmap{P'}{1} 
 			 \\
 			%& & \bbout{k}{ \abs{z}{\,\binp{z}{X} \appl{X}{k'}} } \pmap{P'}{1} \hby{\bactout{k}{\abs{z}{\,\binp{z}{X} \appl{X}{k'}}}} \pmap{P'}{1}  \\
 			&\hby{\ell_2}& 
-			\mapt{\Gamma}^{1};\, \mapt{\Delta_0}^{1} \cat k: \tmap{S}{1} 
+			\mapt{\Gamma}^{1};\, \mapt{\Delta_0}^{1} \cat n: \tmap{S_1}{1} 
 			\proves  \pmap{P'}{1} 
 		\end{eqnarray*}
 %
-		with $\ell_2 = \bactout{k}{\abs{z}{\,\binp{z}{X} \appl{X}{k'}}}$.
+		%with $\ell_2 = \bactout{k}{\abs{z}{\,\binp{z}{X} \appl{X}{k'}}}$.
 		Now, in the source term $P$ we can infer the following transition 
 %
 		\[
-		\Gamma;\,  \Delta_0 \cat k:\btout{T} S \proves \bout{k}{k'} P'
-		 \hby{\bactout{k}{k'}} 
-		 \Gamma;\,  \Delta_0 \cat k: S \proves P'
+		\Gamma;\,  \Delta_0 \cat n:\btout{S} S_1 \proves \bout{n}{m} P'
+		 \hby{\bactout{n}{m}} 
+		 \Gamma;\,  \Delta_0 \cat n: S_1 \proves P'
 		\]
 %
 		and thus the thesis follows easily by noticing that 
-		$\mapa{\bactout{k}{k'}}^{1} = \bactout{k}{\abs{z}{\,\binp{z}{X} \appl{X}{k'}}}$.
+		$\mapa{\bactout{n}{m}}^{1} = \bactout{n}{\abs{z}{\,\binp{z}{x} \appl{x}{m}}}$.
 
 
 		%%%%%%%%%%%
 		%% Input
 		%%%%%%%%%%%
-	\item	Subcase (c): $P = \binp{k}{x} Q$.
+	\item	Subcase (c): $P = \binp{n}{x} P'$ and $\ell_2 = \bactinp{n}{\abs{y}\binp{y}{x} \appl{x}{m}}$.
 		Then we have
 %
 		\[
 			\mapt{\Gamma}^{1};\, \emptyset;\, \mapt{\Delta_0}^{1} \cat 
-			k: \btinp{\lhot{\btinp{\lhot{\tmap{T}{1}}}\tinact}} \tmap{S}{1}
+			n: \btinp{\lhot{\btinp{\lhot{\tmap{S}{1}}}\tinact}} \tmap{S_1}{1}
 			\proves
-			\binp{k}{X} \newsp{s}{\appl{X}{s} \Par \bbout{\dual{s}}{\abs{x}{\pmap{Q}{1}}} \inact}
+			\binp{n}{x} \newsp{s}{\appl{x}{s} \Par \bbout{\dual{s}}{\abs{x}{\pmap{P'}{1}}} \inact}
 			\hastype \Proc
 		\]
 %
-		for some $T$, $S$, $\Delta_0$.
+		for some $S$, $S_1$, $\Delta_0$.
 		We may infer the following typed transitions for $\pmap{P}{1}$:
 %
 		\begin{eqnarray*}
 			& & 
 			\mapt{\Gamma}^{1};\, %\emptyset;\, 
 			\mapt{\Delta_0}^{1} \cat 
-			k: \btinp{\lhot{\btinp{\lhot{\tmap{T}{1}}}\tinact}} \tmap{S}{1}
+			n: \btinp{\lhot{\btinp{\lhot{\tmap{S}{1}}}\tinact}} \tmap{S_1}{1}
 			\proves
-			\binp{k}{X} \newsp{s}{\appl{X}{s} \Par \bbout{\dual{s}}{\abs{x}{\pmap{Q}{1}}} \inact} \\
+			\binp{n}{x} \newsp{s}{\appl{x}{s} \Par \bbout{\dual{s}}{\abs{x}{\pmap{P'}{1}}} \inact} \\
 			& \hby{\ell_2} & 
 			\mapt{\Gamma}^{1};\, %\emptyset;\, 
 			\mapt{\Delta_0}^{1} \cat 
-			k:\tmap{S}{1}
-			\cat k_1:\tmap{T}{1}
+			n:\tmap{S_1}{1}
+			\cat m:\tmap{S_1}{1}
 			\proves
-			\newsp{s}{\appl{X}{s} \Par \bbout{\dual{s}}{\abs{x}{\pmap{Q}{1}}} \inact} \subst{\abs{z}\binp{z}{X}\appl{X}{k_1}}{X} \\
+			\newsp{s}{\appl{x}{s} \Par \bbout{\dual{s}}{\abs{x}{\pmap{P'}{1}}} \inact} \subst{\abs{z}\binp{z}{x}\appl{x}{m}}{x} \\
 			& = & 
 			\mapt{\Gamma}^{1};\, %\emptyset;\, 
 			\mapt{\Delta_0}^{1} 
-			\cat k:\tmap{S}{1}
-			\cat k_1:\tmap{T}{1}
+			\cat n:\tmap{S_1}{1}
+			\cat m:\tmap{S}{1}
 			\proves
-			\newsp{s}{\binp{s}{X}\appl{X}{k_1} \Par \bbout{\dual{s}}{\abs{x}{\pmap{Q}{1}}} \inact}  \\
+			\newsp{s}{\binp{s}{x}\appl{x}{m} \Par \bbout{\dual{s}}{\abs{x}{\pmap{P'}{1}}} \inact}  \\
 			& \hby{\tau} & 
 			\mapt{\Gamma}^{1};\, %\emptyset;\, 
 			\mapt{\Delta_0}^{1} 
-			\cat k:\tmap{S}{1}
-			\cat k_1:\tmap{T}{1}
+			\cat n:\tmap{S_1}{1}
+			\cat m:\tmap{S}{1}
 			\proves
-			\pmap{Q}{1}\subst{k_1}{x}   
+			\appl{(\abs{x}{\pmap{P'}{1}})}{m}   \\
+			& \hby{\tau} & 
+			\mapt{\Gamma}^{1};\, %\emptyset;\, 
+			\mapt{\Delta_0}^{1} 
+			\cat n:\tmap{S_1}{1}
+			\cat m:\tmap{S}{1}
+			\proves
+			\pmap{P'}{1}\subst{m}{x}   
 		\end{eqnarray*}
 %
-		with $\ell_2 = \bactinp{k}{\abs{z}{\,\binp{z}{X} \appl{X}{k_1}}}$.
+		%with $\ell_2 = \bactinp{k}{\abs{z}{\,\binp{z}{X} \appl{X}{k_1}}}$.
 		Now, in the source term $P$ we can infer the following transition 
 %
 		\[
-			\Gamma;\,  \Delta_0 \cat k:\btinp{T} S \proves \binp{k}{x} P'
-			\hby{\bactinp{k}{k_1}} 
-			\Gamma;\,  \Delta_0 \cat k: S \cat k_1: T \proves P'\subst{k_1}{x}
+			\Gamma;\,  \Delta_0 \cat n:\btinp{S} S_1 \proves \binp{n}{x} P'
+			\hby{\bactinp{n}{m}} 
+			\Gamma;\,  \Delta_0 \cat n: S_1 \cat m: S \proves P'\subst{m}{x}
 		\]
 %
-		and the thesis follows easily by noticing that 
-		$\mapa{\bactinp{k}{k_1}}^{1} = \bactinp{k}{\abs{z}{\,\binp{z}{X} \appl{X}{k_1}}}$.
+		and the thesis follows.
+%		 easily by noticing that $\mapa{\bactinp{k}{k_1}}^{1} = \bactinp{k}{\abs{z}{\,\binp{z}{X} \appl{X}{k_1}}}$.
 
 		%%%%%%%%%%%
 		%%  Recursion
