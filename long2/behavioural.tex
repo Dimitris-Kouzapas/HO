@@ -269,6 +269,7 @@ as a combination of the untyped LTS and the LTS for typed environments:
 	$(\Gamma, \emptyset, \Delta_1) \by{\ell} (\Gamma, \emptyset, \Delta_2)$
 	and $\Gamma; \emptyset; \Delta_2 \proves P_2 \hastype \Proc$.
 
+	\noi We extend to $\By{}$ and $\By{\hat{\ell}}$ in the standard way.
 %		\item	$\horel{\Gamma}{\Delta_1}{P_1}{\hby{\ell}}{\Delta_2}{P_2}$
 %			whenever
 %			$P_1 \by{\ell} P_2$,
@@ -278,8 +279,6 @@ as a combination of the untyped LTS and the LTS for typed environments:
 %	\end{enumerate}
 %
 \end{definition}
-
-We extend to $\By{}$ and $\By{\hat{\ell}}$ in the standard way.
 
 %\begin{lemma}[Invariant]\label{l:invariant}
 %	If $\horel{\Gamma}{\Delta_1}{P_1}{\hby{\ell}}{\Delta_2}{P_2}$
@@ -398,6 +397,7 @@ between two related processes.
 The second behavioural relation is contextual bisimulation:
 %
 \begin{definition}[Contextual Bisimulation]\rm
+	\label{def:context_bis}
 	Typed relation 
 	$\Re$ is a {\em contextual bisimulation} if whenever
 	$\horel{\Gamma}{\Delta_1}{P_1}{\ \Re\ }{\Delta_2}{P_2}$ implies:
@@ -437,12 +437,12 @@ The second behavioural relation is contextual bisimulation:
 \end{definition}
 
 The contextual bisimulation in the general case
-is a hard relation to compute due to: i) the universal
-quantifier over contexts in the output case;
-and ii) a higher order input prefix can observe
-infinetely many different input actions, since
-infinetely many different processes can match
-the session type of an input prefix.
+is a hard relation to compute due to:
+i) the universal quantifier over contexts in the output case;
+and
+ii) a higher order input prefix can observe infinitely many
+different input actions, since infinitely many different
+processes can match the session type of an input prefix.
 
 %the set of higher order input actions
 %on an input prefix is infite since infinetely
@@ -452,78 +452,119 @@ the session type of an input prefix.
 %The output action case of the contextual bisimulation
 %can be equivalently be defined as:
 
-Consider an alternative contextual bisimulation definition
-
-Typed relation 
-$\Re$ is a {\em contextual bisimulation} if whenever
-$\horel{\Gamma}{\Delta_1}{P_1}{\ \Re\ }{\Delta_2}{P_2}$ implies:
-\begin{enumerate}
-	\item	$\forall \news{\tilde{m_1}} \bactout{n}{V_1}$ such that
-		\[
-			\horel{\Gamma}{\Delta_1}{P_1}{\by{\news{\tilde{m_1}} \bactout{n}{V_1}}}{\Delta_1'}{P_2}
-		\]
-		implies that $\exists Q_2, \abs{x}{Q}$ such that
-		\[
-			\horel{\Gamma}{\Delta_2}{Q_1}{\By{\news{\tilde{m_2}} \bactout{n}{V_2}}}{\Delta_2'}{Q_2}
-		\]
-		for fresh name $t$: %and $\forall R$ with $\set{x} = \fv{R}$, then
-	%
-		\[
-			\mhorel{\Gamma}{\Delta_1''}{\newsp{\tilde{m_1}}{P_2 \Par \hotrigger{t}{x}{s}{V_1}}}
-			{\ \Re\ }
-			{\Delta_2''}{}{\newsp{\tilde{m_2}}{Q_2 \Par \hotrigger{t}{x}{s}{V_2}}}
-		\]
-	%
-	\item	$\forall \ell \not= \news{\tilde{m}} \bactout{n}{V}$
-		\[
-			\horel{\Gamma}{\Delta_1}{P_1}{\by{\ell}}{\Delta_1'}{P_2}
-		\]
-		implies that $\exists Q_2$ such that
-		\[
-			\horel{\Gamma}{\Delta_1}{Q_1}{\by{\ell}}{\Delta_2'}{Q_2}
-		\]
-		and
-		$\horel{\Gamma}{\Delta_1'}{P_2}{\ \Re\ }{\Delta_2'}{Q_2}$
-
-	\item	The symmetric cases of 1 and 2.
-\end{enumerate}
+To handle the universal quantified over processes in the output
+case of the contextual bisimulation, consider that
+the substitution $R \subst{V}{x}$ can be written up to 
+a restricted deterministic transition as:
+%The output case for the contextual bisimulation can be equivalently be
+%written as:
 %
-The largest such bisimulation is denoted by $\wb^{\mathsf{altr}}$.
-
-It is very easy to see that $\wbc\ =\ \wb^{\mathsf{altr}}$ because
+\[
+	\newsp{s}{\binp{s}{x} R \Par \bout{\dual{s}}{V} \inact}
+\]
 %
-\begin{eqnarray*}
-	\horel{\Gamma}{\Delta_1}{\newsp{\tilde{m_1}}{P_2 \Par \hotrigger{t}{x}{s}{V_1}}}{\by{ \bactinp{t}{\abs{z}{\binp{z}{x} R}} } \by{\tau}}{\Delta_1'}{\newsp{\tilde{m_1}}{P_2 \Par R\subst{V_1}{x}}}
-	\\
-	\horel{\Gamma}{\Delta_2}{\newsp{\tilde{m_2}}{Q_2 \Par \hotrigger{t}{x}{s}{V_2}}}{\by{ \bactinp{t}{\abs{z}{\binp{z}{x} R}} } \by{\tau}}{\Delta_2'}{\newsp{\tilde{m_1}}{Q_2 \Par R\subst{V_2}{x}}}
-\end{eqnarray*}
+If we guard the above process with an input prefix
+on a fresh name $t$ we can simulate the 
+substitution $R \subst{V}{x}$, up to a restricted
+deterministic transition, with the input action
+$\bactinp{t}{\abs{z}{\binp{z}{x} R}}$:
 %
-The latter definition is equivalent to the output
-case of the contextual bisimulation
-because we can observe an input on a fresh name $t$
-of any abstraction process $\abs{z}{\binp{z}{x} R}$ such that $\set{x} = \fv{R}$.
+\[
+	\horel{\Gamma}{\Delta_1}{\binp{t}{x} \newsp{s}{\appl{x}{s} \Par \bout{\dual{s}}{V} \inact}}
+	{\by{\bactinp{t}{\abs{z}{\binp{z}{x} R}}}}
+	{\Delta_2}{\newsp{s}{\binp{s}{x} R \Par \bout{\dual{s}}{V} \inact}}
+\]
+%
+Hence, we can replace $R \subst{V}{x}$ in Clause 1
+of Definition~\ref{def:context_bis}
+with the {\em trigger process}:
+%
+\[
+	\binp{t}{x} \newsp{s}{\appl{x}{s} \Par \bout{\dual{s}}{V} \inact}
+\]
+%
+%Consider an alternative contextual bisimulation definition
+%
+%Typed relation 
+%$\Re$ is a {\em contextual bisimulation} if whenever
+%$\horel{\Gamma}{\Delta_1}{P_1}{\ \Re\ }{\Delta_2}{P_2}$ implies:
+%\begin{enumerate}
+%	\item	$\forall \news{\tilde{m_1}} \bactout{n}{V_1}$ such that
+%		\[
+%			\horel{\Gamma}{\Delta_1}{P_1}{\by{\news{\tilde{m_1}} \bactout{n}{V_1}}}{\Delta_1'}{P_2}
+%		\]
+%		implies that $\exists Q_2, \abs{x}{Q}$ such that
+%		\[
+%			\horel{\Gamma}{\Delta_2}{Q_1}{\By{\news{\tilde{m_2}} \bactout{n}{V_2}}}{\Delta_2'}{Q_2}
+%		\]
+%		for fresh name $t$: %and $\forall R$ with $\set{x} = \fv{R}$, then
+%	%
+%		\[
+%			\mhorel{\Gamma}{\Delta_1''}{\newsp{\tilde{m_1}}{P_2 \Par \hotrigger{t}{x}{s}{V_1}}}
+%			{\ \Re\ }
+%			{\Delta_2''}{}{\newsp{\tilde{m_2}}{Q_2 \Par \hotrigger{t}{x}{s}{V_2}}}
+%		\]
+%	%
+%	\item	$\forall \ell \not= \news{\tilde{m}} \bactout{n}{V}$
+%		\[
+%			\horel{\Gamma}{\Delta_1}{P_1}{\by{\ell}}{\Delta_1'}{P_2}
+%		\]
+%		implies that $\exists Q_2$ such that
+%		\[
+%			\horel{\Gamma}{\Delta_1}{Q_1}{\by{\ell}}{\Delta_2'}{Q_2}
+%		\]
+%		and
+%		$\horel{\Gamma}{\Delta_1'}{P_2}{\ \Re\ }{\Delta_2'}{Q_2}$
+%
+%	\item	The symmetric cases of 1 and 2.
+%\end{enumerate}
+%
+%The largest such bisimulation is denoted by $\wb^{\mathsf{altr}}$.
+%
+%It is very easy to see that $\wbc\ =\ \wb^{\mathsf{altr}}$ because
+%
+%\begin{eqnarray*}
+%	\horel{\Gamma}{\Delta_1}{\newsp{\tilde{m_1}}{P_2 \Par \hotrigger{t}{x}{s}{V_1}}}{\by{ \bactinp{t}{\abs{z}{\binp{z}{x} R}} } \by{\tau}}{\Delta_1'}{\newsp{\tilde{m_1}}{P_2 \Par R\subst{V_1}{x}}}
+%	\\
+%	\horel{\Gamma}{\Delta_2}{\newsp{\tilde{m_2}}{Q_2 \Par \hotrigger{t}{x}{s}{V_2}}}{\by{ \bactinp{t}{\abs{z}{\binp{z}{x} R}} } \by{\tau}}{\Delta_2'}{\newsp{\tilde{m_1}}{Q_2 \Par R\subst{V_2}{x}}}
+%\end{eqnarray*}
+%
+%The latter definition is equivalent to the output
+%case of the contextual bisimulation
+%because we can observe an input on a fresh name $t$
+%of any abstraction process $\abs{z}{\binp{z}{x} R}$ such that $\set{x} = \fv{R}$.
+%
+The trigger process allows us to express the
+substitution $R \subst{V}{x}$ to an arbitrary process
+$R$ as an input prefixed process, by taking
+advantage of the fact that actions on an input
+prefix allows us to input every process $R$
+subject to the substitution $R \subst{V}{x}$.
 
 To define an easy to compute bisimulation we still need to
 restrict the input actions that can happen on an input
 prefix.
-Towards this direction we define the {\em characteristic
-process} which is the {\em simplest} process that
-satisfies a session type.
+Towards this direction we define the
+{\em characteristic process} (resp.~characteristic value)
+which is the
+{\em simplest} process (resp. value) that can inhabit 
+a session type.
 
-As an of example the simplest process that satisfies a
-session type, consider the type
-$\btinp{\shot{S_1}} \btout{S_2} \tinact$. The last type
-types name $u$ satisfied in the typed process
+As an of example the simplest process that inhabits 
+session type $\btinp{\shot{S_1}} \btout{S_2} \tinact$ 
+is:
+%
 \[
 	\Gamma; \es; \Delta \cat s_1: S_1 \cat s_2: S_2 \cat u: \btinp{\shot{S_1}} \btout{S_2} \tinact \proves \binp{u}{x} (\bout{u}{s_2} \tinact \Par \appl{x}{s_1})
 \]
-
+%
+\noi 
 We formalise the last intuition in the next definition.
 %
 \begin{definition}[Characteristic Process]\rm
 	\label{def:characteristic_process}
-	\noi Let name $u$ and type $U$; then we define a {\em characteristic process}:
-	$\mapchar{U}{u}$ as:
+	\noi Let name $u$ and type $U$; then we define the {\em characteristic process}:
+	$\mapchar{U}{u}$ and the {\em characteristic value} $\omapchar{U}$ as:
 %
 	\[
 	\begin{array}{cc}
@@ -560,14 +601,15 @@ We formalise the last intuition in the next definition.
 		\end{array}
 	\end{array}
 	\]
-	\noi with $\omapchar{U}$ being the characterstic value definition.
 \end{definition}
+%
 
 \begin{proposition}\rm
 $ $
 	\begin{itemize}
 		\item	$\Gamma; \emptyset; \Delta \cat u:S \proves \mapchar{S}{u} \hastype \Proc$
 		\item	$U = \chtype{S}$ or $U = \chtype{L}$ implies $\Gamma \cat u:U; \emptyset; \Delta \proves \mapchar{U}{u} \hastype \Proc$
+		\item	$\Gamma; \es; \Delta \proves \omapchar{U} \hastype U$
 	\end{itemize}
 \end{proposition}
 
@@ -582,17 +624,17 @@ $ $
 	$\Gamma; \es; \Delta \proves u \hastype C$.
 \end{corollary}
 
-The aim is to use a characteristic input value
-to restrict the input actions that can be observed on an
-input prefix, so we can define
-a bisimulation relation that does not suffer from the observation of 
-of infitely many input actions on the same input prefix.
-
-Following the intuition of characteristing value input,
-it turns out the usage of a characteristic process
-alone as an input set for the input prefix of a process
-is not enough to define bisimulation.
-
+We use a characteristic input value to restrict the input actions that 
+can be observed on an input prefix.
+%, so we can define
+%a bisimulation relation that does not suffer from the observation of 
+%of infitely many input actions on the same input prefix.
+%
+%Following the intuition of characteristing value,
+As it turns out, the usage of a characteristic value
+alone as an input action for an input prefixed process
+is not enough to define a sound bisimulation relation.
+%
 \begin{example}
 	\label{ex:char_proc}
 	Consider typed processes:
@@ -611,58 +653,62 @@ is not enough to define bisimulation.
 		\Gamma; \es; \Delta \proves \binp{s_1}{y} \inact \Par \binp{s_2}{y} \inact
 	\end{eqnarray*}
 	%
-	with both process being obviously bisimilar.
-	%
-	But the former process are not contextualy bisimimilar since
-	for numerous other input process they can be distinguished,
-	i.e.~input $\abs{x} \bout{a}{s_3} \btinp{x}{y} \inact$.
+	with both process being trivially bisimilar.
+
+	But the former processes are not contextualy bisimimilar since
+	for numerous other input actions they can be distinguished,
+	e.g.~for input action $\bactinp{s}{\abs{x} \bout{a}{s_3} \btinp{x}{y} \inact}$.
 \end{example}
 
-Allowing only the characteristic as an input action
+Allowing the characteristic value as the only input action
+that can be observed on an input prefix,
 results in an over-discriminating bisimulation.
-To solve this problem we introduce the trigger abstraction
-that can be observed as the object of an input action.
-An input trigger is an abstraction prefix on a fresh name $t$
-that has the form:
+To solve this problem we introduce the {\em trigger value}.
+%that can be observed as the object of an input action.
+An trigger value is an abstraction 
+prefix on a fresh trigger name $t$ that has the form:
 \[
 	\Gamma; \es; \Delta \proves \abs{z}{\binp{t}{x} \appl{x}{z}} \hastype U
 \]
 where $U = \shot{C}$ or $U = \lhot{C}$.
 
-The input trigger can distinguish the processes in Example~\ref{ex:char_proc},
-that is if the input trigger is received by both processes in Example~\ref{ex:char_proc}
-we get processes:
+The input trigger can distinguish the processes in Example~\ref{ex:char_proc};
+if the input trigger is received (observe action $\bactinp{s}{\abs{z}{\binp{t}{x} \appl{x}{z}}}$)
+by both processes in Example~\ref{ex:char_proc} we get processes:
 %
 \begin{eqnarray*}
 	\Gamma; \es; \Delta &\proves& \binp{t}{x} \appl{x}{s_1} \Par \binp{t}{x} \appl{x}{s_2}
 	\\
 	\Gamma; \es; \Delta &\proves& \binp{t}{x} \appl{x}{s_1} \Par \binp{s_2}{y} \inact
 \end{eqnarray*}
+%
 \noi that can be distinguished by the freshness of name $t$.
 
-One question that arises here is whether the input trigger is enough
+One question that arises here is whether the trigger value is enough
 to distinguish two processes so that there is no need for a
-characteristic process. This is not true since the input trigger
+characteristic value. This is not true since the trigger value
 alone also results in an over-discriminating bisimulation relation.
-In fact the input trigger can be observed on any input prefix
-of any type. For example processes:
+%In fact the trigger can be observed on any input prefix
+%of any type.
+For example processes:
 %
 \begin{eqnarray*}
 	\Gamma; \es; \Delta \proves \newsp{s}{\binp{n}{x} \appl{x}{s} \Par \bout{\dual{s}}{\abs{x} P} \inact} \hastype \Proc
 	\\
-	\Gamma; \es; \Delta \proves \newsp{s}{\binp{n}{x} \appl{x}{s} \Par \bout{\dual{s}}{\abs{x} Q} \inact}
+	\Gamma; \es; \Delta \proves \newsp{s}{\binp{n}{x} \appl{x}{s} \Par \bout{\dual{s}}{\abs{x} Q} \inact} \hastype \Proc
 \end{eqnarray*}
 %
-\noi can both observe the trigger input and get
+\noi can both observe trigger value input and get
+%
 \begin{eqnarray*}
 	\Gamma; \es; \Delta \proves \newsp{s}{\binp{t}{x} \appl{x}{s} \Par \bout{\dual{s}}{\abs{x} P} \inact} \hastype \Proc
 	\\
 	\Gamma; \es; \Delta \proves \newsp{s}{\binp{t}{x} \appl{x}{s} \Par \bout{\dual{s}}{\abs{x} Q} \inact} \hastype \Proc
 \end{eqnarray*}
 %
-\noi so they can be shown to be bisimilar,
-but for input $\abs{z}{\binp{z}{x} \appl{x}{m}}$
-the resulting processes:
+\noi thus it is shown that they are bisimilar.
+For input action $\bactinp{s}{\abs{z}{\binp{z}{x} \appl{x}{m}}}$
+though, the resulting processes:
 \begin{eqnarray*}
 	\Gamma; \es; \Delta \proves \newsp{s}{\binp{s}{x} \appl{x}{m} \Par \bout{\dual{s}}{\abs{x} P} \inact} \by{\tau} \Delta \proves P \subst{m}{x}
 	\\
@@ -670,17 +716,18 @@ the resulting processes:
 \end{eqnarray*}
 \noi are not bisimilar if $P \subst{m}{x}$ is not bisimilar with $Q \subst{m}{x}$.
 
-%and shown to be bisimilar regardless of the type of $n$.
-
 We formalise the restricted input action with the definition of a
 new environment transition relation
+%
 \[
 	(\Gamma, \Lambda_1, \Delta_1) \hby{\ell} (\Gamma, \Lambda_2, \Delta_2)
 \]
+%
 \noi which is defined using the $\by{\ell}$ relation.
 The definition uses the same rules for defining the $\by{\ell}$ relation,
 but it requires the substitution of rules $\eltsrule{SRv}$ and
 $\eltsrule{ShRv}$ with the rule:
+%
 \[
 	\eltsrule{RRv}~~\tree {
 		(\Gamma_1; \Lambda_1; \Delta_1) \by{\bactinp{n}{V}} (\Gamma_2; \Lambda_2; \Delta_2)
@@ -693,6 +740,7 @@ $\eltsrule{ShRv}$ with the rule:
 		(\Gamma_1; \Lambda_1; \Delta_1) \hby{\bactinp{n}{V}} (\Gamma_2; \Lambda_1; \Delta_2)
 	}
 \]
+%
 \noi The new receive rule is defined on rules
 $\eltsrule{SRv}$ and $\eltsrule{ShRv}$. It
 allows only a characteristic value (fresh name or abstraction)
@@ -712,7 +760,7 @@ remain the same as the cases for relation $\by{\ell}$.
 
 The new typed relation derived from the $\hby{\ell}$ environment LTS is
 defined as:
-
+%
 \begin{definition}[Restricted Typed Transition]\rm
 	We write
 %
@@ -722,10 +770,9 @@ defined as:
 	$(\Gamma, \emptyset, \Delta_1) \hby{\ell} (\Gamma, \emptyset, \Delta_2)$
 	and
 	$\Gamma; \emptyset; \Delta_2 \proves P_2 \hastype \Proc$.
-%
-\end{definition}
 
-We extend to $\Hby{}$ and $\Hby{\hat{\ell}}$ in the standard way.
+	\noi We extend to $\Hby{}$ and $\Hby{\hat{\ell}}$ in the standard way.
+\end{definition}
 
 \begin{lemma}[Invariant]\label{l:invariant}
 	If $\horel{\Gamma}{\Delta_1}{P_1}{\hby{\ell}}{\Delta_2}{P_2}$
@@ -736,43 +783,58 @@ We extend to $\Hby{}$ and $\Hby{\hat{\ell}}$ in the standard way.
 	The proof is straightforward from the definition of rule $\eltsrule{RRv}$.
 \end{proof}
 
-As we discussed previously it is convienient to define
+As we discussed previously it is convenient to define
 the output action case of the bisimulation using the
 trigger process:
+%
 \[
 	\hotrigger{t}{x}{s}{V}
 \]
+%
 \noi for substituting value $\Gamma; \es; \Delta \proves V \hastype U$
 over an observer context.
 An alternative trigger that uses a first-order input prefix,
 can be defined, which is parametrised on the type $U$ of $V$:
+%
 \[
 	\fotrigger{t}{x}{s}{\btinp{U} \inact}{V}
 \]
-Both triggers are equivalent, modulo transition $\shby{\ell}$.
+%
+Both triggers reduce in a deterministic way under
+typed transition $\hby{\ell}$, due to the
+freshness of $t$ and the restricted session $s$. Furthermore
+both trigger transitions result in the process
+$\mapchar{U}{x} \subst{V}{x}$.
 
-\newcommand{\trigger}[3]{#1 \leftarrow\!\!\!\!\!\!\!\leftarrow #2:#3 }
-\newcommand{\htrigger}[2]{#1 \Leftarrow #2}
-\newcommand{\ftrigger}[3]{#1 \leftarrow #2:#3}
+\newcommand{\triggerarrow}{\leftarrow\!\!\!\!\!\!\!\leftarrow}
+\newcommand{\htriggerarrow}{\Leftarrow}
+\newcommand{\ftriggerarrow}{\leftarrow}
 
-\begin{definition}[\dk{Output Trigger}]\rm
+\newcommand{\trigger}[3]{#1 \triggerarrow #2:#3 }
+\newcommand{\htrigger}[2]{#1 \htriggerarrow #2}
+\newcommand{\ftrigger}[3]{#1 \ftriggerarrow #2:#3}
+
+The next definition formalises the idea of the trigger process.
+%
+\begin{definition}[Trigger Process]\rm
 	Let $\Gamma; \es; \Delta \proves V \hastype U$.
-	We write $\trigger{t}{V}{U}$ for either
-\[
-	\begin{array}{lcl}
-		\htrigger{t}{V} &=& \hotrigger{t}{x}{s}{V} \textrm{ or}\\
-		\ftrigger{t}{V}{U} &=& \fotrigger{t}{x}{s}{\btinp{U} \inact}{V}
-	\end{array}
-\]
+	We write $\trigger{t}{V}{U}$ for either:
+%
+	\begin{center}
+		\begin{tabular}{lclcl}
+			Higher order trigger & & $\htrigger{t}{V}$ &$=$& $\hotrigger{t}{x}{s}{V}$ or\\
+			First order trigger & & $\ftrigger{t}{V}{U}$ &$=$& $\fotrigger{t}{x}{s}{\btinp{U} \tinact}{V}$
+		\end{tabular}
+	\end{center}
 \end{definition}
 
 We are now ready to define a bisimulation relation which is not
 contextual.
 
-\begin{definition}{Bisimulation}\rm
+\begin{definition}{Triggered Bisimulation}\rm
 	\label{def:bisim}
 	Typed relation
-	$\Re$ is a {\em bisimulation} if for a trigger $\trigger{t}{V}{U}$, whenever
+	$\Re$ is a {\em triggered bisimulation} if for a trigger $\trigger{t}{V}{U}$, whenever
 	$\horel{\Gamma}{\Delta_1}{P_1}{\ \Re\ }{\Delta_2}{Q_1}$ implies:
 %
 	\begin{enumerate}
@@ -804,15 +866,18 @@ contextual.
 
 		\item	The symmetric cases of 1 and 2.
 	\end{enumerate}
-	The Knaster Tarski theorem ensures that the largest bisimulation exists,
-	it is called bisimilarity and is denoted by $\wb$.
+	The Knaster Tarski theorem ensures that the largest triggered bisimulation exists,
+	it is called triggered bisimilarity and is denoted by $\wb^{\triggerarrow}$.
 \end{definition}
 
+We instantiate higher-order bisimilarity with $\wb^{\htriggerarrow}$ and
+first--order bisimilarity with $\wb^{\htriggerarrow}$.
 
 %The contextual bisimulation in the general case is a hard relation to be computed
 %since it is universaly quantified over substituting processes. The next definition
 %of a bisimulation relation avoids the universal quantifier over processes.
 
+\begin{comment}
 \begin{definition}[Higher-Order Bisimulation]\rm
 	\label{def:HO_bisim}
 	Typed relation
@@ -894,7 +959,7 @@ output triggers solves this problem.
 	The Knaster Tarski theorem ensures that the largest bisimulation exists,
 	it is called bisimilarity and is denoted by $\wbf$.
 \end{definition}
-
+\end{comment}
 
 \begin{comment}
 \begin{definition}[Bisimulation]\label{d:bisim}\rm
@@ -1096,9 +1161,12 @@ Processes that do not use shared names are inherintly $\tau$-inert.
 			\]
 			and for fresh $t$:
 			\[
-				\mhorel{\Gamma}{\Delta_1''}{\newsp{\tilde{m_1}}{P_2 \Par \hotrigger{t}{x}{s}{V_1}}}
+				\mhorel{\Gamma}{\Delta_1''}{\newsp{\tilde{m_1}}{P_2 \Par \htrigger{t}{V_1}}}
 				{\ \Re\ }
-				{\Delta_2''}{}{\newsp{\tilde{m_2}}{Q_2 \Par \hotrigger{t}{x}{s}{V_2}}}
+				{\Delta_2''}{}{\newsp{\tilde{m_2}}{Q_2 \Par \htrigger{t}{V_2}}}
+%				\mhorel{\Gamma}{\Delta_1''}{\newsp{\tilde{m_1}}{P_2 \Par \hotrigger{t}{x}{s}{V_1}}}
+%				{\ \Re\ }
+%				{\Delta_2''}{}{\newsp{\tilde{m_2}}{Q_2 \Par \hotrigger{t}{x}{s}{V_2}}}
 			\]
 %
 		\item	$\forall \ell \not= \news{\tilde{m}} \bactout{n}{V}$ such that
