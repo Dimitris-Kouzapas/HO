@@ -70,9 +70,9 @@ in the following, we use number decorations on these
 mappings to distinguish them.
 
 We require that a {\em good} typed encoding should 
-preserve not only the syntax but
-also the operational, typing and behavioural
-semantics. 
+preserve not only syntactic criteria, but
+also the operational semantics and typing.
+We first state syntactic criteria \\ \jp{Still need to define what renaming policies makes sense for our typed setting!}
 
 \begin{definition}[Syntax Preserving Encoding]\rm
 	\label{def:sep}
@@ -86,9 +86,24 @@ semantics.
 		$\mapt{\Gamma}; \emptyset; \mapt{\Delta_1 \cat \Delta_2} \proves \map{P_1 \Par P_2} \hastype \Proc$
 		then \\
 		$\mapt{\Gamma}; \emptyset; \mapt{\Delta_1} \cat \mapt{\Delta_2} \proves \map{P_1} \Par \map{P_2} \hastype \Proc$.
+
+		\item	\emph{Compositionality wrt Restriction}: If 
+		$\mapt{\Gamma}; \emptyset; \mapt{\Delta} \proves \map{\news{n}P} \hastype \Proc$
+		then \\
+		$\mapt{\Gamma}; \emptyset; \mapt{\Delta} \proves \news{n}\map{P} \hastype \Proc$.
+		
+		\item A renaming policy - TBD.
+		Let $\sigma$ denote a substitution on names.
+		If 
+		$\mapt{\Gamma}; \emptyset; \mapt{\Delta} \proves \map{\sigma(P)} \hastype \Proc$
+		then \\
+		$\mapt{\Gamma}; \emptyset; \mapt{\Delta} \proves \sigma(\map{P}) \hastype \Proc$.
+
 		
 	\end{enumerate}
 \end{definition}
+
+We now state semantic criteria:
 
 \begin{definition}[Semantic Preserving Encoding]\rm
 	\label{def:ep}
@@ -1916,10 +1931,10 @@ will give:
 %
 \begin{eqnarray}
 	\tree{
-		\textrm{Result}~\ref{ex:type1}
+		\textrm{Result}~\eqref{ex:type1}
 		\quad
 		\tree{
-			\textrm{Result}~\ref{ex:type2}
+			\textrm{Result}~\eqref{ex:type2}
 			\quad
 			\Gamma; \es; \dual{s_2} : \btout{\shot{(U_1, U_2, \btinp{L} \tinact)}} \tinact \proves \dual{s_2} \hastype \btout{\shot{(U_1, U_2, \btinp{L} \tinact)}} \tinact
 		}{
@@ -1934,7 +1949,7 @@ will give:
 \begin{eqnarray}
 	\tree{
 		\begin{array}{l}
-			\textrm{Result}~\ref{ex:type3}
+			\textrm{Result}~\eqref{ex:type3}
 			\quad
 			\btinp{L} \tinact \dualof \btout{\shot{(U_1, U_2, \btinp{L} \tinact)}} \tinact\\
 			L = \shot{(U_1, U_2, \btinp{L} \tinact)} \textrm{ implies }\\
@@ -1948,10 +1963,10 @@ will give:
 %
 \begin{eqnarray}
 	\tree{
-		\textrm{Result}~\ref{ex:type4}
-		\quad
+		\textrm{Result}~\eqref{ex:type4}
+		~~
 		\Gamma; \es; \es \proves a \hastype \chtype{\lhot{\btinp{\lhot{U_2}} \tinact}}
-		\quad
+		~~
 		\Gamma; \es; \es \proves \abs{z}{\binp{z}{x} \appl{x}{m}} \hastype \lhot{\btinp{\lhot{U_2}} \tinact}
 	}{
 		\Gamma; \es; \es \proves \bout{a}{\abs{z}{\binp{z}{x} \appl{x}{m}}} \newsp{s_2}{\bout{\dual{s_2}}{\abs{x_a x_m z}{\appl{x}{x_a x_m z}}} \inact \Par \appl{x}{a,m, s_2}} \hastype \Proc
@@ -1962,7 +1977,7 @@ will give:
 \begin{eqnarray}
 	\tree{
 		\begin{array}{l}
-			\textrm{Result}~\ref{ex:type5}
+			\textrm{Result}~\eqref{ex:type5}
 			\quad
 			\Gamma' = \Gamma \backslash X
 			\\
@@ -1992,7 +2007,7 @@ will give:
 \begin{eqnarray*}
 	\tree{
 		\tree{
-			\textrm{Result}~\ref{ex:type6} \quad \textrm{Result}~\ref{ex:type7}
+			\textrm{Result}~\eqref{ex:type6} \quad \textrm{Result}~\eqref{ex:type7}
 		}{
 			\Gamma; \es; \Delta_1 \cat \Delta_2 \proves \bout{\dual{s_1}}{V} \inact \Par \binp{s_1}{x} \bout{a}{\abs{z}{\binp{z}{x} \appl{x}{m}}} \newsp{s_2}{\bout{\dual{s_2}}{\abs{x_a x_m z}{\appl{x}{x_a x_m z}}} \inact} \Par \appl{x}{a,m, s_2} \hastype \Proc
 		}
@@ -2523,7 +2538,7 @@ Below we write $\repl{} P$ as a shorthand notation for $\recp{X}{(P \Par \rvar{X
 
 		\tmap{\btout{\lhot{S}}S_1}{2} & \defeq & \bbtout{\btinp{\tmap{S}{2}}\tinact}\tmap{S_1}{2} \\
 		\tmap{\btinp{\lhot{S}}S_1}{2} & \defeq & \bbtinp{\btinp{\tmap{S}{2}}\tinact}\tmap{S_1}{2} \\
-		\mapa{\bactout{n}{\abs{ x}{P}} }^{2} &  \defeq & \news{n} \bactout{n}{m} \\
+		\mapa{\bactout{n}{\abs{ x}{P}} }^{2} &  \defeq & \news{m} \bactout{n}{m} \\
 		\mapa{\bactinp{n}{\abs{ x}{P}} }^{2} &  \defeq & \bactinp{n}{m}
 	\end{array}
 	\]
@@ -2559,7 +2574,7 @@ Below we write $\repl{} P$ as a shorthand notation for $\recp{X}{(P \Par \rvar{X
 	
 	\begin{enumerate}[1.]
 	\item Suppose $\stytra{\Gamma}{\ell_1}{\Delta}{P}{\Delta'}{P'}$.
-	
+	Then we have:
 	\begin{enumerate}[a)]
 %			\item	 
 %			   If  $\stytra{\Gamma}{\bactout{k}{\abs{x}Q}}{\Delta}{P}{\Delta'}{P'}$
@@ -2569,10 +2584,8 @@ Below we write $\repl{} P$ as a shorthand notation for $\recp{X}{(P \Par \rvar{X
 %			   $R_a = \repl{} \binp{a}{y} \binp{y}{x} \pmap{Q}{3}$ 
 %			   or $R_a = \binp{a}{y} \binp{y}{x} \pmap{Q}{3}$.
 		\item	 
-			If  $\stytra{\Gamma}{\ell_1}{\Delta}{P}{\Delta'}{P'}$
-			with $\ell_1 = \bactout{n}{\abs{x}Q}$,
-			then 
-			there exist $\Gamma', R$ such that \\
+			If  $\ell_1 = \bactout{n}{\abs{x}Q}$,
+			then $\exists \Gamma', R$ s.t. \\
 			$\mapt{\Gamma}^{2};\, \mapt{\Delta}^{2} \proves  \map{P}^{2} 
 			\hby{\mapa{\ell_1}^{2}}
 			\Gamma' \cdot \mapt{\Gamma}^{2};\, \mapt{\Delta'}^{2} \proves \map{P'}^{2} \Par R$, 
@@ -2583,44 +2596,59 @@ Below we write $\repl{} P$ as a shorthand notation for $\recp{X}{(P \Par \rvar{X
 %			\item	 
 %			   If  $\stytra{\Gamma}{\bactinp{k}{\abs{x}Q}}{\Delta}{P}{\Delta'}{P'\subst{\abs{x}Q}{X}}$
 %			   then 
-%			   $\map{P}^{3} \hby{ \bactinp{k}{a}} \map{P'}^{3}\subst{a}{x}$.				
+%			   $\map{P}^{3} \hby{ \bactinp{k}{a} \map{P'}^{3}\subst{a}{x}$.				
 
 
 		\item	 
-			If  $\stytra{\Gamma}{\ell_1}{\Delta}{P}{\Delta'}{P'\subst{\abs{x}Q}{X}}$
-			with $\ell_1 = \bactinp{n}{\abs{x}Q}$
-			then \\
+			If  %$\stytra{\Gamma}{\ell_1}{\Delta}{P}{\Delta'}{P'\subst{\abs{x}Q}{X}}$ with 
+			$\ell_1 = \bactinp{n}{\abs{y}Q}$
+			and $P' = P_0\subst{\abs{y}Q}{x}$
+			then $\exists m$ s.t. \\
 			$\mapt{\Gamma}^{2};\, \mapt{\Delta}^{2} \proves \map{P}^{2} 
 			\hby{\mapa{\ell_1}^{2}}
-			\Gamma';\, \mapt{\Delta'}^{2} \proves  \map{P'}^{2}\subst{m}{x}$, 
+			\Gamma';\, \mapt{\Delta'}^{2} \proves  \map{P_0}^{2}\subst{m}{x}$, 
 			where $\Gamma' = \mapt{\Gamma}^{2}\subst{m}{x}$.
 
 %			   $\stytra{\mapt{\Gamma}^{3}}{\mapa{\ell_1}^{3}}{\mapt{\Delta}^{3}}{\map{P}^{3}}{\mapt{\Delta'}^{3}}{$.
 
 		\item	 
-\dk{			If  $\stytra{\Gamma}{\ell_1}{\Delta}{P}{\Delta'}{P_1 \Par P_2\subst{\abs{x}Q}{X}}$
-			with $\ell_1 = \tau$
+			If  
+			%$\stytra{\Gamma}{\ell_1}{\Delta}{P}{\Delta'}{P_1 \Par P_2\subst{\abs{x}Q}{X}}$
+			$\ell_1 = \tau$ and $P' 	\scong P_1 \Par P_2\subst{\abs{x}Q}{X}$
 			then \\
 			$\mapt{\Gamma}^{2};\, \mapt{\Delta}^{2} \proves  \map{P}^{2}
-			\hby{\mapa{\ell_1}^{2}}
+			\hby{\tau}
 			\mapt{\Gamma}^{2};\, \mapt{\Delta'}^{2} \proves  \map{P_1}^{2} \Par \news{n}
 			(\map{P_2}^{2}\subst{n}{x} \Par R)$, \\
 			where 
 			either
 			$R = \repl{} \binp{a}{y} \binp{y}{x} \pmap{Q}{2}$ 
 			or $R = \binp{s}{y} \binp{y}{x} \pmap{Q}{2}$.
-}	   			   
+
+
+		\item	 
+			If  
+			%$\stytra{\Gamma}{\ell_1}{\Delta}{P}{\Delta'}{P_1 \Par P_2\subst{\abs{x}Q}{X}}$
+			$\ell_1 = \tau$ and $P' 	\not \scong P_1 \Par P_2\subst{\abs{x}Q}{X}$
+			then \\
+			$\mapt{\Gamma}^{2};\, \mapt{\Delta}^{2} \proves  \map{P}^{2}
+			\hby{\tau}
+			\mapt{\Gamma}^{2};\, \mapt{\Delta'}^{2} \proves  \map{P'}^{2}$.
+			
+				   			   
 %			   then  $\exists \ell_2$ s.t. 
 %			    $\wtytra{\mapt{\Gamma}^{3}}{\ell_2}{\mapt{\Delta}^{3}}{\map{P}^{3}}{\mapt{\Delta'}^{3}}{\map{P'}^{3}}$
 %			    and $\ell_2 = \mapa{\ell_1}^{3}$.
 		\end{enumerate}
 		\item Suppose 
-		$\stytra{\mapt{\Gamma}^{2}}{\ell_2}{\mapt{\Delta}^{2}}{\map{P}^{2}}{\mapt{\Delta'}^{2}}{R}$.s
+		$\stytra{\mapt{\Gamma}^{2}}{\ell_2}{\mapt{\Delta}^{2}}{\map{P}^{2}}{\mapt{\Delta'}^{2}}{R}$.
 		\begin{enumerate}[a)]
 		\item
-			\footnote{$\mapt{\Gamma}^{2}$ in the following three items need adjustments.}
-			If  $\stytra{\mapt{\Gamma}^{2}}{\news{m}\bactout{n}{m}}{\mapt{\Delta}^{2}}{\map{P}^{2}}{\mapt{\Delta'}^{2}}{R}$
-			then there are $x$, $Q$, $P'$ such that \\
+			%\footnote{$\mapt{\Gamma}^{2}$ in the following three items need adjustments.}
+			If  
+			$\ell_2 = \news{m}\bactout{n}{m}$
+			%$\stytra{\mapt{\Gamma}^{2}}{\news{m}\bactout{n}{m}}{\mapt{\Delta}^{2}}{\map{P}^{2}}{\mapt{\Delta'}^{2}}{R}$
+			then $\exists x, Q, P'$ s.t. \\
 			$P \hby{\bactout{n}{\abs{x}Q}} P'$
 			and $R = \map{P'}^{2} \Par R$, where 
 			either
@@ -2628,14 +2656,16 @@ Below we write $\repl{} P$ as a shorthand notation for $\recp{X}{(P \Par \rvar{X
 			or $R = \binp{s}{y} \binp{y}{x} \pmap{Q}{2}$.
 
 		\item   
-			If  $\stytra{\mapt{\Gamma}^{2}}{\bactinp{n}{m}}{\mapt{\Delta}^{2}}{\map{P}^{2}}{\mapt{\Delta'}^{2}}{R}$
-			then there are $x$, $Q$, $P'$ such that \\
-			$P \hby{\bactout{k}{\abs{x}Q}} P'\subst{\abs{x}Q}{X}$
+			If  $\ell_2 = \bactinp{n}{m}$ 
+			%$\stytra{\mapt{\Gamma}^{2}}{\bactinp{n}{m}}{\mapt{\Delta}^{2}}{\map{P}^{2}}{\mapt{\Delta'}^{2}}{R}$
+			then $\exists x, Q, P'$ s.t. \\
+			$P \hby{\bactout{n}{\abs{x}Q}} P'\subst{\abs{x}Q}{X}$
 			and $R = \map{P'}^{2}\subst{m}{x}$.
 		
 		\item   
-			If  $\stytra{\mapt{\Gamma}^{2}}{\tau}{\mapt{\Delta}^{2}}{\map{P}^{2}}{\mapt{\Delta'}^{2}}{R}$
-			then exists a $P'$ such that 
+			If  %$\stytra{\mapt{\Gamma}^{2}}{\tau}{\mapt{\Delta}^{2}}{\map{P}^{2}}{\mapt{\Delta'}^{2}}{R}$
+			$\ell_2 = \tau$ 
+			then $\exists P'$ s.t.
 			$P \hby{\tau} P'$
 			and $\horel{\mapt{\Gamma}^{2}}{\mapt{\Delta'}^{2}}{\map{P'}^{2}}{\wbf}{\mapt{\Delta'}^{2}}{R}$.
 	\end{enumerate}
