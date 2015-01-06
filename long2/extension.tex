@@ -100,49 +100,56 @@ characteristic process~\ref{def:characteristic_process} should be:
 
 We now present an encoding from \HOpp to \HOp.
 
-\[
-\begin{array}{rcl}
-	\pmap{\appl{x}{\abs{x} P}}{3} &\defeq& \newsp{s}{\appl{x}{s} \Par \bout{\dual{s}}{\abs{x} \pmap{P}{3}} \inact}
-	\\
-	\pmap{\bout{u}{\abs{x: L}{Q}} P}{3} &\defeq& \bout{u}{\abs{z}{\binp{z}{x} \pmap{Q}{3}}} \pmap{P}{3}
-	\\
-	\pmap{\bout{u}{\abs{x: C}{Q}} P}{3} &\defeq& \bout{u}{\abs{x}{\pmap{Q}{3}}} \pmap{P}{3}
-	\\
-	\\
-	\tmap{\shot{L}}{3} &\defeq& \shot{\btinp{L} \tinact}
-	\\
-	\tmap{\lhot{L}}{3} &\defeq& \lhot{\btinp{L} \tinact}
-	\\
-	\tmap{\btout{\shot{L}} S}{3} &\defeq& \btout{\tmap{\shot{L}}{3}} \tmap{S}{3}
-	\\
-	\tmap{\btout{\lhot{L}} S}{3} &\defeq& \btout{\tmap{\lhot{L}}{3}} \tmap{S}{3}
-	\\
-	\tmap{\btinp{\shot{L}} S}{3} &\defeq& \btinp{\tmap{\shot{L}}{3}} \tmap{S}{3}
-	\\
-	\tmap{\btinp{\lhot{L}} S}{3} &\defeq& \btinp{\tmap{\lhot{L}}{3}} \tmap{S}{3}
-	\\
-	\\
-	\mapa{\bactout{n}{\abs{x:C}{P}}}^{3} &\defeq& \bactout{n}{\abs{x}{\pmap{P}{3}}}
-	\\
-	\mapa{\bactinp{n}{\abs{x:C}{P}}}^{3} &\defeq& \bactinp{n}{\abs{x}{\pmap{P}{3}}}
-	\\
-	\mapa{\bactout{n}{\abs{x:L}{P}}}^{3} &\defeq& \bactout{n}{\abs{z}{\binp{z}{x} \pmap{P}{3}}}
-	\\
-	\mapa{\bactinp{n}{\abs{x:L}{P}}}^{3} &\defeq& \bactinp{n}{\abs{z}{\binp{z}{x} \pmap{P}{3}}}
+\begin{definition}[Encoding from \HOpp to \HOp]\rm
+	\label{def:enc:HOpp_to_HOp}
+	Let mapping $\enco{\pmap{\cdot}{3}, \tmap{\cdot}{3}, \mapa{\cdot}^{3}}: \HOpp \to \HOp$:
+%
+	\[
+	\begin{array}{rcl}
+		\pmap{\appl{x}{\abs{x} P}}{3} &\defeq& \newsp{s}{\appl{x}{s} \Par \bout{\dual{s}}{\abs{x} \pmap{P}{3}} \inact}
+		\\
+		\pmap{\bout{u}{\abs{x: L}{Q}} P}{3} &\defeq& \bout{u}{\abs{z}{\binp{z}{x} \pmap{Q}{3}}} \pmap{P}{3}
+		\\
+		\pmap{\bout{u}{\abs{x: C}{Q}} P}{3} &\defeq& \bout{u}{\abs{x}{\pmap{Q}{3}}} \pmap{P}{3}
+		\\
+		\\
+		\tmap{\shot{L}}{3} &\defeq& \shot{\btinp{L} \tinact}
+		\\
+		\tmap{\lhot{L}}{3} &\defeq& \lhot{\btinp{L} \tinact}
+		\\
+		\tmap{\btout{\shot{L}} S}{3} &\defeq& \btout{\tmap{\shot{L}}{3}} \tmap{S}{3}
+		\\
+		\tmap{\btout{\lhot{L}} S}{3} &\defeq& \btout{\tmap{\lhot{L}}{3}} \tmap{S}{3}
+		\\
+		\tmap{\btinp{\shot{L}} S}{3} &\defeq& \btinp{\tmap{\shot{L}}{3}} \tmap{S}{3}
+		\\
+		\tmap{\btinp{\lhot{L}} S}{3} &\defeq& \btinp{\tmap{\lhot{L}}{3}} \tmap{S}{3}
+		\\
+		\\
+		\mapa{\bactout{n}{\abs{x:C}{P}}}^{3} &\defeq& \bactout{n}{\abs{x}{\pmap{P}{3}}}
+		\\
+		\mapa{\bactinp{n}{\abs{x:C}{P}}}^{3} &\defeq& \bactinp{n}{\abs{x}{\pmap{P}{3}}}
+		\\
+		\mapa{\bactout{n}{\abs{x:L}{P}}}^{3} &\defeq& \bactout{n}{\abs{z}{\binp{z}{x} \pmap{P}{3}}}
+		\\
+		\mapa{\bactinp{n}{\abs{x:L}{P}}}^{3} &\defeq& \bactinp{n}{\abs{z}{\binp{z}{x} \pmap{P}{3}}}
 
-\end{array}
-\]
-\noi We assume that the rest of the encoding is homomorphic on the syntax of
-processes, types and labels, respectively.
+	\end{array}
+	\]
+%
+	\noi We assume that the rest of the encoding is homomorphic on the syntax of
+	processes, types and labels, respectively.
+\end{definition}
 
-\begin{proposition}[Operational Correspondence]\rm
+\begin{proposition}[Operational Correspondence. From \HOpp to \HOp]\rm
+	\label{prop:op_corr:HOpp_to_HO}
 	\begin{enumerate}
 		\item	Let $\Gamma; \es; \Delta \proves P$.
 			$\horel{\Gamma}{\Delta}{P}{\hby{\ell}}{\Delta'}{P'}$ implies
 %
 			\begin{enumerate}[a)]
 				\item	If $\ell \in \set{\news{\tilde{m}} \bactout{n}{\abs{x}{Q}}, \bactinp{n}{\abs{x}{Q}}}$ then
-					$\exists l' $ such that
+%					$\exists l' $ such that
 					$\horel{\tmap{\Gamma}{3}}{\tmap{\Delta}{3}}{\pmap{P}{3}}{\hby{\ell'}}
 					{\tmap{\Delta'}{3}}{\pmap{P'}{3}}$ with $\mapa{\ell}^{3} = \ell'$.
 
@@ -158,8 +165,16 @@ processes, types and labels, respectively.
 %					$\horel{\tmap{\Gamma}{3}}{\tmap{\Delta}{3}}{\pmap{P}{3}}{\hby{\bactinp{n}{\abs{z}{\binp{z}{x} \pmap{Q}{3}}}}}
 %					{\tmap{\Delta'}{3}}{\pmap{P'}{3}}$.
 
-				\item	If $\ell \notin \set{\news{\tilde{m}} \bactout{n}{\abs{x}{Q}}, \bactinp{n}{\abs{x}{Q}}}$ then
-					$\horel{\tmap{\Gamma}{3}}{\tmap{\Delta}{3}}{\pmap{P}{3}}{\Hby{\hat{\ell}}}
+				\item	If $\ell \notin \set{\news{\tilde{m}} \bactout{n}{\abs{x}{Q}}, \bactinp{n}{\abs{x}{Q}}, \tau}$ then
+					$\horel{\tmap{\Gamma}{3}}{\tmap{\Delta}{3}}{\pmap{P}{3}}{\hby{\ell}}
+					{\tmap{\Delta'}{3}}{\pmap{P'}{3}}$.
+
+				\item	If $\hby{\ell}$ is a \betatran then
+					$\horel{\tmap{\Gamma}{3}}{\tmap{\Delta}{3}}{\pmap{P}{3}}{\bhby{\tau} \shby{\tau} \bhby{\tau}}
+					{\tmap{\Delta'}{3}}{\pmap{P'}{3}}$.
+
+				\item	If $\hby{\ell}$ is not a \betatran then
+					$\horel{\tmap{\Gamma}{3}}{\tmap{\Delta}{3}}{\pmap{P}{3}}{\hby{\tau}}
 					{\tmap{\Delta'}{3}}{\pmap{P'}{3}}$.
 			\end{enumerate}
 
@@ -168,12 +183,105 @@ processes, types and labels, respectively.
 			{\tmap{\Delta''}{3}}{Q}$ implies
 %
 			\begin{enumerate}[a)]
-				\item	If $\ell \notin \set{\news{\tilde{m}} \bactout{n}{\abs{x}{Q}}, \bactinp{n}{\abs{x}{Q}}}$
+				\item	If $\ell \in \set{\news{\tilde{m}} \bactout{n}{\abs{x}{Q}}, \bactinp{n}{\abs{x}{Q}}, \tau}$
 					then
-					$\horel{\Gamma}{\Delta}{P}{\hby{\ell}}{\Delta'}{P'}$
-					and $\horel{\tmap{\Gamma}{3}}{\tmap{\Delta''}{3}}{Q}{\Hby{\hat{\ell}}}{\tmap{\Delta'}{3}}{\pmap{P'}{3}}$
+					$\horel{\Gamma}{\Delta}{P}{\hby{\ell'}}{\Delta'}{P'}$
+%					and $\horel{\tmap{\Gamma}{3}}{\tmap{\Delta''}{3}}{Q}{\hby{\hat{\ell}}}{\tmap{\Delta'}{3}}{\pmap{P'}{3}}$
+					with $\mapa{\ell'}^{3} = \ell$ and $Q \scong \pmap{P'}{3}$.
+
+				\item	If $\ell \notin \set{\news{\tilde{m}} \bactout{n}{\abs{x}{Q}}, \bactinp{n}{\abs{x}{Q}}, \tau}$
+					then
+					$\horel{\Gamma}{\Delta}{P}{\hby{\ell}}{\Delta'}{P'}$ and $Q \scong \pmap{P'}{3}$.
+%					and $\horel{\tmap{\Gamma}{3}}{\tmap{\Delta''}{3}}{Q}{\hby{\hat{\ell}}}{\tmap{\Delta'}{3}}{\pmap{P'}{3}}$.
+
+				\item	If $\ell = \tau$ then
+					either
+					$\horel{\Gamma}{\Delta}{\Delta}{\hby{\tau}}{\Delta'}{P'}$ with $Q \scong \pmap{P'}{3}$\\
+					or
+					$\horel{\Gamma}{\Delta}{\Delta}{\bhby{\ell}}{\Delta'}{P'}$ and
+					$\horel{\tmap{\Gamma}{3}}{\tmap{\Delta''}{3}}{Q}{\shby{\tau} \bhby{\tau}}
+					{\tmap{\Delta''}{3}}{\pmap{P'}{3}}$.
 			\end{enumerate}
 	\end{enumerate}
 \end{proposition}
 
-\dk{Show type preservarnce, operatational correspondence and full abstraction}.
+\begin{proof}
+	The proof of Part 1 does a transition induction and
+	considers the mapping in Definition~\ref{def:enc:HOpp_to_HOp}.
+	We give the most interesting cases.
+
+	\begin{itemize}
+		\item	Case: $P = \appl{\abs{x}{Q_1}}{\abs{x}{Q_2}}$.
+
+			$\horel{\Gamma}{\Delta}{\appl{\abs{x}{Q_1}}{\abs{x}{Q_2}}}{\bhby{\tau}}{\Delta}{Q_1 \subst{\abs{x}{Q_2}}{x}}$ implies
+\[
+			\mhorel{\tmap{\Gamma}{3}}{\tmap{\Delta}{3}}{ \newsp{s}{ \appl{\abs{z}\binp{z}{x} \pmap{Q}{3}}{s}  \Par \bout{\dual{s}}{\abs{x}{Q_2}} \inact}}{\bhby{\tau} \shby{\tau} \bhby{\tau}}
+			{\tmap{\Delta'}{3}}{}{\pmap{Q_1}{3} \subst{\abs{x}{\pmap{Q_2}{3}}}{x}}
+\]
+
+		\item	Case: $P = \bout{n}{\abs{x:L} Q} P$
+
+			$\horel{\Gamma}{\Delta}{\bout{n}{\abs{x:L} Q} P}{\hby{ \bactout{n}{\abs{x}{Q}}}}{\Delta}{P}$ implies
+
+			$\horel{\tmap{\Gamma}{3}}{\tmap{\Delta}{3}}{\bout{n}{\abs{z} \binp{z}{x} \pmap{Q}{3}} \pmap{P}{3}}{\hby{ \bactout{n}{\abs{z}{\binp{z}{x} \pmap{Q}{3}} } }}{\Delta}{\pmap{P}{3}}$
+	\end{itemize}
+
+	The proof of Part 2 also does a transition induction and
+	considers the mapping in Definition~\ref{def:enc:HOpp_to_HOp}.
+	We give the most interesting cases.
+
+	\begin{itemize}
+		\item	Case: $P = \appl{\abs{x}{Q_1}}{\abs{x}{Q_2}}$.
+%
+		\[
+			\mhorel{\tmap{\Gamma}{3}}{\tmap{\Delta}{3}}{\newsp{s}{ \appl{\abs{z}\binp{z}{x} \pmap{Q}{3}}{s}  \Par \bout{\dual{s}}{\abs{x}{Q_2}} \inact}}{\hby{\tau}}
+			{\tmap{\Delta'}{3}}{}{\newsp{s}{\binp{s}{x} \pmap{Q}{3}  \Par \bout{\dual{s}}{\abs{x}{Q_2}} \inact}}
+		\]
+%
+			\noi implies
+			$\horel{\Gamma}{\Delta}{\appl{\abs{x}{Q_1}}{\abs{x}{Q_2}}}{\bhby{\tau}}{\Delta}{Q_1 \subst{\abs{x}{Q_2}}{x}}$ and
+%
+		\[
+			\mhorel{\tmap{\Gamma}{3}}{\tmap{\Delta}{3}}{\newsp{s}{\binp{s}{x} \pmap{Q}{3}  \Par \bout{\dual{s}}{\abs{x}{Q_2}} \inact}}{\shby{\tau} \bhby{\tau}}
+			{\tmap{\Delta'}{3}}{}{\pmap{Q_1}{3} \subst{\abs{x}{\pmap{Q_2}{3}}}{x}}
+		\]
+
+		\item	Case: $P = \bout{n}{\abs{x:L} Q} P$
+
+			$\horel{\tmap{\Gamma}{3}}{\tmap{\Delta}{3}}{\bout{n}{\abs{z} \binp{z}{x} \pmap{Q}{3}} \pmap{P}{3}}{\hby{ \bactout{n}{\abs{z}{\binp{z}{x} \pmap{Q}{3}} } }}{\Delta}{\pmap{P}{3}}$ implies
+
+			$\horel{\Gamma}{\Delta}{\bout{n}{\abs{x:L} Q} P}{\hby{ \bactout{n}{\abs{x}{Q}}}}{\Delta}{P}$ implies
+	\end{itemize}
+	\dk{Do more cases}
+	\qed
+\end{proof}
+
+\begin{proposition}[Full Abstraction. From \HOpp to \HOp]\rm
+	$\horel{\Gamma}{\Delta_1}{P}{\wb}{\Delta_2}{Q}$ if and only if $\horel{\tmap{\Gamma}{3}}{\tmap{\Delta_1}{3}}{\pmap{P}{3}}{\wb}{\tmap{\Delta_2}{3}}{\pmap{Q}{3}}$
+\end{proposition}
+
+\begin{proof}
+	\noi {\bf Soundness Direction.}
+
+	\noi We create the closure
+%
+	\[
+		\Re = \set{\horel{\Gamma}{\Delta_1}{P}{\ ,\ }{\Delta_2}{Q} \setbar \horel{\tmap{\Gamma}{3}}{\tmap{\Delta_1}{3}}{\pmap{P}{3}}{\wb}{\tmap{\Delta_2}{3}}{\pmap{Q}{3}}}
+	\]
+%
+	\noi and show that $\Re$ is a bisimulation.
+
+
+	\noi {\bf Completeness Direction.}
+
+	\noi We create the closure
+%
+	\[
+		\Re = \set{\horel{\tmap{\Gamma}{3}}{\tmap{\Delta_1}{3}}{\pmap{P}{3}}{\ ,\ }{\tmap{\Delta_2}{3}}{\pmap{Q}{3}} \setbar \horel{\Gamma}{\Delta_1}{P}{\wb}{\Delta_2}{Q}}
+	\]
+%
+	\noi and show that $\Re$ is a bisimulation up to deterministic transition.
+	
+	\dk{To be done!}
+	\qed
+\end{proof}
