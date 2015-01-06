@@ -1,3 +1,11 @@
+This section defines the formal notion of \emph{encoding}, 
+extending the existing untyped criteria studied in 
+\cite{Palamidessi,Gorhan,AAA} to a typed settion. 
+We first define a typed calculus parameterised by 
+by a syntax, typing and semantics. 
+
+\smallskip 
+
 \begin{definition}[Typed Calculus]\label{d:tcalculus}\rm
 	A \emph{typed calculus} $\tyl{L}$ is a tuple
           $\calc{\CAL}{\cal{T}}{\hby{\ell}}{\wb}{\proves}$
@@ -5,6 +13,13 @@
 respectively; and $\hby{\ell}$, $\wb$, and $\proves$ 
 	denote a transition system, a typed process equivalence, and a type system for $\CAL$ processes, respectively. 
 \end{definition}
+
+\smallskip 
+
+Our notion of encoding considers a mapping on processes, 
+Our notion of encoding considers a mapping on processes, 
+types, 
+and transition labels.  
 
 \begin{definition}[Typed Encoding]\rm
         Let  $\tyl{L}_i=\calc{\CAL_i}{{\cal{T}}_i}{\hby{\ell}}{\wb_i}{\proves_i}$
@@ -16,15 +31,51 @@ respectively; and $\hby{\ell}$, $\wb$, and $\proves$
 	$\enco{\map{\cdot}, \mapt{\cdot}, \mapa{\cdot}} : \tyl{L}_1 \to \tyl{L}_2$ to denote the \emph{typed encoding} of $\tyl{L}_1$ into $\tyl{L}_2$.
 \end{definition}
 
-%Below 
-%we  assume that if 
-%$P \hby{\ell} P'$ and $\mapa{\ell} = \{\ell_1, \ell_2,  \cdots, \ell_m\}$ then
-%$\map{P} \Hby{\mapa{\ell}} \map{P'}$
-%should be understood as
-%$\map{P} \Hby{\ell_1} P_1 \Hby{\ell_2} P_2 \cdots \Hby{\ell_m} P_m =  \map{P'}$,
-%for some
-%$P_1, P_2, \ldots, P_m$.
+\smallskip 
 
+\noi We will often assume that  $\mapt{\cdot}$ extends to typing
+environments as expected. This way, e.g., $\mapt{\Delta \cat u:S} = \mapt{\Delta} \cat u:\mapt{S}$.
+
+For stating stronger positive results of encodings, 
+we define the strong encoding criteria (called {\em precise}). Later 
+they are weakened to prove a stronger negative result (called {\em good}). 
+We first state the 
+syntactic criteria which are used in the untyped setting \cite{}. 
+Let $\sigma$ denote a substitution of names for names (a renaming, in the usual sense). Given environments $\Delta$ and $\Gamma$,
+we write $\sigma(\Delta)$ and $\sigma(\Gamma)$ to denote the effect of applying $\sigma$ on the 
+domains of $\Delta$ and $\Gamma$
+(clearly, $\sigma(\Gamma)$ concerns only shared names in $\Gamma$: process and recursion variables in $\Gamma$ are not affected by $\sigma$). 
+
+\smallskip 
+
+\begin{definition}[Syntax Preserving]\rm
+	\label{def:sep}
+	We say that 
+	the typed encoding 
+	$\enco{\map{\cdot}, \mapt{\cdot}, \mapa{\cdot}}: \tyl{L}_1 \to \tyl{L}_2$ is \emph{syntax preserving}
+	if it is:
+	
+	\begin{enumerate}[1.]
+		\item	\emph{Homomorphic wrt parallel},   if 
+		$\mapt{\Gamma}; \emptyset; \mapt{\Delta_1 \cat \Delta_2} \proves \map{P_1 \Par P_2} \hastype \Proc$
+		then 
+		$\mapt{\Gamma}; \emptyset; \mapt{\Delta_1} \cat \mapt{\Delta_2} \proves \map{P_1} \Par \map{P_2} \hastype \Proc$.
+
+		\item	\emph{Compositional wrt restriction},  if 
+		$\mapt{\Gamma}; \emptyset; \mapt{\Delta} \proves \map{\news{n}P} \hastype \Proc$
+		then 
+		$\mapt{\Gamma}; \emptyset; \mapt{\Delta} \proves \news{n}\map{P} \hastype \Proc$.
+		
+		\item \emph{Name invariant},   if
+		$\mapt{\sigma(\Gamma)}; \emptyset; \mapt{\sigma(\Delta)} \proves \map{\sigma(P)} \hastype \Proc$
+		then 
+		$\sigma(\mapt{\Gamma}); \emptyset; \sigma(\mapt{\Delta}) \proves \sigma(\map{P}) \hastype \Proc$, 
+		for any injective renaming  of names $\sigma$.
+	\end{enumerate}
+\end{definition}
+
+\smallskip 
+Next we define semantic criteria for typed encodings.
 
 \begin{definition}[Semantic Preserving Encoding]\rm
 \label{def:ep}
@@ -34,7 +85,7 @@ We say that $\enco{\map{\cdot}, \mapt{\cdot}, \mapa{\cdot}}: \tyl{L}_1 \to \tyl{
 if it satisfies the following properties:
 	
 	\begin{enumerate}[1.]
-		\item \emph{Type preservation}:
+		\item \emph{Type Preservation}:
 	if
 	$\Gamma; \emptyset; \Delta \proves_1 P \hastype \Proc$ then 
 	$\mapt{\Gamma}; \emptyset; \mapt{\Delta} \proves_2 \map{P} \hastype \Proc$,  
@@ -47,9 +98,11 @@ if it satisfies the following properties:
 %				$\map{P} \Red_2 \map{P'}$ and
 %				$\mapt{\Gamma}; \emptyset; \mapt{\Delta'} \proves_2 \map{P'} \hastype \Proc$.
 			\item	Completeness: 
-			   If  $\stytraarg{\Gamma}{\ell_1}{\Delta_1}{P}{\Delta'_1}{P'}{1}$
+			   If  
+$\stytraarg{\Gamma}{\ell_1}{\Delta_1}{P}{\Delta'_1}{P'}{1}$
 			   then $\exists \ell_2$ s.t. 
-			    $\wtytraarg{\mapt{\Gamma}}{\ell_2}{\mapt{\Delta_1}}{\map{P}}{\mapt{\Delta'_1}}{\map{P'}}{2}$
+
+$\wtytraarg{\mapt{\Gamma}}{\ell_2}{\mapt{\Delta_1}}{\map{P}}{\mapt{\Delta'_1}}{\map{P'}}{2}$
 			    and $\ell_2 = \mapa{\ell_1}$.
 			    				
 %			\item Soundness : \\
@@ -58,13 +111,12 @@ if it satisfies the following properties:
 %				$\mapt{\Gamma}; \mapt{\Delta_1} \wb_2 \mapt{\Delta_2} \proves_2 \map{P'} \wb_2 Q$.
 				
 			\item	Soundness:   
-				If  $\horel{\mapt{\Gamma}}{\mapt{\Delta_1}}{\map{P}}{\hby{\ell_1}}{\Delta''_1}{Q'}$
-				then $\exists \ell, P'$ s.t.  \\
-				(i)~$\stytra{\Gamma}{\ell}{\Delta_1}{P}{\Delta'_1}{P'}$,
-				(ii)~$\horel{\mapt{\Gamma}}{\Delta''_1}{Q'}{\Hby{\ell_2}}{\mapt{\Delta'_1}}{Q}$,
-				(iii)~$\Hby{\mapa{\ell}} = \hby{\ell_1} \Hby{\ell_2}$, and
-%				(iv)~$\ell_2 = \mapa{\ell_1}$, and
-				(iv)~$\horel{\mapt{\Gamma}}{\mapt{\Delta'_1}}{\map{P'}}{\wb_2}{\mapt{\Delta'_1}}{Q}$.
+				If  $\wtytraarg{\mapt{\Gamma}}{\ell_2}{\mapt{\Delta}}{\map{P}}{\mapt{\Delta'}}{Q}{2}$
+				then $\exists \ell_1, P'$ s.t.  
+				(i)~$\stytraarg{\Gamma}{\ell_1}{\Delta}{P}{\Delta'}{P'}{1}$,
+				(ii)~$\ell_2 = \mapa{\ell_1}$, and
+				(iii)~$\horel{\mapt{\Gamma}}{\mapt{\Delta'}}{\map{P'}}{\wb_2}{\mapt{\Delta'}}{Q}$.
+
 %			If  $\wtytraarg{\mapt{\Gamma}}{\ell_2}{\mapt{\Delta_1}}{\map{P}}{\mapt{\Delta'_1}}{Q}{2}$
 %			   then $\exists \ell_1, P'$ s.t.  
 %			    (i)~$\stytraarg{\Gamma}{\ell_1}{\Delta_1}{P}{\Delta'_1}{P'}{1}$,
@@ -83,13 +135,47 @@ if it satisfies the following properties:
 	\end{enumerate}
 \end{definition}
 
-\begin{remark}[Polyadic \HOp] We can trivially define 
-a semantic and type preserving encoding from 
-a polyadic version of \HOp (which extends $\HOp$ to 
-$V$ to $\tilde{n}$ and $\abs{\tilde{x}}{Q}$) into the monadic \HOp.  
-Hence we use the polyadic 
-version of \HOp in the encodings.  
-\end{remark}
+\smallskip 
+
+\noi Type preservation enables us to focus on encodings which retain the communication structures denoted by (session) types.
+Our operational correspondence builds upon analogous definitions in the untyped setting \cite{}. 
+We used labeled transitions, and so correspondences involve the mapping $\mapa{\cdot}$.
+Soundness ensures that the source process is mimicked 
+by its associated encoding; and completeness concerns the opposite direction.
+In the encodability results in the next section, 
+we prove stronger statements, tailored to the specifics of each encoding.
+Finally, we consider the full abstraction as a criteria to demonstrate 
+a stronger positive result. The completeness direction 
+of full abstraction is dropped when we prove the negative result.  
+We now define:
+
+\smallskip 
+
+
+%\begin{remark}[Polyadic \HOp] We can trivially define 
+%a semantic and type preserving encoding from 
+%a polyadic version of \HOp (which extends $\HOp$ to 
+%$V$ to $\tilde{n}$ and $\abs{\tilde{x}}{Q}$) into the monadic \HOp.  
+%Hence we use the polyadic 
+%version of \HOp in the encodings.  
+%\end{remark}
+
+\begin{definition}[Typed Encodings: Good and Basic]\label{def:goodenc}
+We say that the typed encoding 
+	$\enco{\map{\cdot}, \mapt{\cdot}, \mapa{\cdot}}: \tyl{L}_1 \to \tyl{L}_2$ is 
+\begin{enumerate}
+\item \emph{precise}, if it is syntax preserving and semantic preserving (cf. Definitions \ref{def:sep} and  \ref{def:ep}).
+\item \emph{good}, if it is syntax preserving 
+(cf. Definition \ref{def:sep}),
+barb preserving, and enjoys operational completeness (cf. Definition \ref{def:ep}-2(a)).
+\end{enumerate}
+\end{definition}
+Precise encodings offer more detailed criteria and used for positive 
+encodability results (\S\,\ref{s:positive}).
+In contrast, good encodings contains only 
+some of the criteria of precise encodings:    
+this minimal notion will be used 
+for the negative result in \S\,\ref{s:negative}.
 
 \begin{proposition}[Composability of Semantic Preserving Encodings]
 	Let 
