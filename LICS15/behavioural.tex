@@ -877,23 +877,22 @@ $\cong$, $\wbc$, $\hwb$ and $\fwb$ coincide in $\CAL\in \{\HOp, \HO,\sessp\}$.
 
 \smallskip 
 
-We show the examples to justify rule \eltsrule{RRcv} in 
-Definition~\ref{def:rlts}. 
-
 \begin{example}[Restricted Typed Labelled Transition Relation]
 \label{ex:motivation}
 We show that either a characteristic value or 
 a trigger value alone as the observable input 
-is not enough to define meaningful bisimulations. 
+is not enough to define meaningful bisimulations
+to justify rule \eltsrule{RRcv} in Definition~\ref{def:rlts}. 
 
 First we demonstrate that a characteristic value is not sufficient. 
 	Consider typed processes:
 	%
 	\begin{eqnarray}
-&& 	\Gamma; \es; \Delta \cat s: \btinp{\shot{\btinp{C} \tinact}} \tinact \proves \binp{s}{x} (\appl{x}{s_1} \Par \appl{x}{s_2})
+&&\hspace{-1cm}\Gamma; \es; \Delta \cat s: \btinp{\shot{\btinp{C} \tinact}} \tinact \proves \binp{s}{x} (\appl{x}{s_1} \Par \appl{x}{s_2}) \hastype \Proc
 \label{eq:5}
 \\
-&&		\Gamma; \es; \Delta \cat s: \btinp{\shot{\btinp{C} \tinact}} \tinact \proves \binp{s}{x} (\appl{x}{s_1} \Par \binp{s_2}{y} \inact)\quad\quad
+&&\hspace{-1cm}\Gamma; \es; \Delta \cat s: \btinp{\shot{\btinp{C} \tinact}} \tinact \proves \binp{s}{x} (\appl{x}{s_1} \Par \binp{s_2}{y} \inact)
+\hastype \Proc
 \label{eq:6}
 	\end{eqnarray}
 	%
@@ -901,7 +900,7 @@ First we demonstrate that a characteristic value is not sufficient.
 	characteristic value $\abs{z}{\binp{z}{y}} \inact$ into $x$, 
 then the processes (\ref{eq:5}) and (\ref{eq:6}) in become:
 	\begin{eqnarray*}
-		\Gamma; \es; \Delta \proves \binp{s_1}{y} \inact \Par \binp{s_2}{y} \inact
+		\Gamma; \es; \Delta \proves \binp{s_1}{y} \inact \Par \binp{s_2}{y} \inact \hastype \Proc
 	\end{eqnarray*}
 hence after inputting $\abs{x}{\binp{x}{y}} \inact$, 
 both process become contextual bisimilar. 
@@ -911,50 +910,59 @@ for other numerous input processes, they can be distinguished.
 For example, if we input $\abs{x} \bout{a}{s_3} \binp{x}{y} \inact$, 
 the results are {\em not} bisimular. 
 
-Allowing only the characteristic value as an input value 
+Observing only the characteristic value 
 results in an over-discriminating bisimulation.
-But the trigger value can distinguish 
-the processes in (\ref{eq:5}) and (\ref{eq:6}).  
-If a trigger value is received, 
-we obtain:
+However if a trigger value is received, 
+we can distinguish 
+the processes in (\ref{eq:5}) and (\ref{eq:6}):  
 %
 \begin{eqnarray*}
-	\Gamma; \es; \Delta &\proves& \binp{t}{x} \appl{x}{s_1} \Par \binp{t}{x} \appl{x}{s_2}
-	\\
-	\Gamma; \es; \Delta &\proves& \binp{t}{x} \appl{x}{s_1} \Par \binp{s_2}{y} \inact
+%	\Gamma; \es; \Delta &\proves& 
+\binp{t}{x} \appl{x}{s_1} \Par \binp{t}{x} \appl{x}{s_2} 
+%\hastype \Proc
+\mbox{ and }
+%	\Gamma; \es; \Delta &\proves& 
+\binp{t}{x} \appl{x}{s_1} \Par \binp{s_2}{y} \inact 
+%\hastype \Proc
 \end{eqnarray*}
-\noi that can be distinguished by the freshness of name $t$.
+\noi resulting two distinct processes.  
 
 One question that arises here is whether the trigger value is enough
 to distinguish two processes, hence no need of 
-characteristic processes as the input. 
+characteristic values as the input. 
 This is not the case since the trigger value
 alone also results in an over-discriminating bisimulation relation.
 In fact the input trigger can be observed on any input prefix
 of {\em any type}. For example, consider the following processes:
 %
-\begin{eqnarray*}
-	\Gamma; \es; \Delta \proves \newsp{s}{\binp{n}{x} \appl{x}{s} \Par \bout{\dual{s}}{\abs{x} P} \inact} \hastype \Proc
+\begin{eqnarray}
+	\Gamma; \es; \Delta \proves \newsp{s}{\binp{n}{x} \appl{x}{s} \Par \bout{\dual{s}}{\abs{x} P} \inact} \hastype \Proc\label{eq:7}
 	\\
-	\Gamma; \es; \Delta \proves \newsp{s}{\binp{n}{x} \appl{x}{s} \Par \bout{\dual{s}}{\abs{x} Q} \inact} \hastype \Proc
+	\Gamma; \es; \Delta \proves \newsp{s}{\binp{n}{x} \appl{x}{s} \Par \bout{\dual{s}}{\abs{x} Q} \inact} \hastype \Proc\label{eq:8}
+\end{eqnarray}
+%
+\noi if both processes in (\ref{eq:7}) and (\ref{eq:8}) 
+input the trigger abstraction, we obtain the following bisimilar processes: 
+\begin{eqnarray*}
+%\Gamma; \es; \Delta \proves 
+\newsp{s}{\binp{t}{x} \appl{x}{s} \Par \bout{\dual{s}}{\abs{x} P} \inact} 
+%\hastype \Proc
+\mbox{ and }
+%      \\
+%\Gamma; \es; \Delta \proves 
+\newsp{s}{\binp{t}{x} \appl{x}{s} \Par \bout{\dual{s}}{\abs{x} Q} \inact}
+%\hastype \Proc
 \end{eqnarray*}
 %
-\noi if both processes input the trigger abstraction, we obtain: 
-\begin{eqnarray*}
-	\Gamma; \es; \Delta \proves \newsp{s}{\binp{t}{x} \appl{x}{s} \Par \bout{\dual{s}}{\abs{x} P} \inact} \hastype \Proc
-	\\
-	\Gamma; \es; \Delta \proves \newsp{s}{\binp{t}{x} \appl{x}{s} \Par \bout{\dual{s}}{\abs{x} Q} \inact} \hastype \Proc
-\end{eqnarray*}
-%
-\noi so they can be shown to be bisimilar. 
+\noi 
 However if they input $\abs{z}{\binp{z}{x} (\appl{x}{m})}$,  
 the resulting processes become:
 \begin{eqnarray*}
-	\Gamma; \es; \Delta \proves \newsp{s}{\binp{s}{x} \appl{x}{m} \Par \bout{\dual{s}}{\abs{x} P} \inact} \wbc \Delta \proves P \subst{m}{x}
+\Gamma; \es; \Delta \proves \newsp{s}{\binp{s}{x} \appl{x}{m} \Par \bout{\dual{s}}{\abs{x} P} \inact} \wbc \Delta \proves P \subst{m}{x}
 	\\
-	\Gamma; \es; \Delta \proves \newsp{s}{\binp{s}{x} \appl{x}{m} \Par \bout{\dual{s}}{\abs{x} Q} \inact} \wbc \Delta \proves Q \subst{m}{x}
+\Gamma; \es; \Delta \proves \newsp{s}{\binp{s}{x} \appl{x}{m} \Par \bout{\dual{s}}{\abs{x} Q} \inact} \wbc \Delta \proves Q \subst{m}{x}
 \end{eqnarray*}
-\noi which are not bisimilar if $P \subst{m}{x}$ is not with $Q \subst{m}{x}$.
+\noi which are not bisimilar if $P \subst{m}{x} \not\wb Q \subst{m}{x}$.
 
 In conclusion, these examples explain a need of both 
 trigger and characteristic values 
