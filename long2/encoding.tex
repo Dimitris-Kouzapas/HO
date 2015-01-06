@@ -24,15 +24,16 @@ additional information provided by types.
 		\calc{L}{T}{\hby{\ell}}{\wb}{\proves}
 	\]
 %
-	where $L$ and $T$ are set of processes and types, respectively.
+	where $L$ and $T$ are sets of processes and types, respectively.
 	Also, $\hby{\ell}$, $\wb$, and $\proves$ 
-	denote a transition semantics, a typed process equivalence, 
+	denote a transition semantics, a process equivalence, 
 	and a type system for $L$ processes, respectively. 
 \end{definition}
 
 The typed calculi we considered here
 derive from the definition of \HOp.
-\HOp subcalculi share the same
+Subcalculi of 
+\HOp share the same
 type system (as in \S\,\ref{s:types}),
 transition semantics (cf.~Def.~\ref{d:tlts}) 
 with labels $\ell$ (as in  \S\,\ref{ss:lts}).
@@ -43,7 +44,7 @@ First-Order Bisimulation (cf.~Def.~\ref{def:FO_bisim})
 
 In the following, when writing $\tyl{L}_i$ we tacitly
 assume the existence of appropriate 
-calculus $L_i$, type syntax $T_i$ and behavioural relation $\wb$,
+calculus $L_i$, type syntax $T_i$ and behavioral relation $\wb$,
 keeping all other elements unchanged.
 We now define the notion of encoding over typed calculi.
 
@@ -64,40 +65,46 @@ and a mapping
 from transition labels 
 into labels.
 We will often assume that  $\mapt{\cdot}$ extends to typing
-environments as expected.
+environments as expected. This way, e.g., $\mapt{\Delta \cat u:S} = \mapt{\Delta} \cat u:\mapt{S}$.
 As we will define several typed encodings,  
-in the following, we use number decorations on these 
+in the following we use number decorations on these 
 mappings to distinguish them.
 
-We require that a {\em good} typed encoding should 
-preserve not only syntactic criteria, but
-also the operational semantics and typing.
-We first state syntactic criteria \\ \jp{Still need to define what renaming policies makes sense for our typed setting!}
+We require that a typed encoding should be 
+{\em good}, which formally means adherence to
+syntactic criteria, but
+also preservation of typing and operational semantics.
+The following definition gives syntactic criteria for (typed) encodings.
+We require some extra notation.
+Let $\sigma$ denote a substitution of names for names (a renaming, in the usual sense). Given environments $\Delta$ and $\Gamma$,
+we write $\sigma(\Delta)$ and $\sigma(\Gamma)$ to denote the effect of applying $\sigma$ on the 
+domains of $\Delta$ and $\Gamma$.
+(Clearly, $\sigma(\Gamma)$ concerns only shared names in $\Gamma$: process and recursion variables in $\Gamma$ are not affected by $\sigma$.)
+% \\ \jp{Still need to define what renaming policies makes sense for our typed setting!}
 
 \begin{definition}[Syntax Preserving Encoding]\rm
 	\label{def:sep}
 	We say that 
 	the typed encoding 
 	$\enco{\map{\cdot}, \mapt{\cdot}, \mapa{\cdot}}: \tyl{L}_1 \to \tyl{L}_2$ is \emph{syntax preserving}
-	if it satisfies:
+	if it is:
 	
 	\begin{enumerate}[1.]
-		\item	\emph{Homomorphism wrt Parallel}: If 
+		\item	\emph{Homomorphic wrt parallel},   if 
 		$\mapt{\Gamma}; \emptyset; \mapt{\Delta_1 \cat \Delta_2} \proves \map{P_1 \Par P_2} \hastype \Proc$
 		then \\
 		$\mapt{\Gamma}; \emptyset; \mapt{\Delta_1} \cat \mapt{\Delta_2} \proves \map{P_1} \Par \map{P_2} \hastype \Proc$.
 
-		\item	\emph{Compositionality wrt Restriction}: If 
+		\item	\emph{Compositional wrt restriction},  if 
 		$\mapt{\Gamma}; \emptyset; \mapt{\Delta} \proves \map{\news{n}P} \hastype \Proc$
 		then \\
 		$\mapt{\Gamma}; \emptyset; \mapt{\Delta} \proves \news{n}\map{P} \hastype \Proc$.
 		
-		\item A renaming policy - TBD.
-		Let $\sigma$ denote a substitution on names.
-		If 
-		$\mapt{\Gamma}; \emptyset; \mapt{\Delta} \proves \map{\sigma(P)} \hastype \Proc$
+		\item \emph{Name invariant},   if
+		$\mapt{\sigma(\Gamma)}; \emptyset; \mapt{\sigma(\Delta)} \proves \map{\sigma(P)} \hastype \Proc$
 		then \\
-		$\mapt{\Gamma}; \emptyset; \mapt{\Delta} \proves \sigma(\map{P}) \hastype \Proc$.
+		$\sigma(\mapt{\Gamma}); \emptyset; \sigma(\mapt{\Delta}) \proves \sigma(\map{P}) \hastype \Proc$, 
+		for any injective renaming  of names $\sigma$.
 
 		
 	\end{enumerate}
@@ -159,6 +166,16 @@ We present generic definitions for soundness and completeness: in the encodabili
 we will be able to give stronger statements for these criteria, tailored to the specifics of each encoding.
 Finally, we consider full abstraction as a criteria for typed encodings. This is sensible in our setting, as we are interested in transferring tractable reasoning techniques between different typed calculi.
 
+\begin{definition}[Typed Encodings: Good and Basic]\label{def:goodenc}
+We say that 
+	the typed encoding 
+	$\enco{\map{\cdot}, \mapt{\cdot}, \mapa{\cdot}}: \tyl{L}_1 \to \tyl{L}_2$ is 
+	\begin{enumerate}[$-$]
+	\item Good, if it is syntax preserving and semantic preserving, in the sense of Definitions \ref{def:sep} and  \ref{def:ep}.
+	\item Basic, if is syntax preserving, type preserving, and half of full abstraction (TBD!)
+	\end{enumerate}
+\end{definition}
+	
 
 %\begin{remark}\label{r:multilabels}
 %	We  assume that if 
@@ -1124,6 +1141,7 @@ recursive definitions as passing of polyadic abstractions:
 
 The following proposition formalizes completeness and soundness results for the encoding of 
 \HOp into \HO.
+We write $\by{\tau}_k$ to denote a sequence of $k$ $\tau$-transitions.
 
 \begin{proposition}[Operational Correspondence, \HOp into \HO]\rm
 	\label{prop:op_corr_HOp_to_HO}
@@ -1152,14 +1170,16 @@ The following proposition formalizes completeness and soundness results for the 
 			$\stytra{\mapt{\Gamma}^{1}}{\ell_2}{\mapt{\Delta}^{1}}{\pmapp{P}{1}{f}}{\mapt{\Delta'}^{1}}{R}$,
 			with $\ell_2 = \mapa{\ell_1}^{1}$, \\
 			and
-			$\wtytra{\mapt{\Gamma}^{1}}{}{\mapt{\Delta'}^{1}}{R}{\mapt{\Delta'}^{1}}{\pmapp{P_0}{1}{f}\subst{m}{x}}$.	
+			%$\wtytra{\mapt{\Gamma}^{1}}{}{\mapt{\Delta'}^{1}}{R}{\mapt{\Delta'}^{1}}{\pmapp{P_0}{1}{f}\subst{m}{x}}$. \\	
+			$\mapt{\Gamma}^{1}; \mapt{\Delta'}^{1} \proves R \hby{\tau}_3
+				\mapt{\Gamma}^{1}; \mapt{\Delta'}^{1} \proves \pmapp{P_0}{1}{f}\subst{m}{x}$.
 						
 			\item If $\ell_1 = \tau$
 			and $P' \scong P_1 \Par P_2\subst{m}{x}$
 			then $\exists R$ s.t. \\
 			$\stytra{\mapt{\Gamma}^{1}}{\tau}{\mapt{\Delta}^{1}}{\pmapp{P}{1}{f}}{\mapt{\Delta}^{1}}{\pmapp{P_1}{1}{f}
 			\Par R
-			}$, where $R \Hby{} \pmapp{P_2}{1}{f}\subst{m}{x}$.
+			}$, where $R \by{\tau}_3  \pmapp{P_2}{1}{f}\subst{m}{x}$.
 
 			
 			
@@ -1202,7 +1222,7 @@ The following proposition formalizes completeness and soundness results for the 
 			$\stytra{ \Gamma }{\ell_1}{ \Delta }{ P}{ \Delta' }{ P'\subst{m}{z}}$, 
 			$\ell_1 = \mapa{\ell_2}^{1}$,
 			and 
-			$Q \Hby{} \map{P'\subst{m}{z}}^{1}_f$.	
+			$Q \by{\tau}_3  \map{P'\subst{m}{z}}^{1}_f$.	
 		
 			%$\horel{\mapt{\Gamma}^{1}}{\mapt{\Delta'}^{1}}{\map{P'}^{1}}{\wbf}{\mapt{\Delta'}^{1}}{Q}$.
 			
