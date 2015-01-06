@@ -616,7 +616,7 @@ Unfortunately only observing a trigger value as an input
 is not sufficient to reason about the \sessp-calculus 
 (see Example~\ref{ex:motivation}). 
 We need additionally observe very simple 
-processes called {\bf\em characteristic values} which are explained 
+processes called {\em characteristic values} which are explained 
 in the next paragraph. 
 
 \smallskip
@@ -624,7 +624,7 @@ in the next paragraph.
 \myparagraph{Characteristic Processes and Values}
 \label{ss:char}
 \noi 
-We define characteristic processes 
+We use processes 
 which follow structures of session types. 
 This simple process, called a {\em characteristic process}, 
 inhabits a given session type. For example, consider 
@@ -637,7 +637,7 @@ We formalise this idea in the next definition.
 
 \smallskip  
    
-\begin{definition}[Characteristic Process and Value]\rm
+\begin{definition}[Characteristic Process]\rm
 %	Let names $\tilde{k}$ and type $\tilde{C}$; then we define a {\em characteristic process}:
 %	$\map{\tilde{C}}^{\tilde{k}}$:
 %	\[
@@ -647,7 +647,7 @@ We formalise this idea in the next definition.
 We define a {\em characteristic process}
 of type $C$ with name $u$ written by 
 $\mapchar{C}{u}$ together with  
-a mapping $\omapchar{U}$ for a {\em characteristic value} 
+a mapping $\omapchar{U}$ 
 in Fig.~\ref{fig:char}. 
 \end{definition}
 
@@ -691,7 +691,7 @@ in Fig.~\ref{fig:char}.
 		\end{array}
 	\end{array}
 	\]
-\caption{Characteristic Processes (top) and Values (bottom) \label{fig:char}}
+\caption{Characteristic Processes \label{fig:char}}
 \Hline
 \end{figure}
 
@@ -754,9 +754,9 @@ in Fig.~\ref{fig:char}.
 
 For the characteristic bisimulation, 
 denoted by $\fwb$, we limit the input transition to 
-the characteristic value, $\lambda x.\mapchar{U}{x}$. 
+{\bf\em the characteristic value}, $\lambda x.\mapchar{U}{x}$. 
 Hence with the same reasoning as (\ref{eq:1})--(\ref{eq:3}), 
-we define the {\bf characteristic trigger process} with type 
+we define the {\bf\em characteristic trigger process} with type 
 $U$, and replace Clause 1) in Definition~\ref{def:wbc}:
 \begin{equation}\label{eq:4}
 	\ftrigger{t}{V}{U} \defeq 
@@ -800,7 +800,7 @@ by replacing $\by{\ell}$ by $\hby{\ell}$ in Definition~\ref{d:tlts}.
 $\horel{\Gamma}{\Delta_1}{P_1}{\hby{\ell}}{\Delta_2}{P_2}$ implies  
 	then $\horel{\Gamma}{\Delta_1}{P_1}{\by{\ell}}{\Delta_2}{P_2}$.
 See Example~\ref{ex:motivation} for the reason why {\em both} 
-the trigger processes ($\binp{t}{y} (\appl{y}{{x}})$) 
+the trigger values ($\lambda x.\binp{t}{y} (\appl{y}{{x}})$) 
 and characteristic values ($\lambda x.\map{U}^{{x}}$) are required 
 to define the following two bisimulations. 
 
@@ -914,8 +914,8 @@ the results are {\em not} bisimular.
 Allowing only the characteristic value as an input value 
 results in an over-discriminating bisimulation.
 But the trigger value can distinguish 
-the processes in (\ref{eq:5}) and (\ref{eq:6}) 
-that is if a trigger value is received, 
+the processes in (\ref{eq:5}) and (\ref{eq:6}).  
+If a trigger value is received, 
 we obtain:
 %
 \begin{eqnarray*}
@@ -925,10 +925,10 @@ we obtain:
 \end{eqnarray*}
 \noi that can be distinguished by the freshness of name $t$.
 
-One question that arises here is whether the trigger input is enough
+One question that arises here is whether the trigger value is enough
 to distinguish two processes, hence no need of 
 characteristic processes as the input. 
-This is not the case since the trigger input 
+This is not the case since the trigger value
 alone also results in an over-discriminating bisimulation relation.
 In fact the input trigger can be observed on any input prefix
 of {\em any type}. For example, consider the following processes:
@@ -950,15 +950,15 @@ of {\em any type}. For example, consider the following processes:
 However if they input $\abs{z}{\binp{z}{x} (\appl{x}{m})}$,  
 the resulting processes become:
 \begin{eqnarray*}
-	\Gamma; \es; \Delta \proves \newsp{s}{\binp{s}{x} \appl{x}{m} \Par \bout{\dual{s}}{\abs{x} P} \inact} \by{\tau} \Delta \proves P \subst{m}{x}
+	\Gamma; \es; \Delta \proves \newsp{s}{\binp{s}{x} \appl{x}{m} \Par \bout{\dual{s}}{\abs{x} P} \inact} \wbc \Delta \proves P \subst{m}{x}
 	\\
-	\Gamma; \es; \Delta \proves \newsp{s}{\binp{s}{x} \appl{x}{m} \Par \bout{\dual{s}}{\abs{x} Q} \inact} \by{\tau} \Delta \proves Q \subst{m}{x}
+	\Gamma; \es; \Delta \proves \newsp{s}{\binp{s}{x} \appl{x}{m} \Par \bout{\dual{s}}{\abs{x} Q} \inact} \wbc \Delta \proves Q \subst{m}{x}
 \end{eqnarray*}
 \noi which are not bisimilar if $P \subst{m}{x}$ is not with $Q \subst{m}{x}$.
 
-In conclusion, these examples offer the reason why we need to use both 
-$\abs{{x}}{\binp{t}{y} (\appl{y}{{x}})}$  and 
-$\abs{{x}}{\mapchar{U}{x}}$ as an input observation in \eltsrule{RRcv}.  
+In conclusion, these examples explain a need of both 
+trigger and characteristic values 
+as an input observation in \eltsrule{RRcv}.  
 \end{example}
 
 
