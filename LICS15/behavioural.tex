@@ -3,16 +3,16 @@ session typed \HOp processes. The theory follows the principles
 laid by the previous work of the authors
 \cite{DBLP:conf/forte/KouzapasYH11,KY13,dkphdthesis}.
 We introduce three different bisimulations and prove 
-all of them coinside with typed, reduction-closed,
+all of them coincide with typed, reduction-closed,
 barbed congruence. 
 
 \subsection{Labelled Transition Semantics for Processes}\label{ss:lts}
-\myparagraph{Labelles}
+\myparagraph{Labels}
 \noi We define a labelled transition relation (LTS) over
 untyped processes. 
 Later with the environment transition semantics, 
 we can define a typed transition relation to formalise 
-how a process interacts with a process in its enviroment. The interaction
+how a process interacts with a process in its environment. The interaction
 is defined on action $\ell$:
 \[
 \begin{array}{l}
@@ -126,7 +126,7 @@ received prefixed process can observe a receive action of a value $V$.
 Select and branch prefixed processes observe the select and branch
 actions in rules $\ltsrule{Sel}$ and $\ltsrule{Bra}$ respectively.
 Rule $\ltsrule{Alpha}$ closes the LTS
-under alpha-renaiming.
+under alpha-renaming.
 Rule $\ltsrule{Res}$ closes the LTS under the name creation operator
 provided that the restricted name does not occur free in the
 observable action. 
@@ -144,7 +144,7 @@ action does not shared any bound names with the parallel processes.
 \label{ss:elts}
 \noi 
 We define a labelled transition relation between 
-a triple of environemnts, 
+a triple of environments, 
 written by  
 $(\Gamma, \Lambda_1, \Delta_1) \by{\ell} (\Gamma, \Lambda_2, \Delta_2)$, 
 in Fig.~\ref{fig:envLTS}, 
@@ -175,7 +175,7 @@ $\Lambda'$ of $V$ should be included in $\Lambda$.
 Scope extrusion of session names in $\tilde{m}$ requires
 that the dual endpoints of $\tilde{m}$ appear in
 the resulting session environment. Similarly for shared 
-names in $\tilde{m}$ that are extruted.  
+names in $\tilde{m}$ that are extruded.  
 All free values used for typing $V$ are subtracted from the
 resulting type tuple. Also the prefix of session $s$ is consumed
 by the action.
@@ -183,7 +183,7 @@ by the action.
 Similarly, an output on a shared name is described
 with rule $\eltsrule{ShOut}$ where we require a shared name
 is typed with $\chtype{U}$. The requirements for
-the output $V$ are indentical with the requirements for
+the output $V$ are identical with the requirements for
 rule $\eltsrule{SOut}$.
 
 Rules $\eltsrule{Sel}$ and $\eltsrule{Bra}$ describe actions for
@@ -404,7 +404,7 @@ $\ell\not = \tau$ otherwise $\By{}$.
 %\begin{definition}[Session Environment Confluence]\rm
 We begin with a definition of a notion of confluence
 over session environments $\Delta$:
-we denote $\Delta_1 \bistyp \Delta_2$ whenever $\exists \Delta$ such that
+we denote $\Delta_1 \bistyp \Delta_2$ if there exists $\Delta$ such that
 	$\Delta_1 \red^\ast \Delta$ and $\Delta_2 \red^\ast \Delta$.
 %\end{definition}
 
@@ -546,32 +546,34 @@ The contextual bisimulation in the general case
 is hard to compute due to: (1) the universal
 quantifier over contexts in the output case;
 and (2) a higher-order input prefix which can observe
-infinetely many different input actions (since
-infinetely many different processes can match
+infinitely many different input actions (since
+infinitely many different processes can match
 the session type of an input prefix).
 
-\subsection{HO Bisimulation ($\hwb$) and FO Bisimulation ($\fwb$)}\label{ss:hwb}
+\subsection{Higher-Order ($\hwb$) and  
+Characteristic ($\fwb$) Bisimulations}\label{ss:hwb}
 \noi 
 To overcome the problems of $\wbc$, we introduce two bisimulations.
 Our aim to limit the input transition so that we can define a
 bisimulation relation for the output clause without observing
 infinitely many input actions on the same input prefix. Concretely we
-take the following two steps to propose more tractable bisimulations:
+take the following two steps to define more tractable bisimulations:
 \begin{enumerate}
 \item limit the input value $V$ in $n?\ENCan{V}$ in 
 rules $\eltsrule{SRv}$ and $\eltsrule{ShRv}$ in Fig.~\ref{fig:envLTS}; and 
 \item replace 
 the output action case (Clause 1) in Definition~\ref{def:wbc}) 
-by a more tactable closuer. 
+by a more tractable closure. 
 \end{enumerate}
 For 1), we first 
 observe that a substitution $R\subst{V1}{x}$ in 
-Clause 1) in Definition~\ref{def:wbc} is contextual bisimular to the following process, with fresh $s$,  
+Clause 1) in Definition~\ref{def:wbc} is contextual bisimilar to the following process, with fresh $s$,  
 \begin{equation}\label{eq:1}
 P = \newsp{s}{\appl{(\abs{z}{\binp{z}{x}{R}})}{s} \Par \bout{\dual{s}}{V_1} \inact}
 \end{equation}
 since the reduction at $s$ and application are deterministic.  
-Hence using the fresh trigger name $t$, if we input a specific input, 
+We call $\abs{z}{\binp{z}{x} R}$ a {\bf\em trigger value}. 
+Hence using the fresh trigger name $t$, if we input a trigger value, 
 we can simulate the substitution:
 \begin{equation}\label{eq:2}
 \hotrigger{t}{V_1} 
@@ -589,8 +591,8 @@ $\bactinp{t}{\abs{z}{\binp{z}{x} R}}$ since:
 \wbc 
 \newsp{\tilde{m_1}}{P_2 \Par R\subst{V_1}{x}}
 \end{eqnarray*}
-The process in (\ref{eq:2}) is regarded 
-as a {\em trigger process} which 
+The RHS process in (\ref{eq:2}) is regarded 
+as a {\bf\em trigger process} which 
 offers value $V_1$ at $t$ \cite{JeffreyR05}, so that we write as: 
 \begin{equation}\label{eq:3}
 		\htrigger{t}{V_1} \defeq \hotrigger{t}{V_1} 
@@ -614,12 +616,12 @@ Unfortunately only observing a trigger value as an input
 is not sufficient to reason about the \sessp-calculus 
 (see Example~\ref{ex:motivation}). 
 We need additionally observe very simple 
-processes called {\em characteristic processes} which are explained 
+processes called {\bf\em characteristic values} which are explained 
 in the next paragraph. 
 
 \smallskip
 
-\myparagraph{Characteristic Processes}
+\myparagraph{Characteristic Processes and Values}
 \label{ss:char}
 \noi 
 We define characteristic processes 
@@ -635,7 +637,7 @@ We formalise this idea in the next definition.
 
 \smallskip  
    
-\begin{definition}[Characteristic Process]\rm
+\begin{definition}[Characteristic Process and Value]\rm
 %	Let names $\tilde{k}$ and type $\tilde{C}$; then we define a {\em characteristic process}:
 %	$\map{\tilde{C}}^{\tilde{k}}$:
 %	\[
@@ -645,10 +647,12 @@ We formalise this idea in the next definition.
 We define a {\em characteristic process}
 of type $C$ with name $u$ written by 
 $\mapchar{C}{u}$ together with  
-a mapping $\omapchar{U}$ in Fig.~\ref{fig:char}. 
+a mapping $\omapchar{U}$ for a {\em characteristic value} 
+in Fig.~\ref{fig:char}. 
 \end{definition}
 
 \smallskip
+
 \begin{figure}[t]
 	\[
 	\begin{array}{c}
@@ -687,7 +691,7 @@ a mapping $\omapchar{U}$ in Fig.~\ref{fig:char}.
 		\end{array}
 	\end{array}
 	\]
-\caption{Characteristic Processes\label{fig:char}}
+\caption{Characteristic Processes (top) and Values (bottom) \label{fig:char}}
 \Hline
 \end{figure}
 
@@ -741,18 +745,18 @@ a mapping $\omapchar{U}$ in Fig.~\ref{fig:char}.
 	$\Gamma; \es; \Delta \proves u \hastype C$.
 \end{enumerate}
 \end{proposition}
-\begin{IEEEproof}
-	By induction on $\mapchar{S}{u}$, $\mapchar{\chtype{S}}{u}$
-and $\mapchar{C}{u}$. 
-\end{IEEEproof}
+%\begin{IEEEproof}
+%	By induction on $\mapchar{S}{u}$, $\mapchar{\chtype{S}}{u}$
+%and $\mapchar{C}{u}$. 
+%\end{IEEEproof}
 
 \smallskip 
 
-For the first-order bisimulation, 
-denoted by $\fwb$, we limit the input transtion to 
-the characteristic process, $\lambda x.\mapchar{U}{x}$. 
-Hence with the same reasoninig as (\ref{eq:1})--(\ref{eq:3}), 
-we define the trigger process with type 
+For the characteristic bisimulation, 
+denoted by $\fwb$, we limit the input transition to 
+the characteristic value, $\lambda x.\mapchar{U}{x}$. 
+Hence with the same reasoning as (\ref{eq:1})--(\ref{eq:3}), 
+we define the {\bf characteristic trigger process} with type 
 $U$, and replace Clause 1) in Definition~\ref{def:wbc}:
 \begin{equation}\label{eq:4}
 	\ftrigger{t}{V}{U} \defeq 
@@ -761,7 +765,7 @@ $U$, and replace Clause 1) in Definition~\ref{def:wbc}:
 
 \myparagraph{Restricted Input Transition Rule}
 By summing up, we define the typed relation which limits 
-the input values. 
+the input values as trigger values or characteristic values. 
 
 \begin{definition}[Restricted Typed Labelled Transition Relation]
 \label{def:rlts}
@@ -797,7 +801,7 @@ $\horel{\Gamma}{\Delta_1}{P_1}{\hby{\ell}}{\Delta_2}{P_2}$ implies
 	then $\horel{\Gamma}{\Delta_1}{P_1}{\by{\ell}}{\Delta_2}{P_2}$.
 See Example~\ref{ex:motivation} for the reason why {\em both} 
 the trigger processes ($\binp{t}{y} (\appl{y}{{x}})$) 
-and characteristic processes ($\map{U}^{{x}}$) are required 
+and characteristic values ($\lambda x.\map{U}^{{x}}$) are required 
 to define the following two bisimulations. 
 
 \smallskip 
@@ -838,27 +842,26 @@ $\horel{\Gamma}{\Delta_2}{Q_1}{\Hby{\ell}}{\Delta_2'}{Q_2}$
 	it is called bisimilarity and is denoted by $\hwb$.
 \end{definition}
 
-The first-order bisimulation is given using the characteristic processes. 
+The characteristic bisimulation is given using the characteristic values 
+and characteristic trigger processes. 
 
-\begin{definition}[First-Order Bisimulation]\rm
+\begin{definition}[Characteristic Bisimulation]\rm
 \label{d:fwb}
 The first order bisimilarity, denoted by $\fwb$, is defined replacing 
-Clause 1) in Definition~\ref{d:hbw} by the following clause:
-	\begin{enumerate}
-		\item	whenever 
+Clause 1) in Definition~\ref{d:hbw} by the following clause:\\[1mm]
+whenever 
 $\horel{\Gamma}{\Delta_1}{P_1}{\hby{\news{\tilde{m_1}} \bactout{n}{V_1}}}{\Delta_1'}{P_2}$ with $\Gamma; \es; \Delta \proves V_1 \hastype U$,  
 there exits 
 $\horel{\Gamma}{\Delta_2}{Q_1}{\Hby{\news{\tilde{m_2}}\bactout{n}{V_2}}}{\Delta_2'}{Q_2}$ with $\Gamma; \es; \Delta' \proves V_2 \hastype U$,  
 such that, for fresh $t$, 
 \[
-\hspace{-0.5cm}\begin{array}{lrlll}
+\begin{array}{lrlll}
 \Gamma; \Delta''_1  \proves  {\newsp{\tilde{m_1}}{P_2 \Par 
 \ftrigger{t}{V_1}{U_1}}}
 \ \Re 
 \ \Delta''_2 \proves {\newsp{\tilde{m_2}}{Q_2 \Par \ftrigger{t}{V_2}{U_2}}}
 \end{array}
 \]
-\end{enumerate}
 \end{definition}
 
 \smallskip 
@@ -869,20 +872,21 @@ Below we state the main theorem.
 
 \begin{theorem}[Coincidence]\rm
 	\label{the:coincidence}
-	Relations $\hwb, \fwb, \wbc$ and $\cong$ coincide.
+$\cong$, $\wbc$, $\hwb$ and $\fwb$ coincide in $\CAL\in \{\HOp, \HO,\sessp\}$.
 \end{theorem}
 
 \smallskip 
 
-Below we list the examples to justify rule \eltsrule{RRcv} in 
+We show the examples to justify rule \eltsrule{RRcv} in 
 Definition~\ref{def:rlts}. 
 
 \begin{example}[Restricted Typed Labelled Transition Relation]
 \label{ex:motivation}
-We show that either a characteristic process or 
-a trigger process alone as the observable input 
+We show that either a characteristic value or 
+a trigger value alone as the observable input 
 is not enough to define meaningful bisimulations. 
 
+First we demonstrate that a characteristic value is not sufficient. 
 	Consider typed processes:
 	%
 	\begin{eqnarray}
@@ -894,7 +898,7 @@ is not enough to define meaningful bisimulations.
 	\end{eqnarray}
 	%
 	If the above processes input and substitute  
-	characteristic  process $\abs{z}{\binp{z}{y}} \inact$ into $x$, 
+	characteristic value $\abs{z}{\binp{z}{y}} \inact$ into $x$, 
 then the processes (\ref{eq:5}) and (\ref{eq:6}) in become:
 	\begin{eqnarray*}
 		\Gamma; \es; \Delta \proves \binp{s_1}{y} \inact \Par \binp{s_2}{y} \inact
@@ -902,17 +906,16 @@ then the processes (\ref{eq:5}) and (\ref{eq:6}) in become:
 hence after inputting $\abs{x}{\binp{x}{y}} \inact$, 
 both process become contextual bisimilar. 
 The processes in (\ref{eq:5}) and (\ref{eq:6}) 
-are obviously {\em not} contextualy bisimimilar since
+are obviously {\em not} contextually bisimular since
 for other numerous input processes, they can be distinguished. 
 For example, if we input $\abs{x} \bout{a}{s_3} \binp{x}{y} \inact$, 
-the results are {\em not} bisimilar. 
+the results are {\em not} bisimular. 
 
-Allowing only the characteristic as an input action
+Allowing only the characteristic value as an input value 
 results in an over-discriminating bisimulation.
-To solve this problem, we can use the trigger process. 
-The trigger process can distinguish 
+But the trigger value can distinguish 
 the processes in (\ref{eq:5}) and (\ref{eq:6}) 
-that is if a value of the trigger process is received, 
+that is if a trigger value is received, 
 we obtain:
 %
 \begin{eqnarray*}
@@ -980,7 +983,7 @@ $\abs{{x}}{\mapchar{U}{x}}$ as an input observation in \eltsrule{RRcv}.
 
 \smallskip 
 
-\noi Processes that do not use shared names, are inherintly $\tau$-inert.
+\noi Processes that do not use shared names, are inherently $\tau$-inert.
 
 \smallskip 
 
