@@ -1,3 +1,4 @@
+% !TEX root = main.tex
 \section{Negative Results}
 
 In the encoding from $\HOp$ to $\sessp$ we showed that
@@ -34,3 +35,75 @@ does not exist.
 	Details of the proof in Appendix~\ref{app:neg}
 	\qed
 \end{proof}
+
+\subsection{Alternative Proof}
+
+We say that an encoding is \emph{barb preserving} (or that enjoys barb preservation)
+if 
+$P \barb{n}$
+then 
+$\map{P} \Barb{n}$.
+
+%We have the following proposition:
+%
+%\begin{proposition}\rm
+%	\label{lem:tau_inert}
+%	Let balanced \HOp process $\Gamma; \es; \Delta \proves P \hastype \Proc$.
+%	Suppose that $P \barb{n}$ and 
+%	$\horel{\Gamma}{\Delta}{P}{\shby{\tau}}{\Delta'}{P'}$.
+%	Then $P' \barb{n}$.
+%\end{proposition}
+%
+%\begin{proof}
+%Follows directly from $\tau$-inertness. \qed
+%\end{proof}
+
+\begin{theorem}\rm
+	There is no typed encoding $\enco{\map{\cdot}, \mapt{\cdot}, \mapa{\cdot}}: \HOp \longrightarrow \HOp^{\minussh}$
+	that enjoys: (i) homomorphism wrt parallel; (ii) barb preservation; (iii) operational completeness.
+\end{theorem}
+
+\begin{proof}[Sketch]
+Suppose, towards a contradiction, that such a typed encoding indeed exists. 
+Consider the $\HOp$ process
+$$
+P = \breq{a}{s} \inact \Par \bacc{a}{x} \bsel{n}{l_1} \inact \Par \bacc{a}{x} \bsel{m}{l_2} \inact \qquad \text{(with $n \neq m$)}
+$$
+We then have that
+$$P \by{\tau} \bsel{n}{l_1} \inact \Par \bacc{a}{x} \bsel{m}{l_2} \inact = P_1$$
+and
+$$P \by{\tau} \bsel{m}{l_2} \inact \Par \bacc{a}{x} \bsel{n}{l_1} \inact = P_2$$
+Thus, we clearly have:\\
+(a) $P_1 \barb{n}$, $P_1 \not \barb{m}$, and \\
+(b) $P_2 \barb{m}$, $P_2 \not \barb{n}$.
+
+Consider now the $\HOp^{\minussh}$ process $\map{P}$.
+By our assumption of operational completeness we have both:\\
+$\map{P} \Hby{} S_1 \wb \map{P_1}$
+and \\
+$\map{P} \Hby{} S_2 \wb \map{P_2}$.
+
+By our assumption of barb preservation, 
+we know that: \\
+(c) $\map{P_1} \Barb{n}$, $\map{P_1} \not \Barb{m}$, and \\
+(d) $\map{P_2} \Barb{m}$, $\map{P_2} \not \Barb{n}$.
+
+
+
+Notice that behavioral equivalence implies that $S_1$ and $\map{P_1}$  have the same barbs
+(and analogously for $S_2$, $\map{P_2}$). More precisely, from (c) and (d) we infer: \\
+(e) $S_1 \Barb{n}$, $S_1 \not \Barb{m}$, and \\
+(f) $S_2 \Barb{m}$, $S_2 \not \Barb{n}$.
+
+Now, by $\tau$-inertness, we have both 
+$\map{P} \wb S_1$ and 
+$\map{P} \wb S_2$.
+Therefore, by transitivity of $\wb$, we have that \\
+(g) $S_1 \wb S_2$\\
+which entails both \\
+(h) $S_1 \Barb{n}$, $S_ 1 \Barb{m}$, and \\
+(i) $S_2 \Barb{m}$, $S_2 \Barb{n}$ \\
+a contradiction with (e) and and (f).
+\qed
+\end{proof}
+

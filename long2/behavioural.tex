@@ -863,7 +863,7 @@ contextual.
 \end{definition}
 
 We instantiate higher-order bisimilarity with $\wb^{\htriggerarrow}$ and
-first--order bisimilarity with $\wb^{\htriggerarrow}$.
+first-order bisimilarity with $\wb^{\ftriggerarrow}$.
 
 %The contextual bisimulation in the general case is a hard relation to be computed
 %since it is universaly quantified over substituting processes. The next definition
@@ -1090,20 +1090,29 @@ coincide with reduction closed, barbed congruence.
 %	$\horel{\Gamma}{\Delta}{P}{\wb}{\Delta'}{P'}$
 %\end{lemma}
 
-\begin{definition}[Session Transition]\rm
+\begin{definition}[Deterministic Transition]\rm
 	Let balanced \HOp process $\Gamma; \es; \Delta \proves P \hastype \Proc$.
-	We say that transition
-	$\horel{\Gamma}{\Delta}{P}{\hby{\tau}}{\Delta'}{P'}$ is
-	a {\em session transition}, written
-	$\horel{\Gamma}{\Delta}{P}{\shby{\tau}}{\Delta'}{P'}$,
-	whenever the untyped transition $P \by{\tau} P'$
-	is derived on visible actions with a session subject.
+	Transition $\horel{\Gamma}{\Delta}{P}{\hby{\tau}}{\Delta'}{P'}$ is called:
+	\begin{itemize}
+		\item	{\em Session transition}, written
+			$\horel{\Gamma}{\Delta}{P}{\shby{\tau}}{\Delta'}{P'}$,
+			whenever the untyped transition $P \by{\tau} P'$
+			is derived on visible actions with a session subject.
+
+		\item	{\em \betatran}, written
+			$\horel{\Gamma}{\Delta}{P}{\bhby{\tau}}{\Delta'}{P'}$,
+			whenever the untyped transition $P \by{\tau} P'$
+			is derived on rule $\ltsrule{App}$.
+	\end{itemize}
+%
+	We write $\horel{\Gamma}{\Delta}{P}{\dhby{\tau}}{\Delta'}{P'}$ for
+	either a session transition or a \betatran.
 \end{definition}
 
 \begin{proposition}[$\tau$-inertness]\rm
 	\label{lem:tau_inert}
 	Let balanced \HOp process $\Gamma; \es; \Delta \proves P \hastype \Proc$.
-	$\horel{\Gamma}{\Delta}{P}{\shby{\tau}}{\Delta'}{P'}$ implies
+	$\horel{\Gamma}{\Delta}{P}{\dhby{\tau}}{\Delta'}{P'}$ implies
 	$\horel{\Gamma}{\Delta}{P}{\wb}{\Delta'}{P'}$.
 \end{proposition}
 
@@ -1123,8 +1132,8 @@ Processes that do not use shared names are inherently $\tau$-inert.
 	Let $\Gamma; \es; \Delta \proves P \hastype \Proc$ an $\mathsf{C}^{\minussh}$ process.
 %
 	\begin{itemize}
-		\item	$\horel{\Gamma}{\Delta}{P}{\hby{\tau}}{\Delta'}{P'}$ if and only if $\horel{\Gamma}{\Delta}{P}{\shby{\tau}}{\Delta'}{P'}$.
-		\item	$\horel{\Gamma}{\Delta}{P}{\shby{\tau}}{\Delta'}{P'}$ implies $\horel{\Gamma}{\Delta}{P}{\wb}{\Delta'}{P'}$.
+		\item	$\horel{\Gamma}{\Delta}{P}{\hby{\tau}}{\Delta'}{P'}$ if and only if $\horel{\Gamma}{\Delta}{P}{\dhby{\tau}}{\Delta'}{P'}$.
+		\item	$\horel{\Gamma}{\Delta}{P}{\dhby{\tau}}{\Delta'}{P'}$ implies $\horel{\Gamma}{\Delta}{P}{\wb}{\Delta'}{P'}$.
 	\end{itemize}
 %	\begin{enumerate}
 %		\item
@@ -1133,8 +1142,8 @@ Processes that do not use shared names are inherently $\tau$-inert.
 %	\end{enumerate}
 \end{corollary}
 
-\begin{lemma}[Up-to Session Transition]\rm
-	\label{lem:up_to_session_transition}
+\begin{lemma}[Up-to Deterministic Transition]\rm
+	\label{lem:up_to_deterministic_transition}
 	Let $\horel{\Gamma}{\Delta_1}{P_1}{\ \Re\ }{\Delta_2'}{Q_1}$ such
 	that if whenever:
 %
@@ -1149,7 +1158,7 @@ Processes that do not use shared names are inherently $\tau$-inert.
 			\]
 			and
 			\[
-				\horel{\Gamma}{\Delta_3}{P_3}{\SHby{}}{\Delta_1'}{P_2}
+				\horel{\Gamma}{\Delta_3}{P_3}{\DHby{}}{\Delta_1'}{P_2}
 			\]
 			and for fresh $t$:
 			\[
@@ -1171,7 +1180,7 @@ Processes that do not use shared names are inherently $\tau$-inert.
 			\]
 			and
 			\[
-				\horel{\Gamma}{\Delta_3}{P_3}{\SHby{}}{\Delta_1'}{P_2}
+				\horel{\Gamma}{\Delta_3}{P_3}{\DHby{}}{\Delta_1'}{P_2}
 			\]
 			and
 			$\horel{\Gamma}{\Delta_1'}{P_2}{\ \Re\ }{\Delta_2'}{Q_2}$
@@ -1186,10 +1195,10 @@ Processes that do not use shared names are inherently $\tau$-inert.
 	The proof is very easy if we consider the
 	closure
 	\[
-		\Re^{\SHby{}} = \set{ \horel{\Gamma}{\Delta_1'}{P_2}{,}{\Delta_2'}{Q_1} \setbar \horel{\Gamma}{\Delta_1}{P_1}{\ \Re\ }{\Delta_2'}{Q_1},
-		\horel{\Gamma}{\Delta_1}{P_1}{\SHby{}}{\Delta_1'}{P_2} }
+		\Re^{\DHby{}} = \set{ \horel{\Gamma}{\Delta_1'}{P_2}{,}{\Delta_2'}{Q_1} \setbar \horel{\Gamma}{\Delta_1}{P_1}{\ \Re\ }{\Delta_2'}{Q_1},
+		\horel{\Gamma}{\Delta_1}{P_1}{\DHby{}}{\Delta_1'}{P_2} }
 	\]
-	We verify that $\Re^{\SHby{}}$ is a bisimulation with
+	We verify that $\Re^{\DHby{}}$ is a bisimulation with
 	the use of Proposition~\ref{lem:tau_inert}.
 	\qed
 \end{proof}
