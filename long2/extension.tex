@@ -8,9 +8,11 @@ In this section we extend the \HOp calculus to include higher order applications
 {\bf Syntax and Operational Semantics:}
 The syntax of Figure~\ref{fig:syntax} is changed to include $\appl{x}{V}$
 instead of $\appl{x}{u}$.
-The structural congruence in Section~\ref{subsec:reduction_semantics}
-is changed to include $\appl{(\abs{x} P)}{V} \scong P \subst{x}{V}$
-instead of $\appl{(\abs{x} P)}{u} \scong P \subst{x}{u}$.
+We also replace rule $\orule{App}$ in Figure~\ref{fig:reduction}
+with rule $\appl{\abs{x}{P}}{V} \red P \subst{V}{x}$.
+%The structural congruence in Section~\ref{subsec:reduction_semantics}
+%is changed to include $\appl{(\abs{x} P)}{V} \scong P \subst{x}{V}$
+%instead of $\appl{(\abs{x} P)}{u} \scong P \subst{x}{u}$.
 
 \noi {\bf Types.}
 The syntax of types changes to include $L \bnfis \shot{U} \bnfbar \lhot{U}$
@@ -50,7 +52,9 @@ for application and abstraction, respectively, now become:
 \dk{prove subject reduction for the extension}
 
 \noi {\bf Behavioural Semantics.}
-Labels and untyped LTS remain the same. The definition of the
+Labels remain the same. Rule $\ltsrule{App}$ in the untyped LTS
+is replaced with rule $\appl{\abs{x}{P}}{V} \by{\tau} P \subst{V}{x}$.
+The definition of the
 characteristic process~\ref{def:characteristic_process} should be:
 %
 \begin{definition}[Characteristic Process]\rm
@@ -173,7 +177,7 @@ We now present an encoding from \HOpp to \HOp.
 					$\horel{\tmap{\Gamma}{3}}{\tmap{\Delta}{3}}{\pmap{P}{3}}{\bhby{\tau} \shby{\tau}}
 					{\tmap{\Delta'}{3}}{\pmap{P'}{3}}$.
 
-				\item	If $\hby{\ell}$ is not a \betatran then
+				\item	If $\ell = \tau$ and $\hby{\ell}$ is not a \betatran then
 					$\horel{\tmap{\Gamma}{3}}{\tmap{\Delta}{3}}{\pmap{P}{3}}{\hby{\tau}}
 					{\tmap{\Delta'}{3}}{\pmap{P'}{3}}$.
 			\end{enumerate}
