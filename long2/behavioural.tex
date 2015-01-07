@@ -657,8 +657,16 @@ is not enough to define a sound bisimulation relation.
 
 	But the former processes are not contextually bisimilar since
 	for numerous other input actions they can be distinguished,
-	e.g.~for input action $\bactinp{s}{\abs{x} \bout{a}{s_3} \btinp{x}{y} \inact}$.
+	e.g.~for input action $\bactinp{s}{\abs{x} \bout{a}{s_3} \binp{x}{y} \inact}$.
 \end{example}
+
+%\begin{example}
+%	Consider a second example with typed processes
+%	\begin{eqnarray*}
+%		\Gamma; \es; \Delta &\proves& \bout{s_1}{\abs{x}{\bout{s_2}{\inact} \inact}} \inact\\
+%		\Gamma; \es; \Delta &\proves& \bout{s_1}{\inact} \bout{s_2}{\inact} \inact
+%	\end{eqnarray*}
+%\end{example}
 
 Allowing the characteristic value as the only input action
 that can be observed on an input prefix,
@@ -809,8 +817,8 @@ $\mapchar{U}{x} \subst{V}{x}$.
 The next definition formalises the idea of the trigger process.
 %
 \begin{definition}[Trigger Process]\rm
-	Let $\Gamma; \es; \Delta \proves V \hastype U$.
-	We write $\trigger{t}{V}{U}$ for either:
+%	Let $\Gamma; \es; \Delta \proves V \hastype U$.
+%	We write $\trigger{t}{V}{U}$ for either:
 %
 	\begin{center}
 		\begin{tabular}{lclcl}
@@ -823,26 +831,26 @@ The next definition formalises the idea of the trigger process.
 We are now ready to define a bisimulation relation which is not
 contextual.
 
-\begin{definition}[Triggered Bisimulation]\rm
+\begin{definition}[Higher-Order Bisimulation]\rm
 	\label{def:bisim}
 	Typed relation
-	$\Re$ is a {\em triggered bisimulation} if for a trigger $\trigger{t}{V}{U}$, whenever
+	$\Re$ is a {\em higher-order bisimulation} if whenever
 	$\horel{\Gamma}{\Delta_1}{P_1}{\ \Re\ }{\Delta_2}{Q_1}$ implies:
 %
 	\begin{enumerate}
-		\item	$\forall \news{\tilde{m_1}} \bactout{n}{V_1}$ with $\dk{\Gamma; \es; \Delta \proves V_1 \hastype U}$ such that
+		\item	$\forall \news{\tilde{m_1}} \bactout{n}{V_1}$ such that
 			\[
 				\horel{\Gamma}{\Delta_1}{P_1}{\hby{\news{\tilde{m_1}} \bactout{n}{V_1}}}{\Delta_1'}{P_2}
 			\]
-			implies that $\exists Q_2, V_2$ with $\dk{\Gamma; \es; \Delta \proves V_2 \hastype U}$ such that
+			implies that $\exists Q_2, V_2$ such that
 			\[
 				\horel{\Gamma}{\Delta_2}{Q_1}{\Hby{\news{\tilde{m_2}} \bactout{n}{V_2}}}{\Delta_2'}{Q_2}
 			\]
 			and for fresh $t$
 			\[
-				\horel{\Gamma}{\Delta_1''}{\newsp{\tilde{m_1}}{P_2 \Par \trigger{t}{V_1}{U}}}
+				\horel{\Gamma}{\Delta_1''}{\newsp{\tilde{m_1}}{P_2 \Par \htrigger{t}{V_1}}}
 				{\ \Re\ }
-				{\Delta_2''}{}{\newsp{\tilde{m_2}}{Q_2 \Par \trigger{t}{V_2}{U}}}
+				{\Delta_2''}{}{\newsp{\tilde{m_2}}{Q_2 \Par \htrigger{t}{V_2}}}
 			\]
 %
 		\item	$\forall \ell \not= \news{\tilde{m}} \bactout{n}{V}$ such that
@@ -858,12 +866,12 @@ contextual.
 
 		\item	The symmetric cases of 1 and 2.
 	\end{enumerate}
-	The Knaster Tarski theorem ensures that the largest triggered bisimulation exists,
-	it is called triggered bisimilarity and is denoted by $\wb^{\triggerarrow}$.
+	The Knaster Tarski theorem ensures that the largest higher-order bisimulation exists,
+	it is called higher-order bisimilarity and is denoted by $\wb$.
 \end{definition}
 
-We instantiate higher-order bisimilarity with $\wb^{\htriggerarrow}$ and
-first-order bisimilarity with $\wb^{\ftriggerarrow}$.
+%We instantiate higher-order bisimilarity with $\wb^{\htriggerarrow}$ and
+%first-order bisimilarity with $\wb^{\ftriggerarrow}$.
 
 %The contextual bisimulation in the general case is a hard relation to be computed
 %since it is universaly quantified over substituting processes. The next definition
@@ -908,9 +916,9 @@ first-order bisimilarity with $\wb^{\ftriggerarrow}$.
 	The Knaster Tarski theorem ensures that the largest bisimulation exists,
 	it is called HO-bisimilarity and is denoted by $\wb$.
 \end{definition}
-
-Higher-Order Bisimulation uses higher order input guarded triggers, thus
-it cannot be used as an equivalence relation for the \sessp sub-calculus.
+\end{comment}
+%Higher-Order Bisimulation uses higher order input guarded triggers, thus
+%it cannot be used as an equivalence relation for the \sessp sub-calculus.
 An alternative definition of the bisimulation based on first order
 output triggers solves this problem.
 
@@ -920,19 +928,19 @@ output triggers solves this problem.
 	$\Re$ is a {\em FO-bisimulation} if whenever
 	$\horel{\Gamma}{\Delta_1}{P_1}{\ \mathcal{R}\ }{\Delta_2}{Q_1}$ implies:
 	\begin{enumerate}
-		\item	$\forall \news{\tilde{m_1}} \bactout{n}{V_1}$ with $\Gamma; \es; \Delta \proves V_1 \hastype U$ such that
+		\item	$\forall \news{\tilde{m_1}} \bactout{n}{V_1}$ with \dk{$\Gamma; \es; \Delta \proves V_1 \hastype U$} such that
 			\[
 				\horel{\Gamma}{\Delta_1}{P_1}{\hby{\news{\tilde{m_1}} \bactout{n}{V_1}}}{\Delta_1'}{P_2}
 			\]
-			implies that $\exists Q_2, V_2$ with $\Gamma; \es; \Delta \proves V_2 \hastype U$ such that
+			implies that $\exists Q_2, V_2$ with \dk{$\Gamma; \es; \Delta \proves V_2 \hastype U$} such that
 			\[
 				\horel{\Gamma}{\Delta_2}{Q_1}{\Hby{\news{\tilde{m_2}} \bactout{n}{V_2}}}{\Delta_2'}{Q_2}
 			\]
 			and for fresh $t$
 			\[
-				\mhorel{\Gamma}{\Delta_1''}{\newsp{\tilde{m_1}}{P_2 \Par \fotrigger{t}{x}{s}{\btinp{U} \inact}{V_1}}}
+				\horel{\Gamma}{\Delta_1''}{\newsp{\tilde{m_1}}{P_2 \Par \ftrigger{t}{V_1}{U}}}
 				{\ \Re\ }
-				{\Delta_2''}{}{\newsp{\tilde{m_2}}{Q_2 \Par \fotrigger{t}{x}{s}{\btinp{U} \inact}{V_2}}}
+				{\Delta_2''}{}{\newsp{\tilde{m_2}}{Q_2 \Par \ftrigger{t}{V_2}{U}}}
 			\]
 %
 		\item	$\forall \ell \not= \news{\tilde{m}} \bactout{n}{V}$ such that
@@ -951,7 +959,6 @@ output triggers solves this problem.
 	The Knaster Tarski theorem ensures that the largest bisimulation exists,
 	it is called bisimilarity and is denoted by $\wbf$.
 \end{definition}
-\end{comment}
 
 \begin{comment}
 \begin{definition}[Bisimulation]\label{d:bisim}\rm
