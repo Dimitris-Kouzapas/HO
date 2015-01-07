@@ -1,9 +1,9 @@
 This section studies two extensions of \HOp, 
 the $n$-order higher-order (\HOpp)
-and polyadic (\PHO) calculi.  
+and polyadic (\PHOp) calculi.  
  
 \subsection{Encoding from $\HOpp$ to $\HOp$}
-\label{subsec:pho}
+\label{subsec:hop}
 \myparagraph{Syntax, Operational Semantics and Types}
 \noi First, the syntax of Fig.~\ref{fig:syntax} extends 
 $\appl{x}{u}$ to 
@@ -32,11 +32,10 @@ Let $\tyl{L}_{\HOpp}=\calc{\HOpp}{{\cal{T}}_4}{\hby{\ell}}{\wb_H}{\proves}$
 where 
 ${\cal{T}}_4$ is a set of types of $\HOpp$;  
 the typing $\proves$ is defined in 
-Fig.~\ref{fig:typerulesmy} with extended . 
+Fig.~\ref{fig:typerulesmy} with extended \trule{Abs} and \trule{App}. 
 We define the typed encoding 
 the typed encoding $\enco{\map{\cdot}^{3}, \mapt{\cdot}^{3}, \mapa{\cdot}^{3}}: \HOpp \to \HOp$ in 
-in Fig.~\ref{f:enc:hopip_to_hopi} with extended $\ltsrule{Abs}$ 
-and $\ltsrule{App}$. 
+Fig.~\ref{f:enc:hopip_to_hopi}.
 By Proposition~\ref{pro:composition}, 
 we have the following main result. 
 
@@ -45,10 +44,9 @@ we have the following main result.
 \begin{theorem}[Encoding of $n$ Higher-Order Pi into Pi]
 \label{f:enc:hopiptohopi}
 The encoding from $\tyl{L}_{\HOpp}$ into $\tyl{L}_{\HOp}$ 
-defined in Definition~\ref{d:enc:hopiptohopi}
 is precise. Hence the encoding 
 from $\tyl{L}_{\HOpp}$ to $\tyl{L}_{\HO}$ 
-and from $\tyl{L}_{\HOpp}$ to $\tyl{L}_{\sessp}$ 
+and $\tyl{L}_{\sessp}$ 
 are also precise. 
 \end{theorem}
 
@@ -58,15 +56,15 @@ are also precise.
 \noindent{\bf Types:} & 
 		\tmap{\shot{L}}{3} &\defeq& \shot{\btinp{\tmap{L}{3}} \tinact}
 		\\
-&		\tmap{\lhot{L}}{3} &\defeq& \lhot{\btinp{\tmap{L}{3}} \tinact}
-		\\
+%&		\tmap{\lhot{L}}{3} &\defeq& \lhot{\btinp{\tmap{L}{3}} \tinact}
+%		\\
 &		\tmap{\btout{\shot{L}} S}{3} &\defeq& \btout{\tmap{\shot{L}}{3}} \tmap{S}{3}
 		\\
-&		\tmap{\btout{\lhot{L}} S}{3} &\defeq& \btout{\tmap{\lhot{L}}{3}} \tmap{S}{3}
-		\\
+%&		\tmap{\btout{\lhot{L}} S}{3} &\defeq& \btout{\tmap{\lhot{L}}{3}} \tmap{S}{3}
+%		\\
 &		\tmap{\btinp{\shot{L}} S}{3} &\defeq& \btinp{\tmap{\shot{L}}{3}} \tmap{S}{3}
-		\\
-&		\tmap{\btinp{\lhot{L}} S}{3} &\defeq& \btinp{\tmap{\lhot{L}}{3}} \tmap{S}{3}
+%		\\
+%&		\tmap{\btinp{\lhot{L}} S}{3} &\defeq& \btinp{\tmap{\lhot{L}}{3}} \tmap{S}{3}
 \\[1mm]
 \hline
 \noindent{\bf Labels:} & 
@@ -86,8 +84,16 @@ are also precise.
 %		\pmap{\bout{u}{\abs{x: C}{Q}} P}{3} &\defeq& \bout{u}{\abs{x}{\pmap{Q}{3}}} \pmap{P}{3}
 	\end{array}
 	\]
+The mapping of types for $\lhot{L}$ is defined by replacing 
+$\shot{L}$ by $\lhot{L}$. 
 The case of $\abs{x:C}{P}$ in the label and term mappings 
-are defined as in Fig.~\ref{f:enc:hopi_to_ho}.  
+are defined as in Fig.~\ref{f:enc:hopi_to_ho}, replacing 
+$\tmap{\cdot}{1}$,
+$\mapa{\cdot}^{1}$, 
+$\pmap{\cdot}{1}_f$, by  
+$\tmap{\cdot}{3}$,
+$\mapa{\cdot}^{3}$, and 
+$\pmap{\cdot}{3}$. 
 The other processes, types and labels are  homomorphic. 
 \caption{\label{f:enc:hopip_to_hopi} 
 Encoding of \HOpp into \HOp.
@@ -97,11 +103,130 @@ Encoding of \HOpp into \HOp.
 
 \subsection{Encoding from Polyadic $\HOp$ to $\HOp$}
 \label{subsec:pho}
-The encoding of the polyadic name passing 
-into monadic name passing is well-known in the literature.    
+\noi The encoding of the polyadic name passing 
+into the monadic name passing is well-known in the literature.    
 In addition, using the linear typing, 
-we can also obtain the preciseness \cite{Yoshida96}.
-We can easily show $\HOp$
+we can also obtain the preciseness (full abstraction) \cite{Yoshida96}.
+By the same idea, we can show $\PHOp$ can be encoded into $\HOp$. 
+The syntax of 
+$\HOp$ is extended from \HOp by including 
+polyadic name passing $\tilde{n}$ and $\abs{\tilde{x}}{Q}$ in the syntax 
+of value $V$. The type syntax is extended to: 
+\[
+L ::= \shot{\tilde{C}} \ | \ \lhot{\tilde{C}}
+\quad\quad S \ ::= \  \btout{\tilde{U}} S \bnfbar \btinp{\tilde{U}} S \bnfbar \cdots 
+\]
+Other definitions are straightforwardly extended. 
+Let $\tyl{L}_{\PHOp}=\calc{\PHOp}{{\cal{T}}_5}{\hby{\ell}}{\wb_H}{\proves}$
+where 
+${\cal{T}}_5$ is a set of types of $\HOpp$;  
+the typing $\proves$ is defined in 
+Fig.~\ref{fig:typerulesmy} with polyadic types. 
+We define the typed encoding 
+the typed encoding $\enco{\map{\cdot}^{4}, \mapt{\cdot}^{4}, \mapa{\cdot}^{4}}: \PHOp \to \HOp$ 
+in Fig.~\ref{f:enc:poltomon}. 
+Then we have:
+
+\smallskip 
+
+\begin{theorem}[Encoding of Polyadic Higher-Order Pi into Higher-Order Pi]
+\label{f:enc:hopiptohopi}
+The encoding from $\tyl{L}_{\PHOp}$ into $\tyl{L}_{\HOp}$ 
+is precise. Hence the encoding 
+from $\tyl{L}_{\PHOp}$ to 
+$\tyl{L}_{\HO}$ 
+and $\tyl{L}_{\sessp}$ 
+are also precise. 
+\end{theorem}
+
+\begin{figure}[t]
+\small
+\[
+\begin{array}{rcl}
+% typed mapping starts here
+{\bf Types:}\hspace{2.5cm}\\
+		\tmap{\btout{S_1, \cdots, S_m}S}{4}
+		&\!\!\defeq\!\!&
+		\btout{\tmap{S_1}{4}} \cdots ; \btout{\tmap{S_m}{4}}\tmap{S}{4}
+%		\\
+%		\tmap{\btinp{S_1, \cdots, S_m}S}{4}
+%		&\defeq&
+%		\btinp{\tmap{S_1}{4}} \cdots ; \btinp{\tmap{S_m}{4}}\tmap{S}{4}
+		\\
+		\tmap{\bbtout{L} S}{4}
+		&\!\!\defeq\!\!&
+		\bbtout{\mapt{L}^{4}}\mapt{S}^{4}
+%		\\
+%		\tmap{\bbtinp{L} S}{4}
+%		&\defeq&
+%		\bbtinp{\mapt{L}^{4}}\mapt{S}^{4}
+		\\
+%		\tmap{\bbtout{\shot{(C_1, \cdots, C_m)}} S}{4}
+%		&\defeq&
+%		\bbtout{
+%		\shot{\big(\btinp{\tmap{C_1}{4}} \cdots; \btinp{\tmap{C_m}{4}}\tinact\big)}}\mapt{S}^{4}
+%		\\
+%		\tmap{\bbtinp{\shot{(C_1, \cdots, C_m)}} S}{4}
+%		&\defeq&
+%		\bbtinp{
+%		\shot{\big(\btinp{\tmap{C_1}{4}} \cdots; \btinp{\tmap{C_m}{4}}\tinact\big)}}\mapt{S}^{4}
+%		\\
+		\tmap{\shot{(C_1, \cdots, C_m)}}{4}
+		&\!\!\defeq\!\!&
+		\shot{\big(\btinp{\tmap{C_1}{4}} \cdots; \btinp{\tmap{C_m}{4}}\tinact\big)}
+		\\
+		\tmap{\lhot{(C_1, \cdots, C_m)}}{4}
+		&\!\!\defeq\!\!&
+		\lhot{\big(\btinp{\tmap{C_1}{4}} \cdots; \btinp{\tmap{C_m}{4}}\tinact\big)}
+		\\
+%		\tmap{\lhot{(C_1, \cdots, C_m)}}{4}
+%		&\defeq&
+%		\lhot{\big(\btinp{\tmap{C_1}{\mathsf{p}}} \cdots \btinp{\tmap{C_m}{\mathsf{p}}}\tinact\big)}
+%		\\
+%		\tmap{\shot{(C_1, \cdots, C_m)}}{\mathsf{p}}
+%		&\defeq&
+%		\shot{\big(\btinp{\tmap{C_1}{\mathsf{p}}} \cdots \btinp{\tmap{C_m}{\mathsf{p}}}\tinact\big)}
+\hline
+{\bf Labels:}\hspace{2.5cm}\\
+%		\\ % action mapping starts here
+		\mapa{\bactout{u}{u_1, \ldots, u_m}}^4 
+		&\!\!\defeq\!\!&
+ \big\{\bactout{u}{u_1}, \cdots, \bactout{u}{u_m}\big\} \\
+%		\mapa{\bactinp{k}{k_1, \ldots, k_m}}^4 &\defeq&   \big\{\bactinp{k}{k_1}, \cdots, \bactinp{k}{k_m} \big\}\\
+		\mapa{\bactout{u}{\abs{x_1, \ldots, x_m}{P}} }^4 
+		&\!\!\defeq\!\!&
+\bactout{u}{\abs{z}\binp{z}{x_1} \cdots ; \binp{z}{x_m} \map{P}^{4}}\\
+%		\mapa{\bactinp{k}{\abs{x_1, \ldots, x_m}{P}} }^4 &\defeq&  \bactinp{k}{\abs{z}\binp{z}{x_1} \cdots ; \binp{z}{x_m} \map{P}^{4}} 
+\hline
+{\bf Terms:}\hspace{2.5cm}\\
+		\map{\bout{u}{u_1, \cdots, u_m} P}^{4}
+		&\!\!\defeq\!\!&
+		\bout{u}{u_1} \cdots ;  \bout{u}{u_m} \map{P}^{4}
+		\\
+%			\map{\binp{k}{x_1, \cdots, x_m} P}^{4}
+%		&\defeq&
+%		\binp{k}{x_1} \cdots ; \binp{k}{x_m}  \map{P}^{4}
+%		\\
+		\map{\bbout{u}{\abs{(x_1, \cdots, x_m)} Q} P}^{4}
+		&\!\!\defeq\!\!&
+		\bbout{u}{\abs{z}\binp{z}{x_1}\cdots ; \binp{z}{x_m} \map{Q}^{4}} \map{P}^{4}
+		\\ 
+		\map{\appl{x}{(u_1, \cdots, u_m)}}^{4}
+		&\!\!\defeq\!\!&
+		\newsp{s}{\appl{x}{s} \Par \bout{\dual{s}}{u_1} \cdots ; \bout{\dual{s}}{u_m} \inact} 
+        \\ 
+	\end{array}
+\]
+The input cases are defined as the outputs replacing $!$ by $?$. 
+The mappings for the other processes/types/labels are 
+homomorphic. 
+\caption{\label{f:enc:poltomon}
+Encoding of \PHOp to \HOp
+}
+\Hline 
+\end{figure}
+
+
  
  
 
