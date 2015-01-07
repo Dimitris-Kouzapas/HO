@@ -6,7 +6,7 @@
 \section{Typed Encodings}\label{s:expr}
 This section defines the formal notion of \emph{encoding}, 
 extending the existing criteria for untyped processes (as in, e.g.,
-\cite{Palamidessi03,DBLP:journals/iandc/Gorla10}) to a typed setting. 
+\cite{Nestmann00,Palamidessi03,DBLP:conf/lics/PalamidessiSVV06,DBLP:journals/iandc/Gorla10,DBLP:conf/icalp/LanesePSS10}) to a typed setting. 
 We first define a typed calculus parameterised by a syntax, operational semantics, and typing.
 
 % We define the formal notion of \emph{encoding} that we
@@ -105,7 +105,7 @@ environments as expected. This way, e.g., $\mapt{\Delta \cat u:S} = \mapt{\Delta
 
 Now we introduce two classes of typed encodings; 
 although they serve different purposes, both  consist of syntactic and semantic criteria 
-proposed for untyped processes~\cite{Palamidessi03,DBLP:journals/iandc/Gorla10}, here extended to account for higher-order session types.
+proposed for untyped processes~\cite{Palamidessi03,DBLP:journals/iandc/Gorla10,DBLP:conf/icalp/LanesePSS10}, here extended to account for higher-order session types.
 First, for stating stronger positive encodability results, 
 we define the notion of {\em precise} encodings.
 Then, 
@@ -146,14 +146,14 @@ domains of $\Delta$ and $\Gamma$
 		for any injective renaming  of names $\sigma$.
 	\end{enumerate}
 \end{definition}
-
-Our syntactic criteria are inspired by the uniform encodings in~\cite{Palamidessi03}, which include 
-homomorphism wrt parallel composition and name invariance. 
-The former is a widely studied criteria, useful for both encodability and non encodability results.
-In our typed setting, it admits an elegant formulation, also induced by rules for typed composition.
+Homomorphism wrt parallel composition (used in, e.g.,~\cite{Palamidessi03,DBLP:conf/lics/PalamidessiSVV06})
+expresses that encodings should preserve the distributed topology of source processes. This criteria 
+ is appropriate for both encodability and non encodability results; in our setting, 
+it admits an elegant formulation, also induced by rules for typed composition.
 Compositionality wrt restriction is 
-also induced by typing and turns out to be 
-useful in our encodability results, as we detail in the following section.
+also naturally supported by typing and turns out to be 
+useful in our encodability results (see the following section).
+Our name invariance criteria follows the one given in~\cite{DBLP:journals/iandc/Gorla10,DBLP:conf/icalp/LanesePSS10}. 
 Next we define semantic criteria for typed encodings.
 
 \begin{definition}[Semantic Preserving Encoding]\rm
@@ -232,16 +232,23 @@ ${\mapt{\Gamma}};{\mapt{\Delta'}}\proves_2 {\map{P'}}{\wb_2}
 	\end{enumerate}
 \end{definition}
 
-\noi Type preservation is a central criteria to our notion of encodings: it enables us to focus on encodings which retain the communication structures denoted by (session) types.
-The other 
-criteria builds upon analogous definitions in the untyped setting, as we explain now. 
-In operational correspondence we used labeled transitions, and so correspondences involve the mapping $\mapa{\cdot}$.
+\noi Type preservation is a distinguishing criteria in our notion of encoding: it enables us to focus on encodings which retain the communication structures denoted by (session) types.
+The other semantic
+criteria build upon analogous definitions in the untyped setting, as we explain now. 
+Operational correspondence, standardly divided into completeness and soundness criteria, is based
+in the formulation given in~\cite{DBLP:journals/iandc/Gorla10,DBLP:conf/icalp/LanesePSS10}. 
 Soundness ensures that the source process is mimicked 
 by its associated encoding; and completeness concerns the opposite direction.
-It worth stressing that in the encodability results in the next section, 
-we provide very tight forms of operational correspondence, tailored to the specifics of each encoding.
-Finally, we consider the full abstraction as a criteria to demonstrate 
-a stronger positive result. 
+Rather than reductions, completeness and soundness rely on 
+the typed LTS of Definition~\ref{d:restlts}; labels are considered up to  mapping $\mapa{\cdot}$, which offers flexibility when comparing different subcalculi of \HOp. We require that $\mapa{\cdot}$ preserves communication subjects, which is in accordance with the criteria in~\cite{DBLP:conf/icalp/LanesePSS10}.
+It is worth stressing that 
+the operational correspondence statements given in
+ the next section for our  encodings 
+ are tailored to the specifics of each encoding, and so they
+ are actually stronger than the criteria given above.
+Finally, following~\cite{San923,DBLP:conf/lics/PalamidessiSVV06},
+we consider full abstraction as an encodability criteria: this results into 
+stronger encodability results. 
 %The completeness direction of full abstraction is dropped when we prove the negative result. 
 From the criteria in Definitions \ref{def:sep} and \ref{def:ep}
 we have the following derived criteria: 
@@ -282,7 +289,7 @@ Part (2) follows from the definition of barbs, operational completeness, and sub
 
 
 
-We now define:
+We may now define \emph{precise} and \emph{minimal} typed criteria: 
 
 \begin{definition}[Typed Encodings: Precise and Minimal]\rm\label{def:goodenc}
 We say that 
@@ -1116,16 +1123,32 @@ $\tilde{S}_{\Delta}$ to stand for $S_1, \ldots, S_m$.
 \[
 	\begin{array}{c}
 		\begin{array}{rcl}
-			\tmap{S}{\mathsf{v}}		&\defeq& \lhot{(\btinp{\lhot{\tmap{S}{1}}} \tinact)}
+			\tmap{C}{\mathsf{v}}		&\defeq&
+			\left\{
+			\begin{array}{rcl}
+				\lhot{(\btinp{\lhot{\tmap{C}{1}}} \tinact)} && \textrm{if } C = S\\
+				\lhot{(\btinp{\shot{\tmap{C}{1}}} \tinact)} && \textrm{otherwise}\\
+			\end{array}
+			\right.
 			\\
-			\tmap{\chtype{S}}{\mathsf{v}}	&\defeq& \lhot{(\btinp{\shot{\chtype{\tmap{S}{1}}}} \tinact)}
 			\\
-			\tmap{\lhot{C}}{\mathsf{v}}	&\defeq& \lhot{\tmap{C}{\mathsf{v}}}
+			\tmap{\lhot{C}}{\mathsf{v}}	&\defeq& \lhot{\tmap{C}{1}}
 			\\
-			\tmap{\shot{C}}{\mathsf{v}}	&\defeq& \shot{\tmap{C}{\mathsf{v}}}
+			\tmap{\shot{C}}{\mathsf{v}}	&\defeq& \shot{\tmap{C}{1}}
 			\\
-			\tmap{\chtype{L}}{\mathsf{v}}	&\defeq& \lhot{(\btinp{\shot{\chtype{\tmap{L}{\mathsf{v}}}}} \tinact)}
+			\tmap{\chtype{S}}{1}		&\defeq& \chtype{\tmap{S}{1}}
 			\\
+			\tmap{\chtype{L}}{1}		&\defeq& \chtype{\tmap{L}{\mathsf{v}}}
+			\\
+%			\tmap{S}{\mathsf{v}}		&\defeq& \lhot{(\btinp{\lhot{\tmap{S}{1}}} \tinact)}
+%			\\
+%			\tmap{\chtype{S}}{\mathsf{v}}	&\defeq& \lhot{(\btinp{\shot{\chtype{\tmap{S}{1}}}} \tinact)}
+%			\\
+%			\tmap{\lhot{C}}{\mathsf{v}}	&\defeq& \lhot{\tmap{C}{\mathsf{v}}}
+%			\\
+%			\tmap{\shot{C}}{\mathsf{v}}	&\defeq& \shot{\tmap{C}{\mathsf{v}}}
+%			\\
+%			\tmap{\chtype{L}}{\mathsf{v}}	&\defeq& \lhot{(\btinp{\shot{\chtype{\tmap{L}{\mathsf{v}}}}} \tinact)}
 			\tmap{\btout{U} S}{1}		&\defeq& \btout{\tmap{U}{\mathsf{v}}} \tmap{S}{1}
 			\\
 			\tmap{\btinp{U} S}{1}		&\defeq& \btinp{\tmap{U}{\mathsf{v}}} \tmap{S}{1}
