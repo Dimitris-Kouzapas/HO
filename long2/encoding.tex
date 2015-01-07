@@ -5,8 +5,8 @@
 
 \section{Typed Encodings}\label{s:expr}
 This section defines the formal notion of \emph{encoding}, 
-extending the existing criteria for untyped processes (as in, e.g.,
-\cite{Nestmann00,Palamidessi03,DBLP:conf/lics/PalamidessiSVV06,DBLP:journals/iandc/Gorla10,DBLP:conf/icalp/LanesePSS10}) to a typed setting. 
+extending to a typed setting existing criteria for untyped processes (as in, e.g.,
+\cite{Nestmann00,Palamidessi03,DBLP:conf/lics/PalamidessiSVV06,DBLP:journals/iandc/Gorla10,DBLP:conf/icalp/LanesePSS10}). 
 We first define a typed calculus parameterised by a syntax, operational semantics, and typing.
 
 % We define the formal notion of \emph{encoding} that we
@@ -103,9 +103,9 @@ types, and transition labels.
 \noi We will often assume that  $\mapt{\cdot}$ extends to typing
 environments as expected. This way, e.g., $\mapt{\Delta \cat u:S} = \mapt{\Delta} \cat u:\mapt{S}$.
 
-Now we introduce two classes of typed encodings; 
-although they serve different purposes, both  consist of syntactic and semantic criteria 
-proposed for untyped processes~\cite{Palamidessi03,DBLP:journals/iandc/Gorla10,DBLP:conf/icalp/LanesePSS10}, here extended to account for higher-order session types.
+Now we introduce two classes of typed encodings, which 
+serve different purposes. Both  consist of syntactic and semantic criteria 
+proposed for untyped processes~\cite{Palamidessi03,DBLP:journals/iandc/Gorla10,DBLP:conf/icalp/LanesePSS10}, here extended to account for (higher-order) session types.
 First, for stating stronger positive encodability results, 
 we define the notion of {\em precise} encodings.
 Then, 
@@ -205,7 +205,7 @@ $\stytraarg{\Gamma}{\ell_1}{\Delta_1}{P}{\Delta'_1}{P'}{1}$
 				
 			\item	Soundness:   
 				If  $\wtytraarg{\mapt{\Gamma}}{\ell_2}{\mapt{\Delta}}{\map{P}}{\mapt{\Delta'}}{Q}{2}$
-				then $\exists \ell_1, P'$ s.t.  
+				then $\exists \ell_1, P'$ s.t.  \\
 				(i)~$\stytraarg{\Gamma}{\ell_1}{\Delta}{P}{\Delta'}{P'}{1}$,
 				(ii)~$\ell_2 = \mapa{\ell_1}$, and
 				(iii)~
@@ -238,9 +238,9 @@ criteria build upon analogous definitions in the untyped setting, as we explain 
 Operational correspondence, standardly divided into completeness and soundness criteria, is based
 in the formulation given in~\cite{DBLP:journals/iandc/Gorla10,DBLP:conf/icalp/LanesePSS10}. 
 Soundness ensures that the source process is mimicked 
-by its associated encoding; and completeness concerns the opposite direction.
+by its associated encoding; completeness concerns the opposite direction.
 Rather than reductions, completeness and soundness rely on 
-the typed LTS of Definition~\ref{d:restlts}; labels are considered up to  mapping $\mapa{\cdot}$, which offers flexibility when comparing different subcalculi of \HOp. We require that $\mapa{\cdot}$ preserves communication subjects, which is in accordance with the criteria in~\cite{DBLP:conf/icalp/LanesePSS10}.
+the typed LTS of Definition~\ref{d:restlts}; labels are considered up to  mapping $\mapa{\cdot}$, which offers flexibility when comparing different subcalculi of \HOp. We require that $\mapa{\cdot}$ preserves communication subjects, in accordance with the criteria in~\cite{DBLP:conf/icalp/LanesePSS10}.
 It is worth stressing that 
 the operational correspondence statements given in
  the next section for our  encodings 
@@ -1123,7 +1123,7 @@ $\tilde{S}_{\Delta}$ to stand for $S_1, \ldots, S_m$.
 \[
 	\begin{array}{c}
 		\begin{array}{rcl}
-			\tmap{C}{\mathsf{v}}		&\defeq&
+			\tmap{C}{1}_\mathsf{v}		&\defeq&
 			\left\{
 			\begin{array}{rcl}
 				\lhot{(\btinp{\lhot{\tmap{C}{1}}} \tinact)} && \textrm{if } C = S\\
@@ -1132,13 +1132,13 @@ $\tilde{S}_{\Delta}$ to stand for $S_1, \ldots, S_m$.
 			\right.
 			\\
 			\\
-			\tmap{\lhot{C}}{\mathsf{v}}	&\defeq& \lhot{\tmap{C}{1}}
+			\tmap{\lhot{C}}{1}_\mathsf{v}	&\defeq& \lhot{\tmap{C}{1}}
 			\\
-			\tmap{\shot{C}}{\mathsf{v}}	&\defeq& \shot{\tmap{C}{1}}
+			\tmap{\shot{C}}{1}_\mathsf{v}	&\defeq& \shot{\tmap{C}{1}}
 			\\
 			\tmap{\chtype{S}}{1}		&\defeq& \chtype{\tmap{S}{1}}
 			\\
-			\tmap{\chtype{L}}{1}		&\defeq& \chtype{\tmap{L}{\mathsf{v}}}
+			\tmap{\chtype{L}}{1}		&\defeq& \chtype{\tmap{L}{1}_\mathsf{v}}
 			\\
 %			\tmap{S}{\mathsf{v}}		&\defeq& \lhot{(\btinp{\lhot{\tmap{S}{1}}} \tinact)}
 %			\\
@@ -1184,20 +1184,20 @@ $\tilde{S}_{\Delta}$ to stand for $S_1, \ldots, S_m$.
 		\end{array}
 		\qquad
 		\begin{array}{rcl}
-			\mapa{\bactout{n}{m}}^{1} &\defeq&   \bactout{n}{\abs{z}{\,\binp{z}{x} \appl{x}{m}} }
+			\mapa{\news{m}\bactout{n}{m}}^{1} &\defeq&   \news{m}\bactout{n}{\abs{z}{\,\binp{z}{x} \appl{x}{m}} }
 			\\
 			\mapa{\bactinp{n}{m}}^{1} &\defeq&   \bactinp{n}{\abs{z}{\,\binp{z}{x} \appl{x}{m}} }
 			\\
 
-			\mapa{\bactout{n}{\abs{x}{P}}}^{1} &\defeq& \bactout{n}{\abs{x}{\pmapp{P}{1}{\es}}}
+			\mapa{\news{\tilde{m}}\bactout{n}{\abs{x}{P}}}^{1} &\defeq& \news{\tilde{m}}\bactout{n}{\abs{x}{\pmapp{P}{1}{\es}}}
 			\\
 			\mapa{\bactinp{n}{\abs{x}{P}}}^{1} &\defeq& \bactinp{n}{\abs{x}{\pmapp{P}{1}{\es}}}
 			\\
 			\mapa{\tau}^{1} &\defeq& \tau
 			\\
-			\mapa{\bactsel{s}{l} }^{1} &\defeq& \bactsel{n}{l} 
+			\mapa{\bactsel{n}{l} }^{1} &\defeq& \bactsel{n}{l} 
 			\\
-			\mapa{\bactbra{s}{l} }^{1} &\defeq& \bactbra{n}{l} 
+			\mapa{\bactbra{n}{l} }^{1} &\defeq& \bactbra{n}{l} 
 		\end{array}
 	\end{array}
 \]
@@ -1323,7 +1323,7 @@ We write $\by{\tau}_k$ to denote a sequence of $k$ $\tau$-transitions.
 			Suppose $\stytra{\Gamma}{\ell_1}{\Delta}{P}{\Delta'}{P'}$. Then we have:
 			\begin{enumerate}[a)]
 		    \item 
-			If $\ell_1 \in \{\bactout{n}{m}, \,\bactout{n}{\abs{x}Q}, \,\bactsel{s}{l}, \,\bactbra{s}{l}   \}$
+			If $\ell_1 \in \{\news{m}\bactout{n}{m}, \,\news{m}\bactout{n}{\abs{x}Q}, \,\bactsel{s}{l}, \,\bactbra{s}{l}   \}$
 			then $\exists \ell_2$ s.t. \\
 			$\stytra{\mapt{\Gamma}^{1}}{\ell_2}{\mapt{\Delta}^{1}}{\pmapp{P}{1}{f}}{\mapt{\Delta'}^{1}}{\pmapp{P'}{1}{f}}$
 			and $\ell_2 = \mapa{\ell_1}^{1}$.
@@ -1346,24 +1346,26 @@ We write $\by{\tau}_k$ to denote a sequence of $k$ $\tau$-transitions.
 				\mapt{\Gamma}^{1}; \mapt{\Delta'}^{1} \proves \pmapp{P_0}{1}{f}\subst{m}{x}$.
 						
 			\item If $\ell_1 = \tau$
-			and $P' \scong P_1 \Par P_2\subst{m}{x}$
+			and $P' \scong \news{m}(P_1 \Par P_2\subst{m}{x})$
 			then $\exists R$ s.t. \\
-			$\stytra{\mapt{\Gamma}^{1}}{\tau}{\mapt{\Delta}^{1}}{\pmapp{P}{1}{f}}{\mapt{\Delta}^{1}}{\pmapp{P_1}{1}{f}
-			\Par R
+			$\stytra{\mapt{\Gamma}^{1}}{\tau}{\mapt{\Delta}^{1}}{\pmapp{P}{1}{f}}{\mapt{\Delta}^{1}}{
+			\news{m}(\pmapp{P_1}{1}{f}
+			\Par R)
 			}$, where $R \by{\tau}_3  \pmapp{P_2}{1}{f}\subst{m}{x}$.
 
 			
 			
 			
 			\item If $\ell_1 = \tau$
-			and $P' \scong P_1 \Par P_2\subst{\abs{y}Q}{x}$
+			and $P' \scong \news{\tilde{m}}(P_1 \Par P_2\subst{\abs{y}Q}{x})$
 			then \\
-			$\stytra{\mapt{\Gamma}^{1}}{\tau}{\mapt{\Delta}^{1}}{\pmapp{P}{1}{f}}{\mapt{\Delta_1}^{1}}{\pmapp{P_1}{1}{f}
-			\Par \pmapp{P_2}{1}{f}\subst{\abs{y}\pmapp{Q}{1}{\emptyset}}{x}
+			$\stytra{\mapt{\Gamma}^{1}}{\tau}{\mapt{\Delta}^{1}}{\pmapp{P}{1}{f}}{\mapt{\Delta_1}^{1}}{
+			\news{\tilde{m}}(\pmapp{P_1}{1}{f}
+			\Par \pmapp{P_2}{1}{f}\subst{\abs{y}\pmapp{Q}{1}{\emptyset}}{x})
 			}$.
 			
 			\item If $\ell_1 = \tau$
-			and $P' \not\scong P_1 \Par P_2\subst{m}{x} \land P' \not\scong P_1 \Par P_2\subst{\abs{y}Q}{x}$
+			and $P' \not\scong \news{m}(P_1 \Par P_2\subst{m}{x}) \land P' \not\scong \news{\tilde{m}}(P_1 \Par P_2\subst{\abs{y}Q}{x})$
 			then \\
 			$\stytra{\mapt{\Gamma}^{1}}{\tau}{\mapt{\Delta}^{1}}{\pmapp{P}{1}{f}}{\mapt{\Delta'_1}^{1}}{ \pmapp{P'}{1}{f}
 			}$.
@@ -1373,7 +1375,7 @@ We write $\by{\tau}_k$ to denote a sequence of $k$ $\tau$-transitions.
 		Then we have:
 			\begin{enumerate}[a)]
 		    \item 
-		    If $\ell_2 \in \{\bactout{n}{\abs{z}{\,\binp{z}{x} \appl{x}{m}}}, \,\bactout{n}{\abs{x}R}, \,\bactsel{s}{l}, \,\bactbra{s}{l}   \}$
+		    If $\ell_2 \in \{\news{m}\bactout{n}{\abs{z}{\,\binp{z}{x} \appl{x}{m}}}, \,\news{\tilde{m}}\bactout{n}{\abs{x}R}, \,\bactsel{s}{l}, \,\bactbra{s}{l}   \}$
 			then $\exists \ell_1, P'$ s.t. \\
 			$\stytra{ \Gamma }{\ell_1}{ \Delta }{ P}{ \Delta' }{ P'}$, 
 			$\ell_1 = \mapa{\ell_2}^{1}$, 
@@ -1401,17 +1403,17 @@ We write $\by{\tau}_k$ to denote a sequence of $k$ $\tau$-transitions.
 		    If $\ell_2 = \tau$ 
 			then $\Delta' = \Delta$ and 
 			either
-			\begin{enumerate}[-]
+			\begin{enumerate}[(i)]
 			\item $\exists P'$ s.t. 
 			$\stytra{ \Gamma }{\tau}{ \Delta }{ P}{ \Delta}{ P'}$, and $Q = \map{P'}^{1}_f$.	
 
 			\item $\exists P_1, P_2, x, m, Q'$ s.t. 
-			$\stytra{ \Gamma }{\tau}{ \Delta }{ P}{ \Delta}{ P_1 \Par P_2\subst{m}{x} }$, and 
+			$\stytra{ \Gamma }{\tau}{ \Delta }{ P}{ \Delta}{\news{m}( P_1 \Par P_2\subst{m}{x}) }$, and 
 			$Q = \map{P_1}^{1}_f \Par Q'$, where $Q'  \Hby{} \map{P_2\subst{m}{x}}^{1}_f$.
 
 			\item $\exists P_1, P_2, x, R$ s.t. 
-			$\stytra{ \Gamma }{\tau}{ \Delta }{ P}{ \Delta}{ P_1 \Par P_2\subst{\abs{y}R}{x} }$, and 
-			$Q = \map{P_1 \Par P_2\subst{\abs{y}R}{x}}^{1}_f$.
+			$\stytra{ \Gamma }{\tau}{ \Delta }{ P}{ \Delta}{ \news{\tilde{m}}(P_1 \Par P_2\subst{\abs{y}R}{x}) }$, and 
+			$Q = \map{\news{\tilde{m}}(P_1 \Par P_2\subst{\abs{y}R}{x})}^{1}_f$.
 
 			\end{enumerate}
 		    \end{enumerate}
@@ -1433,7 +1435,7 @@ By transition induction. We consider parts (1) and (2) separately:
 %
 \begin{enumerate}[1.]
 	%%  Output 
-	\item	Subcase  (a): $P =\bout{s}{n} P'$ and $\ell_1 = \bactout{s}{n}$. By assumption, $P$ is well-typed. 
+	\item	Subcase  (a): $P =\bout{s}{n} P'$ and $\ell_1 = \bactout{s}{n}$ (the case $\ell_1 = \news{n}\bactout{s}{n}$ is similar). By assumption, $P$ is well-typed. 
 		We may have:
 %
 		\[
@@ -1563,7 +1565,8 @@ By transition induction. We consider parts (1) and (2) separately:
 		%%%%%%%%%%%
 		%%  Output 
 		%%%%%%%%%%%
-	\item Subcase (a): $P = \bout{n}{m} P'$ and $\ell_2 = \bactout{n}{\abs{z}{\,\binp{z}{x} \appl{x}{m}}}$.
+	\item Subcase (a): $P = \bout{n}{m} P'$ and $\ell_2 = \bactout{n}{\abs{z}{\,\binp{z}{x} \appl{x}{m}}}$
+	(the case $\ell_2 = \news{m}\bactout{n}{\abs{z}{\,\binp{z}{x} \appl{x}{m}}}$ is similar).
 		%,  $\map{P}^{1} = \bbout{k}{ \abs{z}{\,\binp{z}{X} \appl{X}{k'}} } \pmap{P'}{1}$.
 		Then 
 		we have: % the following typed transition for $\map{P}^{1}$:
@@ -2729,7 +2732,7 @@ Below we write $\repl{} P$ as a shorthand notation for $\recp{X}{(P \Par \rvar{X
 
 		\tmap{\btout{\lhot{S}}S_1}{2} & \defeq & \bbtout{\btinp{\tmap{S}{2}}\tinact}\tmap{S_1}{2} \\
 		\tmap{\btinp{\lhot{S}}S_1}{2} & \defeq & \bbtinp{\btinp{\tmap{S}{2}}\tinact}\tmap{S_1}{2} \\
-		\mapa{\bactout{n}{\abs{ x}{P}} }^{2} &  \defeq & \news{m} \bactout{n}{m} \\
+		\mapa{\news{\tilde{m_1}}\bactout{n}{\abs{ x}{P}} }^{2} &  \defeq & \news{m \cdot \tilde{m_1}} \bactout{n}{m} \\
 		\mapa{\bactinp{n}{\abs{ x}{P}} }^{2} &  \defeq & \bactinp{n}{m}
 	\end{array}
 	\]
@@ -2775,7 +2778,7 @@ Below we write $\repl{} P$ as a shorthand notation for $\recp{X}{(P \Par \rvar{X
 %			   $R_a = \repl{} \binp{a}{y} \binp{y}{x} \pmap{Q}{3}$ 
 %			   or $R_a = \binp{a}{y} \binp{y}{x} \pmap{Q}{3}$.
 		\item	 
-			If  $\ell_1 = \bactout{n}{\abs{x}Q}$,
+			If  $\ell_1 = \news{\tilde{m}}\bactout{n}{\abs{x}Q}$,
 			then $\exists \Gamma', R$ s.t. \\
 			$\mapt{\Gamma}^{2};\, \mapt{\Delta}^{2} \proves  \map{P}^{2} 
 			\hby{\mapa{\ell_1}^{2}}
@@ -2805,12 +2808,12 @@ Below we write $\repl{} P$ as a shorthand notation for $\recp{X}{(P \Par \rvar{X
 		\item	 
 			If  
 			%$\stytra{\Gamma}{\ell_1}{\Delta}{P}{\Delta'}{P_1 \Par P_2\subst{\abs{x}Q}{X}}$
-			$\ell_1 = \tau$ and $P' 	\scong P_1 \Par P_2\subst{\abs{x}Q}{X}$
+			$\ell_1 = \tau$ and $P' 	\scong \news{\tilde{m}}(P_1 \Par P_2\subst{\abs{x}Q}{X})$
 			then \\
 			$\mapt{\Gamma}^{2};\, \mapt{\Delta}^{2} \proves  \map{P}^{2}
 			\hby{\tau}
-			\mapt{\Gamma}^{2};\, \mapt{\Delta'}^{2} \proves  \map{P_1}^{2} \Par \news{n}
-			(\map{P_2}^{2}\subst{n}{x} \Par R)$, \\
+			\mapt{\Gamma}^{2};\, \mapt{\Delta'}^{2} \proves  \news{\tilde{m}}(\map{P_1}^{2} \Par \news{n}
+			(\map{P_2}^{2}\subst{n}{x} \Par R))$, \\
 			where 
 			either
 			$R = \repl{} \binp{a}{y} \binp{y}{x} \pmap{Q}{2}$ 
@@ -2820,7 +2823,7 @@ Below we write $\repl{} P$ as a shorthand notation for $\recp{X}{(P \Par \rvar{X
 		\item	 
 			If  
 			%$\stytra{\Gamma}{\ell_1}{\Delta}{P}{\Delta'}{P_1 \Par P_2\subst{\abs{x}Q}{X}}$
-			$\ell_1 = \tau$ and $P' 	\not \scong P_1 \Par P_2\subst{\abs{x}Q}{X}$
+			$\ell_1 = \tau$ and $P' 	\not \scong \news{\tilde{m}}(P_1 \Par P_2\subst{\abs{x}Q}{X})$
 			then \\
 			$\mapt{\Gamma}^{2};\, \mapt{\Delta}^{2} \proves  \map{P}^{2}
 			\hby{\tau}
