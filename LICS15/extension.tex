@@ -17,12 +17,85 @@ The syntax of types changes to include:
 \[ L \bnfis \shot{U} \bnfbar \lhot{U}\]  
 We apply the straightforward extension of the typing  
 system to accomodate the new type syntax (see Appendix \ref{app:types}).
+\smallskip 
 
-\myparagraph{ Behavioural Semantics.}
+\myparagraph{Behavioural Semantics}
 Labels remain the same. Rule $\ltsrule{App}$ in the untyped LTS
+(Fig.~\ref{fig:untyped_LTS}) 
 is replaced with rule $\appl{\abs{x}{P}}{V} \by{\tau} P \subst{V}{x}$.
-The definition of the
-characteristic process is extended to include 
+Characteristic processes (Definition~\ref{def:char}) are extended with  
+${\mapchar{\shot{U}}{x}} \!\!\defeq\!\! \mapchar{\lhot{U}}{x} \!\!\defeq\!\! {\appl{x}{\omapchar{U}}}$ and ${\omapchar{\shot{U}}} \defeq {\omapchar{\lhot{U}}} \!\!\defeq\!\! \abs{x}{\mapchar{U}{x}}$. 
+Then we can use the same definitions for $\cong$, $\wbc$, $\hwb$ and $\fwb$. 
+
+\smallskip 
+
+\myparagraph{Encoding from \HOpp to \HOp} 
+Let $\tyl{L}_{\HOpp}=\calc{\HOpp}{{\cal{T}}_5}{\hby{\ell}}{\wb_H}{\proves}$
+where 
+${\cal{T}}_5$ is a set of types of $\HOpp$;  
+the typing $\proves$ is defined in 
+Appendix~\ref{app:types}. 
+We define the typed encoding 
+the typed encoding $\enco{\map{\cdot}^{4}, \mapt{\cdot}^{4}, \mapa{\cdot}^{4}}: \HOpp \to \HOp$ in 
+in Fig.~\ref{f:enc:hopip_to_hopi}. 
+By Proposition~\ref{pro:composition}, 
+we have the following main result. 
+
+\smallskip 
+
+\begin{theorem}[Encoding of $n$-Higher-Order Pi into Pi]
+\label{f:enc:hopiptohopi}
+The encoding from $\tyl{L}_{\HOpp}$ into $\tyl{L}_{\HOp}$ 
+defined in Definition~\ref{d:enc:hopiptohopi}
+is precise. Hence the encoding 
+from $\tyl{L}_{\HOpp}$ to $\tyl{L}_{\HO}$ 
+and from $\tyl{L}_{\HOpp}$ to $\tyl{L}_{\sessp}$ 
+are also precise. 
+\end{theorem}
+
+\begin{figure}[t]
+\[
+\begin{array}{lrcll}
+\noindent{\bf Types:} & 
+		\tmap{\shot{L}}{3} &\defeq& \shot{\btinp{\tmap{L}{3}} \tinact}
+		\\
+&		\tmap{\lhot{L}}{3} &\defeq& \lhot{\btinp{\tmap{L}{3}} \tinact}
+		\\
+&		\tmap{\btout{\shot{L}} S}{3} &\defeq& \btout{\tmap{\shot{L}}{3}} \tmap{S}{3}
+		\\
+&		\tmap{\btout{\lhot{L}} S}{3} &\defeq& \btout{\tmap{\lhot{L}}{3}} \tmap{S}{3}
+		\\
+&		\tmap{\btinp{\shot{L}} S}{3} &\defeq& \btinp{\tmap{\shot{L}}{3}} \tmap{S}{3}
+		\\
+&		\tmap{\btinp{\lhot{L}} S}{3} &\defeq& \btinp{\tmap{\lhot{L}}{3}} \tmap{S}{3}
+\\[1mm]
+\hline
+\noindent{\bf Labels:} & 
+%		\mapa{\bactout{n}{\abs{x:C}{P}}}^{3} &\defeq& \bactout{n}{\abs{x}{\pmap{P}{3}}}
+%		\\
+%		\mapa{\bactinp{n}{\abs{x:C}{P}}}^{3} &\defeq& \bactinp{n}{\abs{x}{\pmap{P}{3}}}
+%		\\
+		\mapa{\bactout{n}{\abs{\AT{x}{L}}{P}}}^{3} &\defeq& \bactout{n}{\abs{z}{\binp{z}{x} \pmap{P}{3}}}
+		\\
+&		\mapa{\bactinp{n}{\abs{\AT{x}{L}}{P}}}^{3} &\defeq& \bactinp{n}{\abs{z}{\binp{z}{x} \pmap{P}{3}}}
+\\[1mm]
+\hline
+{\bf Terms}: & 
+	\pmap{\appl{x}{(\abs{x} P)}}{3} &\defeq& \newsp{s}{\appl{x}{s} \Par \bout{\dual{s}}{\abs{x} \pmap{P}{3}} \inact}
+		\\
+&	\pmap{\bout{u}{\abs{\AT{x}{L}}{Q}} P}{3} &\defeq& \bout{u}{\abs{z}{\binp{z}{x} \pmap{Q}{3}}} \pmap{P}{3}
+%		\pmap{\bout{u}{\abs{x: C}{Q}} P}{3} &\defeq& \bout{u}{\abs{x}{\pmap{Q}{3}}} \pmap{P}{3}
+	\end{array}
+	\]
+The case of $\abs{x:C}{P}$ in the label and term mappings 
+are defined as in Fig.~\ref{f:enc:hopi_to_ho}.  
+The other processes, types and labels are  homomorphic. 
+\caption{\label{f:enc:hopip_to_hopi} 
+Encoding of \HOpp into \HOp.
+}
+\Hline
+\end{figure} 
+
 
 
 
