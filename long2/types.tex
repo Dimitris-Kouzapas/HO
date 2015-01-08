@@ -15,67 +15,90 @@ features of higher-order communication in a session-typed setting.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \subsection{Syntax}
-%We write $\Proc$ to denote the type of processes.
-The type syntax for values and sessions
-(denoted $U$ and $S$, respectively) is as follows:
+
+We define the syntax of session types for \HOp.
+
+\begin{definition}[Syntax of Types]\rm
+	\label{def:types}
+	The syntax of types is defined on the types for sessions $S$,
+	and the types for values $U$:
+	%
+	\[
+	\begin{array}{lrcl}
+		\textrm{(value)} & U & \bnfis &		C \bnfbar L 
+		\\
+
+		\textrm{(channels)} & C & \bnfis &	S \bnfbar \chtype{S} \bnfbar \chtype{L}
+		\\
+
+		\textrm{(lambda)} & L & \bnfis &	\shot{C} \bnfbar \lhot{C}
+		\\
+
+		\textrm{(session)} & S,T & \bnfis & 	\btout{U} S \bnfbar \btinp{U} S
+							\bnfbar \btsel{l_i:S_i}_{i \in I} \bnfbar \btbra{l_i:S_i}_{i \in I}\\
+					&&\bnfbar&	\trec{t}{S} \bnfbar \vart{t}  \bnfbar \tinact
+	\end{array}
+	\]
+\end{definition}
 %
-\[
-\begin{array}{lrcl}
-	\textrm{(channels)} & C & \bnfis &	S \bnfbar \chtype{S} \bnfbar \chtype{L}
-	\\
-
-	\textrm{(lambda)} & L & \bnfis &	\shot{C} \bnfbar \lhot{C}
-	\\
-
-	\textrm{(value)} & U & \bnfis &	C \bnfbar L 
-	\\
-
-	\textrm{(session)} & S,T & \bnfis & 	\btout{U} S \bnfbar \btinp{U} S
-						\bnfbar \btsel{l_i:S_i}_{i \in I} \bnfbar \btbra{l_i:S_i}_{i \in I}\\
-				&&\bnfbar&	\trec{t}{S} \bnfbar \vart{t}  \bnfbar \tinact
-\end{array}
-\]
-%
-\noi We write $C$ to denote first-order channel types; session types $S$
-for session channels and shared types $\chtype{S}$ or $\chtype{L}$ 
-for shared channels.
-We write $L$ to denote types for abstractions (higher-order values): % In particular, 
+\noi Values range over symbol $U$ which is defined by
+first order values $C$ and higher order values $L$.
+\noi First order values $C$ are used to type channels;
+session types $S$ for session channels and shared types
+$\chtype{S}$ or $\chtype{L}$ for shared channels that
+carry session values and higher order values, respectively.
+Higher-order types $L$ are used to type abstractions;
 $\shot{C}$ and $\lhot{C}$ denote
 shared and linear abstraction types, respectively.
-We write $U$ to denote types for values; first-order values and 
-higher-order values.
-Note that our type syntax disallows types of
-the form $\chtype{\chtype{U}}$, $\chtype{\tilde{U}}$
-and $\shot{(\shot{U})}$,
-meaning that shared names cannot carry shared names and
-we that do not apply abstractions over abstractions.
-This is a main difference with respect to the type structure 
-in~\cite{tlca07}, which  supports arrow types 
-$U \sharedop T$ and 
+%We write $U$ to denote types for values; first-order values and 
+%higher-order values.
+
+The syntax of session types $S$ follows the usual (binary) session
+types with recursion~\cite{honda.vasconcelos.kubo:language-primitives,GH05}.
+%to denote usual (binary) session types with recursion. 
+Session type $\btout{U} S$ is assigned to a channel that first sends a 
+value of type $U$ and then follows
+the type described by $S$.
+Dually, type $\btinp{U} S$ is assigned to a channel  
+that first receives a value of type $U$ and then continues as $S$. 
+Session types for labelled choice and selection, 
+%are standard: they are 
+written $\btbra{l_i:S_i}_{i \in I}$ and $\btsel{l_i:S_i}_{i \in I}$ respectively,
+require a set of types $\set{S_i}_{i \in I}$ that correspond to a set of
+labels $\set{i \in I}_{i \in I}$. 
+Recursive session types are defined using the primitive recursor
+and consider usual well-formedness conditions.
+We let $\mathsf{T}$ to be the set of all well-formed types and
+\ST to be the set of all well-formed session types.
+
+
+Note that the syntax for value types is restricted
+to dissallow types of the form:
+i) $\chtype{\chtype{U}}$---shared names
+cannot carry shared names;
+and ii) $\shot{(\shot{U})}$---abstractions do not
+bind a higher-order variables.
+% $\chtype{U}$ and ,
+%meaning that shared names cannot carry shared names and
+%we that do not apply abstractions over abstractions.
+The restricted values syntax is a main difference with respect to
+the type structure  in~\cite{tlca07}, which 
+supports the arrow types $U \sharedop T$ and 
 $U \lollipop T$, where $T$ denotes an arbitrary term 
 (i.e., a value or a process).
 
-We write $S$ to denote usual (binary) session types with recursion. 
-Session type $\btout{U} S$ is assigned to a channel that first sends a 
-value of type $U$ and then follows
-the protocol described by $S$.
-Dually, type $\btinp{U} S$ is assigned to a channel  
-that first receives a value of type $U$ and then continues as $S$. 
-Session types for labelled choice and selection are standard: they are 
-written $\btbra{l_i:S_i}_{i \in I}$ and $\btsel{l_i:S_i}_{i \in I}$ , respectively. 
-Recursive types are also as customary, considering usual 
-well-formedness conditions. We let \ST to be the set of
-all well formed session types.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %  DUALITY
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \subsection{Duality}
-We first define type equivalence.
+
+Duality is defined following the co-inductive
+approach following~\cite{GH05,TGC14}.
+We first require the notion of type equivalence.
 %
 \begin{definition}[Type Equivalence]\rm
 \label{def:type_equiv}
-	Let $\mathsf{T}$ be the set of all well formed types.
 	Define function $F(\Re): \mathsf{T} \longrightarrow \mathsf{T}$:
 	%
 	\[
@@ -94,8 +117,10 @@ We first define type equivalence.
 	of $F$ exists. Let type equivalence be defined as $\iso = \nu X. F(X)$.
 \end{definition}
 %
-We follow the approach in~\cite{onSessionDualityBDGK} to define the 
-key notion of duality for session types.
+In essence type equivalence is a co-inductive definition that
+equates types up-to recursive unfolding.
+
+The duality relation is defined in terms of type equivalence.
 %
 \begin{definition}[Duality]\rm
 	Define function $F(\Re): \mathsf{ST} \longrightarrow \mathsf{ST}$:
@@ -114,27 +139,42 @@ key notion of duality for session types.
 	of $F$ exists. Let duality be defined as $\dualof = \nu X. F(X)$.
 \end{definition}
 %
+The co-inductive definition of duality relates session types
+up-to recursive unfolding. Dual session types are prefixed
+on dual constructors and carry equivalent types.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %  TYPING SYSTEM
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 
 \subsection{Environments and Judgements}
 %Following our decision of focusing on functions
 %$\shot{U}$ and $\lhot{U}$, our environments are
 %simpler than those in~\cite{tlca07}:
 %
-Following~\cite{tlca07}, 
-our typing discipline relies on the following typing environments: %We consider the
-\[
-\begin{array}{llcl}
-	\text{Linear}	& \Lambda & \bnfis &	\emptyset \bnfbar \Lambda \cat \varp{X}: \lhot{C}\\
-	\text{Session}	& \Delta  & \bnfis &	\emptyset \bnfbar \Delta \cat u:S \\
-	\text{Shared}	& \Gamma  & \bnfis &	\emptyset \bnfbar \Gamma \cat \varp{X}: \shot{C} \bnfbar \Gamma \cat u: \chtype{S} \bnfbar
-						\Gamma \cat u: \chtype{L} \bnfbar \Gamma \cat \rvar{X}: \Delta
-\end{array}
-\]
+We follow~\cite{tlca07},
+to defined the typing environment.
+%
+\begin{definition}[Typing environent]\rm
+	We define the {\em shared type environment} $\Gamma$,
+	and the linear environments
+	{\em linear type environment} $\Lambda$ and
+	the {\em session type environment} $\Delta$ as:
+	\[
+	\begin{array}{llcl}
+		\text{Linear}	& \Lambda & \bnfis &	\emptyset \bnfbar \Lambda \cat \varp{X}: \lhot{C}\\
+		\text{Session}	& \Delta  & \bnfis &	\emptyset \bnfbar \Delta \cat u:S \\
+		\text{Shared}	& \Gamma  & \bnfis &	\emptyset \bnfbar \Gamma \cat \varp{X}: \shot{C} \bnfbar \Gamma \cat u: \chtype{S} \bnfbar
+							\Gamma \cat u: \chtype{L} \bnfbar \Gamma \cat \rvar{X}: \Delta
+	\end{array}
+	\]
+	We imply
+	\begin{enumerate}[i.]
+		\item	Domains of $\Gamma, \Lambda, \Delta$ are pairwise distinct.
+		\item	Weakening, contraction and exchange apply to shared environment $\Gamma$.
+		\item	Exchange applies to linear environments $\Lambda$ and $\Delta$. 
+	\end{enumerate}
+\end{definition}
 %
 \noi We define typing judgements for values $V$
 and processes $P$:
@@ -144,41 +184,44 @@ and processes $P$:
 	\end{array}
 \]
 %
-\noi As expected, weakening, contraction, and exchange principles apply to $\Gamma$;
-environments $\Lambda$ and $\Delta$ behave linearly, and are only subject to exchange.
-We require that the domains of $\Gamma, \Lambda$ and $\Delta$ are pairwise distinct.
-The first judgement states that under environment $\Gamma; \Lambda; \Delta$
+%\noi
+%As expected, weakening, contraction, and exchange principles apply to $\Gamma$;
+%environments $\Lambda$ and $\Delta$ behave linearly, and are only subject to exchange.
+%We require that the domains of $\Gamma, \Lambda$ and $\Delta$ are pairwise distinct.
+The first judgement asserts that under environment $\Gamma; \Lambda; \Delta$
 values $V$ have type $U$,
-whereas the second judgement states that under environment $\Gamma; \Lambda; \Delta$
-process $P$ has the process type $\Proc$.
+whereas the second judgement assertss that under environment $\Gamma; \Lambda; \Delta$
+process $P$ has the typed process type $\Proc$.
 
 %%%%%%%%%%%
 %	Type system description
 %%%%%%%%%%%
 
-
 \subsection{Typing Rules}
 
 \input{figures/fig-types}
 
-The typing system is defined in Figure~\ref{fig:typerulesmy}.
+The type relation is defined in Figure~\ref{fig:typerulesmy}.
 %Types for session names/variables $u$ and
 %directly derived from the linear part of the typing
 %environment, i.e.~type maps $\Delta$ and $\Lambda$.
-Rules $\trule{Session}$ and $\trule{LVar}$ require
-the minimal linear environment: i) a minimal session environment
-$\Delta$ to type sessions $u$ with type $S$; and ii)
-a minimal linear environment $\Lambda$ to type 
-higher order variables $x$ with type $\shot{\tilde{C}}$.
+Rules $\trule{Session}$ and $\trule{LVar}$ require,
+respectively, the minimal:
+i) session environment $\Delta$ to type session 
+$u$ with type $S$; and,
+ii) linear environment $\Lambda$ to type 
+higher-order variable $x$ with type $\shot{\tilde{C}}$.
 Rule $\trule{Shared}$
-types shared names or shared variables $u$ with
-type $U$ if the map $u:U$ exists in environment
-$\Gamma$. Again the linear environment should
-be minimal, i.e.,empty.
-The type $\shot{C}$ for shared higher order values $V$
+assigns the value type $U$
+to shared names or shared variables $u$ 
+if the map $u:U$ exists in environment
+$\Gamma$. Rule $\trule{Shared}$ also requires 
+that the linear environment is
+be minimal, i.e.~empty.
+The type $\shot{C}$ for shared higher-order values $V$
 is derived using rule $\trule{Prom}$, where we require
 a value with linear type to be typed without a linear
-environment in order to be used as a shared type.
+environment present in order to be used as a shared type.
 Rule $\trule{EProm}$ allows to freely use a linear
 type variable as shared type variable. 
 %A value consisting of a tuple of names/variables is typed using the $\trule{Pol}$ rule,
@@ -186,7 +229,7 @@ type variable as shared type variable.
 Abstraction values are typed with rule $\trule{Abs}$.
 The key type for an abstraction is the type for
 the bound variables of the abstraction, i.e.~for
-bound variable type $C$ the abstraction
+bound variable with type $C$ the abstraction
 has type $\lhot{C}$.
 The dual of abstraction typing is application typing
 governed by rule $\trule{App}$, where we expect
@@ -199,7 +242,7 @@ is typed using rule $\trule{Send}$.
 The type $U$ of a send value $V$ should appear as a prefix
 on the session type $\btout{U} S$ of $s$.
 Rule $\trule{Rcv}$
-defined the typing for the 
+defines the typing for the 
 reception of values $\binp{u}{V} P$.
 %and abstractions $\binp{k}{X} P$, respectively.
 The type $U$ of a receive value should 
@@ -219,22 +262,21 @@ rules prefix the session type with the selection
 type $\btsel{l_i: S_i}_{i \in I}$ and
 $\btbra{l_i:S_i}_{i \in I}$.
 
-Creating and restricting a
-shared name $a$ requires to remove
-its type from environment $\Gamma$ as defined in 
+The creation of a
+shared name $a$ requires to add
+its type in environment $\Gamma$ as defined in 
 rule \trule{Res}. 
 Creation of a session name $s$
-creates two endpoints with dual types and restricts
-them by removing them from the session environment
+creates two endpoints with dual types and adds them to
+the session environment 
 $\Delta$ as defined in rule \trule{ResS}. 
-%This is the only duality check present in our system.
-Rule \trule{Par} combines the linear environment of
-the parallel components of a parallel process
-to create a type for the entire parallel process.
+Rule \trule{Par} concatanates the linear environment of
+the parallel components of a parallel operator
+to create a type for the entire process.
 The disjointness of environments $\Lambda$ and $\Delta$
 is implied. Rule \trule{End} allows a form of weakening 
 for the session environment $\Delta$, provided that
-the names added in $\Delta$ have the inactive
+the name added in $\Delta$ has the inactive
 type $\tinact$. The inactive process $\inact$ has no
 linear environment. The recursive variable is typed
 directly from the shared environment $\Gamma$ as
@@ -243,23 +285,11 @@ The recursive operator requires that the body of
 a recursive process matches the type of the recursive
 variable as in rule \trule{Rec}.
 
-%\begin{definition}[$\proves_s$]\rm
-%	Assume type system that does not use
-%	type rule $\trule{Shared}$, denoted
-%	$\proves_s$.
-%\end{definition}
-%
-%\begin{proposition}
-%	$\Gamma; \es; \Delta \proves_s P \hastype \Proc$
-%	implies
-%	$\not\exists a, a \in (\fn{P} \cup \bn{P})$.
-%\end{proposition}
-
-
 \subsection{Type Soundness}
-We state results for type safety:
-we report instances of more general statements already proved by
-Mostrous and Yoshida in the asynchronous case.
+
+%We state results for type safety:
+Type safety result are instances of more general statements already proved by
+Mostrous and Yoshida~\ref{tlca07} in the asynchronous case.
 
 \begin{lemma}[Substitution Lemma - Lemma C.10 in M\&Y]\rm
 	\label{lem:subst}
@@ -298,7 +328,7 @@ Mostrous and Yoshida in the asynchronous case.
 \end{definition}
 
 \begin{definition}[Session Environment Reduction]\rm
-\label{def:ses_red}
+	\label{def:ses_red}
 	The reduction relation $\red$ on session environments is defined as:
 %
 	\begin{enumerate}[$-$]
@@ -306,12 +336,15 @@ Mostrous and Yoshida in the asynchronous case.
 		\item	$\Delta \cat s: \btsel{l_i: S_i}_{i \in I} \cat \dual{s}: \btbra{l_i: S_i'}_{i \in I} \red \Delta \cat s: S_k \cat \dual{s}: S_k', \quad k \in I$.
 	\end{enumerate}
 \end{definition}
-
-We now state the instance of type soundness that we can derived from the Mostrous and Yoshida system.
-It is worth noticing that M\&Y have a slightly richer definition of structural congruence.
-Also, their statement for subject reduction relies on an ordering on typing associated to queues and other 
+%
+We now state the main soundness result as an instance
+of type soundness from the Mostrous and Yoshida system.
+It is worth noticing that M\&Y have a slightly richer
+definition of structural congruence.
+Also, their statement for subject reduction relies on an
+ordering on typing associated to queues and other 
 runtime elements (such extended typing is denoted as $\Delta$ by M\&Y).
-Since we are synchronous we can omit such an ordering.
+Since we are dealing with synchronous semantics we can omit such an ordering.
 
 \begin{theorem}[Type Soundness - Theorem 7.3 in M\&Y]\label{t:sr}\rm
 %
