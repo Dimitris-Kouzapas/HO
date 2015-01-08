@@ -1,21 +1,25 @@
-\noindent This section introduces a core higher-order 
-calculus (called \HO) which is a sub-calculus of 
-{\em Full Higher-Order Session $\pi$-Calculus} ($\HOp$).
-$\HO$ features minimum constructs: it includes only session establishments 
-and communications 
-with single name-abstraction, but  
-without recursions nor name-passing.  
-On the other hand, $\HOp$ includes both name and abstraction-passing 
-with recursions; 
-it corresponds to a sub-calculus studied 
+% !TEX root = main.tex
+\noindent 
+We introduce the 
+\emph{Higher-Order Session $\pi$-Calculus} (\HOp).
+\HOp includes both name- and abstraction-passing 
+as well as recursions; it corresponds to a subcalculus 
+of the language
+studied 
 in~\cite{tlca07}. 
-Following the literature \cite{JeffreyR05},
-for a simplicity of the presentation, 
-we concentrate on 
-the second-order call-by-value HO$\pi$-calculus.  
-See \S~\ref{sec:extension} for the extensions to 
-HO$\pi$-calclus with the general higher-order abstractions 
-and polyadic name passing/abstractions. 
+Following the literature~\cite{JeffreyR05},
+for simplicity of the presentation
+we concentrate on the second-order call-by-value \HOp.  
+(In \S\,\ref{sec:extension} we consider the extension of 
+\HOp with general higher-order abstractions 
+and polyadicity in name-passing/abstractions.)
+We also introduce subcalculi of \HOp. In particular, we define the 
+core higher-order session
+calculus (\HO), which 
+%. The \HO calculus is  minimal: it 
+includes constructs for session establish\-ment/communication and 
+(monadic) name-abstraction, but lacks name-passing and recursion.
+
 %Although minimal, in \S\ref{s:expr}
 %the abstraction-passing capabilities of \HOp will prove 
 %expressive enough to capture key features of session communication, 
@@ -34,16 +38,15 @@ u,w  ::=  n \ | \ x,y,z
 \]
 \[
 \begin{array}{rclllll}
-P,Q & ::= &  P\Par Q \bnfbar 
+P,Q \!\!\!\!\!\! & ::= & \!\! P\Par Q \bnfbar 
  \bsel{u}{l} P \bnfbar \bbra{u}{l_i:P_i}_{i \in I} \bnfbar \inact \\[1mm]
- & \bnfbar & \bout{u}{V}{P} \bnfbar \binp{u}{x}{P} \bnfbar \news{n} P 
-\bnfbar \appl{x}{u} 
-\\[1mm]
-     & \bnfbar & \nonhosyntax{\rvar{X} \bnfbar \recp{X}{P}}
+ & \bnfbar & \!\! \bout{u}{V}{P} \bnfbar \binp{u}{x}{P} \bnfbar \news{n} P 
+\bnfbar \appl{x}{u} \bnfbar \nonhosyntax{\rvar{X} \bnfbar \recp{X}{P}}
+%\\[1mm]
+ %    & \bnfbar & \nonhosyntax{\rvar{X} \bnfbar \recp{X}{P}}
 \end{array}
 \]
-The syntax of \HO is given by excluding \nonhosyntax{\text{boxed syntax}}. 
-\caption{Syntax of \HOp}
+ \caption{Syntax of \HOp. The syntax of \HO lacks the constructs in \nonhosyntax{\text{grey}}.}
 \label{fig:syntax}
 \Hline
 \end{figure}
@@ -65,7 +68,8 @@ $\pi$-calculus prefixes for sending and receiving values $V$.
 Process $\bout{u}{V} P$ denotes the output of value $V$
 over channel $u$, with continuation $P$;
 process $\binp{u}{x} P$ denotes the input prefix on channel $u$ of a value
-that it is going to be substituted on variable $x$ in continuation $P$. 
+that 
+will substitute variable $x$ in continuation $P$. 
 Recursion is expressed by $\recp{X}{P}$,
 which binds the recursive variable $\varp{X}$ in process $P$.
 Process $\appl{x}{u}$ is the application
@@ -74,9 +78,10 @@ substitutes variable $X$.
 Prefix $\bsel{u}{l} P$ selects label $l$ on channel $u$ and then behaves as $P$.
 Given $i \in I$ process $\bbra{u}{l_i: P_i}_{i \in I}$ offers a choice on labels $l_i$ with
 continuation $P_i$.
-Others are standard constructs for 
+%Others are standard c
+Constructs for 
 inaction $\inact$,  parallel composition $P_1 \Par P_2$, and 
-name restriction $\news{n} P$.
+name restriction $\news{n} P$ are standard.
 Session name restriction $\news{s} P$ simultaneously binds endpoints $s$ and $\dual{s}$ in $P$.
 %A well-formed process relies on assumptions for
 %guarded recursive processes.
@@ -88,18 +93,25 @@ free session channels a {\em program}.
 
 \subsection{Subcalculi of \HOp}
 \label{subsec:subcalculi}
-\noindent 
-We now define several sub-calculi of \HOp. 
-The {\em core higher-order calculus} (denoted by \HO) has 
-no name passing and no recursion. The syntax deleted from \HOp
-is \nonhosyntax{\text{boxed}} in Fig.~\ref{fig:syntax}. 
-Another sub-calculus we use is the {\em session $\pi$-calculus} 
-(dentoed by $\sessp$) which does not include the higher-order constructions 
-(i.e. abstraction passing and application), but include recursions. 
+\noi
+We define two subcalculi of \HOp. 
+%We now define several sub-calculi of \HOp. 
+The first is the 
+{\em core higher-order session calculus} (denoted \HO),
+which lacks recursion and name passing; its 
+formal syntax is obtained from Fig.~\ref{fig:syntax} by excluding 
+constructs in \nonhosyntax{\text{grey}}.
+The second subcalculus is 
+the {\em session $\pi$-calculus} 
+(denoted $\sessp$), which 
+lacks  the
+higher-order constructs
+(i.e., abstraction passing and application), but includes recursion.
 Let $\CAL \in \{\HOp, \HO, \sessp\}$. We write 
 $\CAL^{-\mathsf{sh}}$ for $\CAL$ without shared channels
- (we delete $a,b$ from $n$). In the subsequent sections, 
-we show $\HOp$, $\HO$ and $\sessp$ have the same expressiveness. 
+ (we delete $a,b$ from $n$). 
+ We shall demonstrate that 
+$\HOp$, $\HO$, and $\sessp$ have the same expressivity.
 
 \subsection{Operational Semantics}
 \label{subsec:semantics}
@@ -137,18 +149,18 @@ P \Par \news{n} Q \scong \news{n}(P \Par Q)
 \end{array}
 \]
 }
-\caption{Operational Sematincs of $\HOp$ \label{fig:reduction}}
+\caption{Operational Semantics of $\HOp$ \label{fig:reduction}.}
 \Hline
 \end{figure}
-\noindent Fig.~\ref{fig:reduction} defines operational semantics 
+\noindent Fig.~\ref{fig:reduction} defines the operational semantics 
 of \HOp.
-$\orule{App}$ is an name application; 
+$\orule{App}$ is a name application; 
 $\orule{Pass}$ defines a shared interaction at $n$ 
 ($\dual{n}=n$) or session interaction;  
 $\orule{Sel}$ is the standard rule for labeled choice/selection:
 given an index set $I$, 
 a process selects label $l_j$ on channel $n$ over a set of
 labels $\set{l_i}_{i \in I}$ offered by a branching 
-on the dual endpoint $\dual{n}$; and other rules are standard
-with the sturcture rules defined in the bottom of Fig.~\ref{fig:reduction}. 
-We write $\red^\ast$ for a multi-step reductions. 
+on the dual endpoint $\dual{n}$; and other rules are standard.
+Rules for \emph{structural congruence} are defined in Fig.~\ref{fig:reduction} (bottom). 
+We write $\red^\ast$ for a multi-step reduction. 
