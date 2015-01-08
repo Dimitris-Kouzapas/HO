@@ -1,4 +1,4 @@
-\noi This section presents two posirive results of the encodings:
+\noi This section presents two positive results of the encodings:
 (1) The higher-order name-passing communication with recursions (\HOp) into 
 the higher-order communication without name-passing nor 
 recursions (\HO) (\S\,\ref{subsec:HOpi_to_HO}); and (2) 
@@ -246,8 +246,7 @@ $\abs{x_1, \cdots, x_n}{\auxmapp{P}{{}}{\epsilon} }$, where $\vmap{m_j} = x_j$, 
 & & \hspace{-3mm} \Par \bbout{\dual{s}}{ \abs{(\vmap{\tilde{n}},y)}{\appl{z_X}{(\vmap{\tilde{n}}, y)}}} \inact}  \quad (\tilde{n} = f(z_\rvar{X})) \\
 \end{array}
 \]
-The input bound variable $x$ is annotated by a type to distinct the first-order and higher-order cases. We use the polyadic name abstraction for a simplicity of the presentation. They are formally encoded in 
-\S~\ref{sec:extension}.
+The input bound variable $x$ is annotated by a type to distinct the first-order and higher-order cases. 
 \caption{\label{f:enc:hopi_to_ho}
 Encoding of \HOp into \HO.
 %(cf.~Defintion~\ref{d:enc:fotohorec}).
@@ -298,8 +297,9 @@ with $\Delta = \{n_1:S_1, \ldots, n_m:S_m\}$.
 \smallskip 
 \noi Note that $\varp{X}:\Delta$ is mapped to a recursive session type 
 which carries type variable as the last argument.  
+For a simplicity of the presentation, we use the polyadic name abstraction and passing. They will be formally encoded into \HO in \S~\ref{sec:extension}.
 
-\noi We explain the mapping in Fig.~\ref{f:enc:hopi_to_ho}, forcussing 
+\noi We explain the mapping in Fig.~\ref{f:enc:hopi_to_ho}, focusing 
 on {\em name passing} ($\pmapp{\bout{u}{w} P}{1}{f}$) and  
 {\em recursions} ($\pmapp{\recp{X}{P}}{1}{f}$ and $\pmapp{z_\rvar{X}}{1}{f}$). 
 
@@ -317,18 +317,19 @@ $\abs{x}{P}$.
 As a result, name substitution is achieved via name application.
 
 
-{\bf\em Recursions:}
-A process $P$ is parallel composed, and also being passed as an input
+{\bf\em Recursions:} The idea follows 
+the encoding of  $\lambda x.xx$ in \cite{MilnerR:funp}. 
+A mapping of process $P$ is parallel composed, 
+and also being passed as an input
 guarded abstraction, parameterised also by a sequence of trigger names $\tilde{n}$. 
 We record a mapping from $z_X$ (which is a fresh variable of $X$) 
 to $\tilde{n}$, so that 
 when the abstraction is substituted to $\pmapp{z_\rvar{X}}{1}{f}$ 
 (which occurs in the mapping of $P\subst{z_X}{X}$), 
 the correct $\tilde{n}$ is applied. In this way, we can 
-send and receive an abstruction which holds $P$, repeatedly. 
+send and receive an abstraction which holds $P$, repeatedly. 
 
 \smallskip  
-
 
 \begin{theorem}[Encoding of Full Higher-Order Pi into Higher-Order]
 \label{f:enc:hopitoho}
@@ -337,8 +338,50 @@ defined in Definition~\ref{d:enc:hopitoho}
 is semantic preserving. 
 \end{theorem}
 
-\subsection{From \HO to \sessp}
+\subsection{From \HOp to \sessp}
 \label{subsec:HO_to_sessp}
+\noi 
+We now discuss the encodability of  $\HO$ into $\sessp$ where
+we essentially follow the representability result put forward by 
+Sangiorgi~\cite{San92,SaWabook}, but casted in the setting of session-typed communications. 
+Intuitively, such a strategy represents the exchange of a process with the exchange of a freshly generated \emph{trigger name}. 
+Trigger names may then be used to activate copies of the process, which now becomes a persistent resource represented by an input-guarded replication.
+A session name 
+is, however, a linear resource and cannot be replicated.
+Consider the following (naive) adaptation of \cite{San92,SaWabook} 
+in which session names are used are triggers and 
+exchanged processes would be have to used exactly once:
+%
+\[
+\begin{array}{l}
+		\pmap{\bout{u}{\abs{x}{Q}} P}{n}  \defeq   \newsp{s}{\bout{u}{s} (\pmap{P}{n} \Par \binp{\dual{s}}{x} \pmap{Q}{n})} \\
+		\pmap{\binp{u}{x} P}{n}  \defeq \binp{u}{x} \pmap{P}{n}
+\quad 
+		\pmap{\appl{x}{u}}{n}  \defeq  \bout{x}{u} \inact
+	\end{array}
+\]
+%
+with the remaining \HOp constructs being mapped homomorphically.
+Although $\pmap{\cdot}{n}$ captures the correct semantics when
+dealing with systems that allow only linear abstractions,
+it suffers from non-typability in the presence
+of shared abstractions. For instance,
+mapping for $P = \bout{n}{\abs{x}{\bout{x}{m}\inact}} \inact \Par \binp{\dual{n}}{x} (\appl{x}{s_1} \Par \appl{x}{s_2})$
+would be:
+%
+\[
+	\pmap{P}{n} \defeq
+	\newsp{s}{\bout{n}{s} \binp{\dual{s}}{x} \bout{x}{m} \inact \Par \binp{\dual{n}}{x} (\bout{x}{s_1} \inact \Par \bout{x}{s_2} \inact)}
+\]
+%
+The above process is untypable since processes $(\bout{x}{s_1} \inact$ and $\bout{x}{s_2} \inact)$
+cannot be put in parallel because they do not have disjoint session environments.
+
+The correct approach would be to use replicated shared names
+as triggers instead of session names, when dealing with shared abstractions. 
+Below we write $\repl{} P$ as a shorthand notation for $\recp{X}{(P \Par \rvar{X})}$.
+
+\smallskip 
 
 \begin{definition}[Higher-Order into First-Order Pi]
 \label{d:enc:hopitopi}
@@ -351,6 +394,8 @@ ${\cal{T}}_3$ is a set of types of $\sessp$.
 We define the mappings $\map{\cdot}^{2}$, $\mapt{\cdot}^{2}$, $\mapa{\cdot}^{2}$
 in Fig.~\ref{f:enc:ho_to_sessp}. 
 \end{definition}
+
+\smallskip 
 
 \begin{figure}[t]
 \[
@@ -394,26 +439,20 @@ $\map{\cdot}^2$,
 $\mapt{\cdot}^2$, 
 and 
 $\mapa{\cdot}^2$
-are homomorphisms for the other types, labels and processes.   
+are homomorphic for the other types, labels and processes.   
 	\caption{
-Encoding of \HO into \sessp.
+Encoding of \HOp into \sessp.
 \label{f:enc:ho_to_sessp}
 }
 \end{figure}
 
-\begin{theorem}[Encoding of Higher-Order into First-Order Pi]
+\begin{theorem}[Encoding of Higher-Order Pi into First-Order Pi]
 \label{f:enc:hotopi}
-The encoding from $\tyl{L}_{\HO}$ into $\tyl{L}_{\sessp}$ defined in 
+The encoding from $\tyl{L}_{\HOp}$ into $\tyl{L}_{\sessp}$ defined in 
 Definition~\ref{d:enc:hopitopi} 
 is semantic preserving. 
 \end{theorem}
 
-\begin{corollary}[Encoding of Higher-Order Pi into First-Order Pi]
-The encoding from $\tyl{L}_{\HOp}$ into $\tyl{L}_{\sessp}$ is semantic preserving. 
-\end{corollary}
-
-Note that an encoding from $\tyl{L}_{\HOp}$ into $\tyl{L}_{\sessp}$
-can be defined without using the first encoding result.  
 
 
 
