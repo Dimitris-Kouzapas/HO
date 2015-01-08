@@ -1,26 +1,26 @@
-\noi This section defines the formal notion of \emph{encoding}, 
-extending the existing untyped criteria studied in 
-\cite{Palamidessi,Gorhan,AAA} to a typed settion. 
-We first define a typed calculus parameterised by 
-by a syntax, typing and semantics. 
-
-\smallskip 
+% !TEX root = main.tex
+\noi Here we define the formal notion of \emph{encoding}, 
+extending to a typed setting existing criteria for untyped processes (as in, e.g.,
+\cite{Nestmann00,Palamidessi03,DBLP:conf/lics/PalamidessiSVV06,DBLP:journals/iandc/Gorla10,DBLP:conf/icalp/LanesePSS10}). 
+We first define a typed calculus parameterised by a syntax, operational semantics, and typing.
+%\smallskip 
 
 \begin{definition}[Typed Calculus]\label{d:tcalculus}\rm
 	A \emph{typed calculus} $\tyl{L}$ is a tuple
           $\calc{\CAL}{\cal{T}}{\hby{\ell}}{\wb}{\proves}$
-	where $\CAL$ and $\cal{T}$ are set of processes and types, 
+	where $\CAL$ and $\cal{T}$ are sets of processes and types, 
 respectively; and $\hby{\ell}$, $\wb$, and $\proves$ 
 	denote a transition system, a typed process equivalence, and a type system for $\CAL$ processes, respectively. 
 \end{definition}
 
-\smallskip 
 
-\noi Our notion of encoding considers a mapping on processes, 
-types, and transition labels.  
+%\smallskip 
+
+%\noi 
+Our notion of encoding considers mappings on processes, 
+types, and transition labels: 
 
 \begin{definition}[Typed Encoding]\rm
-\label{def:tenc}
         Let  $\tyl{L}_i=\calc{\CAL_i}{{\cal{T}}_i}{\hby{\ell}}{\wb_i}{\proves_i}$
         ($i=1,2$) be typed calculi. 
 	Given mappings $\map{\cdot}: \CAL_1 \to \CAL_2$, 
@@ -32,59 +32,74 @@ types, and transition labels.
 
 \smallskip 
 
+
+
+
 \noi We will often assume that  $\mapt{\cdot}$ extends to typing
 environments as expected. This way, e.g., $\mapt{\Delta \cat u:S} = \mapt{\Delta} \cat u:\mapt{S}$.
 
-For stating stronger positive results of encodings, 
-we define the strong encoding criteria (called {\em precise}). Later 
-they are weakened to prove a stronger negative result (called {\em good}). 
+Now we introduce two classes of typed encodings, which 
+serve different purposes. Both  consist of syntactic and semantic criteria 
+first proposed for untyped processes~\cite{Palamidessi03,DBLP:journals/iandc/Gorla10,DBLP:conf/icalp/LanesePSS10}, and here extended to account for (higher-order) session types.
+First, for stating stronger positive encodability results in \S\,\ref{sec:positive}, 
+we define the notion of {\em precise} encodings.
+Then, 
+with the aim of proving the strong non-encodability result in \S\,\ref{sec:negative}, 
+precise encodings are relaxed into the weaker {\em minimal} encodings. 
+
 We first state the 
-syntactic criteria which are used in the untyped setting \cite{}. 
+syntactic criteria. 
 Let $\sigma$ denote a substitution of names for names (a renaming, in the usual sense). Given environments $\Delta$ and $\Gamma$,
 we write $\sigma(\Delta)$ and $\sigma(\Gamma)$ to denote the effect of applying $\sigma$ on the 
 domains of $\Delta$ and $\Gamma$
 (clearly, $\sigma(\Gamma)$ concerns only shared names in $\Gamma$: process and recursion variables in $\Gamma$ are not affected by $\sigma$). 
 
-\smallskip 
 
-\begin{definition}[Syntax Preserving]\rm
+
+\begin{definition}[Syntax Preserving Encoding]\rm
 	\label{def:sep}
-	We say that 
-	the typed encoding 
+	%We say that 
+	The typed encoding 
 	$\enco{\map{\cdot}, \mapt{\cdot}, \mapa{\cdot}}: \tyl{L}_1 \to \tyl{L}_2$ is \emph{syntax preserving}
 	if it is:
 	
 	\begin{enumerate}[1.]
 		\item	\emph{Homomorphic wrt parallel},   if 
-		$\mapt{\Gamma}; \emptyset; \mapt{\Delta_1 \cat \Delta_2} \proves \map{P_1 \Par P_2} \hastype \Proc$
+		$\mapt{\Gamma}; \emptyset; \mapt{\Delta_1 \cat \Delta_2} \proves_1 \map{P_1 \Par P_2} \hastype \Proc$
 		then 
-		$\mapt{\Gamma}; \emptyset; \mapt{\Delta_1} \cat \mapt{\Delta_2} \proves \map{P_1} \Par \map{P_2} \hastype \Proc$.
+		$\mapt{\Gamma}; \emptyset; \mapt{\Delta_1} \cat \mapt{\Delta_2} \proves_2 \map{P_1} \Par \map{P_2} \hastype \Proc$.
 
 		\item	\emph{Compositional wrt restriction},  if 
-		$\mapt{\Gamma}; \emptyset; \mapt{\Delta} \proves \map{\news{n}P} \hastype \Proc$
+		$\mapt{\Gamma}; \emptyset; \mapt{\Delta} \proves_1 \map{\news{n}P} \hastype \Proc$
 		then 
-		$\mapt{\Gamma}; \emptyset; \mapt{\Delta} \proves \news{n}\map{P} \hastype \Proc$.
+		$\mapt{\Gamma}; \emptyset; \mapt{\Delta} \proves_2 \news{n}\map{P} \hastype \Proc$.
 		
 		\item \emph{Name invariant},   if
-		$\mapt{\sigma(\Gamma)}; \emptyset; \mapt{\sigma(\Delta)} \proves \map{\sigma(P)} \hastype \Proc$
-		then 
-		$\sigma(\mapt{\Gamma}); \emptyset; \sigma(\mapt{\Delta}) \proves \sigma(\map{P}) \hastype \Proc$, 
+		$\mapt{\sigma(\Gamma)}; \emptyset; \mapt{\sigma(\Delta)} \proves_1 \map{\sigma(P)} \hastype \Proc$
+		then \\
+		$\sigma(\mapt{\Gamma}); \emptyset; \sigma(\mapt{\Delta}) \proves_2 \sigma(\map{P}) \hastype \Proc$, 
 		for any injective renaming  of names $\sigma$.
 	\end{enumerate}
 \end{definition}
-
-\smallskip 
-
-\noi Next we define semantic criteria for typed encodings.
-
-\smallskip 
+Homomorphism wrt parallel (used in, e.g.,~\cite{Palamidessi03,DBLP:conf/lics/PalamidessiSVV06})
+expresses that encodings should preserve the distributed topology of source processes. This criteria 
+ is appropriate for both encodability and non encodability results; in our setting, 
+it admits an elegant formulation, also induced by rules for typed composition.
+Compositionality wrt restriction is 
+also naturally supported by typing and turns out to be 
+useful in our encodability results (see \S\,\ref{sec:positive}).
+Our name invariance criteria follows the one given in~\cite{DBLP:journals/iandc/Gorla10,DBLP:conf/icalp/LanesePSS10}. 
+Next we define semantic criteria for typed encodings.
 
 \begin{definition}[Semantic Preserving Encoding]\rm
 \label{def:ep}
        Let  $\tyl{L}_i=\calc{\CAL_i}{{\cal{T}}_i}{\hby{\ell}}{\wb_i}{\proves_i}$
        ($i=1,2$) be typed calculi. 
 We say that $\enco{\map{\cdot}, \mapt{\cdot}, \mapa{\cdot}}: \tyl{L}_1 \to \tyl{L}_2$ is a \emph{semantic preserving encoding}
-if it satisfies the following properties:
+if it satisfies the properties below.
+Given a label $\ell \neq \tau$, we write 
+$\mathsf{sub}(\ell)$
+to denote the \emph{subject} of the action.
 	
 	\begin{enumerate}[1.]
 		\item \emph{Type Preservation}:
@@ -92,25 +107,20 @@ if it satisfies the following properties:
 	$\Gamma; \emptyset; \Delta \proves_1 P \hastype \Proc$ then 
 	$\mapt{\Gamma}; \emptyset; \mapt{\Delta} \proves_2 \map{P} \hastype \Proc$,  
 	for any   $P$ in $\CAL_1$.
+			\item \emph{Subject preserving}: if $\mathsf{sub}(\ell) = u$ then $\mathsf{sub}(\mapa{\ell}) =u$.
+
 
 	\item \emph{Operational Correspondence}: If $\Gamma; \emptyset; \Delta \proves_1 P \hastype \Proc$ then
 		\begin{enumerate}
-%			\item	Completeness: \\
-%			    If $P \red_1 P'$ then $\exists\, \Delta'$ s.t.
-%				$\map{P} \Red_2 \map{P'}$ and
-%				$\mapt{\Gamma}; \emptyset; \mapt{\Delta'} \proves_2 \map{P'} \hastype \Proc$.
 			\item	Completeness: 
 			   If  
 $\stytraarg{\Gamma}{\ell_1}{\Delta_1}{P}{\Delta'_1}{P'}{1}$
-			   then $\exists \ell_2$ s.t. 
-
-$\wtytraarg{\mapt{\Gamma}}{\ell_2}{\mapt{\Delta_1}}{\map{P}}{\mapt{\Delta'_1}}{\map{P'}}{2}$
-			    and $\ell_2 = \mapa{\ell_1}$.
-			    				
-%			\item Soundness : \\
-%			    If $\map{P} \red_2 Q$ then
-%				$\exists P'$ s.t. $P \red_1 P'$ and 
-%				$\mapt{\Gamma}; \mapt{\Delta_1} \wb_2 \mapt{\Delta_2} \proves_2 \map{P'} \wb_2 Q$.
+			   then $\exists \ell_2, Q$ s.t. 
+ (i)~$\wtytraarg{\mapt{\Gamma}}{\ell_2}{\mapt{\Delta_1}}{\map{P}}{\mapt{\Delta'_1}}{Q}{2}$,
+			    (ii)~$\ell_2 = \mapa{\ell_1}$, 
+			    and \\
+				(iii)~${\mapt{\Gamma}};{\mapt{\Delta'}}\proves_2 {Q}{\wb_2}
+{\mapt{\Delta'}}\proves_2 {\map{P'}}$.
 				
 			\item	Soundness:   
 				If  $\wtytraarg{\mapt{\Gamma}}{\ell_2}{\mapt{\Delta}}{\map{P}}{\mapt{\Delta'}}{Q}{2}$
@@ -121,77 +131,97 @@ $\wtytraarg{\mapt{\Gamma}}{\ell_2}{\mapt{\Delta_1}}{\map{P}}{\mapt{\Delta'_1}}{\
 ${\mapt{\Gamma}};{\mapt{\Delta'}}\proves_2 {\map{P'}}{\wb_2}
 {\mapt{\Delta'}}\proves_2 {Q}$.
 
-%			If  $\wtytraarg{\mapt{\Gamma}}{\ell_2}{\mapt{\Delta_1}}{\map{P}}{\mapt{\Delta'_1}}{Q}{2}$
-%			   then $\exists \ell_1, P'$ s.t.  
-%			    (i)~$\stytraarg{\Gamma}{\ell_1}{\Delta_1}{P}{\Delta'_1}{P'}{1}$,
-%			    (ii)~~$\Hby{\mapa{\ell}} = \hby{\ell_1} \Hby{\ell_2}$ and 
-%			    (iii)~
-%				$\mapt{\Gamma}; \mapt{\Delta_1} 
-%\proves_2 \map{P'}  \wb_2 \mapt{\Delta_2} \proves_2 Q$.
-%$\wbb{\mapt{\Gamma}}{\ell}{\mapt{\Delta'_1}}{\map{P'}}{\mapt{\Delta'_1}}{Q}$.
 		\end{enumerate}
 		
 		\item \emph{Full Abstraction:} 
-%		$\Gamma; \Delta_1 \wb \Delta_2 \proves P \wb Q $ if and only if $\mapt{\Gamma}; \mapt{\Delta_1} \wb \mapt{\Delta_2} \proves \map{P} \wb \map{Q} $.
 		\wbbarg{\Gamma}{}{\Delta_1}{P}{\Delta_2}{Q}{1}
 		if and only if
 		\wbbarg{\mapt{\Gamma}}{}{\mapt{\Delta_1}}{\map{P}}{\mapt{\Delta_2}}{\map{Q}}{2}.
+		
 	\end{enumerate}
 \end{definition}
 
-\smallskip 
-
-\noi Type preservation enables us to focus on encodings which retain the communication structures denoted by (session) types.
-Our operational correspondence builds upon analogous definitions in the untyped setting \cite{}. 
-We used labeled transitions, and so correspondences involve the mapping $\mapa{\cdot}$.
+\noi Type preservation is a distinguishing criteria in our notion of encoding: it enables us to focus on encodings which retain the communication structures denoted by (session) types.
+The other semantic
+criteria build upon analogous definitions in the untyped setting, as we explain now. 
+Operational correspondence, standardly divided into completeness and soundness criteria, is based
+in the formulation given in~\cite{DBLP:journals/iandc/Gorla10,DBLP:conf/icalp/LanesePSS10}. 
 Soundness ensures that the source process is mimicked 
-by its associated encoding; and completeness concerns the opposite direction.
-In the encodability results in the next section, 
-we prove stronger statements, tailored to the specifics of each encoding.
-Finally, we consider the full abstraction as a criteria to demonstrate 
-a stronger positive result. The completeness direction 
-of full abstraction is dropped when we prove the negative result.  
-We now define:
+by its associated encoding; completeness is its converse.
+Rather than reductions, completeness and soundness rely on 
+the typed LTS of Definition~\ref{def:rlts}; labels are considered up to  mapping $\mapa{\cdot}$, which offers flexibility when comparing different  calculi. We require that $\mapa{\cdot}$ preserves  subjects, in accordance with the criteria in~\cite{DBLP:conf/icalp/LanesePSS10}.
+It is worth stressing that 
+the operational correspondence statements given in
+\S\,\ref{sec:positive} for our  encodings 
+ are tailored to the specifics of each encoding, and so they
+ are actually stronger than the criteria given above.
+Finally, following~\cite{San923,DBLP:conf/lics/PalamidessiSVV06},
+we consider full abstraction as an encodability criteria: this results into 
+stronger encodability results. 
+%The completeness direction of full abstraction is dropped when we prove the negative result. 
+From the criteria in Definitions \ref{def:sep} and \ref{def:ep}
+we have the following derived criteria: 
 
-\smallskip 
-
-
-%\begin{remark}[Polyadic \HOp] We can trivially define 
-%a semantic and type preserving encoding from 
-%a polyadic version of \HOp (which extends $\HOp$ to 
-%$V$ to $\tilde{n}$ and $\abs{\tilde{x}}{Q}$) into the monadic \HOp.  
-%Hence we use the polyadic 
-%version of \HOp in the encodings.  
-%\end{remark}
-
-\begin{definition}[Typed Encodings: Good and Basic]\label{def:goodenc}
-We say that the typed encoding 
-	$\enco{\map{\cdot}, \mapt{\cdot}, \mapa{\cdot}}: \tyl{L}_1 \to \tyl{L}_2$ is 
-\begin{enumerate}
-\item \emph{precise}, if it is syntax preserving and semantic preserving (cf. Definitions \ref{def:sep} and  \ref{def:ep}).
-\item \emph{good}, if it is syntax preserving 
-(cf.~Definition \ref{def:sep}),
-barb preserving, and enjoys operational completeness (cf.~Definition \ref{def:ep}-2~a)).
-\end{enumerate}
-\end{definition}
-Precise encodings offer more detailed criteria and used for positive 
-encodability results (\S\,\ref{sec:positive}).
-In contrast, good encodings contains only 
-some of the criteria of precise encodings:    
-this minimal notion will be used 
-for the negative result in \S\,\ref{sec:negative}. Further we have:
-
-\smallskip 
-
-\begin{proposition}[Composability of Semantic Preserving Encodings]
-\label{pro:composition}
-	Let 
-	$\enco{\map{\cdot}^{1}, \mapt{\cdot}^{1}, \mapa{\cdot}^{1}}: \tyl{L}_1 \to \tyl{L}_2$
-	and 
-	$\enco{\map{\cdot}^{2}, \mapt{\cdot}^{2}, \mapa{\cdot}^{2}}: \tyl{L}_2 \to \tyl{L}_3$
-%	$\enco{\cdot}{\cdot}{1}: \tyl{L}_1 \to \tyl{L}_2$ and $\encod{\cdot}{\cdot}{2}: \tyl{L}_2 \to \tyl{L}_3$
-	be two semantic preserving encodings.
-	Then their composition, denoted 
-	$\enco{\map{\cdot}^{1} \circ \map{\cdot}^{2}, \mapt{\cdot}^{1} \circ \mapt{\cdot}^{2}, \mapa{\cdot}^{1}\circ \mapa{\cdot}^{2}}: \tyl{L}_1 \to \tyl{L}_3$
-	is also a semantic preserving encoding.
+\begin{proposition}[Barb Preservation]\label{p:barbpres}
+Let
+	$\enco{\map{\cdot}, \mapt{\cdot}, \mapa{\cdot}}: \tyl{L}_1 \to \tyl{L}_2$
+	be a typed encoding.
+%	\begin{enumerate}[1.]
+%	\item Suppose the typed encoding is name invariant. Then $u \in \fn{P}$ implies $u \in \fn{\map{P}}$.
+%	\item 
+	Suppose the encoding is both
+% name invariant (cf. Definition \ref{def:sep}),
+ operational complete (cf. Definition \ref{def:ep}-2(a)) 
+ and subject preserving (cf. Definition \ref{def:ep}-3).
+ Then, it is also \emph{barb preserving}, i.e., 
+$\Gamma; \Delta \proves_1 P \barb{n}$
+implies
+$\mapt{\Gamma}; \mapt{\Delta} \proves_2 \map{P} \Barb{n}$.
+%\end{enumerate}
 \end{proposition}
+
+%\begin{proof}%[Sketch]
+%%Part (1) follows by contradiction.
+%%Consider two distinct names $v$ and $u$.
+%%Suppose $u \in \fn{P}$. Clearly:
+%%$$P\subst{v}{u} \neq P$$
+%%For the sake of contradiction, now suppose $u \not\in \fn{\map{P}}$.
+%%Then, $\map{P}\subst{v}{u} = \map{P}$ (the substitution has no effect). 
+%%Name invariance  ensures that
+%%$\map{P}\subst{v}{u} = \map{P\subst{v}{u}}$. 
+%%By the inequality
+%%on source processes given above, one has $\map{P}\subst{v}{u} \neq \map{P\subst{v}{u}}$,
+%%a contradiction.
+%%
+%%Part (2) 
+%The proof
+%follows from the definition of barbs, operational completeness, and subject preservation.
+%\qed
+%\end{proof}
+
+
+
+We may now define \emph{precise} and \emph{minimal} typed criteria: 
+
+\begin{definition}[Typed Encodings: Precise and Minimal]\rm\label{def:goodenc}
+We say that 
+	the typed encoding 
+	$\enco{\map{\cdot}, \mapt{\cdot}, \mapa{\cdot}}: \tyl{L}_1 \to \tyl{L}_2$ is 
+	\begin{enumerate}[(i)]
+	\item \emph{precise}, if it is both syntax and semantic preserving (cf. Definitions \ref{def:sep} and  \ref{def:ep}).
+	\item \emph{minimal}, if it is syntax preserving 
+	(cf. Definition \ref{def:sep}),
+	%barb preserving, 
+	and operational complete (cf. Definition \ref{def:ep}-2(a)).
+	\end{enumerate}
+\end{definition}
+
+\noi We now move on present our encodability results, which rely on precise encodings; 
+our non encodability result is presented in \S\,\ref{sec:negative}, using minimal encodings.
+
+%\noi Precise encodings offer more detailed criteria and used for positive 
+%encodability results (\S\,\ref{sec:positive}).
+%In contrast, minimal encodings contains only 
+%some of the criteria of precise encodings:    
+%this reduced notion will be used 
+%for the negative result in \S\,\ref{sec:negative}. 

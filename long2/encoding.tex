@@ -9,16 +9,6 @@ extending to a typed setting existing criteria for untyped processes (as in, e.g
 \cite{Nestmann00,Palamidessi03,DBLP:conf/lics/PalamidessiSVV06,DBLP:journals/iandc/Gorla10,DBLP:conf/icalp/LanesePSS10}). 
 We first define a typed calculus parameterised by a syntax, operational semantics, and typing.
 
-% We define the formal notion of \emph{encoding} that we
-%shall use in the following section.
-%Known definitions of encodings are given for untyped calculi,
-%and are thus inappropriate for our purposes.
-%To this end, 
-%here we introduce abstract notions of calculi and encodings which are suited to our typed setting: they
-%essentially extend known criteria for calculi comparison, with 
-%additional information provided by types.
-
-
 \begin{definition}[Typed Calculus]\label{d:tcalculus}\rm
 	A \emph{typed calculus} $\tyl{L}$ is a tuple
           $\calc{\CAL}{\cal{T}}{\hby{\ell}}{\wb}{\proves}$
@@ -28,39 +18,7 @@ respectively; and $\hby{\ell}$, $\wb$, and $\proves$
 \end{definition}
 
 
-%In general, we may define:
 
-%\begin{definition}[Typed Calculus]\label{d:tcalculus}\rm
-%	A \emph{typed calculus} $\tyl{L}$ is a tuple:
-%%
-%	\[
-%		\calc{L}{T}{\hby{\ell}}{\wb}{\proves}
-%	\]
-%%
-%	where $L$ and $T$ are sets of processes and types, respectively.
-%	Also, $\hby{\ell}$, $\wb$, and $\proves$ 
-%	denote a transition semantics, a process equivalence, 
-%	and a type system for $L$ processes, respectively. 
-%\end{definition}
-
-
-%The typed calculi we considered here
-%derive from the definition of \HOp.
-%Subcalculi of 
-%\HOp share the same
-%type system (as in \S\,\ref{s:types}),
-%transition semantics (cf.~Def.~\ref{d:tlts}) 
-%with labels $\ell$ (as in  \S\,\ref{ss:lts}).
-%We use Higher-Order Bisimulation
-%(cf.~Def.~\ref{def:HO_bisim}) except in the case
-%of the sub-calculus  \sessp, which uses the
-%First-Order Bisimulation (cf.~Def.~\ref{def:FO_bisim})
-%
-%In the following, when writing $\tyl{L}_i$ we tacitly
-%assume the existence of appropriate 
-%calculus $L_i$, type syntax $T_i$ and behavioral relation $\wb$,
-%keeping all other elements unchanged.
-%We now define the notion of encoding over typed calculi.
 
 \noi Our notion of encoding considers a mapping on processes, 
 types, and transition labels.  
@@ -78,26 +36,6 @@ types, and transition labels.
 \smallskip 
 
 
-%Our notion of encoding considers a mapping on processes, 
-%types, 
-%and transition labels.  
-%We will often assume that  $\mapt{\cdot}$ extends to typing
-%environments as expected. This way, e.g., $\mapt{\Delta \cat u:S} = \mapt{\Delta} \cat u:\mapt{S}$.
-%As we will define several typed encodings,  
-%in the following we use number decorations on these 
-%mappings to distinguish them.
-%
-%We require that a typed encoding should be 
-%{\em good}, which formally means adherence to
-%syntactic criteria, but
-%also preservation of typing and operational semantics.
-%The following definition gives syntactic criteria for (typed) encodings.
-%We require some extra notation.
-%Let $\sigma$ denote a substitution of names for names (a renaming, in the usual sense). Given environments $\Delta$ and $\Gamma$,
-%we write $\sigma(\Delta)$ and $\sigma(\Gamma)$ to denote the effect of applying $\sigma$ on the 
-%domains of $\Delta$ and $\Gamma$.
-%(Clearly, $\sigma(\Gamma)$ concerns only shared names in $\Gamma$: process and recursion variables in $\Gamma$ are not affected by $\sigma$.)
-%% \\ \jp{Still need to define what renaming policies makes sense for our typed setting!}
 
 
 \noi We will often assume that  $\mapt{\cdot}$ extends to typing
@@ -172,13 +110,11 @@ to denote the \emph{subject} of the action.
 	$\Gamma; \emptyset; \Delta \proves_1 P \hastype \Proc$ then 
 	$\mapt{\Gamma}; \emptyset; \mapt{\Delta} \proves_2 \map{P} \hastype \Proc$,  
 	for any   $P$ in $\CAL_1$.
+			\item \emph{Subject preserving}: if $\mathsf{sub}(\ell) = u$ then $\mathsf{sub}(\mapa{\ell}) =u$.
+
 
 	\item \emph{Operational Correspondence}: If $\Gamma; \emptyset; \Delta \proves_1 P \hastype \Proc$ then
 		\begin{enumerate}
-%			\item	Completeness: \\
-%			    If $P \red_1 P'$ then $\exists\, \Delta'$ s.t.
-%				$\map{P} \Red_2 \map{P'}$ and
-%				$\mapt{\Gamma}; \emptyset; \mapt{\Delta'} \proves_2 \map{P'} \hastype \Proc$.
 			\item	Completeness: 
 			   If  
 $\stytraarg{\Gamma}{\ell_1}{\Delta_1}{P}{\Delta'_1}{P'}{1}$
@@ -186,22 +122,8 @@ $\stytraarg{\Gamma}{\ell_1}{\Delta_1}{P}{\Delta'_1}{P'}{1}$
  (i)~$\wtytraarg{\mapt{\Gamma}}{\ell_2}{\mapt{\Delta_1}}{\map{P}}{\mapt{\Delta'_1}}{Q}{2}$,
 			    (ii)~$\ell_2 = \mapa{\ell_1}$, 
 			    and \\
-				%$\horel{\mapt{\Gamma}}{\mapt{\Delta'}}{Q}{\wb}{\mapt{\Delta'}}{\mapt{P'}}$.
 				(iii)~${\mapt{\Gamma}};{\mapt{\Delta'}}\proves_2 {Q}{\wb_2}
 {\mapt{\Delta'}}\proves_2 {\map{P'}}$.
-				
-%			    \item if  $\stytra{\Gamma}{\ell_1}{\Delta}{P}{\Delta'}{P'}$
-%				then \\ $\exists \ell_2$ s.t. 
-%				$\wtytra{\mapt{\Gamma}}{\ell_2}{\mapt{\Delta}}{P}{\mapt{\Delta'}}{Q}$,
-%				$\ell_2 = \mapa{\ell_1}$,
-%				and
-%				$\horel{\mapt{\Gamma}}{\mapt{\Delta'}}{Q}{\wb}{\mapt{\Delta'}}{\mapt{P'}}$.
-				
-			    				
-%			\item Soundness : \\
-%			    If $\map{P} \red_2 Q$ then
-%				$\exists P'$ s.t. $P \red_1 P'$ and 
-%				$\mapt{\Gamma}; \mapt{\Delta_1} \wb_2 \mapt{\Delta_2} \proves_2 \map{P'} \wb_2 Q$.
 				
 			\item	Soundness:   
 				If  $\wtytraarg{\mapt{\Gamma}}{\ell_2}{\mapt{\Delta}}{\map{P}}{\mapt{\Delta'}}{Q}{2}$
@@ -212,23 +134,13 @@ $\stytraarg{\Gamma}{\ell_1}{\Delta_1}{P}{\Delta'_1}{P'}{1}$
 ${\mapt{\Gamma}};{\mapt{\Delta'}}\proves_2 {\map{P'}}{\wb_2}
 {\mapt{\Delta'}}\proves_2 {Q}$.
 
-%			If  $\wtytraarg{\mapt{\Gamma}}{\ell_2}{\mapt{\Delta_1}}{\map{P}}{\mapt{\Delta'_1}}{Q}{2}$
-%			   then $\exists \ell_1, P'$ s.t.  
-%			    (i)~$\stytraarg{\Gamma}{\ell_1}{\Delta_1}{P}{\Delta'_1}{P'}{1}$,
-%			    (ii)~~$\Hby{\mapa{\ell}} = \hby{\ell_1} \Hby{\ell_2}$ and 
-%			    (iii)~
-%				$\mapt{\Gamma}; \mapt{\Delta_1} 
-%\proves_2 \map{P'}  \wb_2 \mapt{\Delta_2} \proves_2 Q$.
-%$\wbb{\mapt{\Gamma}}{\ell}{\mapt{\Delta'_1}}{\map{P'}}{\mapt{\Delta'_1}}{Q}$.
 		\end{enumerate}
 		
 		\item \emph{Full Abstraction:} 
-%		$\Gamma; \Delta_1 \wb \Delta_2 \proves P \wb Q $ if and only if $\mapt{\Gamma}; \mapt{\Delta_1} \wb \mapt{\Delta_2} \proves \map{P} \wb \map{Q} $.
 		\wbbarg{\Gamma}{}{\Delta_1}{P}{\Delta_2}{Q}{1}
 		if and only if
 		\wbbarg{\mapt{\Gamma}}{}{\mapt{\Delta_1}}{\map{P}}{\mapt{\Delta_2}}{\map{Q}}{2}.
 		
-		\item \emph{Subject preserving}: if $\mathsf{sub}(\ell) = u$ then $\mathsf{sub}(\mapa{\ell}) =u$.
 	\end{enumerate}
 \end{definition}
 
@@ -253,13 +165,14 @@ stronger encodability results.
 From the criteria in Definitions \ref{def:sep} and \ref{def:ep}
 we have the following derived criteria: 
 
-\begin{proposition}[Derived Criteria]
+\begin{proposition}[Derived Criteria]\label{p:barbpres}
 Let
 	$\enco{\map{\cdot}, \mapt{\cdot}, \mapa{\cdot}}: \tyl{L}_1 \to \tyl{L}_2$
 	be a typed encoding.
-	\begin{enumerate}[1.]
-	\item Suppose the typed encoding is name invariant. Then $u \in \fn{P}$ implies $u \in \fn{\map{P}}$.
-	\item Suppose the typed encoding is both
+%	\begin{enumerate}[1.]
+%	\item Suppose the typed encoding is name invariant. Then $u \in \fn{P}$ implies $u \in \fn{\map{P}}$.
+%	\item 
+	Suppose the encoding is both
 % name invariant (cf. Definition \ref{def:sep}),
  operational complete (cf. Definition \ref{def:ep}-2(a)) 
  and subject preserving (cf. Definition \ref{def:ep}-3).
@@ -267,23 +180,25 @@ Let
 $\Gamma; \Delta \proves_1 P \barb{n}$
 implies
 $\mapt{\Gamma}; \mapt{\Delta} \proves_2 \map{P} \Barb{n}$.
-\end{enumerate}
+%\end{enumerate}
 \end{proposition}
 
-\begin{proof}[Sketch]
-Part (1) follows by contradiction.
-Consider two distinct names $v$ and $u$.
-Suppose $u \in \fn{P}$. Clearly:
-$$P\subst{v}{u} \neq P$$
-For the sake of contradiction, now suppose $u \not\in \fn{\map{P}}$.
-Then, $\map{P}\subst{v}{u} = \map{P}$ (the substitution has no effect). 
-Name invariance  ensures that
-$\map{P}\subst{v}{u} = \map{P\subst{v}{u}}$. 
-By the inequality
-on source processes given above, one has $\map{P}\subst{v}{u} \neq \map{P\subst{v}{u}}$,
-a contradiction.
-
-Part (2) follows from the definition of barbs, operational completeness, and subject preservation.
+\begin{proof}%[Sketch]
+%Part (1) follows by contradiction.
+%Consider two distinct names $v$ and $u$.
+%Suppose $u \in \fn{P}$. Clearly:
+%$$P\subst{v}{u} \neq P$$
+%For the sake of contradiction, now suppose $u \not\in \fn{\map{P}}$.
+%Then, $\map{P}\subst{v}{u} = \map{P}$ (the substitution has no effect). 
+%Name invariance  ensures that
+%$\map{P}\subst{v}{u} = \map{P\subst{v}{u}}$. 
+%By the inequality
+%on source processes given above, one has $\map{P}\subst{v}{u} \neq \map{P\subst{v}{u}}$,
+%a contradiction.
+%
+%Part (2) 
+The proof
+follows from the definition of barbs, operational completeness, and subject preservation.
 \qed
 \end{proof}
 
@@ -309,23 +224,11 @@ encodability results (\S\,\ref{s:positive}).
 In contrast, minimal encodings contains only 
 some of the criteria of precise encodings:    
 this reduced notion will be used 
-for the negative result in \S\,\ref{s:negative}. Further we have:
-	
+for the negative result in \S\,\ref{s:negative}. 
 
-%\begin{remark}\label{r:multilabels}
-%	We  assume that if 
-%	$P \hby{\ell} P'$ and $\mapa{\ell} = \{\ell_1, \ell_2,  \cdots, \ell_m\}$ then
-%	$\map{P} \Hby{\mapa{\ell}} \map{P'}$
-%	should be understood as
-%	$\map{P} \Hby{\ell_1} P_1 \Hby{\ell_2} P_2 \cdots \Hby{\ell_m} P_m =  \map{P'}$,
-%	for some
-%	$P_1, P_2, \ldots, P_m$.
-%	This is useful for the encoding of polyadic into monadic communication.
-%\end{remark}
-
-%We show that the composition of encodings is closed on the above properties.
-
+Further we have:
 \begin{proposition}[Composability of Precise Encodings]\rm
+	\label{prop:enc_composability}
 	Let %encodings 
 	$\enco{\map{\cdot}^{1}, \mapt{\cdot}^{1}, \mapa{\cdot}^{1}}: \tyl{L}_1 \to \tyl{L}_2$
 	and 
