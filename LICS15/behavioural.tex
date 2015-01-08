@@ -10,7 +10,7 @@ barbed congruence.
 \myparagraph{Labels}
 \noi We define a labelled transition relation (LTS) over
 untyped processes. 
-Later with the environment transition semantics, 
+Later on, using the \emph{environmental} transition semantics, 
 we can define a typed transition relation to formalise 
 how a process interacts with a process in its environment. The interaction
 is defined on action $\ell$:
@@ -23,27 +23,28 @@ is defined on action $\ell$:
 			\bnfbar \bactbra{n}{l} 
 \end{array}
 \]
-\noi The internal action is defined on label $\tau$.
+\noi The internal action is defined by label $\tau$.
 Action $\news{\tilde{m}} \bactout{n}{V}$ denotes the sending of value $V$ over channel $n$ with
 names $\tilde{m}$ being restricted.
-Dually the action for the reception of values is 
+(When $\tilde{m}$ is empty we write $\bactout{n}{V}$.)
+Dually, the action for value reception is 
 $\bactinp{n}{V}$.
-We also defined actions for selecting a label $l$, 
-$\bactsel{n}{l}$ and branching on a label
-$n$, $\bactbra{s}{l}$.
-We use $\fn{\ell}$ and $\bn{\ell}$ to denote 
-a set of free and bound names in $\ell$. 
+We also have actions for selecting 
+and branching on
+a label $l$ ($\bactsel{n}{l}$ and $\bactbra{n}{l}$, resp.)
+$\fn{\ell}$ and $\bn{\ell}$ denote 
+ sets of free/bound names in $\ell$, resp.
 %and set $\mathsf{n}(\ell)=\bn{\ell}\cup \fn{\ell}$. 
 
-The dual action relation is the symmetric relation $\asymp$, that satisfies the rules:
+Dual actions, defined below, occur on subjects that are dual between them and carry the same
+object. Thus, output action is dual with input action and 
+select action is dual with branch action.
+Formally, the dual action relation is the symmetric relation $\asymp$ that satisfies the rules:
 \[
 	\bactsel{n}{l} \asymp \bactbra{\dual{n}}{l}
 	\qquad
 	\news{\tilde{m}} \bactout{n}{V} \asymp \bactinp{\dual{n}}{V}
 \]
-Dual actions happen on subjects that are dual between them and carry the same
-object. Furthermore output action is dual with input action and 
-select action is dual with branch action.
 
 \smallskip
 
@@ -109,48 +110,48 @@ select action is dual with branch action.
 %		}\ \ltsrule{RPar}
 	\end{array}
 	\]
-We omit $\ltsrule{Par${}_R$}$. 
-	\caption{The Untyped (Early) Labelled Transition System \label{fig:untyped_LTS}}
+%We omit $\ltsrule{Par${}_R$}$. 
+	\caption{The Untyped (Early) Labelled Transition System. We omit rule $\ltsrule{Par${}_R$}$.  \label{fig:untyped_LTS}}
 \Hline
 \end{figure}
 \myparagraph{LTS over Untyped Processes}
-The labelled transition system (LTS) over untyped processes, 
-written by $P_1 \by{\ell} P_2$,  is defined in
+The labelled transition system (LTS) over untyped processes
+is defined in
 Fig.~\ref{fig:untyped_LTS}. 
+We write $P_1 \by{\ell} P_2$ with the usual meaning.
 The rules are standard 
 \cite{DBLP:conf/forte/KouzapasYH11,KY13,dkphdthesis}.
 A process with a send prefix can
 interact with the environment with a send action that carries a value
-$V$ as in rule $\ltsrule{Out}$.  Dually in rule $\ltsrule{In}$ a
+$V$ as in rule $\ltsrule{Out}$.  Dually, in rule $\ltsrule{In}$ a
 received prefixed process can observe a receive action of a value $V$.
 Select and branch prefixed processes observe the select and branch
-actions in rules $\ltsrule{Sel}$ and $\ltsrule{Bra}$ respectively.
+actions in rules $\ltsrule{Sel}$ and $\ltsrule{Bra}$, respectively.
 Rule $\ltsrule{Alpha}$ closes the LTS
 under alpha-renaming.
 Rule $\ltsrule{Res}$ closes the LTS under the name creation operator
 provided that the restricted name does not occur free in the
 observable action. 
-If a restricted name occurs free in and an output
-action then the name is added as in the bound name list of the action
-and the continuation process performs scope opening as described in
-rule $\ltsrule{New}$.  
+If a restricted name occurs free in an output
+action then the name is added in the bound name list of the action
+and the continuation process performs scope opening (rule $\ltsrule{New}$).  
 Rule $\ltsrule{Tau}$ states that if two parallel processes can perform
 dual actions then the two actions can synchronise to observe an
-internal transition.  Rules $\ltsrule{Par${}_L$}$ 
-closes the LTS under the parallel operator provided that the observable
-action does not shared any bound names with the parallel processes.
+internal transition.  Rules $\ltsrule{Par${}_L$}$ and $\ltsrule{Par${}_R$}$ 
+close the LTS under the parallel operator provided that the observable
+action does not share any bound names with the parallel processes.
 
-\subsection{Environment Labelled Transition System}
+\subsection{Environmental Labelled Transition System}
 \label{ss:elts}
 \noi 
-We define a labelled transition relation between 
+Fig.~\ref{fig:envLTS}
+defines a labelled transition relation between 
 a triple of environments, 
-written by  
-$(\Gamma, \Lambda_1, \Delta_1) \by{\ell} (\Gamma, \Lambda_2, \Delta_2)$, 
-in Fig.~\ref{fig:envLTS}, 
-as the extension of the transition systems
+denoted
+$(\Gamma, \Lambda_1, \Delta_1) \by{\ell} (\Gamma, \Lambda_2, \Delta_2)$.
+It extends the transition systems
 in \cite{DBLP:conf/forte/KouzapasYH11,KY13,dkphdthesis} 
-to the higher-order sessions. 
+to higher-order sessions. 
 
 Rules $\eltsrule{SRv}$ and $\eltsrule{ShRv}$ describe the input action
 $\bactinp{n}{V}$ ($n$ session or shared channel respectively) on the
@@ -160,7 +161,7 @@ expect the resulting type tuple to contain the values that consist
 with value $V$. Note that the condition $\dual{s} \notin \dom{\Delta}$
 in $\eltsrule{SRv}$ ensures that 
 the dual channel $\dual{s}$ should not be
-present in the session environment, since if it was present
+present in the session environment, since if it were present
 the only communication that could take place is the interaction
 between the two endpoints (using $\eltsrule{Tau}$ below).
 
@@ -178,7 +179,7 @@ that the dual endpoints of $\tilde{m}$ appear in
 the resulting session environment. Similarly for shared 
 names in $\tilde{m}$ that are extruded.  
 All free values used for typing $V$ are subtracted from the
-resulting type tuple. Also the prefix of session $s$ is consumed
+resulting type tuple. The prefix of session $s$ is consumed
 by the action.
 
 Similarly, an output on a shared name is described
@@ -193,8 +194,8 @@ rules is that the dual endpoint is not present in the session
 environment and furthermore the action labels are present
 in the type.
 Hidden transitions do not change the session environment
-or they follow the reduction on the session
-environment (Definition~\ref{def:ses_red}) as seen in rule
+or they follow the reduction on session
+environments (Definition~\ref{def:ses_red}), as seen in rule
 $\eltsrule{Tau}$.
 
 %A second environment LTS, denoted $\hby{\ell}$,
@@ -350,7 +351,7 @@ $\eltsrule{Tau}$.
 %		}
 	\end{array}
 	\]
-\caption{Labelled Transition Semantics for Typed Environments 
+\caption{Labelled Transition Semantics for Typed Environments. 
 \label{fig:envLTS}}
 \Hline
 \end{figure}
