@@ -9,10 +9,13 @@ with recursions (\sessp) (\S\,\ref{subsec:HO_to_sesspi}).
 \label{subsec:HOpi_to_HO}
 \noi We show that $\HO$ is expressive enough to
 represent the the full \HOp calculus.
-The main challenge here is to encode recursions, 
+The main challenge here is to encode (1) name passing 
+and (2) recursions, 
 for which 
-we use abstraction passing semantics, where
-we copy a process upon reception. The case of linear abstraction passing
+we use abstraction passing semantics. For (1), we pass  
+a simple abstraction which enables to use the name upon application. 
+For (2), we 
+copy a process upon reception; the case of linear abstraction passing
 presents a limitation due to the fact that we can{\em not} 
 copy a linear abstraction.
 To overcome this problem we define a preliminary tool which is a mapping from
@@ -149,7 +152,9 @@ free names in $P$.
 \caption{\label{f:auxmap} A triger mapping}
 \end{figure}
 
-Given a process $P$ with $\fn{P} = m_1, \cdots, m_n$, we are interested in its associated abstraction, which is defined as
+\smallskip 
+
+\noi Given a process $P$ with $\fn{P} = m_1, \cdots, m_n$, we are interested in its associated abstraction, which is defined as
 $\abs{x_1, \cdots, x_n}{\auxmapp{P}{{}}{\epsilon} }$, where $\vmap{m_j} = x_j$, for all $j \in \{1, \ldots, n\}$. 
 
 %This transformation from processes into abstractions can be reverted by
@@ -192,10 +197,12 @@ $\abs{x_1, \cdots, x_n}{\auxmapp{P}{{}}{\epsilon} }$, where $\vmap{m_j} = x_j$, 
 	%\]
 	%\[
 	%\begin{array}{rcll}
-	\noindent{\bf Labels:} \quad \quad 
-		\mapa{\bactout{n}{m}}^{1} &\!\!\defeq\!\!&   \bactout{n}{\abs{z}{\,\binp{z}{x} \appl{x}{m}} } \\
-		\mapa{\bactinp{n}{m}}^{1} &\!\!\defeq\!\!&   \bactinp{n}{\abs{z}{\,\binp{z}{x} \appl{x}{m}} } \\
-			\mapa{\bactout{n}{\abs{{x}}{P}}}^{1} &\!\!\defeq\!\!& \bactout{n}{\abs{{x}}{\pmapp{P}{1}{\es}}}\\
+	\noindent{\bf Labels:} \quad 
+		\mapa{(\nu \tilde{m})\bactout{n}{m}}^{1} &\!\!\defeq\!\!&   
+(\nu \tilde{m})\bactout{n}{\abs{z}{\,\binp{z}{x} (\appl{x}{m})} } \\
+		\mapa{\bactinp{n}{m}}^{1} &\!\!\defeq\!\!&   \bactinp{n}{\abs{z}{\,\binp{z}{x} (\appl{x}{m})} } \\
+	\mapa{(\nu \tilde{m})\bactout{n}{\abs{{x}}{P}}}^{1} &\!\!\defeq\!\!& 
+(\nu \tilde{m})\bactout{n}{\abs{{x}}{\pmapp{P}{1}{\es}}}\\
 			\mapa{\bactinp{n}{\abs{{x}}{P}}}^{1} &\!\!\defeq\!\!& \bactinp{n}{\abs{{x}}{\pmapp{P}{1}{\es}}}\\
 			\mapa{\bactsel{n}{l} }^{1} \!\defeq\! \bactsel{n}{l} 
 	\quad 
@@ -238,8 +245,8 @@ $\abs{x_1, \cdots, x_n}{\auxmapp{P}{{}}{\epsilon} }$, where $\vmap{m_j} = x_j$, 
 & &  \Par \bbout{\dual{s}}{ \abs{(\vmap{\tilde{n}},y)}{\appl{z_X}{(\vmap{\tilde{n}}, y)}}} \inact}  \quad (\tilde{n} = f(z_\rvar{X})) \\
 \end{array}
 \]
-The input bound variable $x$ is annotated by a type to distinct the first-order and higher-order cases. We use the polyadic name abstraction and applications for a simplicity of the presentation. They are formally encoded in 
-\S~\ref{sec:}.
+The input bound variable $x$ is annotated by a type to distinct the first-order and higher-order cases. We use the polyadic name abstraction for a simplicity of the presentation. They are formally encoded in 
+\S~\ref{sec:extension}.
 \caption{\label{f:enc:hopi_to_ho}
 Encoding of \HOp into \HO.
 %(cf.~Defintion~\ref{d:enc:fotohorec}).
@@ -251,6 +258,8 @@ Encoding of \HOp into \HO.
 %are homomorphisms for the other processes/types/labels. 
 }
 \end{figure}
+
+\smallskip 
 
 \begin{definition}[Full Higher-Order Pi into Higher-Order]
 \label{d:enc:hopitoho}
@@ -264,11 +273,62 @@ ${\cal{T}}_1$ and ${\cal{T}}_2$ are sets of types of $\HOp$
 and $\HO$, respectively, 
 the typing $\proves$ is defined in 
 Fig.~\ref{fig:typerulesmy} 
-and the equivalence $\hwb$ is defined in Definition~\ref{d:bisim}.
+and $\hwb$ is defined in Definition~\ref{d:hbw}. 
 We define the typed encoding 
-the typed encoding $\enco{\map{\cdot}^{1}, \mapt{\cdot}^{1}, \mapa{\cdot}^{1}}: \HOp \to \HO$ in 
-in Fig.~\ref{f:enc:hopi_to_ho}. 
+$\enco{\map{\cdot}^{1}, \mapt{\cdot}^{1}, \mapa{\cdot}^{1}}: \HOp \to \HO$ in 
+Fig.~\ref{f:enc:hopi_to_ho}. 
+We assume that the mapping $\mapt{\cdot}^{1}$ on types is extended to 
+session environments $\Delta$
+and
+shared environments $\Gamma$ homomorphically with: 
+\[
+	\begin{array}{rcll}
+%	    \mapt{\Delta \cat s: S}^{1} & =  & \mapt{\Delta}^{1} \cat s:\mapt{S}^{1} & \\
+%		\mapt{\Gamma \cat u: \chtype{S}}^{1} & =  & \mapt{\Gamma}^{1} \cat u:\chtype{\mapt{S}^{1}} & \\
+%		\mapt{\Gamma \cat u: \chtype{L}}^{1} & = &  \mapt{\Gamma}^{1} \cat u:\chtype{\mapt{L}^{1}} & \\
+		\tmap{\Gamma \cat \varp{X}:\Delta}{1} & = & \tmap{\Gamma}{1} \cat x:\shot{(\tilde{S}_{\Delta}\,,\,S^*)}
+	\end{array}
+\]
+where 
+$S^* = \trec{t}{\btinp{\shot{(S_1,...,S_m,\vart{t})}} \tinact}$
+with $\Delta = \{n_1:S_1, \ldots, n_m:S_m\}$. 
 \end{definition}
+
+\smallskip 
+\noi Note that $\varp{X}:\Delta}{1}$ is mapped to a recursive session type 
+which carries type variable as the last argument.  
+
+\noi We explain the mapping in Fig.~\ref{f:enc:hopi_to_ho}, forcussing 
+on {\em name passing} ($\pmapp{\bout{u}{w} P}{1}{f}$) and  
+{\em recursions} ($\pmapp{\recp{X}{P}}{1}{f}$ and $\pmapp{z_\rvar{X}}{1}{f}$). 
+
+{\bf\em Name passing:}
+A name $m$ is being passed as an input
+guarded abstraction. 
+The input prefix receives an abstraction and
+continues with the application of $n$ over the received abstraction.
+On the receiver side $\binp{u}{x} P$ 
+the encoding realises a mechanism that (i) receives
+the input guarded abstraction, then (ii) applies it on a fresh session endpoint $s$, 
+and (iii) uses
+the dual endpoint $\dual{s}$ to send the continuation $P$ as the abstraction
+$\abs{x}{P}$. 
+As a result, name substitution is achieved via name application.
+
+
+{\bf\em Recursions:}
+A process $P$ is parallel composed, and also being passed as an input
+guarded abstraction, parameterised also by a sequence of trigger names $\tilde{n}$. 
+We record a mapping from $z_X$ (which is a fresh variable of $X$) 
+to $\tilde{n}$, so that 
+when the abstraction is passed to 
+$\pmapp{z_\rvar{X}}{1}{f}$ (which appears in 
+ 
+
+ 
+
+
+
 
 
 
@@ -308,7 +368,7 @@ in Fig.~\ref{f:enc:ho_to_sessp}.
 %\[
 %\begin{array}{rcll}
 \noindent{\bf Labels:}\quad \quad 
-		\mapa{\bactout{u}{\abs{ x}{P}} }^2  & \defeq & \news{a} \bactout{u}{a} \\
+		\mapa{(\nu \tilde{m})\bactout{u}{\abs{ x}{P}} }^2  & \defeq & (\nu \tilde{m})\news{a} \bactout{u}{a} \\
 		\mapa{\bactinp{u}{\abs{ x}{P}} }^2 &  \defeq & \bactinp{u}{a}
 \\[1mm]
 \hline
