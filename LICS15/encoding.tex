@@ -1,22 +1,24 @@
 % !TEX root = main.tex
-This section defines the formal notion of \emph{encoding}, 
+\noi Here we define the formal notion of \emph{encoding}, 
 extending to a typed setting existing criteria for untyped processes (as in, e.g.,
 \cite{Nestmann00,Palamidessi03,DBLP:conf/lics/PalamidessiSVV06,DBLP:journals/iandc/Gorla10,DBLP:conf/icalp/LanesePSS10}). 
 We first define a typed calculus parameterised by a syntax, operational semantics, and typing.
+%\smallskip 
 
 \begin{definition}[Typed Calculus]\label{d:tcalculus}\rm
 	A \emph{typed calculus} $\tyl{L}$ is a tuple
           $\calc{\CAL}{\cal{T}}{\hby{\ell}}{\wb}{\proves}$
 	where $\CAL$ and $\cal{T}$ are sets of processes and types, 
 respectively; and $\hby{\ell}$, $\wb$, and $\proves$ 
-	denote a transition system, a typed process equivsalence, and a type system for $\CAL$ processes, respectively. 
+	denote a transition system, a typed process equivalence, and a type system for $\CAL$ processes, respectively. 
 \end{definition}
 
 
+%\smallskip 
 
-
-\noi Our notion of encoding considers a mapping on processes, 
-types, and transition labels.  
+%\noi 
+Our notion of encoding considers mappings on processes, 
+types, and transition labels: 
 
 \begin{definition}[Typed Encoding]\rm
         Let  $\tyl{L}_i=\calc{\CAL_i}{{\cal{T}}_i}{\hby{\ell}}{\wb_i}{\proves_i}$
@@ -38,11 +40,11 @@ environments as expected. This way, e.g., $\mapt{\Delta \cat u:S} = \mapt{\Delta
 
 Now we introduce two classes of typed encodings, which 
 serve different purposes. Both  consist of syntactic and semantic criteria 
-proposed for untyped processes~\cite{Palamidessi03,DBLP:journals/iandc/Gorla10,DBLP:conf/icalp/LanesePSS10}, here extended to account for (higher-order) session types.
-First, for stating stronger positive encodability results, 
+first proposed for untyped processes~\cite{Palamidessi03,DBLP:journals/iandc/Gorla10,DBLP:conf/icalp/LanesePSS10}, and here extended to account for (higher-order) session types.
+First, for stating stronger positive encodability results in \S\,\ref{sec:positive}, 
 we define the notion of {\em precise} encodings.
 Then, 
-with the aim of proving strong non-encodability results, 
+with the aim of proving the strong non-encodability result in \S\,\ref{sec:negative}, 
 precise encodings are relaxed into the weaker {\em minimal} encodings. 
 
 We first state the 
@@ -56,8 +58,8 @@ domains of $\Delta$ and $\Gamma$
 
 \begin{definition}[Syntax Preserving Encoding]\rm
 	\label{def:sep}
-	We say that 
-	the typed encoding 
+	%We say that 
+	The typed encoding 
 	$\enco{\map{\cdot}, \mapt{\cdot}, \mapa{\cdot}}: \tyl{L}_1 \to \tyl{L}_2$ is \emph{syntax preserving}
 	if it is:
 	
@@ -79,13 +81,13 @@ domains of $\Delta$ and $\Gamma$
 		for any injective renaming  of names $\sigma$.
 	\end{enumerate}
 \end{definition}
-Homomorphism wrt parallel composition (used in, e.g.,~\cite{Palamidessi03,DBLP:conf/lics/PalamidessiSVV06})
+Homomorphism wrt parallel (used in, e.g.,~\cite{Palamidessi03,DBLP:conf/lics/PalamidessiSVV06})
 expresses that encodings should preserve the distributed topology of source processes. This criteria 
  is appropriate for both encodability and non encodability results; in our setting, 
 it admits an elegant formulation, also induced by rules for typed composition.
 Compositionality wrt restriction is 
 also naturally supported by typing and turns out to be 
-useful in our encodability results (see the following section).
+useful in our encodability results (see \S\,\ref{sec:positive}).
 Our name invariance criteria follows the one given in~\cite{DBLP:journals/iandc/Gorla10,DBLP:conf/icalp/LanesePSS10}. 
 Next we define semantic criteria for typed encodings.
 
@@ -113,7 +115,7 @@ to denote the \emph{subject} of the action.
 			\item	Completeness: 
 			   If  
 $\stytraarg{\Gamma}{\ell_1}{\Delta_1}{P}{\Delta'_1}{P'}{1}$
-			   then $\exists \ell_2, Q$ s.t. \\
+			   then $\exists \ell_2, Q$ s.t. 
  (i)~$\wtytraarg{\mapt{\Gamma}}{\ell_2}{\mapt{\Delta_1}}{\map{P}}{\mapt{\Delta'_1}}{Q}{2}$,
 			    (ii)~$\ell_2 = \mapa{\ell_1}$, 
 			    and \\
@@ -122,7 +124,7 @@ $\stytraarg{\Gamma}{\ell_1}{\Delta_1}{P}{\Delta'_1}{P'}{1}$
 				
 			\item	Soundness:   
 				If  $\wtytraarg{\mapt{\Gamma}}{\ell_2}{\mapt{\Delta}}{\map{P}}{\mapt{\Delta'}}{Q}{2}$
-				then $\exists \ell_1, P'$ s.t.  \\
+				then $\exists \ell_1, P'$ s.t.  
 				(i)~$\stytraarg{\Gamma}{\ell_1}{\Delta}{P}{\Delta'}{P'}{1}$,
 				(ii)~$\ell_2 = \mapa{\ell_1}$, and
 				(iii)~
@@ -145,12 +147,12 @@ criteria build upon analogous definitions in the untyped setting, as we explain 
 Operational correspondence, standardly divided into completeness and soundness criteria, is based
 in the formulation given in~\cite{DBLP:journals/iandc/Gorla10,DBLP:conf/icalp/LanesePSS10}. 
 Soundness ensures that the source process is mimicked 
-by its associated encoding; completeness concerns the opposite direction.
+by its associated encoding; completeness is its converse.
 Rather than reductions, completeness and soundness rely on 
-the typed LTS of Definition~\ref{d:restlts}; labels are considered up to  mapping $\mapa{\cdot}$, which offers flexibility when comparing different subcalculi of \HOp. We require that $\mapa{\cdot}$ preserves communication subjects, in accordance with the criteria in~\cite{DBLP:conf/icalp/LanesePSS10}.
+the typed LTS of Definition~\ref{def:rlts}; labels are considered up to  mapping $\mapa{\cdot}$, which offers flexibility when comparing different  calculi. We require that $\mapa{\cdot}$ preserves  subjects, in accordance with the criteria in~\cite{DBLP:conf/icalp/LanesePSS10}.
 It is worth stressing that 
 the operational correspondence statements given in
- the next section for our  encodings 
+\S\,\ref{sec:positive} for our  encodings 
  are tailored to the specifics of each encoding, and so they
  are actually stronger than the criteria given above.
 Finally, following~\cite{San923,DBLP:conf/lics/PalamidessiSVV06},
@@ -160,7 +162,7 @@ stronger encodability results.
 From the criteria in Definitions \ref{def:sep} and \ref{def:ep}
 we have the following derived criteria: 
 
-\begin{proposition}[Derived Criteria]\label{p:barbpres}
+\begin{proposition}[Barb Preservation]\label{p:barbpres}
 Let
 	$\enco{\map{\cdot}, \mapt{\cdot}, \mapa{\cdot}}: \tyl{L}_1 \to \tyl{L}_2$
 	be a typed encoding.
@@ -214,9 +216,12 @@ We say that
 	\end{enumerate}
 \end{definition}
 
-Precise encodings offer more detailed criteria and used for positive 
-encodability results (\S\,\ref{sec:positive}).
-In contrast, minimal encodings contains only 
-some of the criteria of precise encodings:    
-this reduced notion will be used 
-for the negative result in \S\,\ref{sec:negative}. 
+\noi We now move on present our encodability results, which rely on precise encodings; 
+our non encodability result is presented in \S\,\ref{sec:negative}, using minimal encodings.
+
+%\noi Precise encodings offer more detailed criteria and used for positive 
+%encodability results (\S\,\ref{sec:positive}).
+%In contrast, minimal encodings contains only 
+%some of the criteria of precise encodings:    
+%this reduced notion will be used 
+%for the negative result in \S\,\ref{sec:negative}. 
