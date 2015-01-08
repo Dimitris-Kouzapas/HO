@@ -1,23 +1,91 @@
 % !TEX root = main.tex
-\section{Extension of \HOp to \HOpp}
+\section{Extending \HOp}
 
-In this section we extend the \HOp calculus to include higher order applications.
+We present two essential extension of $\HOp$
+and show their precise encoding to $\HOp$.
 
-\subsection{Extending the Semantics}
+\subsection{Polyadic \HOp}
 
-{\bf Syntax and Operational Semantics:}
-The syntax of Figure~\ref{fig:syntax} is changed to include $\appl{x}{V}$
-instead of $\appl{x}{u}$.
-We also replace rule $\orule{App}$ in Figure~\ref{fig:reduction}
+The \HOp is presented in monadic terms.
+Nevertheless, we use polyadic \HOp terms
+as syntax sugar to define the encoding from
+$\HOp$ to $\HO$ in Definition~\ref{def:enc:HOp_to_HO},
+since polyadic encoding for session types
+has already been studied (cf.~\ref{}).
+
+For clarity reasons we present the polyadic variance
+\pHOp of \HOp and show a fully abstract
+encoding from \pHOp to \HOp.
+
+\subsubsection{Extending the Semantics}
+
+\paragraph{Syntax and Operational Semantics:}
+The syntax of Figure~\ref{fig:syntax} is changed to
+include $V \bnfis \tilde{u} \bnfbar \abs{\tilde{x}}{P}$
+and $\binp{n}{\tilde{x}} P$ instead of $\binp{n}{x} P$.
+The reduction relation in Figure~\ref{fig:reduction}
+replaces rule $\orule{App}$ 
+with rule
+%
+\[
+	\appl{\abs{\tilde{x}}{P}}{\tilde{u}} \red P \subst{\tilde{u}}{\tilde{x}}
+\]
+%
+\noi and rule $\orule{Pass}$ with
+%
+\[
+	\bout{n}{V} P_1 \Par \binp{\dual{n}}{\tilde{x}} P_2 \red P_1 \Par P_2 \subst{V}{\tilde{x}} \quad |V| = |\tilde{x}|
+\]
+%
+
+\paragraph{Types:}
+The syntax of types in Figure~\ref{def:types}
+is changed to include $L \bnfis \shot{\tilde{C}} \bnfbar \lhot{\tilde{C}}$
+instead of $L \bnfis \shot{C} \bnfbar \lhot{C}$ and
+to $U \bnfis \tilde{C} \bnfbar L$.
+
+Note that we do dissallow types of the form
+$\chtype{\tilde{U}}$---shared types do not
+carry polyadic value types.
+In the current polyadic extension we do not
+require polyadic shared names since the
+polyadic encoding for shared names is
+less straightforward than the polyadic
+encoding for session names.
+
+\subsection{From \HOp to \HOpp}
+
+So far we have studied a higher-order calculus that allows
+only name applications. Higher-order calculi in the
+literature~\cite{} allow for higher-order applications.
+In this section we introduce \HOpp which is an 
+extension of the \HOp calculus that includes
+higher-order applications.
+We further show that \HOpp has a precise encoding
+in the \HOp and thus by the composability of
+encoding (Proposition~\ref{prop:enc_composability})
+\HOpp has a precise encoding to \HO and \sessp.
+The latter result implies that \HO is powerfull
+enough to express full higher-order semantics.
+
+\subsubsection{Extending the Semantics}
+
+\paragraph{Syntax and Operational Semantics:}
+The syntax of Figure~\ref{fig:syntax} is changed to
+include $\appl{x}{V}$ instead of $\appl{x}{u}$.
+The reduction relation in Figure~\ref{fig:reduction}
+replaces rule $\orule{App}$ 
 with rule $\appl{\abs{x}{P}}{V} \red P \subst{V}{x}$.
 %The structural congruence in Section~\ref{subsec:reduction_semantics}
 %is changed to include $\appl{(\abs{x} P)}{V} \scong P \subst{x}{V}$
 %instead of $\appl{(\abs{x} P)}{u} \scong P \subst{x}{u}$.
 
-\noi {\bf Types.}
-The syntax of types changes to include $L \bnfis \shot{U} \bnfbar \lhot{U}$
-instead of $L \bnfis \shot{C} \bnfbar \lhot{C}$. We expect the obvious
-extension for type equivalence (Definition~\ref{def:type_equiv})
+\paragraph{Types:}
+The syntax of types in Figure~\ref{def:types}
+is changed to include $L \bnfis \shot{U} \bnfbar \lhot{U}$
+instead of $L \bnfis \shot{C} \bnfbar \lhot{C}$.
+We expect the obvious extension for type equivalence
+(Definition~\ref{def:type_equiv})
 and for the definition of type environments.
 
 We also expect the straightforward extension of the type 
@@ -39,23 +107,33 @@ for application and abstraction, respectively, now become:
 			\begin{array}{c}
 				U = \lhot{U'} \lor \shot{U'}
 				\quad
-				\Gamma; \Lambda; \Delta_1 \proves x \hastype U
+				\Gamma; \Lambda; \Delta_1 \proves V \hastype U
 				\quad
 				\Gamma; \es; \Delta_2 \proves u \hastype U'
 			\end{array}
 		}{
-			\Gamma; \Lambda; \Delta_1 \cat \Delta_2 \proves \appl{x}{u} \hastype \Proc
+			\Gamma; \Lambda; \Delta_1 \cat \Delta_2 \proves \appl{V}{u} \hastype \Proc
 		} 
 	\end{array}
 \]
 
 \dk{prove subject reduction for the extension}
 
-\noi{\bf Behavioural Semantics.}
-Labels remain the same. Rule $\ltsrule{App}$ in the untyped LTS
-is replaced with rule $\appl{\abs{x}{P}}{V} \by{\tau} P \subst{V}{x}$.
+\paragraph{Behavioural Semantics:}
+The label definition remain the same.
+Rule $\ltsrule{App}$ in the untyped LTS
+is replaced with rule
+$\appl{\abs{x}{P}}{V} \by{\tau} P \subst{V}{x}$.
 The definition of the
-characteristic process~\ref{def:characteristic_process} should be:
+characteristic process~\ref{def:characteristic_process}
+now includes
+$\mapchar{\shot{U}}{x} \defeq \mapchar{\lhot{U}}{x} \defeq \appl{x}{\omapchar{U}}$
+instead of $\mapchar{\shot{C}}{x} \defeq \mapchar{\lhot{C}}{x} \defeq \appl{x}{\omapchar{C}}$
+and
+$\omapchar{\shot{U}} \defeq \omapchar{\lhot{U}} \defeq \abs{x}{\mapchar{U}{x}}$
+instead of
+$\omapchar{\shot{C}} \defeq \omapchar{\lhot{C}} \defeq \abs{x}{\mapchar{C}{x}}$.
+\begin{comment}
 %
 \begin{definition}[Characteristic Process]\rm
 	\noi Let name $u$ and type $U$; then we define the {\em characteristic process}:
@@ -98,16 +176,18 @@ characteristic process~\ref{def:characteristic_process} should be:
 	\]
 \end{definition}
 %
+\end{comment}
 \noi The rest of the definition for the behavioural remain the same.
 
-\subsection{Encoding from \HOpp to \HOp}
+\subsubsection{Encoding from \HOpp to \HOp}
 
 We now present an encoding from \HOpp to \HOp.
-
+%
 \begin{definition}[Encoding from \HOpp to \HOp]\rm
 	\label{def:enc:HOpp_to_HOp}
-	Let mapping $\enco{\pmap{\cdot}{3}, \tmap{\cdot}{3}, \mapa{\cdot}^{3}}: \HOpp \to \HOp$:
-	\end{definition}
+	Let mapping $\enco{\pmap{\cdot}{3}, \tmap{\cdot}{3}, \mapa{\cdot}^{3}}: \HOpp \to \HOp$
+	as defined in Figure~\ref{fig:enc:HOpp_to_HOp}.
+\end{definition}
 %
 \begin{figure}[t]
 	\[
@@ -143,12 +223,10 @@ We now present an encoding from \HOpp to \HOp.
 	\end{array}
 	\]
 %
-\caption{Encoding of \HOpp into \HOp (cf. Def.~\ref{def:enc:HOpp_to_HOp}).
-We assume that the rest of the encoding is homomorphic on the syntax of
-	processes, types and labels, respectively.}
-	\end{figure}
-	
-
+	\caption{Encoding of \HOpp into \HOp (cf. Def.~\ref{def:enc:HOpp_to_HOp}).
+	We assume that the rest of the encoding is homomorphic on the syntax of
+	processes, types and labels, respectively. \label{fig:enc:HOpp_to_HOp}}
+\end{figure}
 
 \begin{proposition}[Operational Correspondence. From \HOpp to \HOp]\rm
 	\label{prop:op_corr:HOpp_to_HO}
