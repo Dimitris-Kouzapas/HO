@@ -14,13 +14,13 @@ The syntax of types changes to include:
 \[ L \bnfis \shot{U} \bnfbar \lhot{U}\]  
 We apply the straightforward extension of the typing  
 system to accomodate the extended type syntax 
-(we just need to replace $C$ by $U$ in \trule{Abs} and $C$ by $U'$ in \trule{App} in Fig.~\ref{fig:typerulesmy}).
+(we replace $C$ by $U$ in \trule{Abs} and $C$ by $U'$ in \trule{App} in Fig.~\ref{fig:typerulesmy}).
 \smallskip 
 
 \myparagraph{Behavioural Semantics}
 Labels remain the same. Rule $\ltsrule{App}$ in the untyped LTS
 (Fig.~\ref{fig:untyped_LTS}) 
-is replaced with rule $\appl{\abs{x}{P}}{V} \by{\tau} P \subst{V}{x}$.
+is replaced with rule $\appl{(\abs{x}{P})}{V} \by{\tau} P \subst{V}{x}$.
 Characteristic processes (Definition~\ref{def:char}) are extended with  
 ${\mapchar{\shot{U}}{x}} \!\!\defeq\!\! \mapchar{\lhot{U}}{x} \!\!\defeq\!\! {\appl{x}{\omapchar{U}}}$ and ${\omapchar{\shot{U}}} \defeq {\omapchar{\lhot{U}}} \!\!\defeq\!\! \abs{x}{\mapchar{U}{x}}$. 
 Then we can use the same definitions for $\cong$, $\wbc$, $\hwb$ and $\fwb$. 
@@ -44,7 +44,7 @@ we have the following main result.
 \begin{theorem}[Encoding of $n$ Higher-Order Pi into Pi]
 \label{f:enc:hopiptohopi}
 The encoding from $\tyl{L}_{\HOpp}$ into $\tyl{L}_{\HOp}$ 
-is precise. Hence the encoding 
+is precise. Hence the encodings 
 from $\tyl{L}_{\HOpp}$ to $\tyl{L}_{\HO}$ 
 and $\tyl{L}_{\sessp}$ 
 are also precise. 
@@ -89,7 +89,7 @@ $\shot{L}$ by $\lhot{L}$.
 The case of $\abs{x:C}{P}$ in the label and term mappings 
 are defined as in Fig.~\ref{f:enc:hopi_to_ho}, replacing 
 $\tmap{\cdot}{1}$,
-$\mapa{\cdot}^{1}$, 
+$\mapa{\cdot}^{1}$, and 
 $\pmap{\cdot}{1}_f$, by  
 $\tmap{\cdot}{3}$,
 $\mapa{\cdot}^{3}$, and 
@@ -117,6 +117,18 @@ L ::= \shot{\tilde{C}} \ | \ \lhot{\tilde{C}}
 \quad\quad S \ ::= \  \btout{\tilde{U}} S \bnfbar \btinp{\tilde{U}} S \bnfbar \cdots 
 \]
 Other definitions are straightforwardly extended. 
+We extend the mapping for labels 
+($\mapa{\cdot}: \ell \to \tilde{\ell}$ in  
+Definition~\ref{def:tenc}) to capture 
+a sequence of labels  and Definition~\ref{def:ep} stays as the same
+assuming that if 
+$P \hby{\ell} P'$ and $\mapa{\ell} = \{\ell_1, \ell_2,  \cdots, \ell_m\}$ then
+$\map{P} \Hby{\mapa{\ell}} \map{P'}$
+should be understood as
+$\map{P} \Hby{\ell_1} P_1 \Hby{\ell_2} P_2 \cdots \Hby{\ell_m} P_m =  \map{P'}$,
+for some
+$P_1, P_2, \ldots, P_m$.
+
 Let $\tyl{L}_{\PHOp}=\calc{\PHOp}{{\cal{T}}_5}{\hby{\ell}}{\wb_H}{\proves}$
 where 
 ${\cal{T}}_5$ is a set of types of $\HOpp$;  
@@ -132,7 +144,7 @@ Then we have:
 \begin{theorem}[Encoding of Polyadic Higher-Order Pi into Higher-Order Pi]
 \label{f:enc:hopiptohopi}
 The encoding from $\tyl{L}_{\PHOp}$ into $\tyl{L}_{\HOp}$ 
-is precise. Hence the encoding 
+is precise. Hence the encodings 
 from $\tyl{L}_{\PHOp}$ to 
 $\tyl{L}_{\HO}$ 
 and $\tyl{L}_{\sessp}$ 
@@ -190,12 +202,12 @@ are also precise.
 {\bf Labels:}\hspace{2.5cm}\\
 %		\\ % action mapping starts here
 		\mapa{\bactout{u}{u_1, \ldots, u_m}}^4 
-		&\!\!\defeq\!\!&
- \big\{\bactout{u}{u_1}, \cdots, \bactout{u}{u_m}\big\} \\
+		&\!\!\!\!\defeq\!\!\!\!&
+ \bactout{u}{u_1} \cdots \bactout{u}{u_m} \\
 %		\mapa{\bactinp{k}{k_1, \ldots, k_m}}^4 &\defeq&   \big\{\bactinp{k}{k_1}, \cdots, \bactinp{k}{k_m} \big\}\\
 		\mapa{\bactout{u}{\abs{x_1, \ldots, x_m}{P}} }^4 
 		&\!\!\defeq\!\!&
-\bactout{u}{\abs{z}\binp{z}{x_1} \cdots ; \binp{z}{x_m} \map{P}^{4}}\\
+\bactout{u}{\abs{z}\binp{z}{x_1} \cdots \binp{z}{x_m} \map{P}^{4}}\\
 %		\mapa{\bactinp{k}{\abs{x_1, \ldots, x_m}{P}} }^4 &\defeq&  \bactinp{k}{\abs{z}\binp{z}{x_1} \cdots ; \binp{z}{x_m} \map{P}^{4}} 
 \hline
 {\bf Terms:}\hspace{2.5cm}\\
