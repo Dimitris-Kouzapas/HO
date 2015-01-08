@@ -1,28 +1,42 @@
-We present two encodings:
-\begin{enumerate}
-\item The higher-order name-passing communication (\HOp) into 
+\noi This section presents two posirive results of the encodings:
+(1) The higher-order name-passing communication with recursions (\HOp) into 
 the higher-order communication without name-passing nor 
-recursions (\HO) (\S\,\ref{subsec:HOpi_to_HO})
-\item the higher-order communication without 
-name-passing and recursions (\HO)
-into the first-order name-passing communication
-with recursions (\sessp) (\S\,\ref{subsec:HO_to_sesspi})
-\end{enumerate}
-By (1), we can encode \sessp into \HO and by (2), 
-we can encode \HOp into \sessp.  
-Note that it is obvious that \HOp can encode both 
-$\HO$ and $\sessp$ by the identitiy mapping. 
+recursions (\HO) (\S\,\ref{subsec:HOpi_to_HO}); and (2) 
+\HOp into the first-order name-passing communication
+with recursions (\sessp) (\S\,\ref{subsec:HO_to_sesspi}). 
 
 \subsection{From \HOp to \HO}
 \label{subsec:HOpi_to_HO}
+\noi We show that $\HO$ is expressive enough to
+represent the the full \HOp calculus.
+The main challenge here is to encode recursions, 
+for which 
+we use abstraction passing semantics, where
+we copy a process upon reception. The case of linear abstraction passing
+presents a limitation due to the fact that we can{\em not} 
+copy a linear abstraction.
+To overcome this problem we define a preliminary tool which is a mapping from
+processes to processes with no free names (but with free variables) (Definition~\ref{d:auxmap}). 
+
+We first require an auxiliary definition.
+
+\smallskip 
 
 \begin{definition}\rm 
+\label{def:hop_to_ho}
 	Let $\vmap{\cdot}: 2^{\mathcal{N}} \longrightarrow \mathcal{V}^\omega$
 	be a map of sequences of 
 lexicographically ordered names to sequences of variables, defined
 	inductively as: 
 	$\vmap{\epsilon} = \epsilon$ and $\vmap{n \cat \tilde{m}} = x_n \cat \vmap{\tilde{m}}$. 
 \end{definition}
+
+\smallskip 
+
+\noi The following trigger mapping transforms processes
+with free names into abstractions. 
+
+\smallskip 
 
 \begin{definition}[Trigger Mapping] \label{d:trabs}\label{d:auxmap}
 	Let $\sigma$ be a set of session names.
@@ -136,17 +150,18 @@ free names in $P$.
 \end{figure}
 
 Given a process $P$ with $\fn{P} = m_1, \cdots, m_n$, we are interested in its associated abstraction, which is defined as
-$\abs{x_1, \cdots, x_n}{\auxmapp{P}{{}}{\epsilon} }$, where $\vmap{m_j} = x_j$, for all $j \in \{1, \ldots, n\}$.
-This transformation from processes into abstractions can be reverted by
-using abstraction and application with an appropriate sequence of session names:
-%
-\begin{proposition}\rm
-	Let $P$ be a \HOp process and 
-	suppose $\tilde{x} = \vmap{\tilde{n}}$ where 
-$\tilde{n} = \fn{P}$.
-	Then $P \scong \appl{(\abs{\tilde{x}}{\auxmapp{P}{{}}{\emptyset}})}{\tilde{n}}$.
-%	$\appl{X}{\smap{\fn{P}}} \subst{(\vmap{\fn{P}}) \map{P}^{\emptyset}}{X} \scong P$
-\end{proposition}
+$\abs{x_1, \cdots, x_n}{\auxmapp{P}{{}}{\epsilon} }$, where $\vmap{m_j} = x_j$, for all $j \in \{1, \ldots, n\}$. 
+
+%This transformation from processes into abstractions can be reverted by
+%using abstraction and application with an appropriate sequence of session names:
+%%
+%\begin{proposition}\rm
+%	Let $P$ be a \HOp process and 
+%	suppose $\tilde{x} = \vmap{\tilde{n}}$ where 
+%$\tilde{n} = \fn{P}$.
+%	Then $P \scong \appl{(\abs{\tilde{x}}{\auxmapp{P}{{}}{\emptyset}})}{\tilde{n}}$.
+%%	$\appl{X}{\smap{\fn{P}}} \subst{(\vmap{\fn{P}}) \map{P}^{\emptyset}}{X} \scong P$
+%\end{proposition}
 
 \begin{figure}[t]
 \[
@@ -223,7 +238,8 @@ $\tilde{n} = \fn{P}$.
 & &  \Par \bbout{\dual{s}}{ \abs{(\vmap{\tilde{n}},y)}{\appl{z_X}{(\vmap{\tilde{n}}, y)}}} \inact}  \quad (\tilde{n} = f(z_\rvar{X})) \\
 \end{array}
 \]
-The input bound variable $x$ is annotated by a type to distinct the first-order and higher-order cases.
+The input bound variable $x$ is annotated by a type to distinct the first-order and higher-order cases. We use the polyadic name abstraction and applications for a simplicity of the presentation. They are formally encoded in 
+\S~\ref{sec:}.
 \caption{\label{f:enc:hopi_to_ho}
 Encoding of \HOp into \HO.
 %(cf.~Defintion~\ref{d:enc:fotohorec}).
@@ -253,6 +269,8 @@ We define the typed encoding
 the typed encoding $\enco{\map{\cdot}^{1}, \mapt{\cdot}^{1}, \mapa{\cdot}^{1}}: \HOp \to \HO$ in 
 in Fig.~\ref{f:enc:hopi_to_ho}. 
 \end{definition}
+
+
 
 \begin{theorem}[Encoding of Full Higher-Order Pi into Higher-Order]
 \label{f:enc:hopitoho}
