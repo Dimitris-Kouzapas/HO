@@ -44,7 +44,7 @@ is changed to include $L \bnfis \shot{\tilde{C}} \bnfbar \lhot{\tilde{C}}$
 instead of $L \bnfis \shot{C} \bnfbar \lhot{C}$ and
 to $U \bnfis \tilde{C} \bnfbar L$.
 
-Note that we do dissallow types of the form
+Note that we dissallow types of the form
 $\chtype{\tilde{U}}$---shared types do not
 carry polyadic value types.
 In the current polyadic extension we do not
@@ -52,6 +52,106 @@ require polyadic shared names since the
 polyadic encoding for shared names is
 less straightforward than the polyadic
 encoding for session names.
+
+We extend the type system in Figure~\ref{fig:typerulesmy}
+to include the type rule:
+%
+\[
+	\trule{Pol}~~\tree{
+		V = a_i \dots a_n \qquad \Gamma; \Lambda_i; \Delta_i \proves u_i \hastype C_i \qquad U = C_1 \dots C_n
+	}{
+		\Gamma; \bigcup_{i \in I} \Lambda_i; \bigcup_{i \in I} \Delta_i \proves V \hastype U
+	}
+\]
+%
+that allows us to type polyadic values. We expect the
+extension of the type rules to accomodate polyadic values.
+Note that rules $\trule{Req}$ and $\trule{Acc}$
+continue to type monadic instances of shared
+name prefixes.
+
+\dk{prove subject reduction?}
+
+\paragraph{Behavioural Semantics}
+The definition of the labelled transition system
+replaces rule $\ltsrule{App}$ with rule:
+%
+\[
+	\appl{\abs{\tilde{x}} P}{\tilde{u}} \by{\tau} P\subst{\tilde{u}}{\tilde{x}}
+\]
+%
+The characteristic process and characteristic value 
+definition (Definition~\ref{def:characteristic_process})
+is extended to include the cases:
+\[
+	\mapchar{C_1 \dots C_n}{u_1 \cdots u_n} \defeq \mapchar{C_1}{x_1} \Par \dots \Par \mapchar{C_n}{x_n}
+\]
+\noi and
+\[
+	\omapchar{U_1 \dots U_n} \defeq \omapchar{U_1}, \dots, \omapchar{U_n}
+\]
+%
+A polyadic type is inhabited in a process where its
+parallel components inhabit type terms of the polyadic
+type. A polyadic value type is inhabited as a list
+of values that inhabit the polyadic values.
+
+The rest of the behavioural semantics remain the same.
+
+\subsubsection{Encoding from \pHOp to \HOp}
+
+\begin{definition}[Encoding from \pHOp to \HOp]\rm
+	\label{def:enc:pHOp_to_HOp}
+	Let map $\enco{\pmap{\cdot}{4}, \tmap{\cdot}{4}, \mapa{\cdot}^{4}}: \pHOp \to \HOp$
+	to be defined as in Figure~\ref{fig:enc:pHOp_to_HOp}
+\end{definition}
+
+\begin{figure}[t]
+	\[
+		\begin{array}{rcl}
+			\pmap{\bout{n}{u_1, \dots, u_n} P}{4} &\defeq& \bout{n}{u_1} \dots ; \bout{n}{u_n} \pmap{P}{4}
+			\\
+			\pmap{\binp{n}{x_1, \dots, x_n} P}{4} &\defeq& \binp{n}{x_1} \dots ; \binp{n}{x_n} \pmap{P}{4}
+			\\
+			\pmap{\bout{n}{\abs{x_1, \dots, x_n}{Q}} P}{4} &\defeq& \bout{n}{\abs{z}{\binp{z}{x_1} \dots; \binp{z}{x_n} \pmap{Q}{4}}} \pmap{P}{4}
+			\\
+			\pmap{\appl{x}{u_1, \dots, u_n}}{4} &\defeq& \newsp{s}{\appl{x}{s} \Par \bout{\dual{s}}{u_1} \dots; \bout{\dual{s}}{u_1} \inact}
+			\\
+			\\
+			\tmap{\lhot{(C_1, \dots, C_n)}}{4} &\defeq& \lhot{(\btinp{C_1} \dots; \btinp{C_n} \tinact)}
+			\\
+			\tmap{\shot{(C_1, \dots, C_n)}}{4} &\defeq& \shot{(\btinp{C_1} \dots; \btinp{C_n} \tinact)}
+			\\
+			\tmap{\btout{L} S}{4} &\defeq& \btout{\tmap{L}{4}} \tmap{S}{4}
+			\\
+			\tmap{\btinp{L} S}{4} &\defeq& \btinp{\tmap{L}{4}} \tmap{S}{4}
+			\\
+			\tmap{\btout{C_1, \dots, C_n} S}{4} &\defeq& \btout{C_1} \dots; \btout{C_n} \tmap{S}{4}
+			\\
+			\tmap{\btinp{C_1, \dots, C_n} S}{4} &\defeq& \btinp{C_1} \dots; \btout{C_n} \tmap{S}{4}
+			\\
+			\\
+			\mapa{\news{\tilde{m}'} \bactout{n}{m_1, \dots, m_n}}^{4} &\defeq& \news{\tilde{m_1}'} \bactout{n}{m_1} \dots \news{\tilde{m_n}'}\bactout{n}{m_n}
+			\quad \left.
+			\begin{array}{rcl}
+				\tilde{m_i}' &=& m_i \Leftrightarrow m_i \in \tilde{m}' \wedge\\
+				\tilde{m_i}' &=& \es \Leftrightarrow m_i \notin \tilde{m}'
+			\end{array}
+			\right.
+			\\
+			\mapa{\bactinp{n}{m_1, \dots, m_n}}^{4} &\defeq& \bactinp{n}{m_1} \dots \bactinp{n}{m_n}
+			\\
+			\mapa{\news{\tilde{m}} \bactout{n}{\abs{x_1, \dots, x_n}{P}}}{4} &\defeq& \news{\tilde{m}} \bactout{n}{\abs{z}{\binp{z}{x_1} \dots; \binp{z}{x_n} \pmap{P}{4}}}
+			\\
+			\mapa{\bactinp{n}{\abs{x_1, \dots, x_n}{P}}}{4} &\defeq& \bactinp{n}{\abs{z}{\binp{z}{x_1} \dots; \binp{z}{x_n} \pmap{P}{4}}}
+		\end{array}
+	\]
+%
+	\caption{Encoding of \pHOp into \HOp (cf. Def.~\ref{def:enc:pHOp_to_HOp}).
+	We assume that the rest of the encoding is homomorphic on the syntax of
+	processes, types and labels, respectively. \label{fig:enc:pHOp_to_HOp}}
+\end{figure}
+
 
 \subsection{From \HOp to \HOpp}
 
