@@ -3,7 +3,7 @@
 
 \paragraph{Expressiveness in Concurrency.}
 There is a vast literature on expressiveness studies for process calculi;
-the interested reader is referred to~\cite{DBLP:journals/entcs/Parrow08} for a survey
+we refer to~\cite{DBLP:journals/entcs/Parrow08} for a survey
 (see also~\cite[\S\,2.3]{PerezPhD10}). 
 In particular, the expressive power of the $\pi$-calculus has received much attention.
 Studies cover, e.g., 
@@ -11,7 +11,7 @@ relationships between first-order and higher-order concurrency~(see, e.g.,~\cite
 comparisons between 
 synchronous and asynchronous communication~(see, e.g.,~\cite{Boudol92,Palamidessi03,BeauxisPV08}),
 and
-(non)encodability results of different choice operators~(see, e.g.,~\cite{Nestmann00,DBLP:conf/esop/PetersNG13}).
+(non)encodability issues for different choice operators~(see, e.g.,~\cite{Nestmann00,DBLP:conf/esop/PetersNG13}).
 To substantiate claims related to (relative) expressive power,
 early works appealed to different definitions of encoding.
 %For instance, Palamidessi~\cite{Palamidessi03} defines \emph{uniform encodings} as those encodings which are homomorphic wrt parallel composition, respect renamings, and respect a ``reasonable semantics.''
@@ -53,12 +53,12 @@ its extension  with higher-order applications (denoted $\HOpp$).
 Thus, using session types all these calculi are shown to be equally expressive with fully abstract encodings.
 To our knowledge, these are the first expressiveness results of this kind.
 
-
-A hierarchy of process-passing calculi (without name passing) is studied in~\cite{San96int} and is shown to be fully abstract with respect to a hierarchy with internal mobility in the first-order setting; a typed system enforces different degrees of mobility for names in the first-order setting.
+Other related works are~\cite{BundgaardHG06,XuActa2012,DBLP:journals/iandc/LanesePSS11}.
 The paper~\cite{BundgaardHG06} proposes a fully abstract, continuation-passing style encoding of the 
 $\pi$-calculus into Homer, a higher-order process calculus with explicit locations, local names, and nested locations.
 The work~\cite{XuActa2012} studies the encodability of the higher-order $\pi$-calculus (extended with a relabeling operator) into the first-order $\pi$-calculus; encodings in the reverse direction are also proposed.
-A minimal calculus of higher-order concurrency is studied in~\cite{DBLP:journals/iandc/LanesePSS11}: it lacks restriction,  name passing, output prefix (asynchronous communication), and constructs for infinite behavior. Still, the calculus is shown to be Turing complete. Moreover, 
+A minimal calculus of higher-order concurrency is studied in~\cite{DBLP:journals/iandc/LanesePSS11}: it lacks restriction,  name passing, output prefix (asynchronous communication), and constructs for infinite behavior. 
+Nevertheless, this calculus (a sublanguage of \HO) is shown to be Turing complete. Moreover, 
 strong bisimilarity is decidable and coincides with barbed congruence. 
 
 
@@ -72,7 +72,7 @@ A further extension with process abstractions of order one
 (functions from processes to processes)
  is shown to strictly add expressive power with respect to passing of processes only.
 The paper~\cite{DBLP:conf/wsfm/XuYL13} complements the study in~\cite{DBLP:conf/icalp/LanesePSS10} by deepening on the expressive power of second-order abstractions (similar to \HO). 
-In that setting, name and process abstractions are distinguished and contrasted, also considering polyadicity of abstraction parameters. It is shown that polyadicity of process abstraction induces an expressiveness hierarchy. Moreover, it is shown that name abstraction can encode process abstraction, and therefore it may be considered as a more basic mechanism. 
+In that setting, name and process abstractions are distinguished and contrasted, also considering polyadicity of abstraction parameters (as we have in \pHOp). It is shown that polyadicity of process abstraction induces an expressiveness hierarchy. Moreover, it is shown that name abstraction can encode process abstraction, and therefore it may be considered as a more basic mechanism. 
 The works~\cite{DBLP:conf/icalp/LanesePSS10,DBLP:conf/wsfm/XuYL13} focus on untyped processes;
 therefore, our work complements such previous results by clarifying the status of structured communications (as delineated by session types) in representability strategies of process passing (such as those based on triggers) both in encodings and (typed) behavioral equivalences; this allows us to clearly establish the use and role of linear/unrestricted names in such strategies.
 
@@ -129,15 +129,66 @@ a behavioural equivalence or bisimulation.
  
 
 
+<<<<<<< HEAD
 \paragraph{Typed Behavioral Equivalences.}
+=======
+\paragraph{Typed Behavioural Equivalences.}
+This work builds on the session type bisimulations principles
+that were laid by previous works of the
+authors~\cite{dkphdthesis,DBLP:conf/forte/KouzapasYH11,KY13}.
+These principles, that are still followed in the current work,
+require a typed labelled transition system
+that assumes a session typed observer and develops
+tractable bisimulation relations that coincide with
+the reduction closed, barb preserving congruence. The
+proof tecnhiques for soundness and completeness of the bisimulation
+are derived from~\cite{Hennessy07}.
+
+The theory for higher-order equivalences is more challenging than
+their corresponding first-order bisimulation theory.
+In this work we continue the line drawn originally by
+Sangiorgi~\cite{San96H,SangiorgiD:expmpa},
+and Jeffrey and Rathke~\cite{DBLP:journals/lmcs/JeffreyR05}.
+The first fully abstract encoding from the higher order $\pi$-calculus to
+the $\pi$-calculus was given by Sangiorgi in his Ph.D.~thesis~\cite{SangiorgiD:expmpa}.
+Sangiorgi introduced the idea of a replicated trigger in order to create
+arbitrary copies of a higher order value. The core of the triggered encoding 
+is used also used in this work to encode the \HOp to \sessp (Definition~\ref{def:enc:HOp_to_FO}).
+The trigger encoding gave the motivation to Jeffrey and
+Rathke to introduce the trigger bisimulation~\cite{DBLP:journals/lmcs/JeffreyR05}.
+The main idea for higher-order output observation in the
+triggered bisimulation requires from
+a process $P$ to output a fresh
+trigger name and then introduce of a replicated triggered process
+in its context:
+\[
+	P \by{\news{t} \bactout{n}{t}} P' \Par \repl{} \binp{t}{x} Q
+\]
+Our approach for output observation is similar but instead of 
+a replicated triggered process we require a triggered process that 
+can input any process that can substitute the higher-order output.
+The approach for higher-order input observation by Jeffrey and Rathke requires 
+to the input of a triggered process annotated with the application value.
+\[
+	P \by{\bactinp{n}{t}} P \subst{t}{x} 
+\]
+whereas in this approach we can observe the triggered value
+$\abs{z}\btinp{t}{x} \appl{x}{z}$.
+Finally an application in triggger bisimulation semantics
+observes a trigger over
+\dk{continue}
+>>>>>>> bf32e0b2aa3007cc242db0b7846b1c6d0d2e36f0
 
 
 Boreale and Sangiorgi, 
 Deng and Hennessy, 
-Jeffrey and Rathke, Hennessy and Kouzapas, Schmitt and Lenglet, Piérard and Sumii.
+Jeffrey and Rathke, Hennessy and Koutavas, Schmitt and Lenglet, Piérard and Sumii.
 Perez et al (bisimilarities for binary sessions), Kouzapas and Yoshida (bisimilarities for binary and multiparty sessions).
 Bisimilarities for HO processes: \cite{Xu07}.
 
 \paragraph{Higher-Order Session Types.}
 Works by Mostrous, Demangeon, and others.
+<<<<<<< HEAD
 
+=======
+>>>>>>> bf32e0b2aa3007cc242db0b7846b1c6d0d2e36f0
