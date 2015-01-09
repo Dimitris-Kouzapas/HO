@@ -1,5 +1,4 @@
-% !TEX root = main.tex
-\noi We develop a theory for observational equivalence over
+\noi This section develops a theory for observational equivalence over
 session typed \HOp processes. The theory follows the principles
 laid by the previous work of the authors
 \cite{DBLP:conf/forte/KouzapasYH11,KY13,dkphdthesis}.
@@ -549,22 +548,78 @@ $\horel{\Gamma}{\Delta_2}{Q_1}{\By{\ell}}{\Delta_2'}{Q_2}$
 The Knaster Tarski theorem ensures that the largest contextual bisimulation exists, it is called contextual bisimilarity and is denoted by $\wbc$.
 \end{definition}
 
-In the general case,
-contextual bisimulation 
+The contextual bisimulation in the general case
 is hard to compute due to: (1) the universal
-quantification over contexts in the output case;
+quantifier over contexts in the output case;
 and (2) a higher-order input prefix which can observe
 infinitely many different input actions (since
 infinitely many different processes can match
 the session type of an input prefix).
 
-\subsection{Higher-Order  and  
-Characteristic  Bisimulations ($\hwb$/$\fwb$)}\label{ss:hwb}
+\subsection{Higher-Order ($\hwb$) and  
+Characteristic ($\fwb$) Bisimulations}\label{ss:hwb}
 \noi 
+To overcome the problems of $\wbc$, we introduce two bisimulations.
+Our aim to limit the input transition so that we can define a
+bisimulation relation for the output clause without observing
+infinitely many input actions on the same input prefix. Concretely we
+take the following two steps to define more tractable bisimulations:
+%
+\begin{enumerate}
+	\item	replace 
+		the output action case (Clause 1) in Definition~\ref{def:wbc}) 
+		by a more tractable closure; and 
 
-Here we formalize the technical novelties motivated in the Introduction.
-Our main result is Theorem~\ref{the:coincidence}.
-We first define characteristic processes:
+	\item	limit the input value $V$ in $n?\ENCan{V}$ in 
+		rules $\eltsrule{SRv}$ and $\eltsrule{ShRv}$ in Fig.~\ref{fig:envLTS}.
+\end{enumerate}
+%
+For 1), we first 
+observe that a substitution $R\subst{V1}{x}$ in 
+Clause 1) in Definition~\ref{def:wbc} is contextual bisimilar to the following process, with fresh $s$,  
+\begin{equation}\label{eq:1}
+P = \newsp{s}{\appl{(\abs{z}{\binp{z}{x}{R}})}{s} \Par \bout{\dual{s}}{V_1} \inact}
+\end{equation}
+since the reduction at $s$ and application are deterministic.  
+%We call $\abs{z}{\binp{z}{x} R}$ a {\bf\em trigger value}. 
+Hence using the fresh trigger name $t$, if we input $\abs{z}{\binp{z}{x} R}$, 
+we can simulate the substitution:
+\begin{equation}\label{eq:2}
+\hotrigger{t}{V_1} 
+\by{\bactinp{t}{\abs{z}{\binp{z}{x} R}}} P 
+\wbc 
+R\subst{V_1}{x}
+\end{equation}
+Let us define a {\bf\em trigger process} which 
+offers value $V_1$ at fresh name $t$ \cite{JeffreyR05}, so that we write as: 
+\begin{equation}\label{eq:3}
+		\htrigger{t}{V_1} \defeq \hotrigger{t}{V_1} 
+\end{equation}
+Then we can use 
+$\newsp{\tilde{m_1}}{P_1 \Par \htrigger{t}{V_1}}$ instead 
+of Clause 1) in Definition \ref{def:wbc} if we input 
+$\abs{z}{\binp{z}{x} R}$.   
+
+Our next task is to limit a shape of $R$. 
+For this, we try to use 
+the information given by session types as explained in the next paragraph. 
+
+\smallskip
+
+\myparagraph{Characteristic Processes and Values}
+\label{ss:char}
+\noi 
+We use processes 
+which follow structures of session types as an input observation. 
+This simple process, called a {\em characteristic process}, 
+inhabits a given session type. For example, consider 
+session type $\btinp{\shot{S_1}} \btout{S_2} \tinact$. 
+Then the simplest process inhabits this type at name $u$ is:
+\[
+\Gamma; \es; s_1: S_1 \cat s_2: S_2 \cat u: \btinp{\shot{S_1}} \btout{S_2} \tinact \proves \binp{u}{x} (\bout{u}{s_2} \inact \Par \appl{x}{s_1})
+\]
+We formalise this idea in the next definition. 
+
 \smallskip  
    
 \begin{definition}[Characteristic Process]\rm
@@ -666,8 +721,6 @@ We first define characteristic processes:
 %	\]
 %\end{definition}
 
-Characteristic processes are indeed inhabitants of their associated type:
-
 \begin{proposition}[Characteristic Processes]\rm
 \label{pro:characteristic}
 \begin{enumerate}
@@ -685,13 +738,131 @@ Characteristic processes are indeed inhabitants of their associated type:
 
 \smallskip 
 
+We now limit the input transition to 
+{\bf\em the characteristic value}, $\omapchar{U}$.%$\lambda x.\mapchar{U}{x}$. 
+If we follow the same reasoning as (\ref{eq:1})--(\ref{eq:3}), 
+we can use alternative trigger process, called
+{\bf\em characteristic trigger process} with type 
+$U$, and replace Clause 1) in Definition~\ref{def:wbc}:
 
-We now define the \emph{refined} typed LTS. 
-As explained in \S\,\ref{sec:intro}, this new LTS is defined 
-by considering a transition rule for input in which admitted values are
- trigger values or characteristic values: 
+\begin{equation}
+	\label{eq:4}
+	\ftrigger{t}{V}{U} \defeq \fotrigger{t}{x}{s}{\btinp{U} \tinact}{V}
+\end{equation}
 
-\begin{definition}[Refined Typed Labelled Transition Relation]
+Note that if $U=L$, $\ftrigger{t}{V}{U}$ subsumes 
+$\htrigger{t}{V}{U}$. 
+To refine the input transition system, we need to observe 
+an additional value, 
+$\abs{{x}}{\binp{t}{y} (\appl{y}{{x}})}$, 
+called {\bf\em the trigger value}. 
+The reason is explained in the next example. 
+
+\smallskip 
+
+\begin{example}[Restricted Typed Labelled Transition Relation]
+\label{ex:motivation}
+We show that either a characteristic value or 
+a trigger value alone as the observable input 
+is not enough to define meaningful bisimulations.
+(to justify rule \eltsrule{RRcv} in Definition~\ref{def:rlts} in the next paragraph). 
+
+First we demonstrate that a characteristic value is not sufficient. 
+Consider typed processes:
+%
+\begin{eqnarray}
+	&&\hspace{-1cm}\Gamma; \es; \Delta \cat s: \btinp{\shot{\btinp{C} \tinact}} \tinact \proves \binp{s}{x} (\appl{x}{s_1} \Par \appl{x}{s_2}) \hastype \Proc
+	\label{eq:5}
+	\\
+	&&\hspace{-1cm}\Gamma; \es; \Delta \cat s: \btinp{\shot{\btinp{C} \tinact}} \tinact \proves \binp{s}{x} (\appl{x}{s_1} \Par \binp{s_2}{y} \inact) \hastype \Proc
+	\label{eq:6}
+\end{eqnarray}
+%
+If the above processes input and substitute over $x$
+the characteristic value $\abs{z}{\binp{z}{y}} \inact$, 
+then both the processes continue as:%(\ref{eq:5}) and (\ref{eq:6}) in become:
+%
+\begin{eqnarray*}
+	\Gamma; \es; \Delta \proves \binp{s_1}{y} \inact \Par \binp{s_2}{y} \inact \hastype \Proc
+\end{eqnarray*}
+%
+hence after inputting $\abs{x}{\binp{x}{y}} \inact$, 
+both process become contextually bisimilar. 
+The processes in (\ref{eq:5}) and (\ref{eq:6}) 
+are obviously {\em not} contextually bisimular since
+for other numerous other input processes, they can be distinguished. 
+For example, if we input $\abs{x} \bout{a}{s_3} \binp{x}{y} \inact$, 
+the results are {\em not} bisimular. 
+
+Observing only the characteristic value 
+results in an over-discriminating bisimulation.
+However if a trigger value is received, 
+then we can distinguish 
+processes (\ref{eq:5}) and (\ref{eq:6}):  
+%
+\begin{eqnarray*}
+%	\Gamma; \es; \Delta &\proves& 
+	\binp{t}{x} \appl{x}{s_1} \Par \binp{t}{x} \appl{x}{s_2} 
+%\hastype \Proc
+	\mbox{ and }
+%	\Gamma; \es; \Delta &\proves& 
+	\binp{t}{x} \appl{x}{s_1} \Par \binp{s_2}{y} \inact 
+%\hastype \Proc
+\end{eqnarray*}
+%\noi resulting two distinct processes.  
+%
+One question that arises here is whether the trigger value is enough
+to distinguish two processes, hence no need of 
+characteristic values as the input. 
+This is not the case since the trigger value
+alone also results in an over-discriminating bisimulation relation.
+In fact the input trigger can be observed on any input prefix
+of {\em any type}. For example, consider the following processes:
+%
+\begin{eqnarray}
+	\Gamma; \es; \Delta \proves \newsp{s}{\binp{n}{x} \appl{x}{s} \Par \bout{\dual{s}}{\abs{x} P} \inact} \hastype \Proc\label{eq:7}
+	\\
+	\Gamma; \es; \Delta \proves \newsp{s}{\binp{n}{x} \appl{x}{s} \Par \bout{\dual{s}}{\abs{x} Q} \inact} \hastype \Proc\label{eq:8}
+\end{eqnarray}
+%
+\noi if both processes in (\ref{eq:7}) and (\ref{eq:8}) 
+input the trigger abstraction, we obtain they evolved to 
+\begin{eqnarray*}
+%\Gamma; \es; \Delta \proves 
+	\newsp{s}{\binp{t}{x} \appl{x}{s} \Par \bout{\dual{s}}{\abs{x} P} \inact} 
+%\hastype \Proc
+	\mbox{ and }
+%      \\
+%\Gamma; \es; \Delta \proves 
+	\newsp{s}{\binp{t}{x} \appl{x}{s} \Par \bout{\dual{s}}{\abs{x} Q} \inact}
+%\hastype \Proc
+\end{eqnarray*}
+%
+\noi It is easy to obtain a closure if allow only the
+trigger value as the input value.
+
+\noi However if both processes input $\abs{z}{\binp{z}{x} (\appl{x}{m})}$,  
+then the resulting processes become:
+\begin{eqnarray*}
+\Gamma; \es; \Delta \proves \newsp{s}{\binp{s}{x} \appl{x}{m} \Par \bout{\dual{s}}{\abs{x} P} \inact} \wbc \Delta \proves P \subst{m}{x}
+	\\
+\Gamma; \es; \Delta \proves \newsp{s}{\binp{s}{x} \appl{x}{m} \Par \bout{\dual{s}}{\abs{x} Q} \inact} \wbc \Delta \proves Q \subst{m}{x}
+\end{eqnarray*}
+\noi which are not bisimilar if $P \subst{m}{x} \not\wb Q \subst{m}{x}$.
+
+%In conclusion, these examples explain a need of both 
+%trigger and characteristic values 
+%as an input observation in the input transition relation (\eltsrule{RRcv})
+%which will be defined in Definition~\ref{def:rlts}.  
+\end{example}
+
+\smallskip 
+
+\myparagraph{Restricted Input Transition Rule}
+By summing up, we define the typed relation which limits 
+the input values as trigger values or characteristic values. 
+
+\begin{definition}[Restricted Typed Labelled Transition Relation]
 \label{def:rlts}
 We define the environment transition rule for input actions in
 %restricted environment transition relation using the

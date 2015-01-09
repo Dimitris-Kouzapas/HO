@@ -1,2 +1,128 @@
 % !TEX root = main.tex
-Related works will appear here.
+\paragraph{Expressiveness in Concurrency}
+There is a vast literature on expressiveness studies for process calculi;
+we refer to~\cite{DBLP:journals/entcs/Parrow08} for a survey.
+%(see also~\cite[\S\,2.3]{PerezPhD10}). 
+In particular, the expressive power of the $\pi$-calculus has received much attention.
+Studies cover, e.g., 
+relationships between first-order and higher-order concurrency~(see, e.g.,~\cite{San923,San96int}),
+comparisons between 
+synchronous and asynchronous communication~(see, e.g.,~\cite{Boudol92,Palamidessi03,BeauxisPV08}),
+and
+(non)encodability issues for different choice operators~(see, e.g.,~\cite{Nestmann00,DBLP:conf/esop/PetersNG13}).
+To substantiate claims related to (relative) expressive power,
+early works appealed to different definitions of encoding.
+%For instance, Palamidessi~\cite{Palamidessi03} defines \emph{uniform encodings} as those encodings which are homomorphic wrt parallel composition, respect renamings, and respect a ``reasonable semantics.''
+Later on, 
+proposals of abstract 
+frameworks which formalize the notion of encoding 
+and state associated syntactic and semantic criteria 
+were put forward; 
+two proposals are~\cite{DBLP:journals/iandc/Gorla10,DBLP:journals/tcs/FuL10}. 
+These frameworks are applicable to different calculi, and 
+have shown useful to clarify known results and to derive new ones.
+Our formulation of (precise) typed encoding (Def.~\ref{def:goodenc}) 
+builds upon existing proposals (including~\cite{Palamidessi03,DBLP:journals/iandc/Gorla10,DBLP:conf/icalp/LanesePSS10})
+in order to account for the session type systems
+associated to the process languages under comparison.
+
+\paragraph{Expressiveness of Higher-Order Process Calculi}
+Early expressiveness studies for higher-order calculi are~\cite{Tho90,San923}; 
+more recent works include~\cite{BundgaardHG06,DBLP:conf/icalp/LanesePSS10,DBLP:journals/iandc/LanesePSS11,XuActa2012,DBLP:conf/wsfm/XuYL13}.
+Due to the close relationship between higher-order process calculi and functional calculi, 
+works devoted to encoding (variants of) the $\lambda$-calculus into (variants of) the $\pi$-calculus (see, e.g.,~\cite{San92,DBLP:journals/tcs/Fu99,DBLP:journals/iandc/YoshidaBH04,BHY,DBLP:conf/concur/SangiorgiX14}) are also worth mentioning.
+The work~\cite{San923} gives an encoding of the higher-order $\pi$-calculus
+into the first-order $\pi$-calculus which is fully abstract with respect to barbed congruence. 
+A basic form of input/output types is used in~\cite{DBLP:journals/tcs/Sangiorgi01}, where the encoding in~\cite{San923} is casted in the asynchronous setting, with output and applications coalesced in a single construct. Building upon~\cite{DBLP:journals/tcs/Sangiorgi01}, 
+a simply typed encoding for synchronous processes is given in~\cite{SaWabook}; the reverse encoding (i.e.,  first-order communication into higher-order processes) is also studied there for an asynchronous, localized $\pi$-calculus (only the output capability of names can be sent around).
+The work~\cite{San96int} studies hierarchies for calculi with \emph{internal} first-order mobility and 
+with higher-order mobility without name-passing (similarly as the subcalculus \HO). 
+The hierarchies are based on expressivity: 
+formally defined according to the order of types needed in typing, 
+they describe different ``degrees of mobility''.
+Via fully abstract encodings, it is shown that that name- and process-passing calculi with equal order of types have the same expressiveness.
+With respect to these previous results, our approach based on session types 
+has several important consequences and allows us to derive new results.  Our study reinforces the intuitive view of ``encodings as protocols'', namely session protocols which enforce precise linear and shared disciplines for names, a distinction not investigated in~\cite{San923,DBLP:journals/tcs/Sangiorgi01}. 
+In turn, the linear/shared distinction is central in proper definitions of trigger processes, which are essential to encodings (cf. Definition~\ref{def:enc:HOp_to_FO}) and behavioral equivalences (cf. Definition~\ref{def:XX}).
+More interestingly, we showed that $\HO$, a  minimal higher-order session calculus (no name passing, only first-order application) suffices to encode $\sessp$ (the session calculus with name passing) but also 
+$\HOp$  and 
+its extension  with higher-order applications (denoted $\HOpp$). 
+Thus, using session types all these calculi are shown to be equally expressive with fully abstract encodings.
+To our knowledge, these are the first expressiveness results of this kind.
+
+
+
+Our work is closely related in spirit to the expressiveness studies in~\cite{DBLP:conf/icalp/LanesePSS10,DBLP:conf/wsfm/XuYL13}.
+In~\cite{DBLP:conf/icalp/LanesePSS10}
+the core calculus in~\cite{DBLP:journals/iandc/LanesePSS11} is extended with restriction, output prefix (thus enabling synchronous communication), 
+and polyadic communication. It is shown that 
+synchronous communication can encode asynchronous communication (as in the first-order setting),
+and that process passing polyadicity induces a hierarchy in expressive power (unlike the first-order setting).
+A further extension with process abstractions of order one
+(functions from processes to processes)
+ is shown to strictly add expressive power with respect to passing of processes only.
+The paper~\cite{DBLP:conf/wsfm/XuYL13} complements the study in~\cite{DBLP:conf/icalp/LanesePSS10} by deepening on the expressive power of second-order abstractions (similar to \HO). 
+In that setting, name and process abstractions are distinguished and contrasted, also considering polyadicity of abstraction parameters (the same kind of polyadicity present in \pHOp). It is shown that polyadicity of process abstraction induces an expressiveness hierarchy. Moreover, it is shown that name abstraction can encode process abstraction, and therefore it may be considered as a more basic mechanism. 
+The works~\cite{DBLP:conf/icalp/LanesePSS10,DBLP:conf/wsfm/XuYL13} focus on untyped processes;
+therefore, our work complements such previous results by clarifying the status of typeful, resource-aware structured communications in
+trigger-based representations of process passing, both in encodings and  behavioral equivalences.
+
+Other related works are~\cite{BundgaardHG06,XuActa2012,DBLP:journals/iandc/LanesePSS11}.
+The paper~\cite{BundgaardHG06} proposes a %fully abstract, 
+continuation-passing style encoding of the 
+$\pi$-calculus into Homer, a rich higher-order process calculus with explicit locations, local names, and nested locations.
+The work~\cite{XuActa2012} studies the encodability of the higher-order $\pi$-calculus (extended with a relabeling operator) into the first-order $\pi$-calculus; encodings in the reverse direction are also proposed, following \cite{Tho90}.
+A minimal calculus of higher-order concurrency is studied in~\cite{DBLP:journals/iandc/LanesePSS11}: it lacks restriction,  name passing, output prefix (so  communication is asynchronous), and constructs for infinite behavior. 
+This calculus (a sublanguage of \HO) is shown to be Turing complete, while having a decidable notion of  
+(strong) bisimilarity that coincides with barbed congruence. 
+
+
+\paragraph{Expressiveness of (Session) Typed Mobile Processes}
+Since types can limit
+contexts (environments) where processes can interact, typed equivalences
+usually offer {\em coarser} semantics than untyped semantics. 
+This work demonstrated the IO-subtyping can equate 
+the optimal encoding of the $\lambda$-caclulus by Milner which was not 
+in the untyped polyadic $\pi$-calculus \cite{MilnerR:funp}. 
+After \cite{PiSa96b}, many works on typed $\pi$-calculi 
+have investigated correctness of encodings of known concurrent and
+sequential calculi in order to examine semantic
+effects of proposed typing systems. 
+
+The type discipline closely related
+to session types is a family of linear typing systems. The
+work \cite{LinearPi} first proposed a linearly typed barbed congruence and 
+reasoned a tail-call optimisation of higher-order functions which are
+encoded 
+as processes. 
+The work \cite{Yoshida96} had
+used a bisimulation of graph-based types to prove the full abstraction
+of encodings of the polyadic synchronous $\pi$-calculus into the
+monadic synchronous $\pi$-calculus. 
+Later typed equivalences of a
+family of linear and affine calculi \cite{BHY,YBH04,BergerHY05} 
+were used to encode 
+PCF \cite{Plotkin1977223,Milner19771}, the simply typed $\lambda$-calculi with sums and products, and System F \cite{GirardJY:protyp}
+fully abstractly (a fully abstract encoding of the $\lambda$-calculi 
+was an open problem in \cite{MilnerR:funp}).  
+The work \cite{YHB02} proposed a new bisimilarity
+method associated with linear type structure and strong
+normalisation. It presented applications to reason secrecy in
+programming languages. A subsequent work~\cite{HY02} adapted these results
+to a practical direction. It proposes new typing
+systems for secure higher-order and multi-threaded programming 
+languages. 
+In these works, typed properties, linearity and liveness, 
+play a fundamental role in the analysis. In general, linear types 
+are suitable to encode ``sequentiality'' in the sense of 
+\cite{HylandJME:fulapi,AbramskyS:fulap}.
+
+Another recent work \cite{DemangeonH11} gives a fully abstract encoding of a 
+binary synchronous
+session typed calculus into a linearly typed $\pi$-calculus \cite{BHY}.
+The work \cite{Dardha:2012:STR:2370776.2370794} also 
+uses linear types to 
+encode binary session types for the first- and higher-order 
+$\pi$-calculi \cite{tlca07}, but it does not 
+study full abstraction results with respect to 
+a behavioural equivalence or bisimulation.
