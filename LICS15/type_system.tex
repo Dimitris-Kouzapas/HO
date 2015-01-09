@@ -330,32 +330,33 @@ The typing system is defined in Fig.~\ref{fig:typerulesmy}.
 %directly derived from the linear part of the typing
 %environment, i.e.~type maps $\Delta$ and $\Lambda$.
 Rules $\trule{Sess, Sh, LVar}$ are name and variable introduction rules. 
-The type $\shot{C}$ for shared higher order values $V$
+The type $\shot{C}$ %for shared higher order values $V$
 is derived using rule $\trule{Prom}$, where we require
 a value with linear type to be typed without a linear
-environment in order to be used as a shared type.
+environment to be typed as a shared type.
 Rule $\trule{EProm}$ allows to freely use a linear
-type variable as shared type variable. 
+type variable as shared.
 
 Abstraction values are typed with rule $\trule{Abs}$.
-The key type for an abstraction is the type for
-the bound variables of the abstraction, i.e.~for
-bound variable type $C$ the abstraction
-has type $\lhot{C}$.
+%The key type for an abstraction is the type for
+%the bound variables of the abstraction, i.e.~for
+%bound variable type $C$ the abstraction
+%has type $\lhot{C}$.
 The dual of abstraction typing is application typing
 governed by rule $\trule{App}$, where we expect
 the type $C$ of an application name $u$ 
 to match the type $\lhot{C}$ or $\shot{C}$
 of the application variable $x$.
 
-A process prefixed with a session send operator $\bout{k}{V} P$
-is typed using rule $\trule{Send}$.
-The type $U$ of a send value $V$ should appear as a prefix
+%A process prefixed with a session send operator $\bout{k}{V} P$
+%is typed using rule $\trule{Send}$.
+In $\trule{Send}$, 
+the type $U$ of a send value $V$ should appear as a prefix
 on the session type $\btout{U} S$ of $u$.
-Rule $\trule{Rcv}$
-defined the typing for the 
-reception of values $\binp{u}{V} P$.
-The type $U$ of a receive value should 
+In rule $\trule{Rcv}$, 
+%defined the typing for the 
+%reception of values $\binp{u}{V} P$.
+the type $U$ of a receive value should 
 appear as a prefix on the session type $\btinp{U} S$ of $u$.
 We use a similar approach with session prefixes
 to type interaction between shared channels as defined 
@@ -364,24 +365,28 @@ where the type of the sent/received object
 ($S$ and $L$, respectively) should
 match the type of the sent/received subject
 ($\chtype{S}$ and $\chtype{L}$, respectively).
-Select and branch prefixes are typed using the rules
-$\trule{Sel}$ and $\trule{Bra}$ respectively. Both
-rules prefix the session type with the selection
-type $\btsel{l_i: S_i}_{i \in I}$ and
-$\btbra{l_i:S_i}_{i \in I}$.
+Rules for selection and branching, 
+$\trule{Sel}$ and $\trule{Bra}$, are standard. 
+%Both
+%rules prefix the session type with the selection
+%type $\btsel{l_i: S_i}_{i \in I}$ and
+%$\btbra{l_i:S_i}_{i \in I}$.
 
-Creating and restricting a
+Creating a
 shared name $a$ requires to remove
 its type from environment $\Gamma$ as defined in 
 rule \trule{Res}. 
 Creation of a session name $s$
-creates two endpoints with dual types and restricts
-them by removing them from the session environment
-$\Delta$ as defined in rule \trule{ResS}. 
-Rule \trule{Par} combines the linear environment of
-the parallel components of a parallel process
-to create a type for the entire parallel process.
-The disjointness of environmnts $\Lambda$ and $\Delta$
+creates and restricts two endpoints with dual types. 
+%and restricts
+%them by removing them from the session environment
+%$\Delta$ as defined 
+in rule \trule{ResS}. 
+In rule \trule{Par}, 
+%combines the linear environment of
+%the parallel components of a parallel process
+%to create a type for the entire parallel process.
+the disjointness of environmnts $\Lambda$ and $\Delta$
 is implied. Rule \trule{End} allows a form of weakening 
 for the session environment $\Delta$, provided that
 the names added in $\Delta$ have the inactive
@@ -392,8 +397,8 @@ variable as in rule \trule{Rec}.
 The recursive variable is typed
 directly from the shared environment $\Gamma$ as
 in rule \trule{RVar}.
-The inactive process $\inact$ has no
-linear environment. 
+The inactive process $\inact$ is typed with no
+linear environments in rule \trule{Nil}. 
 
 
 
