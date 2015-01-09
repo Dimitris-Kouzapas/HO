@@ -146,17 +146,26 @@ their corresponding first-order bisimulation theory.
 In this work we continue the line drawn originally by
 Sangiorgi~\cite{San96H,SangiorgiD:expmpa},
 and Jeffrey and Rathke~\cite{DBLP:journals/lmcs/JeffreyR05}.
-The first fully abstract encoding from the higher order $\pi$-calculus to
-the $\pi$-calculus was given by Sangiorgi in his Ph.D.~thesis~\cite{SangiorgiD:expmpa}.
-Sangiorgi introduced the idea of a replicated trigger in order to create
-arbitrary copies of a higher order value. The core of the triggered encoding 
-is used also used in this work to encode the \HOp to \sessp (Definition~\ref{def:enc:HOp_to_FO}).
+Sangiorgi in his Ph.D.~thesis~\cite{SangiorgiD:expmpa} introduces
+the first fully abstract encoding from the higher-order $\pi$-calculus to
+the $\pi$-calculus.
+The encoding is based on the idea of a replicated trigger process 
+in order to create arbitrary copies of a higher order-value.
+The replicated triggered process 
+is used in this work for the encoding of \HOp into \sessp
+(Definition~\ref{def:enc:HOp_to_FO}).
+
 The trigger encoding gave the motivation to Jeffrey and
-Rathke to introduce the trigger bisimulation~\cite{DBLP:journals/lmcs/JeffreyR05}.
-The main idea for higher-order output observation in the
+Rathke to introduce the trigger bisimulation~\cite{DBLP:journals/lmcs/JeffreyR05}
+for a full higher-order $\pi$-calculus that allows
+higher-order applications.
+The triggered bisimulation is based on a labelled semantics
+that observe triggered process semantics instead of standard
+higher-order values.
+Higher-order output observation $\bout{n}{Q}$ in the
 triggered bisimulation requires from
 a process $P$ to output a fresh
-trigger name and then introduce of a replicated triggered process
+trigger name $t$ and then introduce of a replicated triggered process
 in its context:
 \[
 	P \by{\news{t} \bactout{n}{t}} P' \Par \repl{} \binp{t}{x} Q
@@ -164,20 +173,34 @@ in its context:
 Our approach for output observation is similar but instead of 
 a replicated triggered process we require a triggered process that 
 can input any process that can substitute the higher-order output.
-The approach for higher-order input observation by Jeffrey and Rathke requires 
-to the input of a triggered process annotated with the application value.
+In essence we are transforming a replicated trigger into a higher-order
+input prefixed process.
+Higher-order input observation in the Jeffrey and Rathke approach requires 
+the input of a fresh trigger name.
 \[
 	P \by{\bactinp{n}{t}} P \subst{t}{x} 
 \]
-whereas in this approach we can observe the triggered value
+whereas in our approach we can observe the triggered value
 $\abs{z}\btinp{t}{x} \appl{x}{z}$.
-Finally an application in triggger bisimulation semantics
-observes a trigger over
-\dk{continue}
+In triggered bisimulation a fresh trigger name input leads to applications over
+fresh trigger names. This leads into observing an application
+as an output of the application value over the fresh trigger name.
+In our approach instead of observing an application and its value,
+we use the application in a characteristic process.
+
+The main differences of the triggered
+bisimulation approach comparing to our approach are:
+i) We use observe higher-order values on the LTS in contrast to first-order 
+values in~\cite{DBLP:journals/lmcs/JeffreyR05}.
+ii) In our approach we avoid the replicated triggered process,
+by transforming the output process into a higher-order guarded input.
+iii) The triggered bisimulation gives semantics for higher-order application,
+whereas in our approach we give semantics for first-order applications
+and show that higher-order applications are fully encodable.
 
 Boreale and Sangiorgi, 
 Deng and Hennessy, 
-Jeffrey and Rathke, Hennessy and Koutavas, Schmitt and Lenglet, Piérard and Sumii.
+Jeffrey and Rathke, Hennessy and Koutavas, Schmitt and Lenglet, Pi\E9rard and Sumii.
 Perez et al (bisimilarities for binary sessions), Kouzapas and Yoshida (bisimilarities for binary and multiparty sessions).
 Bisimilarities for HO processes: \cite{Xu07}.
 
