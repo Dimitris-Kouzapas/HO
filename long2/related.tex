@@ -134,73 +134,101 @@ In \cite{DBLP:journals/iandc/PerezCPT14} typed behavioral equivalencies for bina
 a session $\pi$-calculus without shared names. Issues of strong normalization, confluence, $\tau$-inertness are covered.
 
 \paragraph{Typed Behavioural Equivalences.}
-This work builds on the session type bisimulations principles
-that were laid by previous works of the
+The current work follows the principles for
+session type behavioural semantics that were laid
+by the previous works of the
 authors~\cite{dkphdthesis,DBLP:conf/forte/KouzapasYH11,KY13}.
-These principles, that are still followed in the current work,
-require a typed labelled transition system
-that assumes a session typed observer and develops
-tractable bisimulation relations that coincide with
-the reduction closed, barb preserving congruence. The
-proof tecnhiques for soundness and completeness of the bisimulation
-are derived from~\cite{Hennessy07}.
+A bisimulation relation is defined on a labelled
+transition system that assumes a session typed
+observer.
+The bisimilarity is characterised by the corresponding
+reduction-closed, barb-preserving congruence using a
+proof technique that is derived from~\cite{Hennessy07}.
 
-The theory for higher-order equivalences is more challenging than
-their corresponding first-order bisimulation theory.
-In this work we continue the line drawn originally by
-Sangiorgi~\cite{San96H,SangiorgiD:expmpa},
-and Jeffrey and Rathke~\cite{DBLP:journals/lmcs/JeffreyR05}.
-Sangiorgi in his Ph.D.~thesis~\cite{SangiorgiD:expmpa} introduces
-the first fully abstract encoding from the higher-order $\pi$-calculus to
-the $\pi$-calculus.
-The encoding is based on the idea of a replicated trigger process 
-in order to create arbitrary copies of a higher order-value.
+The theory for higher-order session types
+differentiates from 
+the work in~\cite{dkphdthesis,DBLP:conf/forte/KouzapasYH11,KY13}
+that studies the behavioural semantics for first-order
+binary and multiparty session types.
+
+%The theory for higher-order session type quivalences is more challenging than
+%their corresponding first-order bisimulation theory.
+To cope with the challenges presented by the higher-order
+theory we are motivate and in fact we continue the line drawn
+originally by Sangiorgi~\cite{San96H,SangiorgiD:expmpa},
+and by Jeffrey and Rathke~\cite{DBLP:journals/lmcs/JeffreyR05}.
+Sangiorgi as part of his Ph.D.~research~\cite{San96H,SangiorgiD:expmpa}
+introduced the first fully abstract encoding from the higher-order 
+$\pi$-calculus to the $\pi$-calculus. 
 The replicated triggered process 
-is used in this work for the encoding of \HOp into \sessp
+is also used in this work for the encoding of \HOp into \sessp
 (Definition~\ref{def:enc:HOp_to_FO}).
+Sangiorgi's encoding is based on the idea of a replicated input guarded process 
+(called a trigger process). Operational correspondence for
+the triggered encoding is shown using the contextual bisimulation
+with first-order labels.
+The encoding also motivates the definition of a form of
+triggered bisimulation, also defined on first-order labels
+where the contextual bisimulation is restricted to arbitrary
+trigger substitution rather than arbitrary process substitutions.
 
-The trigger encoding gave the motivation to Jeffrey and
-Rathke to introduce the trigger bisimulation~\cite{DBLP:journals/lmcs/JeffreyR05}
-for a full higher-order $\pi$-calculus that allows
-higher-order applications.
-The triggered bisimulation is based on a labelled semantics
-that observe triggered process semantics instead of standard
+The triggered bisimulation was further refined by Jeffrey and
+Rathke to introduce their own version of triggered
+bisimulation~\cite{DBLP:journals/lmcs/JeffreyR05}.
+%for a full higher-order $\pi$-calculus that allows
+%higher-order applications.
+Like Sangiorgi the labelled transition semantics
+that observe first-order triggered values instead of
 higher-order values.
-Higher-order output observation $\bout{n}{Q}$ in the
-triggered bisimulation requires from
-a process $P$ to output a fresh
-trigger name $t$ and then introduce of a replicated triggered process
-in its context:
+
+There are similarities of the characteristic bisimulation
+the triggered bisimulation as defined by Jeffrey and Rathke:
+i) the output of a higher-order higher-order value $Q$ on name
+$n$ in the triggered bisimulation requires the output of
+a fresh trigger name $t$ on channel $n$ 
+and then the introduction of a replicated triggered process
+in the context of the acting process:
+%
 \[
 	P \by{\news{t} \bactout{n}{t}} P' \Par \repl{} \binp{t}{x} Q
 \]
-Our approach for output observation is similar but instead of 
-a replicated triggered process we require a triggered process that 
-can input any process that can substitute the higher-order output.
-In essence we are transforming a replicated trigger into a higher-order
-input prefixed process.
-Higher-order input observation in the Jeffrey and Rathke approach requires 
-the input of a fresh trigger name.
+%
+The approached used in the characteristic bisimulation is similar
+but instead of a replicated triggered process we require a
+triggered process that can input any process that can substitute
+the higher-order output.
+In essence we are transforming a replicated trigger into a process
+that is input-prefixed on a fresh name that receives a higher-order
+value;
+ii) the input of a higher-order the Jeffrey and Rathke approach requires 
+the input of a fresh trigger name, which is substituted on the application
+variable, thus having a special syntax for triggered application instead
+of higher-order applications.  
 \[
 	P \by{\bactinp{n}{t}} P \subst{t}{x} 
 \]
-whereas in our approach we can observe the triggered value
-$\abs{z}\btinp{t}{x} \appl{x}{z}$.
-In triggered bisimulation a fresh trigger name input leads to applications over
-fresh trigger names. This leads into observing an application
-as an output of the application value over the fresh trigger name.
-In our approach instead of observing an application and its value,
-we use the application in a characteristic process.
+The approach in the characteristic bisimulation observes the triggered value
+$\abs{z}\btinp{t}{x} \appl{x}{z}$ as an input instead of the
+trigger name, thus avoiding the special syntax for triggered applications;
+iii) Lastly, in triggered bisimulation a triggered applications
+leads into an output observation of the application value over
+the fresh trigger name.
+\[
+	\appl{t}{V} \by{\bactout{t}{V}} \inact
+\]
+In the characteristic bisimulation instead of observing an 
+application and its value as an action we observe the application
+value by inhabiting it in a characteristic process.
 
-The main differences of the triggered
-bisimulation approach comparing to our approach are:
-i) We use observe higher-order values on the LTS in contrast to first-order 
-values in~\cite{DBLP:journals/lmcs/JeffreyR05}.
-ii) In our approach we avoid the replicated triggered process,
-by transforming the output process into a higher-order guarded input.
-iii) The triggered bisimulation gives semantics for higher-order application,
-whereas in our approach we give semantics for first-order applications
-and show that higher-order applications are fully encodable.
+%The main differences of the triggered
+%bisimulation approach comparing to our approach are:
+%i) We use observe higher-order values on the LTS in contrast to first-order 
+%values in~\cite{DBLP:journals/lmcs/JeffreyR05}.
+%ii) In our approach we avoid the replicated triggered process,
+%by transforming the output process into a higher-order guarded input.
+%iii) The triggered bisimulation gives semantics for higher-order application,
+%whereas in our approach we give semantics for first-order applications
+%and show that higher-order applications are fully encodable.
 
 Boreale and Sangiorgi, 
 Deng and Hennessy, 

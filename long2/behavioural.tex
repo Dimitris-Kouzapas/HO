@@ -3,18 +3,19 @@
 \label{sec:beh_sem}
 
 In this section we define a theory for observational equivalence over
-session typed \HOp processes. The theory follows the principles
+\HOp processes. The theory follows the principles
 laid by the previous work of the authors
-\cite{DBLP:conf/forte/KouzapasYH11,KY13,dkphdthesis}.
-We require a bisimulation relation over typed processes that
-is also characterised by the corresponding typed, reduction-closed,
-barbed congruence relation.
+\cite{DBLP:conf/forte/KouzapasYH11,KY13,dkphdthesis,DBLP:journals/iandc/PerezCPT14}.
 
-\dk{(Jorge, I think you have a paper we can cite over session typed bisimulations)}
+
+%We require a bisimulation relation over typed processes that
+%is also characterised by the corresponding typed, reduction-closed,
+%barbed congruence relation.
 
 \subsection{Labelled Transition Semantics}\label{ss:lts}
 
-We define the relation $P_1 \by{\ell} P_2$ over
+We define the typed labelled transition relation
+$P_1 \by{\ell} P_2$ (LTS for short) over
 (untyped) processes, that allows us to follow how a process may
 interact with a process in its environment. The interaction
 is defined on action $\ell$:
@@ -30,9 +31,9 @@ is defined on action $\ell$:
 \]
 %
 \noi The internal action is defined on label $\tau$.
-Action $\news{\tilde{m}} \bactout{n}{V}$ denotes the sending of value $V$ over channel $n$ with
-the (possibly empty) set of names $\tilde{m}$ being restricted (we write $\bactout{n}{V}$ 
-when $\tilde{m}$ is empty).
+Action $\news{\tilde{m}} \bactout{n}{V}$ denotes the sending of value
+$V$ over channel $n$ with the (possibly empty) set of names $\tilde{m}$
+being restricted (we write $\bactout{n}{V}$  when $\tilde{m}$ is empty).
 Dually the action for the reception of values is 
 $\bactinp{n}{V}$.
 We also defined actions for selecting a label $l$, $\bactsel{n}{l}$ and branching on a label
@@ -54,12 +55,16 @@ select action is dual with branch action.
 
 {\bf Untyped Labelled Transition System:}
 The labelled transition system, LTS, is defined in Figure~\ref{fig:untyped_LTS}.
+An application requires an extra silent step $\tau$ to substitute
+the application name over the application abstraction as defined
+in rule $\ltsrule{App}$.
 A process with a send prefix can interact with the environment with a send
 action that carries a value $V$ as in rule $\ltsrule{Out}$.
 Dually in rule $\ltsrule{In}$
 a received prefixed process can observe a receive action of a value $V$.
 Select and branch prefixed processes observe the select
-and branch actions in rules $\ltsrule{Sel}$ and $\ltsrule{Bra}$ respectively.
+and branch actions in rules $\ltsrule{Sel}$ and $\ltsrule{Bra}$, respectively,
+and proceed according to the labels observed.
 Rule $\ltsrule{Res}$ closes the LTS under the name creation
 operator provided that the restricted name does not occur free in the observable action.
 If a restricted name occurs free in and an output action 
@@ -72,158 +77,46 @@ Rule $\ltsrule{Tau}$ states that if two parallel processes can perform dual acti
 then the two actions  can synchronise to observe an internal transition. 
 Finally rule $\ltsrule{Alpha}$ closes  the LTS under alpha-renaming.
 
-%\subsection{Characteristic Processes}
-%We can use a session type to define the a {\em characteristic process}
-%which is the simplest process that is typed
-%under the given session type.
-%
-\begin{comment}
-\begin{definition}[Characteristic Process]\rm
-	\label{def:characteristic_process}
-	Let name $u$ and type $U$; then we define a {\em characteristic process}:
-	$\mapchar{U}{k}$ as:
-%
-	\[
-	\begin{array}{cc}
-		\begin{array}{rclcl}
-			\mapchar{\btinp{U} S}{u} &\defeq& \binp{u}{x} (\mapchar{S}{u} \Par \mapchar{U}{x})
-			\\
-			\mapchar{\btout{U} S}{u} &\defeq& \bout{u}{\omapchar{U}} \mapchar{S}{u} %& & n \textrm{ fresh}
-			\\
-			\mapchar{\btsel{l : S}}{u} &\defeq& \bsel{u}{l} \mapchar{S}{u}
-			\\
-			\mapchar{\btbra{l_i: S_i}_{i \in I}}{u} &\defeq& \bbra{u}{l_i: \mapchar{S_i}{u}}_{i \in I}
-			\\
-			\mapchar{\tvar{t}}{u} &\defeq& \varp{X}_{\vart{t}}
-			\\
-			\mapchar{\trec{t}{S}}{u} &\defeq& \recp{X_{\vart{t}}}{\mapchar{S}{u}}
-			\\
-			\mapchar{\tinact}{u} &\defeq& \inact
-			\\
-		\end{array}
-		&
-		\begin{array}{rcrclcl}
-			&&\mapchar{\chtype{S}}{u} &\defeq& \bout{u}{\omapchar{S}} \inact
-			\\
-			&&\mapchar{\chtype{L}}{u} &\defeq& \bout{u}{\omapchar{L}} \inact
-			\\
-			\mapchar{\shot{C}}{x} &\defeq& \mapchar{\lhot{C}}{x} &\defeq& \appl{x}{\omapchar{C}}
-			\\
-			\\
-			&&\omapchar{S} &\defeq& s && s \textrm{ fresh}
-			\\
-			\omapchar{\chtype{S}} &\defeq& \omapchar{\chtype{L}} &\defeq& a && a \textrm{ fresh}
-			\\
-			\omapchar{\shot{C}} &\defeq& \omapchar{\lhot{C}} &\defeq& \abs{x}{\mapchar{C}{x}}
-		\end{array}
-	\end{array}
-	\]
-\end{definition}
-\end{comment}
-%
-\begin{comment}
-\begin{definition}[Characteristic Process]\rm
-	\label{def:characteristic_process}
-	Let name $u$ and type $C$; then we define a {\em characteristic process}:
-	$\map{C}^k$ as:
-%
-	\[
-	\begin{array}{rclcl}
-		\map{\btinp{C} S}^{u} &=& \binp{u}{x} (\map{S}^{u} \Par \map{C}^{x})
-		\\
-		\map{\btout{C} S}^{u} &=& \bout{u}{n} \map{S}^{u} & & n \textrm{ fresh}
-		\\
-		\map{\btsel{l : S}}^{u} &=& \bsel{u}{l} \map{S}^{u}
-		\\
-		\map{\btbra{l_i: S_i}_{i \in I}}^{u} &=& \bbra{u}{l_i: \map{S_i}^{u}}_{i \in I}
-		\\
-		\map{\tvar{t}}^{k} &=& \varp{X}_{\vart{t}}
-		\\
-		\map{\trec{t}{S}}^{u} &=& \recp{X_{\vart{t}}}{\map{S}^{u}}
-		\\
-		\map{\btout{\lhot{C}} S}^{u} &=& \bout{u}{\abs{x}{\map{C}^{x}}} \map{S}^u
-		\\
-		\map{\btinp{\lhot{C}} S}^{u} &=& \binp{u}{x} (\map{S}^u \Par \appl{x}{n}) & & n \textrm{ fresh}
-		\\
-		\map{\btout{\shot{C}} S}^{u} &=& \bout{u}{\abs{x}{\map{C}^{x}}} \map{S}^u
-		\\
-		\map{\btinp{\shot{C}} S}^{u} &=& \binp{u}{x} (\map{S}^u \Par \appl{x}{n}) & & n \textrm{ fresh}
-		\\
-
-%		\map{\btinp{\chtype{S}} S}^{k} &=& \binp{k}{x} (\map{S}^k \Par \map{\chtype{S}}^y)
-%		&&
-%		\map{\btout{\chtype{S}} S}^{k} &=& \bout{k}{a} \map{S}^k  & a\textrm{ fresh}
-%		\\
-
-		\map{\tinact}^{u} &=& \inact
-		\\
-		\map{\chtype{S}}^{u} &=& \bout{u}{s} \inact & & s \textrm{ fresh}
-		\\
-		\map{\chtype{\lhot{C}}}^{u} &=& \bout{u}{\abs{x} \map{C}^{x}} \inact
-		\\
-		\map{\chtype{\shot{C}}}^{u} &=& \bout{u}{\abs{x} \map{C}^{x}} \inact
-	\end{array}
-	\]
-\end{definition}
-\end{comment}
-
-%\begin{proposition}\rm
-%$ $
-%	\begin{itemize}
-%		\item	$\Gamma; \emptyset; \Delta \cat u:S \proves \mapchar{S}{u} \hastype \Proc$
-%		\item	$U = \chtype{S}$ or $U = \chtype{L}$ implies $\Gamma \cat u:U; \emptyset; \Delta \proves \mapchar{U}{u} \hastype \Proc$
-%	\end{itemize}
-%\end{proposition}
-%
-%\begin{proof}
-%	By induction on the definition of $\mapchar{S}{u}$ and $\mapchar{U}{u}$.
-%\end{proof}
-%
-%\begin{corollary}\rm
-%	If $\Gamma; \emptyset; \Delta \proves \mapchar{C}{u} \hastype \Proc$
-%	then
-%	$\Gamma; \es; \Delta \proves u \hastype C$.
-%\end{corollary}
-
 \subsection{Typed Labelled Transition System}
 
 \input{figures/fig-envLTS}
 
-We define a relation of the form
-$(\Gamma, \Lambda_1, \Delta_1) \by{\ell} (\Gamma, \Lambda_2, \Delta_2)$
-over type tuples, that follows the progress of types over
-actions $\ell$.
+Figure~\ref{fig:envLTS} describes we define 
+the environemnt labelled transition relation that
+follows the progress of types over actions $\ell$ and has form
+$(\Gamma, \Lambda_1, \Delta_1) \by{\ell} (\Gamma, \Lambda_2, \Delta_2)$.
 
-Figure~\ref{fig:envLTS} describes relation $\by{\ell}$.
 Rule $\eltsrule{SOut}$ states the conditions for observing action
-$\news{\tilde{m}} \bactout{s}{V}$ on a type tuple $(\Gamma, \Lambda, \Delta)$. 
-The session environment $\Delta$ of the type tuple should include
-a type for $s$ that is prefixed on the output type of type $U$.
-Furthermore the dual channel $\dual{s}$ should not be
+$\news{\tilde{m}} \bactout{s}{V}$ on a type tuple $(\Gamma, \Lambda, \Delta)$:
+i) the session environment $\Delta$ of the type tuple should include
+a type for $s$ that is prefixed on the output type of type $U$;
+ii) the dual channel $\dual{s}$ should not be
 present in the session environment, since if it was present
 the only communication that could take place is the interaction
-between the two endpoints.
-Under the latter conditions the type tuple may output any
+between the two endpoints;
+iii) the type tuple may output any
 value $V$ that is typed under a subset of $\Delta$ and
 the session environment that types the restricted names
-$\tilde{m}$. Scope extrusion of session names in $\tilde{m}$ requires
-that the dual endpoints of $\tilde{m}$ appear in
-the resulting session environment. Similarly for shared names
-in $\tilde{m}$ that are extruded.
-All free values used for typing $V$ are subtracted from the
-resulting type tuple. Also the prefix of session $s$ is consumed
-by the action.
-Similarly, an output on a shared name is described
-with rule $\eltsrule{ShOut}$ where we require a shared name
-is typed with $\chtype{U}$. The requirements for
-the output $V$ are identical with the requirements for
+$\tilde{m}$;
+iv) scope extrusion of session names in $\tilde{m}$ requires
+the dual endpoints of $\tilde{m}$ to appear in
+the resulting session environment (shared names in
+$\tilde{m}$ are extruded in a similar manner);
+v) all free values used for typing $V$ are subtracted from the
+resulting type tuple; and
+vi) the prefix of session type of channel $s$ is consumed by the action.
+Similarly, rule $\eltsrule{ShOut}$ describes an output on a shared name,
+where we require a shared name with value $\chtype{U}$.
+The requirements for the observation of action
+$\news{\tilde{m}} \bactout{a}{V}$ are identical with the requirements for
 rule $\eltsrule{SOut}$.
 Rules $\eltsrule{SRecv}$ and $\eltsrule{ShRecv}$ describe
-the input action $\bactinp{n}{V}$ ($n$ session or shared channel respectively)
+the input action $\bactinp{n}{V}$ ($n$ is a session or a shared channel, respectively)
 on the type tuple $(\Gamma, \Lambda, \Delta)$.
-We require the value $V$ has the same type as name $n$. Furthermore
-we expect the resulting type tuple to contain the values that
-consist value $V$.
+We require the value $V$ has the same type as the type in name $n$.
+Furthermore,
+we expect the resulting type tuple to contain the type of the
+values that consist value $V$.
 Rules $\eltsrule{Sel}$ and $\eltsrule{Bra}$ describe actions for
 select and branch. The only requirements for both
 rules is that the dual endpoint is not present in the session
@@ -261,9 +154,6 @@ as a combination of the untyped LTS and the LTS for typed environments:
 
 \begin{definition}[Typed Transition System]\label{d:tlts}\rm
 	We write
-%
-%	\begin{enumerate}
-%		\item
 	$\horel{\Gamma}{\Delta_1}{P_1}{\by{\ell}}{\Delta_2}{P_2}$
 	whenever
 	$P_1 \by{\ell} P_2$,
@@ -271,60 +161,51 @@ as a combination of the untyped LTS and the LTS for typed environments:
 	and $\Gamma; \emptyset; \Delta_2 \proves P_2 \hastype \Proc$.
 
 	\noi We extend to $\By{}$ and $\By{\hat{\ell}}$ in the standard way.
-%		\item	$\horel{\Gamma}{\Delta_1}{P_1}{\hby{\ell}}{\Delta_2}{P_2}$
-%			whenever
-%			$P_1 \by{\ell} P_2$,
-%			$(\Gamma, \emptyset, \Delta_1) \hby{\ell} (\Gamma, \emptyset, \Delta_2)$
-%			and
-%			$\Gamma; \emptyset; \Delta_2 \proves P_2 \hastype \Proc$.
-%	\end{enumerate}
-%
 \end{definition}
-
-%\begin{lemma}[Invariant]\label{l:invariant}
-%	If $\horel{\Gamma}{\Delta_1}{P_1}{\hby{\ell}}{\Delta_2}{P_2}$
-%	then $\horel{\Gamma}{\Delta_1}{P_1}{\by{\ell}}{\Delta_2}{P_2}$.
-%\end{lemma}
-
-%\begin{proof}
-%	The proof is straightforward from the definition of rule $\eltsrule{RRcv}$.
-%\end{proof}
 
 \subsection{Behavioural Semantics}
 
 We use the typed labelled transition semantics to define
-a set of relations over typed processes that allow us to compare
-typed processes over a notion of observational equivalence.
+a set of equivalence relations over typed processes.
+% that allow us to compare
+%typed processes over a notion of observational equivalence.
 
-We begin with a definition of a notion of confluence
-over session environments $\Delta$:
+Equivalent processes require a notion of session type confluence,
+defined over session environments $\Delta$:
 %
 \begin{definition}[Session Environment Confluence]\rm
 	We denote $\Delta_1 \bistyp \Delta_2$ whenever $\exists \Delta$ such that
 	$\Delta_1 \red^* \Delta$ and $\Delta_2 \red^* \Delta$.
 \end{definition}
 %
-A typed relation is a relation over typed programs:
+Session environment confluence requires from session environment
+to be able to follow each other.
 
+We define a generic typed relation typed processes that
+includes the common properties for all the equivalence relations
+that we are going to define:
+%
 \begin{definition}[Typed Relation]\rm
 	We say that
 	$\Gamma; \emptyset; \Delta_1 \proves P_1 \hastype \Proc\ \Re \ \Gamma; \emptyset; \Delta_2 \proves P_2 \hastype \Proc$
 	is a typed relation whenever:
-	i) $P_1$ and $P_2$ are programs;
-	ii) $\Delta_1$ and $\Delta_2$ are well typed;
-	iii) and $\Delta_1 \bistyp \Delta_2$.
-
-	We write
+	\begin{enumerate}[i)]
+		\item	$P_1$ and $P_2$ are closed processes;
+		\item	$\Delta_1$ and $\Delta_2$ are balanced; and
+		\item	$\Delta_1 \bistyp \Delta_2$.
+	\end{enumerate}
+%
+	\noi We write
 	$\horel{\Gamma}{\Delta_1}{P_1}{\ \Re\ }{\Delta_2}{P_2}$
 	for $\Gamma; \emptyset; \Delta_1 \proves P_1 \hastype \Proc\ \Re\ \Gamma; \emptyset; \Delta_2 \proves P_2 \hastype \Proc$.
 \end{definition}
 
-Type relations relate only programs (i.e.\ processes with no free variables) with
-well typed session environments and furthermore the two session environments
-are confluent.
+Type relations relate only closed processes
+(i.e.\ processes with no free variables)
+that have balanced and confluent session environments.
 
-We define the notions of barb and typed barb.
-
+We define the notions of barb and typed barb:
+%
 \begin{definition}[Barbs]\rm
 	Let program $P$.
 	\begin{enumerate}
@@ -337,7 +218,7 @@ We define the notions of barb and typed barb.
 			$\Gamma; \emptyset; \Delta' \proves P' \barb{n}$.			
 	\end{enumerate}
 \end{definition}
-
+%
 A barb $\barb{n}$ is an observable on an output prefix with subject $n$.
 Similarly a weak barb $\Barb{n}$ is a barb after a number of reduction steps.
 Typed barbs $\barb{n}$ (resp.\ $\Barb{n}$)
@@ -346,24 +227,24 @@ where we require that the corresponding dual endpoint $\dual{n}$ is not present
 in the session type $\Delta$.
 
 We define the notion of the context:
-
+%
 \begin{definition}[Context]\rm
 	A context $\C$ is defined on the grammar:
 %
 \[
 	\begin{array}{rcl}
-		\C &\bnfis& \hole \bnfbar \bout{u}{V} \C \bnfbar \bout{u}{\abs{x}{\C}} P \bnfbar \binp{u}{x} \C \\
+		\C &\bnfis& \hole \bnfbar \bout{u}{V} \C \bnfbar \bout{u}{\abs{x}{\C}} P \bnfbar \binp{u}{x} \C \bnfbar \recp{X}{\C}\\
 		& \bnfbar & \news{n} \C \bnfbar \C \Par P \bnfbar \bsel{u}{l} \C \bnfbar \bbra{k}{l_1: P_1, \dots, l_i:\C, \dots, l_n: P_n}
 	\end{array}
 \]
 %
 	Notation $\context{\C}{P}$ replaces every $\hole$ in $\C$ with $P$.
 \end{definition}
-
-A context is a function that takes a process and returns a new process
+%
+\noi A context is a function that takes a process and returns a new process
 according to the above syntax.
 
-The first behavioural relation we define is reduction-closed, barbed congruence:
+The first behavioural relation we define is reduction-closed, barb-preserving congruence:
 %
 \begin{definition}[Reduction-closed, Barbed Congruence]\rm
 	Typed relation
@@ -391,11 +272,12 @@ The first behavioural relation we define is reduction-closed, barbed congruence:
 	The largest such congruence is denoted with $\cong$.
 \end{definition}
 %
-Reduction-closed, barbed congruence is closed under reduction semantics and 
-preserves barbs under any context. In a sense no barb observer can distinguish
+\noi Reduction-closed, barbed congruence is closed under reduction semantics and 
+preserves barbs under any context, i.e~no barb observer can distinguish
 between two related processes.
 
-The second behavioural relation is contextual bisimulation:
+The second behavioural relation we define a bisimulation
+relation based on contexts, called contextual bisimulation:
 %
 \begin{definition}[Contextual Bisimulation]\rm
 	\label{def:context_bis}
@@ -436,7 +318,7 @@ The second behavioural relation is contextual bisimulation:
 	The Knaster Tarski theorem ensures that the largest contextual bisimulation exists,
 	it is called contextual bisimilarity and is denoted by $\wbc$.
 \end{definition}
-
+%
 The contextual bisimulation in the general case
 is a hard relation to compute due to:
 i) the universal quantifier over contexts in the output case;
@@ -457,8 +339,6 @@ To handle the universal quantified over processes in the output
 case of the contextual bisimulation, consider that
 the substitution $R \subst{V}{x}$ can be written up to 
 a restricted deterministic transition as:
-%The output case for the contextual bisimulation can be equivalently be
-%written as:
 %
 \[
 	\newsp{s}{\binp{s}{x} R \Par \bout{\dual{s}}{V} \inact}
@@ -484,74 +364,24 @@ with the {\em trigger process}:
 	\binp{t}{x} \newsp{s}{\appl{x}{s} \Par \bout{\dual{s}}{V} \inact}
 \]
 %
-%Consider an alternative contextual bisimulation definition
-%
-%Typed relation 
-%$\Re$ is a {\em contextual bisimulation} if whenever
-%$\horel{\Gamma}{\Delta_1}{P_1}{\ \Re\ }{\Delta_2}{P_2}$ implies:
-%\begin{enumerate}
-%	\item	$\forall \news{\tilde{m_1}} \bactout{n}{V_1}$ such that
-%		\[
-%			\horel{\Gamma}{\Delta_1}{P_1}{\by{\news{\tilde{m_1}} \bactout{n}{V_1}}}{\Delta_1'}{P_2}
-%		\]
-%		implies that $\exists Q_2, \abs{x}{Q}$ such that
-%		\[
-%			\horel{\Gamma}{\Delta_2}{Q_1}{\By{\news{\tilde{m_2}} \bactout{n}{V_2}}}{\Delta_2'}{Q_2}
-%		\]
-%		for fresh name $t$: %and $\forall R$ with $\set{x} = \fv{R}$, then
-%	%
-%		\[
-%			\mhorel{\Gamma}{\Delta_1''}{\newsp{\tilde{m_1}}{P_2 \Par \hotrigger{t}{x}{s}{V_1}}}
-%			{\ \Re\ }
-%			{\Delta_2''}{}{\newsp{\tilde{m_2}}{Q_2 \Par \hotrigger{t}{x}{s}{V_2}}}
-%		\]
-%	%
-%	\item	$\forall \ell \not= \news{\tilde{m}} \bactout{n}{V}$
-%		\[
-%			\horel{\Gamma}{\Delta_1}{P_1}{\by{\ell}}{\Delta_1'}{P_2}
-%		\]
-%		implies that $\exists Q_2$ such that
-%		\[
-%			\horel{\Gamma}{\Delta_1}{Q_1}{\by{\ell}}{\Delta_2'}{Q_2}
-%		\]
-%		and
-%		$\horel{\Gamma}{\Delta_1'}{P_2}{\ \Re\ }{\Delta_2'}{Q_2}$
-%
-%	\item	The symmetric cases of 1 and 2.
-%\end{enumerate}
-%
-%The largest such bisimulation is denoted by $\wb^{\mathsf{altr}}$.
-%
-%It is very easy to see that $\wbc\ =\ \wb^{\mathsf{altr}}$ because
-%
-%\begin{eqnarray*}
-%	\horel{\Gamma}{\Delta_1}{\newsp{\tilde{m_1}}{P_2 \Par \hotrigger{t}{x}{s}{V_1}}}{\by{ \bactinp{t}{\abs{z}{\binp{z}{x} R}} } \by{\tau}}{\Delta_1'}{\newsp{\tilde{m_1}}{P_2 \Par R\subst{V_1}{x}}}
-%	\\
-%	\horel{\Gamma}{\Delta_2}{\newsp{\tilde{m_2}}{Q_2 \Par \hotrigger{t}{x}{s}{V_2}}}{\by{ \bactinp{t}{\abs{z}{\binp{z}{x} R}} } \by{\tau}}{\Delta_2'}{\newsp{\tilde{m_1}}{Q_2 \Par R\subst{V_2}{x}}}
-%\end{eqnarray*}
-%
-%The latter definition is equivalent to the output
-%case of the contextual bisimulation
-%because we can observe an input on a fresh name $t$
-%of any abstraction process $\abs{z}{\binp{z}{x} R}$ such that $\set{x} = \fv{R}$.
-%
-The trigger process allows us to express the
-substitution $R \subst{V}{x}$ to an arbitrary process
-$R$ as an input prefixed process, by taking
+\noi The trigger process allows us to express the
+substitution $R \subst{V}{x}$, for an arbitrary process
+$R$, as an input prefixed process.
+We achieve the substitution by taking
 advantage of the fact that actions on an input
 prefix allows us to input every process $R$
-subject to the substitution $R \subst{V}{x}$.
+which is subject to the substitution $R \subst{V}{x}$.
 
-To define an easy to compute bisimulation we still need to
+To define a tractable bisimulation we still need to
 restrict the input actions that can happen on an input
 prefix.
 Towards this direction we define the
 {\em characteristic process} (resp.~characteristic value)
 which is the
-{\em simplest} process (resp. value) that can inhabit 
+{\em simplest} process (resp.~value) that can inhabit 
 a session type.
 
-As an of example the simplest process that inhabits 
+For example, the simplest process that inhabits 
 session type $\btinp{\shot{S_1}} \btout{S_2} \tinact$ 
 is:
 %
@@ -634,7 +464,7 @@ can be observed on an input prefix.
 %Following the intuition of characteristic value,
 As it turns out, the usage of a characteristic value
 alone as an input action for an input prefixed process
-is not enough to define a sound bisimulation relation.
+is not enough to define a sound bisimulation relation:
 %
 \begin{example}
 	\label{ex:char_proc}
@@ -647,7 +477,7 @@ is not enough to define a sound bisimulation relation.
 	%
 	In the restricted input setting both process can input the
 	characteristic value $\abs{x}{\binp{x}{y}} \inact$
-	to get
+	to get:
 	%
 	\begin{eqnarray*}
 		\Gamma; \es; \Delta \proves \binp{s_1}{y} \inact \Par \binp{s_2}{y} \inact\\
@@ -674,16 +504,18 @@ that can be observed on an input prefix,
 results in an over-discriminating bisimulation.
 To solve this problem we introduce the {\em trigger value}.
 %that can be observed as the object of an input action.
-An trigger value is an abstraction 
+A trigger value is an abstraction 
 prefix on a fresh trigger name $t$ that has the form:
+%
 \[
 	\Gamma; \es; \Delta \proves \abs{z}{\binp{t}{x} \appl{x}{z}} \hastype U
 \]
-where $U = \shot{C}$ or $U = \lhot{C}$.
+%
+\noi where $U = \shot{C}$ or $U = \lhot{C}$.
 
 The input trigger can distinguish the processes in Example~\ref{ex:char_proc};
 if the input trigger is received (observe action $\bactinp{s}{\abs{z}{\binp{t}{x} \appl{x}{z}}}$)
-by both processes in Example~\ref{ex:char_proc} we get processes:
+by both processes in Example~\ref{ex:char_proc} we get the processes:
 %
 \begin{eqnarray*}
 	\Gamma; \es; \Delta &\proves& \binp{t}{x} \appl{x}{s_1} \Par \binp{t}{x} \appl{x}{s_2}
@@ -715,7 +547,7 @@ For example processes:
 	\Gamma; \es; \Delta \proves \newsp{s}{\binp{t}{x} \appl{x}{s} \Par \bout{\dual{s}}{\abs{x} Q} \inact} \hastype \Proc
 \end{eqnarray*}
 %
-\noi thus it is shown that they are bisimilar.
+\noi thus if we only observe a trigger value we can easily show a bisimulation closure.
 For input action $\bactinp{s}{\abs{z}{\binp{z}{x} \appl{x}{m}}}$
 though, the resulting processes:
 \begin{eqnarray*}
@@ -811,7 +643,7 @@ can be defined, which is parametrised on the type $U$ of $V$:
 %
 Both triggers reduce in a deterministic way under
 typed transition $\hby{\ell}$, due to the
-freshness of $t$ and the restricted session $s$. Furthermore
+freshness of $t$ and the restricted session $s$. Furthermore,
 both trigger transitions result in the process
 $\mapchar{U}{x} \subst{V}{x}$.
 
