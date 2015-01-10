@@ -26,8 +26,8 @@ is defined on action $\ell$:
 \]
 \noi The internal action is defined by label $\tau$.
 Action $\news{\tilde{m}} \bactout{n}{V}$ denotes the sending of value $V$ over channel $n$ with
-names $\tilde{m}$ being restricted.
-(When $\tilde{m}$ is empty we write $\bactout{n}{V}$.)
+names $\tilde{m}$ being restricted
+(when $\tilde{m}$ is empty we write $\bactout{n}{V}$).
 Dually, the action for value reception is 
 $\bactinp{n}{V}$.
 We also have actions for selecting 
@@ -38,9 +38,9 @@ $\fn{\ell}$ and $\bn{\ell}$ denote
 %and set $\mathsf{n}(\ell)=\bn{\ell}\cup \fn{\ell}$. 
 
 Dual actions, defined below, occur on subjects that are dual between them and carry the same
-object. Thus, output action is dual with input action and 
-select action is dual with branch action.
-Formally, the dual action relation is the symmetric relation $\asymp$ that satisfies the rules:
+object. Thus, output is dual with input and 
+selection is dual with branching.
+Formally, the duality is the symmetric relation $\asymp$ that satisfies:
 \[
 	\bactsel{n}{l} \asymp \bactbra{\dual{n}}{l}
 	\qquad
@@ -113,7 +113,7 @@ Formally, the dual action relation is the symmetric relation $\asymp$ that satis
 	\]
 %We omit $\ltsrule{Par${}_R$}$. 
 	\caption{The Untyped (Early) Labelled Transition System. We omit rule $\ltsrule{Par${}_R$}$.  \label{fig:untyped_LTS}}
-\Hline
+\Hlinefig
 \end{figure}
 \myparagraph{LTS over Untyped Processes}
 The labelled transition system (LTS) over untyped processes
@@ -125,22 +125,21 @@ The rules are standard
 A process with a send prefix can
 interact with the environment with a send action that carries a value
 $V$ as in rule $\ltsrule{Out}$.  Dually, in rule $\ltsrule{In}$ a
-received prefixed process can observe a receive action of a value $V$.
-Select and branch prefixed processes observe the select and branch
+received process can observe an input action of a value $V$.
+Selection and branching processes observe the select and branch
 actions in rules $\ltsrule{Sel}$ and $\ltsrule{Bra}$, respectively.
-Rule $\ltsrule{Alpha}$ closes the LTS
-under alpha-renaming.
 Rule $\ltsrule{Res}$ closes the LTS under the name creation operator
 provided that the restricted name does not occur free in the
 observable action. 
-If a restricted name occurs free in an output
-action then the name is added in the bound name list of the action
-and the continuation process performs scope opening (rule $\ltsrule{New}$).  
+If a restricted name occurs free,  
+then the process performs scope opening (rule $\ltsrule{New}$).  
 Rule $\ltsrule{Tau}$ states that if two parallel processes can perform
-dual actions then the two actions can synchronise to observe an
-internal transition.  Rules $\ltsrule{Par${}_L$}$ and $\ltsrule{Par${}_R$}$ 
-close the LTS under the parallel operator provided that the observable
-action does not share any bound names with the parallel processes.
+dual actions then the two actions can synchronise by 
+an internal transition. Rules $\ltsrule{Par${}_L$}$/$\ltsrule{Par${}_R$}$ 
+and $\ltsrule{Alpha}$ closes the LTS
+under the parallel operator and $\alpha$-renaming. 
+%provided that the observable
+%action does not share any bound names with the parallel processes.
 
 \subsection{Environmental Labelled Transition System}
 \label{ss:elts}
@@ -154,18 +153,23 @@ It extends the transition systems
 in \cite{DBLP:conf/forte/KouzapasYH11,KY13,dkphdthesis} 
 to higher-order sessions. 
 
-Rules $\eltsrule{SRv}$ and $\eltsrule{ShRv}$ describe the input action
-$\bactinp{n}{V}$ ($n$ session or shared channel respectively) on the
-type tuple $(\Gamma, \Lambda, \Delta)$.  We require the value $V$ has
+\myparagraph{Input Actions} 
+are defined by 
+$\eltsrule{SRv}$ and $\eltsrule{ShRv}$
+%describe the input action
+($n$ session or shared channel respectively $\bactinp{n}{V}$). 
+We require the value $V$ has
 the same type as name $s$ and $a$, respectively.  Furthermore we
 expect the resulting type tuple to contain the values that consist
-with value $V$. Note that the condition $\dual{s} \notin \dom{\Delta}$
+with value $V$. The condition $\dual{s} \notin \dom{\Delta}$
 in $\eltsrule{SRv}$ ensures that 
 the dual channel $\dual{s}$ should not be
 present in the session environment, since if it were present
 the only communication that could take place is the interaction
 between the two endpoints (using $\eltsrule{Tau}$ below).
 
+\myparagraph{Output Actions} are defined by $\eltsrule{SOut}$
+and $\eltsrule{ShOut}$.  
 Rule $\eltsrule{SOut}$ states the conditions for observing action
 $\news{\tilde{m}} \bactout{s}{V}$ on a type tuple 
 $(\Gamma, \Lambda, \Delta\cdot \AT{s}{S})$. 
@@ -189,15 +193,16 @@ is typed with $\chtype{U}$. The requirements for
 the output $V$ are identical with the requirements for
 rule $\eltsrule{SOut}$.
 
+\myparagraph{Other Actions}
 Rules $\eltsrule{Sel}$ and $\eltsrule{Bra}$ describe actions for
 select and branch. The only requirements for both
 rules is that the dual endpoint is not present in the session
-environment and furthermore the action labels are present
+environment and the action labels are present
 in the type.
-Hidden transitions do not change the session environment
-or they follow the reduction on session
-environments (Definition~\ref{def:ses_red}), as seen in rule
-$\eltsrule{Tau}$.
+Hidden transitions defined by rule $\eltsrule{Tau}$ 
+do not change the session environment or they follow the reduction on session
+environments (Definition~\ref{def:ses_red}). 
+
 
 %A second environment LTS, denoted $\hby{\ell}$,
 %is defined in the lower part of Figure~\ref{fig:envLTS}.
@@ -413,11 +418,11 @@ we denote $\Delta_1 \bistyp \Delta_2$ if there exists $\Delta$ such that
 
 \smallskip 
 
-\begin{definition}[Typed Relation]\rm
+\begin{definition}\rm %[Typed Relation]\rm
 	We say that
 	$\Gamma; \emptyset; \Delta_1 \proves P_1 \hastype \Proc\ \Re \ \Gamma; \emptyset; \Delta_2 \proves P_2 \hastype \Proc$
-	is a typed relation whenever $P_1$ and $P_2$ are closed;
-		$\Delta_1$ and $\Delta_2$ are well typed; and 
+	is a {\em typed relation} whenever $P_1$ and $P_2$ are closed;
+		$\Delta_1$ and $\Delta_2$ are balanced; and 
 		$\Delta_1 \bistyp \Delta_2$.
 We write
 $\horel{\Gamma}{\Delta_1}{P_1}{\ \Re \ }{\Delta_2}{P_2}$
@@ -426,11 +431,11 @@ for the typed relation $\Gamma; \emptyset; \Delta_1 \proves P_1 \hastype \Proc\ 
 
 \smallskip 
 
-Type relations relate only programs (i.e.\ processes with no free variables) with
-well typed session environments and furthermore the two session environments
+\noi Type relations relate only closed terms with
+balanced session environments and the two session environments
 are confluent.
 Next we define the {\em barb} \cite{MiSa92} 
-with respect to the process typing judgement. 
+with respect to types. 
 
 \smallskip 
 
@@ -449,7 +454,7 @@ Let $P$ closed. We define:
 
 \smallskip 
 
-A barb $\barb{n}$ is an observable on an output prefix with subject $n$.
+\noi A barb $\barb{n}$ is an observable on an output prefix with subject $n$.
 Similarly a weak barb $\Barb{n}$ is a barb after a number of reduction steps.
 Typed barbs $\barb{n}$ (resp.\ $\Barb{n}$)
 happen on typed processes $\Gamma; \emptyset; \Delta \proves P \hastype \Proc$
@@ -460,13 +465,17 @@ To define a congruence relation, we introduce the context $\C$:\\
 
 %\begin{definition}[Context]\rm
 %	A context $\C$ is defined as:
-\hspace{-1cm}\begin{tabular}{rl}
+\noi 
+{\small
+\begin{tabular}{rl}
 	$\C::=$\!\!\!\! & $\hole \bnfbar \bout{u}{V} \C \bnfbar \binp{u}{x} \C
 \bnfbar \bout{u}{\lambda x.\C} P
 \bnfbar \news{n} \C \bnfbar \recp{X}{\C}$\\ 
              $\bnfbar$\!\!\!\!& $\C \Par P \bnfbar P \Par \C 
 \bnfbar \bsel{u}{l} \C \bnfbar \bbra{u}{l_1:P_1,..,l_i:\C,..l_n:P_n}$\\
 	\end{tabular}
+}
+\smallskip 
 
 \noi Notation $\context{\C}{P}$ replaces $\hole$ in $\C$ with $P$.
 %\end{definition}
@@ -549,22 +558,26 @@ $\horel{\Gamma}{\Delta_2}{Q_1}{\By{\ell}}{\Delta_2'}{Q_2}$
 The Knaster Tarski theorem ensures that the largest contextual bisimulation exists, it is called contextual bisimilarity and is denoted by $\wbc$.
 \end{definition}
 
+\smallskip 
+
+\noi As explained in \S~\ref{subsec:intro:bisimulation}, 
 In the general case,
 contextual bisimulation 
-is hard to compute due to: (1) the universal
-quantification over contexts in the output case;
-and (2) a higher-order input prefix which can observe
-infinitely many different input actions (since
-infinitely many different processes can match
-the session type of an input prefix).
+is hard to compute, hence we introduce $\hwb$ and $\fwb$ below. 
+%due to: (1) the universal
+%quantification over contexts in the output case;
+%and (2) a higher-order input prefix which can observe
+%infinitely many different input actions (since
+%infinitely many different processes can match
+%the session type of an input prefix).
 
 \subsection{Higher-Order  and  
 Characteristic  Bisimulations ($\hwb$/$\fwb$)}\label{ss:hwb}
 \noi 
-
-Here we formalize the technical novelties motivated in the Introduction.
+We formalise the technical novelties motivated in \S~\ref{subsec:intro:bisimulation}.
 Our main result is Theorem~\ref{the:coincidence}.
 We first define characteristic processes:
+
 \smallskip  
    
 \begin{definition}[Characteristic Process]\rm
@@ -575,11 +588,10 @@ We first define characteristic processes:
 %		\map{C_1, \cdots, C_n}^{k_1 \cdots k_n} = \map{C_1}^{k_1} \Par \dots \Par \map{C_n}^{k_n}		
 %	\]
 %	with 
-	Let name $u$ and type $U$;
-	then we define the {\em characteristic process} 
-	$\mapchar{U}{u}$ and the {\em characteristic value}
-	$\omapchar{U}$ as
-	in Fig.~\ref{fig:char}. 
+	Let name $u$ and type $U$. 
+	We define the {\em characteristic process} 
+	$\mapchar{U}{u}$ with %{\em characteristic value}
+	$\omapchar{U}$ in Fig.~\ref{fig:char}. 
 \end{definition}
 
 \smallskip
@@ -684,8 +696,6 @@ Characteristic processes are indeed inhabitants of their associated type:
 %\end{IEEEproof}
 
 \smallskip 
-
-
 We now define the \emph{refined} typed LTS. 
 As explained in \S\,\ref{sec:intro}, this new LTS is defined 
 by considering a transition rule for input in which admitted values are
@@ -716,10 +726,9 @@ using the input rules in Fig.~\ref{fig:envLTS}:
 \]
 \noi Environment transition
 $(\Gamma, \Lambda_1, \Delta_1) \hby{\ell} (\Gamma, \Lambda_2, \Delta_2)$
-is defined as in Fig.~\ref{fig:envLTS} but by replacing rules
-$\eltsrule{SRcv}$ and $\eltsrule{ShRcv}$ with $\eltsrule{RRcv}$.
-
-\noi We then define 
+is defined as in Fig.~\ref{fig:envLTS} adding 
+$\eltsrule{RRcv}$. %to $\eltsrule{SRcv}$ and $\eltsrule{ShRcv}$. 
+We then define 
 $\horel{\Gamma}{\Delta_1}{P_1}{\hby{\ell}}{\Delta_2}{P_2}$
 by replacing $\by{\ell}$ by $\hby{\ell}$ in Definition~\ref{d:tlts}. 
 \end{definition}
@@ -728,7 +737,7 @@ by replacing $\by{\ell}$ by $\hby{\ell}$ in Definition~\ref{d:tlts}.
 
 \noi Note 
 $\horel{\Gamma}{\Delta_1}{P_1}{\hby{\ell}}{\Delta_2}{P_2}$ implies  
-then $\horel{\Gamma}{\Delta_1}{P_1}{\by{\ell}}{\Delta_2}{P_2}$.
+$\horel{\Gamma}{\Delta_1}{P_1}{\by{\ell}}{\Delta_2}{P_2}$.
 %See Example~\ref{ex:motivation} for the reason why {\em both} 
 %the trigger values ($\lambda x.\binp{t}{y} (\appl{y}{{x}})$) 
 %and characteristic values ($\lambda x.\map{U}^{{x}}$) are required 
