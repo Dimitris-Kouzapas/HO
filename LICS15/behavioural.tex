@@ -200,8 +200,7 @@ rules is that the dual endpoint is not present in the session
 environment and the action labels are present
 in the type.
 Hidden transitions defined by rule $\eltsrule{Tau}$ 
-do not change the session environment
-or they follow the reduction on session
+do not change the session environment or they follow the reduction on session
 environments (Definition~\ref{def:ses_red}). 
 
 
@@ -419,11 +418,11 @@ we denote $\Delta_1 \bistyp \Delta_2$ if there exists $\Delta$ such that
 
 \smallskip 
 
-\begin{definition}[Typed Relation]\rm
+\begin{definition}\rm %[Typed Relation]\rm
 	We say that
 	$\Gamma; \emptyset; \Delta_1 \proves P_1 \hastype \Proc\ \Re \ \Gamma; \emptyset; \Delta_2 \proves P_2 \hastype \Proc$
-	is a typed relation whenever $P_1$ and $P_2$ are closed;
-		$\Delta_1$ and $\Delta_2$ are well typed; and 
+	is a {\em typed relation} whenever $P_1$ and $P_2$ are closed;
+		$\Delta_1$ and $\Delta_2$ are balanced; and 
 		$\Delta_1 \bistyp \Delta_2$.
 We write
 $\horel{\Gamma}{\Delta_1}{P_1}{\ \Re \ }{\Delta_2}{P_2}$
@@ -432,11 +431,11 @@ for the typed relation $\Gamma; \emptyset; \Delta_1 \proves P_1 \hastype \Proc\ 
 
 \smallskip 
 
-Type relations relate only programs (i.e.\ processes with no free variables) with
-well typed session environments and furthermore the two session environments
+\noi Type relations relate only closed terms with
+balanced session environments and the two session environments
 are confluent.
 Next we define the {\em barb} \cite{MiSa92} 
-with respect to the process typing judgement. 
+with respect to types. 
 
 \smallskip 
 
@@ -455,7 +454,7 @@ Let $P$ closed. We define:
 
 \smallskip 
 
-A barb $\barb{n}$ is an observable on an output prefix with subject $n$.
+\noi A barb $\barb{n}$ is an observable on an output prefix with subject $n$.
 Similarly a weak barb $\Barb{n}$ is a barb after a number of reduction steps.
 Typed barbs $\barb{n}$ (resp.\ $\Barb{n}$)
 happen on typed processes $\Gamma; \emptyset; \Delta \proves P \hastype \Proc$
@@ -466,13 +465,17 @@ To define a congruence relation, we introduce the context $\C$:\\
 
 %\begin{definition}[Context]\rm
 %	A context $\C$ is defined as:
-\hspace{-1cm}\begin{tabular}{rl}
+\noi 
+{\small
+\begin{tabular}{rl}
 	$\C::=$\!\!\!\! & $\hole \bnfbar \bout{u}{V} \C \bnfbar \binp{u}{x} \C
 \bnfbar \bout{u}{\lambda x.\C} P
 \bnfbar \news{n} \C \bnfbar \recp{X}{\C}$\\ 
              $\bnfbar$\!\!\!\!& $\C \Par P \bnfbar P \Par \C 
 \bnfbar \bsel{u}{l} \C \bnfbar \bbra{u}{l_1:P_1,..,l_i:\C,..l_n:P_n}$\\
 	\end{tabular}
+}
+\smallskip 
 
 \noi Notation $\context{\C}{P}$ replaces $\hole$ in $\C$ with $P$.
 %\end{definition}
@@ -555,22 +558,26 @@ $\horel{\Gamma}{\Delta_2}{Q_1}{\By{\ell}}{\Delta_2'}{Q_2}$
 The Knaster Tarski theorem ensures that the largest contextual bisimulation exists, it is called contextual bisimilarity and is denoted by $\wbc$.
 \end{definition}
 
+\smallskip 
+
+\noi As explained in \S~\ref{subsec:intro:bisimulation}, 
 In the general case,
 contextual bisimulation 
-is hard to compute due to: (1) the universal
-quantification over contexts in the output case;
-and (2) a higher-order input prefix which can observe
-infinitely many different input actions (since
-infinitely many different processes can match
-the session type of an input prefix).
+is hard to compute, hence we introduce $\hwb$ and $\fwb$ below. 
+%due to: (1) the universal
+%quantification over contexts in the output case;
+%and (2) a higher-order input prefix which can observe
+%infinitely many different input actions (since
+%infinitely many different processes can match
+%the session type of an input prefix).
 
 \subsection{Higher-Order  and  
 Characteristic  Bisimulations ($\hwb$/$\fwb$)}\label{ss:hwb}
 \noi 
-
-Here we formalize the technical novelties motivated in the Introduction.
+We formalise the technical novelties motivated in \S~\ref{subsec:intro:bisimulation}.
 Our main result is Theorem~\ref{the:coincidence}.
 We first define characteristic processes:
+
 \smallskip  
    
 \begin{definition}[Characteristic Process]\rm
@@ -581,11 +588,10 @@ We first define characteristic processes:
 %		\map{C_1, \cdots, C_n}^{k_1 \cdots k_n} = \map{C_1}^{k_1} \Par \dots \Par \map{C_n}^{k_n}		
 %	\]
 %	with 
-	Let name $u$ and type $U$;
-	then we define the {\em characteristic process} 
-	$\mapchar{U}{u}$ and the {\em characteristic value}
-	$\omapchar{U}$ as
-	in Fig.~\ref{fig:char}. 
+	Let name $u$ and type $U$. 
+	We define the {\em characteristic process} 
+	$\mapchar{U}{u}$ with %{\em characteristic value}
+	$\omapchar{U}$ in Fig.~\ref{fig:char}. 
 \end{definition}
 
 \smallskip
@@ -690,8 +696,6 @@ Characteristic processes are indeed inhabitants of their associated type:
 %\end{IEEEproof}
 
 \smallskip 
-
-
 We now define the \emph{refined} typed LTS. 
 As explained in \S\,\ref{sec:intro}, this new LTS is defined 
 by considering a transition rule for input in which admitted values are
@@ -722,10 +726,9 @@ using the input rules in Fig.~\ref{fig:envLTS}:
 \]
 \noi Environment transition
 $(\Gamma, \Lambda_1, \Delta_1) \hby{\ell} (\Gamma, \Lambda_2, \Delta_2)$
-is defined as in Fig.~\ref{fig:envLTS} but by replacing rules
-$\eltsrule{SRcv}$ and $\eltsrule{ShRcv}$ with $\eltsrule{RRcv}$.
-
-\noi We then define 
+is defined as in Fig.~\ref{fig:envLTS} adding 
+$\eltsrule{RRcv}$. %to $\eltsrule{SRcv}$ and $\eltsrule{ShRcv}$. 
+We then define 
 $\horel{\Gamma}{\Delta_1}{P_1}{\hby{\ell}}{\Delta_2}{P_2}$
 by replacing $\by{\ell}$ by $\hby{\ell}$ in Definition~\ref{d:tlts}. 
 \end{definition}
@@ -734,7 +737,7 @@ by replacing $\by{\ell}$ by $\hby{\ell}$ in Definition~\ref{d:tlts}.
 
 \noi Note 
 $\horel{\Gamma}{\Delta_1}{P_1}{\hby{\ell}}{\Delta_2}{P_2}$ implies  
-then $\horel{\Gamma}{\Delta_1}{P_1}{\by{\ell}}{\Delta_2}{P_2}$.
+$\horel{\Gamma}{\Delta_1}{P_1}{\by{\ell}}{\Delta_2}{P_2}$.
 %See Example~\ref{ex:motivation} for the reason why {\em both} 
 %the trigger values ($\lambda x.\binp{t}{y} (\appl{y}{{x}})$) 
 %and characteristic values ($\lambda x.\map{U}^{{x}}$) are required 
