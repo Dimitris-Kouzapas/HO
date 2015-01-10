@@ -576,9 +576,106 @@ Characteristic  Bisimulations ($\hwb$/$\fwb$)}\label{ss:hwb}
 \noi 
 We formalise the technical novelties motivated in \S~\ref{subsec:intro:bisimulation}.
 Our main result is Theorem~\ref{the:coincidence}.
-We first define characteristic processes:
-
+We first give an example that extends the motivation given in \S\,\ref{sec:intro}; then we define characteristic processes.
 \smallskip  
+
+
+
+\begin{example}[The Need for Refined Typed LTS.]
+\label{ex:motivation}
+First we demonstrate that a characteristic value is not sufficient. 
+Consider typed processes $P_1, P_2$:
+%
+\begin{eqnarray}
+	P_1 = \binp{s}{x} (\appl{x}{s_1} \Par \appl{x}{s_2}) 
+	& & 
+	P_2 = \binp{s}{x} (\appl{x}{s_1} \Par \binp{s_2}{y} \inact) 
+	\label{equ:6}
+\end{eqnarray}
+%
+We can show that $\Gamma; \es; \Delta \cat s: \btinp{\shot{\btinp{C} \tinact}} \tinact \proves P_i \hastype \Proc$.
+If the above processes input and substitute over $x$
+the characteristic value $\abs{z}{\binp{z}{y}} \inact$, 
+then both processes evolve into:%(\ref{eq:5}) and (\ref{eq:6}) in become:
+%
+\begin{eqnarray*}
+	\Gamma; \es; \Delta \proves \binp{s_1}{y} \inact \Par \binp{s_2}{y} \inact \hastype \Proc
+\end{eqnarray*}
+%
+therefore becoming 
+contextually bisimilar after the input of
+ $\abs{x}{\binp{x}{y}} \inact$.
+However, the processes in (\ref{equ:6}) 
+are clearly {\em not} contextually bisimular: there exist many input actions
+which may be used to distinguish them.
+For example, if 
+$P_1$ and $P_2$ input 
+ $\abs{x} \bout{a}{s_3} \binp{x}{y} \inact$ then
+their derivatives not bisimilar. 
+
+Observing only the characteristic value 
+results in an over-discriminating bisimulation.
+However, if a trigger value is received, 
+then we can distinguish 
+processes (\ref{equ:5}) and (\ref{equ:6}):  
+%
+\begin{eqnarray*}
+%	\Gamma; \es; \Delta &\proves& 
+	P_1 \by{\ell} \binp{t}{x} \appl{x}{s_1} \Par \binp{t}{x} \appl{x}{s_2} 
+%\hastype \Proc
+	\mbox{ and }
+%	\Gamma; \es; \Delta &\proves& 
+	P_2 \by{\ell} \binp{t}{x} \appl{x}{s_1} \Par \binp{s_2}{y} \inact 
+%\hastype \Proc
+\end{eqnarray*}
+%\noi resulting two distinct processes.  
+%
+One question that arises here is whether the trigger value is enough
+to distinguish two processes, hence no need of 
+characteristic values as the input. 
+This is not the case since the trigger value
+alone also results in an over-discriminating bisimulation relation.
+In fact the input trigger can be observed on any input prefix
+of {\em any type}. For example, consider the following processes:
+%
+\begin{eqnarray}
+	\Gamma; \es; \Delta \proves \newsp{s}{\binp{n}{x} \appl{x}{s} \Par \bout{\dual{s}}{\abs{x} P} \inact} \hastype \Proc\label{equ:7}
+	\\
+	\Gamma; \es; \Delta \proves \newsp{s}{\binp{n}{x} \appl{x}{s} \Par \bout{\dual{s}}{\abs{x} Q} \inact} \hastype \Proc\label{equ:8}
+\end{eqnarray}
+%
+\noi if both processes in (\ref{equ:7}) and (\ref{equ:8}) 
+input the trigger abstraction, we obtain: % they evolved to 
+\begin{eqnarray*}
+%\Gamma; \es; \Delta \proves 
+	\newsp{s}{\binp{t}{x} \appl{x}{s} \Par \bout{\dual{s}}{\abs{x} P} \inact} 
+%\hastype \Proc
+	\mbox{ and }
+%      \\
+%\Gamma; \es; \Delta \proves 
+	\newsp{s}{\binp{t}{x} \appl{x}{s} \Par \bout{\dual{s}}{\abs{x} Q} \inact}
+%\hastype \Proc
+\end{eqnarray*}
+%
+%\noi It is easy to obtain a closure if allow only the
+%trigger value as the input value.
+Then, 
+if both these processes input the trigger value $\abs{z}{\binp{z}{x} (\appl{x}{m})}$,  
+then they would become:
+\begin{eqnarray*}
+\Gamma; \es; \Delta \proves \newsp{s}{\binp{s}{x} \appl{x}{m} \Par \bout{\dual{s}}{\abs{x} P} \inact} \wbc \Delta \proves P \subst{m}{x}
+	\\
+\Gamma; \es; \Delta \proves \newsp{s}{\binp{s}{x} \appl{x}{m} \Par \bout{\dual{s}}{\abs{x} Q} \inact} \wbc \Delta \proves Q \subst{m}{x}
+\end{eqnarray*}
+\noi which are not bisimilar if $P \subst{m}{x} \not\wb Q \subst{m}{x}$.
+%\qed
+%In conclusion, these examples explain a need of both 
+%trigger and characteristic values 
+%as an input observation in the input transition relation (\eltsrule{RRcv})
+%which will be defined in Definition~\ref{def:rlts}.  
+\end{example}
+
+
    
 \begin{definition}[Characteristic Process]\rm
 \label{def:char}
