@@ -6,23 +6,23 @@
 	\item	Bisimulation theory for higher-order session semantics. DONE
 	\item	New triggered bisimulation, related to J\&R's. DONE
 	\item   Elementary values key to characterizations of behavioral equivalence. DONE
-	\item	Types provide techniques to prove completeness without matching.
+	\item	Types provide techniques to prove completeness without matching. \jp{TBD}
 	\item	We are interested in encodings with properties a la Gorla. 
-                We extended them to typed setting. 
-	\item	Encode name-passing to pure process abstraction calculus, with name abstractions.
-	\item	Type of the recursion encoding uses non tail recursive type $\trec{t}{\btinp{t} \tinact}$.
-	\item	Encode higher-order semantics to first order semantics.
+                We extended them to typed setting. \jp{TBD}
+	\item	Encode name-passing to pure process abstraction calculus, with name abstractions. DONE
+	\item	Type of the recursion encoding uses non tail recursive type $\trec{t}{\btinp{t} \tinact}$. DONE
+	\item	Encode higher-order semantics to first order semantics. DONE
 	\item	Negative result. Cannot encode shared names using only shared names.
-	\item   Extensions with higher-order abstractions and polyadicity also explored.
+	\item   Extensions with higher-order abstractions and polyadicity also explored. DONE
 \end{enumerate}
 
-\smallskip 
-
-\myparagraph{Important things to explain}
-Explain our \HO is very small without containg name passing 
-\[ 
-\abs{x}.P \quad \appl{x}{u}
-\]
+%\smallskip 
+%
+%\myparagraph{Important things to explain}
+%Explain our \HO is very small without containg name passing 
+%\[ 
+%\abs{x}.P \quad \appl{x}{u}
+%\]
 
 %Explain we input only characteristic processes.  
 %
@@ -355,12 +355,41 @@ an encoding of \HOp into \sessp. Here we rely on the well-known representability
 Since communicated processes may contain free session names, in order to respect session protocols
 the encoding should distinguish between two cases, depending on whether this kind of linear names is present in the communication object. If session names are present then a linear server trigger is deployed; otherwise, the replicated server  in~\cite{SangiorgiD:expmpa} can be used. 
 
-As mentioned earlier, \HOp and \HO feature \emph{first-order} abstractions; this means that
-only (shared/linear) names can be used as arguments to abstractions $\abs{x}P$.
-We consider \HOpp, an extension of \HOp with \emph{higher-order} abstractions; this 
-means that in \HOpp also processes can be arguments of abstractions.
-The encoding is a natural extension of the encoding of \HOp into \HO;
-see \S\,\ref{subsec:hop} for a formal definition.
+As mentioned earlier, \HOp and \HO feature \emph{first-order} abstractions. 
+This means that
+only  names can be used as arguments to abstractions.
+Hence, given a (shared/linear) name $u$, in \HOp
+we have the reduction $(\abs{x}{P}) \, u   \red  P \subst{u}{x}$.
+We also consider \HOpp, an extension of \HOp with \emph{higher-order} abstractions.
+ This means that in \HOpp also arbitrary values can be arguments of abstractions, 
+ and one could have the reduction
+ $(\abs{x}{P}) \, V   \red  P \subst{V}{x}$, where $V$ can be a process.
+ We propose an encoding of \HOpp into \HO; it results as 
+a natural extension of that of \HOp into \HO;
+see \S\,\ref{subsec:hop} for a definition.
+
+Another well-known feature in process calculi is \emph{polyadicity}, the ability 
+of passing around tuples of values in communications. 
+We consider a polyadic extension of \HOp, denoted \pHOp.
+In \pHOp polyadicity appears in intrasession communications and abstractions; 
+polyadicity of session names is not defined. Encoding \pHOp into \HOp is straightforward
+in a session-typed setting, as detailed in \S\,\ref{subsec:pho}.
+For instance, we may define:
+\[
+\begin{array}{rl}
+		\map{\binp{u}{u_1, \cdots, u_m} P}
+		 =  & \!\!\!\!
+		\binp{u}{u_1} \cdots ;  \binp{u}{u_m} \map{P}
+		\\
+		\map{\bbout{u}{\abs{(x_1, \cdots, x_m)} Q} P}
+		= & \!\!\!\!
+		\bbout{u}{\abs{z}\binp{z}{x_1}\cdots ; \binp{z}{x_m} \map{Q}} \map{P}
+		\\ 
+		\map{\appl{x}{(u_1, \cdots, u_m)}}
+		= & \!\!\!\!
+		\newsp{s}{\appl{x}{s} \Par \bout{\dual{s}}{u_1} \cdots ; \bout{\dual{s}}{u_m} \inact} 
+	\end{array}
+\]
 
 %\myparagraph{Outline}
 \subsection{Outline}
