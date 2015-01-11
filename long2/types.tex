@@ -74,13 +74,18 @@ We let $\mathsf{T}$ to be the set of all well-formed types and
 
 Note that the syntax for value types is restricted
 to dissallow types of the form:
-i) $\chtype{\chtype{U}}$---shared names
-cannot carry shared names;
-and ii) $\shot{(\shot{U})}$---abstractions do not
-bind a higher-order variables.
+\begin{enumerate}[i)]
+	\item	$\chtype{\chtype{U}}$: shared names
+		cannot carry shared names; and
+
+	\item  $\shot{U}$: abstractions do not
+		bind higher-order variables.
+\end{enumerate}
 % $\chtype{U}$ and ,
 %meaning that shared names cannot carry shared names and
 %we that do not apply abstractions over abstractions.
+
+
 The restricted values syntax is a main difference with respect to
 the type structure  in~\cite{tlca07}, which 
 supports the arrow types $U \sharedop T$ and 
@@ -284,6 +289,45 @@ in rule \trule{RVar}.
 The recursive operator requires that the body of
 a recursive process matches the type of the recursive
 variable as in rule \trule{Rec}.
+
+\begin{comment}
+\subsection{Order of Types}
+
+In~\cite{tlca07} the type syntax for values includes the definition
+$U_1 \sharedop U_2$ and $U_1 \lollipop U_2$, that
+allows us to define types of arbitrary order $k$.
+An abstraction of $k$-order types requires to extend the syntax
+to include higher-order applications:
+\[
+	\abs{z}{\binp{z}{x} \appl{x}{\abs{y} Q}}
+\]
+with with the type of $\abs{y}{Q}$ being of order
+$k-1$. The type of of such an abstraction in the current setting would
+be $\shot{U}$ (or $\lhot{U}$) with the order of the type being defined
+as the number of nested higher-order types~\cite{San96int}.
+
+In the type system we develop for the \HOp we only have
+types of the form $\shot{C}$.
+If we maintain the definition of counting the order
+of the type as the nesting of higher-order types we
+can still express $k$-order types, e.g:
+\[
+	\shot{(\btinp{U} \tinact)}
+\]
+with $U$ being of order $k-1$.
+An $k$-order abstraction in \HOp would be:
+\[
+	\abs{z}{\binp{z}{x} \binp{x}{y} \appl{y}{n}}
+\]
+with $y$ being of order $k-1$.
+
+\begin{definition}[Order of Value Type]\rm
+	\label{def:order_type}
+	Let type $U$ and value $V$ such that $\Gamma; \Lambda; \Delta \proves V \hastype U$.
+	The order of $U$ is the number of using rule $\trule{Abs}$
+	in the typing derivation $\Gamma; \Lambda; \Delta \proves V \hastype U$.
+\end{definition}
+\end{comment}
 
 \subsection{Type Soundness}
 
