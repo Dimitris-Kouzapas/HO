@@ -72,6 +72,190 @@ The works~\cite{DBLP:conf/icalp/LanesePSS10,DBLP:conf/wsfm/XuYL13} focus on unty
 therefore, our work complements such previous results by clarifying the status of typeful, resource-aware structured communications in
 trigger-based representations of process passing, both in encodings and  behavioral equivalences.
 
+
+\paragraph{Typed Behavioural Equivalences.}
+The current work follows the principles for
+session type behavioural semantics that were laid
+by the previous works of the
+authors~\cite{dkphdthesis,DBLP:conf/forte/KouzapasYH11,KY13,DBLP:journals/iandc/PerezCPT14}.
+A bisimulation relation is defined on a labelled
+transition system that assumes a session typed
+observer.
+The bisimilarity is characterised by the corresponding
+reduction-closed, barb-preserving congruence using a
+proof technique that is derived from~\cite{Hennessy07}.
+The theory for higher-order session types developed here
+differentiates from 
+the work in~\cite{dkphdthesis,DBLP:conf/forte/KouzapasYH11,KY13}, which 
+considers the behavioural semantics for first-order
+binary and multiparty session types.
+Also the work \cite{DBLP:journals/iandc/PerezCPT14} studies typed behavioral equivalencies for binary session types.
+The underlying process languages does not have shared names which, as we have shown, strictly add expressive power. 
+Moreover, for this deterministic language, confluence and $\tau$-inertness properties are established.
+
+%The theory for higher-order session type quivalences is more challenging than
+%their corresponding first-order bisimulation theory.
+To cope with the challenges presented by the higher-order
+session theory, 
+our approach continues the line of research 
+originally drawn by Sangiorgi~\cite{San96H,SangiorgiD:expmpa}
+and later improved by Jeffrey and Rathke~\cite{JeffreyR05}.
+The works %Sangiorgi as part of his Ph.D.~research
+\cite{San96H,SangiorgiD:expmpa}
+introduced the first fully abstract encoding from the higher-order 
+$\pi$-calculus to the $\pi$-calculus. 
+The replicated triggered process 
+is also used in this work for the encoding of \HOp into \sessp (Definition~\ref{def:enc:HOp_to_FO}).
+Sangiorgi's encoding is based on the idea of a replicated input guarded process 
+(called a trigger process). Operational correspondence for
+the triggered encoding is shown using the contextual bisimulation
+with first-order labels.
+Although contextual bisimilarity has a satisfactory discriminative power,
+its use is hindered by the universal quantification on output clauses.
+Sangiorgi then proposed \emph{normal bisimilarity}, a tractable  equivalence 
+on processes without universal quantification. 
+To show the coincidence between contextual and normal bisimilarities, 
+the use of triggered processes and bisimilarity is developed in \cite{San96H}.
+%The encoding also motivates the definition of a form of
+Triggered bisimulation is also defined on first-order labels
+where the contextual bisimulation is restricted to arbitrary
+trigger substitution rather than arbitrary process substitutions.
+The triggered bisimulation was further refined by Jeffrey and
+Rathke, who study calculi with recursive types, not addressed in~\cite{San96H,SangiorgiD:expmpa} and
+relevant in our work.
+They introduce their own version of a
+bisimulation~\cite{JeffreyR05}
+based on a LTS which is extended with trigger meta-notation.
+%for a full higher-order $\pi$-calculus that allows
+%higher-order applications.
+Like Sangiorgi's approach, the labelled transition semantics
+in~\cite{JeffreyR05}
+observes first-order triggered values instead of
+higher-order values, offering a more direct characterization of contextual equivalence
+and lifting the restriction to finite types.
+
+
+There are similarities of the characteristic bisimulation
+the triggered bisimulation as defined by Jeffrey and Rathke:
+%
+\begin{enumerate}[i)]
+	\item	the output of a higher-order value $\abs{x}{Q}$ on name
+		$n$ in Jeffrey\&Rathke approach requires the output of
+		a fresh trigger name $\tau_t$
+		($\tau_t$ is the meta-notation which extends the LTS)
+		on channel $n$ 
+		and then the introduction of a replicated triggered process
+		in the context of the acting process:
+		%
+		\[
+			P \by{\news{t} \tau_{t}} P' \Par (t \Leftarrow \abs{x}{Q}) \by{\bactinp{t}{v}} P' \Par \appl{\abs{x}{Q}}{v} \Par (t \Leftarrow \abs{x}{Q}) 
+		\]
+		%
+		The approached used in the characteristic bisimulation is similar
+		but instead of a replicated triggered process we require a
+		triggered process that can input any process that can substitute
+		the higher-order output.
+		%
+		\[
+			P \hby{\bactout{n}{\abs{x}{Q}}} P' \Par \htrigger{t}{\abs{x}{Q}} \hby{\bactinp{t}{\abs{x}{\mapchar{U}{x}}}}
+			P' \Par \news{s}{ \appl{\mapchar{U}{x}}{s} \Par \bout{\dual{s}}{\abs{x}{Q}} \inact}
+		\]
+		%
+		In essence we are transforming a replicated trigger into a process
+		that is input-prefixed on a fresh name that receives a higher-order
+		value;
+
+	\item	the input of a higher-order in the Jeffrey\&Rathke approach requires 
+		the input of a fresh trigger name, which is substituted on the application
+		variable, thus having a meta-suntax for triggered application instead
+		of higher-order applications:
+		%
+		\[
+			\binp{n}{x} P \by{\bactinp{n}{\tau_k}} \appl{\abs{x}{P}}{\tau_k} 
+		\]
+		%
+		The approach in the characteristic bisimulation observes the 
+		triggered value
+		$\abs{z}\binp{t}{x} \appl{x}{z}$ as an input instead of the
+		trigger name:
+		%
+		\[
+			P \by{\bactinp{n}{\abs{z}\binp{t}{x} \appl{x}{z}}} P \subst{\abs{z}\binp{t}{x} \appl{x}{z}}{x}
+		\]
+		%
+		
+	\item 	lastly, in the Jeffrey\&Rahtke approach a triggered application
+		leads into an output observation of the application value over
+		the fresh trigger name.
+		%
+		\[
+			\appl{\tau_k}{v} \by{\bactout{k}{v}} \inact
+		\]
+		%
+		In the characteristic bisimulation instead of observing an 
+		application and its value as an action we observe the application
+		value by inhabiting it in a characteristic process.
+		%
+		\[
+			\appl{\abs{x}{\mapchar{U}{x}}}{n} \by{\tau} \mapchar{U}{x} \subst{n}{x}
+		\]
+		%
+\end{enumerate}
+
+%The main differences of the triggered
+%bisimulation approach comparing to our approach are:
+%i) We use observe higher-order values on the LTS in contrast to first-order 
+%values in~\cite{DBLP:journals/lmcs/JeffreyR05}.
+%ii) In our approach we avoid the replicated triggered process,
+%by transforming the output process into a higher-order guarded input.
+%iii) The triggered bisimulation gives semantics for higher-order application,
+%whereas in our approach we give semantics for first-order applications
+%and show that higher-order applications are fully encodable.
+
+%Boreale and Sangiorgi, 
+%Deng and Hennessy, 
+%Jeffrey and Rathke, Hennessy and Koutavas, Schmitt and Lenglet, Pi\E9rard and Sumii.
+%Perez et al (bisimilarities for binary sessions), Kouzapas and Yoshida (bisimilarities for binary and multiparty sessions).
+%Bisimilarities for HO processes: \cite{Xu07}.
+
+Sangiorgi et al.~\cite{DBLP:conf/lics/SangiorgiKS07}, use a higher-order LTS 
+to define an arguably complex bisimulation relation that stores the knowledge known to
+the observer, thus the observation actions are based on the observer's knowledge
+at any given time. 
+The environmental bisimulation approach is simplified by Koutavas and
+Hennessy in~\cite{DBLP:journals/cl/KoutavasH12,DBLP:conf/esop/KoutavasH11}
+with the introduction
+of a mapping from constants to higher-order values. This
+technique allows for the observation of first-order values instead
+of higher-order values. It differs from the approaches
+in~\cite{San96H,JeffreyR05} because the
+mapping between higher and first order values is no longer implicit.
+
+\paragraph{Higher-Order Session Types.}
+The session type discipline developed for the $\HOp$ is a subset
+of the session type discipline
+for higher-order session processes developed by Mostrous and Yoshida
+in~\cite{tlca07,mostrous09sessionbased}.
+Mostrous and Yoshida in~\cite{tlca07} develop a full higher order session calculus
+with process abstractions and process applications and extend it
+in~\cite{mostrous09sessionbased} in the asynchronous setting.
+The session type
+system considered is influenced by the type systems for $\lambda$-calculi and
+uses type syntax of the form $U_1 \rightarrow U_2 \dots U_n \rightarrow \Proc$
+for shared values and $(U_1 \rightarrow U_2 \dots U_n \rightarrow \Proc)^{1}$
+for linear values.
+In the current setting such a typed is expressed only in $\HOpp$
+terms using the type $\shot{U}$ (respectively, $\lhot{U}$)
+with $U$ being a nested higher-order type.
+In the $\HOp$ session type system we only use types of the form
+$\shot{C}$ and $\lhot{C}$ with $C$ being a first-order type.
+Nevertheless, we show that
+the calulus presented in~\cite{tlca07} can be exrpessed in terms of a the
+core $\HO$ sub-calculus.
+
+
+
+\begin{comment}
 \myparagraph{Expressiveness of Session Typed Mobile Processes}
 Two recent works \cite{DemangeonH11,Dardha:2012:STR:2370776.2370794} 
 study encoding binary session calculi into 
@@ -193,4 +377,4 @@ technique allows for the observation of first-order values instead
 of higher-order values. It differs from the approaches
 in~\cite{JeffreyR05} because the
 mapping between higher and first order values is no longer implicit.
-
+\end{comment}
