@@ -1,11 +1,11 @@
 % !TEX root = main.tex
-\subsection{Key points}
+\myparagraph{Key points}
 \begin{enumerate}[1.]
-	\item	Session $\pi$ calculus with process passing.
-	\item	Identify session $\pi$ and process passing subcalculi and their polyadic variants.
-	\item	Bisimulation theory for higher-order session semantics.
-	\item	New triggered bisimulation, related to Jeffrey and Rathke's.
-	\item   Elementary values key to characterizations of behavioral equivalence.
+	\item	Session $\pi$ calculus with process passing. DONE
+	\item	Identify session $\pi$ and process passing subcalculi and their polyadic variants. DONE
+	\item	Bisimulation theory for higher-order session semantics. DONE
+	\item	New triggered bisimulation, related to Jeffrey and Rathke's. DONE
+	\item   Elementary values key to characterizations of behavioral equivalence. DONE
 	\item	Types provide techniques to prove completeness without matching.
 	\item	We are interested in encodings with properties a la Gorla. 
                 We extended them to typed setting. 
@@ -18,17 +18,17 @@
 
 \smallskip 
 
-\subsection{Important things to explain}
+\myparagraph{Important things to explain}
 Explain our \HO is very small without containg name passing 
 \[ 
 \abs{x}.P \quad \appl{x}{u}
 \]
 
-Explain we input only characteristic processes.  
-
-\[
-\lambda x.\mapchar{S}{x}
-\]
+%Explain we input only characteristic processes.  
+%
+%\[
+%\lambda x.\mapchar{S}{x}
+%\]
 
 \subsection{Higher-Order Session Calculi}
 \noi By combining features from the $\lambda$-calculus and the $\pi$-calculus, 
@@ -82,8 +82,8 @@ core calculus for higher-order session concurrency.
 
 In the first part of the paper, we address tractable behavioral equivalences
 for \HOp.
-A well-studied behavioral equivalence in the higher-order setting is \emph{contextual equivalence},
-a characterization of barbed congruence 
+A well-studied behavioral equivalence in the higher-order setting is \emph{contextual bisimulation},
+a labelled characterization of barbed congruence 
 which offers an appropriate discriminative power at the price of universal quantifications in output clauses.
 The definition of alternative characterizations that alleviate this burden
 is then a recurring issue 
@@ -91,22 +91,23 @@ in the study of higher-order processes equivalences.
 Our approach to this problem 
 exploits the protocol specifications given by session types to  limit 
 the behavior of higher-order session processes. 
-This limitation is formally enforced by 
+Exploiting elementary processes inhabiting session types, 
+this limitation is formally enforced by 
 a refined (typed) labelled transition system (LTS)
 that narrows down the spectrum of allowed process behaviors, 
 thus naturally enabling tractable reasoning techniques. 
 Two tractable characterizations of bisimilarity, 
 targeted to higher- and first-order session processes,
-are shown to coincide with contextual equivalence.
+are shown to coincide with contextual bisimilarity.
 
 Then, in the second part of the paper we assess the expressive 
 power of \HOp, \HO, and \sessp as delineated by typing. 
 We establish strong correspondences between 
 these languages via fully abstract encodings. 
-Here again the name usage information given by session types is fundamental to define the encodings
-and to state semantic correspondences.
-That is, our encodings concern source and target processes
-endowed with proper communication structures which are described by session types. 
+Here again having the name usage information given by session types is fundamental to define the encodings
+and to state their semantic correspondences.
+That is, our encodings relate source and target processes
+endowed with proper communication structures as described by session types. 
 We introduce a notion of encoding that 
 requires the translation of both process and types and 
 formally captures preservation of (session) typing,
@@ -116,15 +117,18 @@ as required in the session establishment phase,
  strictly add expressive power 
 to session calculi. 
 
-In the remainder of the introduction, we motivate further these contributions,
-giving details of the technical novelties. 
+In the remainder of the introduction, we motivate further our contributions,
+giving details of the technical challenges involves. 
+Notation for input/output processes, abstraction/applications, endpoints, 
+session types, 
 
 \subsection{Tractable Bisimilarities for Session-Typed Processes}
 \label{subsec:intro:bisimulation}
 \noi 
 \myparagraph{Overcoming Limitations of Contextual Bisimulation.}
-Contextual bisimilarity ($\wbc$, Definition~\ref{def:wbc}) is 
-a straightforward labelled characterisation of contextual congruence 
+Contextual bisimilarity ($\wbc$, Def.~\ref{def:wbc}) is 
+%a straightforward 
+labelled characterisation of contextual congruence 
 \cite{SaWabook}. 
 Unfortunately, it is a too demanding relation on processes. 
 %In the following we motivate our
@@ -168,6 +172,8 @@ To this end, we take the following two steps:
 	\item We refine the transition rule for input in the LTS.
 \end{enumerate}
 %
+\smallskip
+
 \myparagraph{Trigger Processes with Session Communication.}
 Concerning~(a), we exploit session types. 
 We 
@@ -184,8 +190,9 @@ on the endpoint $\dual{s}$ (the dual of $s$).
 In fact,
 we have $P \wbc R\subst{V}{x}$, 
 since 
-application and reduction between two dual endpoints 
-($s$ and $\dual{s}$) are deterministic.  
+application and reduction of dual endpoints 
+%($s$ and $\dual{s}$) 
+are deterministic.  
 Now consider the process $T_{V}$ below, where $t$ is a fresh name:
 \begin{equation}\label{equ:0}
 T_{V} = \hotrigger{t}{V}
@@ -212,6 +219,8 @@ in contrast to previous approaches~\cite{SaWabook,JeffreyR05}
 our {trigger processes} do {\em not} use recursion or 
 replication. This is crucial for preserving linearity of session names.  
 
+\smallskip
+
 %Then we can use 
 %$\newsp{\tilde{m_1}}{P_1 \Par \htrigger{t}{V_1}}$ instead 
 %of Clause 1) in Definition \ref{def:wbc} if we input 
@@ -220,8 +229,8 @@ replication. This is crucial for preserving linearity of session names.
 \myparagraph{Characteristic Processes.}
 Concerning (b), we shall limit the possible $R$ processes by
 exploiting the structure of session types.
-The key concept is that of a {\bf \emph{characteristic process}} 
-(Definition~\ref{def:char}). 
+The key concept is that of {\bf \emph{characteristic process}} 
+(Def.~\ref{def:char}). 
 The characteristic process of 
 a session type $S$ is the 
 simplest process inhabiting $S$. 
@@ -236,12 +245,14 @@ the definition
 extends to  value types $U$ and so we write $\mapchar{U}{u}$.
 
 We use characteristic processes to limit input transitions.
-More precisely, we exploit  the
-{\bf\em characteristic value}, denoted $\lambda x.\mapchar{U}{x}$. %$\lambda x.\mapchar{U}{x}$. 
+Precisely, we exploit  the
+{\bf\em characteristic value} $\lambda x.\mapchar{U}{x}$. %$\lambda x.\mapchar{U}{x}$. 
 If we follow the same reasoning as (\ref{equ:1})--(\ref{equ:2}), 
 we can use an alternative trigger process, called
 {\bf\em characteristic trigger process} with type 
-$U$ to replace clause (1) in Definition~\ref{def:wbc}:
+$U$ to replace clause
+% (1) in Definition~\ref{def:wbc}:
+($\star$) in Def.~\ref{def:wbc}:
 \begin{equation}
 	\label{eq:4}
 	\ftrigger{t}{V}{U} \defeq \fotrigger{t}{x}{s}{\btinp{U} \tinact}{V}
@@ -259,121 +270,15 @@ alone as the observable input
 is not enough to define meaningful bisimulations.
 Roughly speaking, the trigger value is used 
 to {\em count} the number of free higher-order variables inside 
-the receiver (Example~\ref{ex:motivation} explains the details). 
-%as the following example illustrates.
-%\begin{example}[The Need for Refined Typed LTS]
-%%\label{ex:motivation}
-%%We show that either a characteristic value or 
-%%a trigger value alone as the observable input 
-%%is not enough to define meaningful bisimulations.
-%%(to justify rule \eltsrule{RRcv} in Definition~\ref{def:rlts} in the next paragraph). 
-%%
-%First we demonstrate that a characteristic value is not sufficient. 
-%Consider the typed processes $P_1, P_2$:
-%%
-%\begin{eqnarray}
-%	P_1 = \binp{s}{x} (\appl{x}{s_1} \Par \appl{x}{s_2}) & ~~&
-%	P_2 = \binp{s}{x} (\appl{x}{s_1} \Par \binp{s_2}{y} \inact) 
-%	\label{equ:6}
-%\end{eqnarray}
-%%
-%We can show that 
-%the session type for $s$ in $P_1$ and $P_2$ is 
-%$s: \btinp{\shot{\btinp{C} \tinact}} \tinact$.
-%If $P_1$ and $P_2$ 
-%receive 
-%the characteristic value $\abs{z}{\binp{z}{y}} \inact$ along $x$, 
-%then they will evolve into %(\ref{eq:5}) and (\ref{eq:6}) in become:
-%%
-%\begin{eqnarray*}
-%	\binp{s_1}{y} \inact \Par \binp{s_2}{y} \inact \hastype \Proc
-%\end{eqnarray*}
-%%
-%therefore becoming 
-%contextually bisimilar after the input of
-% $\abs{x}{\binp{x}{y}} \inact$.
-%However, the processes in \eqref{equ:6}
-%are clearly {\em not} contextually bisimilar: there exist many input actions
-%which may be used to distinguish them.
-%For example, if 
-%$P_1$ and $P_2$ input 
-% $\abs{x} \bout{a}{s_3} \binp{x}{y} \inact$ then
-%their derivatives are not bisimilar. 
+the receiver. In Example~\ref{ex:motivation} we explain the details. 
 
-%Observing only the characteristic value 
-%results in an over-discriminating bisimulation.
-%However, if a trigger value is received, 
-%then we can distinguish 
-%processes in \eqref{equ:6}:  
-%%
-%\begin{eqnarray*}
-%%	\Gamma; \es; \Delta &\proves& 
-%	P_1 \by{\ell} \binp{t}{x} \appl{x}{s_1} \Par \binp{t}{x} \appl{x}{s_2} 
-%%\hastype \Proc
-%	\mbox{~~and~~}
-%%	\Gamma; \es; \Delta &\proves& 
-%	P_2 \by{\ell} \binp{t}{x} \appl{x}{s_1} \Par \binp{s_2}{y} \inact 
-%%\hastype \Proc
-%\end{eqnarray*}
-%%\noi resulting two distinct processes.  
-%%
-%where $\ell$ stands for the input of the trigger value
-%$\abs{{x}}{\binp{t}{y} (\appl{y}{{x}})}$.
-%One question that arises here is whether the trigger value is enough
-%to distinguish two processes, hence no need of 
-%characteristic values as the input. 
-%This is not the case, since considering the trigger value
-%alone also results in an over-discriminating bisimulation relation.
-%In fact, the input trigger can be observed on any input prefix
-%of {\em any type}. For example, consider the following processes:
-%%
-%\begin{eqnarray}
-%	 \newsp{s}{\binp{n}{x} \appl{x}{s} \Par \bout{\dual{s}}{\abs{x} P} \inact} \label{equ:7}
-%	\\
-%	 \newsp{s}{\binp{n}{x} \appl{x}{s} \Par \bout{\dual{s}}{\abs{x} Q} \inact} \label{equ:8}
-%\end{eqnarray}
-%%
-%\noi 
-%Upon reception of the trigger abstraction, 
-%processes \eqref{equ:7} and \eqref{equ:8}
-%would evolve to 
-%%input the trigger value, we obtain: % they evolved to 
-%\begin{eqnarray*}
-%%\Gamma; \es; \Delta \proves 
-%	\newsp{s}{\binp{t}{x} \appl{x}{s} \Par \bout{\dual{s}}{\abs{x} P} \inact} 
-%%\hastype \Proc
-%	\mbox{~~and~~}
-%%      \\
-%%\Gamma; \es; \Delta \proves 
-%	\newsp{s}{\binp{t}{x} \appl{x}{s} \Par \bout{\dual{s}}{\abs{x} Q} \inact}
-%%\hastype \Proc
-%\end{eqnarray*}
-%%
-%%\noi It is easy to obtain a closure if allow only the
-%%trigger value as the input value.
-%Then, 
-%if both these processes input the trigger value $\abs{z}{\binp{z}{x} (\appl{x}{m})}$,  
-%then they would become:
-%\begin{eqnarray*}
-%\Gamma; \es; \Delta \proves \newsp{s}{\binp{s}{x} \appl{x}{m} \Par \bout{\dual{s}}{\abs{x} P} \inact} \wbc \Delta \proves P \subst{m}{x}
-%	\\
-%\Gamma; \es; \Delta \proves \newsp{s}{\binp{s}{x} \appl{x}{m} \Par \bout{\dual{s}}{\abs{x} Q} \inact} \wbc \Delta \proves Q \subst{m}{x}
-%\end{eqnarray*}
-%\noi which are not bisimilar if $P \subst{m}{x} \not\wb Q \subst{m}{x}$.
-%%\qed
-%%In conclusion, these examples explain a need of both 
-%%trigger and characteristic values 
-%%as an input observation in the input transition relation (\eltsrule{RRcv})
-%%which will be defined in Definition~\ref{def:rlts}.  
-%\end{example}
-
-%%\smallskip 
+\smallskip 
 \myparagraph{Refined Input Transition Rule.}
 The above discussion justifies the refinement of the transition 
 rule for input actions. 
-We write $P \by{\bactinp{n}{V}} P'$ for the usual input transition along $n$ (early style).
-The new transition rule for input looks as the rule 
-given below (see Definition~\ref{def:rlts} for a precise definition):
+We write $P \by{\bactinp{n}{V}} P'$ for the input transition along $n$ (early style).
+The transition rule for input roughly becomes 
+(see Def.~\ref{def:rlts} for a precise definition):
 \[
 		\tree {
 %\begin{array}{c}
@@ -385,13 +290,13 @@ P \by{\bactinp{n}{V}} P' \quad  V  \scong
 		}
 \]
 Observe the notations for standard and refined transitions: $\by{\bactinp{n}{V}}$ vs. $\hby{\bactinp{n}{V}}$.
-Using this rule, we define an alternative (typed) LTS
+Using this rule, we define an alternative  LTS
 with refined input; all other rules are kept unchanged.
 This refined LTS is used for 
-both higher-order ($\hwb$) and characteristic ($\fwb$) bisimulations
-where where we replace the demanding clause $(\star)$ with 
+both higher-order ($\hwb$) and characteristic ($\fwb$) bisimulations,
+which replace the demanding clause~$(\star)$ with 
 more tractable clauses based on trigger processes and characteristic 
-trigger processes, respectively (Definitions \ref{d:hbw} and \ref{d:fwb}).
+trigger processes, respectively (Defs.~\ref{d:hbw} and \ref{d:fwb}).
 Later we show $\hwb$ is useful for \HOp and \HO, but 
 $\fwb$ is uniformly useful for all subcalculi including the 
 first-order session $\pi$-calculus. 
@@ -399,8 +304,8 @@ first-order session $\pi$-calculus.
 %\HOp and its higher-order variants,
 %Definition \ref{d:fwb} is useful for first-order sub-calculi of \HOp.
 
-%\subsection{Expressiveness Results}
-%TBD.
+\subsection{Relative Expressiveness Results}
+TBD.
 
 \smallskip 
 
