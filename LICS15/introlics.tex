@@ -115,15 +115,34 @@ A further expressivity result shows that shared names,
 as required in the session establishment phase,
  strictly add expressive power 
 to session calculi. 
+\smallskip
 
-In the remainder of the introduction, 
-\S\,\ref{subsec:intro:bisimulation}
+\myparagraph{Outline}
+The next section gives an overview of results and approach.
+\noi \S\,\ref{sec:calculus} presents the calculi; 
+\S\,\ref{sec:types} presents types;
+the tractable bisimulations are in \S\,\ref{sec:behavioural};
+the notion of encoding is in \S\,\ref{s:expr};
+\S\,\ref{sec:positive} and \S\,\ref{sec:negative}
+present positive and negative encodability results, resp;
+\S\,\ref{sec:extension} discusses extensions; and 
+\S\,\ref{sec:relwork} concludes with related work;
+Appendix summarises the typing system. 
+The paper is self-contained. 
+{\bf\em Omitted definitions, additional related work and full proofs can be found 
+in a technical report, available from \cite{KouzapasPY15}.} 
+
+\section{Overview}
+\label{sec:overview}
+\noi
+In  \S\,\ref{subsec:intro:bisimulation}
 and
 \S\,\ref{subsec:intro:expr}
 motivate further our contributions and 
 give details of the technical challenges involved. 
 STILL TO ADD: Notation for input/output processes, abstraction/applications, endpoints, 
 session types, 
+
 
 \subsection{Tractable Bisimilarities for Session-Typed Processes}
 \label{subsec:intro:bisimulation}
@@ -299,10 +318,11 @@ This refined LTS is used for
 both higher-order ($\hwb$) and characteristic ($\fwb$) bisimulations,
 which replace the demanding clause~$(\star)$ with 
 more tractable clauses based on trigger processes and characteristic 
-trigger processes, respectively (Defs.~\ref{d:hbw} and \ref{d:fwb}).
+trigger processes, respectively (Defs.~\ref{d:hbw} and~\ref{d:fwb}).
 Later we show $\hwb$ is useful for \HOp and \HO, but 
 $\fwb$ is uniformly useful for all subcalculi including the 
-first-order session $\pi$-calculus. 
+first-order %session $\pi$-calculus.
+calculus \sessp. 
 %Notice that while Definition \ref{d:hbw} is useful for 
 %\HOp and its higher-order variants,
 %Definition \ref{d:fwb} is useful for first-order sub-calculi of \HOp.
@@ -364,22 +384,28 @@ We also consider \HOpp, an extension of \HOp with \emph{higher-order} abstractio
  This means that in \HOpp also arbitrary values can be arguments of abstractions, 
  and one could have the reduction
  $(\abs{x}{P}) \, V   \red  P \subst{V}{x}$, where $V$ can be a process.
- We propose an encoding of \HOpp into \HO; it results as 
+ We propose an encoding of \HOpp into \HO: it results as 
 a natural extension of that of \HOp into \HO;
-see \S\,\ref{subsec:hop} for a definition.
+see \S\,\ref{subsec:hop} for a formal definition.
 
 Another well-known feature in process calculi is \emph{polyadicity}, the ability 
 of passing around tuples of values in communications. 
 We consider a polyadic extension of \HOp, denoted \pHOp.
-In \pHOp polyadicity appears in intrasession communications and abstractions; 
-polyadicity of session names is not defined. Encoding \pHOp into \HOp is straightforward
+In \pHOp polyadicity appears in intra-session communications and abstractions; 
+polyadicity of shared names is ruled out by typing. 
+This is enough for most practical purposes, including our encoding from \HOp into \HO.
+Encoding \pHOp into \HOp is straightforward
 in a session-typed setting, as detailed in \S\,\ref{subsec:pho}.
 For instance, we may define:
 \[
 \begin{array}{rl}
-		\map{\binp{u}{u_1, \cdots, u_m} P}
+		\map{\binp{u}{x_1, \cdots, x_m} P}
 		 =  & \!\!\!\!
-		\binp{u}{u_1} \cdots ;  \binp{u}{u_m} \map{P}
+		\binp{u}{x_1} \cdots ;  \binp{u}{x_m} \map{P}
+		\\
+		\map{\bout{u}{u_1, \cdots, u_m} P}
+		 =  & \!\!\!\!
+		\bout{u}{u_1} \cdots ;  \bout{u}{u_m} \map{P}
 		\\
 		\map{\bbout{u}{\abs{(x_1, \cdots, x_m)} Q} P}
 		= & \!\!\!\!
@@ -390,18 +416,31 @@ For instance, we may define:
 		\newsp{s}{\appl{x}{s} \Par \bout{\dual{s}}{u_1} \cdots ; \bout{\dual{s}}{u_m} \inact} 
 	\end{array}
 \]
+Thus, the polyadic arguments are communicated one by one, relying on the linear, private character of 
+session names. The encoding of polyadic abstraction/application requires an extra step, 
+in which a  monadic abstraction is passed around.
 
-%\myparagraph{Outline}
-\subsection{Outline}
-\noi \S\,\ref{sec:calculus} presents the calculi; 
-\S\,\ref{sec:types} presents types;
-the tractable bisimulations are in \S\,\ref{sec:behavioural};
-the notion of encoding is in \S\,\ref{s:expr};
-\S\,\ref{sec:positive} and \S\,\ref{sec:negative}
-present positive and negative encodability results, resp;
-\S\,\ref{sec:extension} discusses extensions; and 
-\S\,\ref{sec:relwork} concludes with related work;
-Appendix summarises the typing system. 
-The paper is self-contained. 
-{\bf\em Omitted definitions, additional related work and full proofs can be found 
-in a technical report, available from \cite{KouzapasPY15}.} 
+\smallskip
+
+\myparagraph{A Non Encodability Result.}
+We also show that shared names strictly add expressiveness to session calculi:
+there are behaviors expressible with shared names not expressible using linear names only.
+Although somewhat expected we do not know of a formal proof.
+We propose such a formal proof, which relies crucially on the behavioral theory that we have introduced here
+and its properties.
+
+
+%%\myparagraph{Outline}
+%\subsection{Outline}
+%\noi \S\,\ref{sec:calculus} presents the calculi; 
+%\S\,\ref{sec:types} presents types;
+%the tractable bisimulations are in \S\,\ref{sec:behavioural};
+%the notion of encoding is in \S\,\ref{s:expr};
+%\S\,\ref{sec:positive} and \S\,\ref{sec:negative}
+%present positive and negative encodability results, resp;
+%\S\,\ref{sec:extension} discusses extensions; and 
+%\S\,\ref{sec:relwork} concludes with related work;
+%Appendix summarises the typing system. 
+%The paper is self-contained. 
+%{\bf\em Omitted definitions, additional related work and full proofs can be found 
+%in a technical report, available from \cite{KouzapasPY15}.} 
