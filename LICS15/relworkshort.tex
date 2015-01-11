@@ -114,7 +114,7 @@ also reasoned in
 $\HO$ (with limited form of arrow types, $\shot{C}$ and $\lhot{C}$) and 
 $\sessp$, via precise encodings. 
 
-\myparagraph{Typed Behavioural Equivalences.}
+\paragraph{Typed Behavioural Equivalences.}
 The current work follows the principles for
 session type behavioural semantics that were laid
 by the previous works of the
@@ -146,7 +146,7 @@ The works %Sangiorgi as part of his Ph.D.~research
 introduced the first fully abstract encoding from the higher-order 
 $\pi$-calculus to the $\pi$-calculus. 
 The replicated triggered process 
-is also used in this work for the encoding of \HOp into \sessp (Definition~\ref{d:enc:hopitopi}).
+is also used in this work for the encoding of \HOp into \sessp (Definition~\ref{def:enc:HOp_to_FO}).
 Sangiorgi's encoding is based on the idea of a replicated input guarded process 
 (called a trigger process). Operational correspondence for
 the triggered encoding is shown using the contextual bisimulation
@@ -165,68 +165,141 @@ The triggered bisimulation was further refined by Jeffrey and
 Rathke, who study calculi with recursive types, not addressed in~\cite{San96H,SangiorgiD:expmpa} and
 relevant in our work.
 They introduce their own version of a
-bisimulation~\cite{JeffreyR05}
+bisimulation~\cite{DBLP:journals/lmcs/JeffreyR05}
 based on a LTS which is extended with trigger meta-notation.
 %for a full higher-order $\pi$-calculus that allows
 %higher-order applications.
 Like Sangiorgi's approach, the labelled transition semantics
-in~\cite{JeffreyR05}
+in~\cite{DBLP:journals/lmcs/JeffreyR05}
 observes first-order triggered values instead of
 higher-order values, offering a more direct characterization of contextual equivalence
 and lifting the restriction to finite types.
 
 
-There are similarities of the characteristic bisimulation
-the triggered bisimulation as defined by Jeffrey and Rathke:
+There are similarities and differences between of the characteristic bisimulation
+and the bisimulation as defined by Jeffrey and Rathke
+(below we use the meta-notation adopted in~\cite{JeffreyR05}):
 %
 \begin{enumerate}[i)]
-	\item	the output of a higher-order value $\abs{x}{Q}$ on name
+	\item	The output of a higher-order value $\abs{x}{Q}$ on name
 		$n$ in Jeffrey\&Rathke approach requires the output of
-		a fresh trigger name $\tau_t$
-		($\tau_t$ is the meta-notation which extends the LTS)
+		a fresh trigger name $t$ (notation $\tau_t$)
 		on channel $n$ 
 		and then the introduction of a replicated triggered process
+		(notation $(t \Leftarrow (x) Q)$)
 		in the context of the acting process:
 		%
 		\[
-			P \by{\news{t} \tau_{t}} P' \Par (t \Leftarrow \abs{x}{Q}) \by{\bactinp{t}{v}} P' \Par \appl{\abs{x}{Q}}{v} \Par (t \Leftarrow \abs{x}{Q}) 
+			P \by{\news{t} \bactout{n}{\tau_{t}}} P' \Par (t \Leftarrow (x) Q) \by{\bactinp{t}{v}} P' \Par \appl{(x) Q}{v} \Par (t \Leftarrow (x) Q) 
 		\]
 		%
-		The approached used in the characteristic bisimulation is similar
-		but instead of a replicated triggered process we require a
-		triggered process that can input any process that can substitute
-		the higher-order output.
+		In the characteristic bisimulation approach we only observe
+		an output of a value that can be either first- or higher-order:
 		%
 		\[
-			P \hby{\bactout{n}{\abs{x}{Q}}} P' \Par \htrigger{t}{\abs{x}{Q}} \hby{\bactinp{t}{\abs{x}{\mapchar{U}{x}}}}
-			P' \Par \news{s}{ \appl{\mapchar{U}{x}}{s} \Par \bout{\dual{s}}{\abs{x}{Q}} \inact}
+			P \hby{\bactout{n}{V}} P' 
 		\]
 		%
-		In essence we are transforming a replicated trigger into a process
-		that is input-prefixed on a fresh name that receives a higher-order
-		value;
+		with $V = \abs{x}{Q}$ or $V = m$.
+		A non-replicated triggered process appears in
+		the parallel context of the acting process when
+		we compare two processes for behavioural equality
+		(cf.~characteristic bisimulation Definition~\ref{d:fwb}),
+		$P' \Par \htrigger{t}{\abs{x}{Q}}$.
+		In fact using the LTS in
+		Definition~\ref{d:tlts} we can get:
+		%
+		\begin{eqnarray*}
+			P' \Par \htrigger{t}{\abs{x}{Q}}
+			&\by{\abs{z}{\binp{z}{y} \repl{} \binp{t}{x} \appl{y}{x}}}&
+			P' \Par \newsp{s}{\binp{s}{y} \repl{} \binp{t}{x} \appl{y}{x} \Par \bout{s}{\abs{x}{Q}} \inact}\\
+			&\by{\tau}&
+			P' \Par \repl{}\binp{t}{y} \appl{\abs{x}{Q}}{y}
+		\end{eqnarray*}
+		%
+		that simulates the Jeffrey\&Rathke approach.
 
-	\item	the input of a higher-order in the Jeffrey\&Rathke approach requires 
+		The characteristic bisimulation differentiates from
+		the Jeffrey\&Rathke approach:
+		\begin{itemize}
+			\item	The typed LTS predicts the case of linear
+				output values and will never allow replication
+				of such a value;
+				if $V$ is linear the input action would have no replication
+				operator, as
+				$\abs{z}{\binp{z}{y} \binp{t}{x} \appl{y}{x}}$.
+
+			\item	The characteristic bisimulation introduces a uniform approach
+				not only for
+				higher-order values but for first-order values
+				as well. A triggered process can accept any
+				process that can substitute a first-order value as well.
+				This is derived from the fact that the $\HOp$
+				calculus makes no use of a matching operator, in contrast
+				to the calculus defined in \cite{DBLP:journals/lmcs/JeffreyR05})
+				where name matching is crucial to prove completness
+				of the bisimilarity relation.
+				We chose not to include the matching operator
+				because of the requirement of a minimal calculus.
+				In the lack of matching we use types to inhabit
+				a value so we can observe its simplest interaction
+				with the process environment.
+
+			\item	The \HOp calculus requires only first-order
+				applications. Higher-order applications,
+				as in the Jeffrey\&Rathke work,
+				are presented as an extension in the \HOpp
+				calculus.
+
+			\item	The trigger process is non-replicated. In fact
+				the trigger process transforms guards the output
+				value with a higher-order input prefix. The
+				functionality of the input is used to
+				simulate the contextual bisimilarity that subsumes
+				the replicated trigger approach.
+				The transformation of an output action as an input
+				action allows for treating an output
+				using the restricted LTS~\ref{def:rlts}:
+				%
+				\[
+					P' \Par \htrigger{t}{\abs{x}{Q}} \hby{\bactinp{t}{\abs{x}{\mapchar{U}{x}}}}
+					P' \Par \news{s}{ \appl{\mapchar{U}{x}}{s} \Par \bout{\dual{s}}{\abs{x}{Q}} \inact}
+				\]
+		\end{itemize}
+		%
+		%In essence we are transforming a replicated trigger into a process
+		%that is input-prefixed on a fresh name that receives a higher-order
+		%value;
+
+	\item	The input of a higher-order value in the Jeffrey\&Rathke approach requires 
 		the input of a fresh trigger name, which is substituted on the application
 		variable, thus having a meta-suntax for triggered application instead
 		of higher-order applications:
 		%
 		\[
-			\binp{n}{x} P \by{\bactinp{n}{\tau_k}} \appl{\abs{x}{P}}{\tau_k} 
+			\binp{n}{x} P \by{\bactinp{n}{\tau_k}} \appl{\abs{x}{P}}{\tau_k} \by{\tau} P \subst{x}{\tau_k} 
 		\]
 		%
-		The approach in the characteristic bisimulation observes the 
+		with every instance of process variable $x$ in $P$ being substituted
+		with trigger value $\tau_k$ to give a process of the form $\appl{\tau_k}{x}$.
+		The approach in the characteristic bisimulation observes the
 		triggered value
 		$\abs{z}\binp{t}{x} \appl{x}{z}$ as an input instead of the
 		trigger name:
 		%
 		\[
-			P \by{\bactinp{n}{\abs{z}\binp{t}{x} \appl{x}{z}}} P \subst{\abs{z}\binp{t}{x} \appl{x}{z}}{x}
+			P \hby{\bactinp{n}{\abs{z}\binp{t}{x} \appl{x}{z}}} P \subst{\abs{z}\binp{t}{x} \appl{x}{z}}{x}
 		\]
 		%
+		with applications being transformed to
+		$\abs{z}{\binp{t}{x} \appl{x}{z}}{v}$
+		Note that in the characteristic bisimulation semantics
+		we can also observe a characteristic process as an input.
 		
-	\item 	lastly, in the Jeffrey\&Rahtke approach a triggered application
-		leads into an output observation of the application value over
+	\item 	Triggered application in the Jeffrey\&Rahtke
+		are observe using an output
+		lead into an output observation of the
+		application value over
 		the fresh trigger name.
 		%
 		\[
@@ -234,12 +307,19 @@ the triggered bisimulation as defined by Jeffrey and Rathke:
 		\]
 		%
 		In the characteristic bisimulation instead of observing an 
-		application and its value as an action we observe the application
-		value by inhabiting it in a characteristic process.
+		application and its value as an action we observe:
+		i) the name of the trigger through the trigger value
+		application; and ii) the application
+		value by inhabiting it in the characteristic value
+		and observing the interaction of the corresponding
+		characteristic process with its environment.
 		%
-		\[
-			\appl{\abs{x}{\mapchar{U}{x}}}{n} \by{\tau} \mapchar{U}{x} \subst{n}{x}
-		\]
+		\begin{eqnarray*}
+			\appl{\abs{z}{\binp{t}{x} \appl{x}{z}}}{v} &\by{\tau}& \binp{t}{x} \appl{x}{v}
+			\by{\bactinp{t}{\abs{x}{\mapchar{U}{x}}}}
+			\appl{\abs{x}{\mapchar{U}{x}}}{v}
+			\by{\tau} \mapchar{U}{x} \subst{n}{x}
+		\end{eqnarray*}
 		%
 \end{enumerate}
 
