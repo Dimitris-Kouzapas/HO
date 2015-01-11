@@ -179,8 +179,9 @@ trigger substitution rather than arbitrary process substitutions.
 The triggered bisimulation was further refined by Jeffrey and
 Rathke, who study calculi with recursive types, not addressed in~\cite{San96H,SangiorgiD:expmpa} and
 relevant in our work.
-They introduce their own version of triggered
-bisimulation~\cite{DBLP:journals/lmcs/JeffreyR05}.
+They introduce their own version of a
+bisimulation~\cite{DBLP:journals/lmcs/JeffreyR05}
+based on a LTS which is extended with trigger meta-notation.
 %for a full higher-order $\pi$-calculus that allows
 %higher-order applications.
 Like Sangiorgi's approach, the labelled transition semantics
@@ -192,42 +193,70 @@ and lifting the restriction to finite types.
 
 There are similarities of the characteristic bisimulation
 the triggered bisimulation as defined by Jeffrey and Rathke:
-i) the output of a higher-order higher-order value $Q$ on name
-$n$ in the triggered bisimulation requires the output of
-a fresh trigger name $t$ on channel $n$ 
-and then the introduction of a replicated triggered process
-in the context of the acting process:
 %
-\[
-	P \by{\news{t} \bactout{n}{t}} P' \Par \repl{} \binp{t}{x} Q
-\]
-%
-The approached used in the characteristic bisimulation is similar
-but instead of a replicated triggered process we require a
-triggered process that can input any process that can substitute
-the higher-order output.
-In essence we are transforming a replicated trigger into a process
-that is input-prefixed on a fresh name that receives a higher-order
-value;
-ii) the input of a higher-order the Jeffrey and Rathke approach requires 
-the input of a fresh trigger name, which is substituted on the application
-variable, thus having a special syntax for triggered application instead
-of higher-order applications.  
-\[
-	P \by{\bactinp{n}{t}} P \subst{t}{x} 
-\]
-The approach in the characteristic bisimulation observes the triggered value
-$\abs{z}\binp{t}{x} \appl{x}{z}$ as an input instead of the
-trigger name, thus avoiding the special syntax for triggered applications;
-iii) Lastly, in triggered bisimulation a triggered applications
-leads into an output observation of the application value over
-the fresh trigger name.
-\[
-	\appl{t}{V} \by{\bactout{t}{V}} \inact
-\]
-In the characteristic bisimulation instead of observing an 
-application and its value as an action we observe the application
-value by inhabiting it in a characteristic process.
+\begin{enumerate}[i)]
+	\item	the output of a higher-order higher-order value $\abs{x}{Q}$ on name
+		$n$ in Jeffrey\&Rathke approach requires the output of
+		a fresh trigger name $\tau_t$
+		($\tau_t$ is the meta-notation which extends the LTS)
+		on channel $n$ 
+		and then the introduction of a replicated triggered process
+		in the context of the acting process:
+		%
+		\[
+			P \by{\news{t} \tau_{t}} P' \Par (t \Leftarrow \abs{x}{Q}) \by{\bactinp{t}{v}} P' \Par \appl{\abs{x}{Q}}{v} \Par (t \Leftarrow \abs{x}{Q}) 
+		\]
+		%
+		The approached used in the characteristic bisimulation is similar
+		but instead of a replicated triggered process we require a
+		triggered process that can input any process that can substitute
+		the higher-order output.
+		%
+		\[
+			\Gamma; \es; \Delta' \proves P \hby{\bactout{n}{\abs{x}{Q}}} \Delta_2 \proves P' \Par \htrigger{t}{\abs{x}{Q}} \hby{\bactinp{t}{\abs{x}{\mapchar{U}{x}}}} \Delta_3 \proves
+			P' \Par \news{s}{ \appl{\mapchar{U}{x}}{s} \Par \bout{\dual{s}}{\abs{x}{Q}} \inact}
+		\]
+		%
+		In essence we are transforming a replicated trigger into a process
+		that is input-prefixed on a fresh name that receives a higher-order
+		value;
+
+	\item	the input of a higher-order in the Jeffrey\&Rathke approach requires 
+		the input of a fresh trigger name, which is substituted on the application
+		variable, thus having a meta-suntax for triggered application instead
+		of higher-order applications:
+		%
+		\[
+			\binp{n}{x} P \by{\bactinp{n}{\tau_k}} \appl{\abs{x}{P}}{\tau_k} 
+		\]
+		%
+		The approach in the characteristic bisimulation observes the 
+		triggered value
+		$\abs{z}\binp{t}{x} \appl{x}{z}$ as an input instead of the
+		trigger name:
+		%
+		\[
+			\horel{\Gamma}{\Delta_1}{P}{\bactinp{n}{\abs{z}\binp{t}{x} \appl{x}{z}}}{\Delta_2}{P \subst{\abs{z}\binp{t}{x} \appl{x}{z}}{x}} 
+		\]
+		%
+		
+	\item 	lastly, in the Jeffrey\&Rahtke approach a triggered application
+		leads into an output observation of the application value over
+		the fresh trigger name.
+		%
+		\[
+			\appl{\tau_k}{v} \by{\bactout{k}{v}} \inact
+		\]
+		%
+		In the characteristic bisimulation instead of observing an 
+		application and its value as an action we observe the application
+		value by inhabiting it in a characteristic process.
+		%
+		\[
+			\appl{\abs{x}{\mapchar{U}{x}}}{n} \by{\tau} \mapchar{U}{x} \subst{n}{x}
+		\]
+		%
+\end{enumerate}
 
 %The main differences of the triggered
 %bisimulation approach comparing to our approach are:
@@ -259,6 +288,24 @@ in~\cite{San96H,DBLP:journals/lmcs/JeffreyR05} because the
 mapping between higher and first order values is no longer implicit.
 
 \paragraph{Higher-Order Session Types.}
-
-Works by Mostrous, Demangeon, and others.
+The session type discipline developed for the $\HOp$ is a subset
+of the session type discipline
+for higher-order session processes developed by Mostrous and Yoshida
+in~\cite{tlca07,mostrous09sessionbased}.
+Mostrous and Yoshida in~\cite{tlca07} develop a full higher order session calculus
+with process abstractions and process applications and extend it
+in~\cite{mostrous09sessionbased} in the asynchronous setting.
+The session type
+system considered is influenced by the type systems for $\lambda$-calculi and
+uses type syntax of the form $U_1 \rightarrow U_2 \dots U_n \rightarrow \Proc$
+for shared values and $(U_1 \rightarrow U_2 \dots U_n \rightarrow \Proc)^{1}$
+for linear values.
+In the current setting such a typed is expressed only in $\HOpp$
+terms using the type $\shot{U}$ (respectively, $\lhot{U}$)
+with $U$ being a nested higher-order type.
+In the $\HOp$ session type system we only use types of the form
+$\shot{C}$ and $\lhot{C}$ with $C$ being a first-order type.
+Nevertheless, we show that
+the calulus presented in~\ref{tlca07} can be exrpessed in terms of a the
+core $\HO$ sub-calculus.
 
