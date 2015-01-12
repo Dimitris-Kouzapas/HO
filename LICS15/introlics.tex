@@ -134,19 +134,21 @@ ADD~FIGURE!
 \smallskip
 
 \myparagraph{Outline.}
-The next section overviews our results and approach.
+Next  we overview our results and approach.
 \noi \S\,\ref{sec:calculus} presents the calculi; 
-\S\,\ref{sec:types} presents types;
-the tractable bisimulations are in \S\,\ref{sec:behavioural};
-the notion of encoding is in \S\,\ref{s:expr};
-\S\,\ref{sec:positive} and \S\,\ref{sec:negative}
-present positive and negative encodability results, resp;
-\S\,\ref{sec:extension} discusses extensions; and 
-\S\,\ref{sec:relwork} concludes with related work;
-Appendix summarises the typing system. 
+\S\,\ref{sec:types} presents types.
+The tractable bisimulations are in \S\,\ref{sec:behavioural}.
+The notion of encoding is in \S\,\ref{s:expr} and
+\S\,\ref{sec:positive} %and \S\,\ref{sec:negative}
+presents expressiveness results.
+%present positive and negative encodability results, resp;
+In \S\,\ref{sec:extension} we discuss extensions; 
+\S\,\ref{sec:relwork} concludes with related works.
+An appendix summarises the typing system. 
 The paper is self-contained. 
-{\bf\em Omitted definitions, additional related work and full proofs 
-can be found 
+{\bf\em Omitted definitions, additional related work, and  proofs 
+%can be found
+are 
 in~\cite{KouzapasPY15}.} 
 
 \section{Overview}
@@ -159,6 +161,108 @@ motivate further our contributions and
 give details of the technical challenges involved. 
 \jp{STILL TO ADD}: Notation for input/output processes, abstraction/applications, endpoints, 
 session types, 
+
+\subsection{Relative Expressiveness Results}
+\label{subsec:intro:expr}
+\myparagraph{Encoding Name Passing and Recursion into \HO.}
+Our first encodability result highlights the expressiveness of 
+the core higher-order calculus \HO, which lacks name passing and recursion. 
+We encode \HOp into \HO, which entails also an encoding of \sessp into \HO.
+The challenges in this encoding of concern exactly name passing and recursion.
+To encode name output, we ``pack''
+the name to be passed around into a suitable abstraction; 
+upon reception, the receiver must ``unpack'' this object following a precise protocol.
+The encoding formally defined in Def.~\ref{d:enc:hopitoho}; we give intuitions of the strategy below.
+The encoding of name passing is:
+\[
+\begin{array}{rcll}
+  \map{\bout{u}{w} P}	&=&	\bout{u}{ \abs{z}{\,\binp{z}{x} (\appl{x}{w})} } \map{P} \\
+  \map{\binp{u}{x} Q}	&=&	\binp{u}{y} \newsp{s}{\appl{y}{s} \Par \bout{\dual{s}}{\abs{x}{\map{Q}}} \inact}
+\end{array}
+\]
+where it is easy to see that 
+exactly two deterministic reductions are needed
+to unpack the name $w$ sent by the sender.
+A challenge in this encoding strategy is the encoding of recursion, 
+for it must preserve the linearity of session endpoints. 
+The encoding of $\recp{X}{P}$ is delicate and involves the following steps:
+\begin{enumerate}[i)]
+\item The recursion body $P$ is encoded in such a way that
+the free session names in $\map{P}$ (linear names) are renamed as name variables; the obtained process
+is then used as the body of a (polyadic) name abstraction on those variables.
+\item Using a private session, the abstraction obtained in (i) is communicated to a
+process which instantiates the initial free session names in $P$, 
+in coordination with the encoding of the recursion variable $X$ (using a private session).
+\end{enumerate}
+%The second step is also challenging:
+%in essence, one should establish a private session with the encoding of the recursion  
+%body in order to spawn copies of $\map{P}$ with appropriate free session names.
+The use of polyadicity is crucial to the encoding; we shall get back to this point below.
+It is worth noticing that the typing of the encoding requires 
+a non tail recursive type of the form $\trec{t}{\btinp{\lhot{(S,\vart{t}}} \tinact}$
+(see Def.~\ref{d:enc:hopitoho} for the precise formulation).
+
+\smallskip 
+
+\myparagraph{Other Encodings.}
+We also study the reverse of the previous encoding, namely 
+an encoding of \HOp into \sessp. Here we rely on the well-known representability result of Sangiorgi~\cite{SangiorgiD:expmpa}. 
+Since communicated processes may contain free session names, in order to respect session protocols
+the encoding should distinguish between two cases, depending on whether this kind of linear names is present in the communication object. If session names are present then a linear server trigger is deployed; otherwise, the replicated server  in~\cite{SangiorgiD:expmpa} can be used. 
+
+As mentioned earlier, \HOp and \HO feature \emph{first-order} abstractions. 
+This means that
+only  names can be used as arguments to abstractions.
+Hence, given a (shared/linear) name $u$, in \HOp
+we have the reduction $(\abs{x}{P}) \, u   \red  P \subst{u}{x}$.
+We also consider \HOpp, an extension of \HOp with \emph{higher-order} abstractions.
+ This means that in \HOpp also arbitrary values can be arguments of abstractions, 
+ and one could have the reduction
+ $(\abs{x}{P}) \, V   \red  P \subst{V}{x}$, where $V$ can be a process.
+ We propose an encoding of \HOpp into \HO: it results as 
+a natural extension of that of \HOp into \HO;
+see \S\,\ref{subsec:hop} for a formal definition.
+
+Another well-known feature in process calculi is \emph{polyadicity}, the ability 
+of passing around tuples of values in communications. 
+We consider a polyadic extension of \HOp, denoted \pHOp.
+In \pHOp polyadicity appears in intra-session communications and abstractions; 
+polyadicity of shared names is ruled out by typing. 
+This is enough for most practical purposes, including our encoding from \HOp into \HO.
+Encoding \pHOp into \HOp is straightforward
+in a session-typed setting, as detailed in \S\,\ref{subsec:pho}.
+For instance, we may define:
+\[
+\begin{array}{rl}
+		\map{\binp{u}{x_1, \cdots, x_m} P}
+		 =  & \!\!\!\!
+		\binp{u}{x_1} \cdots ;  \binp{u}{x_m} \map{P}
+		\\
+		\map{\bout{u}{u_1, \cdots, u_m} P}
+		 =  & \!\!\!\!
+		\bout{u}{u_1} \cdots ;  \bout{u}{u_m} \map{P}
+		\\
+		\map{\bbout{u}{\abs{(x_1, \cdots, x_m)} Q} P}
+		= & \!\!\!\!
+		\bbout{u}{\abs{z}\binp{z}{x_1}\cdots ; \binp{z}{x_m} \map{Q}} \map{P}
+		\\ 
+		\map{\appl{x}{(u_1, \cdots, u_m)}}
+		= & \!\!\!\!
+		\newsp{s}{\appl{x}{s} \Par \bout{\dual{s}}{u_1} \cdots ; \bout{\dual{s}}{u_m} \inact} 
+	\end{array}
+\]
+Thus, the polyadic arguments are communicated one by one, relying on the linear, private character of 
+session names. The encoding of polyadic abstraction/application requires an extra step, 
+in which a  monadic abstraction is passed around.
+
+\smallskip
+
+\myparagraph{A Non Encodability Result.}
+We also show that shared names strictly add expressiveness to session calculi:
+there are (non deterministic) behaviors expressible with shared names not expressible using linear names only.
+Although somewhat expected we do not know of a formal proof.
+We propose such a formal proof, which relies crucially on the behavioral theory that we have introduced here
+and its properties. \jp{EXPAND}.
 
 
 \subsection{Tractable Bisimilarities for Session-Typed Processes}
@@ -344,107 +448,7 @@ calculus \sessp.
 %\HOp and its higher-order variants,
 %Definition \ref{d:fwb} is useful for first-order sub-calculi of \HOp.
 
-\subsection{Relative Expressiveness Results}
-\label{subsec:intro:expr}
-\myparagraph{Encoding Name Passing and Recursion into \HO.}
-Our first encodability result highlights the expressiveness of 
-the core higher-order calculus \HO, which lacks name passing and recursion. 
-We encode \HOp into \HO, which entails also an encoding of \sessp into \HO.
-The challenges in this encoding of concern exactly name passing and recursion.
-To encode name output, we ``pack''
-the name to be passed around into a suitable abstraction; 
-upon reception, the receiver must ``unpack'' this object following a precise protocol.
-The encoding formally defined in Def.~\ref{d:enc:hopitoho}; we give intuitions of the strategy below.
-The encoding of name passing is:
-\[
-\begin{array}{rcll}
-  \map{\bout{u}{w} P}	&=&	\bout{u}{ \abs{z}{\,\binp{z}{x} (\appl{x}{w})} } \map{P} \\
-  \map{\binp{u}{x} Q}	&=&	\binp{u}{y} \newsp{s}{\appl{y}{s} \Par \bout{\dual{s}}{\abs{x}{\map{Q}}} \inact}
-\end{array}
-\]
-where it is easy to see that 
-exactly two deterministic reductions are needed
-to unpack the name $w$ sent by the sender.
-A challenge in this encoding strategy is the encoding of recursion, 
-for it must preserve the linearity of session endpoints. 
-The encoding of $\recp{X}{P}$ is delicate and involves the following steps:
-\begin{enumerate}[i)]
-\item The recursion body $P$ is encoded in such a way that
-the free session names in $\map{P}$ (linear names) are renamed as name variables; the obtained process
-is then used as the body of a (polyadic) name abstraction on those variables.
-\item Using a private session, the abstraction obtained in (i) is communicated to a
-process which instantiates the initial free session names in $P$, 
-in coordination with the encoding of the recursion variable $X$ (using a private session).
-\end{enumerate}
-%The second step is also challenging:
-%in essence, one should establish a private session with the encoding of the recursion  
-%body in order to spawn copies of $\map{P}$ with appropriate free session names.
-The use of polyadicity is crucial to the encoding; we shall get back to this point below.
-It is worth noticing that the typing of the encoding requires 
-a non tail recursive type of the form $\trec{t}{\btinp{\lhot{(S,\vart{t}}} \tinact}$
-(see Def.~\ref{d:enc:hopitoho} for the precise formulation).
 
-\smallskip 
-
-\myparagraph{Other Encodings.}
-We also study the reverse of the previous encoding, namely 
-an encoding of \HOp into \sessp. Here we rely on the well-known representability result of Sangiorgi~\cite{SangiorgiD:expmpa}. 
-Since communicated processes may contain free session names, in order to respect session protocols
-the encoding should distinguish between two cases, depending on whether this kind of linear names is present in the communication object. If session names are present then a linear server trigger is deployed; otherwise, the replicated server  in~\cite{SangiorgiD:expmpa} can be used. 
-
-As mentioned earlier, \HOp and \HO feature \emph{first-order} abstractions. 
-This means that
-only  names can be used as arguments to abstractions.
-Hence, given a (shared/linear) name $u$, in \HOp
-we have the reduction $(\abs{x}{P}) \, u   \red  P \subst{u}{x}$.
-We also consider \HOpp, an extension of \HOp with \emph{higher-order} abstractions.
- This means that in \HOpp also arbitrary values can be arguments of abstractions, 
- and one could have the reduction
- $(\abs{x}{P}) \, V   \red  P \subst{V}{x}$, where $V$ can be a process.
- We propose an encoding of \HOpp into \HO: it results as 
-a natural extension of that of \HOp into \HO;
-see \S\,\ref{subsec:hop} for a formal definition.
-
-Another well-known feature in process calculi is \emph{polyadicity}, the ability 
-of passing around tuples of values in communications. 
-We consider a polyadic extension of \HOp, denoted \pHOp.
-In \pHOp polyadicity appears in intra-session communications and abstractions; 
-polyadicity of shared names is ruled out by typing. 
-This is enough for most practical purposes, including our encoding from \HOp into \HO.
-Encoding \pHOp into \HOp is straightforward
-in a session-typed setting, as detailed in \S\,\ref{subsec:pho}.
-For instance, we may define:
-\[
-\begin{array}{rl}
-		\map{\binp{u}{x_1, \cdots, x_m} P}
-		 =  & \!\!\!\!
-		\binp{u}{x_1} \cdots ;  \binp{u}{x_m} \map{P}
-		\\
-		\map{\bout{u}{u_1, \cdots, u_m} P}
-		 =  & \!\!\!\!
-		\bout{u}{u_1} \cdots ;  \bout{u}{u_m} \map{P}
-		\\
-		\map{\bbout{u}{\abs{(x_1, \cdots, x_m)} Q} P}
-		= & \!\!\!\!
-		\bbout{u}{\abs{z}\binp{z}{x_1}\cdots ; \binp{z}{x_m} \map{Q}} \map{P}
-		\\ 
-		\map{\appl{x}{(u_1, \cdots, u_m)}}
-		= & \!\!\!\!
-		\newsp{s}{\appl{x}{s} \Par \bout{\dual{s}}{u_1} \cdots ; \bout{\dual{s}}{u_m} \inact} 
-	\end{array}
-\]
-Thus, the polyadic arguments are communicated one by one, relying on the linear, private character of 
-session names. The encoding of polyadic abstraction/application requires an extra step, 
-in which a  monadic abstraction is passed around.
-
-\smallskip
-
-\myparagraph{A Non Encodability Result.}
-We also show that shared names strictly add expressiveness to session calculi:
-there are (non deterministic) behaviors expressible with shared names not expressible using linear names only.
-Although somewhat expected we do not know of a formal proof.
-We propose such a formal proof, which relies crucially on the behavioral theory that we have introduced here
-and its properties. \jp{EXPAND}.
 
 
 %%\myparagraph{Outline}
