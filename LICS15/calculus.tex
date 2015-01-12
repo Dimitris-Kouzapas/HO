@@ -13,11 +13,11 @@ we concentrate on the second-order call-by-value \HOp.
 (In \S\,\ref{sec:extension} we consider the extension of 
 \HOp with general higher-order abstractions 
 and polyadicity in name-passing/abstractions.)
-We also introduce subcalculi of \HOp. In particular, we define the 
+We also introduce two subcalculi of \HOp. In particular, we define the 
 core higher-order session
 calculus (\HO), which 
 %. The \HO calculus is  minimal: it 
-includes constructs for session establish\-ment/communication and 
+includes constructs for shared name synchronisation and 
 (monadic) name-abstraction, but lacks name-passing and recursion.
 
 %Although minimal, in \S\ref{s:expr}
@@ -39,8 +39,8 @@ u,w  ::=  n \ | \ x,y,z
 \[
 \begin{array}{rclllll}
 P,Q \!\!\!\!\!\! & ::= & \!\! P\Par Q \bnfbar 
- \bsel{u}{l} P \bnfbar \bbra{u}{l_i:P_i}_{i \in I} \bnfbar \inact \\[1mm]
- & \bnfbar & \!\! \bout{u}{V}{P} \bnfbar \binp{u}{x}{P} \bnfbar \news{n} P 
+ \bsel{u}{l} P \bnfbar \bbra{u}{l_i:P_i}_{i \in I} \bnfbar \inact \bnfbar \bout{u}{V}{P} \\[1mm]
+ & \bnfbar & \!\! \binp{u}{x}{P} \bnfbar \news{n} P 
 \bnfbar 
 %ny
 %\appl{x}{u}
@@ -56,8 +56,8 @@ P,Q \!\!\!\!\!\! & ::= & \!\! P\Par Q \bnfbar
 \end{figure}
 We use $a,b,c, \dots$ (resp.~$s, \dual{s}, \dots$) 
 to range over shared (resp. session) names. 
-We use $m, n, \dots$ for session or shared names. 
-We define the dual operation over channels $n$ as $\dual{n}$ with
+We use $m, n, t, \dots$ for session or shared names. 
+We define the dual operation over names $n$ as $\dual{n}$ with
 $\dual{\dual{s}} = s$ and $\dual{a} = a$.
 Intuitively, names $s$ and $\dual{s}$ are dual (two) \emph{endpoints} while 
 shared names repsent shared (non-deterministic) points. 
@@ -71,8 +71,8 @@ $V, W, \dots$ to denote values.
 include the
 $\pi$-calculus prefixes for sending and receiving values $V$.
 Process $\bout{u}{V} P$ denotes the output of value $V$
-over channel $u$, with continuation $P$;
-process $\binp{u}{x} P$ denotes the input prefix on channel $u$ of a value
+over name $u$, with continuation $P$;
+process $\binp{u}{x} P$ denotes the input prefix on name $u$ of a value
 that 
 will substitute variable $x$ in continuation $P$. 
 Recursion is expressed by $\recp{X}{P}$,
@@ -82,8 +82,8 @@ Process
 %$\appl{x}{u}$ 
 $\appl{V}{u}$ 
 is the application
-process which substitutes channel $u$ on the abstraction $V$. 
-Prefix $\bsel{u}{l} P$ selects label $l$ on channel $u$ and then behaves as $P$.
+process which substitutes name $u$ on the abstraction $V$. 
+Prefix $\bsel{u}{l} P$ selects label $l$ on name $u$ and then behaves as $P$.
 Given $i \in I$ process $\bbra{u}{l_i: P_i}_{i \in I}$ offers a choice on labels $l_i$ with
 continuation $P_i$.
 %Others are standard c
@@ -97,7 +97,7 @@ We use $\fv{P}$ and $\fn{P}$ to denote a set of free variables and names;
 and assume $V$ in $\bout{u}{V}{P}$ does not include free process recursive 
 variables $\rvar{X}$. 
 If $\fv{P} = \emptyset$, we call $P$ {\em closed}; and closed $P$ without 
-free session channels a {\em program}. 
+free session names a {\em program}. 
 
 \subsection{Subcalculi of \HOp}
 \label{subsec:subcalculi}
@@ -116,7 +116,7 @@ lacks  the
 higher-order constructs
 (i.e., abstraction passing and application), but includes recursion.
 Let $\CAL \in \{\HOp, \HO, \sessp\}$. We write 
-$\CAL^{-\mathsf{sh}}$ for $\CAL$ without shared channels
+$\CAL^{-\mathsf{sh}}$ for $\CAL$ without shared names
  (we delete $a,b$ from $n$). 
  We shall demonstrate that 
 $\HOp$, $\HO$, and $\sessp$ have the same expressivity.
@@ -167,7 +167,7 @@ $\orule{Pass}$ defines a shared interaction at $n$
 ($\dual{n}=n$) or session interaction;  
 $\orule{Sel}$ is the standard rule for labelled choice/selection:
 given an index set $I$, 
-a process selects label $l_j$ on channel $n$ over a set of
+a process selects label $l_j$ on name $n$ over a set of
 labels $\set{l_i}_{i \in I}$ offered by a branching 
 on the dual endpoint $\dual{n}$; and other rules are standard.
 Rules for \emph{structural congruence} are defined in Fig.~\ref{fig:reduction} (bottom). 

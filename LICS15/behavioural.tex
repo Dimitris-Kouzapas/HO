@@ -168,9 +168,9 @@ present in the session environment, since if it were present
 the only communication that could take place is the interaction
 between the two endpoints (using $\eltsrule{Tau}$ below).
 
-\myparagraph{Output Actions} are defined by $\eltsrule{SOut}$
-and $\eltsrule{ShOut}$.  
-Rule $\eltsrule{SOut}$ states the conditions for observing action
+\myparagraph{Output Actions} are defined by $\eltsrule{SSnd}$
+and $\eltsrule{ShSnd}$.  
+Rule $\eltsrule{SSnd}$ states the conditions for observing action
 $\news{\tilde{m}} \bactout{s}{V}$ on a type tuple 
 $(\Gamma, \Lambda, \Delta\cdot \AT{s}{S})$. 
 The session environment $\Delta$ with $\AT{s}{S}$ 
@@ -188,10 +188,10 @@ resulting type tuple. The prefix of session $s$ is consumed
 by the action.
 
 Similarly, an output on a shared name is described
-with rule $\eltsrule{ShOut}$ where we require a shared name
+with rule $\eltsrule{ShSnd}$ where we require a shared name
 is typed with $\chtype{U}$. The requirements for
 the output $V$ are identical with the requirements for
-rule $\eltsrule{SOut}$.
+rule $\eltsrule{SSnd}$.
 
 \myparagraph{Other Actions}
 Rules $\eltsrule{Sel}$ and $\eltsrule{Bra}$ describe actions for
@@ -256,7 +256,7 @@ environments (Definition~\ref{def:ses_red}).
 	\]
 	\[
 	\begin{array}{l}
-		\eltsrule{SOut}\\
+		\eltsrule{SSnd}\\
 \tree{
 			\begin{array}{lll}
 			\Gamma \cat \Gamma'; \Lambda'; \Delta' \proves V \hastype U
@@ -289,7 +289,7 @@ environments (Definition~\ref{def:ses_red}).
 			(\Delta \cat s: S \cat \cup_j \Delta_j') \backslash \Delta')
 		}
 \\[6mm]
-\eltsrule{ShOut}\\
+\eltsrule{ShSnd}\\
 \tree{
 		\begin{array}{lll}
 			\Gamma \cat \Gamma' ; \Lambda'; \Delta' \proves V \hastype U &  
@@ -575,7 +575,7 @@ Characteristic  Bisimulations ($\hwb$/$\fwb$)}\label{ss:hwb}
 We formalise the technical novelties motivated in \S~\ref{subsec:intro:bisimulation}.
 Our main result is Theorem~\ref{the:coincidence}.
 We first define characteristic processes:
-   
+
 \begin{definition}[Characteristic Process]\rm
 \label{def:char}
 %	Let names $\tilde{k}$ and type $\tilde{C}$; then we define a {\em characteristic process}:
@@ -586,8 +586,7 @@ We first define characteristic processes:
 %	with 
 	Let name $u$ and type $U$. 
 	Fig.~\ref{fig:char} defines the {\em characteristic process} 
-	$\mapchar{U}{u}$ with %{\em characteristic value}
-	$\omapchar{U}$. 
+	$\mapchar{U}{u}$ and the {\em characteristic value} $\omapchar{U}$.
 \end{definition}
 
 \smallskip
@@ -630,7 +629,7 @@ We first define characteristic processes:
 		\end{array}
 	\end{array}
 	\]
-\caption{Characteristic Processes \label{fig:char}}
+\caption{Characteristic Processes and Characteristic Values\label{fig:char}}
 \Hline
 \end{figure}
 
@@ -691,15 +690,17 @@ We first define characteristic processes:
 %%and $\mapchar{C}{u}$. 
 %%\end{IEEEproof}
 
-
-\noi We can easily verify characteristic processes are inhabitants of their associated type. 
+\noi We can easily verify characteristic processes are
+inhabitants of their associated type. 
 The example below explains the motivation of the refined 
 LTS explained in \S\,\ref{subsec:intro:bisimulation}.
 \smallskip  
 
 \begin{example}[The Need for Refined Typed LTS]
 \label{ex:motivation}
-First we demonstrate that a characteristic value is not sufficient. 
+First we demonstrate that observing a characteristic value
+input alone is not sufficient
+\dk{to define a sound bisimulation closure}.
 Consider typed processes $P_1, P_2$:
 %
 \begin{eqnarray}
@@ -711,7 +712,7 @@ Consider typed processes $P_1, P_2$:
 %
 We can show that $\Gamma; \es; \Delta \cat s: \btinp{\shot{\btinp{C} \tinact}} \tinact \proves P_i \hastype \Proc$ ($i \in \{1,2\}$).
 If the above processes input and substitute over $x$
-the characteristic value $\abs{z}{\binp{z}{y}} \inact$, 
+the characteristic value $\dk{\omapchar{\shot{\btinp{C} \tinact}} =} \abs{z}{\binp{z}{y}} \inact$, 
 then both processes evolve into:%(\ref{eq:5}) and (\ref{eq:6}) in become:
 %
 \begin{eqnarray*}
@@ -726,8 +727,9 @@ are clearly {\em not} contextually bisimilar: there exist many input actions
 which may be used to distinguish them.
 For example, if 
 $P_1$ and $P_2$ input 
- $\abs{x} \bout{a}{s_3} \binp{x}{y} \inact$ then
-their derivatives are not bisimilar. 
+$\abs{x} \newsp{s_3}{\bout{a}{s_3} \binp{x}{y} \inact}$ with
+$\Gamma; \es; \Delta \proves s,\dual{s} \hastype \tinact, \tinact$
+then their derivatives are not bisimilar. 
 
 Observing only the characteristic value 
 results in an over-discriminating bisimulation.
@@ -802,39 +804,49 @@ then they would become:
 \noi We now define the \emph{refined} typed LTS. 
 As explained in \S\,\ref{sec:intro}, this new LTS is defined 
 by considering a transition rule for input in which admitted values are
- trigger or characteristic values: 
+trigger or characteristic values
+\dk{(assume extension of the structural
+congruence to acommodate values: i) $\abs{x}{P} \scong \abs{x}{Q}$ if
+$P \scong Q$) and ii) $n \scong m$ if $n = n$)}: 
 
 \smallskip 
 
 \begin{definition}[Refined Typed Labelled Transition Relation]
-\label{def:rlts}
-We define the environment transition rule for input actions in
-%restricted environment transition relation using the
-%following rule %using the environment transition relation defined in 
-using the input rules in Fig.~\ref{fig:envLTS}: 
-\[
-\begin{array}{rl}
-		\eltsrule{RRcv}&\tree {
-\begin{array}{c}
-(\Gamma_1; \Lambda_1; \Delta_1) \by{\bactinp{n}{V}} (\Gamma_2; \Lambda_2; \Delta_2)
-\\
-			\begin{array}{lll}
-				 V  \scong
-(\abs{{x}}{\binp{t}{y} (\appl{y}{{x}})}
- \vee  \abs{{x}}{\map{U}^{{x}}}  \vee m)  \textrm{ with } t \textrm{ fresh} 
-			\end{array}
-			\end{array}
-		}{
-			(\Gamma_1; \Lambda_1; \Delta_1) \hby{\bactinp{n}{V}} (\Gamma_2; \Lambda_1; \Delta_2)
-		}
-\end{array}
-\]
-\noi $\eltsrule{RRcv}$ uses the environment transition
-$(\Gamma, \Lambda_1, \Delta_1) \hby{\ell} (\Gamma, \Lambda_2, \Delta_2)$
-in Fig.~\ref{fig:envLTS}. 
-We then define 
-$\horel{\Gamma}{\Delta_1}{P_1}{\hby{\ell}}{\Delta_2}{P_2}$
-by replacing $\by{\ell}$ by $\hby{\ell}$ in Definition~\ref{d:tlts}. 
+	\label{def:rlts}
+	We define the environment transition rule for input actions in
+	%restricted environment transition relation using the
+	%following rule %using the environment transition relation defined in 
+	using the input rules in Fig.~\ref{fig:envLTS}:
+	\[
+	\begin{array}{rl}
+			\eltsrule{RRcv}&\tree {
+	\begin{array}{c}
+	(\Gamma_1; \Lambda_1; \Delta_1) \by{\bactinp{n}{V}} (\Gamma_2; \Lambda_2; \Delta_2)
+	\\
+				\begin{array}{lll}
+					V  \scong
+					(\abs{{x}}{\binp{t}{y} (\appl{y}{{x}})}
+					\vee  \omapchar{U}%\abs{{x}}{\map{U}^{{x}}}
+					\vee m)  \textrm{ with } t \textrm{ fresh} 
+				\end{array}
+				\end{array}
+			}{
+				(\Gamma_1; \Lambda_1; \Delta_1) \hby{\bactinp{n}{V}} (\Gamma_2; \Lambda_1; \Delta_2)
+			}
+	\end{array}
+	\]
+	\noi $\eltsrule{RRcv}$ is defined on top
+	of rules $\eltsrule{SRv}$ and $\eltsrule{ShRv}$
+	in Fig.~\ref{fig:envLTS}.
+%	uses the environment transition
+%	$(\Gamma, \Lambda_1, \Delta_1) \hby{\ell} (\Gamma, \Lambda_2, \Delta_2)$
+%	in Fig.~\ref{fig:envLTS}. 
+\dk{	We then use the non-receiving rules in Fig.~\ref{fig:envLTS}
+	together with rule $\eltsrule{RRcv}$
+	to define 
+	$\horel{\Gamma}{\Delta_1}{P_1}{\hby{\ell}}{\Delta_2}{P_2}$
+	as in Definition~\ref{d:tlts}.}
+%	by replacing $\by{\ell}$ by $\hby{\ell}$ in Definition~\ref{d:tlts}. 
 \end{definition}
 
 \smallskip 
@@ -852,6 +864,9 @@ $\horel{\Gamma}{\Delta_1}{P_1}{\by{\ell}}{\Delta_2}{P_2}$.
 \myparagraph{The Two Bisimulations} We now define 
 higher-order bisimulation, 
 a more tractable bisimulation for $\HO$ and $\HOp$-calculi. 
+\dk{The two bisimulation differ on the fact that
+they defined using the different but equivalent
+trigger processes: $\htrigger{t}{V}$ and $\ftrigger{t}{V}{U}$.}
 
 \smallskip 
 
@@ -929,6 +944,32 @@ $\cong$, $\wbc$ and $\fwb$ coincide in $\CAL\in \{\HOp, \HO, \sessp\}$.
 \noi The above theorem shows that using $\hwb$ is the most tractable 
 in the higher-order setting, but if the calculus is limited into the 
 $\sessp$-calculus, we can still use $\fwb$. 
+
+
+\smallskip  
+
+\noi Processes that do not use shared names, are inherently deterministic. 
+The following lemma is useful for both positive and negative results. 
+
+%\smallskip 
+
+\begin{lemma}[$\tau$-Inertness]\rm
+	\label{lem:tau_inert}
+	\begin{enumerate}
+		\item (deterministic transitions) 
+		Transition $\horel{\Gamma}{\Delta}{P}{\hby{\tau}}{\Delta'}{P'}$ is called
+		{\em deterministic} if it is derived by $\ltsrule{App}$ or 
+		$\ltsrule{Tau}$ where $\subj{\ell_1}$ and $\subj{\ell_2}$ in the premise 
+		are dual session names. Suppose $\Delta$ is balanced. Then 
+		$\Gamma; \Delta \proves P \cong \Delta'\proves P'$ 
+		with $\Delta \red^\ast \Delta'$ balanced. 
+		\item 
+		Let $P$ is the $\HOp^{-\mathsf{sh}}$-calculus. 
+		Assume $\Gamma; \emptyset; \Delta \proves P \hastype \Proc$. Then 
+		$P \red^\ast P'$ implies $\Gamma; \Delta \proves 
+		P \cong \Delta'\proves P'$ with $\Delta \red^\ast \Delta'$. 
+	\end{enumerate}
+\end{lemma}
 
 
 %\smallskip 

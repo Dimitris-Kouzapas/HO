@@ -25,31 +25,40 @@ The syntax of types of \HOp is given below:
 	  \bnfbar  \trec{t}{S} \bnfbar \vart{t}  \bnfbar \tinact
 \end{array}
 \]
-In channel types, $\chtype{U}$ is shared channel types 
-which are sent via shared channels. 
-$\shot{C}$ and $\lhot{C}$ denote
-{\em shared} and {\em linear} function types, respectively.
-$\lhot{C}$ \cite{tlca07,mostrous_phd} ensures values which contain free 
-session channels used once. 
+\dk{Type $U$ is used to type value terms and include
+the first-order types for names $C$ and the higher-order
+types for abstractions $L$. Session names are typed
+with a session type $S$ and shared names are typed
+with the share name types $\chtype{C}$ and $\chtype{L}$.
+Note that we dissallow type $\chtype{U}$, thus
+in the type discipline shared names cannot carry shared names.}
+%In name types, $\chtype{U}$ is shared name types 
+%which are sent via shared names. 
+Types $\shot{C}$ and $\lhot{C}$ denote
+{\em shared} and {\em linear} higher-order types, respectively,
+used to type abstraction values.
+%$\lhot{C}$ \cite{tlca07,mostrous_phd} ensures values which contain free 
+%session names used once. 
  
 We write $S$ to denote binary session types.  {\em Output type}
-$\btout{U} S$ %is assigned to a channel that 
+$\btout{U} S$ %is assigned to a name that 
 first sends a value of
 type $U$ and then follows the protocol described by $S$.  Dually,
 $\btinp{U} S$ denotes an {\em input type}.  {\em Branching type}
 $\btbra{l_i:S_i}_{i \in I}$ and {\em selection type}
-$\btsel{l_i:S_i}_{i \in I}$ are the labelled choice.  We assume {\em recursive
-  type} $\trec{t}{S}$ is guarded, i.e.  $\trec{t}{\vart{t}}$ is not
-allowed.  We stress that carried type $U$ in $\btout{U} S$ and
-$\btinp{U} S$ can contain free type variables, which is crucial
-to encode $\HOp$ into $\HO$. Type $\tinact$ represents the
-termination. 
+$\btsel{l_i:S_i}_{i \in I}$ are the labelled choice. 
+We assume {\em recursive type} $\trec{t}{S}$ is guarded,
+i.e.  $\trec{t}{\vart{t}}$ is not allowed. 
+%We stress that carried type $U$ in $\btout{U} S$ and
+%$\btinp{U} S$ can contain free type variables, which is crucial
+%to encode $\HOp$ into $\HO$.
+Type $\tinact$ is the termination type. 
 
 Types of \HO exclude $\nonhosyntax{C}$ from 
 value types of \HOp; the types of \sessp exclude $L$. 
 From each $\CAL \in \{\HOp, \HO, \pi \}$, $\CAL^{-\mathsf{sh}}$ 
-excludes shared channel types ($\chtype{S}$ and $\chtype{L}$), 
-from channel type $C$.
+excludes shared name types ($\chtype{S}$ and $\chtype{L}$), 
+from name type $C$.
 
 We write $S_1 \dualof S_2$ if 
 $S_1$ is dual of $S_2$ following \cite{TGC14}.  
@@ -84,10 +93,10 @@ environments $\Gamma; \Lambda; \Delta$ process $P$ has the process type~$\Proc$.
 \end{array}
 \]
 \noi 
-$\Gamma$ is a mapping from variables, shared channels and recursive 
+$\Gamma$ is a mapping from variables, shared names and recursive 
 process variables;  $\Lambda$ is a mapping from variables to 
 the linear functional type; and $\Delta$ is a mapping from 
-session channels to session types. 
+session names to session types. 
 %As expected, weakening, contraction, and exchange principles apply to
 %$\Gamma$; environments $\Lambda$ and $\Delta$ behave linearly, and are
 %only subject to exchange.  
