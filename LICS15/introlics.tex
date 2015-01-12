@@ -1,20 +1,20 @@
 % !TEX root = main.tex
-\myparagraph{Key points}
-\begin{enumerate}[1.]
-%	\item	Session $\pi$ calculus with process passing. DONE
-%	\item	Identify session $\pi$ and process passing subcalculi and their polyadic variants. DONE
-%	\item	Bisimulation theory for higher-order session semantics. DONE
-%	\item	New triggered bisimulation, related to J\&R's. DONE
-%	\item   Elementary values key to characterizations of behavioral equivalence. DONE
-	\item	Types provide techniques to prove completeness without matching. \jp{TBD}
-	\item	We are interested in encodings with properties a la Gorla. 
-                We extended them to typed setting. \jp{TBD}
-%	\item	Encode name-passing to pure process abstraction calculus, with name abstractions. DONE
-%	\item	Type of the recursion encoding uses non tail recursive type $\trec{t}{\btinp{t} \tinact}$. DONE
-%	\item	Encode higher-order semantics to first order semantics. DONE
-%	\item	Negative result. Cannot encode shared names using only shared names.
-%	\item   Extensions with higher-order abstractions and polyadicity also explored. DONE
-\end{enumerate}
+%\myparagraph{Key points}
+%\begin{enumerate}[1.]
+%%	\item	Session $\pi$ calculus with process passing. DONE
+%%	\item	Identify session $\pi$ and process passing subcalculi and their polyadic variants. DONE
+%%	\item	Bisimulation theory for higher-order session semantics. DONE
+%%	\item	New triggered bisimulation, related to J\&R's. DONE
+%%	\item   Elementary values key to characterizations of behavioral equivalence. DONE
+%	\item	Types provide techniques to prove completeness without matching. \jp{TBD}
+%	\item	We are interested in encodings with properties a la Gorla. 
+%                We extended them to typed setting. \jp{TBD}
+%%	\item	Encode name-passing to pure process abstraction calculus, with name abstractions. DONE
+%%	\item	Type of the recursion encoding uses non tail recursive type $\trec{t}{\btinp{t} \tinact}$. DONE
+%%	\item	Encode higher-order semantics to first order semantics. DONE
+%%	\item	Negative result. Cannot encode shared names using only shared names.
+%%	\item   Extensions with higher-order abstractions and polyadicity also explored. DONE
+%\end{enumerate}
 
 %\smallskip 
 %
@@ -84,7 +84,7 @@ while $\sessp$ is in essence the calculus in~\cite{honda.vasconcelos.kubo:langua
 In the first part of the paper, we address tractable behavioral equivalences
 for \HOp.
 A well-studied behavioral equivalence in the higher-order setting 
-is \emph{contextual bisimulation}~\cite{San96H},
+is \emph{context bisimilarity}~\cite{San96H},
 a labelled characterization of barbed congruence, 
 which offers an appropriate discriminative power at the price of heavy universal quantifications in output clauses.
 Obtaining alternative characterizations that alleviate this burden
@@ -104,24 +104,29 @@ are shown to coincide with contextual bisimilarity.
 
 We then move on to 
 %in the second part of the paper we 
-assess the expressive 
-power of \HOp, \HO, and \sessp as delineated by typing. 
+assess the expressivity 
+ of \HOp, \HO, and \sessp as delineated by typing. 
 We establish strong correspondences between 
 these languages via fully abstract encodings. 
-Here again the usage information given by session types is fundamental to define the encodings
+Here again the usage information given by session types is essential to define encodings
 and to state their semantic correspondences.
-That is, our encodings relate source and target processes
-endowed with proper communication structures as enforced by session types. 
-We rely on a notion of encoding that 
-requires the translation of both process and types and 
-formally captures preservation of (session) typing,
-both for processes and typing judgments. 
-A further expressivity result shows that 
+ Building upon established notions for (untyped) processes~(e.g.,~\cite{DBLP:journals/iandc/Gorla10}), 
+ we
+define a notion of \emph{precise encoding} that 
+requires the translation of both process and types, and 
+focuses on process mappings that preserve (session) typing. 
+Thus, our encodings only relate source and target 
+processes 
+with  
+proper communication structures (given by session types).
+A further result shows that 
 shared names
 %as required in the session establishment phase,
  strictly add expressive power 
 to session calculi. 
-Fig.~\ref{fig:express} summarizes our expressiveness results.
+Fig.~\ref{fig:express} summarizes %our expressivity 
+these
+results.
 
 \begin{figure}[t]
 \[
@@ -154,13 +159,30 @@ in~\cite{KouzapasPY15}.}
 \section{Overview}
 \label{sec:overview}
 \noi
-In  \S\,\ref{subsec:intro:bisimulation}
-and
-\S\,\ref{subsec:intro:expr}
-motivate further our contributions and 
+%In  
+%\S\,\ref{subsec:intro:expr}
+%and
+%\S\,\ref{subsec:intro:bisimulation}
+We motivate further our contributions and 
 give details of the technical challenges involved. 
-\jp{STILL TO ADD}: Notation for input/output processes, abstraction/applications, endpoints, 
-session types, 
+Some  notation, formally introduced shortly, is useful here:
+$\bout{u}{V} P$
+and
+$\binp{u}{x} P$ denote input- and output-prefixed processes.
+Values $V, W$ can be either a name $u$ or an (name) abstraction $\abs{x}Q$.
+Processes $P \Par Q$ and $\inact$ denote the parallel composition and inactive processes, respectively.
+Given a (linear) session name $s$, we write $\dual{s}$ for its \emph{dual}; 
+they are the two \emph{endpoints} of the same session: the restriction operation  
+$\news{s}P$ simultaneously covers $s$ and $\dual{s}$ in~$P$. 
+The restriction for shared name $a$ in $P$ is denoted $\news{a}P$.
+We write $S$ to range over session types;
+this way, e.g., session type $\btout{U} S'$ (resp. $\btinp{U} S'$) is
+decrees that the output (resp. input) of a value of type $U$
+must precede a protocol with type $S'$. 
+The  terminated session is typed with $\tinact$.
+%Given  type $U$, 
+We write $\lhot{U}$ (resp. $\shot{U}$) for the 
+linear (resp. unrestricted) functional type.
 
 \subsection{Relative Expressiveness Results}
 \label{subsec:intro:expr}
@@ -172,7 +194,7 @@ The challenges in this encoding of concern exactly name passing and recursion.
 To encode name output, we ``pack''
 the name to be passed around into a suitable abstraction; 
 upon reception, the receiver must ``unpack'' this object following a precise protocol.
-The encoding formally defined in Def.~\ref{d:enc:hopitoho}; we give intuitions of the strategy below.
+The encoding formally is defined in Def.~\ref{d:enc:hopitoho}; we illustrate the encoding strategy below.
 The encoding of name passing is:
 \[
 \begin{array}{rcll}
@@ -180,20 +202,26 @@ The encoding of name passing is:
   \map{\binp{u}{x} Q}	&=&	\binp{u}{y} \newsp{s}{\appl{y}{s} \Par \bout{\dual{s}}{\abs{x}{\map{Q}}} \inact}
 \end{array}
 \]
-where it is easy to see that 
-exactly two deterministic reductions are needed
-to unpack the name $w$ sent by the sender.
-A challenge in this encoding strategy is the encoding of recursion, 
-for it must preserve the linearity of session endpoints. 
-The encoding of $\recp{X}{P}$ is delicate and involves the following steps:
-\begin{enumerate}[i)]
-\item The recursion body $P$ is encoded in such a way that
-the free session names in $\map{P}$ (linear names) are renamed as name variables; the obtained process
-is then used as the body of a (polyadic) name abstraction on those variables.
-\item Using a private session, the abstraction obtained in (i) is communicated to a
-process which instantiates the initial free session names in $P$, 
-in coordination with the encoding of the recursion variable $X$ (using a private session).
-\end{enumerate}
+and so we need 
+exactly two (deterministic) reductions 
+to unpack  name $w$.
+The encoding of a recursive process $\recp{X}{P}$  is delicate, for it 
+ must preserve the linearity of session endpoints. To this end, we
+%\begin{enumerate}[i)]
+%\item 
+encode the recursion body $P$ as a (polyadic) name abstraction
+in which free session names are converted into name variables.
+This higher-order value is embedded in a sort of input-guarded 
+``duplicator'' process; the encoding of process variable $X$ is then meant to 
+invoke the duplicator in a by-need fashion to simulate recursion unfolding. 
+
+%\item The recursion body $P$ is encoded in such a way that
+%the  in $\map{P}$ (linear names) ; the obtained process
+%is then used as the body of a  on those variables.
+%\item Using a private session, the abstraction obtained in (i) is communicated to a
+%process which instantiates the initial free session names in $P$, 
+%in coordination with the encoding of the recursion variable $X$ (using a private session).
+%\end{enumerate}
 %The second step is also challenging:
 %in essence, one should establish a private session with the encoding of the recursion  
 %body in order to spawn copies of $\map{P}$ with appropriate free session names.
@@ -205,81 +233,76 @@ a non tail recursive type of the form $\trec{t}{\btinp{\lhot{(S,\vart{t}}} \tina
 \smallskip 
 
 \myparagraph{Other Encodings.}
-We also study the reverse of the previous encoding, namely 
-an encoding of \HOp into \sessp. Here we rely on the well-known representability result of Sangiorgi~\cite{SangiorgiD:expmpa}. 
-Since communicated processes may contain free session names, in order to respect session protocols
-the encoding should distinguish between two cases, depending on whether this kind of linear names is present in the communication object. If session names are present then a linear server trigger is deployed; otherwise, the replicated server  in~\cite{SangiorgiD:expmpa} can be used. 
+We also give %the reverse of the previous encoding, namely 
+an encoding of \HOp into \sessp. We rely on the well-known representability result of Sangiorgi~\cite{SangiorgiD:expmpa}. 
+Since communicated processes may contain session names, in order to respect linearity and session protocols
+the encoding enforces a distinction, depending on whether this kind of names is present in the communication object. If session names are present then a linear server trigger is deployed; otherwise, the replicated server  in~\cite{SangiorgiD:expmpa} can be used. 
 
-As mentioned earlier, \HOp and \HO feature \emph{first-order} abstractions. 
-This means that
-only  names can be used as arguments to abstractions.
+As mentioned above, \HOp and \HO feature \emph{first-order} abstractions: 
+only names can be used as arguments to abstractions.
 Hence, given a (shared/linear) name $u$, in \HOp
 we have the reduction $(\abs{x}{P}) \, u   \red  P \subst{u}{x}$.
 We also consider \HOpp, an extension of \HOp with \emph{higher-order} abstractions.
- This means that in \HOpp also arbitrary values can be arguments of abstractions, 
+ Thus, in \HOpp also an arbitrary value $V$ (possibly a process) can be an argument of an abstraction, 
  and one could have the reduction
- $(\abs{x}{P}) \, V   \red  P \subst{V}{x}$, where $V$ can be a process.
- We propose an encoding of \HOpp into \HO: it results as 
-a natural extension of that of \HOp into \HO;
-see \S\,\ref{subsec:hop} for a formal definition.
+ $(\abs{x}{P}) \, V   \red  P \subst{V}{x}$.
+ We give an encoding of \HOpp into \HO: it  naturally extends that of \HOp into \HO;
+see~\S\,\ref{subsec:hop}.
 
-Another well-known feature in process calculi is \emph{polyadicity}, the ability 
-of passing around tuples of values in communications. 
-We consider a polyadic extension of \HOp, denoted \pHOp.
-In \pHOp polyadicity appears in intra-session communications and abstractions; 
+A well-known feature in process calculi is \emph{polyadicity}, i.e.,  
+passing around tuples of values in communications. 
+We consider the polyadic extension of \HOp, denoted \pHOp.
+In \pHOp we have polyadicity in session communications and abstractions; 
 polyadicity of shared names is ruled out by typing. 
-This is enough for most practical purposes, including our encoding from \HOp into \HO.
-Encoding \pHOp into \HOp is straightforward
-in a session-typed setting, as detailed in \S\,\ref{subsec:pho}.
-For instance, we may define:
-\[
-\begin{array}{rl}
-		\map{\binp{u}{x_1, \cdots, x_m} P}
-		 =  & \!\!\!\!
-		\binp{u}{x_1} \cdots ;  \binp{u}{x_m} \map{P}
-		\\
-		\map{\bout{u}{u_1, \cdots, u_m} P}
-		 =  & \!\!\!\!
-		\bout{u}{u_1} \cdots ;  \bout{u}{u_m} \map{P}
-		\\
-		\map{\bbout{u}{\abs{(x_1, \cdots, x_m)} Q} P}
-		= & \!\!\!\!
-		\bbout{u}{\abs{z}\binp{z}{x_1}\cdots ; \binp{z}{x_m} \map{Q}} \map{P}
-		\\ 
-		\map{\appl{x}{(u_1, \cdots, u_m)}}
-		= & \!\!\!\!
-		\newsp{s}{\appl{x}{s} \Par \bout{\dual{s}}{u_1} \cdots ; \bout{\dual{s}}{u_m} \inact} 
-	\end{array}
-\]
-Thus, the polyadic arguments are communicated one by one, relying on the linear, private character of 
-session names. The encoding of polyadic abstraction/application requires an extra step, 
-in which a  monadic abstraction is passed around.
+This is enough for most purposes, including our encoding from \HOp into \HO.
+In a session-typed setting, encoding polyadicity is straightforward, thanks to 
+%polyadic arguments can be sent one by one, relying on 
+the private character of 
+(linear) session names --- see \S\,\ref{subsec:pho} for details.
+%\[
+%\begin{array}{rl}
+%		\map{\binp{u}{x_1, \cdots, x_m} P}
+%		 =  & \!\!\!\!
+%		\binp{u}{x_1} \cdots ;  \binp{u}{x_m} \map{P}
+%		\\
+%%		\map{\bout{u}{u_1, \cdots, u_m} P}
+%%		 =  & \!\!\!\!
+%%		\bout{u}{u_1} \cdots ;  \bout{u}{u_m} \map{P}
+%%		\\
+%		\map{\bbout{u}{\abs{(x_1, \cdots, x_m)} Q} P}
+%		= & \!\!\!\!
+%		\bbout{u}{\abs{z}\binp{z}{x_1}\cdots ; \binp{z}{x_m} \map{Q}} \map{P}
+%		\\ 
+%		\map{\appl{x}{(u_1, \cdots, u_m)}}
+%		= & \!\!\!\!
+%		\newsp{s}{\appl{x}{s} \Par \bout{\dual{s}}{u_1} \cdots ; \bout{\dual{s}}{u_m} \inact} 
+%	\end{array}
+%\]
+%Notice that encoding of polyadic abstraction/application requires an extra step, 
+%in which a monadic abstraction is sent.
 
 \smallskip
 
 \myparagraph{A Non Encodability Result.}
-We also show that shared names strictly add expressiveness to session calculi:
+We also show that shared names strictly add expressiveness to session calculi: that is,
 there are (non deterministic) behaviors expressible with shared names not expressible using linear names only.
 Although somewhat expected we do not know of a formal proof.
 We propose such a formal proof, which relies crucially on the behavioral theory that we have introduced here
-and its properties. \jp{EXPAND}.
+and on its determinacy properties. %\jp{EXPAND}.
 
 
 \subsection{Tractable Bisimilarities for Session-Typed Processes}
 \label{subsec:intro:bisimulation}
 \noi 
-\myparagraph{Overcoming Limitations of Contextual Bisimulation.}
-Contextual bisimilarity ($\wbc$, Def.~\ref{def:wbc}) is 
-%a straightforward 
-labelled characterisation of contextual congruence 
-\cite{SaWabook}. 
-Unfortunately, it is a too demanding relation on processes. 
+\myparagraph{Overcoming Issues of Context Bisimilarity.}
+%The characterisation of contextual congruence given by 
+Context bisimilarity ($\wbc$, Def.~\ref{def:wbc}) is a too demanding relation on processes. 
 %In the following we motivate our
 %proposal for alternative, more tractable characterisations.  
 %For the sake of clarity, and to emphasise the novelties of our approach, 
 %we often omit type information. 
 %Formal definitions including types are in \S\,\ref{sec:behavioural}.
-To see the problem, we show 
+To see the issue, we show 
 the following clause for output.
 Suppose $P \,\Re\, Q$, for some context bisimulation $\Re$. Then:
 
@@ -293,7 +316,7 @@ $Q'$ and $W$
 such that 
 $Q \by{\news{\tilde{m_2}} \bactout{n}{W}} Q'$
 and, for all $R$ with $\fv{R}=x$, 
-$\newsp{\tilde{m_1}}{P' \Par R\subst{V}{x}} \,\Re\, \newsp{\tilde{m_2}}{Q' \Par R\subst{W}{x}}$
+$\newsp{\tilde{m_1}}{P' \Par R\subst{V}{x}} \,\Re\, \newsp{\tilde{m_2}}{Q' \Par R\subst{W}{x}}$.
 \end{enumerate}
 \smallskip 
 \noi 
@@ -304,8 +327,9 @@ To reduce the burden induced by
 universal quantification, we introduce \emph{higher-order}  and 
 \emph{characteristic}  
 bisimulations, two tractable equivalences denoted  $\hwb$ and $\fwb$, respectively.
-We shall aim at limiting the input 
-labelled transition system (LTS)  so that we can define a
+As we work with an \emph{early} labelled transition system (LTS), 
+we shall also aim at limiting the input actions,  
+so to define a
 bisimulation relation for the output clause without observing
 infinitely many actions on the same input prefix. 
 To this end, we take the following two steps: 
@@ -327,16 +351,17 @@ is contextually bisimilar to the process
 \begin{equation}\label{equ:1}
 P = \newsp{s}{\appl{(\abs{z}{\binp{z}{x}{R}})}{s} \Par \bout{\dual{s}}{V} \inact}
 \end{equation}
-\noi where $\binp{z}{x}{R}$ is an input and $\bout{\dual{s}}{V} \inact$
-is an output 
-on the endpoint $\dual{s}$ (the dual of $s$).
+\noi 
+%where $\binp{z}{x}{R}$ is an input and $\bout{\dual{s}}{V} \inact$
+%is an output 
+%on the endpoint $\dual{s}$ (the dual of $s$).
 In fact,
 we have $P \wbc R\subst{V}{x}$, 
 since 
 application and reduction of dual endpoints 
 %($s$ and $\dual{s}$) 
 are deterministic.  
-Now consider the process $T_{V}$ below, where $t$ is a fresh name:
+Now consider process $T_{V}$ below, where $t$ is a fresh name:
 \begin{equation}\label{equ:0}
 T_{V} = \hotrigger{t}{V}
 \end{equation}
@@ -369,28 +394,31 @@ replication. This is crucial for preserving linearity of session names.
 %of Clause 1) in Definition \ref{def:wbc} if we input 
 %$\abs{z}{\binp{z}{x} R}$.   
 
-\myparagraph{Characteristic Processes.}
+\myparagraph{Characteristic Processes and Values.}
 Concerning (b), we shall limit the possible $R$ processes by
 exploiting the structure of session types.
-The key concept is that of {\bf \emph{characteristic process}} 
-(Def.~\ref{def:char}). 
-The characteristic process of 
-a session type $S$ is the 
-simplest process inhabiting $S$. 
+The key concept is that of {\bf \emph{characteristic process/values}}
+of a type (Def.~\ref{def:char}),  
+%The characteristic process of a session type $S$ is the process inhabiting $S$. 
+the 
+simplest value inhabiting that type.
 This way, e.g., if $S = \btinp{\shot{S_1}} \btout{S_2} \tinact$
-(input a function from values $S_1$ to processes, then output a value of type $S_2$)
+(input a shared function, %from values $S_1$ to processes, 
+then output a value of type $S_2$)
 then process $Q = \binp{u}{x} (\bout{u}{s_2} \inact \Par \appl{x}{s_1})$
 is a characteristic process for $S$.
-Thus, characteristic processes follow the communication structures decreed by session types.
+%Thus, characteristic processes follow the communication structures decreed by session types.
 Given a session type $S$, we write $\mapchar{S}{u} $ for its characteristic process along name $u$.
-In general, 
-the definition
-extends to  value types $U$ and so we write $\mapchar{U}{u}$.
+Similarly, 
+given value type $U$, we write 
+$\omapchar{U}$ to denote its characteristic value.
+
 
 We use characteristic processes to limit input transitions.
 Precisely, we exploit  the
-{\bf\em characteristic value} $\lambda x.\mapchar{U}{x}$. %$\lambda x.\mapchar{U}{x}$. 
-If we follow the same reasoning as (\ref{equ:1})--(\ref{equ:2}), 
+ characteristic value %$\lambda x.\mapchar{U}{x}$. %$\lambda x.\mapchar{U}{x}$. 
+$\omapchar{U}$.
+Following the same reasoning as (\ref{equ:1})--(\ref{equ:2}), 
 we can use an alternative trigger process, called
 {\bf\em characteristic trigger process} with type 
 $U$ to replace clause
@@ -417,33 +445,32 @@ the receiver. In Example~\ref{ex:motivation} we explain the details.
 
 \smallskip 
 \myparagraph{Refined Input Transition Rule.}
-The above discussion justifies the refinement of the transition 
-rule for input actions. 
-We write $P \by{\bactinp{n}{V}} P'$ for the input transition along $n$ (early style).
+Based on 
+the above discussion, we refine 
+the (early) transition rule for input actions. 
+We write $P \by{\bactinp{n}{V}} P'$ for the input transition along $n$.
 The transition rule for input roughly becomes 
-(see Def.~\ref{def:rlts} for a precise definition):
+(see Def.~\ref{def:rlts} for details):
 \[
 		\tree {
 %\begin{array}{c}
 P \by{\bactinp{n}{V}} P' \quad  V  \scong
 (\abs{{x}}{\binp{t}{y} (\appl{y}{{x}})}
- \vee  \abs{{x}}{\map{U}^{{x}}}  \vee m)  \textrm{ with } t \textrm{ fresh} 
+ \vee  \omapchar{U}  \vee m)  \textrm{ with } t \textrm{ fresh} 
 		}{
 			P' \hby{\bactinp{n}{V}} P'
 		}
 \]
-Observe the notations for standard and refined transitions: $\by{\bactinp{n}{V}}$ vs. $\hby{\bactinp{n}{V}}$.
+Note the distinction between standard and refined transitions: $\by{\bactinp{n}{V}}$ vs. $\hby{\bactinp{n}{V}}$.
 Using this rule, we define an alternative  LTS
-with refined input; all other rules are kept unchanged.
+with refined input. %; all other rules are kept unchanged.
 This refined LTS is used for 
 both higher-order ($\hwb$) and characteristic ($\fwb$) bisimulations,
 which replace the demanding clause~$(\star)$ with 
 more tractable clauses based on trigger processes and characteristic 
 trigger processes, respectively (Defs.~\ref{d:hbw} and~\ref{d:fwb}).
 Later we show $\hwb$ is useful for \HOp and \HO, but 
-$\fwb$ is uniformly useful for all subcalculi including the 
-first-order %session $\pi$-calculus.
-calculus \sessp. 
+$\fwb$ can be uniformly used in all subcalculi, including \sessp. 
 %Notice that while Definition \ref{d:hbw} is useful for 
 %\HOp and its higher-order variants,
 %Definition \ref{d:fwb} is useful for first-order sub-calculi of \HOp.
