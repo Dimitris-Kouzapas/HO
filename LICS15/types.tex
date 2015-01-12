@@ -25,18 +25,19 @@ The syntax of types of \HOp is given below:
 	  \bnfbar  \trec{t}{S} \bnfbar \vart{t}  \bnfbar \tinact
 \end{array}
 \]
-\dk{Type $U$ is used to type value terms and include
-the first-order types for names $C$ and the higher-order
-types for abstractions $L$. Session names are typed
-with a session type $S$ and shared names are typed
-with the share name types $\chtype{C}$ and $\chtype{L}$.
-Note that we dissallow type $\chtype{U}$, thus
-in the type discipline shared names cannot carry shared names.}
+\dk{Value type $U$ includes
+the first-order types $C$ and the higher-order
+types $L$. Session types are denote $S$ and
+shared types with $\chtype{C}$ and $\chtype{L}$.
+%Note that we dissallow type $\chtype{U}$, thus
+%in the type discipline shared names cannot carry shared names.
+}
 %In name types, $\chtype{U}$ is shared name types 
 %which are sent via shared names. 
 Types $\shot{C}$ and $\lhot{C}$ denote
-{\em shared} and {\em linear} higher-order types, respectively,
-used to type abstraction values.
+{\em shared} and {\em linear} higher-order types, respectively.
+%,
+%used to type abstraction values.
 %$\lhot{C}$ \cite{tlca07,mostrous_phd} ensures values which contain free 
 %session names used once. 
  
@@ -64,7 +65,7 @@ We write $S_1 \dualof S_2$ if
 $S_1$ is dual of $S_2$ following \cite{TGC14}.  
 Intuitively, 
 the duality of types is defined by 
-duallising $!$ by $?$, $?$ by $!$, $\oplus$ by $\&$ and $\&$ by $\oplus$,  
+dualising $!$ by $?$, $?$ by $!$, $\oplus$ by $\&$ and $\&$ by $\oplus$,  
 incorporating the fixed point construction 
 (see \defref{def:dual} in Appendix). 
 
@@ -75,12 +76,12 @@ incorporating the fixed point construction
 \myparagraph{Typing Judgements of \HOp.}
 \noi We define typing judgements for values $V$
 and processes $P$:
-%
-\[	\begin{array}{c}
-		\Gamma; \Lambda; \Delta \proves V \hastype U \qquad \qquad \qquad \Gamma; \Lambda; \Delta \proves P \hastype \Proc
-	\end{array}
-\]
-The first judgement
+
+\begin{tabular}{c}
+	$\Gamma; \Lambda; \Delta \proves V \hastype U \qquad \qquad \qquad \Gamma; \Lambda; \Delta \proves P \hastype \Proc$
+\end{tabular}
+
+\noi The first judgement
 states that under environments $\Gamma; \Lambda; \Delta$ value $V$
 has type $U$, whereas the second judgement states that under
 environments $\Gamma; \Lambda; \Delta$ process $P$ has the process type~$\Proc$. The environments are defined below:
@@ -103,8 +104,10 @@ session names to session types.
 We require that the domains of $\Gamma,
 \Lambda$ and $\Delta$ are pairwise distinct. $\Delta_1\cdot \Delta_2$ means 
 a disjoint union of $\Delta_1$ and $\Delta_2$.  
-The following definition ensures two session endpoints 
-are dual each other. 
+We are interested in session environments that contain
+dual endpoints typed with dual types.
+%The following definition ensures two session endpoints 
+%are dual each other. 
 
 \smallskip
 
@@ -127,13 +130,25 @@ key properties.
 \begin{definition}[Reduction of Session Environment]%\rm
 \label{def:ses_red}
 We define the relation $\red$ on session environments as:
-\[
-\begin{array}{rcl}
-\Delta \cat s: \btout{U} S_1 \cat \dual{s}: \btinp{U} S_2 & \red & 
-\Delta \cat s: S_1 \cat \dual{s}: S_2\\[1mm]
-\Delta \cat s: \btsel{l_i: S_i}_{i \in I} \cat \dual{s}: \btbra{l_i: S_i'}_{i \in I} & \red & \Delta \cat s: S_k \cat \dual{s}: S_k' \ (k \in I)
-\end{array}
-\]
+
+\begin{tabular}{l}
+	$\Delta \cat s: \btout{U} S_1 \cat \dual{s}: \btinp{U} S_2 \red
+	\Delta \cat s: S_1 \cat \dual{s}: S_2$\\[1mm]
+	$\Delta \cat s: \btsel{l_i: S_i}_{i \in I} \cat \dual{s}: \btbra{l_i: S_i'}_{i \in I} \red \Delta \cat s: S_k \cat \dual{s}: S_k' \ (k \in I)$
+\end{tabular}
+%\begin{tabular}{rcl}
+%	\setlength{\tabcolsep}{0pt}
+%	$\Delta \cat s: \btout{U} S_1 \cat \dual{s}: \btinp{U} S_2$ & $\red$ & 
+%	$\Delta \cat s: S_1 \cat \dual{s}: S_2$\\[1mm]
+%	$\Delta \cat s: \btsel{l_i: S_i}_{i \in I} \cat \dual{s}: \btbra{l_i: S_i'}_{i \in I}$ & $\red$ & $\Delta \cat s: S_k \cat \dual{s}: S_k' \ (k \in I)$
+%\end{tabular}
+%\[
+%\begin{array}{rcl}
+%\Delta \cat s: \btout{U} S_1 \cat \dual{s}: \btinp{U} S_2 & \red & 
+%\Delta \cat s: S_1 \cat \dual{s}: S_2\\[1mm]
+%\Delta \cat s: \btsel{l_i: S_i}_{i \in I} \cat \dual{s}: \btbra{l_i: S_i'}_{i \in I} & \red & \Delta \cat s: S_k \cat \dual{s}: S_k' \ (k \in I)
+%\end{array}
+%\]
 \end{definition}
 
 \smallskip
@@ -145,15 +160,17 @@ the type soundness of the sub-calculi, \HO, \sessp and $\CAL^{-\mathsf{sh}}$).
 \smallskip
 
 \begin{theorem}[Type Soundness]\label{t:sr}%\rm
-	\begin{enumerate}[1.]
-	\item	(Subject Congruence) Suppose $\Gamma; \es; \Delta \proves P \hastype \Proc$.
-		Then $P \scong P'$ implies $\Gamma; \es; \Delta \proves P' \hastype \Proc$.
-
-	\item	(Subject Reduction) Suppose $\Gamma; \es; \Delta \proves P \hastype \Proc$
+%	\begin{enumerate}[1.]
+%		\item	(Subject Congruence) Suppose $\Gamma; \es; \Delta \proves P \hastype \Proc$.
+%			Then $P \scong P'$ implies $\Gamma; \es; \Delta \proves P' \hastype \Proc$.
+%
+%		\item
+%			(Subject Reduction)
+			Suppose $\Gamma; \es; \Delta \proves P \hastype \Proc$
 			with
 			$\Delta$ balanced. 
 			Then $P \red P'$ implies $\Gamma; \es; \Delta'  \proves P' \hastype \Proc$
 			and $\Delta = \Delta'$ or $\Delta \red \Delta'$
-with $\Delta'$ balanced. 
-	\end{enumerate}
+			with $\Delta'$ balanced. 
+%	\end{enumerate}
 \end{theorem}

@@ -15,19 +15,20 @@ Later on, using the \emph{environmental} transition semantics,
 we can define a typed transition relation to formalise 
 how a process interacts with a process in its environment. The interaction
 is defined on action $\ell$:
-\[
-\begin{array}{l}
-		\ell	\bnfis   \tau 
-		\bnfbar\bactinp{n}{V} 
-			\bnfbar \news{\tilde{m}} \bactout{n}{V}
-			\bnfbar  \bactsel{n}{l} 
-			\bnfbar \bactbra{n}{l} 
-\end{array}
-\]
+
+\begin{tabular}{l}
+	$\ell	\bnfis   \tau 
+		\bnfbar	\bactinp{n}{V} 
+		\bnfbar	\news{\tilde{m}} \bactout{n}{V}
+		\bnfbar	\bactsel{n}{l} 
+		\bnfbar	\bactbra{n}{l} $
+\end{tabular}
+
 \noi The internal action is defined by label $\tau$.
-Action $\news{\tilde{m}} \bactout{n}{V}$ denotes the sending of value $V$ over channel $n$ with
-names $\tilde{m}$ being restricted
-(when $\tilde{m}$ is empty we write $\bactout{n}{V}$).
+Action $\news{\tilde{m}} \bactout{n}{V}$ denotes the sending of value $V$
+over channel $n$ with
+a possible empty set of names $\tilde{m}$ being restricted
+(we may also write $\bactout{n}{V}$ when $\tilde{m}$ is empty).
 Dually, the action for value reception is 
 $\bactinp{n}{V}$.
 We also have actions for selecting 
@@ -41,12 +42,13 @@ Dual actions, defined below, occur on subjects that are dual between them and ca
 object. Thus, output is dual with input and 
 selection is dual with branching.
 Formally, the duality is the symmetric relation $\asymp$ that satisfies:
-\[
-	\bactsel{n}{l} \asymp \bactbra{\dual{n}}{l}
-	\qquad
-	\news{\tilde{m}} \bactout{n}{V} \asymp \bactinp{\dual{n}}{V}
-\]
 
+\begin{tabular}{c}
+	$\bactsel{n}{l} \asymp \bactbra{\dual{n}}{l}
+	\qquad \qquad \qquad
+	\news{\tilde{m}} \bactout{n}{V} \asymp \bactinp{\dual{n}}{V}$s
+
+\end{tabular}
 \smallskip
 
 \begin{figure}[t]
@@ -406,7 +408,7 @@ $\ell\not = \tau$ otherwise $\By{}$.
 %in the standard way.
 \end{definition}
 
-\subsection{Reduction-Closed Congruence}
+\subsection{Reduction-Closed, Barbed Congruence}
 \label{subsec:rc}
 \noi We define the typed relation and the contextual equivalence.  
 %\begin{definition}[Session Environment Confluence]\rm
@@ -484,15 +486,15 @@ $\bnfbar$\!\!\!\!& $\bsel{u}{l} \C \bnfbar \bbra{u}{l_1:P_1,..,l_i:\C,..l_n:P_n}
 
 \smallskip 
 
-\begin{definition}[Barbed Reduction-Closed Congruence]\rm
+\begin{definition}[Reduction-Closed, Barbed Congruence]\rm
 \label{def:rc}
 	Typed relation
 	$\horel{\Gamma}{\Delta_1}{P_1}{\ \Re\ }{\Delta_2}{P_2}$
-	is a {\em barbed reduction-closed congruence} whenever:
+	is a {\em reduction-closed, barbed congruence} whenever:
 	\begin{enumerate}
-	\item	If $P_1 \red P_1'$ then there exists $P_2'$ such that $P_2 \red^* P_2'$ and
-	$\horel{\Gamma}{\Delta_1'}{P_1'}{\ \Re\ }{\Delta_2'}{P_2'}$; 
-and its symmetric case;
+		\item	If $P_1 \red P_1'$ then there exists $P_2'$ such that $P_2 \red^* P_2'$ and
+			$\horel{\Gamma}{\Delta_1'}{P_1'}{\ \Re\ }{\Delta_2'}{P_2'}$; 
+			and its symmetric case;
 %		\item	If $P_2 \red P_2'$ then $\exists P_1', P_1 \red^* P_1'$ and
 %		$\horel{\Gamma}{\Delta_1'}{P_1'}{\ \Re\ }{\Delta_2'}{P_2'}$
 %		\end{itemize}
@@ -553,7 +555,7 @@ $\horel{\Gamma}{\Delta_2}{Q_1}{\By{\ell}}{\Delta_2'}{Q_2}$
 
                       \item	The symmetric cases of 1 and 2.                
 	\end{enumerate}
-The Knaster Tarski theorem ensures that the largest contextual bisimulation exists, it is called contextual bisimilarity and is denoted by $\wbc$.
+	The largest such bisimulation is called contextual bisimilarity, denoted by $\wbc$.
 \end{definition}
 
 \smallskip 
@@ -712,16 +714,16 @@ Consider typed processes $P_1, P_2$:
 %
 We can show that $\Gamma; \es; \Delta \cat s: \btinp{\shot{\btinp{C} \tinact}} \tinact \proves P_i \hastype \Proc$ ($i \in \{1,2\}$).
 If the above processes input and substitute over $x$
-the characteristic value $\dk{\omapchar{\shot{\btinp{C} \tinact}} =} \abs{z}{\binp{z}{y}} \inact$, 
+the characteristic value $\dk{\omapchar{\shot{\btinp{C} \tinact}} =} \abs{x}{\binp{x}{y} \inact}$, 
 then both processes evolve into:%(\ref{eq:5}) and (\ref{eq:6}) in become:
-%
-\begin{eqnarray*}
-	\Gamma; \es; \Delta \proves \binp{s_1}{y} \inact \Par \binp{s_2}{y} \inact \hastype \Proc
-\end{eqnarray*}
-%
-therefore becoming 
-contextually bisimilar after the input of
-$\abs{x}{\binp{x}{y}} \inact$.
+
+\begin{tabular}{c}
+	$\Gamma; \es; \Delta \proves \binp{s_1}{y} \inact \Par \binp{s_2}{y} \inact \hastype \Proc$
+\end{tabular}
+
+\noi therefore becoming 
+contextually bisimilar.
+%after the input of $\abs{x}{\binp{x}{y}} \inact$.
 However, the processes in (\ref{equ:6}) 
 are clearly {\em not} contextually bisimilar: there exist many input actions
 which may be used to distinguish them.
@@ -729,7 +731,7 @@ For example, if
 $P_1$ and $P_2$ input 
 $\abs{x} \newsp{s_3}{\bout{a}{s_3} \binp{x}{y} \inact}$ with
 $\Gamma; \es; \Delta \proves s,\dual{s} \hastype \tinact, \tinact$
-then their derivatives are not bisimilar. 
+then their derivatives are not contextually bisimilar. 
 
 Observing only the characteristic value 
 results in an over-discriminating bisimulation.
@@ -781,16 +783,20 @@ input the trigger abstraction, we obtain: % they evolved to
 	\newsp{s}{\binp{t}{x} \appl{x}{s} \Par \bout{\dual{s}}{\abs{x} Q} \inact}
 %\hastype \Proc
 \end{eqnarray*}
+
+\noi thus we can easily derive a bisimulation closure if we 
+assume a bisimulation definition that allows only trigger value input.
 %
 %\noi It is easy to obtain a closure if allow only the
-%trigger value as the input value.
-Then, 
-if both these processes input the trigger value $\abs{z}{\binp{z}{x} (\appl{x}{m})}$,  
+%trigger value as the input value. 
+But if processes in \eqref{equ:7}/\eqref{equ:8}
+input the characteristic value $\abs{z}{\binp{z}{x} (\appl{x}{m})}$,  
 then they would become:
+%
 \begin{eqnarray*}
-\Gamma; \es; \Delta \proves \newsp{s}{\binp{s}{x} \appl{x}{m} \Par \bout{\dual{s}}{\abs{x} P} \inact} \wbc \Delta \proves P \subst{m}{x}
+	\Gamma; \es; \Delta \proves \newsp{s}{\binp{s}{x} \appl{x}{m} \Par \bout{\dual{s}}{\abs{x} P} \inact} \wbc \Delta \proves P \subst{m}{x}
 	\\
-\Gamma; \es; \Delta \proves \newsp{s}{\binp{s}{x} \appl{x}{m} \Par \bout{\dual{s}}{\abs{x} Q} \inact} \wbc \Delta \proves Q \subst{m}{x}
+	\Gamma; \es; \Delta \proves \newsp{s}{\binp{s}{x} \appl{x}{m} \Par \bout{\dual{s}}{\abs{x} Q} \inact} \wbc \Delta \proves Q \subst{m}{x}
 \end{eqnarray*}
 \noi which are not bisimilar if $P \subst{m}{x} \not\wb Q \subst{m}{x}$.
 %\qed
@@ -805,9 +811,9 @@ then they would become:
 As explained in \secref{sec:intro}, this new LTS is defined 
 by considering a transition rule for input in which admitted values are
 trigger or characteristic values
-\dk{(assume extension of the structural
-congruence to acommodate values: i) $\abs{x}{P} \scong \abs{x}{Q}$ if
-$P \scong Q$) and ii) $n \scong m$ if $n = n$)}: 
+%\dk{(assume extension of the structural
+%congruence to acommodate values: i) $\abs{x}{P} \scong \abs{x}{Q}$ if
+%$P \scong Q$) and ii) $n \scong m$ if $n = n$)}: 
 
 \smallskip 
 
@@ -897,8 +903,8 @@ $\horel{\Gamma}{\Delta_2}{Q_1}{\Hby{\ell}}{\Delta_2'}{Q_2}$
 
                       \item	The symmetric cases of 1 and 2.                
 	\end{enumerate}
-	The Knaster Tarski theorem ensures that the largest bisimulation exists,
-	it is called bisimilarity and is denoted by $\hwb$.
+	The largest such bisimulation
+	is called Higher-Order bisimilarity, denoted by $\hwb$.
 \end{definition}
 
 \smallskip 
