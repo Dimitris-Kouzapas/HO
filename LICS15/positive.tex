@@ -334,7 +334,7 @@ They will be formally encoded into \HO in \secref{sec:extension}.
 on {\em name passing} ($\pmapp{\bout{u}{w} P}{1}{f}$) and  
 {\em recursion} ($\pmapp{\recp{X}{P}}{1}{f}$ and $\pmapp{z_\rvar{X}}{1}{f}$). 
 
-{\bf\em Name passing:}
+\myparagraph{Name passing}
 A name $w$ is being passed as an input guarded abstraction;
 the abstraction receives a higher-order
 value and continues with the application of $w$ over
@@ -344,24 +344,23 @@ the received higher-order value.
 %The input prefix receives an abstraction and
 %continues with the application of $n$ over the received abstraction.
 On the receiver side $\binp{u}{x} P$ 
-the encoding realises a mechanism that (i) receives
-the input guarded abstraction, then (ii) applies it on a fresh session endpoint $s$, 
-and (iii) uses
+the encoding realises a mechanism that i) receives
+the input guarded abstraction, then ii) applies it on a fresh session endpoint $s$, 
+and iii) uses
 the dual endpoint $\dual{s}$ to send the continuation $P$ as the abstraction
 $\abs{x}{P}$. 
 As a result, name substitution is achieved via name application.
 
-
-{\bf\em Recursion:}
+\myparagraph{Recursion}
 The encoding of a recursive process $\recp{X}{P}$  is delicate, for it 
 must preserve the linearity of session endpoints. To this end, we:
-\dk{i) record a mapping from recursive variable $X$ to process variables $z_X$;
-ii)~encode the recursion body $P$ as a (polyadic) name abstraction
+\NY{i) record a mapping from recursive variable $X$ to process variables $z_X$;
+ii)~encode the recursion body $P$ as a name abstraction
 in which free names of $P$ are converted into name variables;
-iii)~this higher-order value is embedded in a sort of input-guarded 
-``duplicator'' process;
-iv)~define the encoding of process variable $z_X$ in such a way that it
-simulates recursion unfolding by 
+iii)~this higher-order value is embedded in an input-guarded 
+``duplicator'' process; and 
+iv)~make the encoding of process variable $z_X$ to 
+simulate recursion unfolding by 
 invoking the duplicator in a by-need fashion,
 i.e.,~upon reception, abstraction $\auxmapp{P}{{}}{\sigma}$ is duplicated
 with one copy used to reconstitute the encoded recursion body $P$ through
