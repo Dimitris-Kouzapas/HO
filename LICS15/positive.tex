@@ -40,15 +40,16 @@ lexicographically ordered names to sequences of variables, defined
 
 \smallskip 
 
-\noi The following trigger mapping transforms processes
-with free names into abstractions. 
+\noi The following auxiliary mapping transforms processes
+with free names into abstractions and it is
+used in \defref{d:enc:hopitoho}.
 
 \smallskip 
 
-\begin{definition}[Trigger Mapping] \label{d:trabs}\label{d:auxmap}
+\begin{definition}[Auxiliary Mapping] \label{d:trabs}\label{d:auxmap}
 	Let $\sigma$ be a set of session names.
-	\figref{f:auxmap} defines a trigger mapping
-$\auxmapp{\cdot}{{}}{\sigma}: \HO \to \HO$.
+	\figref{f:auxmap} defines an auxiliary mapping
+	$\auxmapp{\cdot}{{}}{\sigma}: \HO \to \HO$.
 \end{definition}
 
 %
@@ -154,7 +155,7 @@ $\auxmapp{\cdot}{{}}{\sigma}: \HO \to \HO$.
 %without recursive definitions and (\defref{d:enc:fotohorec}).
 $u = n$ if $n\in \sigma$; otherwise $u = x_n$. 
 %The mapping is defined homomorphically for inaction and parallel composition.
-\caption{\label{f:auxmap} A trigger mapping.}
+\caption{\label{f:auxmap} An auxiliary mapping used in \defref{d:enc:hopitoho}.}
 \Hline 
 \end{figure}
 
@@ -259,8 +260,8 @@ $\abs{x_1\cdots x_n}{\auxmapp{P}{{}}{\emptyset} }$, where $\vmap{m_j} = x_j$, fo
 \end{array}
 \]
 %  
-\dk{$\fn{P}$ denotes a sequence of lexicopraphically ordered 
-free names in $P$.}
+$\fn{P}$ denotes a sequence of lexicopraphically ordered 
+free names in $P$.
 The input bound variable $x$ is annotated by a type to distinct the first-order and higher-order cases. 
 \caption{\label{f:enc:hopi_to_ho}
 Encoding of \HOp into \HO.
@@ -314,11 +315,11 @@ and $\Delta = \{n_i:S_i\}_{1\leq i\leq m}$.
 \smallskip 
 \noi Note that $\varp{X}:\Delta$ is mapped to a non-tail
 recursive session type.
-\dk{Processes that are typed with the non-tail
+\dk{Non-tail
 recursive session type were studied in
 \cite{DBLP:journals/corr/abs-1202-2086,DBLP:journals/corr/BernardiH13},
-but this is the first time they are used in
-a meaningfull application.}
+but this is the first application in the
+context of higher-order session types.}
 %which carries type variable as the last argument.  
 For a simplicity of the presentation, we use the polyadic name abstraction and passing.
 They will be formally encoded into \HO in \secref{sec:extension}.
@@ -328,10 +329,14 @@ on {\em name passing} ($\pmapp{\bout{u}{w} P}{1}{f}$) and
 {\em recursions} ($\pmapp{\recp{X}{P}}{1}{f}$ and $\pmapp{z_\rvar{X}}{1}{f}$). 
 
 {\bf\em Name passing:}
-A name $m$ is being passed as an input
-guarded abstraction. 
-The input prefix receives an abstraction and
-continues with the application of $n$ over the received abstraction.
+A name $w$ is being passed as an input guarded abstraction;
+the abstraction receives a higher-order
+value and continues with the application of $w$ over
+the received higher-order value.
+%A name $m$ is being passed as an input
+%guarded abstraction. 
+%The input prefix receives an abstraction and
+%continues with the application of $n$ over the received abstraction.
 On the receiver side $\binp{u}{x} P$ 
 the encoding realises a mechanism that (i) receives
 the input guarded abstraction, then (ii) applies it on a fresh session endpoint $s$, 
@@ -341,17 +346,32 @@ $\abs{x}{P}$.
 As a result, name substitution is achieved via name application.
 
 
-{\bf\em Recursions:} The idea follows 
-a classical recursion encoding \cite{ThomsenB:plachoasgcfhop}.  
-A mapping of process $P$ is parallel composed, 
-and also being passed as an input
-guarded abstraction, parameterised also by a sequence of trigger names $\tilde{n}$. 
-We record a mapping from $z_X$ (which is a fresh variable of $X$) 
-to $\tilde{n}$, so that 
-when the abstraction is substituted to $z_\rvar{X}$ 
-(which occurs in the mapping of $P\subst{z_X}{X}$), 
-the correct $\tilde{n}$ is applied. In this way, we can 
-send and receive an abstraction which holds $P$, repeatedly. 
+{\bf\em Recursions:}
+The encoding of a recursive process $\recp{X}{P}$  is delicate, for it 
+must preserve the linearity of session endpoints. To this end, we:
+\dk{i) record a mapping from recursive variable $X$ to process variable $z_X$;
+ii) encode the recursion body $P$ as a (polyadic) name abstraction
+in which free names of $P$ are converted into name variables;
+iii) this higher-order value is embedded in a sort of input-guarded 
+``duplicator'' proces;
+iv) the encoding of process variable $z_X$ is then meant to 
+invoke the duplicator in a by-need fashion to simulate recursion unfolding,
+i.e.~upon reception, abstraction $\auxmap{P}{}{\sigma}$ is duplicated
+with one copy used to reconstitute the encoded recursion body $P$ through
+the application of $\fn{P}$ and the other copy used to re-invoke
+the duplicator when needed to simulate recursion unfolding.
+}
+%The idea follows 
+%a classical recursion encoding \cite{ThomsenB:plachoasgcfhop}.  
+%A mapping of process $P$ is parallel composed, 
+%and also being passed as an input
+%guarded abstraction, parameterised also by a sequence of trigger names $\tilde{n}$. 
+%We record a mapping from $z_X$ (which is a fresh variable of $X$) 
+%to $\tilde{n}$, so that 
+%when the abstraction is substituted to $z_\rvar{X}$ 
+%(which occurs in the mapping of $P\subst{z_X}{X}$), 
+%the correct $\tilde{n}$ is applied. In this way, we can 
+%send and receive an abstraction which holds $P$, repeatedly. 
 
 \smallskip 
 
@@ -369,39 +389,40 @@ we essentially follow the representability result put forward by
 Sangiorgi~\cite{San92,SaWabook}, but casted in the setting of session-typed communications. 
 Intuitively, such a strategy represents the exchange of a process with the exchange of a freshly generated \emph{trigger name}. 
 Trigger names may then be used to activate copies of the process, which now becomes a persistent resource represented by an input-guarded replication.
-A session name 
-is, however, a linear resource and cannot be replicated.
-Consider the following (naive) adaptation of \cite{San92,SaWabook} 
-in which session names are used are triggers and 
-exchanged processes would be have to used exactly once:
-%
-\[
-\begin{array}{l}
-		\pmap{\bout{u}{\abs{x}{Q}} P}{n}  \defeq   \newsp{s}{\bout{u}{s} (\pmap{P}{n} \Par \binp{\dual{s}}{x} \pmap{Q}{n})} \\
-		\pmap{\binp{u}{x} P}{n}  \defeq \binp{u}{x} \pmap{P}{n}
-\quad 
-		\pmap{\appl{x}{u}}{n}  \defeq  \bout{x}{u} \inact
-	\end{array}
-\]
-%
-with the remaining \HOp constructs being mapped homomorphically.
-Although $\pmap{\cdot}{n}$ captures the correct semantics when
-dealing with systems that allow only linear abstractions,
-it suffers from untypability in the presence
-of shared abstractions. For instance,
-mapping for $P = \bout{n}{\abs{x}{\bout{x}{m}\inact}} \inact \Par \binp{\dual{n}}{x} (\appl{x}{s_1} \Par \appl{x}{s_2})$
-would be:
-%
-\[
-	\pmap{P}{n} \defeq
-	\newsp{s}{\bout{n}{s} \binp{\dual{s}}{x} \bout{x}{m} \inact \Par \binp{\dual{n}}{x} (\bout{x}{s_1} \inact \Par \bout{x}{s_2} \inact)}
-\]
-%
-The above process is untypable since processes $(\bout{x}{s_1} \inact$ and $\bout{x}{s_2} \inact)$
-cannot be put in parallel because they do not have disjoint session environments.
 
-The correct approach would be to use replicated shared names
-as triggers instead of session names, when dealing with shared abstractions. 
+%Consider the following (naive) adaptation of \cite{San92,SaWabook} 
+%in which session names are used are triggers and 
+%exchanged processes would be have to used exactly once:
+%%
+%\[
+%\begin{array}{l}
+%		\pmap{\bout{u}{\abs{x}{Q}} P}{n}  \defeq   \newsp{s}{\bout{u}{s} (\pmap{P}{n} \Par \binp{\dual{s}}{x} \pmap{Q}{n})} \\
+%		\pmap{\binp{u}{x} P}{n}  \defeq \binp{u}{x} \pmap{P}{n}
+%		\quad 
+%		\pmap{\appl{x}{u}}{n}  \defeq  \bout{x}{u} \inact
+%	\end{array}
+%\]
+%%
+%with the remaining \HOp constructs being mapped homomorphically.
+%Although $\pmap{\cdot}{n}$ captures the correct semantics when
+%dealing with systems that allow only linear abstractions,
+%it suffers from untypability in the presence
+%of shared abstractions. For instance,
+%mapping for $P = \bout{n}{\abs{x}{\bout{x}{m}\inact}} \inact \Par \binp{\dual{n}}{x} (\appl{x}{s_1} \Par \appl{x}{s_2})$
+%would be:
+%%
+%\[
+%	\pmap{P}{n} \defeq
+%	\newsp{s}{\bout{n}{s} \binp{\dual{s}}{x} \bout{x}{m} \inact \Par \binp{\dual{n}}{x} (\bout{x}{s_1} \inact \Par \bout{x}{s_2} \inact)}
+%\]
+%%
+%The above process is untypable since processes $(\bout{x}{s_1} \inact$ and $\bout{x}{s_2} \inact)$
+%cannot be put in parallel because they do not have disjoint session environments.
+A session name is, however, a linear resource and cannot be replicated.
+The correct approach would be to use replicated names
+as triggers for shared resources and non-replicated names
+for linear resources.
+%as triggers instead of session names, when dealing with shared abstractions. 
 
 \smallskip 
 
