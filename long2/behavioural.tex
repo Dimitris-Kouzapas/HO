@@ -2,22 +2,26 @@
 \section{Behavioural Semantics}
 \label{sec:beh_sem}
 
-In this section we define a theory for observational equivalence over
-\HOp processes. The theory follows the principles
-laid by the previous work of the authors
-\cite{DBLP:conf/forte/KouzapasYH11,KY13,dkphdthesis,DBLP:journals/iandc/PerezCPT14}.
+\noi We develop a theory for observational equivalence over
+session typed \HOp processes.
+The theory follows the principles laid by the previous
+work of the authors \cite{KYHH2015,KY2015,dkphdthesis}.
+We introduce three different bisimilarities and prove
+that
+all of them coincide with typed, reduction-closed,
+barbed congruence. 
 
+\subsection{Labelled Transition Semantics}
+\label{subsec:lts}
 
-%We require a bisimulation relation over typed processes that
-%is also characterised by the corresponding typed, reduction-closed,
-%barbed congruence relation.
-
-\subsection{Labelled Transition Semantics}\label{ss:lts}
-
-We define the typed labelled transition relation
+\myparagraph{Labels.}
+We define an (early) typed labelled transition system
 $P_1 \by{\ell} P_2$ (LTS for short) over
-(untyped) processes, that allows us to follow how a process may
-interact with a process in its environment. The interaction
+untyped processes.
+Later on, using the \emph{environmental} transition semantics, 
+we can define a typed transition relation to formalise 
+how a process interacts with a process in its environment.
+The interaction
 is defined on action $\ell$:
 %
 \[
@@ -30,14 +34,16 @@ is defined on action $\ell$:
 	\end{array}
 \]
 %
-\noi The internal action is defined on label $\tau$.
-Action $\news{\tilde{m}} \bactout{n}{V}$ denotes the sending of value
-$V$ over channel $n$ with the (possibly empty) set of names $\tilde{m}$
-being restricted (we write $\bactout{n}{V}$  when $\tilde{m}$ is empty).
-Dually the action for the reception of values is 
-$\bactinp{n}{V}$.
-We also defined actions for selecting a label $l$, $\bactsel{n}{l}$ and branching on a label
+\noi The internal action is defined by label $\tau$.
+Output action $\news{\tilde{m}} \bactout{n}{V}$ denotes the output of value
+$V$ over name $n$ with a possibly empty set of names $\tilde{m}$
+being restricted (we may write $\bactout{n}{V}$  when $\tilde{m}$ is empty).
+Dually, the action for the value input is $\bactinp{n}{V}$.
+We also defined actions for selecting a label
+$l$, $\bactsel{n}{l}$ and branching on a label
 $n$, $\bactbra{s}{l}$.
+$\fn{\ell}$ and $\bn{\ell}$ denote 
+sets of free/bound names in $\ell$, resp.
 
 The dual action relation is the symmetric relation $\asymp$, that satisfies the rules:
 %
@@ -47,27 +53,31 @@ The dual action relation is the symmetric relation $\asymp$, that satisfies the 
 	\news{\tilde{m}'} \bactout{n}{V} \asymp \bactinp{\dual{n}}{V}
 \]
 %
-Dual actions happen on subjects that are dual between them and carry the same
-object. Furthermore output action is dual with input action and 
+Dual actions, occur on subjects that are dual between
+them and carry the same object. Thus,
+output action is dual with input action and 
 select action is dual with branch action.
 
 \input{figures/fig-unLTS}
 
-{\bf Untyped Labelled Transition System:}
-The labelled transition system, LTS, is defined in Figure~\ref{fig:untyped_LTS}.
+\myparagraph{LTS over Untyped Processes}
+The labelled transition system (LTS) over untyped processes
+is defined in \figref{fig:untyped_LTS}.
+We write $P_1 \by{\ell} P_2$ with the usual meaning.
+The rules are standard~\cite{KYHH2015,KY2015}.
 An application requires an extra silent step $\tau$ to substitute
 the application name over the application abstraction as defined
 in rule $\ltsrule{App}$.
 A process with a send prefix can interact with the environment with a send
 action that carries a value $V$ as in rule $\ltsrule{Out}$.
-Dually in rule $\ltsrule{In}$
+Dually, in rule $\ltsrule{In}$
 a received prefixed process can observe a receive action of a value $V$.
 Select and branch prefixed processes observe the select
 and branch actions in rules $\ltsrule{Sel}$ and $\ltsrule{Bra}$, respectively,
 and proceed according to the labels observed.
 Rule $\ltsrule{Res}$ closes the LTS under the name creation
 operator provided that the restricted name does not occur free in the observable action.
-If a restricted name occurs free in and an output action 
+If a restricted name occurs free in an output action 
 then the name is added as in the bound name list of the action
 and the continuation process performs scope opening as described in rule $\ltsrule{Scope}$.
 Rules $\ltsrule{LPar}$ and $\ltsrule{RPar}$ close the LTS under the parallel operator 
@@ -77,10 +87,76 @@ Rule $\ltsrule{Tau}$ states that if two parallel processes can perform dual acti
 then the two actions  can synchronise to observe an internal transition. 
 Finally rule $\ltsrule{Alpha}$ closes  the LTS under alpha-renaming.
 
-\subsection{Typed Labelled Transition System}
+\subsection{Environmental Labelled Transition System}
 
 \input{figures/fig-envLTS}
 
+\label{ss:elts}
+\noi 
+\figref{fig:envLTS}
+defines a labelled transition relation between 
+a triple of environments, 
+denoted
+$(\Gamma, \Lambda_1, \Delta_1) \by{\ell} (\Gamma, \Lambda_2, \Delta_2)$.
+It extends the transition systems
+in \cite{KYHH2015,KY2015} 
+to higher-order sessions. 
+
+\myparagraph{Input Actions} 
+are defined by 
+$\eltsrule{SRv}$ and $\eltsrule{ShRv}$
+%describe the input action
+($n$ session or shared name respectively $\bactinp{n}{V}$). 
+We require the value $V$ has
+the same type as name $s$ and $a$, respectively.  Furthermore we
+expect the resulting type tuple to contain the values that consist
+with value $V$. The condition $\dual{s} \notin \dom{\Delta}$
+in $\eltsrule{SRv}$ ensures that 
+the dual name $\dual{s}$ should not be
+present in the session environment, since if it were present
+the only communication that could take place is the interaction
+between the two endpoints (using $\eltsrule{Tau}$ below).
+
+\myparagraph{Output Actions} are defined by $\eltsrule{SSnd}$
+and $\eltsrule{ShSnd}$.  
+Rule $\eltsrule{SSnd}$ states the conditions for observing action
+$\news{\tilde{m}} \bactout{s}{V}$ on a type tuple 
+$(\Gamma, \Lambda, \Delta \cdot s: S)$. 
+The session environment $\Delta$ with $s: S$ 
+should include the session environment of sent value $V$, 
+{\em excluding} the session environments of the name $n_j$ 
+in $\tilde{m}$ which restrict the scope of value $V$. 
+Similarly the linear variable environment 
+$\Lambda'$ of $V$ should be included in $\Lambda$. 
+Scope extrusion of session names in $\tilde{m}$ requires
+that the dual endpoints of $\tilde{m}$ appear in
+the resulting session environment. Similarly for shared 
+names in $\tilde{m}$ that are extruded.  
+All free values used for typing $V$ are subtracted from the
+resulting type tuple. The prefix of session $s$ is consumed
+by the action.
+Similarly, an output on a shared name is described
+by rule $\eltsrule{ShSnd}$ where we require that the name
+is typed with $\chtype{U}$. Conditions for
+the output $V$ are identical to those
+% the requirements 
+for rule~$\eltsrule{SSnd}$.
+We sometimes annotate the output action 
+$\news{\tilde{m}} \bactout{n}{V}$
+with the type of $V$ as $\news{\tilde{m}} \bactout{n}{V:U}$.
+
+\myparagraph{Other Actions}
+Rules $\eltsrule{Sel}$ and $\eltsrule{Bra}$ describe actions for
+select and branch. The only requirements for both
+rules is that the dual endpoint is not present in the session
+environment and the action labels are present
+in the type.
+Hidden transitions defined by rule $\eltsrule{Tau}$ 
+do not change the session environment or they follow the reduction on session
+environments (\defref{def:ses_red}). 
+
+
+\begin{comment}
 Figure~\ref{fig:envLTS} describes we define 
 the environemnt labelled transition relation that
 follows the progress of types over actions $\ell$ and has form
@@ -126,6 +202,7 @@ Hidden transitions do not change the session environment
 or they follow the reduction on the session
 environment (Definition~\ref{def:ses_red}) as we can see in rule
 $\eltsrule{Tau}$.
+\end{comment}
 
 \begin{comment}
 A second environment LTS, denoted $\hby{\ell}$,
@@ -147,8 +224,7 @@ The conditions for input follow the conditions
 for the $\by{\ell}$ definition.
 \end{comment}
 
-\paragraph{Typed Transition System}
-
+\myparagraph{Typed Transition System}
 We define a typed labelled transition system over typed processes,
 as a combination of the untyped LTS and the LTS for typed environments:
 
@@ -161,15 +237,20 @@ as a combination of the untyped LTS and the LTS for typed environments:
 	$(\Gamma, \emptyset, \Delta_1) \by{\ell} (\Gamma, \emptyset, \Delta_2)$
 	and $\Gamma; \emptyset; \Delta_2 \proves P_2 \hastype \Proc$.
 
-	\noi We extend to $\By{}$ and $\By{\hat{\ell}}$ in the standard way.
+	We extend to $\By{}$ 
+	and $\By{\hat{\ell}}$ 
+	where we write 
+	$\By{}$ for the reflexive and
+	transitive closure of $\by{}$, $\By{\ell}$ for the transitions
+	$\By{}\by{\ell}\By{}$ and $\By{\hat{\ell}}$ for $\By{\ell}$ if
+	$\ell\not = \tau$ otherwise $\By{}$.
+%	\noi We extend to $\By{}$ and $\By{\hat{\ell}}$ in the standard way.
 \end{definition}
 
-\subsection{Behavioural Semantics}
+%\subsection{Behavioural Semantics}
 
-We use the typed labelled transition semantics to define
-a set of equivalence relations over typed processes.
-% that allow us to compare
-%typed processes over a notion of observational equivalence.
+\subsection{Reduction-Closed, Barbed Congruence}
+\label{subsec:rc}
 
 Equivalent processes require a notion of session type confluence,
 defined over session environments $\Delta$:
@@ -179,8 +260,8 @@ defined over session environments $\Delta$:
 	$\Delta_1 \red^* \Delta$ and $\Delta_2 \red^* \Delta$.
 \end{definition}
 %
-Session environment confluence requires from session environment
-to be able to follow each other.
+%Session environment confluence requires from session environment
+%to be able to follow each other.
 
 We define a generic typed relation typed processes that
 includes the common properties for all the equivalence relations
@@ -203,9 +284,10 @@ that we are going to define:
 
 Type relations relate only closed processes
 (i.e.\ processes with no free variables)
-that have balanced and confluent session environments.
+with balanced session environments and the two session
+environments are confluent.
 
-We define the notions of barb and typed barb:
+We define the notions of barb~\cite{MiSa92} and typed barb:
 %
 \begin{definition}[Barbs]\rm
 	Let program $P$.
@@ -227,15 +309,15 @@ happen on typed processes $\Gamma; \emptyset; \Delta \proves P \hastype \Proc$
 where we require that the corresponding dual endpoint $\dual{n}$ is not present
 in the session type $\Delta$.
 
-We define the notion of the context:
+To define a congruence relation we define the notion of the context $\C$:
 %
 \begin{definition}[Context]\rm
 	A context $\C$ is defined on the grammar:
 %
 \[
 	\begin{array}{rcl}
-		\C &\bnfis& \hole \bnfbar \bout{u}{V} \C \bnfbar \bout{u}{\abs{x}{\C}} P \bnfbar \binp{u}{x} \C \bnfbar \recp{X}{\C}\\
-		& \bnfbar & \news{n} \C \bnfbar \C \Par P \bnfbar \bsel{u}{l} \C \bnfbar \bbra{k}{l_1: P_1, \dots, l_i:\C, \dots, l_n: P_n}
+		\C &\bnfis& \hole \bnfbar \bout{u}{V} \C \bnfbar \bout{u}{\abs{x}{\C}} P \bnfbar \binp{u}{x} \C \bnfbar \recp{X}{\C} \bnfbar \appl{(\abs{x}{\C})}{u}\\
+		& \bnfbar & \news{n} \C \bnfbar \C \Par P \bnfbar P \Par \C \bnfbar \bsel{u}{l} \C \bnfbar \bbra{k}{l_1: P_1, \dots, l_i:\C, \dots, l_n: P_n}
 	\end{array}
 \]
 %
@@ -245,7 +327,7 @@ We define the notion of the context:
 \noi A context is a function that takes a process and returns a new process
 according to the above syntax.
 
-The first behavioural relation we define is reduction-closed, barb-preserving congruence:
+The first behavioural relation we define is reduction-closed, barbed congruence:
 %
 \begin{definition}[Reduction-closed, Barbed Congruence]\rm
 	Typed relation
@@ -277,8 +359,11 @@ The first behavioural relation we define is reduction-closed, barb-preserving co
 preserves barbs under any context, i.e~no barb observer can distinguish
 between two related processes.
 
-The second behavioural relation we define a bisimulation
-relation based on contexts, called contextual bisimulation:
+\subsection{Contextual Bisimulation}
+
+The second behavioural relation we define is the labelled
+characterisation of reduction-closed, barbed congruence,
+called contextual bisimulation~\cite{San96H}:
 %
 \begin{definition}[Contextual Bisimulation]\rm
 	\label{def:context_bis}
@@ -320,6 +405,8 @@ relation based on contexts, called contextual bisimulation:
 	it is called contextual bisimilarity and is denoted by $\wbc$.
 \end{definition}
 %
+
+\subsection{Higher-Order Bisimulation and Characteristic Bisimulation ($\wb/\wbf$)}
 The contextual bisimulation in the general case
 is a hard relation to compute due to:
 i) the universal quantifier over contexts in the output case;
