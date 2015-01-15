@@ -671,13 +671,13 @@ Given a session environment $\Delta = \{n_1:S_1, \ldots, n_m:S_m\}$,
 in the following definition we write
 $\tilde{S}_{\Delta}$ to stand for $S_1, \ldots, S_m$.
 %
-\begin{definition}[\HOp into \HO]\rm
+\begin{definition}[Encoding \HOp into \HO]\rm
 	\label{def:enc:HOp_to_HO}
 	Let $f$ be a function from recursion variables to sequences of name variables.
-	Define the typed encoding $\enco{\map{\cdot}^{1}_f, \mapt{\cdot}^{1}, \mapa{\cdot}^{1}}: \HOp \to \HO$,
+	Define the typed encoding $\enco{\pmapp{\cdot}{1}{f}, \tmap{\cdot}{1}, \mapa{\cdot}^{1}}: \tyl{L}_{\HOp} \to \tyl{L}_{\HO}$,
 	where mappings $\map{\cdot}^{1}$, $\mapt{\cdot}^{1}$, $\mapa{\cdot}^{1}$
 	are as in Fig.~\ref{fig:enc:HOp_to_HO}.
-	We assume that the mapping $\mapt{\cdot}^{1}$ on types is extended to 
+	We assume that the mapping $\tmap{\cdot}{1}$ on types is extended to 
 	session environments $\Delta$
 	and
 	shared environments $\Gamma$ 
@@ -686,8 +686,8 @@ $\tilde{S}_{\Delta}$ to stand for $S_1, \ldots, S_m$.
 	\[
 	\begin{array}{rcll}
 	    \mapt{\Delta \cat s: S}^{1} & =  & \mapt{\Delta}^{1} \cat s:\mapt{S}^{1} & \\
-		\mapt{\Gamma \cat u: \chtype{S}}^{1} & =  & \mapt{\Gamma}^{1} \cat u:\chtype{\mapt{S}^{1}} & \\
-		\mapt{\Gamma \cat u: \chtype{L}}^{1} & = &  \mapt{\Gamma}^{1} \cat u:\chtype{\mapt{L}^{1}} & \\
+		\tmap{\Gamma \cat u: \chtype{S}}{1} & =  & \tmap{\Gamma}{1} \cat u:\chtype{\tmap{S}{1}} & \\
+		\tmap{\Gamma \cat u: \chtype{L}}{1} & = &  \tmap{\Gamma}{1} \cat u:\chtype{\tmap{L}{1}} & \\
 		\tmap{\Gamma \cat \varp{X}:\Delta}{1} & = & \tmap{\Gamma}{1} \cat x:\shot{(\tilde{S}_{\Delta}\,,\,S^*)} & 
 		\quad\text{(where $ 
 %		S^* = \trec{t}{\big((\tilde{S}_{\Delta}\,,\, \btinp{\vart{t}}\tinact)\big)}
@@ -713,7 +713,7 @@ Polyadic semantics will be formally encoded into \HO in \secref{subsec:pol_HOp}.
 
 \noi We explain the mapping in \figref{def:enc:HOp_to_HO}, focusing 
 on {\em name passing} ($\pmapp{\bout{u}{w} P}{1}{f}$) and  
-{\em recursion} ($\pmapp{\recp{X}{P}}{1}{f}$ and $\pmapp{z_\rvar{X}}{1}{f}$). 
+{\em recursion} ($\pmapp{\recp{X}{P}}{1}{f}$ and $\pmapp{z_\varp{X}}{1}{f}$). 
 
 \myparagraph{Name passing}
 A name $w$ is being passed as an input guarded abstraction;
@@ -810,7 +810,7 @@ recursive definitions as passing of polyadic abstractions:
 	
 	\item $R_3 = \abs{\tilde{m}}\binp{z}{X}\auxmap{\map{P'}^{1}_{f_{1}}}{\sigma}$, with $\tilde{m} = \ofn{P'},z$)
 	and
-	$f_1 = f, \{\rvar{X} \to \ofn{P'}\}$.
+	$f_1 = f, \set{\varp{X} \to \ofn{P'}}$.
 	\end{enumerate}
 \end{proposition}
 
@@ -1894,55 +1894,22 @@ cannot be put in parallel because they do not have disjoint session environments
 
 The correct approach would be to use replicated shared names
 as triggers instead of session names, when dealing with shared abstractions. 
-Below we write $\repl{} P$ as a shorthand notation for $\recp{X}{(P \Par \rvar{X})}$.
+Below we write $\repl{} P$ as a shorthand notation for $\recp{X}{(P \Par \varp{X})}$.
 
-\begin{definition}[Higher-Order into First-order]\rm
-	\label{def:enc:HOp_to_FO}
+\begin{definition}[Encoding \HOp to \sessp]\rm
+	\label{def:enc:HOp_to_p}
 	Define encoding
-	$\enco{\map{\cdot}^2, \mapt{\cdot}^2, \mapa{\cdot}^2}: \HO \to \sessp$
+	$\enco{\map{\cdot}^2, \mapt{\cdot}^2, \mapa{\cdot}^2}: \tyl{L}_{\HOp} \to \tyl{L}_{\sessp}$
 	with mappings 
 	$\map{\cdot}^{2}$, $\mapt{\cdot}^{2}$, $\mapa{\cdot}^{2}$ as
-	in Fig.~\ref{fig:enc:HOp_to_FO}.
+	in Fig.~\ref{fig:enc:HOp_to_p}.
 \end{definition}
 %
-\begin{figure}[t]
-	\[
-	\begin{array}{rcl}
-		\pmap{\bout{u}{\abs{x}{Q}} P}{2} & \defeq &  \left\{
-		\begin{array}{ll}
-			\newsp{a}{\bout{u}{a} (\pmap{P}{2} \Par \repl{} \binp{a}{y} \binp{y}{x} \pmap{Q}{2})\,} & s \notin \fn{Q} \\
-			\newsp{s}{\bout{u}{s} (\pmap{P}{2} \Par \binp{s}{y} \binp{y}{x} \pmap{Q}{2})\,} & \textrm{otherwise} %\dk{Q \textrm{ linear}} \\
-		\end{array}
-		\right.
-		\\
-		\pmap{\binp{u}{x} P}{2} &\defeq&  \binp{u}{x} \pmap{P}{2}\\
-		\pmap{\appl{x}{u}}{2} & \defeq & \newsp{s}{\bout{x}{s} \bout{\dual{s}}{u} \inact}
-		\\
-		\\
-		\tmap{\btout{\shot{S}}S_1}{2} & \defeq & \bbtout{\chtype{\btinp{\tmap{S}{2}}\tinact}}\tmap{S_1}{2} \\
-		\tmap{\btinp{\shot{S}}S_1}{2} & \defeq & \bbtinp{\chtype{\btinp{\tmap{S}{2}}\tinact}}\tmap{S_1}{2} \\
 
-		\tmap{\btout{\lhot{S}}S_1}{2} & \defeq & \bbtout{\btinp{\tmap{S}{2}}\tinact}\tmap{S_1}{2} \\
-		\tmap{\btinp{\lhot{S}}S_1}{2} & \defeq & \bbtinp{\btinp{\tmap{S}{2}}\tinact}\tmap{S_1}{2} \\
-		\mapa{\news{\tilde{m_1}}\bactout{n}{\abs{ x}{P}} }^{2} &  \defeq & \news{m \cdot \tilde{m_1}} \bactout{n}{m} \\
-		\mapa{\bactinp{n}{\abs{ x}{P}} }^{2} &  \defeq & \bactinp{n}{m}
-	\end{array}
-	\]
-	\caption{
-		Typed encoding of higher-order  into first-order communication (cf.~Defintion~\ref{def:enc:HOp_to_FO}).
-		\label{fig:enc:HOp_to_FO}
-		Mappings 
-		$\map{\cdot}^3$,
-		$\mapt{\cdot}^3$, 
-		and 
-		$\mapa{\cdot}^3$
-		are homomorphisms for the other processes/types/labels. 
-	}
-\end{figure}
-
+\input{figures/fig-HOp_to_p}
 
 \begin{proposition}[Type Preservation, \HOp into \sessp]\rm
-\label{prop:typepres_HOp_to_FO}
+	\label{prop:typepres_HOp_to_p}
 	Let $P$ be a \HOp process. 
 	If $\Gamma; \emptyset; \Delta \proves P \hastype \Proc$ then 
 	$\mapt{\Gamma}^{2}; \emptyset; \mapt{\Delta}^{2} \proves \map{P}^{2} \hastype \Proc$.
@@ -1950,10 +1917,105 @@ Below we write $\repl{} P$ as a shorthand notation for $\recp{X}{(P \Par \rvar{X
 
 \begin{proof}
 	By induction on the inference $\Gamma; \emptyset; \Delta \proves P \hastype \Proc$. 
-	Details in \S~\ref{app:enc:HOp_to_sessp}
-	(Page~\pageref{app:enc:HOp_to_sessp}).
+	Details in \propref{app:prop:typepres_HOp_to_p}
+	(Page~\pageref{app:prop:typepres_HOp_to_p}).
 	\qed
 \end{proof}
+
+\begin{comment}
+\begin{proposition}[Operational Correspondence, \HOp into \sessp]\rm
+	Let $P$ be an  $\HO$ process such that  $\Gamma; \emptyset; \Delta \proves P \hastype \Proc$.
+	
+	\begin{enumerate}[1.]
+		\item	Suppose $\horel{\Gamma}{\Delta}{P}{\hby{\ell_1}}{\Delta'}{P'}$.
+			Then we have:
+%
+			\begin{enumerate}[a)]
+				\item
+					If  $\ell_1 = \news{\tilde{m}}\bactout{n}{\abs{x}Q}$,
+					then $\exists \Gamma', R$ s.t. \\
+					$\tmap{\Gamma}{2}; \tmap{\Delta}{2} \proves  \pmap{P}{2} 
+					\hby{\mapa{\ell_1}^{2}}
+					\Gamma' \cdot \tmap{\Gamma}{2}; \tmap{\Delta'}{2} \proves \pmap{P'}{2} \Par R$, 
+					where either \\
+					$R = \repl{} \binp{a}{y} \binp{y}{x} \pmap{Q}{3}$
+					or $ R = \binp{s}{y} \binp{y}{x} \pmap{Q}{3}$.
+
+				\item	 
+					If
+					$\ell_1 = \bactinp{n}{\abs{y}Q}$
+					and $P' = P_0\subst{\abs{y}Q}{x}$
+					then $\exists m$ s.t. \\
+					$\horel{\tmap{\Gamma}{2}}{\tmap{\Delta}{2}}{\pmap{P}{2}}
+					{\hby{\mapa{\ell_1}^{2}}}
+					{\tmap{\Delta'}{2}}{\pmap{P_0}{2}\subst{m}{x}}$.
+					%where $\Gamma' = \tmap{\Gamma}{2}\subst{m}{x}$.
+
+				\item	 
+					If  
+					%$\stytra{\Gamma}{\ell_1}{\Delta}{P}{\Delta'}{P_1 \Par P_2\subst{\abs{x}Q}{X}}$
+					$\ell_1 = \tau$ and $P' \scong \news{\tilde{m}}(P_1 \Par P_2\subst{\abs{x}Q}{X})$
+					then \\
+					$\horel{\tmap{\Gamma}{2}}{\tmap{\Delta}{2}}{\pmap{P}{2}}
+					{\hby{\tau}}
+					{\tmap{\Delta'}{2}}{\newsp{\tilde{m}}{\map{P_1}^{2} \Par \newsp{n}{\map{P_2}^{2}\subst{n}{x} \Par R}}}$,
+					\\
+					where either
+					$R = \repl{} \binp{a}{y} \binp{y}{x} \pmap{Q}{2}$ 
+					or $R = \binp{s}{y} \binp{y}{x} \pmap{Q}{2}$.
+
+				\item
+					If $\ell_1 = \btau$ then
+					$\horel{\tmap{\Gamma}{2}}{\tmap{\Delta}{2}}{\pmap{P}{2}}{\hby{\tau} \hby{\stau}}{\tmap{\Delta'}{2}}{\pmap{P'}{2}}$
+
+
+		\item	 
+			If  
+			%$\stytra{\Gamma}{\ell_1}{\Delta}{P}{\Delta'}{P_1 \Par P_2\subst{\abs{x}Q}{X}}$
+			$\ell_1 = \tau$ and $P' 	\not \scong \news{\tilde{m}}(P_1 \Par P_2\subst{\abs{x}Q}{X})$
+			then \\
+			$\mapt{\Gamma}^{2};\, \mapt{\Delta}^{2} \proves  \map{P}^{2}
+			\hby{\tau}
+			\mapt{\Gamma}^{2};\, \mapt{\Delta'}^{2} \proves  \map{P'}^{2}$.
+			
+				   			   
+%			   then  $\exists \ell_2$ s.t. 
+%			    $\wtytra{\mapt{\Gamma}^{3}}{\ell_2}{\mapt{\Delta}^{3}}{\map{P}^{3}}{\mapt{\Delta'}^{3}}{\map{P'}^{3}}$
+%			    and $\ell_2 = \mapa{\ell_1}^{3}$.
+		\end{enumerate}
+		\item Suppose 
+		$\stytra{\mapt{\Gamma}^{2}}{\ell_2}{\mapt{\Delta}^{2}}{\map{P}^{2}}{\mapt{\Delta'}^{2}}{R}$.
+		\begin{enumerate}[a)]
+		\item
+			%\footnote{$\mapt{\Gamma}^{2}$ in the following three items need adjustments.}
+			If  
+			$\ell_2 = \news{m}\bactout{n}{m}$
+			%$\stytra{\mapt{\Gamma}^{2}}{\news{m}\bactout{n}{m}}{\mapt{\Delta}^{2}}{\map{P}^{2}}{\mapt{\Delta'}^{2}}{R}$
+			then $\exists x, Q, P'$ s.t. \\
+			$P \hby{\bactout{n}{\abs{x}Q}} P'$
+			and $R = \map{P'}^{2} \Par R$, where 
+			either
+			$R = \repl{} \binp{a}{y} \binp{y}{x} \pmap{Q}{2}$ 
+			or $R = \binp{s}{y} \binp{y}{x} \pmap{Q}{2}$.
+
+		\item   
+			If  $\ell_2 = \bactinp{n}{m}$ 
+			%$\stytra{\mapt{\Gamma}^{2}}{\bactinp{n}{m}}{\mapt{\Delta}^{2}}{\map{P}^{2}}{\mapt{\Delta'}^{2}}{R}$
+			then $\exists x, Q, P'$ s.t. \\
+			$P \hby{\bactout{n}{\abs{x}Q}} P'\subst{\abs{x}Q}{X}$
+			and $R = \map{P'}^{2}\subst{m}{x}$.
+		
+		\item   
+			If  %$\stytra{\mapt{\Gamma}^{2}}{\tau}{\mapt{\Delta}^{2}}{\map{P}^{2}}{\mapt{\Delta'}^{2}}{R}$
+			$\ell_2 = \tau$ 
+			then $\exists P'$ s.t.
+			$P \hby{\tau} P'$
+			and $\horel{\mapt{\Gamma}^{2}}{\mapt{\Delta'}^{2}}{\map{P'}^{2}}{\wbf}{\mapt{\Delta'}^{2}}{R}$.
+	\end{enumerate}
+	\end{enumerate}
+\end{proposition}
+\end{comment}
+
 
 \begin{proposition}[Operational Correspondence, \HOp into \sessp]\rm
 	Let $P$ be an  $\HO$ process such that  $\Gamma; \emptyset; \Delta \proves P \hastype \Proc$.
