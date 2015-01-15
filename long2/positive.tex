@@ -1,17 +1,23 @@
 \section{Positive Expressiveness Results}
-	\label{sec:positive}
-In this section we present a study of the expressiveness of $\HOp$ and its subcalculi. 
-We present two encodings:
+
+\label{sec:positive}
+In this section we present a study of the expressiveness
+of $\HOp$ and its subcalculi. 
+We present two encodability results:
 %
 \begin{enumerate}[1.]
-%	\item Polyadic into Monadic Communication (\S\,\ref{ss:polmon})
-%	\item Finite First-Order Communication into Higher-Order Communication (\S\,\ref{ss:ffotoho})
-	\item Higher-Order $\pi$-calculus into Higher-Order  (\S~\ref{subsec:HOp_to_HO})
-	\item Higher-Order $\pi$-calculus into First-Order Communication (\S~\ref{subsec:HOp_to_FO})
+	\item	The higher-order name passing communications with recursions (\HOp) into
+		the higher-order communication without name-passing nor 
+		recursions (\HO) (\secref{subsec:HOp_to_HO}).
+
+	\item	\HOp into the first-order name-passing communication
+		with recursions (\sessp) (\secref{subsec:HOp_to_p}). 
 \end{enumerate}
 %
-In each case, encoding correctness is supported by type preservation and operational correspondence statements.
-Full abstraction results are conjectured, for the moment.
+In each case we show that the encoding is precise.
+%In each case, encoding correctness is supported by
+%type preservation and operational correspondence statements.
+%Full abstraction results are conjectured, for the moment.
 
 \begin{remark}[Polyadic \HOp]
 	We can assume a semantic preserving encoding from the polyadic
@@ -19,6 +25,8 @@ Full abstraction results are conjectured, for the moment.
 	extension of the \HOp semantics that defines values as
 	$V \bnfis \tilde{u} \bnfbar \abs{\tilde{x}}{P}$
 	and input prefix as $\binp{n}{\tilde{x}} P$.
+	See \secref{subsec:pol_HOp} for the full definition of
+	polyadic \HOp.
 \end{remark}
 
 \begin{comment}
@@ -566,104 +574,64 @@ in the following we restrict to consider monadic communications.
 \subsection{Encoding \HOp into \HO}
 \label{subsec:HOp_to_HO}
 
-%\subsection{Encoding $\sessp^{-\mu}$  into \HO}\label{ss:ffotoho}
-
 We show that the subcalculus $\HO$ is expressive enough to
 represent the the full \HOp calculus.
 
-The name passing semantics of \HOp have a rather straightforward
-encoding from to $\HO$.
-On the other hand the encoding of the primitive recursion semantics
-of \HOp are more complex because they are based on the principle
-of process copying.
-
-To achieve process copying we use abstraction passing semantics, where
-we copy a process upon reception. The case of linear abstraction passing
-presents a limitation due to the fact that we cannot copy a linear abstraction.
-To overcome this problem we define a preliminary tool which is a mapping from
-processes to processes with no free names (but with free variables).
-We first require an auxiliary definition.
+The main challenge is to encode (1) name passing 
+and (2) recursions.
+Name passing involves {\em packing} a name 
+value as an abstraction send it and it and then
+substitute on the receiving using a name appication.
+The encoding on the recursion semantics are more complex;
+A process is encoded as an abstraction with no free names
+(i.e~a shared abstraction). We then use higher-order
+passing to pass the process and duplicate the process.
+One copy of the process is used to reconstitute the
+original process and the other is used to enable another
+duplicator procedure.
+%we only use name abstraction passing.
+%For (1), we pass  
+%an % simple 
+%abstraction which enables to use the name upon application. 
+%For (2), we 
+%copy a process upon reception; the case of linear abstraction passing
+%presents a limitation 
+%is \NY{delicate} 
+%because 
+%linear abstractions cannot be copied.
+We handle the transformation of a process into a linear abstraction
+with the definition of an
+%a preliminary tool which is a mapping from
+auxiliary mapping
+from processes with free names to processes without free names
+(but with free variables) (\defref{d:auxmap}). 
+We first require an auxiliary definition:
 %
 \begin{definition}\rm 
 	Let $\vmap{\cdot}: 2^{\mathcal{N}} \longrightarrow \mathcal{V}^\omega$
-	be a map of sequences names to sequences of variables, defined
-	inductively as follows:
+	be a map of sequences lexicographically ordered 
+	names to sequences of variables, defined
+	inductively as:
 %
-\[
-	\vmap{n} = x_n \qquad \qquad \qquad \vmap{n \cat \tilde{m}} = x_n \cat \vmap{\tilde{m}}
-\]
+	\[
+		\vmap{\epsilon} = \epsilon \qquad \qquad \qquad \vmap{n \cat \tilde{m}} = x_n \cat \vmap{\tilde{m}}
+	\]
 \end{definition}
 
 Given a process $P$, we write $\ofn{P}$ to denote the
 \emph{sequence} of free names of $P$, lexicographically ordered.
-Roughly, the following mapping transforms processes
-with free names into abstractions:
+
+The following auxiliary mapping transforms processes
+with free names into abstractions and it is
+used in \defref{def:enc:HOp_to_HO}.
 %
-\begin{definition}%\label{d:trabs}
+\begin{definition}\rm
 	\label{def:auxmap}
 	Let $\sigma$ be a set of session names.
 	Define $\auxmap{\cdot}{\sigma}: \HOp \to \HOp$  as in Fig.~\ref{fig:auxmap}.
-%
-\begin{figure}[t]
-\[
-	\begin{array}{rcl}
-		\auxmap{\news{n} P}{\sigma} &\bnfis& \news{n} \auxmap{P}{{\sigma \cat n}}
-		\vspace{1mm} \\
-
-		\auxmap{\bout{n}{\abs{x}{Q}} P}{\sigma} &\bnfis&
-		\left\{
-		\begin{array}{rl}
-			\bout{x_n}{\abs{x}{\auxmap{Q}{\sigma}}} \auxmap{P}{\sigma} & n \notin \sigma\\
-			\bout{n}{\abs{x}{\auxmap{Q}{\sigma}}} \auxmap{P}{\sigma} & n \in \sigma
-		\end{array}
-		\right.
-		\vspace{1mm}	\\ 
-
-		\auxmap{\binp{n}{X} P}{\sigma} &\bnfis&
-		\left\{
-		\begin{array}{rl}
-			\binp{x_n}{X} \auxmap{P}{\sigma} & n \notin \sigma\\
-			\binp{n}{X} \auxmap{P}{\sigma} & n \in \sigma
-		\end{array}
-		\right.
-
-		\vspace{1mm}	\\ 
-		\auxmap{\bsel{n}{l} P}{\sigma} &\bnfis&
-		\left\{
-		\begin{array}{rl}
-			\bsel{x_n}{l} \auxmap{P}{\sigma} & n \notin \sigma\\
-			\bsel{n}{l} \auxmap{P}{\sigma} & n \in \sigma
-		\end{array}
-		\right.
-		\vspace{1mm} \\
-		\auxmap{\bbra{n}{l_i:P_i}_{i \in I}}{\sigma} &\bnfis&
-
-		\left\{
-		\begin{array}{rl}
-			\bbra{x_n}{l_i:\auxmap{P_i}{\sigma}}_{i \in I}  & n \notin \sigma\\
-			\bbra{n}{l_i:\auxmap{P_i}{\sigma}}_{i \in I}  & n \in \sigma
-		\end{array}
-		\right.
-		\vspace{1mm} \\
-		\auxmap{\appl{x}{n}}{\sigma} &\bnfis&
-		\left\{
-		\begin{array}{rl}
-			\appl{x}{x_n} & n \notin \sigma\\
-			\appl{x}{n} & n \in \sigma\\
-		\end{array}
-		\right.
-		\vspace{1mm} \\
-
-		\auxmap{\inact}{\sigma} &\bnfis& \inact
-		\vspace{1mm} \\
-
-		\auxmap{P \Par Q}{\sigma} &\bnfis& \auxmap{P}{\sigma} \Par \auxmap{Q}{\sigma}
-	\end{array}
-\]
-\caption{\label{fig:auxmap} The auxiliary map (cf. Def.~\ref{def:auxmap}) 
-used in the encoding of the recursive primitives of \HOp into \HO (Def.~\ref{def:enc:HOp_to_HO}).}
-\end{figure}
 \end{definition}
+
+\input{figures/fig-auxmap}
 
 Given a process $P$ with $\fn{P} = m_1, \cdots, m_n$,
 we are interested in its associated (polyadic) abstraction,
@@ -697,31 +665,25 @@ using abstraction and application with an appropriate sequence of session names:
 \end{proof}
 
 
-We are now ready to define the encoding of \HOp
-into strict process-passing. Note that we assume polyadicity 
-in abstraction and application.
-%For the sake of completeness, we give again the encodings for 
-%finite processes and types, as
-%formalized 
-%in \S\,\ref{ss:ffotoho}.
-%by $\encod{\cdot}{\cdot}{1}: \sessp^{-\mu} \to \HO$.
-Given a session environment
-$\Delta = \{n_1:S_1, \ldots, n_m:S_m\}$, 
-in the following definition
-we write
+We are now ready to define the encoding of \HOp into strict process-passing.
+Note that we assume polyadicity in abstraction and application.
+Given a session environment $\Delta = \{n_1:S_1, \ldots, n_m:S_m\}$, 
+in the following definition we write
 $\tilde{S}_{\Delta}$ to stand for $S_1, \ldots, S_m$.
+%
 \begin{definition}[\HOp into \HO]\rm
 	\label{def:enc:HOp_to_HO}
 	Let $f$ be a function from recursion variables to sequences of name variables.
 	Define the typed encoding $\enco{\map{\cdot}^{1}_f, \mapt{\cdot}^{1}, \mapa{\cdot}^{1}}: \HOp \to \HO$,
 	where mappings $\map{\cdot}^{1}$, $\mapt{\cdot}^{1}$, $\mapa{\cdot}^{1}$
 	are as in Fig.~\ref{fig:enc:HOp_to_HO}.
-    We assume that the mapping $\mapt{\cdot}^{1}$ on types is extended to 
-    session environments $\Delta$
-  and
-    shared environments $\Gamma$ 
-      as follows:
-\[
+	We assume that the mapping $\mapt{\cdot}^{1}$ on types is extended to 
+	session environments $\Delta$
+	and
+	shared environments $\Gamma$ 
+	as follows:
+%
+	\[
 	\begin{array}{rcll}
 	    \mapt{\Delta \cat s: S}^{1} & =  & \mapt{\Delta}^{1} \cat s:\mapt{S}^{1} & \\
 		\mapt{\Gamma \cat u: \chtype{S}}^{1} & =  & \mapt{\Gamma}^{1} \cat u:\chtype{\mapt{S}^{1}} & \\
@@ -731,157 +693,89 @@ $\tilde{S}_{\Delta}$ to stand for $S_1, \ldots, S_m$.
 %		S^* = \trec{t}{\big((\tilde{S}_{\Delta}\,,\, \btinp{\vart{t}}\tinact)\big)}
 		S^* = \trec{t}{\btinp{\shot{(\tilde{S}_{\Delta}\,,\,\vart{t})}} \tinact}$)}
 	\end{array}
-\]
+	\]
 %\end{remark}
-
 \end{definition}
 
-\begin{figure}[h!]
-\[
-	\begin{array}{rcll}
-			\pmapp{\bout{u}{v} P}{1}{f}	&\defeq&	\bout{u}{ \abs{z}{\,\binp{z}{x} \appl{x}{v}} } \pmapp{P}{1}{f}
-		\\
-		\pmapp{\binp{u}{x: C} Q}{1}{f}	&\defeq&	\binp{u}{x} \newsp{s}{\appl{x}{s} \Par \bout{\dual{s}}{\abs{x}{\pmapp{Q}{1}{f}}} \inact}
-		\\
-				\pmapp{\bout{u}{\abs{x}{Q}} P}{1}{f} &\defeq& \bout{u}{\abs{x}{\pmapp{Q}{1}{f}}} \pmapp{P}{1}{f}
-		\\
-		\pmapp{\binp{u}{x: L} P}{1}{f}	&\defeq&	\binp{u}{x: L} \pmapp{P}{1}{f}
-		\\
-		\pmapp{\recp{X}{P}}{1}{f} &\defeq&
-		\newsp{s}{\binp{s}{x} \pmapp{P}{1}{{f,\{\varp{X}\to \tilde{n}\}}} \Par
-		\bout{\dual{s}}{\abs{\vmap{\tilde{n}}, z } \,{\binp{z}{x} \auxmap{\pmapp{P}{1}{{f,\{\varp{X}\to \tilde{n}\}}}}{\es}}} \inact} &
-		\quad \tilde{n} = \ofn{P}
-		\\
-		\pmapp{\varp{X}}{1}{f} &\defeq& \newsp{s}{\appl{x}{\tilde{n}, s} \Par \bbout{\dual{s}}{ \abs{\vmap{\tilde{n}},z}\,\,{\appl{x}{ \vmap{\tilde{n}}, z}}} \inact} &
-		\quad \tilde{n} = f(\varp{X})
-		\\
-		\pmapp{\bsel{s}{l} P}{1}{f}	&\defeq&	\bsel{s}{l} \pmapp{P}{1}{f}
-		\\
-		\pmapp{\bbra{s}{l_i: P_i}_{i \in I}}{1}{f} &\defeq& \bbra{s}{l_i: \pmapp{P_i}{1}{f}}_{i \in I}
-		\\
-		\pmapp{\appl{x}{u}}{1}{f}	&\defeq&	\appl{x}{u}
-		\\
-		\pmapp{P \Par Q}{1}{f}		&\defeq&	\pmapp{P}{1}{f} \Par \pmapp{Q}{1}{f}
-		\\
-		\pmapp{\news{n} P}{1}{f}	&\defeq&	\news{n} \pmapp{P}{1}{f}
-		\\
-		\pmapp{\inact}{1}{f}		&\defeq&	\inact
-	\end{array}
-\]
-%
-\[
-	\begin{array}{rcl}
-	\end{array}
-\]
-%
-\[
-	\begin{array}{c}
-		\begin{array}{rcl}
-			\tmap{C}{1}_\mathsf{v}		&\defeq&
-			\left\{
-			\begin{array}{rcl}
-				\lhot{(\btinp{\lhot{\tmap{C}{1}}} \tinact)} && \textrm{if } C = S\\
-				\lhot{(\btinp{\shot{\tmap{C}{1}}} \tinact)} && \textrm{otherwise}\\
-			\end{array}
-			\right.
-			\\
-			\\
-			\tmap{\lhot{C}}{1}_\mathsf{v}	&\defeq& \lhot{\tmap{C}{1}}
-			\\
-			\tmap{\shot{C}}{1}_\mathsf{v}	&\defeq& \shot{\tmap{C}{1}}
-			\\
-			\tmap{\chtype{S}}{1}		&\defeq& \chtype{\tmap{S}{1}}
-			\\
-			\tmap{\chtype{L}}{1}		&\defeq& \chtype{\tmap{L}{1}_\mathsf{v}}
-			\\
-%			\tmap{S}{\mathsf{v}}		&\defeq& \lhot{(\btinp{\lhot{\tmap{S}{1}}} \tinact)}
-%			\\
-%			\tmap{\chtype{S}}{\mathsf{v}}	&\defeq& \lhot{(\btinp{\shot{\chtype{\tmap{S}{1}}}} \tinact)}
-%			\\
-%			\tmap{\lhot{C}}{\mathsf{v}}	&\defeq& \lhot{\tmap{C}{\mathsf{v}}}
-%			\\
-%			\tmap{\shot{C}}{\mathsf{v}}	&\defeq& \shot{\tmap{C}{\mathsf{v}}}
-%			\\
-%			\tmap{\chtype{L}}{\mathsf{v}}	&\defeq& \lhot{(\btinp{\shot{\chtype{\tmap{L}{\mathsf{v}}}}} \tinact)}
-			\tmap{\btout{U} S}{1}		&\defeq& \btout{\tmap{U}{\mathsf{v}}} \tmap{S}{1}
-			\\
-			\tmap{\btinp{U} S}{1}		&\defeq& \btinp{\tmap{U}{\mathsf{v}}} \tmap{S}{1}
-			\\
-%			\tmap{\btout{S_1} S}{1}	&\defeq&	\bbtout{\lhot{\btinp{\lhot{\tmap{S_1}{1}}}\tinact}} \tmap{S}{1}
-%			\\
-%			\tmap{\btinp{S_1} S}{1}	&\defeq&	\bbtinp{\lhot{\btinp{\lhot{\tmap{S_1}{1}}}\tinact}} \tmap{S}{1}
-%			\\
-%			\tmap{\bbtout{\chtype{S_1}} S}{1}	&\defeq&	\bbtout{\shot{\btinp{\shot{\chtype{\tmap{S_1}{1}}}}\tinact}} \tmap{S}{1}
-%			\\
-%			\tmap{\bbtinp{\chtype{S_1}} S}{1}	&\defeq&	\bbtinp{\shot{\btinp{\shot{\chtype{\tmap{S_1}{1}}}}\tinact}} \tmap{S}{1}
-%			\\
-%
-%			\tmap{\bbtout{\chtype{L}} S}{1}		&\defeq&	\bbtout{\shot{\btinp{\shot{\chtype{\dk{\tmap{L}{1}}}}}\tinact}} \tmap{S}{1}
-%			\\
-%			\tmap{\bbtinp{\chtype{L}} S}{1}		&\defeq&	\bbtinp{\shot{\btinp{\shot{\chtype{\dk{\tmap{L}{1}}}}}\tinact}} \tmap{S}{1}
-%			\\
-%
-%			\tmap{\btout{L} S}{1} &\defeq& \btout{L} \tmap{S}{1}
-%			\\
-%			\tmap{\btinp{L} S}{1} &\defeq& \btinp{L} \tmap{S}{1}
-%			\\
-			\tmap{\btsel{l_i: S_i}_{i \in I}}{1} &\defeq& \btsel{l_i: \tmap{S_i}{1}}_{i \in I}
-			\\
-			\tmap{\btbra{l_i: S_i}_{i \in I}}{1} &\defeq& \btbra{l_i: \tmap{S_i}{1}}_{i \in I}
-			\\
+\input{figures/fig-HOp_to_HO}
 
-			\tmap{\vart{t}}{1} &\defeq& \vart{t}
-			\\
-			\tmap{\trec{t}{S}}{1} &\defeq& \trec{t}{\tmap{S}{1}}
-			\\
-			\tmap{\tinact}{1} &\defeq& \tinact
-		\end{array}
-		\qquad
-		\begin{array}{rcl}
-			\mapa{\news{\tilde{m_1}}\bactout{n}{m}}^{1} &\defeq&   \news{\tilde{m_1}}\bactout{n}{\abs{z}{\,\binp{z}{x} \appl{x}{m}} }
-			\\
-			\mapa{\bactinp{n}{m}}^{1} &\defeq&   \bactinp{n}{\abs{z}{\,\binp{z}{x} \appl{x}{m}} }
-			\\
+\noi Note that $\varp{X}:\Delta$ is mapped to a non-tail
+recursive session type.
+Non-tail
+recursive session types have been studied in
+\cite{DBLP:journals/corr/abs-1202-2086,TGC14};
+to our knowledge,
+this is the first application in the
+context of higher-order session types.
+%which carries type variable as the last argument.  
+For a simplicity of the presentation, we use the polyadic name abstraction and passing.
+Polyadic semantics will be formally encoded into \HO in \secref{subsec:pol_HOp}.
 
-			\mapa{\news{\tilde{m}}\bactout{n}{\abs{x}{P}}}^{1} &\defeq& \news{\tilde{m}}\bactout{n}{\abs{x}{\pmapp{P}{1}{\es}}}
-			\\
-			\mapa{\bactinp{n}{\abs{x}{P}}}^{1} &\defeq& \bactinp{n}{\abs{x}{\pmapp{P}{1}{\es}}}
-			\\
-			\mapa{\tau}^{1} &\defeq& \tau
-			\\
-			\mapa{\bactsel{n}{l} }^{1} &\defeq& \bactsel{n}{l} 
-			\\
-			\mapa{\bactbra{n}{l} }^{1} &\defeq& \bactbra{n}{l} 
-		\end{array}
-	\end{array}
-\]
-	\caption{
-		\label{fig:enc:HOp_to_HO}
-		Typed encoding of \HOp into \HO (cf.~Defintion~\ref{def:enc:HOp_to_HO}).
-%		Mappings 
-%		$\map{\cdot}^2$,
-%		$\mapt{\cdot}^2$, 
-%		and 
-%		$\mapa{\cdot}^2$
-%		are homomorphisms for the other processes/types/labels. 
-	}
-\end{figure}
+\noi We explain the mapping in \figref{def:enc:HOp_to_HO}, focusing 
+on {\em name passing} ($\pmapp{\bout{u}{w} P}{1}{f}$) and  
+{\em recursion} ($\pmapp{\recp{X}{P}}{1}{f}$ and $\pmapp{z_\rvar{X}}{1}{f}$). 
 
-
-
-In the higher-order setting, a name $v$ is being passed as an input
-guarded abstraction. The input prefix receives an abstraction and
-continues with the application of $v$ over the received abstraction.
+\myparagraph{Name passing}
+A name $w$ is being passed as an input guarded abstraction;
+the abstraction receives a higher-order
+value and continues with the application of $w$ over
+the received higher-order value.
+%A name $m$ is being passed as an input
+%guarded abstraction. 
+%The input prefix receives an abstraction and
+%continues with the application of $n$ over the received abstraction.
 On the receiver side $\binp{u}{x} P$ 
-the encoding realizes a mechanism that (i) receives
-the input guarded abstraction, then (ii) applies it on a fresh session endpoint $s$, 
-and (iii) uses
+the encoding realises a mechanism that i) receives
+the input guarded abstraction, then ii) applies it on a fresh session endpoint $s$, 
+and iii) uses
 the dual endpoint $\dual{s}$ to send the continuation $P$ as the abstraction
 $\abs{x}{P}$. 
-As a result, name substitution is achieved via name application.
+\NY{Then} name substitution is achieved via name application.
+
+\myparagraph{Recursion}
+The encoding of a recursive process $\recp{X}{P}$  is delicate, for it 
+must preserve the linearity of session endpoints. To this end, we:
+\NY{i) record a mapping from recursive variable $X$ to process variables $z_X$;
+ii)~encode the recursion body $P$ as a name abstraction
+in which free names of $P$ are converted into name variables;
+iii)~this higher-order value is embedded in an input-guarded 
+``duplicator'' process; and 
+iv)~make the encoding of process variable $z_X$ to 
+simulate recursion unfolding by 
+invoking the duplicator in a by-need fashion,
+i.e.,~upon reception, abstraction $\auxmap{P}{\sigma}$ is duplicated
+with one copy used to reconstitute the encoded recursion body $P$ through
+the application of $\fn{P}$ and another copy used to re-invoke
+the duplicator when needed. % to simulate recursion unfolding.
+}
+%The idea follows 
+%a classical recursion encoding \cite{ThomsenB:plachoasgcfhop}.  
+%A mapping of process $P$ is parallel composed, 
+%and also being passed as an input
+%guarded abstraction, parameterised also by a sequence of trigger names $\tilde{n}$. 
+%We record a mapping from $z_X$ (which is a fresh variable of $X$) 
+%to $\tilde{n}$, so that 
+%when the abstraction is substituted to $z_\rvar{X}$ 
+%(which occurs in the mapping of $P\subst{z_X}{X}$), 
+%the correct $\tilde{n}$ is applied. In this way, we can 
+%send and receive an abstraction which holds $P$, repeatedly. 
 
 
-\begin{proposition}[Type Preservation, \HOp into \HO]
+%In the higher-order setting, a name $v$ is being passed as an input
+%guarded abstraction. The input prefix receives an abstraction and
+%continues with the application of $v$ over the received abstraction.
+%On the receiver side $\binp{u}{x} P$ 
+%the encoding realizes a mechanism that (i) receives
+%the input guarded abstraction, then (ii) applies it on a fresh session endpoint $s$, 
+%and (iii) uses
+%the dual endpoint $\dual{s}$ to send the continuation $P$ as the abstraction
+%$\abs{x}{P}$. 
+%As a result, name substitution is achieved via name application.
+
+
+
+
+\begin{proposition}[Type Preservation, \HOp into \HO]\rm
 	\label{prop:typepres_HOp_to_HO}
 	Let $P$ be a \HOp process.
 	If $\Gamma; \emptyset; \Delta \proves P \hastype \Proc$ then 
@@ -890,24 +784,9 @@ As a result, name substitution is achieved via name application.
 
 \begin{proof}
 	By induction on the inference $\Gamma; \emptyset; \Delta \proves P \hastype \Proc$.
-	Details in \S\,\ref{app:enc_HOp_to_HO} (Page~\pageref{app:enc_HOp_to_HO}).
+	Details in \secref{app:enc_HOp_to_HO} (Page~\pageref{app:enc_HOp_to_HO}).
 	\qed
-%	By induction on the inference $\Gamma; \emptyset; \Delta \proves P \hastype \Proc$. 
-%	Details in Appendix~\ref{app:enc_HOp_to_HO}.
-%	\qed
 \end{proof}
-
-%\begin{proposition}[Type Preservation, Full First-Order into Higher-Order]\label{prop:typepres2}
-%Let $P$ be a  $\sessp$ process.
-%If			$\Gamma; \emptyset; \Delta \proves P \hastype \Proc$ then 
-%			$\mapt{\Gamma}^{2}; \emptyset; \mapt{\Delta}^{2} \proves \map{P}_f^{2} \hastype \Proc$. 
-%\end{proposition}
-
-%\begin{proof}
-%By induction on the inference $\Gamma; \emptyset; \Delta \proves P \hastype \Proc$. 
-%Details in Appendix~\ref{app:enc_sesp_to_HO}.
-%	\qed
-%\end{proof}
 
 The following proposition formalizes our strategy  for encoding
 recursive definitions as passing of polyadic abstractions:
@@ -945,27 +824,8 @@ recursive definitions as passing of polyadic abstractions:
 	\qed
 \end{proof}
 
-%\begin{proposition}[Operational Correspondence, Full First-Order into Higher-Order]
-%\label{p:auxfullfho}
-%Let $P$ be a  $\sessp$ process.
-%If $\Gamma; \emptyset; \Delta \proves P \hastype \Proc$ then
-%		\begin{enumerate}[a)]
-%			\item	 
-%			   If  $\stytra{\Gamma}{\ell_1}{\Delta}{P}{\Delta'}{P'}$
-%			   then  $\exists \ell_2$ s.t. \\
-%			    $\wtytra{\mapt{\Gamma}^{2}}{\ell_2}{\mapt{\Delta}^{2}}{\map{P}_f^{2}}{\mapt{\Delta'}^{2}}{\map{P'}_f^{2}}$
-%			    and $\ell_2 = \mapa{\ell_1}^{2}$.
-%			\item   
-%			If  $\wtytra{\mapt{\Gamma}^{2}}{\ell_2}{\mapt{\Delta}^{2}}{\map{P}^{2}_f}{\mapt{\Delta'}^{2}}{Q}$
-%			   then $\exists \ell_1, P'$ s.t.  \\
-%			    (i)~$\stytra{\Gamma}{\ell_1}{\Delta}{P}{\Delta'}{P'}$,
-%			    (ii)~$\ell_2 = \mapa{\ell_1}^{2}$, 
-%			    (iii)~$\wbb{\mapt{\Gamma}^{2}}{\ell}{\mapt{\Delta'}^{2}}{\map{P'}_f^{2}}{\mapt{\Delta'}^{2}}{Q}$.
-%			    \end{enumerate}
-%\end{proposition}
-
-The following proposition formalizes completeness and soundness results for the encoding of 
-\HOp into \HO.
+The following proposition formalises completeness and
+soundness results for the encoding of \HOp into \HO.
 We write $\by{\tau}_k$ to denote a sequence of $k$ $\tau$-transitions.
 
 \begin{proposition}[Operational Correspondence, \HOp into \HO]\rm
@@ -2323,7 +2183,7 @@ Prop.~\ref{p:auxfullfho} in the extra cases $P =\recp{X}{P'}$ and $P = \rvar{X}$
 
 
 \subsection{From \HOp to \sessp}
-\label{subsec:HOp_to_FO}
+\label{subsec:HOp_to_p}
 
 We now discuss the encodability of  $\HO$ into $\sessp$ where
 %, 
