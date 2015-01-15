@@ -158,16 +158,13 @@ and the following type derivation:
 \subsection{Properties for $\enco{\pmapp{\cdot}{1}{f}, \tmap{\cdot}{1}, \mapa{\cdot}^{1}}: \HOp \to \HO$}
 \label{app:enc_HOp_to_HO}
 
-We repeat the statement of Prop.~\ref{prop:typepres_HOp_to_HO}, 
+We repeat the statement of \propref{prop:typepres_HOp_to_HO}, 
 as in Page \pageref{prop:typepres_HOp_to_HO}:
 
-%\begin{proposition}[Type Preservation, Full First-Order into Higher-Order]
-%	Let $P$ be a  $\sessp$ process.
-%	If	$\Gamma; \emptyset; \Delta \proves P \hastype \Proc$ then 
-%		$\mapt{\Gamma}^{2}; \emptyset; \mapt{\Delta}^{2} \proves \map{P}_f^{2} \hastype \Proc$. 
-%\end{proposition}
+%% Type Preservation
 
 \begin{proposition}[Type Preservation, \HOp into \HO]
+	\label{app:prop:typepres_HOp_to_HO}
 	Let $P$ be a \HOp process.
 	If $\Gamma; \emptyset; \Delta \proves P \hastype \Proc$ then 
 	$\mapt{\Gamma}^{1}; \emptyset; \mapt{\Delta}^{1} \proves \pmapp{P}{1}{f} \hastype \Proc$. 
@@ -332,46 +329,7 @@ as in Page \pageref{prop:typepres_HOp_to_HO}:
 				\Gamma ; \emptyset; \Delta  \cat k:\btinp{\chtype{S_1}}S \proves  \binp{k}{x} Q \hastype \Proc}
 			 \]
 			 The typing in the target language is derived similarly as in the first sub-case.	
-%	\end{enumerate}
-	%
-%	\qed
-%\end{proof}
 
-
-%\begin{proposition}\rm
-%	\label{app:enc_sesspnr_to_ho_oc}
-%	Encoding $\encod{\cdot}{\cdot}{1}: \sessp^{-\mu} \to \HO$  enjoys operational correspondence (cf. Def.~\ref{def:ep}\,(2)).
-%\end{proposition}
-%
-%\begin{proof}[Sketch]
-%	We must show completeness and soundness properties. 
-%	For completeness, it suffices to consider source process
-%	$P_0 = \bout{k}{k'} P \Par \binp{k}{x} Q$. We have that
-%%
-%	\[
-%		P_0 \red P \Par Q\subst{k'}{x}.
-%	\]
-%%
-%	By the definition of encoding we have:
-%	\begin{eqnarray*}
-%		\pmap{P_0}{1} & = & \bbout{k}{ \abs{z}{\,\binp{z}{X} \appl{X}{k'}} } \pmap{P}{1} \Par \binp{k}{X} \newsp{s}{\appl{X}{s} \Par \bbout{\dual{s}}{\abs{x} \pmap{Q}{1}} \inact}  \\
-%		& \red & \pmap{P}{1} \Par \newsp{s}{\appl{X}{s} \subst{\abs{z}{\,\binp{z}{X} \appl{X}{k'}}}{X} \Par \bbout{\dual{s}}{\abs{x}{\pmap{Q}{1}}} \inact} \\
-%		& = & \pmap{P}{1} \Par \newsp{s}{\,\binp{s}{X} \appl{X}{k'} \Par \bbout{\dual{s}}{\abs{x}{\pmap{Q}{1}}} \inact} \\
-%		& \red & \pmap{P}{1} \Par \appl{X}{k'} \subst{\abs{x} \pmap{Q}{1}}{X} \Par \inact \\
-%		& \scong & \pmap{P}{1} \Par \pmap{Q}{1}\subst{k'}{x}  
-%	\end{eqnarray*}
-%	For soundness, it suffices to notice that the encoding does not add new visible actions:
-%	the additional synchronizations induced by the encoding always occur on private (fresh) names.
-%	We assume weak bisimilarities, which abstract from internal actions used by the encoding,
-%	and so  constructing a relation witnessing behavioral equivalence is easy.
-%	\qed
-%\end{proof}
-
-
-
-%\begin{proof}
-%	By induction on the inference $\Gamma; \emptyset; \Delta \proves P \hastype \Proc$.
-%	\begin{enumerate}[1.]
 		\item	Case $P_0 = \rvar{X}$.
 			Then we have the following typing in the source language:
 %
@@ -576,15 +534,642 @@ as in Page \pageref{prop:typepres_HOp_to_HO}:
 	\qed
 \end{proof}
 
-%\begin{proposition}\rm
-%	\label{app:enc_sesp_to_HO_oc}
-%	Encoding $\fencod{\cdot}{\cdot}{2}{f}: \sessp \to \HO$ 
-%	enjoys operational correspondence (cf. Def.~\ref{def:ep}\,(2)).
-%\end{proposition}
+
+%%% Operational Correspondence
+
+We repeat the statement of
+\propref{prop:op_corr_HOp_to_HO}, 
+as in Page \pageref{prop:op_corr_HOp_to_HO}:
+
+\begin{proposition}[Operational Correspondence, \HOp into \HO]\rm
+	\label{app:prop:op_corr_HOp_to_HO}
+	Let $P$ be a \HOp process.
+	If $\Gamma; \emptyset; \Delta \proves P \hastype \Proc$ then:
 %
-%\begin{proof}[Sketch]
-%\dk{TBD.}
-%\end{proof}
+	\begin{enumerate}[1.]
+		\item
+			Suppose $\horel{\Gamma}{\Delta}{P}{\hby{\ell_1}}{\Delta'}{P'}$. Then we have:
+%
+			\begin{enumerate}[a)]
+				\item
+					If $\ell_1 \in \set{\news{\tilde{m}}\bactout{n}{m}, \,\news{\tilde{m}}\bactout{n}{\abs{x}Q}, \,\bactsel{s}{l}, \,\bactbra{s}{l}}$
+					then $\exists \ell_2$ s.t. \\
+					$\horel{\tmap{\Gamma}{1}}{\tmap{\Delta}{1}}{\pmapp{P}{1}{f}}{\hby{\ell_2}}{\tmap{\Delta'}{1}}{\pmapp{P'}{1}{f}}$
+					and $\ell_2 = \mapa{\ell_1}^{1}$.
+			
+				\item
+					If $\ell_1 = \bactinp{n}{\abs{y}Q}$ and
+					$P' = P_0 \subst{\abs{y}Q}{x}$
+					then $\exists \ell_2$ s.t. \\
+					$\horel{\tmap{\Gamma}{1}}{\tmap{\Delta}{1}}{\pmapp{P}{1}{f}}{\hby{\ell_2}}{\tmap{\Delta'}{1}}{\pmapp{P_0}{1}{f}\subst{\abs{y}\pmapp{Q}{1}{\emptyset}}{x}}$
+					and $\ell_2 = \mapa{\ell_1}^{1}$.
+			
+				\item
+					If $\ell_1 = \bactinp{n}{m}$
+					and 
+					$P' = P_0 \subst{m}{x}$
+					then $\exists \ell_2$, $R$ s.t. \\
+					$\horel{\tmap{\Gamma}{1}}{\tmap{\Delta}{1}}{\pmapp{P}{1}{f}}{\hby{\ell_2}}{\tmap{\Delta'}{1}}{R}$,
+					with $\ell_2 = \mapa{\ell_1}^{1}$, \\
+					and
+					$\horel{\tmap{\Gamma}{1}}{\tmap{\Delta'}{1}}{R}{\hby{\btau} \hby{\stau} \hby{\btau}}
+					{\tmap{\Delta'}{1}}{\pmapp{P_0}{1}{f}\subst{m}{x}}$.
+						
+				\item
+					If $\ell_1 = \tau$
+					and $P' \scong \newsp{\tilde{m}}{P_1 \Par P_2\subst{m}{x}}$
+					then $\exists R$ s.t. \\
+					$\horel{\tmap{\Gamma}{1}}{\tmap{\Delta}{1}}{\pmapp{P}{1}{f}}{\hby{\tau}}{\mapt{\Delta}^{1}}{\newsp{\tilde{m}}{\pmapp{P_1}{1}{f} \Par R}}$,
+					and\\ 
+					$\horel{\tmap{\Gamma}{1}}{\tmap{\Delta}{1}}{\newsp{\tilde{m}}{\pmapp{P_1}{1}{f} \Par R}}{\hby{\btau} \hby{\stau} \hby{\btau}}
+					{\mapt{\Delta}^{1}}{\newsp{\tilde{m}}{\pmapp{P_1}{1}{f} \Par \pmapp{P_2}{1}{f}\subst{m}{x}}}$.
+			
+				\item
+					If $\ell_1 = \tau$
+					and $P' \scong \newsp{\tilde{m}}{P_1 \Par P_2 \subst{\abs{y}Q}{x}}$
+					then \\
+					$\horel{\tmap{\Gamma}{1}}{\tmap{\Delta}{1}}{\pmapp{P}{1}{f}}{\hby{\tau}}
+					{\tmap{\Delta_1}{1}}{\newsp{\tilde{m}}{\pmapp{P_1}{1}{f}\Par \pmapp{P_2}{1}{f}\subst{\abs{y}\pmapp{Q}{1}{\emptyset}}{x}}}$.
+			
+				\item
+					If $\ell_1 = \tau$
+					and $P' \not\scong \newsp{\tilde{m}}{P_1 \Par P_2 \subst{m}{x}} \land P' \not\scong \newsp{\tilde{m}}{P_1 \Par P_2\subst{\abs{y}Q}{x}}$
+					then \\
+					$\horel{\tmap{\Gamma}{1}}{\tmap{\Delta}{1}}{\pmapp{P}{1}{f}}{\hby{\tau}}{\tmap{\Delta'_1}{1}}{ \pmapp{P'}{1}{f}}$.
+			\end{enumerate}
+			
+		\item	Suppose $\horel{\tmap{\Gamma}{1}}{\tmap{\Delta}{1}}{\pmapp{P}{1}{f}}{\hby{\ell_2}}{\tmap{\Delta'}{1}}{Q}$.
+			Then we have:
+%
+			\begin{enumerate}[a)]
+				\item 
+					If $\ell_2 \in
+					\set{\news{\tilde{m}}\bactout{n}{\abs{z}{\,\binp{z}{x} \appl{x}{m}}}, \,\news{\tilde{m}} \bactout{n}{\abs{x}{R}}, \,\bactsel{s}{l}, \,\bactbra{s}{l}}$
+					then $\exists \ell_1, P'$ s.t. \\
+					$\horel{\Gamma}{\Delta}{P}{\hby{\ell_1}}{\Delta'}{P'}$, 
+					$\ell_1 = \mapa{\ell_2}^{1}$, 
+					and
+					$Q = \pmapp{P'}{1}{f}$.
+			
+				\item 
+					If $\ell_2 = \bactinp{n}{\abs{y} R}$ %(with $R \neq \binp{y}{x} \appl{x}{m}$)
+					then either:
+%
+					\begin{enumerate}[(i)]
+						\item	$\exists \ell_1, x, P', P''$ s.t. \\
+							$\horel{\Gamma}{\Delta}{P}{\hby{\ell_1}}{\Delta'}{P' \subst{\abs{y}P''}{x}}$, 
+							$\ell_1 = \mapa{\ell_2}^{1}$, $\pmapp{P''}{1}{\es} = R$, and $Q = \pmapp{P'}{1}{f}$.
+
+						\item	$R \scong \binp{y}{x} \appl{x}{m}$ and 
+							$\exists \ell_1, z, P'$ s.t. \\
+							$\horel{\Gamma}{\Delta}{P}{\hby{\ell_1}}{\Delta'}{P' \subst{m}{z}}$, 
+							$\ell_1 = \mapa{\ell_2}^{1}$,
+							and\\
+							$\horel{\tmap{\Gamma}{1}}{\tmap{\Delta'}{1}}{Q}{\hby{\btau} \hby{\stau} \hby{\btau}}{\tmap{\Delta''}{1}}{\pmapp{P'\subst{m}{z}}{1}{f}}$
+					\end{enumerate}
+			
+				\item 
+					If $\ell_2 = \tau$ 
+					then $\Delta' = \Delta$ and 
+					either
+%
+					\begin{enumerate}[(i)]
+						\item	$\exists P'$ s.t. 
+							$\horel{\Gamma}{\Delta}{P}{\hby{\tau}}{\Delta}{P'}$,
+							and $Q = \map{P'}^{1}_f$.	
+
+						\item
+							$\exists P_1, P_2, x, m, Q'$ s.t. 
+							$\horel{\Gamma}{\Delta}{P}{\hby{\tau}}{\Delta}{\newsp{\tilde{m}}{P_1 \Par P_2\subst{m}{x}} }$, and\\
+							$\horel{\tmap{\Gamma}{1}}{\tmap{\Delta}{1}}{Q}{\hby{\btau} \hby{\stau} \hby{\btau}}{\tmap{\Delta}{1}}{\pmapp{P_1}{1}{f} \Par \pmapp{P_2\subst{m}{x}}{1}{f}}$ 
+%							$Q = \map{P_1}^{1}_f \Par Q'$, where $Q'  \Hby{} $.
+
+%						\item $\exists P_1, P_2, x, R$ s.t. 
+%						$\stytra{ \Gamma }{\tau}{ \Delta }{ P}{ \Delta}{ \news{\tilde{m}}(P_1 \Par P_2\subst{\abs{y}R}{x}) }$, and 
+%						$Q = \map{\news{\tilde{m}}(P_1 \Par P_2\subst{\abs{y}R}{x})}^{1}_f$.
+			\end{enumerate}
+		    \end{enumerate}
+		    
+%		\item   
+%			If  $\wtytra{\mapt{\Gamma}^{1}}{\ell_2}{\mapt{\Delta}^{1}}{\pmapp{P}{1}{f}}{\mapt{\Delta'}^{1}}{Q}$
+%			then $\exists \ell_1, P'$ s.t.  \\
+%			(i)~$\stytra{\Gamma}{\ell_1}{\Delta}{P}{\Delta'}{P'}$,
+%			(ii)~$\ell_2 = \mapa{\ell_1}^{1}$, 
+%			(iii)~$\wbb{\mapt{\Gamma}^{1}}{\ell}{\mapt{\Delta'}^{1}}{\pmapp{P'}{1}{f}}{\mapt{\Delta'}^{1}}{Q}$.
+	\end{enumerate}
+\end{proposition}
+
+
+\begin{proof}
+
+By transition induction. We consider parts (1) and (2) separately:
+
+\noi \textbf{Part (1) - Completeness}. We consider two representative cases, the rest is similar or simpler:
+%
+\begin{enumerate}[1.]
+	%%  Output 
+	\item	Subcase  (a): $P =\bout{s}{n} P'$ and $\ell_1 = \bactout{s}{n}$ (the case $\ell_1 = \news{n}\bactout{s}{n}$ is similar). By assumption, $P$ is well-typed. 
+		We may have:
+%
+		\[
+			\tree{
+				\Gamma; \emptyset; \Delta_0 \cat s:S_1  \proves  P' \hastype \Proc \quad 
+				\Gamma ; \emptyset ; \{n{:} S\}  \proves   n \hastype S }{
+				\Gamma; \emptyset; \Delta_0 \cat n{:}S \cat s:\btout{S}S_1 \proves \bout{s}{n} P' \hastype \Proc}
+		\]
+%
+		\noi for some $S, S_1, \Delta_0$.
+		%such that $\Delta = \Delta_0 \cat k_1{:}T  \cat k:\btout{T}S$.
+		We may then have the following transition:
+%
+		\[
+			\stytra{\Gamma}{\ell_1}{\Delta_0 \cat n{:}S \cat s:\btout{S}S_1 }{\bout{s}{n} P'}{\Delta_0 \cat s{:}S_1 }{P'}
+		\]
+%
+		\noi The encoding of the source judgment for $P$ is as follows:
+%
+		\[
+			\mapt{\Gamma}^{1}; \emptyset; \mapt{\Delta_0 \cat n{:}S \cat s:\btout{S}S_1}^{1} \proves \map{\bout{s}{n} P'}^{1} \hastype \Proc
+		\]
+%
+		\noi which, using Def.~\ref{def:enc:HOp_to_HO} can be expressed as 
+%
+		\[
+			\mapt{\Gamma}^{\mathsf{p}}; \emptyset; \mapt{\Delta_0} 
+			\cat n{:}\mapt{S}^{1} 
+			\cat s: \btout{\lhot{\btinp{\lhot{\tmap{S}{1}}}\tinact}} \tmap{S_1}{1}
+			\proves 
+			\bbout{s}{ \abs{z}{\,\binp{z}{x} \appl{x}{n}} } \pmap{P'}{1}
+			\hastype \Proc
+		\]
+%
+		\noi Now, $\mapa{\ell_1}^{1} = \bactout{s}{\abs{z}{\,\binp{z}{x} \appl{x}{n}}\, } $. 
+		We may infer the following  transition for $\map{P}^{1}$:
+%
+		\begin{eqnarray*}
+			& & \mapt{\Gamma}^{1}; \emptyset; \mapt{\Delta}^{1} 
+			\proves 
+			\bbout{s}{ \abs{z}{\,\binp{z}{x} \appl{x}{n}} } \pmap{P'}{1}
+			\hastype \Proc \\
+			& \hby{\mapa{\ell_1}^{1}} & \mapt{\Gamma}^{1}; \emptyset; \mapt{\Delta_0}^{1} 
+			\cat s:  \tmap{S_1}{1}
+			\proves  \pmap{P'}{1}
+			\hastype \Proc \\
+			& = & \mapt{\Gamma}^{1}; \emptyset; \mapt{\Delta_0 \cat s:  S_1}^{1}
+			\proves  \pmap{P'}{1}
+			\hastype \Proc 
+		\end{eqnarray*}
+%
+		\noi from which the thesis follows easily.
+
+	\item	Subcase (c): $P = \binp{n}{x} P'$	and $\ell_1 = \bactinp{n}{m}$.
+		By assumption $P$ is well-typed.
+		We may have:
+%
+		\[
+			\tree{
+				\Gamma; \emptyset; \Delta_0 \cat x:S \cat n:S_1  \proves  P' \hastype \Proc \quad 
+				\Gamma ; \emptyset ; \{x: S\}  \proves   x\hastype S}{
+				\Gamma; \emptyset; \Delta_0 \cat   n:\btinp{S}S_1 \proves \binp{n}{x} P' \hastype \Proc}
+		\]
+%
+		for some  $S, S_1, \Delta_0$.
+%		such that $\Delta = \Delta_0 \cat k:\btinp{T}S$.
+		We may infer the following typed transition:
+%
+		\[
+			\Gamma; \emptyset; \Delta_0 \cat   n:\btinp{S}S_1 \proves \binp{n}{x} P' \hastype \Proc
+			\hby{\bactinp{n}{m}}
+			\Gamma; \emptyset; \Delta_0 \cat  n:S_1 \cat m:S \proves   P'\subst{m}{x} \hastype \Proc
+		\]
+%
+		The encoding of the source judgment for $P$ is as follows:
+%
+		\begin{eqnarray*}
+			& & \mapt{\Gamma}^{1}; \emptyset; \mapt{ \Delta_0 \cat   n:\btinp{S}S_1 }^{1} \proves 
+			\map{P}^{1}
+			\hastype \Proc \\
+			& = & \mapt{\Gamma}^{1}; \emptyset; \mapt{ \Delta_0 }^{1} \cat   n: \btinp{\lhot{\btinp{\lhot{\tmap{S}{1}}}\tinact}} \tmap{S_1}{1} \proves 
+			\binp{n}{x} \newsp{s}{\appl{x}{s} \Par \bbout{\dual{s}}{\abs{x}{\pmap{P'}{1}}} \inact}
+			\hastype \Proc
+		\end{eqnarray*}
+%
+		Now, 
+		$\mapa{\ell_1}^{1} = \bactinp{n}{\abs{z}{\,\binp{z}{x} \appl{x}{m}}\, }$
+		and it is immediate to infer the following 
+		transition for $\map{P}^{1}$:
+%
+		\begin{eqnarray*}
+			&  & \mapt{\Gamma}^{1}; \emptyset; \mapt{ \Delta_0 }^{1} \cat   
+			n: \btinp{\lhot{\btinp{\lhot{\tmap{S}{1}}}\tinact}} \tmap{S_1}{1} \proves 
+			\binp{n}{x} \newsp{s}{\appl{x}{s} \Par \bbout{\dual{s}}{\abs{x}{\pmap{P'}{1}}} \inact}
+			\hastype \Proc \\
+			& \hby{\mapa{\ell_1}^{1}}  & \mapt{\Gamma}^{1}; \emptyset; \mapt{ \Delta_0 }^{1} \cat   
+			n:  \tmap{S_1}{1} \cat m:  \tmap{S}{1} \proves 
+			 \newsp{s}{\appl{x}{s} \Par \bbout{\dual{s}}{\abs{x}{\pmap{P'}{1}}} \inact}\subst{\abs{z}{\,\binp{z}{x} \appl{x}{m}}}{x}
+			\hastype \Proc 
+		\end{eqnarray*}
+%
+		Let us write $R$ to stand for process 
+		$\newsp{s}{\appl{x}{s} \Par \bbout{\dual{s}}{\abs{x}{\pmap{P'}{1}}} \inact}\subst{\abs{z}{\,\binp{z}{x} \appl{x}{m}}}{x}$. 
+		%$\newsp{s}{\appl{X}{s} \Par \bbout{\dual{s}}{\abs{x}{\pmap{Q}{1}}} \inact}\subst{\abs{z}{\,\binp{z}{X} \appl{X}{k_1}}}{X}$.
+		We then have:
+		\begin{eqnarray*}
+		R & \by{\tau} & \newsp{s}{\binp{s}{x} \appl{x}{m} \Par \bbout{\dual{s}}{\abs{x}{\pmap{P'}{1}}} \inact} \\
+		& \by{\tau} &  \appl{(\abs{x}{\pmap{P'}{1}})}{m} \Par \inact \\
+		& \by{\tau} & \pmap{P'}{1}\subst{m}{x}
+		\end{eqnarray*}
+		and so the thesis follows.
+
+		%%%%%%%%%%%
+		%%  Recursion
+		%%%%%%%%%%%
+
+%	\item	Case $P =\recp{X}{P'}$ and $P = \rvar{X}$.
+%
+%		It follows similar arguments with the previous cases
+%		and uses Prop.~\ref{prop:op_corr_HOprec_to_HO} whenever necessary.
+		
+\end{enumerate}
+%
+\noi \textbf{Part (2) - Soundness}. We consider two representative cases, the rest is similar or simpler:
+%
+\begin{enumerate}[1.]
+		%%%%%%%%%%%
+		%%  Output 
+		%%%%%%%%%%%
+	\item Subcase (a): $P = \bout{n}{m} P'$ and $\ell_2 = \bactout{n}{\abs{z}{\,\binp{z}{x} \appl{x}{m}}}$
+	(the case $\ell_2 = \news{m}\bactout{n}{\abs{z}{\,\binp{z}{x} \appl{x}{m}}}$ is similar).
+		%,  $\map{P}^{1} = \bbout{k}{ \abs{z}{\,\binp{z}{X} \appl{X}{k'}} } \pmap{P'}{1}$.
+		Then 
+		we have: % the following typed transition for $\map{P}^{1}$:
+%
+		\[
+			\mapt{\Gamma}^{1};\, \emptyset;\, \mapt{\Delta_0}^{1} \cat 
+			n: \btout{\lhot{\btinp{\lhot{\tmap{S}{1}}}\tinact}} \tmap{S_1}{1} 
+			\proves 
+			 \bbout{n}{ \abs{z}{\,\binp{z}{x} \appl{x}{m}} } \pmap{P'}{1} 
+			 \hastype \Proc
+		\]
+%
+		for some $S, S_1$, and $\Delta_0$. 
+		We may infer the following typed transition for $\pmap{P}{1}$:
+%
+		\begin{eqnarray*}
+			& & \mapt{\Gamma}^{1};\, \mapt{\Delta_0}^{1} \cat n: \btout{\lhot{\btinp{\lhot{\tmap{S}{1}}}\tinact}} \tmap{S_1}{1} 
+			\proves 
+			 \bbout{n}{ \abs{z}{\,\binp{z}{x} \appl{x}{m}} } \pmap{P'}{1} 
+			 \\
+			%& & \bbout{k}{ \abs{z}{\,\binp{z}{X} \appl{X}{k'}} } \pmap{P'}{1} \hby{\bactout{k}{\abs{z}{\,\binp{z}{X} \appl{X}{k'}}}} \pmap{P'}{1}  \\
+			&\hby{\ell_2}& 
+			\mapt{\Gamma}^{1};\, \mapt{\Delta_0}^{1} \cat n: \tmap{S_1}{1} 
+			\proves  \pmap{P'}{1} 
+		\end{eqnarray*}
+%
+		%with $\ell_2 = \bactout{k}{\abs{z}{\,\binp{z}{X} \appl{X}{k'}}}$.
+		Now, in the source term $P$ we can infer the following transition 
+%
+		\[
+		\Gamma;\,  \Delta_0 \cat n:\btout{S} S_1 \proves \bout{n}{m} P'
+		 \hby{\bactout{n}{m}} 
+		 \Gamma;\,  \Delta_0 \cat n: S_1 \proves P'
+		\]
+%
+		and thus the thesis follows easily by noticing that 
+		$\mapa{\bactout{n}{m}}^{1} = \bactout{n}{\abs{z}{\,\binp{z}{x} \appl{x}{m}}}$.
+
+
+		%%%%%%%%%%%
+		%% Input
+		%%%%%%%%%%%
+	\item	Subcase (c): $P = \binp{n}{x} P'$ and $\ell_2 = \bactinp{n}{\abs{y}\binp{y}{x} \appl{x}{m}}$.
+		Then we have
+%
+		\[
+			\mapt{\Gamma}^{1};\, \emptyset;\, \mapt{\Delta_0}^{1} \cat 
+			n: \btinp{\lhot{\btinp{\lhot{\tmap{S}{1}}}\tinact}} \tmap{S_1}{1}
+			\proves
+			\binp{n}{x} \newsp{s}{\appl{x}{s} \Par \bbout{\dual{s}}{\abs{x}{\pmap{P'}{1}}} \inact}
+			\hastype \Proc
+		\]
+%
+		for some $S$, $S_1$, $\Delta_0$.
+		We may infer the following typed transitions for $\pmap{P}{1}$:
+%
+		\begin{eqnarray*}
+			& & 
+			\mapt{\Gamma}^{1};\, %\emptyset;\, 
+			\mapt{\Delta_0}^{1} \cat 
+			n: \btinp{\lhot{\btinp{\lhot{\tmap{S}{1}}}\tinact}} \tmap{S_1}{1}
+			\proves
+			\binp{n}{x} \newsp{s}{\appl{x}{s} \Par \bbout{\dual{s}}{\abs{x}{\pmap{P'}{1}}} \inact} \\
+			& \hby{\ell_2} & 
+			\mapt{\Gamma}^{1};\, %\emptyset;\, 
+			\mapt{\Delta_0}^{1} \cat 
+			n:\tmap{S_1}{1}
+			\cat m:\tmap{S_1}{1}
+			\proves
+			\newsp{s}{\appl{x}{s} \Par \bbout{\dual{s}}{\abs{x}{\pmap{P'}{1}}} \inact} \subst{\abs{z}\binp{z}{x}\appl{x}{m}}{x} \\
+			& = & 
+			\mapt{\Gamma}^{1};\, %\emptyset;\, 
+			\mapt{\Delta_0}^{1} 
+			\cat n:\tmap{S_1}{1}
+			\cat m:\tmap{S}{1}
+			\proves
+			\newsp{s}{\binp{s}{x}\appl{x}{m} \Par \bbout{\dual{s}}{\abs{x}{\pmap{P'}{1}}} \inact}  \\
+			& \hby{\tau} & 
+			\mapt{\Gamma}^{1};\, %\emptyset;\, 
+			\mapt{\Delta_0}^{1} 
+			\cat n:\tmap{S_1}{1}
+			\cat m:\tmap{S}{1}
+			\proves
+			\appl{(\abs{x}{\pmap{P'}{1}})}{m}   \\
+			& \hby{\tau} & 
+			\mapt{\Gamma}^{1};\, %\emptyset;\, 
+			\mapt{\Delta_0}^{1} 
+			\cat n:\tmap{S_1}{1}
+			\cat m:\tmap{S}{1}
+			\proves
+			\pmap{P'}{1}\subst{m}{x}   
+		\end{eqnarray*}
+%
+		%with $\ell_2 = \bactinp{k}{\abs{z}{\,\binp{z}{X} \appl{X}{k_1}}}$.
+		Now, in the source term $P$ we can infer the following transition 
+%
+		\[
+			\Gamma;\,  \Delta_0 \cat n:\btinp{S} S_1 \proves \binp{n}{x} P'
+			\hby{\bactinp{n}{m}} 
+			\Gamma;\,  \Delta_0 \cat n: S_1 \cat m: S \proves P'\subst{m}{x}
+		\]
+%
+		and the thesis follows.
+%		 easily by noticing that $\mapa{\bactinp{k}{k_1}}^{1} = \bactinp{k}{\abs{z}{\,\binp{z}{X} \appl{X}{k_1}}}$.
+
+		%%%%%%%%%%%
+		%%  Recursion
+		%%%%%%%%%%%
+%	\item	Case $P =\recp{X}{P'}$ and $P = \rvar{X}$.
+%
+%		It follows similar arguments with the previous case
+%		and uses Prop.~\ref{prop:op_corr_HOprec_to_HO} whenever nescessary.
+\end{enumerate}
+\qed
+\end{proof}
+
+
+%%%%%%%% Full Abstraction
+
+We repeat the statement of
+\propref{prop:fulla_HOp_to_HO}, 
+as in Page~\pageref{prop:fulla_HOp_to_HO}:
+
+\begin{proposition}[Full Abstraction, \HOp into \HO]\rm
+	\label{app:prop:fulla_HOp_to_HO}
+	$\horel{\Gamma}{\Delta_1}{P_1}{\wb}{\Delta_2}{Q_1}$
+	if and only if
+	$\horel{\tmap{\Gamma}{1}}{\tmap{\Delta_1}{1}}{\pmapp{P_1}{1}{f}}{\wb}{\tmap{\Delta_2}{1}}{\pmapp{Q_2}{1}{f}}$.
+\end{proposition}
+
+\begin{proof}
+	\noi {\bf Proof of Soundness Direction.}
+
+	\noi Let
+%
+	\[
+		\Re = \set{\horel{\Gamma}{\Delta_1}{P_1}{\wb}{\Delta_2}{Q_1} \setbar \horel{\mapt{\Gamma}^{1}}{\mapt{\Delta_1}^{1}}{\pmapp{P_1}{1}{f}}{\wb}{\mapt{\Delta_2}^{1}}{\pmapp{Q_1}{1}{f}}}
+	\]
+%
+	\noi	The proof considers a case analysis on the transition $\hby{\ell}$ and
+		uses the soundness direction of operational correspondence (cf.~Proposition~\ref{prop:op_corr_HOp_to_HO}).
+		We give an interesting case. The others are similar of easier.
+
+	\noi	- Case: $\ell = \news{\tilde{m_1}'} \bactout{n}{m_1}$.
+
+	\noi Proposition~\ref{prop:op_corr_HOp_to_HO} implies that
+%
+	\[
+		\horel{\Gamma}{\Delta_1}{P_1}{\hby{\news{\tilde{m_1}'} \bactout{n}{m_1}}}{\Delta_1'}{P_2}
+	\]
+%
+	\noi implies
+%
+	\[
+		\horel{\mapt{\Gamma}^{1}}{\mapt{\Delta_1}^{1}}{\pmapp{P_1}{1}{f}}{\hby{\news{\tilde{m_1}'} \bactout{n}{\abs{z}{\binp{z}{x} \appl{x}{m_1}}}}}{\mapt{\Delta_1'}^{1}}{\pmapp{P_2}{1}{f}}
+	\]
+%
+	\noi that in combination with the definition of $\Re$ we get
+%
+	\begin{eqnarray}
+		\horel{\mapt{\Gamma}^{1}}{\mapt{\Delta_2}^{1}}{\pmapp{Q_1}{1}{f}}{\Hby{\news{\tilde{m_2}'} \bactout{n}{\abs{z}{\binp{z}{x} \appl{x}{m_2}}}}}{\mapt{\Delta_2'}^{1}}{\pmapp{Q_2}{1}{f}}
+		\label{prop:HOp_to_HO:full_abs11}
+	\end{eqnarray}
+%
+	\noi and
+%
+	\[
+		\mhorel{\mapt{\Gamma}^{1}}{\mapt{\Delta_1'}^{1}}{\newsp{\tilde{m_1}'}{\pmapp{P_2}{1}{f} \Par \hotrigger{t}{x}{s}{\abs{z}{\binp{z}{x} \appl{x}{m_1}}} }}
+		{\wb}{\mapt{\Delta_2'}^{1}}{}{\newsp{\tilde{m_2}'}{\pmapp{Q_2}{1}{f} \Par \hotrigger{t}{x}{s}{\abs{z}{\binp{z}{x} \appl{x}{m_2}}}}}
+	\]
+%
+	\noi We rewrite the last result as
+	\[
+		\mhorel{\mapt{\Gamma}^{1}}{\mapt{\Delta_1'}^{1}}{\pmapp{\newsp{\tilde{m_1}'}{P_2 \Par \hotrigger{t}{x}{s}{m_1}}}{1}{f}}
+		{\wb}{\mapt{\Delta_2'}^{1}}{}{\pmapp{\newsp{\tilde{m_2}'}{Q_2 \Par \hotrigger{t}{x}{s}{m_2}}}{1}{f}}
+	\]
+%
+	\noi to conclude that
+%
+	\[
+		\mhorel{\Gamma}{\Delta_1'}{\newsp{\tilde{m_1}'}{P_2 \Par \hotrigger{t}{x}{s}{m_1}}}
+		{\ \Re\ }{\Delta_2'}{}{\newsp{\tilde{m_2}'}{Q_2 \Par \hotrigger{t}{x}{s}{m_2}}}
+	\]
+%
+	\noi as required
+
+
+	\noi {\bf Proof of Completeness Direction.}
+
+	\noi Let
+%
+	\[
+		\Re = \set{\horel{\mapt{\Gamma}^{1}}{\mapt{\Delta_1}^{1}}{\pmapp{P_1}{1}{f}}{,}{\mapt{\Delta_2}^{1}}{\pmapp{Q_1}{1}{f}} \setbar \horel{\Gamma}{\Delta_1}{P_1}{\wb}{\Delta_2}{Q_1}}
+	\]
+%
+	We show that $\Re \subset \wb$ by a case analysis on the action $\ell$
+
+	\noi - Case: $\ell \notin \set{\news{\tilde{m}} \bactout{n}{\abs{x}{P}}, \bactinp{n}{\abs{x}{P}}}$.
+
+	\noi The proof of Proposition~\ref{prop:op_corr_HOp_to_HO} implies that
+%
+	\[
+		\horel{\mapt{\Gamma}^{1}}{\mapt{\Delta_1}^{1}}{\pmapp{P_1}{1}{f}}{\hby{\ell}}{\mapt{\Delta_1'}^{1}}{\pmapp{P_2}{1}{f}}
+	\]
+%
+	\noi implies
+%
+	\[
+		\horel{\Gamma}{\Delta_1}{P_1}{\hby{\ell}}{\Delta_1'}{P_2}
+	\]
+%
+	\noi From the latter transition and the definition of $\Re$ we imply
+%
+	\begin{eqnarray}
+		&&\horel{\Gamma}{\Delta_2}{Q_1}{\Hby{\ell}}{\Delta_2'}{Q_2}
+		\label{prop:HOp_to_HO:full_abs1}
+		\\
+		&&\horel{\Gamma}{\Delta_1'}{P_2}{\wb}{\Delta_2'}{Q_2}
+		\label{prop:HOp_to_HO:full_abs2}
+	\end{eqnarray}
+%
+	\noi From~\ref{prop:HOp_to_HO:full_abs1} and proposition~\ref{prop:op_corr_HOp_to_HO} we get
+%
+	\[
+		\horel{\mapt{\Gamma}^{1}}{\mapt{\Delta_2}^{1}}{\pmapp{Q_1}{1}{f}}{\Hby{\ell}}{\mapt{\Delta_2'}^{1}}{\pmapp{Q_2}{1}{f}}
+	\]
+%
+	\noi Furthermore, from~\ref{prop:HOp_to_HO:full_abs2} and the definition of $\Re$ we get
+%
+	\[
+		\horel{\mapt{\Gamma}^{1}}{\mapt{\Delta_1'}^{1}}{\pmapp{P_2}{1}{f}}{\ \Re\ }{\mapt{\Delta_2'}^{1}}{\pmapp{Q_2}{1}{f}}
+	\]
+%
+	\noi as required.
+
+	\noi - Case: $\ell = \news{\tilde{m}} \bactout{n}{\abs{x}{P}}$
+
+	\noi There are two subcases:
+
+	\noi -Subcase:
+
+	\noi The proof of Proposition~\ref{prop:op_corr_HOp_to_HO} implies that
+%
+	\[
+		\horel{\mapt{\Gamma}^{1}}{\mapt{\Delta_1}^{1}}{\pmapp{P_1}{1}{f}}{\hby{\ell}}{\mapt{\Delta_1'}^{1}}{\pmapp{P_2}{1}{f}}
+	\]
+%
+	\noi implies
+%
+	\[
+		\horel{\Gamma}{\Delta_1}{P_1}{\hby{\ell}}{\Delta_1'}{P_2}
+	\]
+%
+	\noi where the proof is similar with the previous case.
+
+	\noi - Subcase:
+
+	\noi The proof of Proposition~\ref{prop:op_corr_HOp_to_HO} implies that
+%
+	\[
+		\horel{\mapt{\Gamma}^{1}}{\mapt{\Delta_1}^{1}}{\pmapp{P_1}{1}{f}}{\hby{\news{\tilde{m_1}'} \bactout{n}{\abs{z}{\binp{z}{x} \appl{x}{m_1}}}}}{\mapt{\Delta_1'}^{1}}{\pmapp{P_2}{1}{f}}
+	\]
+%
+	\noi implies
+%
+	\[
+		\horel{\Gamma}{\Delta_1}{P_1}{\hby{\news{\tilde{m_1}'} \bactout{n}{m_1}}}{\Delta_1'}{P_2}
+	\]
+%
+	\noi From the latter transition and the definition of $\Re$ we imply
+%
+	\begin{eqnarray}
+		&&\horel{\Gamma}{\Delta_2}{Q_1}{\Hby{\news{\tilde{m_2}'} \bactout{n}{m_2}}}{\Delta_2'}{Q_2}
+		\label{prop:HOp_to_HO:full_abs3}
+	\end{eqnarray}
+%
+	\noi and
+%
+	\begin{eqnarray}
+		& \Gamma; \es; \Delta_1' & \proves \newsp{\tilde{m_1}'}{P_2 \Par \hotrigger{t}{x}{s}{m_1}} \nonumber \\
+		& \wb & \Delta_2' \proves \newsp{\tilde{m_2}'}{Q_2 \Par \hotrigger{t}{x}{s}{m_2}}
+		\label{prop:HOp_to_HO:full_abs4}
+	\end{eqnarray}
+%
+	\noi From~\ref{prop:HOp_to_HO:full_abs3} and proposition~\ref{prop:op_corr_HOp_to_HO} we get
+%
+	\[
+		\horel{\mapt{\Gamma}^{1}}{\mapt{\Delta_2}^{1}}{\pmapp{Q_1}{1}{f}}{\Hby{\news{\tilde{m_2}'} \bactout{n}{\abs{z}{\binp{z}{x} \appl{x}{m_2}}}}}{\mapt{\Delta_2'}^{1}}{\pmapp{Q_2}{1}{f}}
+	\]
+%
+	\noi Furthermore, from~\ref{prop:HOp_to_HO:full_abs4} and the definition of $\Re$ we get
+%
+	\[
+		\mhorel{\mapt{\Gamma}^{1}}{\mapt{\Delta_1'}^{1}}{\pmapp{\newsp{\tilde{m_1}'}{P_2 \Par \hotrigger{t}{x}{s}{m_1}}}{1}{f}}
+		{\ \Re\ }{\mapt{\Delta_2'}^{1}}{}{\pmapp{\newsp{\tilde{m_2}'}{Q_2 \Par \hotrigger{t}{x}{s}{m_2}}}{1}{f}}
+	\]
+%
+	\noi as required.
+
+	\noi - Case: $\ell = \bactinp{n}{\abs{x}{P}}$
+
+	\noi We have two subcases.
+
+	\noi - Subcase: Similar with the first subcase of the previous case.
+
+	\noi - Subcase:
+	\noi The proof of Proposition~\ref{prop:op_corr_HOp_to_HO} implies that
+%
+	\[
+		\horel{\mapt{\Gamma}^{1}}{\mapt{\Delta_1}^{1}}{\pmapp{P_1}{1}{f}}{\hby{\bactinp{n}{\abs{z}{ \binp{z}{x} \appl{x}{s}}}}}{\mapt{\Delta_1''}^{1}} R %{\pmapp{P_2}{1}{f}}
+	\]
+%
+	\noi implies
+%
+	\begin{eqnarray}
+		\horel{\Gamma}{\Delta_1}{P_1}{\hby{\bactinp{n}{m_1}}}{\Delta_1'}{P_2}
+		\label{prop:HOp_to_HO:full_abs7}
+	\end{eqnarray}
+%
+	\noi and
+%
+	\begin{eqnarray}
+		\horel{\mapt{\Gamma}^{1}}{\mapt{\Delta_1''}^{1}}{R}{\shby{\tau}}{\mapt{\Delta_1'}^{1}}{\pmapp{P_2}{1}{f}}
+		\label{prop:HOp_to_HO:full_abs8}
+	\end{eqnarray}
+%
+%	\noi With the last transition happening on a restricted session channel.
+%	From \dk{Lemma~\ref{lem:tau_inert}} we can conclude that
+%	\begin{eqnarray}
+%		\horel{\mapt{\Gamma}^{1}}{\mapt{\Delta_1''}^{1}}{R}{\wb}{\mapt{\Delta_1'}^{1}}{\pmapp{P_2}{1}{f}}
+%		\label{prop:HOp_to_HO:full_abs9}
+%	\end{eqnarray}
+%
+	\noi From the transition~\ref{prop:HOp_to_HO:full_abs7} and the definition of $\Re$ we imply
+%
+	\begin{eqnarray}
+		&&\horel{\Gamma}{\Delta_2}{Q_1}{\Hby{\bactinp{n}{m_2}}}{\Delta_2'}{Q_2}
+		\label{prop:HOp_to_HO:full_abs5}
+		\\
+		&&\horel{\Gamma}{\Delta_1'}{P_2}{\wb}{\Delta_2'}{Q_2}
+		\label{prop:HOp_to_HO:full_abs6}
+	\end{eqnarray}
+%
+	\noi From~\ref{prop:HOp_to_HO:full_abs5} and proposition~\ref{prop:op_corr_HOp_to_HO} we get
+%
+	\[
+		\horel{\mapt{\Gamma}^{1}}{\mapt{\Delta_2}^{1}}{\pmapp{Q_1}{1}{f}}{\Hby{\bactinp{n}{\abs{z}{\binp{z}{x} \appl{x}{s}}}}}{\mapt{\Delta_2'}^{1}}{\pmapp{Q_2}{1}{f}}
+	\]
+%
+	\noi Furthermore, from~\ref{prop:HOp_to_HO:full_abs6} and the definition of $\Re$ we get
+%
+	\[
+		\horel{\mapt{\Gamma}^{1}}{\mapt{\Delta_1'}^{1}}{\pmapp{P_2}{1}{f}}{\ \Re\ }{\mapt{\Delta_2'}^{1}}{\pmapp{Q_2}{1}{f}}
+	\]
+%
+	\noi If we consider result~\ref{prop:HOp_to_HO:full_abs8} we get.
+%
+	\[
+		\horel{\mapt{\Gamma}^{1}}{\mapt{\Delta_1''}^{1}}{R}{\shby{\tau}\ \Re\ }{\mapt{\Delta_2'}^{1}}{\pmapp{Q_2}{1}{f}}
+	\]
+	where following Lemma~\ref{lem:up_to_deterministic_transition} we show that $R$ is a bisimulation an up to $\SHby{}$.
+	\qed
+\end{proof}
+
+
+
+
+
+
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % HOp TO SESSP
