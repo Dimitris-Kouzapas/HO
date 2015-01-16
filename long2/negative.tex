@@ -104,90 +104,95 @@ communication. Recall that minimal encodings preserve barbs (Proposition~\ref{p:
 %\end{definition}
 
 
-
 \begin{theorem}%\rm
 	There is no typed, minimal encoding $\enco{\map{\cdot}, \mapt{\cdot}, \mapa{\cdot}}: \sessp \longrightarrow \HOp^{\minussh}$.
 %	that enjoys: (i) homomorphism wrt parallel; (ii) barb preservation; (iii) operational completeness.
 \end{theorem}
 
 \begin{proof}[Sketch]
-Assume, towards a contradiction, that such a typed encoding indeed exists. 
-Consider the $\sessp$ process
-$$
-P = \breq{a}{s} \inact \Par \bacc{a}{x} \bsel{n}{l_1} \inact \Par \bacc{a}{x} \bsel{m}{l_2} \inact \qquad \text{(with $n \neq m$)}
-$$
-such that 
-$\Gamma; \es; \Delta \proves P \hastype \Proc$.
-From process $P$ we have: %We then have both
-\begin{eqnarray}
-& & \stytra{\Gamma}{\tau}{\Delta}{P}{\Delta'}{\bsel{n}{l_1} \inact \Par \bacc{a}{x} \bsel{m}{l_2} \inact = P_1} \label{eq:nn3} \\
-& & \stytra{\Gamma}{\tau}{\Delta}{P}{\Delta'}{\bsel{m}{l_2} \inact \Par \bacc{a}{x} \bsel{n}{l_1} \inact = P_2} \label{eq:nn4}
-\end{eqnarray}
-Thus, by definition of typed barb we  have:
-\begin{eqnarray}
-\Gamma; \Delta' \proves P_1 \barb{n} & \land & 
-\Gamma; \Delta' \proves P_1 \nbarb{m} \label{eq:nn1} \\
-\Gamma; \Delta' \proves P_2 \barb{m} & \land & 
-\Gamma; \Delta' \proves P_2 \nbarb{n} \label{eq:nn2}
-\end{eqnarray}
-
-Consider now the $\HOp^{\minussh}$ process $\map{P}$. % = 
-% \map{\breq{a}{s} \inact} \Par \map{\bacc{a}{x} \bsel{n}{l_1} \inact} \Par \map{\bacc{a}{x} \bsel{m}{l_2}}$.
-By our assumption of operational completeness 
-(Def.~\ref{def:ep}-2(a)), 
-from \eqref{eq:nn3} with \eqref{eq:nn4}
-we infer that
-there exist $\HOp^{\minussh}$ processes $S_1$ and $S_2$ such that:
-%we have both:
-\begin{eqnarray}
-& & \shwtytra{\mapt{\Gamma}}{\tau}{\mapt{\Delta}}{\map{P}}{\mapt{\Delta'}}{S_1 \wb \map{P_1}} \label{eq:n1} \\
-& & \shwtytra{\mapt{\Gamma}}{\tau}{\mapt{\Delta}}{\map{P}}{\mapt{\Delta'}}{S_2 \wb \map{P_2}} \label{eq:n2}
-%\map{P} & \Hby{} &  S_1 \wb \map{P_1} \\
-%s\map{P} & \Hby{} & S_2 \wb \map{P_2}
-\end{eqnarray}
-By our assumption of barb preservation, 
-from \eqref{eq:nn1} with \eqref{eq:nn2}
-we infer: 
-\begin{eqnarray}
-\mapt{\Gamma}; \mapt{\Delta'} \proves \map{P_1} \Barb{n} & \land & 
-\mapt{\Gamma}; \mapt{\Delta'} \proves \map{P_1} \nBarb{m} \label{eq:n3} \\
-\mapt{\Gamma}; \mapt{\Delta'} \proves \map{P_2} \Barb{m} & \land & 
-\mapt{\Gamma}; \mapt{\Delta'} \proves \map{P_2} \nBarb{n} \label{eq:n4}
-\end{eqnarray}
-By definition of $\wb$, 
-by combining 
-\eqref{eq:n1} with \eqref{eq:n3}
-and
-\eqref{eq:n2} with \eqref{eq:n4}, we infer barbs for $S_1$ and $S_2$:
-\begin{eqnarray}
-\mapt{\Gamma}; \mapt{\Delta'} \proves S_1 \Barb{n} & \land & 
-\mapt{\Gamma}; \mapt{\Delta'} \proves S_1 \nBarb{m} \label{eq:n5} \\
-\mapt{\Gamma}; \mapt{\Delta'} \proves S_2 \Barb{m} & \land & 
-\mapt{\Gamma}; \mapt{\Delta'} \proves S_2 \nBarb{n} \label{eq:n6}
-\end{eqnarray}
-That is, $S_1$ and $\map{P_1}$ 
-(resp. $S_2$ and $\map{P_2}$)
- have the same barbs.
-Now, by $\tau$-inertness (Proposition~\ref{lem:tau_inert}), we have both 
-\begin{eqnarray}
-& & \horel{\mapt{\Gamma}}{\mapt{\Delta}}{S_1}{\wb}{\mapt{\Delta'}}{\map{P}} \label{eq:n7} \\
-& & \horel{\mapt{\Gamma}}{\mapt{\Delta}}{S_2}{\wb}{\mapt{\Delta'}}{\map{P}} \label{eq:n8}
-\end{eqnarray}
-Combining \eqref{eq:n7} with \eqref{eq:n8}, by transitivity of $\wb$,
-we have 
-\begin{equation}
-\horel{\mapt{\Gamma}}{\mapt{\Delta'}}{S_1}{\wb}{\mapt{\Delta'}}{S_2} \label{eq:n9}
-\end{equation}
-In turn, from \eqref{eq:n9}
-we infer that 
-it must be the case that:
-\begin{eqnarray*}
-\mapt{\Gamma}; \mapt{\Delta'} \proves \map{P_1} \Barb{n} & \land & 
-\mapt{\Gamma}; \mapt{\Delta'} \proves \map{P_1} \Barb{m} \label{eq:n10} \\
-\mapt{\Gamma}; \mapt{\Delta'} \proves \map{P_2} \Barb{m} & \land & 
-\mapt{\Gamma}; \mapt{\Delta'} \proves \map{P_2} \Barb{n} \label{eq:n11}
-\end{eqnarray*}
-which clearly contradict \eqref{eq:n3} and \eqref{eq:n4} above.
-\qed
+	Assume, towards a contradiction, that such a typed encoding indeed exists. 
+	Consider the $\sessp$ process
+	%
+	\[
+		P = \breq{a}{s} \inact \Par \bacc{a}{x} \bsel{n}{l_1} \inact \Par \bacc{a}{x} \bsel{m}{l_2} \inact \qquad \text{(with $n \neq m$)}
+	\]
+	%
+	\noi such that 
+	$\Gamma; \es; \Delta \proves P \hastype \Proc$.
+	From process $P$ we have: %We then have both
+	%
+	\begin{eqnarray}
+		& & \horel{\Gamma}{\Delta}{P}{\hby{\tau}}{\Delta'}{\bsel{n}{l_1} \inact \Par \bacc{a}{x} \bsel{m}{l_2} \inact = P_1} \label{eq:nn3} \\
+		& & \horel{\Gamma}{\Delta}{P}{\hby{\tau}}{\Delta'}{\bsel{m}{l_2} \inact \Par \bacc{a}{x} \bsel{n}{l_1} \inact = P_2} \label{eq:nn4}
+	\end{eqnarray}
+	%
+	Thus, by definition of typed barb we  have:
+	%
+	\begin{eqnarray}
+		\Gamma; \Delta' \proves P_1 \barb{n} & \land & 
+		\Gamma; \Delta' \proves P_1 \nbarb{m} \label{eq:nn1} \\
+		\Gamma; \Delta' \proves P_2 \barb{m} & \land & 
+		\Gamma; \Delta' \proves P_2 \nbarb{n} \label{eq:nn2}
+	\end{eqnarray}
+	%
+	Consider now the $\HOp^{\minussh}$ process $\map{P}$.
+	% = 
+	% \map{\breq{a}{s} \inact} \Par \map{\bacc{a}{x} \bsel{n}{l_1} \inact} \Par \map{\bacc{a}{x} \bsel{m}{l_2}}$.
+	By our assumption of operational completeness 
+	(Def.~\ref{def:ep}-2(a)), 
+	from \eqref{eq:nn3} with \eqref{eq:nn4}
+	we infer that
+	there exist $\HOp^{\minussh}$ processes $S_1$ and $S_2$ such that:
+	%we have both:
+	\begin{eqnarray}
+		& & \horel{\mapt{\Gamma}}{\mapt{\Delta}}{\map{P}}{\Hby{\stau}}{\mapt{\Delta'}}{S_1 \wb \map{P_1}} \label{eq:n1} \\
+		& & \horel{\mapt{\Gamma}}{\mapt{\Delta}}{\map{P}}{\Hby{\stau}}{\mapt{\Delta'}}{S_2 \wb \map{P_2}} \label{eq:n2}
+		%\map{P} & \Hby{} &  S_1 \wb \map{P_1} \\
+		%s\map{P} & \Hby{} & S_2 \wb \map{P_2}
+	\end{eqnarray}
+	By our assumption of barb preservation, 
+	from \eqref{eq:nn1} with \eqref{eq:nn2}
+	we infer: 
+	%
+	\begin{eqnarray}
+		\mapt{\Gamma}; \mapt{\Delta'} \proves \map{P_1} \Barb{n} & \land & 
+		\mapt{\Gamma}; \mapt{\Delta'} \proves \map{P_1} \nBarb{m} \label{eq:n3} \\
+		\mapt{\Gamma}; \mapt{\Delta'} \proves \map{P_2} \Barb{m} & \land & 
+		\mapt{\Gamma}; \mapt{\Delta'} \proves \map{P_2} \nBarb{n} \label{eq:n4}
+	\end{eqnarray}
+	%
+	By definition of $\wb$, 
+	by combining~\eqref{eq:n1} with~\eqref{eq:n3}
+	and~\eqref{eq:n2} with~\eqref{eq:n4}, we infer barbs for $S_1$ and $S_2$:
+	\begin{eqnarray}
+		\mapt{\Gamma}; \mapt{\Delta'} \proves S_1 \Barb{n} & \land & 
+		\mapt{\Gamma}; \mapt{\Delta'} \proves S_1 \nBarb{m} \label{eq:n5} \\
+		\mapt{\Gamma}; \mapt{\Delta'} \proves S_2 \Barb{m} & \land & 
+		\mapt{\Gamma}; \mapt{\Delta'} \proves S_2 \nBarb{n} \label{eq:n6}
+	\end{eqnarray}
+	That is, $S_1$ and $\map{P_1}$ 
+	(resp. $S_2$ and $\map{P_2}$)
+	have the same barbs.
+	Now, by $\tau$-inertness (\propref{lem:tau_inert}), we have both 
+	\begin{eqnarray}
+		& & \horel{\mapt{\Gamma}}{\mapt{\Delta}}{S_1}{\wb}{\mapt{\Delta'}}{\map{P}} \label{eq:n7} \\
+		& & \horel{\mapt{\Gamma}}{\mapt{\Delta}}{S_2}{\wb}{\mapt{\Delta'}}{\map{P}} \label{eq:n8}
+	\end{eqnarray}
+	Combining~\eqref{eq:n7} with~\eqref{eq:n8}, by transitivity of $\wb$,
+	we have 
+	\begin{equation}
+		\horel{\mapt{\Gamma}}{\mapt{\Delta'}}{S_1}{\wb}{\mapt{\Delta'}}{S_2} \label{eq:n9}
+	\end{equation}
+	In turn, from~\eqref{eq:n9}
+	we infer that 
+	it must be the case that:
+	\begin{eqnarray*}
+		\mapt{\Gamma}; \mapt{\Delta'} \proves \map{P_1} \Barb{n} & \land & 
+		\mapt{\Gamma}; \mapt{\Delta'} \proves \map{P_1} \Barb{m} \label{eq:n10} \\
+		\mapt{\Gamma}; \mapt{\Delta'} \proves \map{P_2} \Barb{m} & \land & 
+		\mapt{\Gamma}; \mapt{\Delta'} \proves \map{P_2} \Barb{n} \label{eq:n11}
+	\end{eqnarray*}
+	which clearly contradict \eqref{eq:n3} and \eqref{eq:n4} above.
+	\qed
 \end{proof}
 

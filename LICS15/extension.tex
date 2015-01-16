@@ -8,7 +8,7 @@ with polyadicity.
 \subsection{Encoding from $\HOpp$ to $\HOp$}
 \label{subsec:hop}
 \noi 
-The calculus \HOpp extends  
+The calculus \HOpp 
 extends \HOp with higher-order abstractions and applications.
 
 \myparagraph{Syntax, Operational Semantics and Types.}
@@ -19,7 +19,11 @@ The rule $\appl{(\abs{x}{P})}{V} \red P \subst{V}{x}$
 replaces
 rule $\orule{App}$ in \figref{fig:reduction}.
 The syntax of types changes to include: 
-\[ L \bnfis \shot{U} \bnfbar \lhot{U}\]  
+\begin{center}
+\begin{tabular}{c}
+$L \bnfis \shot{U} \bnfbar \lhot{U}$
+\end{tabular}
+\end{center}
 We apply the straightforward extension of the typing  
 system to accomodate the extended type syntax 
 (we replace $C$ by $U$ in \trule{Abs} and $C$ by $U'$ in \trule{App} in \figref{fig:typerulesmy}).
@@ -87,7 +91,7 @@ are also precise.
 \\
 \hline
 {\bf Terms}: & 
-	\pmap{\appl{x}{(\abs{x} P)}}{3} &\!\!\!\!\defeq\!\!\!\!& \newsp{s}{\appl{x}{s} \Par \bout{\dual{s}}{\abs{x} \pmap{P}{3}} \inact}
+	\pmap{\appl{V}{(\abs{x} P)}}{3} &\!\!\!\!\defeq\!\!\!\!& \newsp{s}{\appl{V}{s} \Par \bout{\dual{s}}{\abs{x} \pmap{P}{3}} \inact}
 		\\
 &	\pmap{\bout{u}{\abs{\AT{x}{L}}{Q}} P}{3} &\!\!\!\!\defeq\!\!\!\!& \bout{u}{\abs{z}{\binp{z}{x} \pmap{Q}{3}}} \pmap{P}{3}
 %		\pmap{\bout{u}{\abs{x: C}{Q}} P}{3} &\!\!\!\!\defeq\!\!\!\!& \bout{u}{\abs{x}{\pmap{Q}{3}}} \pmap{P}{3}
@@ -129,12 +133,16 @@ $\HOp$ is extended from \HOp by including
 polyadic name passing $\tilde{n}$ and $\abs{\tilde{x}}{Q}$ in the syntax 
 of value $V$. The type syntax is extended to: 
 %
-\[
+\begin{center}
+\begin{tabular}{c}
+$
 L ::= \shot{\tilde{C}} \ | \ \lhot{\tilde{C}}
 \quad\quad S \ ::= \  \btout{\tilde{U}} S \bnfbar \btinp{\tilde{U}} S \bnfbar \cdots 
-\]
+$
+\end{tabular}
+\end{center}
 %
-\dk{The type system disallows polyadic shared names.}
+\NY{The type system disallows polyadic shared names as in \cite{tlca07,MostrousY15}.}
 Other definitions are straightforwardly extended. 
 \jpc{We slightly modify \defref{def:tenc} to capture that a 
 label $\ell$ may be mapped into a sequence of labels $\tilde{\ell}$.}
@@ -173,6 +181,11 @@ $\tyl{L}_{\HO}$
 and $\tyl{L}_{\sessp}$ 
 are also precise. 
 \end{theorem}
+\NY{
+By combining Thms.~\ref{f:enc:hopiptohopi} and~\ref{f:enc:phopiptohopi},
+we can easily extend the preciseness to 
+$\PHOpp$, the super-calculus of $\HOpp$ and $\PHOp$. % (denoted by   in Fig.~\ref{fig:express}) 
+}
 
 \begin{figure}[t]
 \small
@@ -223,14 +236,20 @@ are also precise.
 %		\shot{\big(\btinp{\tmap{C_1}{\mathsf{p}}} \cdots \btinp{\tmap{C_m}{\mathsf{p}}}\tinact\big)}
 \hline
 {\bf Labels:}\hspace{2.2cm}\\
-%		\\ % action mapping starts here
+%%		\\ % action mapping starts here
+%		\mapa{\news{\tilde{m}} \bactout{n}{m_1, \ldots, m_k}}^4 
+%		&\!\!\!\!\defeq\!\!\!\!&
+%		\news{\tilde{m_1}'}\bactout{n}{m_1} \cdots \news{\tilde{m_k}'}\bactout{n}{m_k} \\
+%		&& m_i \in \tilde{m} \Leftrightarrow \tilde{m_i}' = m_i \wedge
+%		\\
+%		&& m_i \notin \tilde{m} \Leftrightarrow \tilde{m_i}' = \es 
+%		\\
+%%		\\ % proposal for action mapping starts here
 		\mapa{\news{\tilde{m}} \bactout{n}{m_1, \ldots, m_k}}^4 
 		&\!\!\!\!\defeq\!\!\!\!&
-		\news{\tilde{m_1}'}\bactout{n}{m_1} \cdots \news{\tilde{m_k}'}\bactout{n}{m_k} \\
-		&& m_i \in \tilde{m} \Leftrightarrow \tilde{m_i}' = m_i \wedge
-		\\
-		&& m_i \notin \tilde{m} \Leftrightarrow \tilde{m_i}' = \es 
-		\\
+		\jpc{\ell_1, \ell_2, \cdots, \ell_k }\\
+		& &  (m_i \in \tilde{m}  \Leftrightarrow \ell_i = \news{m_i}\bactout{n}{m_i} ) ~ \lor \\
+		& & (m_i \not\in \tilde{m}  \Leftrightarrow  \ell_i = \bactout{n}{m_i}) \\
 %		\mapa{\bactinp{k}{k_1, \ldots, k_m}}^4 &\defeq&   \big\{\bactinp{k}{k_1}, \cdots, \bactinp{k}{k_m} \big\}\\
 		\mapa{\news{\tilde{m}} \bactout{n}{\abs{x_1, \ldots, x_m}{P}} }^4 
 		&\!\!\!\!\defeq\!\!\!\!&
@@ -250,9 +269,9 @@ are also precise.
 		&\!\!\!\!\defeq\!\!\!\!&
 		\bbout{u}{\abs{z}\binp{z}{x_1}\cdots .\binp{z}{x_m} \map{Q}^{4}} \map{P}^{4}
 		\\ 
-		\map{\appl{x}{(u_1, \cdots, u_m)}}^{4}
+		\map{\appl{V}{(u_1, \cdots, u_m)}}^{4}
 		&\!\!\!\!\defeq\!\!\!\!&
-		\newsp{s}{\appl{x}{s} \Par \bout{\dual{s}}{u_1} \cdots. \bout{\dual{s}}{u_m} \inact} 
+		\newsp{s}{\appl{V}{s} \Par \bout{\dual{s}}{u_1} \cdots. \bout{\dual{s}}{u_m} \inact} 
         \\ 
 	\end{array}
 \]
