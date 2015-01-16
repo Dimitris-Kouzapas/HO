@@ -1924,101 +1924,59 @@ Below we write $\repl{} P$ as a shorthand notation for $\recp{X}{(P \Par \varp{X
 	\qed
 \end{proof}
 
-\begin{comment}
-\begin{proposition}[Operational Correspondence, \HOp into \sessp]\rm
-	Let $P$ be an  $\HO$ process such that  $\Gamma; \emptyset; \Delta \proves P \hastype \Proc$.
-	
-	\begin{enumerate}[1.]
-		\item	Suppose $\horel{\Gamma}{\Delta}{P}{\hby{\ell_1}}{\Delta'}{P'}$.
-			Then we have:
+\begin{remark}
+	As stated in  \cite[Lem.\,5.2.2]{SangiorgiD:expmpa}, 
+	due to the replicated trigger,  
+	operational correspondence in \defref{def:ep} is refined to prove  
+	full abstraction: 
+	e.g., completeness of the case $\ell_1 \neq \tau$, is changed as follows.
+	Suppose:
 %
-			\begin{enumerate}[a)]
-				\item
-					If  $\ell_1 = \news{\tilde{m}}\bactout{n}{\abs{x}Q}$,
-					then $\exists \Gamma', R$ s.t. \\
-					$\tmap{\Gamma}{2}; \tmap{\Delta}{2} \proves  \pmap{P}{2} 
-					\hby{\mapa{\ell_1}^{2}}
-					\Gamma' \cdot \tmap{\Gamma}{2}; \tmap{\Delta'}{2} \proves \pmap{P'}{2} \Par R$, 
-					where either \\
-					$R = \repl{} \binp{a}{y} \binp{y}{x} \pmap{Q}{3}$
-					or $ R = \binp{s}{y} \binp{y}{x} \pmap{Q}{3}$.
+	\[
+		\stytraarg{\Gamma}{\ell_1}{\Delta}{P}{\Delta'}{P'}{}
+	\]
+%
+	If $\ell_1 = (\nu \tilde{m})\bactout{n}{\abs{ x}{R}}$, 
+	then %$\exists \ell_2, Q$ s.t. 
+%
+	\[
+		\stytraarg{\mapt{\Gamma}^2}{\ell_2}{\mapt{\Delta}^2}{\map{P}^2}{\mapt{\Delta'}^2}{Q}{}
+	\]
+%
+	where  $\ell_2 = (\nu a)\bactout{n}{a}$ and
+	$Q = \pmap{P' \Par  \repl{} \binp{a}{y} \binp{y}{x} R}{2}$.
 
-				\item	 
-					If
-					$\ell_1 = \bactinp{n}{\abs{y}Q}$
-					and $P' = P_0\subst{\abs{y}Q}{x}$
-					then $\exists m$ s.t. \\
-					$\horel{\tmap{\Gamma}{2}}{\tmap{\Delta}{2}}{\pmap{P}{2}}
-					{\hby{\mapa{\ell_1}^{2}}}
-					{\tmap{\Delta'}{2}}{\pmap{P_0}{2}\subst{m}{x}}$.
-					%where $\Gamma' = \tmap{\Gamma}{2}\subst{m}{x}$.
+	\noi Similarly, if  
+	%$\stytraarg{\Gamma}{\ell_1}{\Delta}{P}{\Delta'}{P'}{}$
+	%with 
+	$\ell_1 = \bactinp{n}{\abs{ x}{R}}$, 
+	then %$\exists \ell_2, Q$ s.t.
+	\[
+		\stytraarg{\mapt{\Gamma}^2}{\ell_2}{\mapt{\Delta}^2}{\map{P}^2}{\mapt{\Delta'}^2}{Q}{}
+	\]
+	where $\ell_2 = \bactout{n}{a}$ and
+	$\pmap{P'}{2} \wb \news{a}(Q \Par  \repl{} \binp{a}{y} \binp{y}{x} \pmap{R}{2})$.
+	Soundness is stated in a symmetric way.
+	%Operational correspondence for the encoding in~\defref{d:enc:hopitopi}
+	%is different from that in~\defref{def:ep}, due to triggers. 
+	%In particular,  completeness differs when $\ell_1 \neq \tau$.
+	%This way, e.g., if  
+	%$\stytraarg{\Gamma}{\ell_1}{\Delta}{P}{\Delta'}{P'}{}$
+	%with $\ell_1 = (\nu \tilde{m})\bactout{n}{\abs{ x}{R}}$, 
+	%then %$\exists \ell_2, Q$ s.t. 
+	%$\stytraarg{\mapt{\Gamma}^2}{\ell_2}{\mapt{\Delta}^2}{\map{P}^2}{\mapt{\Delta'}^2}{Q}{}$,
+	%where 
+	%$\ell_2 = (\nu a)\bactout{n}{a}$ and
+	%$Q = \pmap{P' \Par  \repl{} \binp{a}{y} \binp{y}{x} R}{2}$.
+	%This 
+	%statement, essential in proofs of full abstraction,
+	%is the same given by Sangiorgi~\cite{SangiorgiD:expmpa}.
+	%Completeness is as in~\defref{def:ep} when  $\ell_1 = \tau$.
+	%See~\cite{KouzapasPY15} for details.
+\end{remark}
 
-				\item	 
-					If  
-					%$\stytra{\Gamma}{\ell_1}{\Delta}{P}{\Delta'}{P_1 \Par P_2\subst{\abs{x}Q}{X}}$
-					$\ell_1 = \tau$ and $P' \scong \news{\tilde{m}}(P_1 \Par P_2\subst{\abs{x}Q}{X})$
-					then \\
-					$\horel{\tmap{\Gamma}{2}}{\tmap{\Delta}{2}}{\pmap{P}{2}}
-					{\hby{\tau}}
-					{\tmap{\Delta'}{2}}{\newsp{\tilde{m}}{\map{P_1}^{2} \Par \newsp{n}{\map{P_2}^{2}\subst{n}{x} \Par R}}}$,
-					\\
-					where either
-					$R = \repl{} \binp{a}{y} \binp{y}{x} \pmap{Q}{2}$ 
-					or $R = \binp{s}{y} \binp{y}{x} \pmap{Q}{2}$.
-
-				\item
-					If $\ell_1 = \btau$ then
-					$\horel{\tmap{\Gamma}{2}}{\tmap{\Delta}{2}}{\pmap{P}{2}}{\hby{\tau} \hby{\stau}}{\tmap{\Delta'}{2}}{\pmap{P'}{2}}$
-
-
-		\item	 
-			If  
-			%$\stytra{\Gamma}{\ell_1}{\Delta}{P}{\Delta'}{P_1 \Par P_2\subst{\abs{x}Q}{X}}$
-			$\ell_1 = \tau$ and $P' 	\not \scong \news{\tilde{m}}(P_1 \Par P_2\subst{\abs{x}Q}{X})$
-			then \\
-			$\mapt{\Gamma}^{2};\, \mapt{\Delta}^{2} \proves  \map{P}^{2}
-			\hby{\tau}
-			\mapt{\Gamma}^{2};\, \mapt{\Delta'}^{2} \proves  \map{P'}^{2}$.
-			
-				   			   
-%			   then  $\exists \ell_2$ s.t. 
-%			    $\wtytra{\mapt{\Gamma}^{3}}{\ell_2}{\mapt{\Delta}^{3}}{\map{P}^{3}}{\mapt{\Delta'}^{3}}{\map{P'}^{3}}$
-%			    and $\ell_2 = \mapa{\ell_1}^{3}$.
-		\end{enumerate}
-		\item Suppose 
-		$\stytra{\mapt{\Gamma}^{2}}{\ell_2}{\mapt{\Delta}^{2}}{\map{P}^{2}}{\mapt{\Delta'}^{2}}{R}$.
-		\begin{enumerate}[a)]
-		\item
-			%\footnote{$\mapt{\Gamma}^{2}$ in the following three items need adjustments.}
-			If  
-			$\ell_2 = \news{m}\bactout{n}{m}$
-			%$\stytra{\mapt{\Gamma}^{2}}{\news{m}\bactout{n}{m}}{\mapt{\Delta}^{2}}{\map{P}^{2}}{\mapt{\Delta'}^{2}}{R}$
-			then $\exists x, Q, P'$ s.t. \\
-			$P \hby{\bactout{n}{\abs{x}Q}} P'$
-			and $R = \map{P'}^{2} \Par R$, where 
-			either
-			$R = \repl{} \binp{a}{y} \binp{y}{x} \pmap{Q}{2}$ 
-			or $R = \binp{s}{y} \binp{y}{x} \pmap{Q}{2}$.
-
-		\item   
-			If  $\ell_2 = \bactinp{n}{m}$ 
-			%$\stytra{\mapt{\Gamma}^{2}}{\bactinp{n}{m}}{\mapt{\Delta}^{2}}{\map{P}^{2}}{\mapt{\Delta'}^{2}}{R}$
-			then $\exists x, Q, P'$ s.t. \\
-			$P \hby{\bactout{n}{\abs{x}Q}} P'\subst{\abs{x}Q}{X}$
-			and $R = \map{P'}^{2}\subst{m}{x}$.
-		
-		\item   
-			If  %$\stytra{\mapt{\Gamma}^{2}}{\tau}{\mapt{\Delta}^{2}}{\map{P}^{2}}{\mapt{\Delta'}^{2}}{R}$
-			$\ell_2 = \tau$ 
-			then $\exists P'$ s.t.
-			$P \hby{\tau} P'$
-			and $\horel{\mapt{\Gamma}^{2}}{\mapt{\Delta'}^{2}}{\map{P'}^{2}}{\wbf}{\mapt{\Delta'}^{2}}{R}$.
-	\end{enumerate}
-	\end{enumerate}
-\end{proposition}
-\end{comment}
-
-
+This last remark is stated formally in the next proposition:
+%
 \begin{proposition}[Operational Correspondence, \HOp into \sessp]\rm
 	Let $P$ be an  $\HOp$ process such that  $\Gamma; \emptyset; \Delta \proves P \hastype \Proc$.
 	
