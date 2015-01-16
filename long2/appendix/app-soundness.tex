@@ -5,93 +5,96 @@
 We state type soundness of our system.
 As our typed process framework is a sub-calculus of that considered
 by Mostrous and Yoshida, the proof of type soundness requires notions
-and properties which are specific instances of those already shown in~\cite{tlca07}.
+and properties which are specific instances of those already shown in~\cite{MostrousY15}.
 We begin by stating weakening and strengthening lemmas,
 which have standard proofs.
 
 %%% Weakening
-\begin{lemma}[Weakening - Lemma C.2 in M\&Y]\rm
+\begin{lemma}[Weakening - Lemma C.2 in~\cite{MostrousY15}]\rm
 	\label{l:weak}
 	\begin{enumerate}[$-$]
 		\item	If $\Gamma; \Lambda; \Delta \proves P \hastype \Proc$
 			and
-			$X \not\in \dom{\Gamma,\Lambda,\Delta}$
+			$x \not\in \dom{\Gamma,\Lambda,\Delta}$
 			then
-			$\Gamma\cat X: \shot{S}; \Lambda; \Delta \proves P \hastype \Proc$ 
+			$\Gamma\cat x: \shot{S}; \Lambda; \Delta \proves P \hastype \Proc$ 
 	\end{enumerate}
 \end{lemma}
 
-\begin{lemma}[Strengthening - Lemma C.3 and C.4 in M\&Y]\rm
+\begin{lemma}[Strengthening - Lemmas C.3 and C.4 in~\cite{MostrousY15}]\rm
 	\label{l:stren}
 	\begin{enumerate}[$-$]
-		\item	If $\Gamma \cat X: \shot{S}; \Lambda; \Delta \proves P \hastype \Proc$
+		\item	If $\Gamma \cat x: \shot{S}; \Lambda; \Delta \proves P \hastype \Proc$
 			and
-			$X \not\in \fpv{P}$ then
+			$x \not\in \fpv{P}$ then
 			$\Gamma; \Lambda; \Delta \proves P \hastype \Proc$
 
-		\item	If $\Gamma; \Lambda; \Delta \cat k: \tinact \proves P \hastype \Proc$
+		\item	If $\Gamma; \Lambda; \Delta \cat s: \tinact \proves P \hastype \Proc$
 			and
-			$k \not\in \fn{P}$
+			$s \not\in \fn{P}$
 			then
 			$\Gamma; \Lambda; \Delta \proves P \hastype \Proc$
 	\end{enumerate}
 \end{lemma}
 
-\begin{lemma}[Substitution Lemma - Lemma C.10 in M\&Y]\rm
+\begin{lemma}[Substitution Lemma - Lemma C.10 in~\cite{MostrousY15}]\rm
 	\label{l:subst}
 	\begin{enumerate}[1.]
 		\item	Suppose $\Gamma; \Lambda; \Delta \cat x:S  \proves P \hastype \Proc$ and
-			$k \not\in \dom{\Gamma, \Lambda, \Delta}$. 
-			Then $\Gamma; \Lambda; \Delta \cat k:S  \vdash P\subst{k}{x} \hastype \Proc$.
+			$s \not\in \dom{\Gamma, \Lambda, \Delta}$. 
+			Then $\Gamma; \Lambda; \Delta \cat s:S  \vdash P\subst{s}{x} \hastype \Proc$.
 
 		\item	Suppose $\Gamma \cat x:\chtype{U}; \Lambda; \Delta \proves P \hastype \Proc$ and
 			$a \notin \dom{\Gamma, \Lambda, \Delta}$. 
 			Then $\Gamma \cat a:\chtype{U}; \Lambda; \Delta   \vdash P\subst{a}{x} \hastype \Proc$.
 
-		\item	Suppose $\Gamma; \Lambda_1 \cat X:\lhot{C}; \Delta_1  \proves P \hastype \Proc$ 
+		\item	Suppose $\Gamma; \Lambda_1 \cat x:\lhot{C}; \Delta_1  \proves P \hastype \Proc$ 
 			and $\Gamma; \Lambda_2; \Delta_2  \proves V \hastype \lhot{C}$ with 
 			$\Lambda_1, \Lambda_2$ and $\Delta_1, \Delta_2$ defined.  
-			Then $\Gamma; \Lambda_1 \cat \Lambda_2; \Delta_1 \cat \Delta_2  \proves P\subst{V}{X} \hastype \Proc$.
+			Then $\Gamma; \Lambda_1 \cat \Lambda_2; \Delta_1 \cat \Delta_2  \proves P\subst{V}{x} \hastype \Proc$.
 
-		\item	Suppose $\Gamma \cat X:\shot{C}; \Lambda; \Delta  \proves P \hastype \Proc$ and
+		\item	Suppose $\Gamma \cat x:\shot{C}; \Lambda; \Delta  \proves P \hastype \Proc$ and
 			$\Gamma; \emptyset ; \emptyset  \proves V \hastype \shot{C}$.
-			Then $\Gamma; \Lambda; \Delta  \proves P\subst{V}{X} \hastype \Proc$.
+			Then $\Gamma; \Lambda; \Delta  \proves P\subst{V}{x} \hastype \Proc$.
 		\end{enumerate}
 \end{lemma}
 
 \begin{proof}
 	In all four parts, we proceed by induction on the typing for $P$,
 	with a case analysis on the last applied rule. 
-	Parts (1) and (2) are standard and therefore omitted. 
-
-	In Part (3), we content ourselves by detailing only the case in
-	which the last applied rule is \trule{App}. 
-	Then we have $P = \appl{X}{\mytilde{k}}$. By inversion on the first assumption 
-	we infer:
-	\[
-	\tree{\tree{}{\Gamma;\, \{ X:\lhot{\mytilde{C}}\} ;\, \emptyset   \proves X \hastype \lhot{\mytilde{C}}} \quad
-	\tree{}{\Gamma;\,  \Lambda'   ;\, \Delta' \cat \mytilde{k}:\mytilde{C} \proves \mytilde{k} \hastype \mytilde{C}}
-	}{
-	\Gamma;\,  \Lambda' \cat X:\lhot{\mytilde{C}};\, \Delta' \cat \mytilde{k}:\mytilde{C}  \proves \appl{X}{\mytilde{k}} \hastype \Proc}
-	\]
-	By inversion on the second assumption we infer that either
-	(i)\,$V = Y$ (for some process variable $Y$) or 
-	(ii)\,$V = \abs{\mytilde{z}}Q$, for some $Q$ such that
+%	Parts (1) and (2) are standard and therefore omitted. 
 %
-	\begin{equation}
-		\Gamma; \Lambda_2 ; \Delta_2 \cat \mytilde{z}:\mytilde{C}  \proves Q \hastype \Proc \label{eq:subseq2}\\
-	\end{equation}
-%
-	In possibility\,(i), we have a simple substitution on process variables and the thesis follows easily. 
-	In possibility\,(ii), we observe that $P\subst{V}{X} = \appl{X}{\mytilde{k}}\subst{\abs{\mytilde{z}}Q}{X} = Q\subst{\mytilde{k}}{\mytilde{z}}$.
-	The thesis then follows by using Lemma~\ref{lem:subst}\,(1) with 
-	the second premise of the typing of $\appl{X}{\mytilde{k}}$
-	and \eqref{eq:subseq2} above to infer 
-	\begin{equation*}
-		\Gamma; \Lambda_2 ; \Delta_2 \cat \mytilde{k}:\mytilde{C}  \proves Q \subst{\mytilde{k}}{\mytilde{z}} \hastype \Proc .
-	\end{equation*}
-%
-	The proof of Part (4) follows similar lines as that of Part (3).
+%	In Part (3), we content ourselves by detailing only the case in
+%	which the last applied rule is \trule{App}. 
+%	Then we have $P = \appl{V}{u}$. By inversion on the first assumption 
+%	we infer:
+%	\[
+%	\tree{
+%	\tree{}{
+%	\Gamma;\, \Lambda_1 \cat x:\lhot{C} ;\, \Delta_{11}   \proves V \hastype \lhot{C}} \quad
+%	\tree{}{\Gamma;\,  \emptyset   ;\, \Delta_{12}  \proves u \hastype C}
+%	}{
+%	\Gamma;\,  \Lambda_1 \cat x:\lhot{C};\, \Delta_1    \proves \appl{V}{u} \hastype \Proc}
+%	\]
+%	where $\Delta_1 = \Delta_{11} \cat \Delta_{12}$.
+%	By inversion on the second assumption we infer that either
+%	(i)\,$V = y$ (for some   variable $y$) or 
+%	(ii)\,$V = \abs{z}Q$, for some $Q$ such that
+%%
+%	\begin{equation}
+%		\Gamma'; \Lambda_1 \cat x:\lhot{C} ; \Delta_{11} \cat \Delta' \proves Q \hastype \Proc \label{eq:subseq2}\\
+%	\end{equation}
+%%
+%	In possibility\,(i), we have a simple substitution on process variables and the thesis follows easily. 
+%	In possibility\,(ii), we observe that $P\subst{V}{X} = \appl{X}{\mytilde{k}}\subst{\abs{\mytilde{z}}Q}{X} = Q\subst{\mytilde{k}}{\mytilde{z}}$.
+%	The thesis then follows by using Lemma~\ref{lem:subst}\,(1) with 
+%	the second premise of the typing of $\appl{X}{\mytilde{k}}$
+%	and \eqref{eq:subseq2} above to infer 
+%	\begin{equation*}
+%		\Gamma; \Lambda_2 ; \Delta_2 \cat \mytilde{k}:\mytilde{C}  \proves Q \subst{\mytilde{k}}{\mytilde{z}} \hastype \Proc .
+%	\end{equation*}
+%%
+%	The proof of Part (4) follows similar lines as that of Part (3).
 	\qed
 \end{proof}
 
@@ -110,25 +113,26 @@ which have standard proofs.
 %\end{definition}
 
 We now state the instance of type soundness that we
-can derive from the Mostrous and Yoshida system.
-It is worth noticing that M\&Y have a slightly richer
-definition of structural congruence.
+can derive from~\cite{MostrousY15}.
+It is worth noticing 
+the 
+definition of structural congruence in~\cite{MostrousY15} is richer. 
 Also, their statement for subject reduction relies on an 
 ordering on typings associated to queues and other 
-runtime elements (such extended typings are denoted $\Delta$ by M\&Y).
+runtime elements (such extended typings are denoted $\Delta$ in~\cite{MostrousY15}).
 Since we are working with synchronous communication we can omit such an ordering.
 
 We now repeat the statement of
-Theorem~\ref{t:sr} in Page~\pageref{t:sr}:
+Theorem~\ref{thm:sr} in Page~\pageref{thm:sr}:
 
-\begin{theorem}[Type Soundness - Theorem~\ref{t:sr}]%\rm
+\begin{theorem}[Type Soundness - Theorem~\ref{thm:sr}]%\rm
 	\begin{enumerate}[1.]
 		\item	(Subject Congruence) Suppose $\Gamma; \Lambda; \Delta \proves P \hastype \Proc$.
 			Then $P \scong P'$ implies $\Gamma; \Lambda; \Delta \proves P' \hastype \Proc$.
 
 		\item	(Subject Reduction) Suppose $\Gamma; \es; \Delta \proves P \hastype \Proc$
 			with
-			well-typed $\Delta$. \\
+			balanced $\Delta$. \\
 			Then $P \red P'$ implies $\Gamma; \es; \Delta'  \proves P' \hastype \Proc$
 			and $\Delta = \Delta'$ or $\Delta \red \Delta'$.
 
@@ -148,7 +152,8 @@ Theorem~\ref{t:sr} in Page~\pageref{t:sr}:
 	   this assumption can be derived; other cases are similar or simpler:
 	   \[
 	   \tree{
-	   \tree{\Gamma;\, \emptyset ;\, \Delta \cat x:S \proves Q  \hastype \Proc }
+	   \tree{\Gamma;\, \emptyset ;\, \Delta \cat \{x:S\} \proves Q  \hastype \Proc \quad 
+	   \Gamma';\, \emptyset ;\, \{x:S\} \proves x  \hastype S}
 	   {
 	   \Gamma;\, \emptyset ;\, \Delta \proves \abs{x}{Q}  \hastype \lhot{S} }
 	   \qquad
@@ -159,7 +164,7 @@ Theorem~\ref{t:sr} in Page~\pageref{t:sr}:
 	   }
 	   \]
 	  Then, by combining premise
-	   $\Gamma;\, \emptyset ;\, \Delta \cat x:S \proves Q  \hastype \Proc$
+	   $\Gamma;\, \emptyset ;\, \Delta \cat \{x:S\} \proves Q  \hastype \Proc$
 	   with
 	   the substitution lemma (Lemma~\ref{lem:subst}(1)),
 	   we obtain 
@@ -391,7 +396,7 @@ Theorem~\ref{t:sr} in Page~\pageref{t:sr}:
 			The proof is standard, exploiting induction hypothesis. 
 
 		\item	Case \orule{Cong}:
-			follows from Theorem~\ref{t:sr}\,(1).
+			follows from Theorem~\ref{thm:sr}\,(1).
 	\end{enumerate}
 	\qed
 \end{proof}
