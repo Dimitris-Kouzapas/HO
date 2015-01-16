@@ -16,7 +16,7 @@ Later on, using the \emph{environmental} transition semantics,
 we can define a typed transition relation to formalise 
 how a process interacts with a process in its environment. The interaction
 is defined on action $\ell$:
-
+\begin{center}
 \begin{tabular}{l}
 	$\ell	\bnfis   \tau 
 		\bnfbar	\bactinp{n}{V} 
@@ -24,7 +24,7 @@ is defined on action $\ell$:
 		\bnfbar	\bactsel{n}{l} 
 		\bnfbar	\bactbra{n}{l} $
 \end{tabular}
-
+\end{center}
 \noi The internal action is defined by label $\tau$.
 Action $\news{\tilde{m}} \bactout{n}{V}$ denotes the sending of value $V$
 over channel $n$ with
@@ -199,6 +199,9 @@ is typed with $\chtype{U}$. Conditions for
 the output $V$ are identical to those
 % the requirements 
 for rule~$\eltsrule{SSnd}$.
+\NY{We sometimes annotate the output action 
+$\news{\tilde{m}} \bactout{n}{V}$
+with the type of $V$ as $\news{\tilde{m}} \bactout{n}{\AT{V}{U}}$.}
 
 \myparagraph{Other Actions}
 Rules $\eltsrule{Sel}$ and $\eltsrule{Bra}$ describe actions for
@@ -385,7 +388,9 @@ $\horel{\Gamma}{\Delta_1}{P_1}{\by{\ell}}{\Delta_2}{P_2}$
 (1) $P_1 \by{\ell} P_2$ and (2) 
 $(\Gamma, \emptyset, \Delta_1) \by{\ell} (\Gamma, \emptyset, \Delta_2)$ 
 with $\Gamma; \emptyset; \Delta_i \proves P_i \hastype \Proc$ 
-($i=1,2$). 
+($i=1,2$).
+%\dk{We sometimes annotated the output action with
+%the type of value $V$ as in $\tilde{m} \bactout{n}{V: U}$.}
 %
 % Efficient 
 %\item 
@@ -723,7 +728,7 @@ Consider typed processes $P_1, P_2$:
 %
 We can show that $\Gamma; \es; \Delta \cat s: \btinp{\shot{(\btinp{C} \tinact)}} \tinact \proves P_i \hastype \Proc$ ($i \in \{1,2\}$).
 If the above processes input and substitute over $x$
-the characteristic value $\dk{\omapchar{\shot{(\btinp{C} \tinact})} =} \abs{x}{\binp{x}{y} \inact}$, 
+the characteristic value $\dk{\omapchar{\shot{(\btinp{C} \tinact)}} =} \abs{x}{\binp{x}{y} \inact}$, 
 then both processes evolve into:%(\ref{eq:5}) and (\ref{eq:6}) in become:
 \begin{center}
 \begin{tabular}{c}
@@ -739,8 +744,8 @@ which may be used to distinguish them.
 For example, if 
 $P_1$ and $P_2$ input 
 $\abs{x} \newsp{s_3}{\bout{a}{s_3} \binp{x}{y} \inact}$ with
-$\Gamma; \es; \Delta \proves s,\dual{s} \hastype \tinact, \tinact$
-then their derivatives are not contextually bisimilar. 
+$\Gamma; \es; \Delta \proves s \hastype \tinact$,
+then their derivatives are not bisimilar. 
 
 Observing only the characteristic value 
 results in an over-discriminating bisimulation.
@@ -878,9 +883,9 @@ $\horel{\Gamma}{\Delta_1}{P_1}{\by{\ell}}{\Delta_2}{P_2}$.
 
 \myparagraph{The Two Bisimulations.} We now define 
 higher-order bisimulation, 
-a more tractable bisimulation for $\HO$ and $\HOp$.%-calculi. 
-\dk{The two bisimulations differ on the fact that
-they use the different (but equivalent)
+a more tractable bisimulation for $\HO$ and $\HOp$.
+ \dk{The two bisimulations differ on the fact that
+they use the different 
 trigger processes: $\htrigger{t}{V}$ and $\ftrigger{t}{V}{U}$.}
 
 \smallskip 
@@ -924,19 +929,19 @@ characteristic trigger processes.
 \smallskip 
 
 \begin{definition}[Characteristic Bisimulation]\rm
-\label{d:fwb}
-The first order bisimilarity, denoted by $\fwb$, is defined \jpc{by} replacing 
-Clause 1) in \defref{d:hbw} with the following clause:\\[1mm]
-whenever 
-$\horel{\Gamma}{\Delta_1}{P_1}{\hby{\news{\tilde{m_1}} \bactout{n}{V_1}}}{\Delta_1'}{P_2}$ with $\Gamma; \es; \Delta \proves V_1 \hastype U$,  
-there exits 
-$\horel{\Gamma}{\Delta_2}{Q_1}{\Hby{\news{\tilde{m_2}}\bactout{n}{V_2}}}{\Delta_2'}{Q_2}$ with $\Gamma; \es; \Delta' \proves V_2 \hastype U$,  
-such that, for fresh $t$, \\[1mm]
-$\begin{array}{lrlll}
-\Gamma; \Delta''_1  \proves  {\newsp{\tilde{m_1}}{P_2 \Par 
-\ftrigger{t}{V_1}{U_1}}}
-\ \Re 
-\ \Delta''_2 \proves {\newsp{\tilde{m_2}}{Q_2 \Par \ftrigger{t}{V_2}{U_2}}}
+	\label{d:fwb}
+	The first order bisimilarity, denoted by $\fwb$, is defined \jpc{by} replacing 
+	Clause 1) in \defref{d:hbw} with the following clause:\\[1mm]
+	whenever 
+	$\horel{\Gamma}{\Delta_1}{P_1}{\hby{\news{\tilde{m_1}} \bactout{n}{\dk{V_1: U}}}}{\Delta_1'}{P_2}$ %with $\Gamma; \es; \Delta \proves V_1 \hastype U$,  
+	then there exists 
+	$\horel{\Gamma}{\Delta_2}{Q_1}{\Hby{\news{\tilde{m_2}}\bactout{n}{\dk{V_2: U}}}}{\Delta_2'}{Q_2}$ %with $\Gamma; \es; \Delta' \proves V_2 \hastype U$,  
+	such that, for fresh $t$, \\[1mm]
+	$\begin{array}{lrlll}
+	\Gamma; \Delta''_1  \proves  {\newsp{\tilde{m_1}}{P_2 \Par 
+	\ftrigger{t}{V_1}{U_1}}}
+	\ \Re 
+	\ \Delta''_2 \proves {\newsp{\tilde{m_2}}{Q_2 \Par \ftrigger{t}{V_2}{U_2}}}
 \end{array}
 $
 \end{definition}

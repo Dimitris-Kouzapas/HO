@@ -1,12 +1,12 @@
 % !TEX root = main.tex
 %\newpage
 \section{Session Types for $\HOp$}
-\label{s:types}
+\label{sec:types}
 
-In this section we define a session type system for
+In this section we define a session typing system for
 $\HOp$ and establish its main properties. We use as
 a reference the type system for higher-order session processes 
-developed by Mostrous and Yoshida~\cite{tlca07}.
+developed by Mostrous and Yoshida~\cite{tlca07,mostrous09sessionbased}.
 Our system is simpler than that in~\cite{tlca07}, in order to distil the key
 features of higher-order communication in a session-typed setting.
 
@@ -28,7 +28,7 @@ We define the syntax of session types for \HOp.
 		\textrm{(value)} & U & \bnfis &		C \bnfbar L 
 		\\
 
-		\textrm{(channels)} & C & \bnfis &	S \bnfbar \chtype{S} \bnfbar \chtype{L}
+		\textrm{(Names)} & C & \bnfis &	S \bnfbar \chtype{S} \bnfbar \chtype{L}
 		\\
 
 		\textrm{(lambda)} & L & \bnfis &	\shot{C} \bnfbar \lhot{C}
@@ -41,56 +41,56 @@ We define the syntax of session types for \HOp.
 	\]
 \end{definition}
 %
-\noi Values range over symbol $U$ which is defined by
-first order values $C$ and higher order values $L$.
-\noi First order values $C$ are used to type channels;
-session types $S$ for session channels and shared types
-$\chtype{S}$ or $\chtype{L}$ for shared channels that
-carry session values and higher order values, respectively.
-Higher-order types $L$ are used to type abstractions;
+\noi \myparagraph{Types for Values}
+Types for values range over symbol $U$ which includes
+first-order types $C$ and higher-order types $L$.
+First-order types $C$ are used to type names;
+session types $S$ type session names and shared types
+$\chtype{S}$ or $\chtype{L}$ type shared names that
+carry session values and higher-order values, respectively.
+Higher-order types $L$ are used to type abstraction values;
 $\shot{C}$ and $\lhot{C}$ denote
 shared and linear abstraction types, respectively.
-%We write $U$ to denote types for values; first-order values and 
-%higher-order values.
 
-The syntax of session types $S$ follows the usual (binary) session
-types with recursion~\cite{honda.vasconcelos.kubo:language-primitives,GH05}.
-%to denote usual (binary) session types with recursion. 
-Session type $\btout{U} S$ is assigned to a channel that first sends a 
-value of type $U$ and then follows
+\myparagraph{Session Types}
+The syntax of session types $S$ follows the usual
+(binary) session types with
+recursion~\cite{honda.vasconcelos.kubo:language-primitives,GH05}.
+{\em Output type} $\btout{U} S$ is assigned to a name that
+first sends a value of type $U$ and then follows
 the type described by $S$.
-Dually, type $\btinp{U} S$ is assigned to a channel  
+Dually, the {\em input type} $\btinp{U} S$ is assigned to a name
 that first receives a value of type $U$ and then continues as $S$. 
 Session types for labelled choice and selection, 
 %are standard: they are 
-written $\btbra{l_i:S_i}_{i \in I}$ and $\btsel{l_i:S_i}_{i \in I}$ respectively,
+written $\btbra{l_i:S_i}_{i \in I}$ and $\btsel{l_i:S_i}_{i \in I}$, respectively,
 require a set of types $\set{S_i}_{i \in I}$ that correspond to a set of
 labels $\set{i \in I}_{i \in I}$. 
-Recursive session types are defined using the primitive recursor
-and consider usual well-formedness conditions.
+{\em Recursive session types} are defined using the primitive recursor.
+We that a {\em type variable} is guarded, i.e.~$\trec{t}{\vart{t}}$ is not allowed.
 We let $\mathsf{T}$ to be the set of all well-formed types and
+Type $\tinact$ is the termination type.
 \ST to be the set of all well-formed session types.
 
+\begin{remark}[Restriction on Types for Values]
+	The syntax for value types is restricted
+	to dissallow types of the form:
+	\begin{enumerate}[$\bullet$]
+		\item	$\chtype{\chtype{U}}$: shared names
+			cannot carry shared names; and
 
-Note that the syntax for value types is restricted
-to dissallow types of the form:
-\begin{enumerate}[i)]
-	\item	$\chtype{\chtype{U}}$: shared names
-		cannot carry shared names; and
+		\item  $\shot{U}$: abstractions do not
+			bind higher-order variables.
+	\end{enumerate}
+\end{remark}
 
-	\item  $\shot{U}$: abstractions do not
-		bind higher-order variables.
-\end{enumerate}
-% $\chtype{U}$ and ,
-%meaning that shared names cannot carry shared names and
-%we that do not apply abstractions over abstractions.
-
-
-The restricted values syntax is a main difference with respect to
-the type structure  in~\cite{tlca07}, which 
-supports the arrow types $U \sharedop T$ and 
-$U \lollipop T$, where $T$ denotes an arbitrary term 
-(i.e., a value or a process).
+The difference between the syntax of process
+in \HOp with the syntax of processes in~\cite{tlca07}
+is also reflected on the two corresponding type syntax;
+the type structure  in~\cite{tlca07}, 
+supports the arrow types of the form $U \sharedop T$ and 
+$U \lollipop T$, where $T$ denotes an arbitrary type of a term 
+(i.e.~a value or a process).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %  DUALITY
@@ -122,7 +122,7 @@ We first require the notion of type equivalence.
 	of $F$ exists. Let type equivalence be defined as $\iso = \nu X. F(X)$.
 \end{definition}
 %
-In essence type equivalence is a co-inductive definition that
+\noi Type equivalence is in a essence a co-inductive definition that
 equates types up-to recursive unfolding.
 
 The duality relation is defined in terms of type equivalence.
@@ -144,33 +144,35 @@ The duality relation is defined in terms of type equivalence.
 	of $F$ exists. Let duality be defined as $\dualof = \nu X. F(X)$.
 \end{definition}
 %
-The co-inductive definition of duality relates session types
-up-to recursive unfolding. Dual session types are prefixed
-on dual constructors and carry equivalent types.
+Duality is applied co-inductively to session types
+up-to recursive unfolding.
+Dual session types are prefixed
+on dual session type constructors
+($!$ is dual to $?$ and $\oplus$ is dual to $\&$)
+that carry equivalent types.
+%The co-inductive definition of duality relates
+%session types up-to recursive unfolding.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %  TYPING SYSTEM
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\subsection{Environments and Judgements}
-%Following our decision of focusing on functions
-%$\shot{U}$ and $\lhot{U}$, our environments are
-%simpler than those in~\cite{tlca07}:
-%
+\subsection{Type Environments and Judgements}
 We follow~\cite{tlca07},
 to defined the typing environment.
 %
-\begin{definition}[Typing environent]\rm
+\begin{definition}[Typing environment]\rm
 	We define the {\em shared type environment} $\Gamma$,
-	and the linear environments
-	{\em linear type environment} $\Lambda$ and
+	the {\em linear type environment} $\Lambda$, and
 	the {\em session type environment} $\Delta$ as:
 	\[
 	\begin{array}{llcl}
-		\text{Linear}	& \Lambda & \bnfis &	\emptyset \bnfbar \Lambda \cat \varp{X}: \lhot{C}\\
-		\text{Session}	& \Delta  & \bnfis &	\emptyset \bnfbar \Delta \cat u:S \\
-		\text{Shared}	& \Gamma  & \bnfis &	\emptyset \bnfbar \Gamma \cat \varp{X}: \shot{C} \bnfbar \Gamma \cat u: \chtype{S} \bnfbar
-							\Gamma \cat u: \chtype{L} \bnfbar \Gamma \cat \rvar{X}: \Delta
+		\text{(Shared)}		& \Gamma  & \bnfis &	\emptyset \bnfbar \Gamma \cat x: \shot{C} \bnfbar \Gamma \cat u: \chtype{S} \bnfbar
+								\Gamma \cat u: \chtype{L} \bnfbar \Gamma \cat \varp{X}: \Delta
+		\\
+		\text{(Linear)}		& \Lambda & \bnfis &	\emptyset \bnfbar \Lambda \cat x: \lhot{C}
+		\\
+		\text{(Session)}	& \Delta  & \bnfis &	\emptyset \bnfbar \Delta \cat u:S
 	\end{array}
 	\]
 	We imply
@@ -185,17 +187,13 @@ to defined the typing environment.
 and processes $P$:
 %
 \[	\begin{array}{c}
-		\Gamma; \Lambda; \Delta \proves V \hastype U \qquad \qquad \qquad \Gamma; \Lambda; \Delta \proves P \hastype \Proc
+		\Gamma; \Lambda; \Delta \proves V \hastype U \qquad \qquad \qquad \qquad \Gamma; \Lambda; \Delta \proves P \hastype \Proc
 	\end{array}
 \]
 %
-%\noi
-%As expected, weakening, contraction, and exchange principles apply to $\Gamma$;
-%environments $\Lambda$ and $\Delta$ behave linearly, and are only subject to exchange.
-%We require that the domains of $\Gamma, \Lambda$ and $\Delta$ are pairwise distinct.
-The first judgement asserts that under environment $\Gamma; \Lambda; \Delta$
+\noi The first judgement asserts that under environment $\Gamma; \Lambda; \Delta$
 values $V$ have type $U$,
-whereas the second judgement assertss that under environment $\Gamma; \Lambda; \Delta$
+whereas the second judgement asserts that under environment $\Gamma; \Lambda; \Delta$
 process $P$ has the typed process type $\Proc$.
 
 %%%%%%%%%%%
@@ -332,9 +330,10 @@ with $y$ being of order $k-1$.
 \subsection{Type Soundness}
 
 %We state results for type safety:
-Type safety result are instances of more general statements already proved by
+Type safety result are instances of more general
+statements already proved by
 Mostrous and Yoshida~\cite{tlca07} in the asynchronous case.
-
+%
 \begin{lemma}[Substitution Lemma - Lemma C.10 in M\&Y]\rm
 	\label{lem:subst}
 	\begin{enumerate}[1.]
@@ -359,53 +358,68 @@ Mostrous and Yoshida~\cite{tlca07} in the asynchronous case.
 			$\Gamma; \Lambda; \Delta \proves P\subst{V}{x} \hastype \Proc$.
 		\end{enumerate}
 \end{lemma}
-
+%
 \begin{proof}
 	By induction on the typing for $P$, with a case analysis on the last used rule. 
 	\qed
 \end{proof}
 
+We are interested in session environments that whenever they contain dual endpoints
+their types are dual:
+%
 \begin{definition}[Balanced Session Environment]\label{d:wtenv}\rm
-%	Let $\Delta$ be a session environment.
 	We say that session environment $\Delta$ is {\em balanced} if
 	$s: S_1, \dual{s}: S_2 \in \Delta$ implies $S_1 \dualof S_2$.
 \end{definition}
-
+%
+The type soundness relies on the following auxiliary definition:
+%
 \begin{definition}[Session Environment Reduction]\rm
 	\label{def:ses_red}
 	The reduction relation $\red$ on session environments is defined as:
 %
-	\begin{enumerate}[$-$]
-		\item	$\Delta \cat s: \btout{U} S_1 \cat \dual{s}: \btinp{U} S_2 \red \Delta \cat s: S_1 \cat \dual{s}: S_2$
-		\item	$\Delta \cat s: \btsel{l_i: S_i}_{i \in I} \cat \dual{s}: \btbra{l_i: S_i'}_{i \in I} \red \Delta \cat s: S_k \cat \dual{s}: S_k', \quad k \in I$.
-	\end{enumerate}
+\[
+	\begin{array}{rcl}
+		\Delta \cat s: \btout{U} S_1 \cat \dual{s}: \btinp{U} S_2 &\red& \Delta \cat s: S_1 \cat \dual{s}: S_2
+		\\
+		\Delta \cat s: \btsel{l_i: S_i}_{i \in I} \cat \dual{s}: \btbra{l_i: S_i'}_{i \in I} &\red& \Delta \cat s: S_k \cat \dual{s}: S_k', \quad k \in I
+	\end{array}
+\]
+%
+	We write $\red^\ast$ for the multistep environment reduction.
 \end{definition}
 %
 We now state the main soundness result as an instance
-of type soundness from the Mostrous and Yoshida system.
-It is worth noticing that M\&Y have a slightly richer
+of type soundness from the system in~\cite{tlca07}.
+It is worth noticing that in~\cite{tlca07} has a slightly richer
 definition of structural congruence.
 Also, their statement for subject reduction relies on an
 ordering on typing associated to queues and other 
-runtime elements (such extended typing is denoted as $\Delta$ by M\&Y).
+runtime elements. %(such extended typing is denoted as $\Delta$ by M\&Y).
 Since we are dealing with synchronous semantics we can omit such an ordering.
+The type soundness result implies soundness for the sub-calculi
+\HO, \sessp, and $\CAL^{\minussh}$
 
-\begin{theorem}[Type Soundness - Theorem 7.3 in M\&Y]\label{t:sr}\rm
+\begin{theorem}[Type Soundness - Theorem 7.3 in M\&Y]\rm
+	\label{thm:sr}
 %
 	\begin{enumerate}[1.]
 		\item	(Subject Congruence)
 			$\Gamma; \es; \Delta \proves P \hastype \Proc$
+			and
+			$P \scong P'$
 			implies
-			$P \scong P'$ implies $\Gamma; \es; \Delta \proves P' \hastype \Proc$.
+			$\Gamma; \es; \Delta \proves P' \hastype \Proc$.
 
 		\item	(Subject Reduction)
 			$\Gamma; \es; \Delta \proves P \hastype \Proc$
 			with
 			balanced $\Delta$
-			implies
-			$P \red P'$ implies $\Gamma; \es; \Delta'  \proves P' \hastype \Proc$
+			and
+			$P \red P'$
+			implies $\Gamma; \es; \Delta'  \proves P' \hastype \Proc$
 			and either (i)~$\Delta = \Delta'$ or (ii)~$\Delta \red \Delta'$
-			(with $\Delta'$ balanced).
+			with $\Delta'$ balanced.
 	\end{enumerate}
 \end{theorem}
 
