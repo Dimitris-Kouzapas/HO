@@ -1488,3 +1488,140 @@ as in Page \pageref{prop:typepres_HOp_to_FO}:
 %\qed
 %\end{proof}
 
+
+\subsection{Properties for $\enco{\pmap{\cdot}{4}, \tmap{\cdot}{4}, \mapa{\cdot}^{4}}$}
+\label{app:pHOp_to_HOp}
+
+We study the properties of the typed encoding in
+\defref{def:enc:pHOp_to_HOp} (Page~\pageref{def:enc:pHOp_to_HOp}).
+
+We repeat the statement of \propref{prop:typepres_pHOp_to_HOp}, as in Page~\pageref{prop:typepres_pHOp_to_HOp}:
+
+\begin{proposition}[Type Preservation. From \pHOp to \HOp]\rm
+	\label{app:prop:typepres_pHOp_to_HOp}
+	Let $P$ be a \pHOp process.
+	If $\Gamma; \emptyset; \Delta \proves P \hastype \Proc$ then 
+	$\tmap{\Gamma}{4}; \emptyset; \tmap{\Delta}{4} \proves \pmap{P}{4} \hastype \Proc$. 
+\end{proposition}
+
+\begin{proof}
+	By induction on the inference $\Gamma; \emptyset; \Delta \proves P \hastype \Proc$.
+	We examine two representative cases, using biadic communications.
+
+	\begin{enumerate}[1.]
+		\item	Case $P = \bout{n}{V} P'$ and 
+			$\Gamma; \emptyset; \Delta_1 \cat \Delta_2 \cat n:\btout{\lhot{(C_1,C_2)}} S \proves \bout{n}{V} P' \hastype \Proc$.
+			Then either $V = Y$ or $V = \abs{x_1,x_2}Q$, for some $Q$.
+			The case $V = Y$ is immediate; we give details for the case $V = \abs{x_1,x_2}Q$, for which we have the following typing:
+			\[
+				\tree{
+					\tree{}{
+						\Gamma; \emptyset; \Delta_1 \cat n:S \proves P' \hastype \Proc
+					}
+					\quad
+					\tree{
+						\Gamma; \emptyset; \Delta_2 \cat x_1: C_1 \cat x_2:C_2 \proves Q \hastype \Proc
+					}{
+						\Gamma; \emptyset; \Delta_2 \proves \abs{x_1,x_2}Q \hastype \lhot{(C_1,C_2)}
+					}
+				}{
+					\Gamma; \emptyset; \Delta_1 \cat \Delta_2 \cat n:\btout{\lhot{(C_1,C_2)}} S \proves \bout{k}{\abs{x_1,x_2}Q} P \hastype \Proc
+				}
+		\]
+		We now show the typing for $\pmap{P}{4}$.
+		By IH we have both:
+%
+		\[
+			\tmap{\Gamma}{4}; \emptyset; \tmap{\Delta_1}{4} \cat n: \tmap{S}{4} \proves \pmap{P'}{4} \hastype \Proc
+			\qquad
+			\tmap{\Gamma}{4}; \emptyset; \tmap{\Delta_2}{4} \cat x_1: \tmap{C_1}{4} \cat x_2:\tmap{C_2}{4} \proves \pmap{Q}{4} \hastype \Proc
+		\]
+%
+		Let $L = \lhot{(C_1,C_2)}$. 
+		By \defref{def:enc:pHOp_to_HOp} we have  
+		$\tmap{L}{4} = \lhot{\big(\btinp{\tmap{C_1}{4}} \btinp{\tmap{C_2}{4}}\tinact\big)}$
+		and
+		$\pmap{P}{4} = \bbout{n}{\abs{z}\binp{z}{x_1}\binp{z}{x_2} \pmap{Q}{4}} \pmap{P'}{4}$.
+		We can now infer the following typing derivation:
+%
+		\begin{eqnarray}
+			\label{prop:tpres:pHOp_to_HOp1}
+			\tree{
+				\tree{
+					\tree{
+						\tree{
+							\tree{}{
+								\tmap{\Gamma}{4}; \emptyset; \tmap{\Delta_2}{4} \cat x_1: \tmap{C_1}{4} \cat x_2: \tmap{C_2}{4} \proves \pmap{Q}{4} \hastype \Proc
+							}
+						}{
+							\tmap{\Gamma}{4}; \emptyset; \tmap{\Delta_2}{4} \cat x_1: \tmap{C_1}{4} \cat x_2: \tmap{C_2}{4} \cat z:\tinact \proves \pmap{Q}{4} \hastype \Proc
+						}
+					}{
+						\tmap{\Gamma}{4}; \emptyset; \tmap{\Delta_2}{4} \cat x_1: \tmap{C_1}{4}\cat z:\btinp{\tmap{C_2}{4}}\tinact \proves \binp{z}{x_2} \pmap{Q}{4} \hastype \Proc
+					}
+				}{
+					\tmap{\Gamma}{4}; \emptyset; \tmap{\Delta_2}{4} \cat z:\btinp{\tmap{C_1}{4}}\btinp{\tmap{C_2}{4}}\tinact \proves \binp{z}{x_1}\binp{z}{x_2} \pmap{Q}{4} \hastype \Proc
+				}
+			}{
+				\tmap{\Gamma}{4}; \emptyset; \tmap{\Delta_2}{4} \proves \abs{z}\binp{z}{x_1}\binp{z}{x_2} \pmap{Q}{4} \hastype \lhot{(\tmap{C_1}{4},\tmap{C_2}{4})}
+			}
+		\end{eqnarray}
+%
+%
+		\[
+		\tree{
+			\tree{}{
+				\mapt{\Gamma}^{\mathsf{p}}; \emptyset; \mapt{\Delta_1}^{\mathsf{p}} \cat k:\mapt{S}^{\mathsf{p}} \proves \map{P'}^{\mathsf{p}} \hastype \Proc
+			}
+			\quad
+			\ref{prop:tpres:pHOp_to_HOp1}
+		}{
+			\tmap{\Gamma}{4}; \emptyset; \tmap{\Delta_1}{4} \cat \tmap{\Delta_2}{4} \cat n:\btout{\tmap{L}{4}} \tmap{S}{4} \proves \pmap{P}{4} \hastype \Proc
+		}
+		\]
+
+		\item	Case $P = \binp{n}{x_1,x_2} P'$ 
+			and
+			$\Gamma; \emptyset; \Delta_1 \cat n: \btinp{(C_1, C_2)} S \proves \binp{n}{x_1,x_2} P' \hastype \Proc$.
+			We have the following typing derivation:
+			\[
+				\tree{
+					\Gamma; \emptyset; \Delta_1 \cat n:S \cat x_1: C_1 \cat x_2: C_2 \proves  P' \hastype \Proc
+					\quad
+					\Gamma; \emptyset;  \proves x_1, x_2 \hastype C_1,C_2
+				}{
+					\Gamma; \emptyset; \Delta_1 \cat n: \btinp{(C_1, C_2)} S \proves \binp{n}{x_1,x_2} P' \hastype \Proc
+				}
+		\]
+		By \defref{def:enc:pHOp_to_HOp} we have 
+		$\pmap{P}{4} = \binp{n}{x_1}\binp{k}{x_2} \pmap{P'}{4}$.
+		By IH we have 
+%
+		\[
+			\tmap{\Gamma}{4}; \emptyset; \tmap{\Delta_1}{4} \cat n:\tmap{S}{4} \cat x_1: \tmap{C_1}{4} \cat x_2: \tmap{C_2}{4} \proves  \pmap{P'}{4} \hastype \Proc
+		\]
+%
+		and the following type derivation:
+		\[
+			\tree{
+				\tree{
+					\tree{}{
+						\tmap{\Gamma}{4}; \emptyset; \tmap{\Delta_1}{4} \cat x_1:\tmap{C_1}{4} \cat x_2:\tmap{C_2}{4} \cat n:\tmap{S}{4} \proves \pmap{P'}{4} \hastype \Proc
+					}
+					%\quad
+					%\tree{}{
+					%\mapt{\Gamma}^{\mathsf{p}}; \emptyset; x_2:\tmap{C_2}{\mathsf{p}}  \proves  x_2 \hastype \tmap{C_2}{\mathsf{p}}}
+				}{
+					\tmap{\Gamma}{4}; \emptyset; \tmap{\Delta_1}{4} \cat x_1:\tmap{C_1}{4} \cat n:\btinp{\tmap{C_2}{4}}\tmap{S}{4} \proves \binp{n}{x_2}\pmap{P'}{4} \hastype \Proc
+				}
+				%\quad
+				%\tree{}{
+				%\mapt{\Gamma}^{\mathsf{p}}; \emptyset; x_1:\tmap{C_1}{\mathsf{p}}  \proves  x_1 \hastype \tmap{C_1}{\mathsf{p}}}
+			}{
+				\tmap{\Gamma}{4}; \emptyset; \tmap{\Delta_1}{4} \cat n:\btinp{\tmap{C_1}{4}}\btinp{\tmap{C_2}{4}}\tmap{S}{4} \proves \pmap{P}{4} \hastype \Proc
+			}
+		\]
+	\end{enumerate}
+	\qed
+\end{proof}
+
