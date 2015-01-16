@@ -1071,9 +1071,10 @@ soundness results for the encoding of \HOp into \HO.
 
 \begin{proposition}[Full Abstraction, \HOp into \HO]\rm
 	\label{prop:fulla_HOp_to_HO}
+	Let $P_1, Q_1$ be \HOp processes.
 	$\horel{\Gamma}{\Delta_1}{P_1}{\wb}{\Delta_2}{Q_1}$
 	if and only if
-	$\horel{\tmap{\Gamma}{1}}{\tmap{\Delta_1}{1}}{\pmapp{P_1}{1}{f}}{\wb}{\tmap{\Delta_2}{1}}{\pmapp{Q_2}{1}{f}}$.
+	$\horel{\tmap{\Gamma}{1}}{\tmap{\Delta_1}{1}}{\pmapp{P_1}{1}{f}}{\wb}{\tmap{\Delta_2}{1}}{\pmapp{Q_1}{1}{f}}$.
 \end{proposition}
 
 \begin{proof}
@@ -1103,7 +1104,7 @@ soundness results for the encoding of \HOp into \HO.
 
 \begin{proof}
 	Syntactic requirements are easily derivable from the
-	definition of the mappings.
+	definition of the mappings in \figref{fig:enc:HOp_to_HO}.
 	Semantic requirements are a consequence of
 	\propref{prop:typepres_HOp_to_HO}, \propref{prop:op_corr_HOp_to_HO}, and \propref{prop:fulla_HOp_to_HO}.
 	\qed
@@ -1223,192 +1224,7 @@ soundness results for the encoding of \HOp into \HO.
 %	as $\encod{\cdot}{\cdot}{5} = \encod{\cdot}{\cdot}{4} \cat \encod{\cdot}{\cdot}{3}$.	
 %\end{definition}
 
-\begin{example}[Encode $\recp{X}{\bout{a}{m} \varp{X}}$ into \HO]
-
-\noi We encode the \HOp process $\recp{X}{\bout{a}{m} \varp{X}}$
-into a \HO process. The first application of the mapping
-will give:
-%
-\begin{eqnarray*}
-	\pmapp{\recp{X}{\bout{a}{m} \varp{X}}}{1}{f} &=&
-	\newsp{s_1}{ \binp{s_1}{x} \pmapp{\bout{a}{m} \varp{X}}{1}{f, \varp{X} \rightarrow x_ax_m} \Par\\
-	&&\bout{\dual{s_1}}{ \abs{x_a x_m z} \binp{z}{x} \auxmap{\pmapp{\bout{a}{m} \varp{X}}{1}{f, \varp{X} \rightarrow x_ax_m}}{\es} } \inact}
-\end{eqnarray*}
-%
-\noi with $\pmapp{\bout{a}{m} \varp{X}}{1}{f, \varp{X} \rightarrow x_ax_m}$ defined as:
-%
-\begin{eqnarray*}
-	\pmapp{\bout{a}{m} \varp{X}}{1}{f, \varp{X} \rightarrow x_ax_m} &=&
-	\bout{a}{\abs{z}{\binp{z}{x} \appl{x}{m}}} \pmapp{\varp{X}}{1}{f, \varp{X} \rightarrow x_ax_m}
-	\\
-	&=& \bout{a}{\abs{z}{\binp{z}{x} \appl{x}{m}}} \newsp{s_2}{\appl{x}{a,m, s_2}  \Par \bout{\dual{s_2}}{\abs{x_a x_m z}{\appl{x}{x_a x_m z}}} \inact}
-\end{eqnarray*}
-%
-\noi Furthermore
-%
-\[
-\begin{array}{l}
-	\auxmap{\pmapp{\bout{a}{m} \varp{X}}{1}{f, \varp{X} \rightarrow x_ax_m}}{\es}\\
-	\qquad \qquad \quad = \auxmap{\bout{a}{\abs{z}{\binp{z}{x} \appl{x}{m}}} \newsp{s_2}{\appl{x}{a,m, s_2}  \Par \bout{\dual{s_2}}{\abs{x_a x_m z}{\appl{x}{x_a x_m z}}} \inact}}{\es}
-	\\
-	\qquad \qquad \quad = \bout{x_a}{\abs{z}{\binp{z}{x} \appl{x}{x_m}}} \auxmap{\newsp{s_2}{\appl{x}{a,m, s_2}  \Par \bout{\dual{s_2}}{\abs{x_a x_m z}{\appl{x}{x_a x_m z}}} \inact}}{\es}
-	\\
-	\qquad \qquad \quad = \bout{x_a}{\abs{z}{\binp{z}{x} \appl{x}{x_m}}} \newsp{s_2}{\appl{x}{x_a,x_m, s_2}  \Par \bout{\dual{s_2}}{\abs{x_a x_m z}{\appl{x}{x_a x_m z}}} \inact}
-\end{array}
-\]
-%
-\noi The whole encoding would be:
-%
-\[
-\begin{array}{l}
-	V = \abs{x_a x_m z} \binp{z}{x} \bout{x_a}{\abs{z}{\binp{z}{x} \appl{x}{x_m}}} \newsp{s_2}{\appl{x}{x_a,x_m, s_2}  \Par \bout{\dual{s_2}}{\abs{x_a x_m z}{\appl{x}{x_a x_m z}}} \inact}\\
-	\pmapp{\recp{X}{\bout{a}{m} \varp{X}}}{1}{f} \scong \\
-	\ \newsp{s_1}{\bout{\dual{s_1}}{V} \inact \Par \binp{s_1}{x} \bout{a}{\abs{z}{\binp{z}{x} \appl{x}{m}}} \newsp{s_2}{\bout{\dual{s_2}}{\abs{x_a x_m z}{\appl{x}{x_a x_m z}}} \inact} \Par \appl{x}{a,m, s_2}}
-\end{array}
-\]
-%
-\noi We can observe $\pmapp{\recp{X}{\bout{a}{m} \varp{X}}}{1}{f}$ as:
-\[
-	\begin{array}{cl}
-		& \pmapp{\recp{X}{\bout{a}{m} \varp{X}}}{1}{f}\\
-		\scong&
-		\newsp{s_1}{\bout{\dual{s_1}}{V} \inact \Par \binp{s_1}{x} \bout{a}{\abs{z}{\binp{z}{x} \appl{x}{m}}} \newsp{s_2}{\bout{\dual{s_2}}{\abs{x_a x_m z}{\appl{x}{x_a x_m z}}} \inact} \Par \appl{x}{a,m, s_2}}
-		\\
-		\by{\tau}&
-		\bout{a}{\abs{z}{\binp{z}{x} \appl{x}{m}}}\\
-		& \newsp{s_2}{\bout{\dual{s_2}}{V} \inact \Par \binp{s_2}{x} \bout{a}{\abs{z}{\binp{z}{x} \appl{x}{m}}} \newsp{s_3}{\bout{\dual{s_3}}{\abs{x_a x_m z}{\appl{x}{x_a x_m z}}} \inact} \Par \appl{x}{a,m, s_3}}
-		\\
-		\scong_{\alpha}&
-		\bout{a}{\abs{z}{\binp{z}{x} \appl{x}{m}}}\\
-		 & \newsp{s_1}{\bout{\dual{s_1}}{V} \inact \Par \binp{s_1}{x} \bout{a}{\abs{z}{\binp{z}{x} \appl{x}{m}}} \newsp{s_2}{\bout{\dual{s_2}}{\abs{x_a x_m z}{\appl{x}{x_a x_m z}}} \inact} \Par \appl{x}{a,m, s_2}}\\
-		\scong& \bout{a}{\abs{z}{\binp{z}{x} \appl{x}{m}}} \pmapp{\recp{X}{\bout{a}{m} \varp{X}}}{1}{f}
-		\\
-		\by{\bactout{a}{\abs{z}{\binp{z}{x} \appl{x}{m}}}}& \pmapp{\recp{X}{\bout{a}{m} \varp{X}}}{1}{f}
-	\end{array}
-\]
-%
-\noi We further show that $\pmapp{\recp{X}{\bout{a}{m} \varp{X}}}{1}{f}$ is typable:
-\begin{eqnarray}
-	\tree{
-		\begin{array}{l}
-			\Gamma; \es; \es \proves a \hastype U_1 = \chtype{\lhot{\btinp{\lhot{U_2}} \tinact}} \\
-			\Gamma; \es; \es \proves m \hastype U_2\\
-			\Gamma; \es; s_2: \proves s_2 : \btinp{L} \tinact \proves s_2 \hastype \btinp{L} \tinact\\ 
-			\Gamma; \es; \es \proves X \hastype \shot{(U_1, U_2, \btinp{L} \tinact)}
-		\end{array}
-	}{
-		\Gamma; \es; s_2 : \btinp{L} \tinact \proves \appl{x}{a,m, s_2} \hastype \Proc
-	}
-	\label{ex:type1}
-\end{eqnarray}
-%
-\begin{eqnarray}
-	\tree{
-		\tree{
-			\begin{array}{l}
-				\Gamma \cat x_a: U_1 \cat x_m: U_2; \es; \es \proves x_a \hastype U_1 = \chtype{\lhot{\btinp{\lhot{U_2}} \tinact}} \\
-				\Gamma \cat x_a: U_1 \cat x_m: U_2 ; \es; \es \proves x_m \hastype U_2\\
-				\Gamma; \es; z: \btinp{L} \tinact \proves z \hastype \btinp{L} \tinact\\
-				\Gamma; \es; \es \proves X \hastype \shot{(U_1, U_2, \btinp{L} \tinact)}
-			\end{array}
-		}{
-			\Gamma \cat x_a: U_1 \cat x_m: U_2 ; \es; z: \btinp{L} \tinact \proves \appl{x}{x_a x_m z} \hastype \Proc
-		}
-	}{
-		\Gamma; \es; \es \proves \abs{x_a x_m z}{\appl{x}{x_a x_m z}} \hastype \shot{(U_1, U_2, \btinp{L} \tinact)}
-	}
-	\label{ex:type2}
-\end{eqnarray}
-%
-\begin{eqnarray}
-	\tree{
-		\textrm{Result}~\eqref{ex:type1}
-		\quad
-		\tree{
-			\textrm{Result}~\eqref{ex:type2}
-			\quad
-			\Gamma; \es; \dual{s_2} : \btout{\shot{(U_1, U_2, \btinp{L} \tinact)}} \tinact \proves \dual{s_2} \hastype \btout{\shot{(U_1, U_2, \btinp{L} \tinact)}} \tinact
-		}{
-			\Gamma; \es; \dual{s_2} : \btout{\shot{(U_1, U_2, \btinp{L} \tinact)}} \tinact \proves \bout{\dual{s_2}}{\abs{x_a x_m z}{\appl{x}{x_a x_m z}}} \inact \hastype \Proc
-		}
-	}{
-		\Gamma; \es; s_2: \btinp{L} \tinact \cat \dual{s_2}: \btout{\shot{(U_1, U_2, \btinp{L} \tinact)}} \tinact \proves \bout{\dual{s_2}}{\abs{x_a x_m z}{\appl{x}{x_a x_m z}}} \inact \Par \appl{x}{a,m, s_2} \hastype \Proc
-	}
-	\label{ex:type3}
-\end{eqnarray}
-%
-\begin{eqnarray}
-	\tree{
-		\begin{array}{l}
-			\textrm{Result}~\eqref{ex:type3}
-			\quad
-			\btinp{L} \tinact \dualof \btout{\shot{(U_1, U_2, \btinp{L} \tinact)}} \tinact\\
-			L = \shot{(U_1, U_2, \btinp{L} \tinact)} \textrm{ implies }\\
-			\btinp{L} \tinact = \trec{t}{\btinp{\shot{(U_1, U_2, \vart{t})}} \tinact}
-		\end{array}
-	}{
-		\Gamma; \es; \es \proves \newsp{s_2}{\bout{\dual{s_2}}{\abs{x_a x_m z}{\appl{x}{x_a x_m z}}} \inact \Par \appl{x}{a,m, s_2} \hastype \Proc}
-	}
-	\label{ex:type4}
-\end{eqnarray}
-%
-\begin{eqnarray}
-	\tree{
-		\textrm{Result}~\eqref{ex:type4}
-		~~
-		\Gamma; \es; \es \proves a \hastype \chtype{\lhot{\btinp{\lhot{U_2}} \tinact}}
-		~~
-		\Gamma; \es; \es \proves \abs{z}{\binp{z}{x} \appl{x}{m}} \hastype \lhot{\btinp{\lhot{U_2}} \tinact}
-	}{
-		\Gamma; \es; \es \proves \bout{a}{\abs{z}{\binp{z}{x} \appl{x}{m}}} \newsp{s_2}{\bout{\dual{s_2}}{\abs{x_a x_m z}{\appl{x}{x_a x_m z}}} \inact \Par \appl{x}{a,m, s_2}} \hastype \Proc
-	}
-	\label{ex:type5}
-\end{eqnarray}
-%
-\begin{eqnarray}
-	\tree{
-		\begin{array}{l}
-			\textrm{Result}~\eqref{ex:type5}
-			\quad
-			\Gamma' = \Gamma \backslash X
-			\\
-			\Gamma; \es; \es \proves X \hastype \shot{(U_1, U_2, \trec{t}{\btinp{\shot{(U_1, U_2, t)}} \tinact})}
-			\\
-			\Gamma'; \es; \Delta \proves s_1 \hastype \btinp{\shot{(U_1, U_2, \trec{t}{\btinp{\shot{(U_1, U_2, \vart{t})}} \tinact})}} \tinact
-		\end{array}
-	}{
-		\Gamma'; \es; \Delta_1 \proves \binp{s_1}{x} \bout{a}{\abs{z}{\binp{z}{x} \appl{x}{m}}} \newsp{s_2}{\bout{\dual{s_2}}{\abs{x_a x_m z}{\appl{x}{x_a x_m z}}} \inact \Par \appl{x}{a,m, s_2}} \hastype \Proc
-	}
-	\label{ex:type6}
-\end{eqnarray}
-%
-\begin{eqnarray}
-	\tree{
-		\begin{array}{l}
-			V = \abs{x_a x_m z} \binp{z}{x} \bout{x_a}{\abs{z}{\binp{z}{x} \appl{x}{x_m}}} \newsp{s_2}{\appl{x}{x_a,x_m, s_2}  \Par \bout{\dual{s_2}}{\abs{x_a x_m z}{\appl{x}{x_a x_m z}}} \inact}\\
-			\Gamma'; \es; \es \proves V \hastype \shot{(U_1, U_2, \trec{t}{\btinp{\shot{(U_1, U_2, \vart{t})}} \tinact})}\\
-			\Gamma'; \es; \Delta_2 \proves \dual{s_1} \hastype \btout{\shot{(U_1, U_2, \trec{t}{\btinp{\shot{(U_1, U_2, t)}} \tinact})}} \tinact
-		\end{array}
-	}{
-		\Gamma'; \es; \Delta_2 \proves \bout{\dual{s_1}}{V} \hastype \Proc
-	}
-	\label{ex:type7}
-\end{eqnarray}
-%
-\begin{eqnarray*}
-	\tree{
-		\tree{
-			\textrm{Result}~\eqref{ex:type6} \quad \textrm{Result}~\eqref{ex:type7}
-		}{
-			\Gamma; \es; \Delta_1 \cat \Delta_2 \proves \bout{\dual{s_1}}{V} \inact \Par \binp{s_1}{x} \bout{a}{\abs{z}{\binp{z}{x} \appl{x}{m}}} \newsp{s_2}{\bout{\dual{s_2}}{\abs{x_a x_m z}{\appl{x}{x_a x_m z}}} \inact} \Par \appl{x}{a,m, s_2} \hastype \Proc
-		}
-	}{
-			\Gamma; \es; \es \proves \newsp{s_1}{\bout{\dual{s_1}}{V} \inact \Par \binp{s_1}{x} \bout{a}{\abs{z}{\binp{z}{x} \appl{x}{m}}} \newsp{s_2}{\bout{\dual{s_2}}{\abs{x_a x_m z}{\appl{x}{x_a x_m z}}} \inact} \Par \appl{x}{a,m, s_2}} \hastype \Proc
-	}
-\end{eqnarray*}
-\qed
-\end{example}
-
+\input{encoding_example}
 
 \begin{comment}
 \subsection{Encoding Recursion into Abstraction Passing}\label{ss:fullfotoho}
@@ -1933,14 +1749,14 @@ Below we write $\repl{} P$ as a shorthand notation for $\recp{X}{(P \Par \varp{X
 	Suppose:
 %
 	\[
-		\stytraarg{\Gamma}{\ell_1}{\Delta}{P}{\Delta'}{P'}{}
+		\horel{\Gamma}{\Delta}{P}{\hby{\ell_1}}{\Delta'}{P'}{}
 	\]
 %
-	If $\ell_1 = (\nu \tilde{m})\bactout{n}{\abs{ x}{R}}$, 
+	If $\ell_1 = \news{\tilde{m}} \bactout{n}{\abs{ x}{R}}$, 
 	then %$\exists \ell_2, Q$ s.t. 
 %
 	\[
-		\stytraarg{\mapt{\Gamma}^2}{\ell_2}{\mapt{\Delta}^2}{\map{P}^2}{\mapt{\Delta'}^2}{Q}{}
+		\horel{\tmap{\Gamma}{2}}{\tmap{\Delta}{2}}{\pmap{P}{2}}{\hby{\ell_2}}{\tmap{\Delta'}{2}}{Q}{}
 	\]
 %
 	where  $\ell_2 = (\nu a)\bactout{n}{a}$ and
@@ -1952,10 +1768,10 @@ Below we write $\repl{} P$ as a shorthand notation for $\recp{X}{(P \Par \varp{X
 	$\ell_1 = \bactinp{n}{\abs{ x}{R}}$, 
 	then %$\exists \ell_2, Q$ s.t.
 	\[
-		\stytraarg{\mapt{\Gamma}^2}{\ell_2}{\mapt{\Delta}^2}{\map{P}^2}{\mapt{\Delta'}^2}{Q}{}
+		\horel{\tmap{\Gamma}{2}}{\tmap{\Delta}{2}}{\pmap{P}{2}}{\hby{\ell_2}}{\tmap{\Delta'}{2}}{Q}{}
 	\]
 	where $\ell_2 = \bactout{n}{a}$ and
-	$\pmap{P'}{2} \wb \news{a}(Q \Par  \repl{} \binp{a}{y} \binp{y}{x} \pmap{R}{2})$.
+	$\pmap{P'}{2} \wb \newsp{a}{Q \Par  \repl{} \binp{a}{y} \binp{y}{x} \pmap{R}{2}}$.
 	Soundness is stated in a symmetric way.
 	%Operational correspondence for the encoding in~\defref{d:enc:hopitopi}
 	%is different from that in~\defref{def:ep}, due to triggers. 
@@ -1978,6 +1794,7 @@ Below we write $\repl{} P$ as a shorthand notation for $\recp{X}{(P \Par \varp{X
 This last remark is stated formally in the next proposition:
 %
 \begin{proposition}[Operational Correspondence, \HOp into \sessp]\rm
+	\label{prop:op_corr_HOp_to_p}
 	Let $P$ be an  $\HOp$ process such that  $\Gamma; \emptyset; \Delta \proves P \hastype \Proc$.
 	
 	\begin{enumerate}[1.]
@@ -2045,7 +1862,7 @@ This last remark is stated formally in the next proposition:
 			$\mapt{\Gamma}^{2};\, \mapt{\Delta}^{2} \proves  \map{P}^{2}
 			\hby{\tau}
 			\mapt{\Gamma}^{2};\, \mapt{\Delta'}^{2} \proves  \news{\tilde{m}}(\map{P_1}^{2} \Par \news{s}
-			(\map{P_2}^{2}\subst{s}{x} \Par \binp{s}{y} \binp{y}{x} \pmap{Q}{2}))$
+			(\map{P_2}^{2}\subst{\dual{s}}{x} \Par \binp{s}{y} \binp{y}{x} \pmap{Q}{2}))$
 			
 		\end{enumerate}
 
@@ -2126,6 +1943,7 @@ This last remark is stated formally in the next proposition:
 \end{proposition}
 
 \begin{proof}
+	\dk{revise the cases and put proof}
 	Follows directly from Defintion~\ref{def:enc:HOp_to_FO}, using the substitution lemma (Lemma~\ref{lem:subst})
 	and Prop.~\ref{prop:typepres_HOp_to_FO}.
 	\qed
@@ -2156,27 +1974,46 @@ In the target language, this reduction is mimicked as follows:
 \end{proof}
 \end{comment}
 
+\begin{proposition}[Full Abstraction. From \HOp to \HO]\rm
+	\label{prop:fulla_HOp_to_p}
+	Let $P_1, Q_1$ be \HOp processes.
+	$\horel{\Gamma}{\Delta_1}{P_1}{\wb}{\Delta_2}{Q_1}$
+	if and only if
+	$\horel{\tmap{\Gamma}{2}}{\tmap{\Delta_1}{2}}{\pmap{P_1}{2}}{\wb}{\tmap{\Delta_2}{2}}{\pmap{Q_1}{2}}$.
+\end{proposition}
 
-\begin{conjecture}[Full Abstraction: Higher-Order / First-Order]\rm
-	\begin{enumerate}[a)]
-		\item
-			If
-			$\horel{\Gamma}{\Delta_1}{P}{\wb}{\Delta_2}{Q}$
-			then
-			$\horel{\mapt{\Gamma}^{2}}{\mapt{\Delta_1}^{2}}{\map{P}^{2}}{\wbf}{\mapt{\Delta_2}^{2}}
-			{\map{Q}^{2}}$.
-		\item  
-			If 
-			$\horel{\mapt{\Gamma}^{2}}{\mapt{\Delta_1}^{2}}{\map{P}^{2}}{\wb}{\mapt{\Delta_2}^{2}}
-			{\map{Q}^{2}}$
-			then 
-			$\horel{ \Gamma}{\ell}{\Delta_1}{ P }{\wbf}{ \Delta_2}{Q}$.
-	\end{enumerate}
-	While (a) is  completeness (non trivial), (b) is soundness  (easy in principle).
-\end{conjecture}
+\begin{proof}
+	The proof for the soundness direction considers
+	closure that can be shown to be a bisimulation
+	following the soundness direction of Operational Correspondence
+	(\propref{prop:op_corr_HOp_to_p}). Whenever needed
+	the proof makes use of the $\tau$-inertness result
+	(\propref{lem:tau_inert}).
 
-At this point an open  question would be if we could find an encoding that maps
-session names to session names without the creation of shared names.
+	The proof for the completness direction also considers
+	a closure shown to be a bisimulation
+	up-to deterministic transition (\propref{lem:up_to_deterministic_transition})
+	following the completeness direction of Operational Correspondence
+	(\propref{prop:op_corr_HOp_to_p}).
 
-\dk{put intuition??}
+	Details of the proof can be found in~\propref{app:prop:fulla_HOp_to_p}
+	(page~\pageref{app:prop:fulla_HOp_to_p}).
+	\qed
+\end{proof}
+
+\begin{proposition}[Precise encoding of \HOp into \sessp]\rm
+	\label{prop:prec:HOp_to_p}
+	The encoding from $\tyl{L}_{\HOp}$ to $\tyl{L}_{\sessp}$
+	is precise.
+\end{proposition}
+
+\begin{proof}
+	Syntactic requirements are easily derivable from the
+	definition of the mappings in \figref{fig:enc:HOp_to_p}.
+	Semantic requirements are a consequence of
+	\propref{prop:typepres_HOp_to_p}, \propref{prop:op_corr_HOp_to_p}, and \propref{prop:fulla_HOp_to_p}.
+	\qed
+\end{proof}
+
+
 
