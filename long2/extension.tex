@@ -7,7 +7,7 @@ with higher-order applications/abstractions
 and 
 with polyadicity.
 
-\subsection{From \HOp to \HOpp}
+\subsection{From \HOpp to \HOp}
 
 So far we have studied a higher-order calculus that allows
 only name applications. Higher-order calculi in the
@@ -88,50 +88,6 @@ now includes
 instead of $\mapchar{\shot{C}}{x} \defeq \mapchar{\lhot{C}}{x} \defeq \appl{x}{\omapchar{C}}$
 and
 $\omapchar{\shot{C}} \defeq \omapchar{\lhot{C}} \defeq \abs{x}{\mapchar{C}{x}}$, respectively.
-\begin{comment}
-%
-\begin{definition}[Characteristic Process]\rm
-	\noi Let name $u$ and type $U$; then we define the {\em characteristic process}:
-	$\mapchar{U}{u}$ and the {\em characteristic value} $\omapchar{U}$ as:
-%
-	\[
-	\begin{array}{cc}
-		\begin{array}{rclcl}
-			\mapchar{\btinp{U} S}{u} &\defeq& \binp{u}{x} (\mapchar{S}{u} \Par \mapchar{U}{x})
-			\\
-			\mapchar{\btout{U} S}{u} &\defeq& \bout{u}{\omapchar{U}} \mapchar{S}{u} %& & n \textrm{ fresh}
-			\\
-			\mapchar{\btsel{l : S}}{u} &\defeq& \bsel{u}{l} \mapchar{S}{u}
-			\\
-			\mapchar{\btbra{l_i: S_i}_{i \in I}}{u} &\defeq& \bbra{u}{l_i: \mapchar{S_i}{u}}_{i \in I}
-			\\
-			\mapchar{\tvar{t}}{u} &\defeq& \varp{X}_{\vart{t}}
-			\\
-			\mapchar{\trec{t}{S}}{u} &\defeq& \recp{X_{\vart{t}}}{\mapchar{S}{u}}
-			\\
-			\mapchar{\tinact}{u} &\defeq& \inact
-			\\
-		\end{array}
-		&
-		\begin{array}{rcrclcl}
-			&&\mapchar{\chtype{S}}{u} &\defeq& \bout{u}{\omapchar{S}} \inact
-			\\
-			&&\mapchar{\chtype{L}}{u} &\defeq& \bout{u}{\omapchar{L}} \inact
-			\\
-			\dk{\mapchar{\shot{U}}{x}} &\defeq& \dk{\mapchar{\lhot{U}}{x}} &\defeq& \dk{\appl{x}{\omapchar{U}}}
-			\\
-			\\
-			&&\omapchar{S} &\defeq& s && s \textrm{ fresh}
-			\\
-			\omapchar{\chtype{S}} &\defeq& \omapchar{\chtype{L}} &\defeq& a && a \textrm{ fresh}
-			\\
-			\dk{\omapchar{\shot{U}}} &\defeq& \dk{\omapchar{\lhot{U}}} &\defeq& \dk{\abs{x}{\mapchar{U}{x}}}
-		\end{array}
-	\end{array}
-	\]
-\end{definition}
-%
-\end{comment}
 \noi The rest of the definition for the behavioural remains the same.
 
 \subsubsection{Encoding from \HOpp to \HOp}
@@ -243,7 +199,7 @@ We now present an encoding from \HOpp to \HOp.
 %					and $\horel{\tmap{\Gamma}{3}}{\tmap{\Delta''}{3}}{Q}{\hby{\hat{\ell}}}{\tmap{\Delta'}{3}}{\pmap{P'}{3}}$
 					with $\mapa{\ell'}^{3} = \ell$ and $Q \scong \pmap{P'}{3}$.
 
-				\item	If $\ell \notin \set{\news{\tilde{m}} \bactout{n}{\abs{x}{Q}}, \bactinp{n}{\abs{x}{Q}}, \tau}$
+				\item	If $\ell \notin \set{\news{\tilde{m}} \bactout{n}{\abs{x}{R}}, \bactinp{n}{\abs{x}{R}}, \tau}$
 					then
 					$\horel{\Gamma}{\Delta}{P}{\hby{\ell}}{\Delta'}{P'}$ and $Q \scong \pmap{P'}{3}$.
 %					and $\horel{\tmap{\Gamma}{3}}{\tmap{\Delta''}{3}}{Q}{\hby{\hat{\ell}}}{\tmap{\Delta'}{3}}{\pmap{P'}{3}}$.
@@ -261,7 +217,7 @@ We now present an encoding from \HOpp to \HOp.
 
 \begin{proof}
 	The proof of Part 1 does a transition induction and
-	considers the mapping in \defref{def:enc:HOpp_to_HOp}.
+	considers the mapping as defined in \defref{def:enc:HOpp_to_HOp}.
 	We give the most interesting cases.
 
 	\begin{itemize}
@@ -281,7 +237,7 @@ We now present an encoding from \HOpp to \HOp.
 	\end{itemize}
 
 	The proof of Part 2 also does a transition induction and
-	considers the mapping in \defref{def:enc:HOpp_to_HOp}.
+	considers the mapping as defined in \defref{def:enc:HOpp_to_HOp}.
 	We give the most interesting cases.
 
 	\begin{itemize}
@@ -312,6 +268,8 @@ We now present an encoding from \HOpp to \HOp.
 
 \begin{proposition}[Full Abstraction. From \HOpp to \HOp]\rm
 	\label{prop:fulla_HOpp_to_HOp}
+	Let $P, Q$ \HOpp processes with $\Gamma; \es; \Delta_1 \proves P \hastype \Proc$ and 
+	$\Gamma; \es; \Delta_2 \proves Q \hastype \Proc$.
 	$\horel{\Gamma}{\Delta_1}{P}{\wb}{\Delta_2}{Q}$ if and only if $\horel{\tmap{\Gamma}{3}}{\tmap{\Delta_1}{3}}{\pmap{P}{3}}{\wb}{\tmap{\Delta_2}{3}}{\pmap{Q}{3}}$
 \end{proposition}
 
@@ -495,14 +453,18 @@ the typing $\proves$ is defined in
 \begin{figure}[t]
 	\[
 		\begin{array}{rcl}
+			\multicolumn{3}{l}{\textrm{\bf Terms}}
+			\\
 			\pmap{\bout{n}{u_1, \dots, u_n} P}{4} &\defeq& \bout{n}{u_1} \dots ; \bout{n}{u_n} \pmap{P}{4}
 			\\
 			\pmap{\binp{n}{x_1, \dots, x_n} P}{4} &\defeq& \binp{n}{x_1} \dots ; \binp{n}{x_n} \pmap{P}{4}
 			\\
 			\pmap{\bout{n}{\abs{x_1, \dots, x_n}{Q}} P}{4} &\defeq& \bout{n}{\abs{z}{\binp{z}{x_1} \dots; \binp{z}{x_n} \pmap{Q}{4}}} \pmap{P}{4}
 			\\
-			\pmap{\appl{x}{u_1, \dots, u_n}}{4} &\defeq& \newsp{s}{\appl{x}{s} \Par \bout{\dual{s}}{u_1} \dots; \bout{\dual{s}}{u_1} \inact}
+			\pmap{\appl{x}{(u_1, \dots, u_n)}}{4} &\defeq& \newsp{s}{\appl{x}{s} \Par \bout{\dual{s}}{u_1} \dots; \bout{\dual{s}}{u_1} \inact}
 			\\
+			\\
+			\multicolumn{3}{l}{\textrm{\bf Types}}
 			\\
 			\tmap{\lhot{(C_1, \dots, C_n)}}{4} &\defeq& \lhot{(\btinp{C_1} \dots; \btinp{C_n} \tinact)}
 			\\
@@ -517,6 +479,8 @@ the typing $\proves$ is defined in
 			\tmap{\btinp{C_1, \dots, C_n} S}{4} &\defeq& \btinp{C_1} \dots; \btout{C_n} \tmap{S}{4}
 			\\
 			\\
+			\multicolumn{3}{l}{\textrm{\bf Labels}}
+			\\
 			\mapa{\news{\tilde{m}'} \bactout{n}{m_1, \dots, m_n}}^{4} &\defeq& \news{\tilde{m_1}'} \bactout{n}{m_1} \dots \news{\tilde{m_n}'}\bactout{n}{m_n}
 			\quad \left.
 			\begin{array}{rcl}
@@ -530,6 +494,10 @@ the typing $\proves$ is defined in
 			\mapa{\news{\tilde{m}} \bactout{n}{\abs{x_1, \dots, x_n}{P}}}{4} &\defeq& \news{\tilde{m}} \bactout{n}{\abs{z}{\binp{z}{x_1} \dots; \binp{z}{x_n} \pmap{P}{4}}}
 			\\
 			\mapa{\bactinp{n}{\abs{x_1, \dots, x_n}{P}}}{4} &\defeq& \bactinp{n}{\abs{z}{\binp{z}{x_1} \dots; \binp{z}{x_n} \pmap{P}{4}}}
+			\\
+			\mapa{\btau}^{4} &\defeq& \btau, \stau \dots \stau
+			\\
+			\mapa{\tau}^{4} &\defeq& \tau \dots \tau
 		\end{array}
 	\]
 %
@@ -551,4 +519,133 @@ the typing $\proves$ is defined in
 	\qed
 \end{proof}
 
+
+\begin{proposition}[Operational Correspondendce. From \pHOp to \HOp]\rm
+	\label{prop:op_cor:pHOp_to_HOp}
+%
+	\begin{enumerate}
+		\item	Let $\Gamma; \es; \Delta \proves P$.
+			$\horel{\Gamma}{\Delta}{P}{\hby{\ell}}{\Delta'}{P'}$ implies
+%
+			\begin{enumerate}[a)]
+				\item	If $\ell = \news{\tilde{m}'} \bactout{n}{\tilde{m}}$ then
+					$\horel{\tmap{\Gamma}{4}}{\tmap{\Delta}{4}}{\pmap{P}{4}}{\hby{\ell_1} \dots \hby{\ell_n}}{\tmap{\Delta'}{4}}{\pmap{P}{4}}$
+					with $\mapa{\ell}^{4} = \ell_1 \dots \ell_n$.
+
+				\item	If $\ell = \bactinp{n}{\tilde{m}}$ then
+					$\horel{\tmap{\Gamma}{4}}{\tmap{\Delta}{4}}{\pmap{P}{4}}{\hby{\ell_1} \dots \hby{\ell_n}}{\tmap{\Delta'}{4}}{\pmap{P}{4}}$
+					with $\mapa{\ell}^{4} = \ell_1 \dots \ell_n$.
+
+				\item	If $\ell \in \set{\news{\tilde{m}} \bactout{n}{\abs{\tilde{x}}{R}}, \bactinp{n}{\abs{\tilde{x}}{R}}}$ then
+%					$\exists l' $ such that
+					$\horel{\tmap{\Gamma}{4}}{\tmap{\Delta}{4}}{\pmap{P}{4}}{\hby{\ell'}}
+					{\tmap{\Delta'}{4}}{\pmap{P'}{4}}$ with $\mapa{\ell}^{4} = \ell'$.
+
+				\item	If $\ell \in \set{\bactsel{n}{l}, \bactbra{n}{l}}$ then
+					$\horel{\tmap{\Gamma}{4}}{\tmap{\Delta}{3}}{\pmap{P}{4}}{\hby{\ell}}
+					{\tmap{\Delta'}{4}}{\pmap{P'}{4}}$.
+
+				\item	If $\ell = \btau$ then either
+					$\horel{\tmap{\Gamma}{4}}{\tmap{\Delta}{4}}{\pmap{P}{4}}{\hby{\btau} \hby{\stau} \dots \hby{\stau}}
+					{\tmap{\Delta'}{4}}{\pmap{P'}{4}}$ with $\mapa{\ell} = \btau, \stau \dots \stau$.
+
+				\item	If $\ell = \tau$ then %and $\hby{\ell}$ is not a \betatran then
+					$\horel{\tmap{\Gamma}{4}}{\tmap{\Delta}{4}}{\pmap{P}{4}}{\hby{\tau} \dots \hby{\tau}}
+					{\tmap{\Delta'}{4}}{\pmap{P'}{4}}$ with $\mapa{\ell}^{4} = \tau \dots \tau$.
+			\end{enumerate}
+
+		\item	Let $\Gamma; \es; \Delta \proves P$.
+			$\horel{\tmap{\Gamma}{4}}{\tmap{\Delta}{4}}{\pmap{P}{4}}{\hby{\ell_1}}
+			{\tmap{\Delta_1}{4}}{P_1}$ implies
+%
+			\begin{enumerate}[a)]
+				\item	If $\ell \in \set{\bactinp{n}{m}, \bactout{n}{m}, \news{m} \bactout{n}{m}}$ then
+					$\horel{\Gamma}{\Delta}{P}{\hby{\ell}}{\Delta'}{P'}$ and\\
+					$\horel{\tmap{\Gamma}{4}}{\tmap{\Delta_1}{4}}{P_1}{\hby{\ell_2} \dots \hby{\ell_n}}
+					{\tmap{\Delta'}{4}}{\tmap{P'}{4}}$ with $\mapa{\ell}^{4} = \ell_1 \dots \ell_n$.
+
+				\item	If $\ell \in \set{\news{\tilde{m}} \bactout{n}{\abs{x}{R}}, \bactinp{n}{\abs{x}{R}}}$
+					then
+					$\horel{\Gamma}{\Delta}{P}{\hby{\ell'}}{\Delta'}{P'}$
+					with $\mapa{\ell'}^{4} = \ell$ and $P_1 \scong \pmap{P'}{4}$.
+
+				\item	If $\ell \in \set{\bactsel{n}{l}, \bactbra{n}{l}}$
+					then
+					$\horel{\Gamma}{\Delta}{P}{\hby{\ell}}{\Delta'}{P'}$ and $P_1 \scong \pmap{P'}{3}$.
+%					and $\horel{\tmap{\Gamma}{3}}{\tmap{\Delta''}{3}}{Q}{\hby{\hat{\ell}}}{\tmap{\Delta'}{3}}{\pmap{P'}{3}}$.
+
+				\item	If $\ell = \btau$ then
+					$\horel{\Gamma}{\Delta}{P}{\hby{\btau}}{\Delta'}{P'}$ and
+					$\horel{\tmap{\Gamma}{4}}{\tmap{\Delta_1}{4}}{P_1}{\hby{\stau} \dots \hby{\stau}}
+					{\tmap{\Delta'}{4}}{\tmap{P'}{4}}$ with $\mapa{\ell}^{4} = \btau, \stau \dots \stau$.
+
+				\item	If $\ell = \tau$ then
+					$\horel{\Gamma}{\Delta}{P}{\hby{\tau}}{\Delta'}{P'}$ and
+					$\horel{\tmap{\Gamma}{4}}{\tmap{\Delta_1}{4}}{P_1}{\hby{\tau} \dots \hby{\tau}}
+					{\tmap{\Delta'}{4}}{\tmap{P'}{4}}$ with $\mapa{\ell}^{4} = \tau \dots \tau$.
+			\end{enumerate}
+	\end{enumerate}
+\end{proposition}
+
+\begin{proof}
+	The proof of both Parts does a transition induction and
+	considers the mapping as defined in \defref{def:enc:HOpp_to_HOp}.
+	\dk{do some cases}
+	\qed
+\end{proof}
+
+
+\begin{proposition}[Full Abstraction. From \HOpp to \HOp]\rm
+	\label{prop:fulla:pHOp_to_HOp}
+	Let $P, Q$ \pHOp process with $\Gamma; \es; \Delta_1 \proves P \hastype \Proc$ and 
+	$\Gamma; \es; \Delta_2 \proves Q \hastype \Proc$.
+	$\horel{\Gamma}{\Delta_1}{P}{\wb}{\Delta_2}{Q}$ if and only if $\horel{\tmap{\Gamma}{4}}{\tmap{\Delta_1}{4}}{\pmap{P}{4}}{\wb}{\tmap{\Delta_2}{4}}{\pmap{Q}{4}}$
+\end{proposition}
+
+\begin{proof}
+	The proof for both direction is a consequence of Operational Correspondence,
+	\propref{prop:op_cor:pHOp_to_HOp}.
+
+	\noi {\bf Soundness Direction.}
+
+	\noi We create the closure
+%
+	\[
+		\Re = \set{\horel{\Gamma}{\Delta_1}{P}{\ ,\ }{\Delta_2}{Q} \setbar \horel{\tmap{\Gamma}{4}}{\tmap{\Delta_1}{4}}{\pmap{P}{4}}{\wb}{\tmap{\Delta_2}{4}}{\pmap{Q}{4}}}
+	\]
+%
+	\noi	It is straightforward to show that $\Re$ is a bisimulation if we follow Part 2 of
+		\propref{prop:op_cor:pHOp_to_HOp}.
+%		for subcases a and b.
+%		In subcase c we make use of \propref{lem:tau_inert}.
+
+	\noi {\bf Completeness Direction.}
+
+	\noi We create the closure
+%
+	\[
+		\Re = \set{\horel{\tmap{\Gamma}{4}}{\tmap{\Delta_1}{4}}{\pmap{P}{4}}{\ ,\ }{\tmap{\Delta_2}{3}}{\pmap{Q}{3}} \setbar \horel{\Gamma}{\Delta_1}{P}{\wb}{\Delta_2}{Q}}
+	\]
+%
+%	\dk{Is the proof easy? do the proof}
+	\noi	We show that $\Re$ is a bisimulation up to deterministic transitions
+		by following Part 1 of \propref{prop:op_cor:pHOp_to_HOp}.
+%		The proof is straightforward for subcases a), b) and d).
+%		In subcase c) we make use of \lemref{lem:up_to_deterministic_transition}.
+	\qed
+\end{proof}
+
+\begin{proposition}[Precise encoding of \HOpp into \HOp]\rm
+	\label{prop:prec:pHOp_to_HOp}
+	The encoding from $\tyl{L}_{\pHOp}$ to $\tyl{L}_{\HOp}$
+	is precise.
+\end{proposition}
+
+\begin{proof}
+	Syntactic requirements are easily derivable from the
+	definition of the mappings in \figref{fig:enc:pHOp_to_HOp}.
+	Semantic requirements are a consequence of
+	\propref{prop:typepres_pHOp_to_HOp}, \propref{prop:op_cor:pHOp_to_HOp}, and \propref{prop:fulla:pHOp_to_HOp}.
+	\qed
+\end{proof}
 
