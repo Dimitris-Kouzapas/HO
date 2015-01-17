@@ -39,14 +39,15 @@ $\fn{\ell}$ and $\bn{\ell}$ denote
  sets of free/bound names in $\ell$, resp.
 %and set $\mathsf{n}(\ell)=\bn{\ell}\cup \fn{\ell}$. 
 
-Dual actions, defined below, occur on subjects that are dual between them and carry the same
-object. Thus, output is dual with input and 
-selection is dual with branching.
+\emph{Dual actions} %, defined below, 
+occur on subjects that are dual between them and carry the same
+object; thus, output is dual to input and 
+selection is dual to branching.
 Formally, duality 
 \jpc{on actions}
 is the symmetric relation $\asymp$ that satisfies:
-\jpc{(i) $\bactsel{n}{l} \asymp \bactbra{\dual{n}}{l}$ 
-and (ii) $\news{\tilde{m}} \bactout{n}{V} \asymp \bactinp{\dual{n}}{V}$}.
+\jpc{(i)~$\bactsel{n}{l} \asymp \bactbra{\dual{n}}{l}$ 
+and (ii)~$\news{\tilde{m}} \bactout{n}{V} \asymp \bactinp{\dual{n}}{V}$}.
 %
 %\begin{tabular}{c}
 %	$\bactsel{n}{l} \asymp \bactbra{\dual{n}}{l}
@@ -137,28 +138,32 @@ and (ii) $\news{\tilde{m}} \bactout{n}{V} \asymp \bactinp{\dual{n}}{V}$}.
 	\caption{The Untyped LTS. We omit rule $\ltsrule{Par${}_R$}$.  \label{fig:untyped_LTS}}
 \Hlinefig
 \end{figure}
-\myparagraph{LTS over Untyped Processes}
+\myparagraph{LTS over Untyped Processes.}
 The labelled transition system (LTS) over untyped processes
 is given in
 \figref{fig:untyped_LTS}. 
 We write $P_1 \by{\ell} P_2$ with the usual meaning.
 The rules are standard~\cite{KYHH2015,KY2015}.
-A process with a send prefix can
-interact with the environment with a send action that carries a value
-$V$ as in rule~$\ltsrule{Out}$.  Dually, in rule $\ltsrule{In}$ a
-received process can observe an input action of a value $V$.
+A process with an output prefix can
+interact with the environment with an output action that carries a value
+$V$ (rule~$\ltsrule{Out}$).  Dually, in rule $\ltsrule{In}$ a
+receiver process can observe an input of  value $V$.
 Selection and branching processes observe the select and branch
 actions in rules $\ltsrule{Sel}$ and $\ltsrule{Bra}$, respectively.
-Rule $\ltsrule{Res}$ closes the LTS under the name creation operator
+Rule $\ltsrule{Res}$ closes the LTS under restriction 
 if the restricted name does not occur free in the
 observable action. 
 %If a restricted name occurs free,  
 Otherwise, 
 the process performs scope opening (rule $\ltsrule{New}$).  
 Rule $\ltsrule{Rec}$ handles recursion unfolding.
-Rule $\ltsrule{Tau}$ states that if two parallel processes can perform
-dual actions then the two actions can synchronise by 
-an internal transition. Rules $\ltsrule{Par${}_L$}$/$\ltsrule{Par${}_R$}$ 
+Rule $\ltsrule{Tau}$ 
+states that two parallel processes which can perform
+dual actions can synchronise by an internal transition.
+%states that if two parallel processes can perform
+%dual actions then the two actions can synchronise by 
+%an internal transition. 
+Rules $\ltsrule{Par${}_L$}$/$\ltsrule{Par${}_R$}$ 
 and $\ltsrule{Alpha}$ close the LTS
 under parallel  and $\alpha$-renaming. 
 %provided that the observable
@@ -178,46 +183,50 @@ to higher-order sessions.
 
 \myparagraph{Input Actions} 
 are defined by 
-$\eltsrule{SRv}$ and $\eltsrule{ShRv}$
+rules~$\eltsrule{SRv}$ and $\eltsrule{ShRv}$
 %describe the input action
-($n$ session or shared channel respectively $\bactinp{n}{V}$). 
-We require the value $V$ has
-the same type as name $s$ and $a$, respectively.  Furthermore we
-expect the resulting type tuple to contain the values that consist
-with value $V$. The condition $\dual{s} \notin \dom{\Delta}$
-in $\eltsrule{SRv}$ ensures that 
-the dual channel $\dual{s}$ should not be
+In rule~$\eltsrule{SRv}$
+%($n$ session or shared channel respectively $\bactinp{n}{V}$). 
+the type of value $V$
+and the type of the object associated to the session type on $s$ 
+should coincide. 
+Moreover, 
+the resulting type tuple must contain the environments 
+associated to $V$. 
+The condition $\dual{s} \notin \dom{\Delta}$
+ensures that 
+the dual endpoint $\dual{s}$ is not 
 present in the session environment, since if it were present
 the only communication that could take place is the interaction
 between the two endpoints (using $\eltsrule{Tau}$ below).
+Rule~$\eltsrule{ShRv}$, for shared names, follows similar principles.
 
-\myparagraph{Output Actions} are defined by $\eltsrule{SSnd}$
+\myparagraph{Output Actions} are defined by rules~$\eltsrule{SSnd}$
 and $\eltsrule{ShSnd}$.  
 Rule $\eltsrule{SSnd}$ states the conditions for observing action
 $\news{\tilde{m}} \bactout{s}{V}$ on a type tuple 
 $(\Gamma, \Lambda, \Delta\cdot \AT{s}{S})$. 
 The session environment $\Delta$ with $\AT{s}{S}$ 
-should include the session environment of sent value $V$, 
-{\em excluding} the session environments of the name $n_j$ 
+should include the session environment of the sent value $V$, 
+{\em excluding} the session environments of names $n_j$ 
 in $\tilde{m}$ which restrict the scope of value $V$. 
 Similarly the linear variable environment 
 $\Lambda'$ of $V$ should be included in $\Lambda$. 
 Scope extrusion of session names in $\tilde{m}$ requires
-that the dual endpoints of $\tilde{m}$ appear in
+that the dual endpoints of $\tilde{m}$ should appear in
 the resulting session environment. Similarly for shared 
 names in $\tilde{m}$ that are extruded.  
 All free values used for typing $V$ are subtracted from the
 resulting type tuple. The prefix of session $s$ is consumed
 by the action.
-Similarly, an output on a shared name is described
-by rule $\eltsrule{ShSnd}$ where we require that the name
-is typed with $\chtype{U}$. Conditions for
-the output $V$ are identical to those
+Rule $\eltsrule{ShSnd}$ is for output actions on shared names:
+the name must be typed with $\chtype{U}$ and conditions on $V$ are identical to those
 % the requirements 
-for rule~$\eltsrule{SSnd}$.
-\NY{We sometimes annotate the output action 
+on rule~$\eltsrule{SSnd}$.
+\NY{Given a $V$ of type $U$, we sometimes annotate the output action 
 $\news{\tilde{m}} \bactout{n}{V}$
-with the type of $V$ as $\news{\tilde{m}} \bactout{n}{\AT{V}{U}}$.}
+%with the type of $V$ 
+as $\news{\tilde{m}} \bactout{n}{\AT{V}{U}}$.}
 
 \myparagraph{Other Actions}
 Rules $\eltsrule{Sel}$ and $\eltsrule{Bra}$ describe actions for
@@ -425,7 +434,7 @@ and $\By{\hat{\ell}}$
 where we write 
 $\By{}$ for the reflexive and
 transitive closure of $\by{}$, $\By{\ell}$ for the transitions
-$\By{}\by{\ell}\By{}$ and $\By{\hat{\ell}}$ for $\By{\ell}$ if
+$\By{}\by{\ell}\By{}$, and $\By{\hat{\ell}}$ for $\By{\ell}$ if
 $\ell\not = \tau$ otherwise $\By{}$. 
 %We extend to $\By{}$ 
 %(resp.\ $\Hby{}$) and  and 
@@ -436,13 +445,13 @@ $\ell\not = \tau$ otherwise $\By{}$.
 
 \subsection{Reduction-Closed, Barbed Congruence}
 \label{subsec:rc}
-\noi We define the typed relation and the contextual equivalence.  
+\noi We define \emph{typed relations} and \emph{contextual equivalence}.  
 %\begin{definition}[Session Environment Confluence]\rm
-We begin with a definition of a notion of confluence
+We first define \emph{confluence}
 over session environments $\Delta$:
 we denote $\Delta_1 \bistyp \Delta_2$ if there exists $\Delta$ such that
 	$\Delta_1 \red^\ast \Delta$ and $\Delta_2 \red^\ast \Delta$
-	\jpc{(here we write $\red^\ast$ for the multistep environment reduction in \defref{def:ses_red})}.
+	\jpc{(here we write $\red^\ast$ for the multistep reduction in \defref{def:ses_red})}.
 %\end{definition}
 
 \smallskip 
@@ -460,10 +469,10 @@ for the typed relation $\Gamma; \emptyset; \Delta_1 \proves P_1 \hastype \Proc\ 
 
 \smallskip 
 
-\noi Type relations relate only closed terms with
-balanced session environments and the two session environments
-are confluent.
-Next we define the {\em barb} \cite{MiSa92} 
+\noi Type relations relate only closed terms whose
+session environments %and the two session environments
+are balanced  and confluent.
+Next we define  {\em barbs}~\cite{MiSa92}
 with respect to types. 
 
 \smallskip 
@@ -486,9 +495,9 @@ Let $P$ closed. We define:
 \noi A barb $\barb{n}$ is an observable on an output prefix with subject $n$.
 Similarly a weak barb $\Barb{n}$ is a barb after a number of reduction steps.
 Typed barbs $\barb{n}$ (resp.\ $\Barb{n}$)
-happen on typed processes $\Gamma; \emptyset; \Delta \proves P \hastype \Proc$
+occur on typed processes $\Gamma; \emptyset; \Delta \proves P \hastype \Proc$
 where we require that the corresponding dual endpoint $\dual{n}$ is not present
-in the session type $\Delta$.
+in the session environment $\Delta$.
 
 To define a congruence relation, we introduce the context $\C$:\\  
 
@@ -521,22 +530,23 @@ $\hole$ in $\C$ with $P$.
 	Typed relation
 	$\horel{\Gamma}{\Delta_1}{P_1}{\ \Re\ }{\Delta_2}{P_2}$
 	is a {\em reduction-closed, barbed congruence} whenever:
-	\begin{enumerate}
+	\begin{enumerate}[1)]
 		\item	If $P_1 \red P_1'$ then there exists $P_2'$ such that $P_2 \red^* P_2'$ and
 			$\horel{\Gamma}{\Delta_1'}{P_1'}{\ \Re\ }{\Delta_2'}{P_2'}$; 
-			and its symmetric case;
+			%and its symmetric case;
 %		\item	If $P_2 \red P_2'$ then $\exists P_1', P_1 \red^* P_1'$ and
 %		$\horel{\Gamma}{\Delta_1'}{P_1'}{\ \Re\ }{\Delta_2'}{P_2'}$
 %		\end{itemize}
 
 %		\item
 %		\begin{itemize}
-			\item	If $\Gamma;\Delta \proves P_1 \barb{n}$ then $\Gamma;\Delta \proves P_2 \Barb{n}$; and its symmetric case; 
+			\item	If $\Gamma;\Delta \proves P_1 \barb{n}$ then $\Gamma;\Delta \proves P_2 \Barb{n}$; %and its symmetric case; 
 
 %			\item	If $\Gamma;\emptyset;\Delta \proves P_2 \barb{s}$ then $\Gamma;\emptyset;\Delta \proves P_1 \Barb{s}$.
 %		\end{itemize}
 
-		\item	for all $\C$, $\horel{\Gamma}{\Delta_1'}{\context{\C}{P_1}}{\ \Re\ }{\Delta_2'}{\context{\C}{P_2}}$
+		\item	For all $\C$, $\horel{\Gamma}{\Delta_1'}{\context{\C}{P_1}}{\ \Re\ }{\Delta_2'}{\context{\C}{P_2}}$;
+		                      \item	The symmetric cases of 1 and 2.                
 	\end{enumerate}
 	The largest such congruence is denoted with $\cong$.
 \end{definition}
@@ -552,7 +562,7 @@ is the standard contextual bisimulation~\cite{San96H}.
 A typed relation $\Re$ is {\em a contextual bisimulation} if
 for all $\horel{\Gamma}{\Delta_1}{P_1}{\ \Re \ }{\Delta_2}{Q_1}$, 
 	\begin{enumerate}[1)] 
-	\item	whenever 
+	\item Whenever 
 $\horel{\Gamma}{\Delta_1}{P_1}
         {\by{\news{\tilde{m_1}} \bactout{n}{V_1}}}{\Delta_1'}{P_2}$,
 there exists $\horel{\Gamma}{\Delta_2}{Q_1}{\By{\news{\tilde{m_2}} \bactout{n}{V_2}}}{\Delta_2'}{Q_2}$ such that, 
@@ -576,7 +586,7 @@ for all $R$ with $\fv{R}=x$:
 %				{\Delta_2''}{\newsp{\tilde{m_2}'}{Q_2 \Par R \subst{\tilde{m_2}}{\tilde{x}}}}
 %			\]
 		\item	
-for all $\horel{\Gamma}{\Delta_1}{P_1}{\by{\ell}}{\Delta_1'}{P_2}$ such that 
+For all $\horel{\Gamma}{\Delta_1}{P_1}{\by{\ell}}{\Delta_1'}{P_2}$ such that 
 $\ell$ is not an output, 
  there exists $Q_2$ such that 
 $\horel{\Gamma}{\Delta_2}{Q_1}{\By{\ell}}{\Delta_2'}{Q_2}$
@@ -616,7 +626,7 @@ We define characteristic processes/values:
 %		\map{C_1, \cdots, C_n}^{k_1 \cdots k_n} = \map{C_1}^{k_1} \Par \dots \Par \map{C_n}^{k_n}		
 %	\]
 %	with 
-	Let name $u$ and type $U$. 
+	Let $u$ and $U$ be a name and a type, respectively.
 	\figref{fig:char} defines the {\em characteristic process} 
 	$\mapchar{U}{u}$ and the {\em characteristic value} $\omapchar{U}$.
 \end{definition}
@@ -759,7 +769,7 @@ are clearly {\em not} contextually bisimilar: there exist many input actions
 which may be used to distinguish them.
 For example, if 
 $P_1$ and $P_2$ input 
-$\abs{x} \newsp{s_3}{\bout{a}{s_3} \binp{x}{y} \inact}$ with
+$\abs{x} \newsp{s}{\bout{a}{s} \binp{x}{y} \inact}$ with
 $\Gamma; \es; \Delta \proves s \hastype \tinact$,
 then their derivatives are not bisimilar. 
 
@@ -860,10 +870,10 @@ trigger or characteristic values:
 	(\Gamma_1; \Lambda_1; \Delta_1) \by{\bactinp{n}{V}} (\Gamma_2; \Lambda_2; \Delta_2)
 	\\
 				\begin{array}{lll}
-					V  \scong
+					V = m \vee V  \scong
 					(\abs{{x}}{\binp{t}{y} (\appl{y}{{x}})}
 					\vee  \omapchar{U}%\abs{{x}}{\map{U}^{{x}}}
-					\vee m)  \textrm{ with } t \textrm{ fresh} 
+					)  \textrm{ with } t \textrm{ fresh} 
 				\end{array}
 				\end{array}
 			}{
@@ -898,22 +908,36 @@ $\horel{\Gamma}{\Delta_1}{P_1}{\by{\ell}}{\Delta_2}{P_2}$.
 \smallskip 
 
 \myparagraph{The Two Bisimulations.} We now define 
-higher-order bisimulation, 
-a more tractable bisimulation for $\HO$ and $\HOp$.
- \dk{The two bisimulations differ on the fact that
-they use the different 
-trigger processes: $\htrigger{t}{V}$ and $\ftrigger{t}{V}{U}$.}
+\emph{higher-order} 
+and
+\emph{characteristic
+bisimulations}, 
+two tractable bisimulations for $\HO$ and $\HOp$.
+As explained in \secref{sec:overview},
+the key difference between them is in the 
+trigger processes they use:
+\begin{eqnarray}
+\htrigger{t}{V_1}  & \defeq &  \hotrigger{t}{V} \label{eqb:0} \\
+	\ftrigger{t}{V}{U} & \defeq &  \fotrigger{t}{x}{s}{\btinp{U} \tinact}{V} 	\label{eqb:4}
+\end{eqnarray}
+\noi
+Notice that while 
+in~\eqref{eqb:0} there is a higher-order input on $t$, 
+in~\eqref{eqb:4} variable $x$ does not play any role.
+% \dk{The two bisimulations differ on the fact that
+%they use the different 
+%trigger processes: $\htrigger{t}{V}$ and $\ftrigger{t}{V}{U}$.}
 
 \smallskip 
 
-\begin{definition}[Higher-Order Bisimulation]\rm
+\begin{definition}[Higher-Order Bisimilarity]\rm
 	\label{d:hbw}
-A typed relation $\Re$ is {\em the HO bisimulation} if 
+A typed relation $\Re$ is a {\em  HO bisimulation} if 
 for all $\horel{\Gamma}{\Delta_1}{P_1}{\ \Re \ }{\Delta_2}{Q_1}$ 
 \begin{enumerate}[1)]
 \item 
 whenever 
-$\horel{\Gamma}{\Delta_1}{P_1}{\hby{\news{\tilde{m_1}} \bactout{n}{V_1}}}{\Delta_1'}{P_2}$, there exits 
+$\horel{\Gamma}{\Delta_1}{P_1}{\hby{\news{\tilde{m_1}} \bactout{n}{V_1}}}{\Delta_1'}{P_2}$, there exists 
 $\horel{\Gamma}{\Delta_2}{Q_1}{\Hby{\news{\tilde{m_2}} \bactout{n}{V_2}}}{\Delta_2'}{Q_2}$ such that, for fresh $t$, 
 \[
 \begin{array}{lrlll}
@@ -934,19 +958,20 @@ $\horel{\Gamma}{\Delta_2}{Q_1}{\Hby{\ell}}{\Delta_2'}{Q_2}$
                       \item	The symmetric cases of 1 and 2.                
 	\end{enumerate}
 	The largest such bisimulation
-	is called Higher-Order bisimilarity \jpc{and} denoted by $\hwb$.
+	is called \emph{higher-order bisimilarity} \jpc{and} denoted by $\hwb$.
 \end{definition}
 
 \smallskip 
 
-\noi The characteristic bisimulation is given using 
-characteristic trigger processes. 
+\noi 
+We now define characteristic bisimilarity:
+% is given using characteristic trigger processes. 
 
 \smallskip 
 
-\begin{definition}[Characteristic Bisimulation]\rm
+\begin{definition}[Characteristic Bisimilarity]\rm
 	\label{d:fwb}
-	The first order bisimilarity, denoted by $\fwb$, is defined \jpc{by} replacing 
+	Characteristic bisimilarity, denoted by $\fwb$, is defined \jpc{by} replacing 
 	Clause 1) in \defref{d:hbw} with the following clause:\\[1mm]
 	whenever 
 	$\horel{\Gamma}{\Delta_1}{P_1}{\hby{\news{\tilde{m_1}} \bactout{n}{\dk{V_1: U}}}}{\Delta_1'}{P_2}$ %with $\Gamma; \es; \Delta \proves V_1 \hastype U$,  
@@ -977,32 +1002,42 @@ $\cong$, $\wbc$ and $\fwb$ coincide in $\CAL\in \{\HOp, \HO, \sessp\}$.
 
 \smallskip 
 
-\noi The above theorem shows that using $\hwb$ is the most tractable 
-in the higher-order setting, but if the calculus is limited  
+\noi Thus, we may use $\hwb$ for tractable reasoning %is the most tractable 
+in the higher-order setting;  
+%the calculus is limited  
 %the $\sessp$-calculus, 
-into~\jpc{\sessp}
-we can still use $\fwb$. 
+%into~\jpc{\sessp}
+in the first-order setting of $\sessp$
+we can still use~$\fwb$. 
 
 
 \smallskip  
 
 \noi Processes that do not use shared names, are inherently deterministic. 
 The following \jpc{determinacy property will be} useful 
-\dk{for proving our expressiveness results (\S\,\ref{sec:positive})}:
+\dk{for proving our expressiveness results (\S\,\ref{sec:positive})}.
 %for both positive and negative results. 
+We say that transition $\horel{\Gamma}{\Delta}{P}{\hby{\tau}}{\Delta'}{P'}$ is
+		{\em deterministic} if it is derived by $\ltsrule{App}$ or 
+		$\ltsrule{Tau}$ where $\subj{\ell_1}$ and $\subj{\ell_2}$ in the premise 
+		are dual session names. 
 
 %\smallskip 
 
 \begin{lemma}[$\tau$-Inertness]\rm
 	\label{lem:tau_inert}
 	\begin{enumerate}[1)]
-		\item (deterministic transitions) 
-		Transition $\horel{\Gamma}{\Delta}{P}{\hby{\tau}}{\Delta'}{P'}$ is called
-		{\em deterministic} if it is derived by $\ltsrule{App}$ or 
-		$\ltsrule{Tau}$ where $\subj{\ell_1}$ and $\subj{\ell_2}$ in the premise 
-		are dual session names. Suppose $\Delta$ is balanced. Then 
+		\item %(deterministic transitions) 
+		Let $\horel{\Gamma}{\Delta}{P}{\hby{\tau}}{\Delta'}{P'}$ be a deterministic transition,
+		with balanced $\Delta$. Then 
 		$\Gamma; \Delta \proves P \cong \Delta'\proves P'$ 
-		with $\Delta \red^\ast \Delta'$ balanced. 
+		with $\Delta \red^\ast \Delta'$ balanced.
+%		Transition $\horel{\Gamma}{\Delta}{P}{\hby{\tau}}{\Delta'}{P'}$ is called
+%		{\em deterministic} if it is derived by $\ltsrule{App}$ or 
+%		$\ltsrule{Tau}$ where $\subj{\ell_1}$ and $\subj{\ell_2}$ in the premise 
+%		are dual session names. Suppose $\Delta$ is balanced. Then 
+%		$\Gamma; \Delta \proves P \cong \Delta'\proves P'$ 
+%		with $\Delta \red^\ast \Delta'$ balanced. 
 		\item 
 		Let $P$ is the $\HOp^{-\mathsf{sh}}$-calculus. 
 		Assume $\Gamma; \emptyset; \Delta \proves P \hastype \Proc$. Then 

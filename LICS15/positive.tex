@@ -1,10 +1,10 @@
 % !TEX root = main.tex
 \noi This section presents two encodabilty results:
-(1)~The higher-order name-passing communication with recursions (\HOp) into 
+(1)~The higher-order name-passing communication with recursion (\HOp) into 
 the higher-order communication without name-passing nor 
-recursions (\HO) (\secref{subsec:HOpi_to_HO}); and 
+recursion (\HO) (\secref{subsec:HOpi_to_HO}); and 
 (2)~\HOp into the first-order name-passing communication
-with recursions (\sessp) (\secref{subsec:HOp_to_sessp}). 
+with recursion (\sessp) (\secref{subsec:HOp_to_sessp}). 
 
  
 
@@ -17,7 +17,7 @@ represent the full
 The main challenge is to encode (1) name passing 
 and (2) recursions, 
 for which 
-we only use name abstraction passing. For (1), we pass  
+we only use  abstraction passing. For (1), we pass  
 an % simple 
 abstraction which enables to use the name upon application. 
 For (2), we 
@@ -28,8 +28,9 @@ because
 linear abstractions cannot be copied.
 To handle linearity, we define 
 %a preliminary tool which is a mapping from
-\jpc{an auxiliary mapping}
-from processes \jpc{with free names} to processes without free names (but with free variables) (\defref{d:auxmap}). 
+a mapping from processes with free names to processes without free
+names (but with free variables instead).
+%from processes \jpc{with free names} to processes without free names (but with free variables) (\defref{d:auxmap}). 
 We first require an auxiliary definition.
 
 \smallskip 
@@ -67,7 +68,10 @@ used in \defref{d:enc:hopitoho}.
 \\[1mm]
 %\auxmapp{\bout{n}{m} P}{{}}{\sigma} \defeq
 %	    \bout{u}{v}\auxmapp{P}{{}}{\sigma} 
-
+\auxmapp{\news{n} P}{{}}{\sigma}  \defeq  \news{n} \auxmapp{P}{{}}{{\sigma \cat n}}
+ & 
+	\auxmapp{P \Par Q}{{}}{\sigma}  \defeq  \auxmapp{P}{{}}{\sigma} \Par \auxmapp{Q}{{}}{\sigma} 
+	\vspace{1mm} \\
 	\auxmapp{\appl{x}{n}}{{}}{\sigma}  \defeq
 		\appl{x}{u} &
 	\auxmapp{\appl{(\lambda x.Q)}{n}}{{}}{\sigma}  \defeq
@@ -82,10 +86,6 @@ used in \defref{d:enc:hopitoho}.
  & 
 	\auxmapp{\bbra{n}{l_i:P_i}_{i \in I}}{{}}{\sigma}  \defeq 
 		\bbra{u}{l_i:\auxmapp{P_i}{{}}{\sigma}}_{i \in I}
-	\vspace{1mm} \\
-\auxmapp{\news{n} P}{{}}{\sigma}  \defeq  \news{n} \auxmapp{P}{{}}{{\sigma \cat n}}
- & 
-	\auxmapp{P \Par Q}{{}}{\sigma}  \defeq  \auxmapp{P}{{}}{\sigma} \Par \auxmapp{Q}{{}}{\sigma} 
 \end{array}
 \]
 %\[
@@ -327,7 +327,8 @@ recursive session types \jpc{have been} studied in
 this is the first application in the
 context of higher-order session types.}
 %which carries type variable as the last argument.  
-For a simplicity of the presentation, we use the polyadic name abstraction and passing.
+For a simplicity of the presentation, %we use the polyadic name abstraction and passing.
+we use name abstractions with polyadicity.
 They will be formally encoded into \HO in \secref{sec:extension}.
 
 We explain the mapping in \figref{f:enc:hopi_to_ho}, focusing 
@@ -356,13 +357,13 @@ The encoding of a recursive process $\recp{X}{P}$  is delicate, for it
 must preserve the linearity of session endpoints. To this end, we:
 \NY{i) record a mapping from recursive variable $X$ to process variables $z_X$;
 ii)~encode the recursion body $P$ as a name abstraction
-in which free names of $P$ are converted into name variables;
+in which free names of $P$ are converted into name variables, using \defref{d:auxmap};
 iii)~this higher-order value is embedded in an input-guarded 
 ``duplicator'' process; and 
 iv)~make the encoding of process variable $z_X$ to 
 simulate recursion unfolding by 
 invoking the duplicator in a by-need fashion,
-i.e.,~upon reception, abstraction $\auxmapp{P}{{}}{\sigma}$ is duplicated
+i.e.,~upon reception, the abstraction containing $\auxmapp{P}{{}}{\sigma}$ is duplicated
 with one copy used to reconstitute the encoded recursion body $P$ through
 the application of $\fn{P}$ and another copy used to re-invoke
 the duplicator when needed. % to simulate recursion unfolding.
