@@ -176,15 +176,18 @@ universal quantification, we introduce \emph{higher-order}  and
 \emph{characteristic}  
 bisimulations, two tractable equivalences denoted  $\hwb$ and $\fwb$, respectively.
 As we work with an \emph{early} labelled transition system (LTS), 
-we shall also aim at limiting the input actions,  
-so to define a
-bisimulation relation for the output clause without observing
-infinitely many actions on the same input prefix. 
-To this end, we take the following two steps: 
+%we shall also aim at limiting the input actions,  
+%so to define a
+%bisimulation relation for the output clause without observing
+%infinitely many actions on the same input prefix. 
+%To this end, 
+%
+we take the following two steps: 
 %
 \begin{enumerate}[(a)]
 	\item We replace $(\star)$ with a clause involving a more tractable process closure.
-	\item We refine the transition rule for input in the LTS.
+	\item We refine the transition rule for input in the LTS,
+	to avoid observing infinitely many actions on the same input prefix.
 \end{enumerate}
 %
 \smallskip
@@ -204,7 +207,7 @@ is context bisimilar to the process:
 %is an output 
 %on the endpoint $\dual{s}$ (the dual of $s$).
 In fact,
-we have $P \wbc R\subst{V}{x}$, 
+we do have $P \wbc R\subst{V}{x}$, 
 since 
 application and reduction of dual endpoints 
 %($s$ and $\dual{s}$) 
@@ -215,7 +218,8 @@ consider process $T_{V}$ below, where $t$ is a fresh name:
 T_{V} = \hotrigger{t}{V}
 \end{equation}
 %We call $\abs{z}{\binp{z}{x} R}$ a {\bf\em trigger value}. 
-If $T_{V}$ inputs $\abs{z}{\binp{z}{x} R}$ then
+Let us write $P \by{\bactinp{n}{V}} P'$ to denote an input transition along $n$.
+If $T_{V}$ inputs value $\abs{z}{\binp{z}{x} R}$ then
 we can simulate the closure of $P$:
 \begin{equation}\label{equ:2}
 %\hotrigger{t}{V_1} 
@@ -244,16 +248,17 @@ replication. This is crucial for preserving linearity of session names.
 %$\abs{z}{\binp{z}{x} R}$.   
 
 \myparagraph{Characteristic Processes and Values.}
-Concerning (b), we limit the possible $R$ processes by
-exploiting session types.
-The key concept is that of {\bf \emph{characteristic process/values}}
+Concerning (b), we limit the possible 
+input values (such as $\abs{z}{\binp{z}{x} R}$ above) %processes 
+by exploiting session types.
+The key concept is that of {\bf \emph{characteristic process/value}}
 of a type,  
 %The characteristic process of a session type $S$ is the process inhabiting $S$. 
 the 
 simplest value inhabiting that type (Def.~\ref{def:char}).
 This way, e.g., let $S = \btinp{\shot{S_1}} \btout{S_2} \tinact$
 be a session type: first
-input a function, %from values $S_1$ to processes, 
+input an abstraction, %from values $S_1$ to processes, 
 then output a value of type $S_2$.
 Then, process $Q = \binp{u}{x} (\bout{u}{s_2} \inact \Par \appl{x}{s_1})$
 is a characteristic process for $S$ 
@@ -288,7 +293,7 @@ $U$ to replace clause
 \jpc{Thus, in contrast to the trigger process~\eqref{equ:0}, the characteristic trigger process 
 in~\eqref{eq:4}
 does not involve a
-higher-order communication on $t$.}
+higher-order communication on fresh name $t$.}
 To refine the input transition system, we need to observe 
 an additional value, 
 $\abs{{x}}{\binp{t}{y} (\appl{y}{{x}})}$, 
@@ -308,7 +313,7 @@ to observe/simulate application processes.
 Based on 
 the above discussion, we refine 
 the (early) transition rule for input actions. 
-We write $P \by{\bactinp{n}{V}} P'$ for the input transition along $n$.
+%We write $P \by{\bactinp{n}{V}} P'$ for the input transition along $n$.
 The transition rule for input roughly becomes 
 (see Def.~\ref{def:rlts} for details):
 \[

@@ -13,7 +13,7 @@ The syntax of types of \HOp is given below:
 \[
 \begin{array}{lrl}
 \text{(value)}	& U \bnfis &	\nonhosyntax{C} \bnfbar L\\[1mm]  % \bnfbar \Proc
-\text{(chan)}   & C  \bnfis &	S \bnfbar \chtype{S}\bnfbar \chtype{L}
+\text{(name)}   & C  \bnfis &	S \bnfbar \chtype{S}\bnfbar \chtype{L}
 	\\[1mm]
 \text{(lambda)} & L \bnfis &	\shot{C} \bnfbar \lhot{C}
 	\\[1mm]
@@ -34,22 +34,23 @@ shared types with $\chtype{S}$ and $\chtype{L}$.
 %which are sent via shared names. 
 Types $\shot{C}$ and $\lhot{C}$ denote
 {\em shared} and {\em linear} higher-order 
-\jpc{functional}
+%\jpc{functional}
 types, respectively.
 %,
 %used to type abstraction values.
 %$\lhot{C}$ \cite{tlca07,mostrous_phd} ensures values which contain free 
 %session names used once. 
  
-We write $S$ to denote binary session types.  {\em Output type}
+We write $S$ to denote %binary 
+session types.  {\em Output type}
 $\btout{U} S$ %is assigned to a name that 
 first sends a value of
-type $U$ and then follows the protocol described by $S$.  Dually,
+type $U$ and then follows the type described by $S$.  Dually,
 $\btinp{U} S$ denotes an {\em input type}.  {\em Branching type}
 $\btbra{l_i:S_i}_{i \in I}$ and {\em selection type}
 $\btsel{l_i:S_i}_{i \in I}$ are the labelled choice. 
-We assume {\em recursive type} $\trec{t}{S}$ is guarded,
-i.e.  $\trec{t}{\vart{t}}$ is not allowed. 
+We assume the {\em recursive type} $\trec{t}{S}$ is guarded,
+i.e.,  $\trec{t}{\vart{t}}$ is not allowed. 
 %We stress that carried type $U$ in $\btout{U} S$ and
 %$\btinp{U} S$ can contain free type variables, which is crucial
 %to encode $\HOp$ into $\HO$.
@@ -95,9 +96,12 @@ environments $\Gamma; \Lambda; \Delta$ process $P$ has the process type~$\Proc$.
 \end{array}
 \]
 \noi 
-$\Gamma$ is a mapping from variables, shared names and recursive 
-process variables;  $\Lambda$ is a mapping from variables to 
-the linear functional type; and $\Delta$ is a mapping from 
+$\Gamma$ maps variables and shared names to value types, and recursive 
+variables to session environments;  $\Lambda$ is a mapping from variables to 
+%the
+ linear %functional 
+higher-order
+types; and $\Delta$ is a mapping from 
 session names to session types. 
 %As expected, weakening, contraction, and exchange principles apply to
 %$\Gamma$; environments $\Lambda$ and $\Delta$ behave linearly, and are
@@ -105,8 +109,8 @@ session names to session types.
 We require that the domains of $\Gamma,
 \Lambda$ and $\Delta$ are pairwise distinct. $\Delta_1\cdot \Delta_2$ means 
 a disjoint union of $\Delta_1$ and $\Delta_2$.  
-We are interested in session environments that contain
-dual endpoints typed with dual types.
+We are interested in \emph{balanced} session environments: 
+%that contain dual endpoints typed with dual types.
 %The following definition ensures two session endpoints 
 %are dual each other. 
 
