@@ -17,6 +17,7 @@ respectively; and $\hby{\ell}$, $\wb$, and $\proves$
 \smallskip 
 
 \noi 
+Based on this definition, later on we define concrete instances of (higher-order) typed calculi.
 Our notion of encoding considers mappings on processes, 
 types, and transition labels: 
 
@@ -89,7 +90,7 @@ expresses that encodings should preserve the distributed topology of source proc
 %it admits an elegant formulation, also 
 induced by rules for typed composition.
 Compositionality wrt restriction 
-is supported by typing and turns out to be 
+is also supported by typing and turns out to be 
 useful in our encodability results (\secref{sec:positive}).
 The name invariance criteria follows \cite{DBLP:journals/iandc/Gorla10,DBLP:conf/icalp/LanesePSS10}. 
 Next we define semantic criteria: %for typed encodings.
@@ -102,9 +103,9 @@ Next we define semantic criteria: %for typed encodings.
        ($i=1,2$) be typed calculi. 
 We say that $\enco{\map{\cdot}, \mapt{\cdot}, \mapa{\cdot}}: \tyl{L}_1 \to \tyl{L}_2$ is a \emph{semantic preserving encoding}
 if it satisfies the properties below.
-Given a label $\ell \neq \tau$, we write 
-$\mathsf{sub}(\ell)$
-to denote the \emph{subject} of the action.
+%Given a label $\ell \neq \tau$, we write 
+%$\mathsf{sub}(\ell)$
+%to denote the \emph{subject} of the action.
 	
 	\begin{enumerate}[1.]
 		\item \emph{Type Preservation}:
@@ -112,7 +113,7 @@ to denote the \emph{subject} of the action.
 	$\Gamma; \emptyset; \Delta \proves_1 P \hastype \Proc$ then 
 	$\mapt{\Gamma}; \emptyset; \mapt{\Delta} \proves_2 \map{P} \hastype \Proc$,  
 	for any   $P$ in $\CAL_1$.
-			\item \emph{Subject preserving}: if $\mathsf{sub}(\ell) = u$ then $\mathsf{sub}(\mapa{\ell}) =u$.
+			\item \emph{Subject preserving}: if $\subj{\ell} = u$ then $\subj{\mapa{\ell}} =u$.
 
 
 	\item \emph{Operational Correspondence}: If $\Gamma; \emptyset; \Delta \proves_1 P \hastype \Proc$ then
@@ -120,11 +121,11 @@ to denote the \emph{subject} of the action.
 			\item	\NY{Completeness: 
 			   If  
 $\stytraarg{\Gamma}{\ell_1}{\Delta}{P}{\Delta'}{P'}{1}$
-			   then $\exists \ell_2, Q$ s.t. 
- (i)~$\wtytraarg{\mapt{\Gamma}}{\ell_2}{\mapt{\Delta}}{\map{P}}{\mapt{\Delta'}}{Q}{2}$,
+			   then $\exists \ell_2, Q, \Delta''$ s.t. 
+ (i)~$\wtytraarg{\mapt{\Gamma}}{\ell_2}{\mapt{\Delta}}{\map{P}}{\mapt{\Delta''}}{Q}{2}$,
 			    (ii)~$\ell_2 = \mapa{\ell_1}$, 
 			    and \\
-				(iii)~${\mapt{\Gamma}};{\mapt{\Delta'}}\proves_2 {Q}{\wb_2}
+				(iii)~${\mapt{\Gamma}};{\mapt{\Delta''}}\proves_2 {Q}{\wb_2}
 {\mapt{\Delta'}}\proves_2 {\map{P'}}$.}
 				
 			\item	Soundness:   
@@ -152,15 +153,18 @@ ${\mapt{\Gamma}};{\mapt{\Delta'}}\proves_2 {\map{P'}}{\wb_2}
 %The other semantic
 %criteria build upon analogous definitions in the untyped setting, as we explain now. 
 Operational correspondence, standardly divided into completeness and soundness, is based
-in the formulation given in~\cite{DBLP:journals/iandc/Gorla10,DBLP:conf/icalp/LanesePSS10}. 
+in the formulation given in~\cite{DBLP:journals/iandc/Gorla10,DBLP:conf/icalp/LanesePSS10};
+it relies on 
+the typed LTS of \defref{def:rlts}, 
+rather than on reduction.
 Completeness ensures that an action of the source process is mimicked
 by an action of its associated encoding; soundness is its converse.
 %Soundness ensures that the source process is mimicked 
 %by its associated encoding; completeness is its converse.
-Completeness and soundness rely on 
-the typed LTS of \defref{def:rlts}, 
-rather than on reductions;
-labels are considered up to  mapping $\mapa{\cdot}$, which offers flexibility when comparing different calculi. We require that $\mapa{\cdot}$ preserves  subjects, in accordance with the criteria in~\cite{DBLP:conf/icalp/LanesePSS10}.
+%Completeness and soundness rely on 
+%the typed LTS of \defref{def:rlts}, 
+%rather than on reductions;
+Labels are considered up to  mapping $\mapa{\cdot}$, which offers flexibility when comparing different calculi. We require that $\mapa{\cdot}$ preserves  subjects, in accordance with the criteria in~\cite{DBLP:conf/icalp/LanesePSS10}.
 \jpc{Above, operational correspondence is stated in generic terms.}
 It is worth stressing that 
 the operational correspondence statements 
@@ -230,7 +234,7 @@ We say that
 	\item \emph{minimal}, if it is syntax preserving 
 	(cf.~\defref{def:sep}),
 	%barb preserving, 
-	and operational complete (cf.~\defref{def:ep}-2(a)).
+	and operational complete (cf.~\defref{def:ep}-3(a)).
 	\end{enumerate}
 \end{definition}
 

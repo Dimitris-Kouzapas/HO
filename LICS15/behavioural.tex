@@ -6,7 +6,7 @@ laid by the previous work of the authors
 We introduce three different bisimulations and prove
 \jpc{that}
 all of them coincide with typed, reduction-closed,
-barbed congruence. 
+barbed congruence (Theorem~\ref{the:coincidence}).
 
 \subsection{Labelled Transition System for Processes}\label{ss:lts}
 \myparagraph{Labels.}
@@ -28,16 +28,23 @@ is defined on action $\ell$:
 \noi The internal action is defined by label $\tau$.
 Action $\news{\tilde{m}} \bactout{n}{V}$ denotes the sending of value $V$
 over channel $n$ with
-a possible empty set of names $\tilde{m}$ being restricted
-(we may also write $\bactout{n}{V}$ when $\tilde{m}$ is empty).
+a possible empty set of names $\tilde{m}$ being restricted.
+We may write $\bactout{n}{V}$ when $\tilde{m}$ is empty,
+and 
+$\news{\tilde{m}} \bactout{n}{\AT{V}{U}}$
+when the type of $V$ is~$U$.
 Dually, the action for value reception is 
 $\bactinp{n}{V}$.
 We also have actions for selecting 
 and branching on
-a label $l$ ($\bactsel{n}{l}$ and $\bactbra{n}{l}$, resp.)
-$\fn{\ell}$ and $\bn{\ell}$ denote 
- sets of free/bound names in $\ell$, resp.
+a label $l$; these are denoted $\bactsel{n}{l}$ and $\bactbra{n}{l}$, resp.
+We write $\fn{\ell}$ and $\bn{\ell}$ to denote the
+ sets of free and bound names in $\ell$, resp.
 %and set $\mathsf{n}(\ell)=\bn{\ell}\cup \fn{\ell}$. 
+Given a label $\ell \neq \tau$, we write 
+$\subj{\ell}$
+to denote the \emph{subject} of the action.
+
 
 \emph{Dual actions} %, defined below, 
 occur on subjects that are dual between them and carry the same
@@ -158,7 +165,7 @@ Otherwise,
 the process performs scope opening (rule $\ltsrule{New}$).  
 Rule $\ltsrule{Rec}$ handles recursion unfolding.
 Rule $\ltsrule{Tau}$ 
-states that two parallel processes which can perform
+states that two parallel processes which perform
 dual actions can synchronise by an internal transition.
 %states that if two parallel processes can perform
 %dual actions then the two actions can synchronise by 
@@ -193,13 +200,13 @@ should coincide.
 Moreover, 
 the resulting type tuple must contain the environments 
 associated to $V$. 
-The condition $\dual{s} \notin \dom{\Delta}$
-ensures that 
+The %condition $\dual{s} \notin \dom{\Delta}$
+rule requires that 
 the dual endpoint $\dual{s}$ is not 
 present in the session environment, since if it were present
 the only communication that could take place is the interaction
 between the two endpoints (using $\eltsrule{Tau}$ below).
-Rule~$\eltsrule{ShRv}$, for shared names, follows similar principles.
+Rule~$\eltsrule{ShRv}$ is for shared names and follows similar principles.
 
 \myparagraph{Output Actions} are defined by rules~$\eltsrule{SSnd}$
 and $\eltsrule{ShSnd}$.  
@@ -210,7 +217,7 @@ The session environment $\Delta$ with $\AT{s}{S}$
 should include the session environment of the sent value $V$, 
 {\em excluding} the session environments of names $n_j$ 
 in $\tilde{m}$ which restrict the scope of value $V$. 
-Similarly the linear variable environment 
+Similarly, the linear variable environment 
 $\Lambda'$ of $V$ should be included in $\Lambda$. 
 Scope extrusion of session names in $\tilde{m}$ requires
 that the dual endpoints of $\tilde{m}$ should appear in
@@ -220,13 +227,13 @@ All free values used for typing $V$ are subtracted from the
 resulting type tuple. The prefix of session $s$ is consumed
 by the action.
 Rule $\eltsrule{ShSnd}$ is for output actions on shared names:
-the name must be typed with $\chtype{U}$ and conditions on $V$ are identical to those
+the name must be typed with $\chtype{U}$; conditions on $V$ are identical to those
 % the requirements 
 on rule~$\eltsrule{SSnd}$.
-\NY{Given a $V$ of type $U$, we sometimes annotate the output action 
-$\news{\tilde{m}} \bactout{n}{V}$
-%with the type of $V$ 
-as $\news{\tilde{m}} \bactout{n}{\AT{V}{U}}$.}
+%\NY{Given a $V$ of type $U$, we sometimes annotate the output action 
+%$\news{\tilde{m}} \bactout{n}{V}$
+%%with the type of $V$ 
+%as $\news{\tilde{m}} \bactout{n}{\AT{V}{U}}$.}
 
 \myparagraph{Other Actions}
 Rules $\eltsrule{Sel}$ and $\eltsrule{Bra}$ describe actions for
@@ -398,7 +405,10 @@ environments (\defref{def:ses_red}).
 \end{figure}
 
 Below we define the typed LTS combining 
-the LTS of processes and the LTS of environments. 
+the LTS of processes 
+(Fig.~\ref{fig:untyped_LTS})
+and the LTS of environments
+(Fig.~\ref{fig:envLTS}). 
 
 \smallskip
 
@@ -478,7 +488,7 @@ with respect to types.
 \smallskip 
 
 \begin{definition}[Barbs]\rm
-Let $P$ closed. We define:
+Let $P$ be a closed process. We define:
 \begin{enumerate}
 		\item	$P \barb{n}$ if $P \scong \newsp{\tilde{m}}{\bout{n}{V} P_2 \Par P_3}, n \notin \tilde{m}$. %; $P \Barb{n}$ if $P \red^* \barb{n}$.
 
@@ -509,7 +519,7 @@ To define a congruence relation, we introduce the context $\C$:\\
 \bnfbar \bout{u}{\lambda x.\C} P
 \bnfbar \news{n} \C$\\
              $\bnfbar$\!\!\!\!& $(\lambda x.\C)u \bnfbar \recp{X}{\C} \bnfbar \C \Par P \bnfbar P \Par \C$\\ 
-$\bnfbar$\!\!\!\!& $\bsel{u}{l} \C \bnfbar \bbra{u}{l_1:P_1,..,l_i:\C,..l_n:P_n}$\\
+$\bnfbar$\!\!\!\!& $\bsel{u}{l} \C \bnfbar \bbra{u}{l_1:P_1,\cdots,l_i:\C,\cdots,l_n:P_n}$\\
 	\end{tabular}
 \smallskip 
 
@@ -552,12 +562,12 @@ $\hole$ in $\C$ with $P$.
 \end{definition}
 
 
-\subsection{Contextual Bisimulation ($\wbc$)}
+\subsection{Context Bisimulation ($\wbc$)}
 \label{subsec:bisimulation}
 \noi The first bisimulation which we define 
-is the standard contextual bisimulation~\cite{San96H}. 
+is the standard (weak) context bisimulation~\cite{San96H}. 
 %
-\begin{definition}[Contextual Bisimulation]\rm
+\begin{definition}[Context Bisimulation]\rm
 \label{def:wbc}
 A typed relation $\Re$ is {\em a contextual bisimulation} if
 for all $\horel{\Gamma}{\Delta_1}{P_1}{\ \Re \ }{\Delta_2}{Q_1}$, 
@@ -595,7 +605,7 @@ $\horel{\Gamma}{\Delta_2}{Q_1}{\By{\ell}}{\Delta_2'}{Q_2}$
 
                       \item	The symmetric cases of 1 and 2.                
 	\end{enumerate}
-	The largest such bisimulation is called contextual bisimilarity \jpc{and} denoted by $\wbc$.
+	The largest such bisimulation is called context bisimilarity \jpc{and} denoted by $\wbc$.
 \end{definition}
 
 \smallskip 
@@ -734,7 +744,7 @@ We define characteristic processes/values:
 
 \noi We can easily verify characteristic processes are
 inhabitants of their associated type. 
-The example below explains the motivation of the refined 
+The following example motivates the refined 
 LTS explained in \secref{subsec:intro:bisimulation}.
 \smallskip  
 
@@ -755,17 +765,17 @@ Consider typed processes $P_1, P_2$:
 We can show that $\Gamma; \es; \Delta \cat s: \btinp{\shot{(\btinp{C} \tinact)}} \tinact \proves P_i \hastype \Proc$ ($i \in \{1,2\}$).
 If the above processes input and substitute over $x$
 the characteristic value $\dk{\omapchar{\shot{(\btinp{C} \tinact)}} =} \abs{x}{\binp{x}{y} \inact}$, 
-then both processes evolve into:%(\ref{eq:5}) and (\ref{eq:6}) in become:
+then they evolve into:%(\ref{eq:5}) and (\ref{eq:6}) in become:
 \begin{center}
 \begin{tabular}{c}
 	$\Gamma; \es; \Delta \proves \binp{s_1}{y} \inact \Par \binp{s_2}{y} \inact \hastype \Proc$
 \end{tabular}
 \end{center}
 \noi therefore becoming 
-contextually bisimilar.
+context bisimilar.
 %after the input of $\abs{x}{\binp{x}{y}} \inact$.
 However, the processes in (\ref{equ:6}) 
-are clearly {\em not} contextually bisimilar: there exist many input actions
+are clearly {\em not} context bisimilar: there are many input actions
 which may be used to distinguish them.
 For example, if 
 $P_1$ and $P_2$ input 
@@ -916,10 +926,10 @@ two tractable bisimulations for $\HO$ and $\HOp$.
 As explained in \secref{sec:overview},
 the key difference between them is in the 
 trigger processes they use:
-\begin{eqnarray}
+\begin{eqnarray*}
 \htrigger{t}{V_1}  & \defeq &  \hotrigger{t}{V} \label{eqb:0} \\
 	\ftrigger{t}{V}{U} & \defeq &  \fotrigger{t}{x}{s}{\btinp{U} \tinact}{V} 	\label{eqb:4}
-\end{eqnarray}
+\end{eqnarray*}
 %\noi
 %Notice that while 
 %in~\eqref{eqb:0} there is a higher-order input on $t$, 
@@ -989,7 +999,7 @@ $
 
 \smallskip 
 
-\noi Below we state the main theorem.
+\noi We now state our main theorem: typed bisimilarities collapse. 
 
 \smallskip 
 
@@ -1013,14 +1023,17 @@ we can still use~$\fwb$.
 
 \smallskip  
 
-\noi Processes that do not use shared names, are inherently deterministic. 
+\noi Processes that do not use shared names are inherently deterministic. 
 The following \jpc{determinacy property will be} useful 
 \dk{for proving our expressiveness results (\S\,\ref{sec:positive})}.
 %for both positive and negative results. 
-We say that transition $\horel{\Gamma}{\Delta}{P}{\hby{\tau}}{\Delta'}{P'}$ is
-		{\em deterministic} if it is derived by $\ltsrule{App}$ or 
-		$\ltsrule{Tau}$ where $\subj{\ell_1}$ and $\subj{\ell_2}$ in the premise 
-		are dual session names. 
+We require an auxiliary definition. 
+A transition $\horel{\Gamma}{\Delta}{P}{\hby{\tau}}{\Delta'}{P'}$ is said
+		{\em deterministic} if it is derived using~$\ltsrule{App}$ or~$\ltsrule{Tau}$ 
+		(where $\subj{\ell_1}$ and $\subj{\ell_2}$ in the premise 
+		are dual endpoints), 
+		possibly followed by uses of  $\ltsrule{Alpha}$, $\ltsrule{Res}$, $\ltsrule{Rec}$, or $\ltsrule{Par${}_L$}/\ltsrule{Par${}_R$}$.
+
 
 %\smallskip 
 

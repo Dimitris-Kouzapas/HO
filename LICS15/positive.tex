@@ -15,7 +15,7 @@ with recursion (\sessp) (\secref{subsec:HOp_to_sessp}).
 represent the full
  \HOp-calculus.
 The main challenge is to encode (1) name passing 
-and (2) recursions, 
+and (2) recursion, 
 for which 
 we only use  abstraction passing. For (1), we pass  
 an % simple 
@@ -31,7 +31,7 @@ To handle linearity, we define
 a mapping from processes with free names to processes without free
 names (but with free variables instead).
 %from processes \jpc{with free names} to processes without free names (but with free variables) (\defref{d:auxmap}). 
-We first require an auxiliary definition.
+To this end, we require two auxiliary definitions.
 
 \smallskip 
 
@@ -46,11 +46,11 @@ lexicographically ordered names to sequences of variables, defined
 
 \smallskip 
 
-\noi The following auxiliary mapping transforms processes
-with free names into abstractions and it is
-used in \defref{d:enc:hopitoho}.
-
-\smallskip 
+%\noi The following auxiliary mapping transforms processes
+%with free names into abstractions and it is
+%used in \defref{d:enc:hopitoho}.
+%
+%\smallskip 
 
 \begin{definition}[Auxiliary Mapping] \label{d:trabs}\label{d:auxmap}
 	Let $\sigma$ be a set of session names.
@@ -158,7 +158,9 @@ used in \defref{d:enc:hopitoho}.
 %used in the encoding of the higher-order communication 
 %with recursive definitions into higher-order communication 
 %without recursive definitions and (\defref{d:enc:fotohorec}).
-$u = n$ if $n\in \sigma$; otherwise $u = x_n$. \\
+\begin{center}
+{\small In all cases: $u = n$ if $n\in \sigma$; otherwise $u = x_n$.}
+\end{center}
 %The mapping is defined homomorphically for inaction and parallel composition.
 \caption{\label{f:auxmap} Auxiliary mapping used to encode \HOp into \HO.}
 \Hlinefig 
@@ -166,8 +168,12 @@ $u = n$ if $n\in \sigma$; otherwise $u = x_n$. \\
 
 \smallskip 
 
-\noi Given a process $P$ with $\fn{P} = m_1, \cdots, m_n$, we are interested in its associated abstraction, which is defined as
-$\abs{x_1\cdots x_n}{\auxmapp{P}{{}}{\emptyset} }$, where $\vmap{m_j} = x_j$, for all $j \in \{1, \ldots, n\}$. 
+\noi This way, given an \HO
+ process $P$ (with $\fn{P} = m_1, \cdots, m_k$),
+ we are interested in its associated abstraction, 
+defined as
+$\abs{x_1\cdots x_n}{\auxmapp{P}{{}}{\emptyset} }$, where $\vmap{m_j} = x_j$, for all $j \in \{1, \ldots, k\}$. 
+In the following we make this intuition precise.
 
 %This transformation from processes into abstractions can be reverted by
 %using abstraction and application with an appropriate sequence of session names:
@@ -265,11 +271,11 @@ $
 \end{array}
 $\\[1mm]
 %  
-Above $\fn{P}$ denotes a 
+{\small Above $\fn{P}$ denotes a 
 lexicographically ordered
 sequence 
 of free names in $P$.
-The input bound variable $x$ is annotated by a type to distinguish the first- and higher-order cases. \\
+The input bound variable $x$ is annotated by a type to distinguish first- and higher-order cases.} \\
 \caption{\label{f:enc:hopi_to_ho}Encoding of \HOp into \HO.}
 %(cf.~\defref{d:enc:fotohorec}).
 %Mappings 
@@ -327,16 +333,16 @@ recursive session types \jpc{have been} studied in
 this is the first application in the
 context of higher-order session types.}
 %which carries type variable as the last argument.  
-For a simplicity of the presentation, %we use the polyadic name abstraction and passing.
+For simplicity of the presentation, %we use the polyadic name abstraction and passing.
 we use name abstractions with polyadicity.
-They will be formally encoded into \HO in \secref{sec:extension}.
+They will be formally encoded into \HO in \secref{subsec:pho}.
 
 We explain the mapping in \figref{f:enc:hopi_to_ho}, focusing 
 on {\em name passing} ($\pmapp{\bout{u}{w} P}{1}{f}$) and  
 {\em recursion} ($\pmapp{\recp{X}{P}}{1}{f}$ and $\pmapp{z_\rvar{X}}{1}{f}$). 
 
 \myparagraph{Name passing.}
-A name $w$ is   passed as an input guarded abstraction;
+A name $w$ is   passed as an input-guarded abstraction;
 the abstraction receives a higher-order
 value and continues with the application of $w$ over
 the received higher-order value.
@@ -354,19 +360,25 @@ $\abs{x}{P}$.
 
 \myparagraph{Recursion.}
 The encoding of a recursive process $\recp{X}{P}$  is delicate, for it 
-must preserve the linearity of session endpoints. To this end, we:
-\NY{i) record a mapping from recursive variable $X$ to process variables $z_X$;
-ii)~encode the recursion body $P$ as a name abstraction
-in which free names of $P$ are converted into name variables, using \defref{d:auxmap};
-iii)~this higher-order value is embedded in an input-guarded 
-``duplicator'' process; and 
-iv)~make the encoding of process variable $z_X$ to 
-simulate recursion unfolding by 
-invoking the duplicator in a by-need fashion,
-i.e.,~upon reception, the abstraction containing $\auxmapp{P}{{}}{\sigma}$ is duplicated
-with one copy used to reconstitute the encoded recursion body $P$ through
-the application of $\fn{P}$ and another copy used to re-invoke
+must preserve the linearity of session endpoints. To this end, we
+\NY{first record a mapping from recursive variable $X$ to process variable $z_X$.
+Then, we encode the recursion body $P$ as a name abstraction
+in which free names of $P$ are converted into name variables, using \defref{d:auxmap}.
+(Notice that $P$ is first encoded into \HO and then transformed using mapping
+$\auxmapp{\cdot}{{}}{\sigma}$.)
+Subsequently, this higher-order value is embedded in an input-guarded 
+``duplicator'' process. Finally, we define the encoding of $z_X$ 
+in such a way that it
+simulates recursion unfolding by 
+invoking the duplicator in a by-need fashion.
+That is, upon reception, the \HO abstraction which encodes  the 
+recursion body $P$
+%containing $\auxmapp{P}{{}}{\sigma}$ 
+is duplicated: 
+one copy is used to reconstitute the original recursion body $P$ (through
+the application of $\fn{P}$); another copy is used to re-invoke
 the duplicator when needed. % to simulate recursion unfolding.
+A detailed example of this encoding strategy is given in~\cite{KouzapasPY15}.
 }
 %The idea follows 
 %a classical recursion encoding \cite{ThomsenB:plachoasgcfhop}.  
@@ -393,9 +405,9 @@ is precise.
 \noi 
 We now discuss the encodability of  $\HO$ into $\sessp$. % where
 %:
-We closely follow the representability result  by 
+We closely follow the encoding  by 
 Sangiorgi~\cite{San92,SaWabook}, but casted in the setting of session-typed communications. 
-Intuitively, such a strategy represents the exchange of a process with the exchange of a freshly generated \emph{trigger name}. 
+Intuitively, such an encoding  represents the exchange of a process with the exchange of a freshly generated \emph{trigger name}. 
 Trigger names may then be used to activate copies of the process, which now becomes a persistent resource represented by an input-guarded replication.
 %Consider the following (naive) adaptation of \cite{San92,SaWabook} 
 %in which session names are used are triggers and 
@@ -451,7 +463,12 @@ in \figref{f:enc:ho_to_sessp}.
 \end{definition}
 
 \smallskip 
-
+\noi 
+Notice that $\mapa{\bactinp{n}{\abs{ x}{P}} }^2$ corresponds to a fresh trigger name, which may 
+be linear or shared, depending on $P$. Such a name informally denotes the location of $\pmap{P}{2}$. 
+%(a $\sessp$ process).
+Observe also how $\pmap{\appl{(\abs{x}{P})}{u}}{2}$ naturally induces a name substitution.
+\smallskip 
 \begin{figure}[t]
 \[
 \begin{array}{l}
@@ -466,9 +483,9 @@ in \figref{f:enc:ho_to_sessp}.
 %\[
 %\begin{array}{rcll}
 \noindent{\bf Labels:}\ 
-		\mapa{(\nu \tilde{m})\bactout{n}{\abs{ x}{P}} }^2  & \defeq & \news{a} \bactout{n}{a} \\
-		\mapa{\bactinp{n}{\abs{ x}{P}} }^2 &  \defeq & \bactinp{n}{a}
-\quad \quad a \text{ fresh}
+		\mapa{(\nu \tilde{m})\bactout{n}{\abs{ x}{P}} }^2  & \defeq & \news{m} \bactout{n}{m} \\
+		\mapa{\bactinp{n}{\abs{ x}{P}} }^2 &  \defeq & \bactinp{n}{m}
+\quad \quad m \text{ fresh}
 \\[1mm]
 \hline
 \end{array}
@@ -486,15 +503,16 @@ in \figref{f:enc:ho_to_sessp}.
 		\end{array}
 		\right.
 		\\
-\pmap{\binp{u}{x} P}{2} &\!\!\!\! \defeq \!\!\!\! \!\!\!\! &  \binp{u}{x} \pmap{P}{2}\quad \quad 
-\pmap{\appl{(\abs{x}{P})}{u}}{2} \!\! \defeq \!\!
-\pmap{P\subst{u}{x}}{2}\\
-\pmap{\appl{x}{u}}{2} & \!\!\!\! \defeq \!\!\!\! \!\!\!\! & \newsp{s}{\bout{x}{s} \bout{\dual{s}}{u} \inact} 
-%\pmap{\appl{(\abs{x}{P})}{u}}{2} & \!\!\!\! \defeq \!\!\!\! \!\!\!\! & \newsp{s}{\bout{a}{s} \bout{\dual{s}}{u} \inact} \\
+\pmap{\binp{u}{x} P}{2} &\!\!\!\! \defeq \!\!\!\! \!\!\!\! &  \binp{u}{x} \pmap{P}{2}
+%\quad \quad \pmap{\appl{(\abs{x}{P})}{u}}{2} \!\! \defeq \!\! \pmap{P\subst{u}{x}}{2}
+\\
+\pmap{\appl{x}{u}}{2} & \!\!\!\! \defeq \!\!\!\! \!\!\!\! & \newsp{s}{\bout{x}{s} \bout{\dual{s}}{u} \inact} \\
+\pmap{\appl{(\abs{x}{P})}{u}}{2} & \!\!\!\! \defeq \!\!\!\! \!\!\!\! & %\newsp{s}{\bout{a}{s} \bout{\dual{s}}{u} \inact} \\
+\newsp{s}{\binp{s}{x} \pmap{P}{2} \Par \bout{\dual{s}}{u} \inact}
 	\end{array}
 $\\[3mm]
-$\repl{} P$ means $\recp{X}{(P \Par \rvar{X})}$.
-The rest of mappings are homomorphic.\\ 
+{\small Notice: $\repl{} P$ means $\recp{X}{(P \Par \rvar{X})}$.
+The rest of mappings are homomorphic.}\\ 
 %for others.  %types, labels and processes    
 	\caption{
 Encoding of \HOp into \sessp.
