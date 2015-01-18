@@ -36,11 +36,11 @@ a possible empty set of names $\tilde{m}$ being restricted
 %when the type of $V$ is~$U$.
 Dually, the action for value reception is 
 $\bactinp{n}{V}$.
-We also have actions for selecting 
-and branching on
-a label $l$; these are denoted $\bactsel{n}{l}$ and $\bactbra{n}{l}$, resp.
+We also have actions for select
+and branch on
+a label~$l$; these are denoted $\bactsel{n}{l}$ and $\bactbra{n}{l}$, resp.
 We write $\fn{\ell}$ and $\bn{\ell}$ to denote the
- sets of free and bound names in $\ell$, resp.
+ sets of free/bound names in $\ell$, resp.
 %and set $\mathsf{n}(\ell)=\bn{\ell}\cup \fn{\ell}$. 
 Given a label $\ell \neq \tau$, we write 
 $\subj{\ell}$
@@ -154,9 +154,9 @@ We write $P_1 \by{\ell} P_2$ with the usual meaning.
 The rules are standard~\cite{KYHH2015,KY2015}.
 A process with an output prefix can
 interact with the environment with an output action that carries a value
-$V$ (rule~$\ltsrule{Out}$).  Dually, in rule $\ltsrule{In}$ a
-receiver process can observe an input of  value $V$.
-Selection and branching processes observe the select and branch
+$V$ (rule~$\ltsrule{Snd}$).  Dually, in rule $\ltsrule{Rv}$ a
+receiver process can observe an input of an arbitrary value $V$.
+Select and branch processes observe the select and branch
 actions in rules $\ltsrule{Sel}$ and $\ltsrule{Bra}$, respectively.
 Rule $\ltsrule{Res}$ closes the LTS under restriction 
 if the restricted name does not occur free in the
@@ -173,7 +173,7 @@ dual actions can synchronise by an internal transition.
 %an internal transition. 
 Rules $\ltsrule{Par${}_L$}$/$\ltsrule{Par${}_R$}$ 
 and $\ltsrule{Alpha}$ close the LTS
-under parallel  and $\alpha$-renaming. 
+under parallel composition and $\alpha$-renaming. 
 %provided that the observable
 %action does not share any bound names with the parallel processes.
 
@@ -206,7 +206,7 @@ rule requires that
 the dual endpoint $\dual{s}$ is not 
 present in the session environment, since if it were present
 the only communication that could take place is the interaction
-between the two endpoints (using $\eltsrule{Tau}$ below).
+between the two endpoints (using rule~$\eltsrule{Tau}$ below).
 Rule~$\eltsrule{ShRv}$ is for shared names and follows similar principles.
 
 \myparagraph{Output Actions} are defined by rules~$\eltsrule{SSnd}$
@@ -216,7 +216,7 @@ $\news{\tilde{m}} \bactout{s}{V}$ on a type tuple
 $(\Gamma, \Lambda, \Delta\cdot \AT{s}{S})$. 
 The session environment $\Delta$ with $\AT{s}{S}$ 
 should include the session environment of the sent value $V$, 
-{\em excluding} the session environments of names $n_j$ 
+{\em excluding} the session environments of names $m_j$ 
 in $\tilde{m}$ which restrict the scope of value $V$. 
 Similarly, the linear variable environment 
 $\Lambda'$ of $V$ should be included in $\Lambda$. 
@@ -506,8 +506,8 @@ Let $P$ be a closed process. We define:
 \noi A barb $\barb{n}$ is an observable on an output prefix with subject $n$.
 Similarly a weak barb $\Barb{n}$ is a barb after a number of reduction steps.
 Typed barbs $\barb{n}$ (resp.\ $\Barb{n}$)
-occur on typed processes $\Gamma; \emptyset; \Delta \proves P \hastype \Proc$
-where we require that the corresponding dual endpoint $\dual{n}$ is not present
+occur on typed processes $\Gamma; \emptyset; \Delta \proves P \hastype \Proc$,
+when $n$ is a session name we require that its dual endpoint $\dual{n}$ is not present
 in the session environment $\Delta$.
 
 To define a congruence relation, we introduce the context $\C$:\\  
@@ -600,7 +600,7 @@ for all $R$ with $\fv{R}=x$:
 For all $\horel{\Gamma}{\Delta_1}{P_1}{\by{\ell}}{\Delta_1'}{P_2}$ such that 
 $\ell$ is not an output, 
  there exists $Q_2$ such that 
-$\horel{\Gamma}{\Delta_2}{Q_1}{\By{\ell}}{\Delta_2'}{Q_2}$
+$\horel{\Gamma}{\Delta_2}{Q_1}{\By{\hat{\ell}}}{\Delta_2'}{Q_2}$
 			and
 			$\horel{\Gamma}{\Delta_1'}{P_2}{\ \Re \ }{\Delta_2'}{Q_2}$; and  
 
@@ -763,7 +763,9 @@ Consider typed processes $P_1, P_2$:
 	\label{equ:6}
 \end{eqnarray}
 %
-We can show that $\Gamma; \es; \Delta \cat s: \btinp{\shot{(\btinp{C} \tinact)}} \tinact \proves P_i \hastype \Proc$ ($i \in \{1,2\}$).
+%We can show that 
+where
+$\Gamma; \es; \Delta \cat s: \btinp{\shot{(\btinp{C} \tinact)}} \tinact \proves P_i \hastype \Proc$ ($i \in \{1,2\}$).
 If the above processes input and substitute over $x$
 the characteristic value $\dk{\omapchar{\shot{(\btinp{C} \tinact)}} =} \abs{x}{\binp{x}{y} \inact}$, 
 then they evolve into:%(\ref{eq:5}) and (\ref{eq:6}) in become:
@@ -817,21 +819,21 @@ In fact the  trigger value can be observed on any input prefix
 of {\em any type}. For example, consider the following processes:
 %
 \begin{eqnarray}
-	\Gamma; \es; \Delta \proves \newsp{s}{\binp{n}{x} \appl{x}{s} \Par \bout{\dual{s}}{\abs{x} P} \inact} \hastype \Proc\label{equ:7}
+	\Gamma; \es; \Delta \proves \newsp{s}{\binp{n}{x} (\appl{x}{s}) \Par \bout{\dual{s}}{\abs{x} P} \inact} \hastype \Proc\label{equ:7}
 	\\
-	\Gamma; \es; \Delta \proves \newsp{s}{\binp{n}{x} \appl{x}{s} \Par \bout{\dual{s}}{\abs{x} Q} \inact} \hastype \Proc\label{equ:8}
+	\Gamma; \es; \Delta \proves \newsp{s}{\binp{n}{x} (\appl{x}{s}) \Par \bout{\dual{s}}{\abs{x} Q} \inact} \hastype \Proc\label{equ:8}
 \end{eqnarray}
 %
 \noi if processes in \eqref{equ:7}/\eqref{equ:8}
 input the trigger value, we obtain: % they evolved to 
 \begin{eqnarray*}
 %\Gamma; \es; \Delta \proves 
-	\newsp{s}{\binp{t}{x} \appl{x}{s} \Par \bout{\dual{s}}{\abs{x} P} \inact} 
+	\newsp{s}{\binp{t}{x} (\appl{x}{s}) \Par \bout{\dual{s}}{\abs{x} P} \inact} 
 %\hastype \Proc
 	\mbox{ and }
 %      \\
 %\Gamma; \es; \Delta \proves 
-	\newsp{s}{\binp{t}{x} \appl{x}{s} \Par \bout{\dual{s}}{\abs{x} Q} \inact}
+	\newsp{s}{\binp{t}{x} (\appl{x}{s}) \Par \bout{\dual{s}}{\abs{x} Q} \inact}
 %\hastype \Proc
 \end{eqnarray*}
 
@@ -845,9 +847,9 @@ input the characteristic value $\abs{z}{\binp{z}{x} (\appl{x}{m})}$,
 then they would become:
 %
 \begin{eqnarray*}
-	\Gamma; \es; \Delta \proves \newsp{s}{\binp{s}{x} \appl{x}{m} \Par \bout{\dual{s}}{\abs{x} P} \inact} \wbc \Delta \proves P \subst{m}{x}
+	\Gamma; \es; \Delta \proves \newsp{s}{\binp{s}{x} (\appl{x}{m}) \Par \bout{\dual{s}}{\abs{x} P} \inact} \wbc \Delta \proves P \subst{m}{x}
 	\\
-	\Gamma; \es; \Delta \proves \newsp{s}{\binp{s}{x} \appl{x}{m} \Par \bout{\dual{s}}{\abs{x} Q} \inact} \wbc \Delta \proves Q \subst{m}{x}
+	\Gamma; \es; \Delta \proves \newsp{s}{\binp{s}{x} (\appl{x}{m}) \Par \bout{\dual{s}}{\abs{x} Q} \inact} \wbc \Delta \proves Q \subst{m}{x}
 \end{eqnarray*}
 \noi which are not bisimilar if $P \subst{m}{x} \not\wb Q \subst{m}{x}$.
 %\qed
@@ -870,7 +872,7 @@ trigger or characteristic values:
 
 \begin{definition}[Refined Typed Labelled Transition Relation]
 	\label{def:rlts}
-	We define the environment transition rule for input actions in
+	We define the environment transition rule for input actions 
 	%restricted environment transition relation using the
 	%following rule %using the environment transition relation defined in 
 	using the input rules in \figref{fig:envLTS}:
@@ -888,7 +890,7 @@ trigger or characteristic values:
 				\end{array}
 				\end{array}
 			}{
-				(\Gamma_1; \Lambda_1; \Delta_1) \hby{\bactinp{n}{V}} (\Gamma_2; \Lambda_1; \Delta_2)
+				(\Gamma_1; \Lambda_1; \Delta_1) \hby{\bactinp{n}{V}} (\Gamma_2; \Lambda_2; \Delta_2)
 			}
 	\end{array}
 	\]
@@ -929,8 +931,8 @@ and
 bisimulations}, 
 two tractable bisimulations for $\HO$ and $\HOp$.
 As explained in \secref{sec:overview},
-the key difference between them is in the 
-trigger processes they use:
+they use different trigger processes:
+%the key difference between them is in the trigger processes they use:
 \begin{eqnarray*}
 \htrigger{t}{V_1}  & \defeq &  \hotrigger{t}{V} \label{eqb:0} \\
 	\ftrigger{t}{V}{U} & \defeq &  \fotrigger{t}{x}{s}{\btinp{U} \tinact}{V} 	\label{eqb:4}
@@ -952,8 +954,9 @@ for all $\horel{\Gamma}{\Delta_1}{P_1}{\ \Re \ }{\Delta_2}{Q_1}$
 \begin{enumerate}[1)]
 \item 
 whenever 
-$\horel{\Gamma}{\Delta_1}{P_1}{\hby{\news{\tilde{m_1}} \bactout{n}{V_1}}}{\Delta_1'}{P_2}$, there exists 
-$\horel{\Gamma}{\Delta_2}{Q_1}{\Hby{\news{\tilde{m_2}} \bactout{n}{V_2}}}{\Delta_2'}{Q_2}$ such that, for fresh $t$, 
+$\horel{\Gamma}{\Delta_1}{P_1}{\hby{\news{\tilde{m_1}} \bactout{n}{V_1}}}{\Delta_1'}{P_2}$, there exist 
+$Q_2$, $V_2$, $\Delta'_2$ such that 
+$\horel{\Gamma}{\Delta_2}{Q_1}{\Hby{\news{\tilde{m_2}} \bactout{n}{V_2}}}{\Delta_2'}{Q_2}$ and, for fresh $t$, 
 \[
 \begin{array}{lrlll}
 \Gamma; \Delta''_1  \proves  {\newsp{\tilde{m_1}}{P_2 \Par 
@@ -965,7 +968,7 @@ $\horel{\Gamma}{\Delta_2}{Q_1}{\Hby{\news{\tilde{m_2}} \bactout{n}{V_2}}}{\Delta
 		\item	
 for all $\horel{\Gamma}{\Delta_1}{P_1}{\hby{\ell}}{\Delta_1'}{P_2}$ such that 
 $\ell$ is not an output, 
- there exists $Q_2$ such that 
+ there exist $Q_2$, $\Delta'_2$ such that 
 $\horel{\Gamma}{\Delta_2}{Q_1}{\Hby{\ell}}{\Delta_2'}{Q_2}$
 			and
 			$\horel{\Gamma}{\Delta_1'}{P_2}{\ \Re \ }{\Delta_2'}{Q_2}$; and 
