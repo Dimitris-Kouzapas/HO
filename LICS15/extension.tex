@@ -1,8 +1,12 @@
 % !TEX root = main.tex
-\noi This section studies two extensions of \HOp 
-with higher-order applications/abstractions 
+\noi This section studies %two extensions of \HOp: 
+(i)~the extension of \HOp with higher-order applications/abstractions 
 and 
+(ii)~the extension of \HOp
 with polyadicity.
+In both cases, we detail required modifications in the syntax
+and types, and
+describe further encodability results.
 %These extensions are denoted \HOpp and \PHOp, respectively. 
  
 \subsection{Encoding from $\HOpp$ to $\HOp$}
@@ -24,9 +28,9 @@ The syntax of types is modified as follows: %changes to include:
 $L \bnfis \shot{U} \bnfbar \lhot{U}$
 \end{tabular}
 \end{center}
-We apply the straightforward extension of the typing  
-system to accommodate the extended type syntax 
-(we replace $C$ by $U$ in \trule{Abs} and $C$ by $U'$ in \trule{App} in \figref{fig:typerulesmy}).
+These types can be easily accommodated in the type system:
+ in \figref{fig:typerulesmy}, 
+we replace $C$ by $U$ in \trule{Abs} and $C$ by $U'$ in \trule{App}.
 \smallskip 
 
 \myparagraph{Behavioural Semantics.}
@@ -36,16 +40,16 @@ is replaced with rule $\appl{(\abs{x}{P})}{V} \by{\tau} P \subst{V}{x}$.
 \defref{def:char} (characteristic processes) is extended with  
 ${\mapchar{\shot{U}}{x}} \defeq\! \mapchar{\lhot{U}}{x} \defeq\! {\appl{x}{\omapchar{U}}}$ and 
 ${\omapchar{\shot{U}}} \defeq {\omapchar{\lhot{U}}} \!\!\defeq\!\! \abs{x}{\mapchar{U}{x}}$. 
-Then we can use the same definitions for $\cong$, $\wbc$, $\hwb$ and $\fwb$. 
+We can then use the same definitions for $\cong$, $\wbc$, $\hwb$ and $\fwb$. 
 
 \smallskip 
 
-\myparagraph{Encoding from \HOpp to \HOp.} 
+\myparagraph{Encoding \HOpp into \HOp.} 
 Let $\tyl{L}_{\HOpp}=\calc{\HOpp}{{\cal{T}}_4}{\hby{\ell}}{\wb_H}{\proves}$
 where 
 ${\cal{T}}_4$ is a set of types of $\HOpp$;  
 the typing $\proves$ is defined in 
-\figref{fig:typerulesmy} with extended \trule{Abs} and \trule{App}. 
+\figref{fig:typerulesmy} with extended rules \trule{Abs} and \trule{App}. 
 We define 
 the typed encoding $\enco{\map{\cdot}^{3}, \mapt{\cdot}^{3}, \mapa{\cdot}^{3}}: \HOpp \to \HOp$ in 
 \figref{f:enc:hopip_to_hopi}.
@@ -57,7 +61,7 @@ we derive the following theorem.
 \begin{theorem}[Encoding \HOpp into~\HOp]
 \label{f:enc:hopiptohopi}
 The encoding from $\tyl{L}_{\HOpp}$ into $\tyl{L}_{\HOp}$ (cf. \figref{f:enc:hopip_to_hopi})
-is precise. Hence the encodings 
+is precise. Hence, the encodings 
 from $\tyl{L}_{\HOpp}$ to $\tyl{L}_{\HO}$ 
 and $\tyl{L}_{\sessp}$ 
 are also precise. 
@@ -98,7 +102,7 @@ are also precise.
 %		\pmap{\bout{u}{\abs{x: C}{Q}} P}{3} &\!\!\!\!\defeq\!\!\!\!& \bout{u}{\abs{x}{\pmap{Q}{3}}} \pmap{P}{3}
 	\end{array}
 	\]
-	$\tmap{\lhot{L}}{3}$ is defined as
+	{\small $\tmap{\lhot{L}}{3}$ is defined as
 	$\tmap{\shot{L}}{3}$
 	by replacing $\shot{L}$ with~$\lhot{L}$. 
 	Label and term mappings for $\abs{x:C}{P}$  
@@ -114,8 +118,8 @@ $\mapa{\cdot}^{1}$, and
 $\pmap{\cdot}{1}_f$, by  
 $\tmap{\cdot}{3}$,
 $\mapa{\cdot}^{3}$, and 
-$\pmap{\cdot}{3}$. 
-The other processes, types and labels are  homomorphic. \\
+$\pmap{\cdot}{3}$. \\
+The other mappings for processes, types and labels are  homomorphic.} \\
 \caption{\label{f:enc:hopip_to_hopi} 
 Encoding of \HOpp into \HOp.
 }
@@ -126,10 +130,11 @@ Encoding of \HOpp into \HOp.
 \label{subsec:pho}
 \noi Embeddings of polyadic name passing into monadic name passing are
 well-studied in the literature. Using a linear typing, precise
-encodings (full abstraction) can be obtained~\cite{Yoshida96}.
+encodings (including full abstraction) can be obtained~\cite{Yoshida96}.
 Here we summarise how $\PHOp$ can be encoded into $\HOp$. 
 The syntax of 
-$\HOp$ is extended from \HOp by including 
+$\HOp$ is extended %from \HOp by including 
+with
 polyadic name passing $\tilde{n}$ and $\abs{\tilde{x}}{Q}$ in the syntax 
 of value $V$. The type syntax is extended to: 
 %
@@ -150,7 +155,7 @@ label $\ell$ may be mapped into a sequence of labels $\tilde{\ell}$.}
 %($\mapa{\cdot}: \ell \to \tilde{\ell}$ in  
 %\defref{def:tenc}) to capture 
 %a sequence of labels  and 
-Also, \defref{def:ep} stays as the same
+Also, \defref{def:ep} is kept unchanged, 
 assuming that if 
 $P \hby{\ell} P'$ and $\mapa{\ell} = \ell_1, \ell_2,  \cdots, \ell_m$ then
 $\map{P} \Hby{\mapa{\ell}} \map{P'}$
@@ -175,7 +180,7 @@ Then we have:
 \label{f:enc:phopiptohopi}
 The encoding from $\tyl{L}_{\PHOp}$ into $\tyl{L}_{\HOp}$ (cf. \figref{f:enc:poltomon})
 is precise. 
-Hence the encodings 
+Hence, the encodings 
 from $\tyl{L}_{\PHOp}$ to 
 $\tyl{L}_{\HO}$ 
 and $\tyl{L}_{\sessp}$ 
@@ -281,7 +286,7 @@ $\PHOpp$, the super-calculus of $\HOpp$ and $\PHOp$. % (denoted by   in Fig.~\re
         \\ 
 	\end{array}
 \]
-The input cases are defined as the outputs replacing $!$ by $?$. 
+The input cases are defined as the outputs replacing $!$ by $?$. \\
 The mappings for the other processes/types/labels are 
 homomorphic. \\
 \caption{\label{f:enc:poltomon}
