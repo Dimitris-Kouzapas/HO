@@ -99,7 +99,7 @@ and rule $\ltsrule{Rec}$ handles recursion unfolding.
 defines a labelled transition relation between 
 a triple of environments, 
 denoted
-$(\Gamma, \Lambda_1, \Delta_1) \by{\ell} (\Gamma, \Lambda_2, \Delta_2)$.
+$(\Gamma_1, \Lambda_1, \Delta_1) \by{\ell} (\Gamma_2, \Lambda_2, \Delta_2)$.
 It extends the transition systems
 in \cite{KYHH2015,KY2015} 
 to higher-order sessions. 
@@ -156,7 +156,6 @@ in the type.
 Hidden transitions defined by rule $\eltsrule{Tau}$ 
 do not change the session environment or they follow the reduction on session
 environments (\defref{def:ses_red}). 
-
 
 \begin{comment}
 \figref{fig:envLTS} describes we define 
@@ -225,6 +224,24 @@ the $\by{\ell}$ relation.
 The conditions for input follow the conditions
 for the $\by{\ell}$ definition.
 \end{comment}
+
+\begin{proposition}[Environment Transition Weakening]\rm
+	\label{prop:env_tran_weak}
+	If $(\Gamma_1; \Lambda_1; \Delta_1) \hby{\ell} (\Gamma_2; \Lambda_2; \Delta_2)$
+	then
+	$(\Gamma_2; \Lambda_1; \Delta_1) \hby{\ell} (\Gamma_2; \Lambda_2; \Delta_2)$
+\end{proposition}
+
+\begin{proof}
+	The proof exploits the weakening properties
+	of the shared environment $\Gamma$ on case analysis
+	on the definition of $\hby{\ell}$.
+	\qed
+\end{proof}
+
+As a direct consequence of \propref{prop:env_tran_weak}
+we can always make an observation on a type environment
+without observing a change in the shared environment.
 
 \myparagraph{Typed Transition System}
 We define a typed labelled transition system over typed processes,
@@ -308,8 +325,8 @@ A barb $\barb{n}$ is an observable on an output prefix with subject $n$.
 Similarly a weak barb $\Barb{n}$ is a barb after a number of reduction steps.
 Typed barbs $\barb{n}$ (resp.\ $\Barb{n}$)
 happen on typed processes $\Gamma; \emptyset; \Delta \proves P \hastype \Proc$
-where we require that the corresponding dual endpoint $\dual{n}$ is not present
-in the session type $\Delta$.
+where we require that whenever $n$ is a session name, then the corresponding 
+dual endpoint $\dual{n}$ is not present in the session type $\Delta$.
 
 To define a congruence relation we define the notion of the context $\C$:
 %
@@ -339,19 +356,19 @@ The first behavioural relation we define is reduction-closed, barbed congruence:
 	\begin{enumerate}
 		\item
 		\begin{itemize}
-			\item	If $P_1 \red P_1'$ then $\exists P_2', P_2 \red^* P_1'$ and
+			\item	If $P_1 \red P_1'$ then there exist $P_2', \Delta_2'$ such that $P_2 \red^* P_1'$ and
 				$\horel{\Gamma}{\Delta_1'}{P_1'}{\ \Re\ }{\Delta_2'}{P_2'}$
-			\item	If $P_2 \red P_2'$ then $\exists P_1', P_1 \red^* P_1'$ and
+			\item	If $P_2 \red P_2'$ then there exist $P_1', \Delta_1'$ such that $P_1 \red^* P_1'$ and
 				$\horel{\Gamma}{\Delta_1'}{P_1'}{\ \Re\ }{\Delta_2'}{P_2'}$
 		\end{itemize}
 
 		\item
 		\begin{itemize}
-			\item	If $\Gamma;\emptyset;\Delta \proves P_1 \barb{s}$ then $\Gamma;\emptyset;\Delta \proves P_2 \Barb{s}$.
-			\item	If $\Gamma;\emptyset;\Delta \proves P_2 \barb{s}$ then $\Gamma;\emptyset;\Delta \proves P_1 \Barb{s}$.
+			\item	If $\Gamma;\emptyset;\Delta_1 \proves P_1 \barb{s}$ then $\Gamma;\emptyset;\Delta_2 \proves P_2 \Barb{s}$.
+			\item	If $\Gamma;\emptyset;\Delta_2 \proves P_2 \barb{s}$ then $\Gamma;\emptyset;\Delta_1 \proves P_1 \Barb{s}$.
 		\end{itemize}
 
-		\item	$\forall \C, \horel{\Gamma}{\Delta_1'}{\context{\C}{P_1}}{\ \Re\ }{\Delta_2'}{\context{\C}{P_2}}$
+		\item	$\forall \C$, then there exist $\Delta_1', \Delta_2'$ such that $\horel{\Gamma}{\Delta_1'}{\context{\C}{P_1}}{\ \Re\ }{\Delta_2'}{\context{\C}{P_2}}$
 	\end{enumerate}
 %
 	The largest such congruence is denoted with $\cong$.
@@ -395,7 +412,7 @@ called contextual bisimulation~\cite{San96H}:
 			\]
 			implies that $\exists Q_2$ such that
 			\[
-				\horel{\Gamma}{\Delta_1}{Q_1}{\by{\ell}}{\Delta_2'}{Q_2}
+				\horel{\Gamma}{\Delta_1}{Q_1}{\By{\hat{\ell}}}{\Delta_2'}{Q_2}
 			\]
 			and
 			$\horel{\Gamma}{\Delta_1'}{P_2}{\ \Re\ }{\Delta_2'}{Q_2}$
@@ -459,7 +476,7 @@ is contextually bisimilar to the process:
 \end{eqnarray}
 %
 \noi
-In fact, we have $P \wbc R\subst{V}{x}$, since 
+In fact, we do have $P \wbc R\subst{V}{x}$, since 
 application and session transitions are deterministic.  
 Now let us consider process $T_{V}$ below,
 where $t$ is a fresh name:
@@ -503,9 +520,9 @@ session names.
 
 
 \myparagraph{Characteristic Processes and Values.}
-Concerning (b), we limit the possible input abstractions
+Concerning point (b), we limit the possible input abstractions
 $\abs{x} P$ by exploiting session types.
-We introduce the key concept of {\bf \emph{characteristic process/values}},
+We introduce the key concept of {\bf \emph{characteristic process/value}},
 which is the 
 simplest process/value that can inhabit a type.
 E.g.~let $S = \btinp{\shot{S_1}} \btout{S_2} \tinact$
@@ -871,7 +888,7 @@ trigger processes: $\htrigger{t}{V}$ and $\ftrigger{t}{V}{U}$.
 			\]
 			implies that $\exists Q_2$ such that 
 			\[
-				\horel{\Gamma}{\Delta_1}{Q_1}{\Hby{\ell}}{\Delta_2'}{Q_2}
+				\horel{\Gamma}{\Delta_1}{Q_1}{\Hby{\hat{\ell}}}{\Delta_2'}{Q_2}
 			\]
 			and
 			$\horel{\Gamma}{\Delta_1'}{P_2}{\ \Re\ }{\Delta_2'}{Q_2}$
@@ -914,7 +931,7 @@ output triggers solves this problem.
 			\]
 			implies that $\exists Q_2$ such that 
 			\[
-				\horel{\Gamma}{\Delta_1}{Q_1}{\Hby{\ell}}{\Delta_2'}{Q_2}
+				\horel{\Gamma}{\Delta_1}{Q_1}{\hat{\Hby{\ell}}}{\Delta_2'}{Q_2}
 			\]
 			and
 			$\horel{\Gamma}{\Delta_1'}{P_2}{\ \Re\ }{\Delta_2'}{Q_2}$
@@ -1084,7 +1101,7 @@ Processes that do not use shared names are inherently $\tau$-inert.
 			\]
 			implies that $\exists Q_2$ such that 
 			\[
-				\horel{\Gamma}{\Delta_1}{Q_1}{\Hby{\ell}}{\Delta_2'}{Q_2}
+				\horel{\Gamma}{\Delta_1}{Q_1}{\hat{\Hby{\ell}}}{\Delta_2'}{Q_2}
 			\]
 			and
 			\[

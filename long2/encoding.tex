@@ -29,11 +29,12 @@ We first define a typed calculus parameterised by a syntax, operational semantic
 types, and transition labels.  
 
 \begin{definition}[Typed Encoding]\rm
-        Let  $\tyl{L}_i=\calc{\CAL_i}{{\cal{T}}_i}{\hby{\ell}}{\wb_i}{\proves_i}$
-        ($i=1,2$) be typed calculi. 
+        Let  $\tyl{L}_i=\calc{\CAL_i}{{\cal{T}}_i}{{\hby{\ell}}_i}{\wb_i}{\proves_i}$
+        ($i=1,2$) be typed calculi, and let $\mathcal{A}_i$ be the
+	set of labels used in relation ${\hby{\ell}}_i$.
 	Given mappings $\map{\cdot}: \CAL_1 \to \CAL_2$, 
 	$\mapt{\cdot}: {\cal{T}}_1 \to {\cal{T}}_2$, and 
-	$\mapa{\cdot}: \ell \to \ell$, 
+	$\mapa{\cdot}: \mathcal{A}_1 \to \mathcal{A}_2$, 
 	we write 
 	$\enco{\map{\cdot}, \mapt{\cdot}, \mapa{\cdot}} : \tyl{L}_1 \to \tyl{L}_2$ to denote the \emph{typed encoding} of $\tyl{L}_1$ into $\tyl{L}_2$.
 \end{definition}
@@ -124,20 +125,20 @@ Next we define semantic criteria for typed encodings.
 				\item	Completeness: 
 					If  
 					$\stytraarg{\Gamma}{\ell_1}{\Delta}{P}{\Delta'}{P'}{1}$
-					then $\exists \ell_2, Q$ s.t. \\
+					then $\exists \ell_2, Q, \Delta''$ s.t. \\
 					(i)~$\wtytraarg{\mapt{\Gamma}}{\ell_2}{\mapt{\Delta}}{\map{P}}{\mapt{\Delta''}}{Q}{2}$,
 					(ii)~$\ell_2 = \mapa{\ell_1}$, 
 					and \\
 					(iii)~${\mapt{\Gamma}};{\mapt{\Delta''}}\proves_2 {Q}{\wb_2}{\mapt{\Delta'}}\proves_2 {\map{P'}}$.
 				
 				\item	Soundness:   
-					If  $\wtytraarg{\mapt{\Gamma}}{\ell_2}{\mapt{\Delta}}{\map{P}}{\mapt{\Delta'}}{Q}{2}$
-					then $\exists \ell_1, P'$ s.t.  \\
+					If  $\wtytraarg{\mapt{\Gamma}}{\ell_2}{\mapt{\Delta}}{\map{P}}{\mapt{\Delta''}}{Q}{2}$
+					then $\exists \ell_1, P', \Delta'$ s.t.  \\
 					(i)~$\stytraarg{\Gamma}{\ell_1}{\Delta}{P}{\Delta'}{P'}{1}$,
 					(ii)~$\ell_2 = \mapa{\ell_1}$, and
 					(iii)~
 					${\mapt{\Gamma}};{\mapt{\Delta'}}\proves_2 {\map{P'}}{\wb_2}
-					{\mapt{\Delta'}}\proves_2 {Q}$.
+					{\mapt{\Delta''}}\proves_2 {Q}$.
 		\end{enumerate}
 		
 		\item	\emph{Full Abstraction:} 
@@ -221,12 +222,12 @@ Further we have:
 \begin{proposition}[Composability of Precise Encodings]\rm
 	\label{prop:enc_composability}
 	Let %encodings 
-	$\enco{\map{\cdot}^{1}, \mapt{\cdot}^{1}, \mapa{\cdot}^{1}}: \tyl{L}_1 \to \tyl{L}_2$
+	$\enco{\pmap{\cdot}{1}, \tmap{\cdot}{1}, \mapa{\cdot}^{1}}: \tyl{L}_1 \to \tyl{L}_2$
 	and 
-	$\enco{\map{\cdot}^{2}, \mapt{\cdot}^{2}, \mapa{\cdot}^{2}}: \tyl{L}_2 \to \tyl{L}_3$
+	$\enco{\pmap{\cdot}{2}, \tmap{\cdot}{2}, \mapa{\cdot}^{2}}: \tyl{L}_2 \to \tyl{L}_3$
 	be two precise typed encodings.
 	Then their composition, denoted 
-	$\enco{\map{\cdot}^{1} \circ \map{\cdot}^{2}, \mapt{\cdot}^{1} \circ \mapt{\cdot}^{2}, \mapa{\cdot}^{1}\circ \mapa{\cdot}^{2}}: \tyl{L}_1 \to \tyl{L}_3$
+	$\enco{\pmap{\cdot}{2} \circ \pmap{\cdot}{1}, \tmap{\cdot}{2} \circ \tmap{\cdot}{1}, \mapa{\cdot}^{2}\circ \mapa{\cdot}^{1}}: \tyl{L}_1 \to \tyl{L}_3$
 	is also a precise encoding.
 \end{proposition}
 
