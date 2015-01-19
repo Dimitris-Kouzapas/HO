@@ -185,7 +185,7 @@ under parallel composition and $\alpha$-renaming.
 defines a labelled transition relation between 
 a triple of environments, 
 denoted
-$(\Gamma, \Lambda_1, \Delta_1) \by{\ell} (\Gamma, \Lambda_2, \Delta_2)$.
+$(\Gamma_1, \Lambda_1, \Delta_1) \by{\ell} (\Gamma_2, \Lambda_2, \Delta_2)$.
 It extends the transition systems
 in \cite{KYHH2015,KY2015} 
 to higher-order sessions. 
@@ -246,11 +246,6 @@ select and branch.
 Hidden transitions defined by rule $\eltsrule{Tau}$ 
 do not change the session environment or they follow the reduction on session
 environments (\defref{def:ses_red}).
-Weakening conditions ensure that
-$(\Gamma_2, \es, \Delta_1) \hby{\ell} (\Gamma_2, \es, \Delta_2)$
-when
-$(\Gamma_1, \es, \Delta_1) \hby{\ell} (\Gamma_2, \es, \Delta_2)$.
-
 
 %A second environment LTS, denoted $\hby{\ell}$,
 %is defined in the lower part of \figref{fig:envLTS}.
@@ -409,11 +404,15 @@ $(\Gamma_1, \es, \Delta_1) \hby{\ell} (\Gamma_2, \es, \Delta_2)$.
 \label{fig:envLTS}}
 \Hlinefig
 \end{figure}
-
-Below we define the typed LTS combining 
-the LTS of processes 
+\noi
+Weakening on $\Gamma$ ensures
+$(\Gamma_2, \Lambda_1, \Delta_1) \hby{\ell} (\Gamma_2, \Lambda_2, \Delta_2)$
+if
+$(\Gamma_1, \Lambda_1, \Delta_1) \hby{\ell} (\Gamma_2, \Lambda_2, \Delta_2)$.
+We define the typed LTS combining 
+the LTSs of processes 
 (\figref{fig:untyped_LTS})
-and the LTS of environments
+and environments
 (\figref{fig:envLTS}). 
 
 \smallskip
@@ -547,7 +546,7 @@ $\hole$ in $\C$ with $P$.
 	$\horel{\Gamma}{\Delta_1}{P_1}{\ \Re\ }{\Delta_2}{P_2}$
 	is a {\em reduction-closed, barbed congruence} whenever:
 	\begin{enumerate}[1)]
-		\item	If $P_1 \red P_1'$ then there exists $P_2'$ such that $P_2 \red^* P_2'$ and
+		\item	If $P_1 \red P_1'$ then there exists $P_2', \Delta_2'$ such that $P_2 \red^* P_2'$ and
 			$\horel{\Gamma}{\Delta_1'}{P_1'}{\ \Re\ }{\Delta_2'}{P_2'}$; 
 			%and its symmetric case;
 %		\item	If $P_2 \red P_2'$ then $\exists P_1', P_1 \red^* P_1'$ and
@@ -561,7 +560,7 @@ $\hole$ in $\C$ with $P$.
 %			\item	If $\Gamma;\emptyset;\Delta \proves P_2 \barb{s}$ then $\Gamma;\emptyset;\Delta \proves P_1 \Barb{s}$.
 %		\end{itemize}
 
-		\item	For all $\C$, $\horel{\Gamma}{\Delta_1''}{\context{\C}{P_1}}{\ \Re\ }{\Delta_2''}{\context{\C}{P_2}}$;
+		\item	For all $\C$, there exists $\Delta_1'' \Delta_2''$: $\horel{\Gamma}{\Delta_1''}{\context{\C}{P_1}}{\ \Re\ }{\Delta_2''}{\context{\C}{P_2}}$;
 		                      \item	The symmetric cases of 1 and 2.                
 	\end{enumerate}
 	The largest such congruence is denoted with $\cong$.
@@ -869,7 +868,7 @@ then they would become:
 
 \smallskip 
 \noi We now define the \emph{refined} typed LTS. 
-As explained in \secref{sec:intro}, this new LTS is defined 
+As explained in \secref{subsec:intro:bisimulation}, this new LTS is defined 
 by considering a transition rule for input in which admitted values are
 trigger or characteristic values:
 %\dk{(assume extension of the structural
