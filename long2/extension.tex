@@ -1,55 +1,53 @@
 % !TEX root = main.tex
-\section{Extending \HOp}
+\section{Extensions of \HOp}
 \label{sec:extension}
 
-This section studies two extensions of \HOp 
-with higher-order applications/abstractions 
-and 
-with polyadicity.
+This section studies (i) the extension of \HOp with higher-order applications/abstractions (denoted \HOpp), and (ii) the extension of \HOp with polyadicity (denoted \pHOp). In both cases, we detail required modifications in the syntax and types, and describe further encodability results.
 
-\subsection{From \HOpp to \HOp}
+\subsection{Encoding \HOpp into \HOp}
 
-So far we have studied a higher-order calculus that allows
-only name applications. 
-In this section we introduce \HOpp which is an 
-extension of the \HOp calculus that includes
-higher-order applications.
-We further show that \HOpp has a precise encoding
-into \HOp and thus by the composability of
-encoding (\propref{prop:enc_composability})
+The \HOp calculus is purposefully minimal and allows
+only name applications/abstractions (also referred to as \emph{first-order} applications/abstractions).
+We now introduce \HOpp, the 
+extension of \HOp with higher-order applications.
+We show that \HOpp has a precise encoding
+into \HOp (\propref{prop:prec:HOpp_to_HOp}). 
+Therefore, since 
+typed encodings are composable (\propref{prop:enc_composability}), 
 \HOpp has a precise encoding to \HO and \sessp.
-The latter result implies that \HO is powerful
+In turn, this latter result implies that \HO is powerful
 enough to express full higher-order semantics.
 
-\subsubsection{Extending the Semantics}
-
-\myparagraph{Syntax and Operational Semantics:}
-The syntax of \figref{fig:syntax} is changed to
-include
-$$\appl{W}{V}$$
-instead of $\appl{V}{u}$.
-The reduction relation in \figref{fig:reduction}
-replaces rule $\orule{App}$ 
-with rule $$\appl{(\abs{x}{P})}{V} \red P \subst{V}{x}$$
+\subsubsection{Modifications in Syntax, Reduction Semantics, and Types.}
+%\myparagraph{Syntax and Operational Semantics:}
+The syntax of \HOpp processes is obtained from the
+syntax for processes given in \figref{fig:syntax} by replacing 
+$\appl{V}{u}$ with $\appl{W}{V}$.
+Reduction is then defined by 
+the rules in \figref{fig:reduction}, excepting 
+rule $\orule{App}$, which is replaced by 
+the following rule 
+$$
+\orule{App$^+$} \qquad
+\appl{(\abs{x}{P})}{V} \red P \subst{V}{x}
+$$
 %The structural congruence in \secref{subsec:reduction_semantics}
 %is changed to include $\appl{(\abs{x} P)}{V} \scong P \subst{x}{V}$
 %instead of $\appl{(\abs{x} P)}{u} \scong P \subst{x}{u}$.
-
-\myparagraph{Types}
+%\myparagraph{Types}
 The syntax of types in \figref{def:types}
-is changed to include $$L \bnfis \shot{U} \bnfbar \lhot{U}$$
+is generalized by including $$L \bnfis \shot{U} \bnfbar \lhot{U}$$
 instead of $L \bnfis \shot{C} \bnfbar \lhot{C}$.
-We expect the obvious extension for type equivalence
-(\defref{def:type_equiv})
-and for the definition of type environments.
-
-We also expect the straightforward extension of the type 
-system to accomodate the new type syntax. The two
-most characterestic rules $\trule{Abs}$ and $\trule{App}$ 
-for application and abstraction, respectively, now become:
+Definitions of type equivalence/duality 
+and typing environments ($\Gamma$ and $\Lambda$) are straightforward extensions of 
+\defref{def:type_equiv}, \defref{def:type_dual},
+and  \defref{def:typeenv}, respectively. 
+The typing rules of \figref{fig:typerulesmy} are then modified accordingly:
+most significant changes are required in rules $\trule{Abs}$ and $\trule{App}$ 
+(for typing abstractions and applications, respectively), which  for \HOpp processes are modified as follows:
 \[
 	\begin{array}{c}
-		\trule{Abs}~~\tree{
+		\trule{Abs$^+$}~~\tree{
 			\Gamma; \Lambda; \Delta_1 \proves P \hastype \Proc
 			\quad
 			\Gamma; \es; \Delta_2 \proves x \hastype U
@@ -58,7 +56,7 @@ for application and abstraction, respectively, now become:
 		}
 		\\[6mm]
 
-		\trule{App}~~\tree{
+		\trule{App$^+$}~~\tree{
 			\begin{array}{c}
 				U = \lhot{U'} \lor \shot{U'}
 				\quad
@@ -72,15 +70,73 @@ for application and abstraction, respectively, now become:
 	\end{array}
 \]
 
-\iftodo\dk{prove subject reduction for the extension}\else\fi
+%\iftodo\dk{prove subject reduction for the extension}\else\fi
 
-\myparagraph{Behavioural Semantics}
-The label definition remain the same.
-Rule $\ltsrule{App}$ in the untyped LTS
+With these modifications we can now state the extension of \thmref{thm:sr}:
+
+\begin{theorem}[Type Soundness for \HOpp]\rm
+	\label{thm:sr_hopp}
+	\begin{enumerate}[1.]
+		\item	(Subject Congruence)
+			$\Gamma; \es; \Delta \proves P \hastype \Proc$
+			and
+			$P \scong P'$
+			implies
+			$\Gamma; \es; \Delta \proves P' \hastype \Proc$.
+
+		\item	(Subject Reduction)
+			$\Gamma; \es; \Delta \proves P \hastype \Proc$
+			with
+			balanced $\Delta$
+			and
+			$P \red P'$
+			implies $\Gamma; \es; \Delta'  \proves P' \hastype \Proc$
+			and either (i)~$\Delta = \Delta'$ or (ii)~$\Delta \red \Delta'$
+			with $\Delta'$ balanced.
+	\end{enumerate}
+\end{theorem}
+
+\begin{proof}
+Part (1) is as for \HOp processes.
+Part (2) 
+is also as before, but 
+requires the expected generalization of parts (3) and (4) of the substitution lemma (\lemref{lem:subst}).
+We describe the analysis when the reduction is inferred by rule \orule{App$^+$}. We have
+	   $$
+	   P = (\abs{x}{Q}) \, V   \red  Q \subst{V}{x} = P'
+	   $$
+	   Suppose $\Gamma;\, \emptyset ;\, \Delta \proves (\abs{x}{Q}) \, V \hastype \Proc$. 
+	   We examine one possible way in which 
+	   this assumption can be derived; other cases are similar or simpler:
+	   \[
+	   \tree{
+	   \tree{\Gamma, x:\lhot{L_1};\, \emptyset ;\, \Delta \proves Q  \hastype \Proc \quad 
+	   \Gamma, x:\lhot{L_1};\, \emptyset ;\, \es \proves x  \hastype \lhot{L_1}}
+	   {
+	   \Gamma;\, \emptyset ;\, \Delta \proves \abs{x}{Q}  \hastype \shot{(\shot{L_1})} }
+	   \qquad
+	   \tree{}{
+	   \Gamma ;\, \es ;\, \emptyset \proves   V \hastype \shot{L_1}}
+	   }{
+	   \Gamma;\, \emptyset ;\, \Delta  \proves (\abs{x}{Q}) \, V \hastype \Proc
+	   }
+	   \]
+	  Then, by combining premise
+	   $\Gamma, x:\lhot{L_1};\, \emptyset ;\, \Delta \proves Q  \hastype \Proc$
+	   with
+	   the extended formulation of \lemref{lem:subst}(4),
+	   we obtain 
+	    $\Gamma;\, \emptyset ;\, \Delta   \proves Q\subst{V}{x}  \hastype \Proc$, as desired.
+	\qed
+\end{proof}
+
+\noi 
+As for the behavioural semantics of \HOpp, modifications are as expected.
+The set of action labels remains the same.
+In the untyped LTS, rule $\ltsrule{App}$
 is replaced with rule
 $\appl{\abs{x}{P}}{V} \by{\tau} P \subst{V}{x}$.
-The definition of the
-characteristic process (\defref{def:characteristic_process})
+\defref{def:characteristic_process} (characteristic processes)
 now includes
 \begin{eqnarray*}
 \mapchar{\shot{U}}{x} & \defeq & \mapchar{\lhot{U}}{x} \defeq \appl{x}{\omapchar{U}} \\
@@ -89,9 +145,9 @@ now includes
 instead of $\mapchar{\shot{C}}{x} \defeq \mapchar{\lhot{C}}{x} \defeq \appl{x}{\omapchar{C}}$
 and
 $\omapchar{\shot{C}} \defeq \omapchar{\lhot{C}} \defeq \abs{x}{\mapchar{C}{x}}$, respectively.
-\noi The rest of the definition for the behavioural remains the same.
+\noi The rest of the definitions for the behavioural semantics is kept unchanged. 
 
-\subsubsection{Encoding from \HOpp to \HOp}
+\subsubsection{Encoding \HOpp into \HOp.}
 
 We now present an encoding from \HOpp to \HOp.
 %
