@@ -207,8 +207,77 @@ We now present an encoding from \HOpp to \HOp.
 
 \iftodo
 \begin{proof}
-	\dk{Put some proof.}
-	\qed
+	\dk{Put some additional cases.}
+By induction on the inference of 
+$\Gamma; \emptyset; \Delta \proves P \hastype \Proc$.
+We detail some representative cases:
+\begin{enumerate}[1.]
+\item Case $P = \bout{u}{\abs{\underline{x}}{Q}} P'$.
+Then we may have the following typing in \HOpp:
+			\[
+				\tree{
+					\tree{}{\Gamma; \Lambda_1; \Delta_1 \cat u:S  \proves  P' \hastype \Proc} 
+					\quad 
+					\tree{
+					\tree{}{\Gamma \cat \underline{x}:L; \Lambda_2 ; \Delta_2 \proves  Q \hastype \Proc}
+					\quad 
+					\tree{}{\Gamma \cat \underline{x}:L; \es ; \es \proves  \underline{x} \hastype L}
+					}{\Gamma ; \Lambda_2 ; \Delta_2 \proves  \abs{\underline{x}:L}Q \hastype \lhot{L}}}{
+					\Gamma; \Lambda_1 \cat \Lambda_2; \Delta_1 \cat \Delta_2 \cat 
+					u:\btout{\lhot{L}}S 
+					\proves  \bout{u}{\abs{\underline{x}}{Q}} P'
+					\hastype \Proc}
+			\]
+Thus, by IH we have:
+\begin{eqnarray}
+\tmap{\Gamma}{3}; \tmap{\Lambda_1}{3}; \tmap{\Delta_1}{3} \cat u:\tmap{S}{3} & \proves &  \pmap{P'}{3} \hastype \Proc
+\label{eq:hopppre1}\\
+\tmap{\Gamma}{3} \cat \underline{x}:\tmap{L}{3}; \tmap{\Lambda_2}{3} ; \tmap{\Delta_2}{3} & \proves & \pmap{Q}{3} \hastype \Proc \label{eq:hopppre2}
+\\
+\tmap{\Gamma}{3} \cat \underline{x}:\tmap{L}{3}; \es ; \es & \proves & \underline{x} \hastype \tmap{L}{3} \label{eq:hopppre3}
+\end{eqnarray}
+The corresponding typing in the target language is then as follows:
+\[
+\tree{
+\tree{}{
+				\eqref{eq:hopppre1}}
+				\quad
+\tree{\tree{
+\tree{
+\tree{}{\eqref{eq:hopppre2}}
+}{
+\tmap{\Gamma}{3} \cat x:\tmap{L}{3};   \tmap{\Lambda_2}{3};  \tmap{\Delta_2}{3} \cat
+				z: \tinact
+					\proves  \pmap{Q}{3}
+					\hastype \Proc}
+					\qquad
+					\tree{}{\eqref{eq:hopppre3}}
+}{
+				\tmap{\Gamma}{3};   \tmap{\Lambda_2}{3};  \tmap{\Delta_2}{3} \cat
+				z:\btinp{\tmap{L}{3}} \tinact
+					\proves  \binp{z}{\underline{x}} \pmap{Q}{3}
+					\hastype \Proc }
+					\qquad 
+					\tree{}{\tmap{\Gamma}{3};   \es;  
+				z:\btinp{\tmap{L}{3}} \tinact
+					\proves  z
+					\hastype \btinp{\tmap{L}{3}} \tinact}
+}{
+					\tmap{\Gamma}{3};   \tmap{\Lambda_2}{3};  \tmap{\Delta_2}{3} 
+					\proves  \abs{z}{\binp{z}{\underline{x}} \pmap{Q}{3}}
+					\hastype \lhot{(\btinp{\tmap{L}{3}} \tinact)}
+}
+}
+{
+					\tmap{\Gamma}{3}; \tmap{\Lambda_1}{3} \cat \tmap{\Lambda_2}{3}; \tmap{\Delta_1}{3} \cat \tmap{\Delta_2}{3} \cat 
+					u:\btout{\lhot{\btinp{\tmap{L}{3}} \tinact}}\tmap{S}{3} 
+					\proves  \bout{u}{\abs{z}{\binp{z}{\underline{x}} \pmap{Q}{3}}} \pmap{P'}{3}
+					\hastype \Proc
+					}
+			\]
+
+\end{enumerate}
+\qed
 \end{proof}
 \else 
 \begin{proof}
