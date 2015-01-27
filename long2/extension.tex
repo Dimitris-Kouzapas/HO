@@ -840,7 +840,7 @@ $$
 $$
 The encoding of the source judgment is
 $$
-\mapt{\Gamma}^{4}; \emptyset; \mapt{\Delta_0 \cat \Delta_1 \cat n:\bbtout{\lhot{(C_1, C_2)}}S}^{4} \proves \map{\bbout{n}{\abs{x_1, x_2} Q} P' }^{4} \hastype \Proc
+\mapt{\Gamma}^{4}; \emptyset; \mapt{\Delta_0 \cat \Delta_1 \cat n:\bbtout{\lhot{(C_1, C_2)}}S}^{4} \proves \map{\bbout{n}{\abs{(x_1, x_2)} Q} P' }^{4} \hastype \Proc
 $$
 which, using \defref{def:enc:HOpp_to_HOp}, can be equivalently expressed as 
 $$
@@ -874,11 +874,83 @@ n:\mapt{S}^{4}, \,
  \map{P'}^{4}
 \end{eqnarray*}
 which concludes the proof for this case.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% PART 2 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%% Biadic Input 
+\item Case (2(a)), with $P =  \binp{n}{x_1, x_2} P' $, 
+$\map{P}^{4} = 
+		\binp{n}{x_1}  \binp{n}{x_2}  \map{P'}^{4}$.
+%		We show that this case falls under part~(b) of the thesis (cf. Prop.~\ref{p:ocpotomo}). 		
+%		and $\ell_2 = \bactinp{n}{m_1}, \bactinp{n}{m_2}$. Then w
+		We have  the following typed transitions for $\map{P}^{4}$, for some $S$, $S_1$, $S_2$, and $\Delta$:
+\begin{eqnarray*}
+& & \mapt{\Gamma}^{4}; 
+\mapt{\Delta}^{4} \cat 
+n:\btinp{\tmap{S_1}{4}}\btinp{\tmap{S_2}{4}}\tmap{S}{4} \cat
+\proves 
+\binp{n}{x_1} \binp{n}{x_2}\map{P'}^{4} \\
+& \hby{\bactinp{n}{m_1}} & 
+\mapt{\Gamma}^{4}; 
+\mapt{\Delta}^{4} \cat 
+n:\btinp{\tmap{S_2}{4}}\tmap{S}{4} \cat
+m_1:\mapt{S_1}^{4}
+\proves 
+\binp{n}{x_2}\map{P'}^{4} \subst{m_1}{x_1} \\
+& \hby{\bactinp{n}{m_2}} & 
+\mapt{\Gamma}^{4}; 
+\mapt{\Delta}^{4} \cat n:\tmap{S}{4} \cat
+m_1:  \mapt{S_1}^{4} \cat
+m_2: \mapt{S_2}^{4}
+\proves 
+\map{P'}^{4} \subst{m_1}{x_1}\subst{m_2}{x_2} = Q
+\end{eqnarray*}
+Observe that the substitution lemma (Lemma~\ref{lem:subst}(1)) has been used twice.
+%Considering Remarn~\ref{r:multilabels} 
+It is then immediate to infer the label for the source transition:
+$\ell_1 = \bactinp{n}{m_1,m_2}$. Indeed, $\mapa{\ell_1}^{4} = \bactinp{n}{m_1}, \bactinp{n}{m_2}$.
+Now, in the source term $P$ we can infer the following transition:
+$$
+\stytra{\Gamma}{\ell_1}{\Delta \cat n:\btinp{S_1, S_2}S}{\binp{n}{x_1, x_2} P' }{\Delta\cat n{:}S \cat m_1:S_1 \cat m_2:S_2}{P'\subst{m_1,m_2}{x_1, x_2}}
+$$
+which concludes the proof for this case.
+
+
+%% Biadic Abstraction Output 
+\item Case (2(b)), with $P =  \bbout{n}{\abs{(x_1,x_2)} Q} P' $, 
+$\map{P}^{4} = 
+		\bbout{n}{\abs{z}\binp{z}{x_1}\binp{z}{x_2} \map{Q}^{4}} \map{P'}^{4}$.
+		%We show that this case falls under part~(a) of the thesis (cf. Prop.~\ref{p:ocpotomo}). 
+		We have the following  typed transition, for some $S$, $C_1$, $C_2$, and $\Delta$:
+\begin{eqnarray*}
+& & \mapt{\Gamma}^{4}; 
+\mapt{\Delta}^{4}\cat n:\tmap{\bbtout{\lhot{(C_1,  C_2)}} S}{4}
+\proves 
+\bbout{n}{\abs{z}\binp{z}{x_1}\binp{z}{x_2} \map{Q}^{4}} \map{P'}^{4} \\
+& \hby{\ell'_1} & 
+\mapt{\Gamma}^{4}; 
+\mapt{\Delta}^{4}\cat n:\tmap{ S}{4} 
+\proves 
+\map{P'}^{4} = Q
+\end{eqnarray*}
+where
+$\ell'_1 = \bactout{n}{\abs{z}\binp{z}{x_1} \binp{z}{x_2} \map{Q}^{4}}$.
+For simplicity, we consider only the case of linear functions.
+It is then immediate to infer the label for the source transition:
+$\ell_1 = \bactout{n}{\abs{(x_1,  x_2)}{Q}} $. 
+Now, in the source term $P$ we can infer the following transition:
+$$
+\stytra{\Gamma}{\ell_1}{\Delta\cat n:\bbtout{\lhot{(C_1,  C_2)}} S}{ \bbout{n}{\abs{x_1,x_2} Q} P'}{\Delta\cat n{:}S}{P'}
+$$
+which concludes the proof for this case.
+
+
+
 	\end{enumerate}
 %\iftodo{
 %	\dk{do some cases}
 %}\else\fi
-%	\qed
+	\qed
 \end{proof}
 
 
