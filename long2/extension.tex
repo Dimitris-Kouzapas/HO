@@ -153,8 +153,13 @@ We now present an encoding from \HOpp to \HOp.
 %
 \begin{definition}[Encoding from \HOpp to \HOp]\rm
 	\label{def:enc:HOpp_to_HOp}
-	Let mapping $\enco{\pmap{\cdot}{3}, \tmap{\cdot}{3}, \mapa{\cdot}^{3}}: \HOpp \to \HOp$
-	as defined in \figref{fig:enc:HOpp_to_HOp}.
+	Let $\tyl{L}_{\HOpp}=\calc{\HOpp}{{\cal{T}}_4}{\hby{\ell}}{\wb}{\proves}$
+where 
+${\cal{T}}_4$ is a set of types of $\HOpp$;  
+the typing $\proves$ is defined in 
+\figref{fig:typerulesmy} with extended rules \trule{Abs} and \trule{App}. 
+Then, mapping $\enco{\pmap{\cdot}{3}, \tmap{\cdot}{3}, \mapa{\cdot}^{3}}: \tyl{L}_\HOpp \to \tyl{L}_\HOp$
+	is defined in \figref{fig:enc:HOpp_to_HOp}.
 \end{definition}
 %
 \begin{figure}[t]
@@ -462,11 +467,11 @@ Similar with the case of the encoding of $\pmap{P}{1}$.
 \label{subsec:pol_HOp}
 
 
-\noi Embedding the polyadic name passing 
+\noi Embedding polyadic name passing 
 into the monadic name passing is well-studied in the literature.    
 Using the linear typing, 
-the preciseness (full abstraction) can be obtained \cite{Yoshida96}.
-Here we summarise how $\pHOp$ can be encoded into $\HOp$. 
+the preciseness (full abstraction) can be obtained~\cite{Yoshida96}.
+Here we describe an encoding of $\pHOp$ into $\HOp$. 
 
 
 %The \HOp is presented in monadic terms.
@@ -480,47 +485,46 @@ Here we summarise how $\pHOp$ can be encoded into $\HOp$.
 %\pHOp of \HOp and show a fully abstract
 %encoding from \pHOp to \HOp.
 
-\subsubsection{Extending the Semantics}
-
-\myparagraph{Syntax and Operational Semantics}
-The syntax of \figref{fig:syntax} is changed to
-include 
+\subsubsection{Modifications in Syntax, Reduction Semantics, and Types.}
+%\myparagraph{Syntax and Operational Semantics}
+The syntax of 
+\pHOp processes is obtained from the syntax for processes given in 
+\figref{fig:syntax} by considering values 
 $$V \bnfis \tilde{u} \bnfbar \abs{\tilde{x}}{P}$$
-and
-$$\binp{n}{\tilde{x}} P$$
-instead of $\binp{n}{x} P$.
-The reduction relation in \figref{fig:reduction}
-replaces rule $\orule{App}$ 
-with rule
-%
-\[
-	\appl{(\abs{\tilde{x}}{P})}{\tilde{u}} \red P \subst{\tilde{u}}{\tilde{x}} \quad |\tilde{x}| = |\tilde{u}|
-\]
-%
-\noi and rule $\orule{Pass}$ with
-%
-\[
-	\bout{n}{V} P_1 \Par \binp{\dual{n}}{\tilde{x}} P_2 \red P_1 \Par P_2 \subst{V}{\tilde{x}} \quad |V| = |\tilde{x}|
-\]
-%
-
-\myparagraph{Types}
+and input prefixes $\binp{n}{\tilde{x}} P$.
+Thus, polyadicity arises both in (session) communications and abstractions. 
+Reduction is then defined by the rules in \figref{fig:reduction}, excepting 
+ rules $\orule{App}$ and $\orule{Pass}$ which are replaced by rules
+ \begin{eqnarray*}
+	\orule{App$^p$} & 
+	\appl{(\abs{\tilde{x}}{P})}{\tilde{u}} \red P \subst{\tilde{u}}{\tilde{x}} \quad |\tilde{x}| = |\tilde{u}| \\
+	\orule{Pass$^p$} & 
+		\quad \bout{n}{V} P_1 \Par \binp{\dual{n}}{\tilde{x}} P_2 \red P_1 \Par P_2 \subst{V}{\tilde{x}} \quad |V| = |\tilde{x}|
+\end{eqnarray*}
 The syntax of types in \figref{def:types}
-is changed to include 
-$$L \bnfis \shot{\tilde{C}} \bnfbar \lhot{\tilde{C}}$$
-instead of $L \bnfis \shot{C} \bnfbar \lhot{C}$ and
-to $U \bnfis \tilde{C} \bnfbar L$.
+is modified to include
+ \begin{eqnarray*}
+ L & \bnfis & \shot{\tilde{C}} \bnfbar \lhot{\tilde{C}} \\
+ U & \bnfis & \tilde{C} \bnfbar L
+ \end{eqnarray*}
+ instead of $L \bnfis \shot{C} \bnfbar \lhot{C}$ and
+$U \bnfis C \bnfbar L$, respectively.
 
-The type system disallows polyadic shared names as in \cite{tlca07,MostrousY15}.
 
 %In the current polyadic extension we do not
 %require polyadic shared names since the
 %polyadic encoding for shared names is
 %less straightforward than the polyadic
 %encoding for session names.
-
-We extend the type system in \figref{fig:typerulesmy}
-to include the type rule:
+Definitions of type equivalence/duality 
+and typing environments ($\Gamma$ and $\Lambda$) are straightforward extensions of 
+\defref{def:type_equiv}, \defref{def:type_dual},
+and  \defref{def:typeenv}, respectively. 
+Following~\cite{tlca07,MostrousY15} the type system for \pHOp
+disallows polyadicity along shared names. Based on these modifications, 
+the typing rules of \figref{fig:typerulesmy} are adapted in the expected way. 
+In order to type polyadic values, we 
+rely on the following rule:
 %
 \[
 	\trule{Pol}~~\tree{
@@ -530,19 +534,46 @@ to include the type rule:
 	}
 \]
 %
-that allows us to type polyadic values. We expect the
-extension of the type rules to accomodate polyadic values.
-Note that rules $\trule{Req}$ and $\trule{Acc}$
-continue to type monadic instances of shared
-name prefixes.
+Other rules are adjusted in the expected way, in order to accommodate polyadic values.
+Notice, however, that rules $\trule{Req}$ and $\trule{Acc}$ are kept unchanged, as they
+are used to type monadic exchanges along shared name prefixes.
+We now state type soundness for \pHOp; the proof is straightforward and omitted, for it follows closely the proof detailed in 
+\appref{app:ts}.
 
-\iftodo
-\dk{sketch subject reduction (just revise the related case)}
-\else\fi
+\begin{theorem}[Type Soundness for \pHOp]\rm
+	\label{thm:sr_phop}
+	\begin{enumerate}[1.]
+		\item	(Subject Congruence)
+			$\Gamma; \es; \Delta \proves P \hastype \Proc$
+			and
+			$P \scong P'$
+			implies
+			$\Gamma; \es; \Delta \proves P' \hastype \Proc$.
 
-\myparagraph{Behavioural Semantics}
-The definition of the labelled transition system
-replaces rule $\ltsrule{App}$ with rule:
+		\item	(Subject Reduction)
+			$\Gamma; \es; \Delta \proves P \hastype \Proc$
+			with
+			balanced $\Delta$
+			and
+			$P \red P'$
+			implies $\Gamma; \es; \Delta'  \proves P' \hastype \Proc$
+			and either (i)~$\Delta = \Delta'$ or (ii)~$\Delta \red \Delta'$
+			with $\Delta'$ balanced.
+	\end{enumerate}
+\end{theorem}
+
+%\iftodo
+%\dk{sketch subject reduction (just revise the related case)}
+%\else\fi
+
+As for the behavioral semantics for \pHOp, the 
+set of action labels is kept unchanged. 
+In fact, 
+as $V$ now stands for $\tilde{u}$ and $\abs{\tilde{x}}{P}$, 
+labels  $\news{\tilde{m}} \bactout{n}{V}$ and $\bactinp{n}{V}$
+require no modification. 
+The LTS for \pHOp is as for \HOp, 
+excepting rule $\ltsrule{App}$ which is replaced with the rule:
 %
 \[
 	\appl{(\abs{\tilde{x}} P)}{\tilde{u}} \by{\tau} P\subst{\tilde{u}}{\tilde{x}}
@@ -551,24 +582,20 @@ replaces rule $\ltsrule{App}$ with rule:
 The characteristic process and characteristic value 
 definition (\defref{def:characteristic_process})
 is extended to include the cases:
-\[
-	\mapchar{C_1 \dots C_n}{u_1 \cdots u_n} \defeq \mapchar{C_1}{x_1} \Par \dots \Par \mapchar{C_n}{x_n}
-\]
-\noi and
-\[
-	\omapchar{U_1 \dots U_n} \defeq \omapchar{U_1}, \dots, \omapchar{U_n}
-\]
+\begin{eqnarray*}
+	\mapchar{C_1 \dots C_n}{u_1 \cdots u_n} & \defeq &  \mapchar{C_1}{x_1} \Par \dots \Par \mapchar{C_n}{x_n} \\
+	\omapchar{U_1 \dots U_n}  & \defeq &  \omapchar{U_1}, \dots, \omapchar{U_n}
+\end{eqnarray*}
 %
-A polyadic type is inhabited in a process where its
-parallel components inhabit type terms of the polyadic
-type. A polyadic value type is inhabited as a list
-of values that inhabit the polyadic values.
-
+Thus, a polyadic type is inhabited by process whose
+parallel components inhabit type the individual components of the polyadic
+type. A polyadic value type is inhabited by a list
+of values which inhabit the individual components of the polyadic value.
 The rest of the behavioural semantics remains unchanged.
 
 %Other definitions are straightforwardly extended. 
 
-\subsubsection{Encoding from \pHOp to \HOp}
+\subsubsection{Encoding \pHOp into \HOp.}
 
 We slightly modify \defref{def:ep} to capture that a 
 label $\ell$ may be mapped into a sequence of labels $\tilde{\ell}$.
@@ -640,9 +667,9 @@ the typing $\proves$ is defined in
 			\\
 			\mapa{\bactinp{n}{\abs{x_1, \dots, x_n}{P}}}{4} &\defeq& \bactinp{n}{\abs{z}{\binp{z}{x_1} \dots; \binp{z}{x_n} \pmap{P}{4}}}
 			\\
-			\mapa{\btau}^{4} &\defeq& \btau, \stau \dots \stau
+			\mapa{\btau}^{4} &\defeq& \btau, \stau, \dots, \stau
 			\\
-			\mapa{\tau}^{4} &\defeq& \tau \dots \tau
+			\mapa{\tau}^{4} &\defeq& \tau, \dots, \tau
 		\end{array}
 	\]
 %
@@ -660,16 +687,16 @@ the typing $\proves$ is defined in
 
 \begin{proof}
 	By induction on the inference $\Gamma; \emptyset; \Delta \proves P \hastype \Proc$.
-	Details in \propref{app:prop:typepres_pHOp_to_HOp} (Page~\pageref{app:prop:typepres_pHOp_to_HOp}).
+	See \propref{app:prop:typepres_pHOp_to_HOp} (Page~\pageref{app:prop:typepres_pHOp_to_HOp}) for details.
 	\qed
 \end{proof}
 
 
-\begin{proposition}[Operational Correspondendce. From \pHOp to \HOp]\rm
+\begin{proposition}[Operational Correspondence. From \pHOp to \HOp]\rm
 	\label{prop:op_cor:pHOp_to_HOp}
 %
 	\begin{enumerate}
-		\item	Let $\Gamma; \es; \Delta \proves P$.
+		\item	Let $\Gamma; \es; \Delta \proves P$. Then
 			$\horel{\Gamma}{\Delta}{P}{\hby{\ell}}{\Delta'}{P'}$ implies
 %
 			\begin{enumerate}[a)]
@@ -733,12 +760,125 @@ the typing $\proves$ is defined in
 \end{proposition}
 
 \begin{proof}
-	The proof of both Parts does a transition induction and
-	considers the mapping as defined in \defref{def:enc:HOpp_to_HOp}.
-\iftodo{
-	\dk{do some cases}
-}\else\fi
-	\qed
+	The proof of both parts is by transition induction, following 
+	the mapping defined in \defref{def:enc:HOpp_to_HOp}.
+	We consider some representative cases, using biadic communication:
+	\begin{enumerate}[$\bullet$]
+	%\item 
+	%% Biadic Output 
+\item Case (1(a)), with $P =\bout{n}{m_1, m_2} P'$ and $\ell_1 = \bactout{n}{m_1, m_2}$. 
+By assumption, $P$ is well-typed. 
+As one particular possibility, we may have:
+			\[
+				\tree{
+					\Gamma; \emptyset; \Delta_0 \cat n:S  \proves  P' \hastype \Proc \quad 
+					\Gamma ; \emptyset ; m_1{:} S_1 \cat m_2{:}S_2 \proves  m_1,m_2 \hastype S_1,S_2}{
+					\Gamma; \emptyset; \Delta_0 \cat m_1{:}S_1 \cat m_2{:}S_2 \cat n:\btout{S_1,S_2}S \proves  
+					\bout{n}{m_1,m_2} P' \hastype \Proc}
+			\]
+for some $\Gamma, S, S_1, S_2, \Delta_0$, 
+such that $\Delta = \Delta_0 \cat m_1{:}S_1 \cat m_2{:}S_2 \cat n:\btout{S_1,S_2}S$.
+We may then have the following typed transition
+$$
+\stytra{\Gamma}{\ell_1}{\Delta_0 \cat m_1{:}S_1 \cat m_2{:}S_2 \cat n:\btout{S_1,S_2}S}{\bout{n}{m_1, m_2} P'}{\Delta_0 \cat n{:}S}{P'}
+$$
+The encoding of the source judgment for $P$ is as follows:
+$$
+\mapt{\Gamma}^{4}; \emptyset; \mapt{\Delta_0 \cat m_1{:}S_1 \cat m_2{:}S_2 \cat n:\btout{S_1,S_2}S}^{4} \proves \map{\bout{n}{m_1, m_2} P'}^{4} \hastype \Proc
+$$
+which, using \defref{def:enc:HOpp_to_HOp}, can be expressed as 
+$$
+\mapt{\Gamma}^{4}; \emptyset; \mapt{\Delta_0} 
+\cat m_1{:}\mapt{S_1}^{4} \cat m_2{:}\mapt{S_2}^{4} 
+\cat n:\btout{\mapt{S_1}^{4}}\btout{\mapt{S_2}^{4}}\mapt{S}^{4}
+\proves 
+\bout{n}{m_1}\bout{n}{m_2} \map{P'}^{4} 
+\hastype \Proc
+$$
+Now, $\mapa{\ell_1}^{4} = \bactout{n}{m_1 }, \bactout{n}{ m_2}$. 
+It is immediate to infer the following typed transitions for $\map{P}^{4}  = \bout{n}{m_1}\bout{n}{m_2} \map{P'}^{4} $:
+\begin{eqnarray*}
+& & \mapt{\Gamma}^{4}; 
+\mapt{\Delta_0} \cat  m_1{:}\mapt{S_1}^{4} \cat m_2{:}\mapt{S_2}^{4} \cat
+n:\btout{\mapt{S_1}^{4}}\btout{\mapt{S_2}^{4}}\mapt{S}^{4}
+\proves 
+\bout{n}{m_1}\bout{n}{m_2} \map{P'}^{4}  \\
+& \hby{\bactout{n}{m_1}} & 
+\mapt{\Gamma}^{4}; \mapt{\Delta_0} \cat  m_2{:}\mapt{S_2}^{4} \cat
+n:\btout{\mapt{S_2}^{4}}\mapt{S}^{4}
+\proves 
+\bout{n}{m_2} \map{P'}^{4} \\
+& \hby{\bactout{n}{m_2}} & 
+\mapt{\Gamma}^{4}; \mapt{\Delta_0}  \cat n{:}\mapt{S}^{4}
+\proves 
+ \map{P'}^{4} \\
+ & = & 
+ \mapt{\Gamma}^{4}; \mapt{\Delta_0 \cat
+n:S }^{4}
+\proves 
+ \map{P'}^{4}
+\end{eqnarray*}
+which concludes the proof for this case.
+
+%% Biadic Abstraction Output 
+\item Case (1(c)) with $P = \bbout{n}{\abs{(x_1, x_2)} Q} P' $ and $\ell_1 = \bactout{n}{\abs{(x_1, x_2)}{Q}}$. 
+By assumption, $P$ is well-typed. 
+We may have:
+			\[
+				\tree{
+					\Gamma; \emptyset; \Delta_0 \cat n:S  \proves  P' \hastype \Proc \quad 
+					\Gamma ; \emptyset ; \Delta_1 \proves  \abs{(x_1,x_2)}Q \hastype \lhot{(C_1,C_2)}}{
+					\Gamma; \emptyset; \Delta_0 \cat \Delta_1 \cat n:\btout{\lhot{(C_1,C_2)}}S \proves  
+					\bout{n}{\abs{(x_1,x_2)}Q} P' \hastype \Proc}
+			\]
+for some $\Gamma$, $S$, $C_1$, $C_2$, $\Delta_0$, $\Delta_1$, 
+such that $\Delta = \Delta_0 \cat \Delta_1 \cat  n:\btout{\lhot{(C_1,C_2)}}S$.
+(For simplicity, we consider only the case of a linear function.)
+We may have the following typed transition:
+$$
+\stytra{\Gamma}{\ell_1}{\Delta_0 \cat \Delta_1 \cat n:\bbtout{\lhot{(C_1, C_2)}}S}{\bbout{n}{\abs{(x_1, x_2)} Q} P' }{\Delta_0 \cat n{:}S}{P'}
+$$
+The encoding of the source judgment is
+$$
+\mapt{\Gamma}^{4}; \emptyset; \mapt{\Delta_0 \cat \Delta_1 \cat n:\bbtout{\lhot{(C_1, C_2)}}S}^{4} \proves \map{\bbout{n}{\abs{x_1, x_2} Q} P' }^{4} \hastype \Proc
+$$
+which, using \defref{def:enc:HOpp_to_HOp}, can be equivalently expressed as 
+$$
+\mapt{\Gamma}^{4}; \emptyset; \mapt{\Delta_0 \cat \Delta_1} \cat
+%n:\btout{\mapt{S_1}^{4}}\btout{\mapt{S_2}^{4}}\mapt{S}^{4}
+n:\bbtout{
+		\lhot{\big(\btinp{\tmap{C_1}{4}}\btinp{\tmap{C_2}{4}}\tinact\big)}}\mapt{S}^{4}
+\proves 
+\bbout{n}{\abs{z}\binp{z}{x_1} \binp{z}{x_2} \map{Q}^{4}} \map{P'}^{4}
+\hastype \Proc
+$$
+
+Now, $\mapa{\ell_1}^{4} = \bactout{n}{\abs{z}\binp{z}{x_1}\binp{z}{x_2} \map{Q}^{4}}$. 
+It is immediate to infer the following typed transition for $\map{P}^{4}  = \bbout{n}{\abs{z}\binp{z}{x_1} \binp{z}{x_2} \map{Q}^{4}} \map{P'}^{4}$:
+\begin{eqnarray*}
+& & \mapt{\Gamma}^{4}; \mapt{\Delta_0 \cat \Delta_1} \cat
+%n:\btout{\mapt{S_1}^{4}}\btout{\mapt{S_2}^{4}}\mapt{S}^{4}
+n:\bbtout{
+		\lhot{\big(\btinp{\tmap{C_1}{4}}\btinp{\tmap{C_2}{4}}\tinact\big)}}\mapt{S}^{4}
+\proves 
+\bbout{n}{\abs{z}\binp{z}{x_1} \binp{z}{x_2} \map{Q}^{4}} \map{P'}^{4} \\
+& \hby{\mapa{\ell_1}^{4}} & 
+\mapt{\Gamma}^{4}; \mapt{\Delta_0} \cat
+n:\mapt{S}^{4}, \,
+\proves 
+\map{P'}^{4} \\
+ & = & 
+ \mapt{\Gamma}^{4}; 
+ \mapt{\Delta_0 \cat n:S}^{4}
+\proves 
+ \map{P'}^{4}
+\end{eqnarray*}
+which concludes the proof for this case.
+	\end{enumerate}
+%\iftodo{
+%	\dk{do some cases}
+%}\else\fi
+%	\qed
 \end{proof}
 
 
