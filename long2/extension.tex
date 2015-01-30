@@ -174,9 +174,9 @@ Then, mapping $\enco{\pmap{\cdot}{3}, \tmap{\cdot}{3}, \mapa{\cdot}^{3}}: \tyl{L
 		\pmap{\bout{u}{\abs{k}{Q}} P}{3} &\defeq& \bout{u}{\abs{k}{\pmap{Q}{3}}} \pmap{P}{3}
 		\\
 		\\
-		\tmap{\shot{L}}{3} &\defeq& \shot{\btinp{\tmap{L}{3}} \tinact}
+		\tmap{\shot{L}}{3} &\defeq& \shot{\big(\btinp{\tmap{L}{3}} \tinact\big)}
 		\\
-		\tmap{\lhot{L}}{3} &\defeq& \lhot{\btinp{\tmap{L}{3}} \tinact}
+		\tmap{\lhot{L}}{3} &\defeq& \lhot{\big(\btinp{\tmap{L}{3}} \tinact\big)}
 		\\
 		\tmap{\btout{\shot{L}} S}{3} &\defeq& \btout{\tmap{\shot{L}}{3}} \tmap{S}{3}
 		\\
@@ -210,9 +210,9 @@ Then, mapping $\enco{\pmap{\cdot}{3}, \tmap{\cdot}{3}, \mapa{\cdot}^{3}}: \tyl{L
 	$\tmap{\Gamma}{3}; \emptyset; \tmap{\Delta}{3} \proves \pmap{P}{3} \hastype \Proc$. 
 \end{proposition}
 
-\iftodo
+%\iftodo
 \begin{proof}
-	\dk{Put some additional cases.}
+%	\dk{Put some additional cases.}
 By induction on the inference of 
 $\Gamma; \emptyset; \Delta \proves P \hastype \Proc$.
 We detail some representative cases:
@@ -241,7 +241,8 @@ Thus, by IH we have:
 \\
 \tmap{\Gamma}{3} \cat \underline{x}:\tmap{L}{3}; \es ; \es & \proves & \underline{x} \hastype \tmap{L}{3} \label{eq:hopppre3}
 \end{eqnarray}
-The corresponding typing in the target language is then as follows:
+The corresponding typing in \HOp is as follows:
+{\small
 \[
 \tree{
 \tree{}{
@@ -280,16 +281,126 @@ The corresponding typing in the target language is then as follows:
 					\hastype \Proc
 					}
 			\]
+			}
+
+\item Case $P =  \appl{(\abs{x} P)}{(\abs{y} Q)}$.
+We may have different possibilities for the types of each abstraction. 
+We consider only one of them, as the rest are similar:
+\[
+\tree{
+\tree{
+\tree{}{
+\Gamma \cat x:\shot{C}; \Lambda;  \Delta_1 \proves   P \hastype \Proc}
+}{
+\Gamma; \Lambda;  \Delta_1 \proves \abs{x} P \hastype \lhot{(\lhot{C})}
+} 
+\quad
+\tree{
+\tree{}{
+\Gamma; \es;  \Delta_2, y:C \proves  Q \hastype \Proc}
+}{
+\Gamma; \es;  \Delta_2 \proves \abs{y} Q \hastype \lhot{C}
+}
+}{
+\Gamma; \Lambda; \Delta_1 \cdot \Delta_2 \proves\appl{(\abs{x} P)}{(\abs{y} Q)} \hastype \Proc
+}
+\]
+
+Thus, by IH we have:
+\begin{eqnarray}
+\tmap{\Gamma}{3} \cat x:\tmap{\shot{C}}{3}; \tmap{\Lambda}{3}; \tmap{\Delta_1}{3}   & \proves &  \pmap{P}{3} \hastype \Proc
+\label{eq:hopppre4} \\
+\tmap{\Gamma}{3}  ; \es; \tmap{\Delta_1}{3}, y:\tmap{C}{3}   & \proves &  \pmap{Q}{3} \hastype \Proc
+\label{eq:hopppre5} 
+\end{eqnarray}
+
+The corresponding typing in \HOp is as follows --- recall that $\tmap{\lhot{C}}{3} = \lhot{\tmap{C}{3}}$.
+{\small
+\[
+\tree{
+\tree{
+\tree{
+\tree{
+\tree{}{
+\eqref{eq:hopppre4}
+}
+}{
+\tmap{\Gamma}{3}\cat x: \tmap{\shot{C}}{3}; \tmap{\Lambda}{3}; \tmap{\Delta_1}{3}   \cat 
+s: \tinact 
+\proves
+\pmap{P}{3}
+\hastype \Proc
+}
+}{
+\tmap{\Gamma}{3}; \tmap{\Lambda}{3}; \tmap{\Delta_1}{3}   \cat 
+s:\btinp{\tmap{\lhot{C}}{3}}\tinact 
+\proves 
+\binp{s}{x}\pmap{P}{3}
+\hastype \Proc
+}
+\quad
+\tree{
+\tree{
+\tree{}{
+\eqref{eq:hopppre5}}
+}{
+\tree{
+\tmap{\Gamma}{3}; \es; \tmap{\Delta_2}{3} 
+\cat y:\tmap{ C}{3}
+\proves 
+  \pmap{Q}{3}
+\hastype \Proc
+}{
+\tree{
+\tmap{\Gamma}{3}; \es;   \tmap{\Delta_2}{3} 
+\proves 
+ \abs{y}{\pmap{Q}{3}} 
+\hastype \tmap{\lhot{C}}{3}
+}{
+\tmap{\Gamma}{3}; \es;   \tmap{\Delta_2}{3} \cat 
+\dual{s}: \tinact
+\proves 
+ \abs{y}{\pmap{Q}{3}} 
+\hastype \tmap{\lhot{C}}{3}
+}
+}
+}
+}{
+\tmap{\Gamma}{3}; \es;   \tmap{\Delta_2}{3} \cat 
+\dual{s}:\btout{\tmap{\lhot{C}}{3}}\tinact
+\proves 
+\bout{\dual{s}}{\abs{y}{\pmap{Q}{3}}}\inact
+\hastype \Proc
+}
+}{
+\tmap{\Gamma}{3}; \tmap{\Lambda}{3}; \tmap{\Delta_1}{3} \cdot \tmap{\Delta_2}{3} \cat 
+s:\btinp{\tmap{\lhot{C}}{3}}\tinact \cat
+\dual{s}:\btout{\tmap{\lhot{C}}{3}}\tinact
+\proves 
+\binp{s}{x}\pmap{P}{3}
+\Par
+\bout{\dual{s}}{\abs{y}{\pmap{Q}{3}}}\inact
+\hastype \Proc
+}
+}{
+\tmap{\Gamma}{3}; \tmap{\Lambda}{3}; \tmap{\Delta_1}{3} \cdot \tmap{\Delta_2}{3} 
+\proves \news{s}(\binp{s}{x}\pmap{P}{3}
+\Par
+\bout{\dual{s}}{\abs{y}{\pmap{Q}{3}}}\inact)
+\hastype \Proc
+}
+\]
+}
 
 \end{enumerate}
 \qed
 \end{proof}
-\else 
-\begin{proof}
-Similar with the case of the encoding of $\pmap{P}{1}$. 
-	\qed
-\end{proof}
-\fi
+%\else 
+%\begin{proof}
+%Similar with the case of the encoding of $\pmap{P}{1}$. 
+%	\qed
+%\end{proof}
+%\fi
 
 \begin{proposition}[Operational Correspondence. From \HOpp to \HOp]\rm
 	\label{prop:op_corr_HOpp_to_HOp}
