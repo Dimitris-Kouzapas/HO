@@ -74,7 +74,7 @@ most significant changes are required in rules $\trule{Abs}$ and $\trule{App}$
 
 With these modifications we can now state the extension of \thmref{thm:sr}:
 
-\begin{theorem}[Type Soundness for \HOpp]\rm
+\begin{theorem}[Type Soundness for \HOpp]\myrm
 	\label{thm:sr_hopp}
 	\begin{enumerate}[1.]
 		\item	(Subject Congruence)
@@ -151,7 +151,7 @@ $\omapchar{\shot{C}} \defeq \omapchar{\lhot{C}} \defeq \abs{x}{\mapchar{C}{x}}$,
 
 We now present an encoding from \HOpp to \HOp.
 %
-\begin{definition}[Encoding from \HOpp to \HOp]\rm
+\begin{definition}[Encoding from \HOpp to \HOp]\myrm
 	\label{def:enc:HOpp_to_HOp}
 	Let $\tyl{L}_{\HOpp}=\calc{\HOpp}{{\cal{T}}_4}{\hby{\ell}}{\wb}{\proves}$
 where 
@@ -165,18 +165,18 @@ Then, mapping $\enco{\pmap{\cdot}{3}, \tmap{\cdot}{3}, \mapa{\cdot}^{3}}: \tyl{L
 \begin{figure}[t]
 	\[
 	\begin{array}{rcl}
-		\pmap{\appl{x}{\abs{x} P}}{3} &\defeq& \newsp{s}{\appl{x}{s} \Par \bout{\dual{s}}{\abs{x} \pmap{P}{3}} \inact}
+		\pmap{\appl{x}{(\abs{y} P})}{3} &\defeq& \newsp{s}{\appl{x}{s} \Par \bout{\dual{s}}{\abs{y} \pmap{P}{3}} \inact}
 		\\
-		\pmap{\appl{(\abs{x} P)}{\abs{x} Q}}{3} &\defeq& \newsp{s}{\appl{(\abs{x} \pmap{P}{3})}{s} \Par \bout{\dual{s}}{\abs{x} \pmap{Q}{3}} \inact}
+		\pmap{\appl{(\abs{x} P)}{(\abs{y} Q)}}{3} &\defeq& \newsp{s}{\binp{s}{x}\pmap{P}{3} \Par \bout{\dual{s}}{\abs{y} \pmap{Q}{3}} \inact}
 		\\
 		\pmap{\bout{u}{\abs{\underline{x}}{Q}} P}{3} &\defeq& \bout{u}{\abs{z}{\binp{z}{\underline{x}} \pmap{Q}{3}}} \pmap{P}{3}
 		\\
 		\pmap{\bout{u}{\abs{k}{Q}} P}{3} &\defeq& \bout{u}{\abs{k}{\pmap{Q}{3}}} \pmap{P}{3}
 		\\
 		\\
-		\tmap{\shot{L}}{3} &\defeq& \shot{\btinp{\tmap{L}{3}} \tinact}
+		\tmap{\shot{L}}{3} &\defeq& \shot{\big(\btinp{\tmap{L}{3}} \tinact\big)}
 		\\
-		\tmap{\lhot{L}}{3} &\defeq& \lhot{\btinp{\tmap{L}{3}} \tinact}
+		\tmap{\lhot{L}}{3} &\defeq& \lhot{\big(\btinp{\tmap{L}{3}} \tinact\big)}
 		\\
 		\tmap{\btout{\shot{L}} S}{3} &\defeq& \btout{\tmap{\shot{L}}{3}} \tmap{S}{3}
 		\\
@@ -203,16 +203,16 @@ Then, mapping $\enco{\pmap{\cdot}{3}, \tmap{\cdot}{3}, \mapa{\cdot}^{3}}: \tyl{L
 	processes, types and labels, respectively. \label{fig:enc:HOpp_to_HOp}}
 \end{figure}
 
-\begin{proposition}[Type Preservation. From \HOpp to \HOp]\rm
+\begin{proposition}[Type Preservation. From \HOpp to \HOp]\myrm
 	\label{prop:typepres_HOpp_to_HOp}
 	Let $P$ be a \HOpp process.
 	If $\Gamma; \emptyset; \Delta \proves P \hastype \Proc$ then 
 	$\tmap{\Gamma}{3}; \emptyset; \tmap{\Delta}{3} \proves \pmap{P}{3} \hastype \Proc$. 
 \end{proposition}
 
-\iftodo
+%\iftodo
 \begin{proof}
-	\dk{Put some additional cases.}
+%	\dk{Put some additional cases.}
 By induction on the inference of 
 $\Gamma; \emptyset; \Delta \proves P \hastype \Proc$.
 We detail some representative cases:
@@ -241,7 +241,8 @@ Thus, by IH we have:
 \\
 \tmap{\Gamma}{3} \cat \underline{x}:\tmap{L}{3}; \es ; \es & \proves & \underline{x} \hastype \tmap{L}{3} \label{eq:hopppre3}
 \end{eqnarray}
-The corresponding typing in the target language is then as follows:
+The corresponding typing in \HOp is as follows:
+{\small
 \[
 \tree{
 \tree{}{
@@ -280,18 +281,128 @@ The corresponding typing in the target language is then as follows:
 					\hastype \Proc
 					}
 			\]
+			}
+
+\item Case $P =  \appl{(\abs{x} P)}{(\abs{y} Q)}$.
+We may have different possibilities for the types of each abstraction. 
+We consider only one of them, as the rest are similar:
+\[
+\tree{
+\tree{
+\tree{}{
+\Gamma \cat x:\shot{C}; \Lambda;  \Delta_1 \proves   P \hastype \Proc}
+}{
+\Gamma; \Lambda;  \Delta_1 \proves \abs{x} P \hastype \lhot{(\lhot{C})}
+} 
+\quad
+\tree{
+\tree{}{
+\Gamma; \es;  \Delta_2, y:C \proves  Q \hastype \Proc}
+}{
+\Gamma; \es;  \Delta_2 \proves \abs{y} Q \hastype \lhot{C}
+}
+}{
+\Gamma; \Lambda; \Delta_1 \cdot \Delta_2 \proves\appl{(\abs{x} P)}{(\abs{y} Q)} \hastype \Proc
+}
+\]
+
+Thus, by IH we have:
+\begin{eqnarray}
+\tmap{\Gamma}{3} \cat x:\tmap{\shot{C}}{3}; \tmap{\Lambda}{3}; \tmap{\Delta_1}{3}   & \proves &  \pmap{P}{3} \hastype \Proc
+\label{eq:hopppre4} \\
+\tmap{\Gamma}{3}  ; \es; \tmap{\Delta_1}{3}, y:\tmap{C}{3}   & \proves &  \pmap{Q}{3} \hastype \Proc
+\label{eq:hopppre5} 
+\end{eqnarray}
+
+The corresponding typing in \HOp is as follows --- recall that $\tmap{\lhot{C}}{3} = \lhot{\tmap{C}{3}}$.
+{\small
+\[
+\tree{
+\tree{
+\tree{
+\tree{
+\tree{}{
+\eqref{eq:hopppre4}
+}
+}{
+\tmap{\Gamma}{3}\cat x: \tmap{\shot{C}}{3}; \tmap{\Lambda}{3}; \tmap{\Delta_1}{3}   \cat 
+s: \tinact 
+\proves
+\pmap{P}{3}
+\hastype \Proc
+}
+}{
+\tmap{\Gamma}{3}; \tmap{\Lambda}{3}; \tmap{\Delta_1}{3}   \cat 
+s:\btinp{\tmap{\lhot{C}}{3}}\tinact 
+\proves 
+\binp{s}{x}\pmap{P}{3}
+\hastype \Proc
+}
+\quad
+\tree{
+\tree{
+\tree{}{
+\eqref{eq:hopppre5}}
+}{
+\tree{
+\tmap{\Gamma}{3}; \es; \tmap{\Delta_2}{3} 
+\cat y:\tmap{ C}{3}
+\proves 
+  \pmap{Q}{3}
+\hastype \Proc
+}{
+\tree{
+\tmap{\Gamma}{3}; \es;   \tmap{\Delta_2}{3} 
+\proves 
+ \abs{y}{\pmap{Q}{3}} 
+\hastype \tmap{\lhot{C}}{3}
+}{
+\tmap{\Gamma}{3}; \es;   \tmap{\Delta_2}{3} \cat 
+\dual{s}: \tinact
+\proves 
+ \abs{y}{\pmap{Q}{3}} 
+\hastype \tmap{\lhot{C}}{3}
+}
+}
+}
+}{
+\tmap{\Gamma}{3}; \es;   \tmap{\Delta_2}{3} \cat 
+\dual{s}:\btout{\tmap{\lhot{C}}{3}}\tinact
+\proves 
+\bout{\dual{s}}{\abs{y}{\pmap{Q}{3}}}\inact
+\hastype \Proc
+}
+}{
+\tmap{\Gamma}{3}; \tmap{\Lambda}{3}; \tmap{\Delta_1}{3} \cdot \tmap{\Delta_2}{3} \cat 
+s:\btinp{\tmap{\lhot{C}}{3}}\tinact \cat
+\dual{s}:\btout{\tmap{\lhot{C}}{3}}\tinact
+\proves 
+\binp{s}{x}\pmap{P}{3}
+\Par
+\bout{\dual{s}}{\abs{y}{\pmap{Q}{3}}}\inact
+\hastype \Proc
+}
+}{
+\tmap{\Gamma}{3}; \tmap{\Lambda}{3}; \tmap{\Delta_1}{3} \cdot \tmap{\Delta_2}{3} 
+\proves \news{s}(\binp{s}{x}\pmap{P}{3}
+\Par
+\bout{\dual{s}}{\abs{y}{\pmap{Q}{3}}}\inact)
+\hastype \Proc
+}
+\]
+}
 
 \end{enumerate}
 \qed
 \end{proof}
-\else 
-\begin{proof}
-Similar with the case of the encoding of $\pmap{P}{1}$. 
-	\qed
-\end{proof}
-\fi
+%\else 
+%\begin{proof}
+%Similar with the case of the encoding of $\pmap{P}{1}$. 
+%	\qed
+%\end{proof}
+%\fi
 
-\begin{proposition}[Operational Correspondence. From \HOpp to \HOp]\rm
+\begin{proposition}[Operational Correspondence. From \HOpp to \HOp]\myrm
 	\label{prop:op_corr_HOpp_to_HOp}
 	\begin{enumerate}
 		\item	Let $\Gamma; \es; \Delta \proves P$.
@@ -412,10 +523,11 @@ Similar with the case of the encoding of $\pmap{P}{1}$.
 	\qed
 \end{proof}
 
-\begin{proposition}[Full Abstraction. From \HOpp to \HOp]\rm
+\begin{proposition}[Full Abstraction. From \HOpp to \HOp]\myrm
 	\label{prop:fulla_HOpp_to_HOp}
 	Let $P, Q$ \HOpp processes with $\Gamma; \es; \Delta_1 \proves P \hastype \Proc$ and 
-	$\Gamma; \es; \Delta_2 \proves Q \hastype \Proc$.
+	$\Gamma; \es; \Delta_2 \proves Q \hastype \Proc$. \\
+	Then 
 	$\horel{\Gamma}{\Delta_1}{P}{\wb}{\Delta_2}{Q}$ if and only if $\horel{\tmap{\Gamma}{3}}{\tmap{\Delta_1}{3}}{\pmap{P}{3}}{\wb}{\tmap{\Delta_2}{3}}{\pmap{Q}{3}}$
 \end{proposition}
 
@@ -447,7 +559,7 @@ Similar with the case of the encoding of $\pmap{P}{1}$.
 	\qed
 \end{proof}
 
-\begin{proposition}[Precise encoding of \HOpp into \HOp]\rm
+\begin{proposition}[Precise encoding of \HOpp into \HOp]\myrm
 	\label{prop:prec:HOpp_to_HOp}
 	The encoding from $\tyl{L}_{\HOpp}$ to $\tyl{L}_{\HOp}$
 	is precise.
@@ -540,7 +652,7 @@ are used to type monadic exchanges along shared name prefixes.
 We now state type soundness for \pHOp; the proof is straightforward and omitted, for it follows closely the proof detailed in 
 \appref{app:ts}.
 
-\begin{theorem}[Type Soundness for \pHOp]\rm
+\begin{theorem}[Type Soundness for \pHOp]\myrm
 	\label{thm:sr_phop}
 	\begin{enumerate}[1.]
 		\item	(Subject Congruence)
@@ -614,7 +726,7 @@ ${\cal{T}}_5$ is a set of types of $\HOpp$;
 the typing $\proves$ is defined in 
 \figref{fig:typerulesmy} with polyadic types.
 
-\begin{definition}[Encoding from \pHOp to \HOp]\rm
+\begin{definition}[Encoding from \pHOp to \HOp]\myrm
 	\label{def:enc:pHOp_to_HOp}
 	Encoding $\enco{\pmap{\cdot}{4}, \tmap{\cdot}{4}, \mapa{\cdot}^{4}}: \tyl{L}_{\pHOp} \to \tyl{L}_{\HOp}$
 	to be defined as in \figref{fig:enc:pHOp_to_HOp}.
@@ -678,7 +790,7 @@ the typing $\proves$ is defined in
 	processes, types and labels, respectively. \label{fig:enc:pHOp_to_HOp}}
 \end{figure}
 
-\begin{proposition}[Type Preservation. From \pHOp to \HOp]\rm
+\begin{proposition}[Type Preservation. From \pHOp to \HOp]\myrm
 	\label{prop:typepres_pHOp_to_HOp}
 	Let $P$ be a \pHOp process.
 	If $\Gamma; \emptyset; \Delta \proves P \hastype \Proc$ then 
@@ -692,7 +804,7 @@ the typing $\proves$ is defined in
 \end{proof}
 
 
-\begin{proposition}[Operational Correspondence. From \pHOp to \HOp]\rm
+\begin{proposition}[Operational Correspondence. From \pHOp to \HOp]\myrm
 	\label{prop:op_cor:pHOp_to_HOp}
 %
 	\begin{enumerate}
@@ -954,7 +1066,7 @@ which concludes the proof for this case.
 \end{proof}
 
 
-\begin{proposition}[Full Abstraction. From \HOpp to \HOp]\rm
+\begin{proposition}[Full Abstraction. From \HOpp to \HOp]\myrm
 	\label{prop:fulla:pHOp_to_HOp}
 	Let $P, Q$ \pHOp process with $\Gamma; \es; \Delta_1 \proves P \hastype \Proc$ and 
 	$\Gamma; \es; \Delta_2 \proves Q \hastype \Proc$.
@@ -994,7 +1106,7 @@ which concludes the proof for this case.
 	\qed
 \end{proof}
 
-\begin{proposition}[Precise encoding of \HOpp into \HOp]\rm
+\begin{proposition}[Precise encoding of \HOpp into \HOp]\myrm
 	\label{prop:prec:pHOp_to_HOp}
 	The encoding from $\tyl{L}_{\pHOp}$ to $\tyl{L}_{\HOp}$
 	is precise.

@@ -1,5 +1,5 @@
 % !TEX root = main.tex
-\section{Behavioural Semantics}
+\section{Behavioural Semantics for \HOp}
 \label{sec:beh_sem}
 \label{sec:behavioural}
 
@@ -40,7 +40,7 @@ Output action $\news{\tilde{m}} \bactout{n}{V}$ denotes the output of value
 $V$ over name $n$ with a possibly empty set of names $\tilde{m}$
 being restricted (we may write $\bactout{n}{V}$  when $\tilde{m}$ is empty).
 Dually, the action for the value input is $\bactinp{n}{V}$.
-We also defined actions for selecting a label
+We also define actions for selecting a label
 $l$, $\bactsel{n}{l}$ and branching on a label
 $n$, $\bactbra{s}{l}$.
 $\fn{\ell}$ and $\bn{\ell}$ denote 
@@ -54,25 +54,25 @@ The dual action relation is the symmetric relation $\asymp$, that satisfies the 
 	\news{\tilde{m}'} \bactout{n}{V} \asymp \bactinp{\dual{n}}{V}
 \]
 %
-Dual actions, occur on subjects that are dual between
+Dual actions occur on subjects that are dual between
 them and carry the same object. Thus,
-output action is dual with input action and 
-select action is dual with branch action.
+output actions are dual to input actions and 
+select actions is dual to branch actions.
 
 \input{figures/fig-unLTS}
 
-\myparagraph{LTS over Untyped Processes}
+\myparagraph{LTS over Untyped Processes.}
 The labelled transition system (LTS) over untyped processes
 is defined in \figref{fig:untyped_LTS}.
 We write $P_1 \by{\ell} P_2$ with the usual meaning.
 The rules are standard~\cite{KYHH2015,KY2015}.
-An application requires an extra silent step $\tau$ to substitute
+An application requires a  silent step $\tau$ to substitute
 the application name over the application abstraction as defined
 in rule $\ltsrule{App}$.
 A process with a send prefix can interact with the environment with a send
 action that carries a value $V$ as in rule $\ltsrule{Out}$.
 Dually, in rule $\ltsrule{In}$
-a received prefixed process can observe a receive action of a value $V$.
+an input prefixed process can observe a receive action of a value $V$.
 Select and branch prefixed processes observe the select
 and branch actions in rules $\ltsrule{Sel}$ and $\ltsrule{Bra}$, respectively,
 and proceed according to the labels observed.
@@ -225,17 +225,21 @@ The conditions for input follow the conditions
 for the $\by{\ell}$ definition.
 \end{comment}
 
-\begin{proposition}[Environment Transition Weakening]\rm
+\begin{proposition}[Environment Transition Weakening]\myrm
 	\label{prop:env_tran_weak}
+	Consider the LTS for typing environments in \figref{fig:envLTS}.
 	If $(\Gamma_1; \Lambda_1; \Delta_1) \hby{\ell} (\Gamma_2; \Lambda_2; \Delta_2)$
 	then
-	$(\Gamma_2; \Lambda_1; \Delta_1) \hby{\ell} (\Gamma_2; \Lambda_2; \Delta_2)$
+	$(\Gamma_2; \Lambda_1; \Delta_1) \hby{\ell} (\Gamma_2; \Lambda_2; \Delta_2)$.
 \end{proposition}
 
 \begin{proof}
-	The proof exploits the weakening properties
-	of the shared environment $\Gamma$ on case analysis
-	on the definition of $\hby{\ell}$.
+	The proof 
+	is by 
+	case analysis
+	on the definition of $\hby{\ell}$, 
+	exploiting the structural properties (in particular, weakening)
+	of shared environment $\Gamma$ (cf. \defref{def:typeenv}).
 	\qed
 \end{proof}
 
@@ -245,9 +249,10 @@ without observing a change in the shared environment.
 
 \myparagraph{Typed Transition System}
 We define a typed labelled transition system over typed processes,
-as a combination of the untyped LTS and the LTS for typed environments:
+as a combination of the untyped LTS and the LTS for typed environments (cf. \figref{fig:untyped_LTS} and
+\ref{fig:envLTS}):
 
-\begin{definition}[Typed Transition System]\label{d:tlts}\rm
+\begin{definition}[Typed Transition System]\label{d:tlts}\myrm
 	\label{def:typed_transition}
 	We write
 	$\horel{\Gamma}{\Delta_1}{P_1}{\by{\ell}}{\Delta_2}{P_2}$
@@ -272,9 +277,9 @@ as a combination of the untyped LTS and the LTS for typed environments:
 \label{subsec:rc}
 
 Equivalent processes require a notion of session type confluence,
-defined over session environments $\Delta$:
+defined over session environments $\Delta$, following \defref{def:ses_red}:
 %
-\begin{definition}[Session Environment Confluence]\rm
+\begin{definition}[Session Environment Confluence]\myrm
 	We denote $\Delta_1 \bistyp \Delta_2$ whenever $\exists \Delta$ such that
 	$\Delta_1 \red^* \Delta$ and $\Delta_2 \red^* \Delta$.
 \end{definition}
@@ -282,11 +287,11 @@ defined over session environments $\Delta$:
 %Session environment confluence requires from session environment
 %to be able to follow each other.
 
-We define a generic typed relation typed processes that
-includes the common properties for all the equivalence relations
+We define the notion of typed relation over typed processes; it 
+includes properties common to all the equivalence relations
 that we are going to define:
 %
-\begin{definition}[Typed Relation]\rm
+\begin{definition}[Typed Relation]\myrm
 	We say that
 	$\Gamma; \emptyset; \Delta_1 \proves P_1 \hastype \Proc\ \Re \ \Gamma; \emptyset; \Delta_2 \proves P_2 \hastype \Proc$
 	is a typed relation whenever:
@@ -302,14 +307,14 @@ that we are going to define:
 \end{definition}
 
 Type relations relate only closed processes
-(i.e.\ processes with no free variables)
+(i.e., processes with no free variables)
 with balanced session environments and the two session
 environments are confluent.
 
 We define the notions of barb~\cite{MiSa92} and typed barb:
 %
-\begin{definition}[Barbs]\rm
-	Let program $P$.
+\begin{definition}[Barbs]\myrm
+	Let $P$ be a closed process.
 	\begin{enumerate}
 		\item	We write $P \barb{n}$ if $P \scong \newsp{\tilde{m}}{\bout{n}{V} P_2 \Par P_3}, n \notin \tilde{m}$.
 			We write $P \Barb{n}$ if $P \red^* \barb{n}$.
@@ -324,23 +329,23 @@ We define the notions of barb~\cite{MiSa92} and typed barb:
 A barb $\barb{n}$ is an observable on an output prefix with subject $n$.
 Similarly a weak barb $\Barb{n}$ is a barb after a number of reduction steps.
 Typed barbs $\barb{n}$ (resp.\ $\Barb{n}$)
-happen on typed processes $\Gamma; \emptyset; \Delta \proves P \hastype \Proc$
+occur on typed processes $\Gamma; \emptyset; \Delta \proves P \hastype \Proc$
 where we require that whenever $n$ is a session name, then the corresponding 
 dual endpoint $\dual{n}$ is not present in the session type $\Delta$.
 
 To define a congruence relation we define the notion of the context $\C$:
 %
-\begin{definition}[Context]\rm
+\begin{definition}[Context]\myrm
 	A context $\C$ is defined on the grammar:
 %
 \[
 	\begin{array}{rcl}
 		\C &\bnfis& \hole \bnfbar \bout{u}{V} \C \bnfbar \bout{u}{\abs{x}{\C}} P \bnfbar \binp{u}{x} \C \bnfbar \recp{X}{\C} \bnfbar \appl{(\abs{x}{\C})}{u}\\
-		& \bnfbar & \news{n} \C \bnfbar \C \Par P \bnfbar P \Par \C \bnfbar \bsel{u}{l} \C \bnfbar \bbra{k}{l_1: P_1, \dots, l_i:\C, \dots, l_n: P_n}
+		& \bnfbar & \news{n} \C \bnfbar \C \Par P \bnfbar P \Par \C \bnfbar \bsel{u}{l} \C \bnfbar \bbra{k}{l_1: P_1, \cdots, l_i:\C, \cdots, l_n: P_n}
 	\end{array}
 \]
 %
-	Notation $\context{\C}{P}$ replaces every $\hole$ in $\C$ with $P$.
+	Notation $\context{\C}{P}$ replaces every hole $\hole$ in $\C$ with $P$.
 \end{definition}
 %
 \noi A context is a function that takes a process and returns a new process
@@ -348,7 +353,7 @@ according to the above syntax.
 
 The first behavioural relation we define is reduction-closed, barbed congruence:
 %
-\begin{definition}[Reduction-closed, Barbed Congruence]\rm
+\begin{definition}[Reduction-closed, Barbed Congruence]\myrm
 	Typed relation
 	$\horel{\Gamma}{\Delta_1}{P_1}{\ \Re\ }{\Delta_2}{P_2}$
 	is a barbed congruence whenever:
@@ -375,7 +380,7 @@ The first behavioural relation we define is reduction-closed, barbed congruence:
 \end{definition}
 %
 \noi Reduction-closed, barbed congruence is closed under reduction semantics and 
-preserves barbs under any context, i.e~no barb observer can distinguish
+preserves barbs under any context, i.e.,~no barb observer can distinguish
 between two related processes.
 
 \subsection{Context Bisimulation}
@@ -384,17 +389,16 @@ The second behavioural relation we define is the labelled
 characterisation of reduction-closed, barbed congruence,
 called context bisimulation~\cite{San96H}:
 %
-\begin{definition}[Context Bisimulation]\rm
+\begin{definition}[Context Bisimulation]\myrm
 	\label{def:context_bis}
 	Typed relation 
-	$\Re$ is a {\em context bisimulation} if whenever
-	$\horel{\Gamma}{\Delta_1}{P_1}{\ \Re\ }{\Delta_2}{P_2}$ implies:
-	\begin{enumerate}
-		\item	$\forall \news{\tilde{m_1}} \bactout{n}{V_1}$ such that
-			\[
+	$\Re$ is a {\em context bisimulation} if for all
+	$\horel{\Gamma}{\Delta_1}{P_1}{\ \Re\ }{\Delta_2}{P_2}$,
+	\begin{enumerate}[1.]
+		\item Whenever	%$\forall \news{\tilde{m_1}} \bactout{n}{V_1}$ such that
+			$
 				\horel{\Gamma}{\Delta_1}{P_1}{\by{\news{\tilde{m_1}} \bactout{n}{V_1}}}{\Delta_1'}{P_2}
-			\]
-			implies that $\exists Q_2$, $V_2$, $\Delta'_2$ such that
+			$ there exist $Q_2$, $V_2$, and $\Delta'_2$ such that
 			\[
 				\horel{\Gamma}{\Delta_2}{Q_1}{\By{\news{\tilde{m_2}} \bactout{n}{V_2}}}{\Delta_2'}{Q_2}
 			\]
@@ -403,19 +407,20 @@ called context bisimulation~\cite{San96H}:
 			\[
 				\horel{\Gamma}{\Delta_1''}{\newsp{\tilde{m_1}}{P_2 \Par R\subst{V_1}{x}}}
 				{\ \Re\ }
-				{\Delta_2''}{\newsp{\tilde{m_2}}{Q_2 \Par R\subst{V_2}{x}}}
+				{\Delta_2''}{\newsp{\tilde{m_2}}{Q_2 \Par R\subst{V_2}{x}}}.
 			\]
 %
-		\item	$\forall \ell \not= \news{\tilde{m}} \bactout{n}{V}$
-			\[
+		\item For all 
+			$
 				\horel{\Gamma}{\Delta_1}{P_1}{\by{\ell}}{\Delta_1'}{P_2}
-			\]
-			implies that $\exists Q_2$ such that
+			$
+			such that $\ell \not= \news{\tilde{m}} \bactout{n}{V}$, there exist 
+			$Q_2$ and $\Delta'_2$ such that
 			\[
-				\horel{\Gamma}{\Delta_1}{Q_1}{\By{\hat{\ell}}}{\Delta_2'}{Q_2}
+				\horel{\Gamma}{\Delta_2}{Q_1}{\By{\hat{\ell}}}{\Delta_2'}{Q_2}
 			\]
 			and
-			$\horel{\Gamma}{\Delta_1'}{P_2}{\ \Re\ }{\Delta_2'}{Q_2}$
+			$\horel{\Gamma}{\Delta_1'}{P_2}{\ \Re\ }{\Delta_2'}{Q_2}$.
 
 		\item	The symmetric cases of 1 and 2.
 	\end{enumerate}
@@ -428,7 +433,7 @@ called context bisimulation~\cite{San96H}:
 \subsection{Higher-Order Bisimulation and Characteristic Bisimulation ($\wb/\wbf$)}
 \label{subsec:char_bis}
 
-The contextual bisimulation in the general case
+In the general case, contextual bisimulation 
 is a hard relation to compute due to:
 %
 \begin{enumerate}[i)]
@@ -468,7 +473,7 @@ we take the following two steps:
 Concerning~(a), we exploit session types. 
 First observe that closure $R\subst{V}{x}$ 
 in Clause~1 in \defref{def:context_bis}
-is contextually bisimilar to the process:
+is context bisimilar to the process:
 %
 \begin{eqnarray}
 	\label{equ:1}
@@ -489,7 +494,7 @@ where $t$ is a fresh name:
 \noi
 Process $T_{V}$ can input the class of
 abstractions $\abs{z}{\binp{z}{x} R}$ and
-can simulate the closure of~\ref{equ:1}:%$P$:
+can simulate the closure of~\eqref{equ:1}:%$P$:
 %
 \begin{eqnarray}
 	\label{equ:2}
@@ -525,21 +530,20 @@ $\abs{x} P$ by exploiting session types.
 We introduce the key concept of {\bf \emph{characteristic process/value}},
 which is the 
 simplest process/value that can inhabit a type.
-E.g.~let $S = \btinp{\shot{S_1}} \btout{S_2} \tinact$
-be a session type that as:
-i) first input an abstraction, from type $S_1$ to a process;
-ii) output a value of type $S_2$; and iii) terminate.
-Then, process:
+Consider, e.g., $S = \btinp{\shot{S_1}} \btout{S_2} \tinact$, the 
+session type that
+firsts input an abstraction, from type $S_1$ to a process, then 
+outputs a value of type $S_2$, and terminates.
+Then, the following process:
 %
 \[
 	Q = \binp{u}{x} (\bout{u}{s_2} \inact \Par \appl{x}{s_1})
 \]
 %
 \noi is a characteristic process for $S$ along name $u$.
- 
-We formalise the last intuition in the next definition.
+The following definition formalizes this intuition.
 %
-\begin{definition}[Characteristic Process]\rm
+\begin{definition}[Characteristic Process]\myrm
 	\label{def:characteristic_process}
 	\noi Let name $u$ and type $U$; then we define the {\em characteristic process}:
 	$\mapchar{U}{u}$ and the {\em characteristic value} $\omapchar{U}$ as:
@@ -586,7 +590,8 @@ We formalise the last intuition in the next definition.
 %for its characteristic process along name $u$.
 %Similarly, given value type $U$, we write 
 %$\omapchar{U}$ to denote its characteristic value.
-\begin{proposition}\rm
+\begin{proposition}\myrm
+Characteristic processes and values are inhabitants of their associated type:
 $ $
 	\begin{enumerate}[$\bullet$]
 		\item	$\Gamma; \emptyset; \Delta \cat u:S \proves \mapchar{S}{u} \hastype \Proc$
@@ -600,7 +605,7 @@ $ $
 	\qed
 \end{proof}
 
-\begin{corollary}\rm
+\begin{corollary}\myrm
 	If $\Gamma; \emptyset; \Delta \proves \mapchar{C}{u} \hastype \Proc$
 	then
 	$\Gamma; \es; \Delta \proves u \hastype C$.
@@ -670,9 +675,9 @@ demonstrated in the next example.
 	\begin{eqnarray*}
 		\Gamma; \es; \Delta \proves \binp{s_1}{y} \inact \Par \binp{s_2}{y} \inact \hastype \Proc
 	\end{eqnarray*}
-	\noi therefore becoming  contextually bisimilar.
+	\noi therefore becoming  context bisimilar.
 	However, the processes in~(\ref{equ:6})
-	are clearly {\em not} contextually bisimilar:
+	are clearly {\em not} context bisimilar:
 	there exist many input actions
 	which may be used to distinguish them.
 	For example, if 
@@ -754,7 +759,7 @@ definition of a new environment transition relation:
 %The definition uses the same rules for defining the $\by{\ell}$ relation,
 %but it requires the substitution of rules $\eltsrule{SRv}$ and
 %$\eltsrule{ShRv}$ with the rule:
-\begin{definition}[Refined Input Environment LTS]\rm
+\begin{definition}[Refined Input Environment LTS]\myrm
 %
 \[
 	\eltsrule{RRv}~~\tree {
@@ -762,7 +767,7 @@ definition of a new environment transition relation:
 		\quad
 		\begin{array}{crcl}
 			& (V & \scong & \abs{z}{\binp{t}{x} (\appl{x}{z})} \wedge t \textrm{ fresh}) \\
-			\vee & (V & \scong &  \omapchar{U}) \vee V \scong m
+			\vee & (V & \scong &  \omapchar{U}) \vee V = m
 		\end{array}
 	}{
 		(\Gamma_1; \Lambda_1; \Delta_1) \hby{\bactinp{n}{V}} (\Gamma_2; \Lambda_1; \Delta_2)
@@ -774,6 +779,9 @@ definition of a new environment transition relation:
 Rule $\eltsrule{RRv}$ refines the input action to carry only
 a characteristic value (fresh name or abstraction)
 or a trigger value on a fresh name $t$.
+This rule is defined on top of rules
+$\eltsrule{SRv}$ and $\eltsrule{ShRv}$
+in~\figref{fig:envLTS}.
 % as a higher order input.
 %Input of names remains as defined in the rules 
 %$\eltsrule{SRv}$ and $\eltsrule{ShRv}$.
@@ -786,17 +794,16 @@ or a trigger value on a fresh name $t$.
 %The conditions for input follow the conditions
 %for the $\by{\ell}$ definition.
 The new environment transition system $\hby{\ell}$
-uses as input rule
-rule $\eltsrule{RRV}$ which is defined on top of rules
-$\eltsrule{SRv}$ and $\eltsrule{ShRv}$
-in~\figref{fig:envLTS}. All other defining cases
+uses %
+rule~$\eltsrule{RRv}$ as input rule.
+ All other defining cases
 of environment LTS $\hby{\ell}$ remain the same
 as in~\figref{fig:envLTS}.
 
 The new typed relation derived from the $\hby{\ell}$ environment LTS is
 defined as:
 %
-\begin{definition}[Restricted Typed Transition]\rm 
+\begin{definition}[Restricted Typed Transition]\myrm 
 	\label{def:restricted_typed_transition}
 	We write
 %
@@ -842,9 +849,10 @@ defined as:
 %both trigger transitions result in the process
 %$\mapchar{U}{x} \subst{V}{x}$.
 
-The next definition formalises the notion of the trigger process.
+The next definition formalises the notion of a trigger process.
 %
-\begin{definition}[Trigger Process]\rm
+\begin{definition}[Trigger Process]\myrm
+Let $t$, $V$, and $U$ be a name, a value, and a type, respectively. We have:
 	\begin{center}
 		\begin{tabular}{rclcl}
 			Trigger Process & & $\htrigger{t}{V}$ &$\defeq$& $\hotrigger{t}{x}{s}{V}$\\
@@ -860,33 +868,35 @@ The two bisimulations differ on the fact that
 they use the different 
 trigger processes: $\htrigger{t}{V}$ and $\ftrigger{t}{V}{U}$.
 
-\begin{definition}[Higher-Order Bisimulation]\rm
+\begin{definition}[Higher-Order Bisimulation]\myrm
 	\label{def:bisim}
 	Typed relation
-	$\Re$ is a {\em Higher-Order bisimulation} if whenever
-	$\horel{\Gamma}{\Delta_1}{P_1}{\ \Re\ }{\Delta_2}{Q_1}$ implies:
+	$\Re$ is a {\em higher-Order bisimulation} if for all
+	$\horel{\Gamma}{\Delta_1}{P_1}{\ \Re\ }{\Delta_2}{Q_1}$, % implies:
 %
-	\begin{enumerate}
-		\item	$\forall \news{\tilde{m_1}} \bactout{n}{V_1}$ such that
-			\[
+	\begin{enumerate}[1.]
+		\item	%$\forall \news{\tilde{m_1}} \bactout{n}{V_1}$ such that
+		   Whenever 
+			$
 				\horel{\Gamma}{\Delta_1}{P_1}{\hby{\news{\tilde{m_1}} \bactout{n}{V_1}}}{\Delta_1'}{P_2}
-			\]
-			implies that $\exists Q_2$, $V_2$, $\Delta_2'$ such that
+			$
+			there exist $Q_2$, $V_2$, $\Delta_2'$ such that
 			\[
 				\horel{\Gamma}{\Delta_2}{Q_1}{\Hby{\news{\tilde{m_2}} \bactout{n}{V_2}}}{\Delta_2'}{Q_2}
 			\]
-			and for fresh $t$
+			and, for a fresh $t$, 
 			\[
 				\horel{\Gamma}{\Delta_1''}{\newsp{\tilde{m_1}}{P_2 \Par \htrigger{t}{V_1}}}
 				{\ \Re\ }
-				{\Delta_2''}{}{\newsp{\tilde{m_2}}{Q_2 \Par \htrigger{t}{V_2}}}
+				{\Delta_2''}{}{\newsp{\tilde{m_2}}{Q_2 \Par \htrigger{t}{V_2}}}.
 			\]
 %
-		\item	$\forall \ell \not= \news{\tilde{m}} \bactout{n}{V}$ such that
-			\[
+		\item	For all 
+			$
 				\horel{\Gamma}{\Delta_1}{P_1}{\hby{\ell}}{\Delta_1'}{P_2}
-			\]
-			implies that $\exists Q_2$, $\Delta_2'$ such that 
+			$
+			such that $\ell \not= \news{\tilde{m}} \bactout{n}{V}$, there exist
+			 $\exists Q_2$ and $\Delta_2'$ such that 
 			\[
 				\horel{\Gamma}{\Delta_1}{Q_1}{\Hby{\hat{\ell}}}{\Delta_2'}{Q_2}
 			\]
@@ -904,37 +914,39 @@ thus it cannot be used as an equivalence relation for the \sessp sub-calculus.
 An alternative definition of the bisimulation based on the characteristic
 output triggers solves this problem.
 
-\begin{definition}[Characteristic Bisimulation]\rm
+\begin{definition}[Characteristic Bisimulation]\myrm
 	\label{def:cbisim}
 	Typed relation 
 	$\Re$ is a {\em characteristic bisimulation} if whenever
 	$\horel{\Gamma}{\Delta_1}{P_1}{\ \mathcal{R}\ }{\Delta_2}{Q_1}$ implies:
 	\begin{enumerate}
-		\item	$\forall \news{\tilde{m_1}} \bactout{n}{V_1: U}$ such that %with \dk{$\Gamma; \es; \Delta \proves V_1 \hastype U$} such that
-			\[
+		\item Whenever 
+		 %$\forall \news{\tilde{m_1}} \bactout{n}{V_1: U}$ such that %with \dk{$\Gamma; \es; \Delta \proves V_1 \hastype U$} such that
+			$
 				\horel{\Gamma}{\Delta_1}{P_1}{\hby{\news{\tilde{m_1}} \bactout{n}{V_1: U}}}{\Delta_1'}{P_2}
-			\]
-			implies that $\exists Q_2$, $V_2$, $\Delta_2'$ such that %with \dk{$\Gamma; \es; \Delta \proves V_2 \hastype U$} such that
+			$
+			there exist $Q_2$, $V_2$, and $\Delta_2'$ such that %with \dk{$\Gamma; \es; \Delta \proves V_2 \hastype U$} such that
 			\[
 				\horel{\Gamma}{\Delta_2}{Q_1}{\Hby{\news{\tilde{m_2}} \bactout{n}{V_2: U}}}{\Delta_2'}{Q_2}
 			\]
-			and for fresh $t$
+			and, for a fresh $t$, 
 			\[
 				\horel{\Gamma}{\Delta_1''}{\newsp{\tilde{m_1}}{P_2 \Par \ftrigger{t}{V_1}{U}}}
 				{\ \Re\ }
-				{\Delta_2''}{}{\newsp{\tilde{m_2}}{Q_2 \Par \ftrigger{t}{V_2}{U}}}
+				{\Delta_2''}{}{\newsp{\tilde{m_2}}{Q_2 \Par \ftrigger{t}{V_2}{U}}}.
 			\]
 %
-		\item	$\forall \ell \not= \news{\tilde{m}} \bactout{n}{V}$ such that
-			\[
+		\item For all 
+			$
 				\horel{\Gamma}{\Delta_1}{P_1}{\hby{\ell}}{\Delta_1'}{P_2}
-			\]
-			implies that $\exists Q_2$, $\Delta_2'$ such that 
+			$
+			such that $\ell \not= \news{\tilde{m}} \bactout{n}{V}$, there exist 
+			  $\exists Q_2$ and $\Delta_2'$ such that 
 			\[
 				\horel{\Gamma}{\Delta_1}{Q_1}{\hat{\Hby{\ell}}}{\Delta_2'}{Q_2}
 			\]
 			and
-			$\horel{\Gamma}{\Delta_1'}{P_2}{\ \Re\ }{\Delta_2'}{Q_2}$
+			$\horel{\Gamma}{\Delta_1'}{P_2}{\ \Re\ }{\Delta_2'}{Q_2}$.
 
 		\item	The symmetric cases of 1 and 2.
 	\end{enumerate}
@@ -943,13 +955,13 @@ output triggers solves this problem.
 \end{definition}
 
 The next result clarifies our choice of restricting
-the higher order input action with the input trigger and
-the characteristic process; if under the substitution
+higher-order input actions with input triggers and
+characteristic processes; if under the substitution
 of the characteristic abstraction and the trigger
 input two processes remain bisimilar then they
 are bisimilar under any abstraction substitution.
 
-\begin{lemma}[Process Substitution]\rm
+\begin{lemma}[Process Substitution]\myrm
 	\label{lem:proc_subst}
 	If 
 %
@@ -968,16 +980,17 @@ are bisimilar under any abstraction substitution.
 \end{lemma}
 
 \begin{proof}
-	The details of the proof can be found in \appref{app:sub_coinc}.
+	The details of the proof can be found in \appref{app:sub_coinc} (Page~\pageref{app:sub_coinc}).
 	\qed
 \end{proof}
 
-The next theorem justifies our definition choices
+We now state our main theorem: typed bisimilarities collapse.
+The following theorem justifies our choices
 for the bisimulation relations, since
 they coincide between them and they also
 coincide with reduction closed, barbed congruence.
 
-\begin{theorem}[Coincidence]\rm
+\begin{theorem}[Coincidence]\myrm
 	\label{the:coincidence}
 	Relations $\wbc, \fwb, \hwb$ and $\cong$ coincide.
 \end{theorem}
@@ -998,7 +1011,7 @@ coincide with reduction closed, barbed congruence.
 	\qed
 \end{proof}
 
-%\begin{definition}[Session Transition]\rm
+%\begin{definition}[Session Transition]\myrm
 %	Let well-typed \HOp process $\Gamma; \es; \Delta \proves P \hastype \Proc$.
 %	We write {\em session transition} 
 %	$\horel{\Gamma}{\Delta}{P}{\shby{\ell}}{\Delta'}{P'}$ if
@@ -1007,7 +1020,7 @@ coincide with reduction closed, barbed congruence.
 %	and $\eltsrule{ShRv}$.
 %\end{definition}
 %
-%\begin{lemma}[$\tau$-inertness]\rm
+%\begin{lemma}[$\tau$-inertness]\myrm
 %	\label{lem:tau_inert}
 %	Let $\Gamma; \es; \Delta \proves P \hastype \Proc$.
 %	$\horel{\Gamma}{\Delta}{P}{\shby{\ell}}{\Delta'}{P'}$
@@ -1015,46 +1028,66 @@ coincide with reduction closed, barbed congruence.
 %	$\horel{\Gamma}{\Delta}{P}{\wb}{\Delta'}{P'}$
 %\end{lemma}
 
-\begin{definition}[Deterministic Transition]\rm
-	Let balanced \HOp process $\Gamma; \es; \Delta \proves P \hastype \Proc$.
+%A transition $\horel{\Gamma}{\Delta}{P}{\hby{\tau}}{\Delta'}{P'}$ is said
+%		{\em deterministic} if it is derived using~$\ltsrule{App}$ or~$\ltsrule{Tau}$ 
+%		(where $\subj{\ell_1}$ and $\subj{\ell_2}$ in the premise 
+%		are dual endpoints), 
+%		possibly followed by uses of  $\ltsrule{Alpha}$, $\ltsrule{Res}$, $\ltsrule{Rec}$, or $\ltsrule{Par${}_L$}/
+%		\ltsrule{Par${}_R$}$.
+
+We now define internal deterministic transitions as those associated to session synchronizations or to 
+$\beta$-reductions: 
+		
+\begin{definition}[Deterministic Transition]\myrm
+\label{def:dettrans}
+	Let  $\Gamma; \es; \Delta \proves P \hastype \Proc$ be a balanced \HOp process. 
 	Transition $\horel{\Gamma}{\Delta}{P}{\hby{\tau}}{\Delta'}{P'}$ is called:
-	\begin{itemize}
+	\begin{enumerate}[$-$]
 		\item	{\em Session transition}, written
 			$\horel{\Gamma}{\Delta}{P}{\hby{\stau}}{\Delta'}{P'}$,
-			whenever the untyped transition $P \by{\tau} P'$
-			is derived on visible actions with a session subject.
-
+			whenever the untyped transition $P \by{\tau} P'$ using 
+			rule~$\ltsrule{Tau}$ 
+		(where $\subj{\ell_1}$ and $\subj{\ell_2}$ in the premise 
+		are dual endpoints), 
+		possibly followed by uses of  $\ltsrule{Alpha}$, $\ltsrule{Res}$, $\ltsrule{Rec}$, or $\ltsrule{Par${}_L$}/
+		\ltsrule{Par${}_R$}$.
+		
 		\item	{\em \betatran}, written
 			$\horel{\Gamma}{\Delta}{P}{\hby{\btau}}{\Delta'}{P'}$,
 			whenever the untyped transition $P \by{\tau} P'$
-			is derived on rule $\ltsrule{App}$.
-	\end{itemize}
+			is derived on rule $\ltsrule{App}$,
+			possibly followed by uses of  $\ltsrule{Alpha}$, $\ltsrule{Res}$, $\ltsrule{Rec}$, or $\ltsrule{Par${}_L$}/
+		\ltsrule{Par${}_R$}$.
+	\end{enumerate}
 %
 	We write $\horel{\Gamma}{\Delta}{P}{\hby{\dtau}}{\Delta'}{P'}$ for
 	either a session transition or a \betatran.
 \end{definition}
 
-\begin{proposition}[$\tau$-inertness]\rm
+\begin{proposition}[$\tau$-inertness]\myrm
 	\label{lem:tau_inert}
-	Let balanced \HOp process $\Gamma; \es; \Delta \proves P \hastype \Proc$.
+	Let  $\Gamma; \es; \Delta \proves P \hastype \Proc$ be a balanced \HOp process.
+	Then
 	$\horel{\Gamma}{\Delta}{P}{\hby{\dtau}}{\Delta'}{P'}$ implies
 	$\horel{\Gamma}{\Delta}{P}{\wb}{\Delta'}{P'}$.
 \end{proposition}
 
 \begin{proof}
-	The proof is relied on the fact that processes of the
+	The proof relies on the fact that processes of the
 	form $\Gamma; \es; \Delta \proves \bout{s}{V} P_1 \Par \binp{k}{x} P_2$
 	cannot have any typed transition observables and the fact
 	that bisimulation is a congruence.
-	See details in \appref{app:sub_tau_inert}.
+	See details in \appref{app:sub_tau_inert} (Page \pageref{app:sub_tau_inert}).
 	\qed
 \end{proof}
 
-Processes that do not use shared names are inherently $\tau$-inert.
+Processes that do not use shared names are inherently 
+deterministic, and so they enjoy 
+\emph{$\tau$-inertness} (in the sense of~\cite{DBLP:journals/tcs/GrooteS96}).
 
-\begin{corollary}[$\CAL^{\minussh}$ $\tau$-inertness]\rm
+\begin{corollary}[$\CAL^{\minussh}$ $\tau$-inertness]\myrm
 	\label{cor:tau_inert}
-	Let $\Gamma; \es; \Delta \proves P \hastype \Proc$ an $\CAL^{\minussh}$ process.
+	Let $\Gamma; \es; \Delta \proves P \hastype \Proc$ be an $\CAL^{\minussh}$ process.
 %
 	\begin{itemize}
 		\item	$\horel{\Gamma}{\Delta}{P}{\hby{\tau}}{\Delta'}{P'}$ if and only if $\horel{\Gamma}{\Delta}{P}{\hby{\dtau}}{\Delta'}{P'}$.
@@ -1067,16 +1100,16 @@ Processes that do not use shared names are inherently $\tau$-inert.
 %	\end{enumerate}
 \end{corollary}
 
-\begin{lemma}[Up-to Deterministic Transition]\rm
+\begin{lemma}[Up-to Deterministic Transition]\myrm
 	\label{lem:up_to_deterministic_transition}
-	Let $\horel{\Gamma}{\Delta_1}{P_1}{\ \Re\ }{\Delta_2'}{Q_1}$ such
+	Let $\horel{\Gamma}{\Delta_1}{P_1}{\ \Re\ }{\Delta_2}{Q_1}$ such
 	that if whenever:
 %
 	\begin{enumerate}
 		\item	$\forall \news{\tilde{m_1}} \bactout{n}{V_1}$ such that
-			\[
+			$
 				\horel{\Gamma}{\Delta_1}{P_1}{\hby{\news{\tilde{m_1}} \bactout{n}{V_1}}}{\Delta_3}{P_3}
-			\]
+			$
 			implies that $\exists Q_2, V_2$ such that
 			\[
 				\horel{\Gamma}{\Delta_2}{Q_1}{\Hby{\news{\tilde{m_2}} \bactout{n}{V_2}}}{\Delta_2'}{Q_2}
@@ -1096,9 +1129,9 @@ Processes that do not use shared names are inherently $\tau$-inert.
 			\]
 %
 		\item	$\forall \ell \not= \news{\tilde{m}} \bactout{n}{V}$ such that
-			\[
+			$
 				\horel{\Gamma}{\Delta_1}{P_1}{\hby{\ell}}{\Delta_3}{P_3}
-			\]
+			$
 			implies that $\exists Q_2$ such that 
 			\[
 				\horel{\Gamma}{\Delta_1}{Q_1}{\hat{\Hby{\ell}}}{\Delta_2'}{Q_2}
@@ -1117,8 +1150,7 @@ Processes that do not use shared names are inherently $\tau$-inert.
 
 
 \begin{proof}
-	The proof is very easy if we consider the
-	closure
+	The proof is easy by considering the closure
 	\[
 		\Re^{\Hby{\dtau}} = \set{ \horel{\Gamma}{\Delta_1'}{P_2}{,}{\Delta_2'}{Q_1} \setbar \horel{\Gamma}{\Delta_1}{P_1}{\ \Re\ }{\Delta_2'}{Q_1},
 		\horel{\Gamma}{\Delta_1}{P_1}{\Hby{\dtau}}{\Delta_1'}{P_2} }
