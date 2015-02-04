@@ -219,69 +219,69 @@ We detail some representative cases:
 \begin{enumerate}[1.]
 \item Case $P = \bout{u}{\abs{\underline{x}}{Q}} P'$.
 Then we may have the following typing in \HOpp:
-			\[
-				\tree{
-					\tree{}{\Gamma; \Lambda_1; \Delta_1 \cat u:S  \proves  P' \hastype \Proc} 
-					\quad 
-					\tree{
-					\tree{}{\Gamma \cat \underline{x}:L; \Lambda_2 ; \Delta_2 \proves  Q \hastype \Proc}
-					\quad 
-					\tree{}{\Gamma \cat \underline{x}:L; \es ; \es \proves  \underline{x} \hastype L}
-					}{\Gamma ; \Lambda_2 ; \Delta_2 \proves  \abs{\underline{x}:L}Q \hastype \lhot{L}}}{
-					\Gamma; \Lambda_1 \cat \Lambda_2; \Delta_1 \cat \Delta_2 \cat 
-					u:\btout{\lhot{L}}S 
-					\proves  \bout{u}{\abs{\underline{x}}{Q}} P'
-					\hastype \Proc}
-			\]
+\[
+	\tree{
+		\tree{}{\Gamma; \Lambda_1; \Delta_1 \cat u:S  \proves  P' \hastype \Proc} 
+		\quad
+		\tree{
+			\tree{}{\Gamma \cat \underline{x}:L; \Lambda_2 ; \Delta_2 \proves  Q \hastype \Proc}
+			\quad
+			\tree{}{\Gamma \cat \underline{x}:L; \es ; \es \proves  \underline{x} \hastype L}
+		}{
+			\Gamma ; \Lambda_2 ; \Delta_2 \proves  \abs{\underline{x}:L} Q \hastype \lhot{L}
+		}
+	}{
+		\Gamma; \Lambda_1 \cat \Lambda_2; \Delta_1 \cat \Delta_2 \cat  u: \btout{\lhot{L}} S \proves \bout{u}{\abs{\underline{x}}{Q}} P' \hastype \Proc
+	}
+\]
 Thus, by IH we have:
+%
 \begin{eqnarray}
-\tmap{\Gamma}{3}; \tmap{\Lambda_1}{3}; \tmap{\Delta_1}{3} \cat u:\tmap{S}{3} & \proves &  \pmap{P'}{3} \hastype \Proc
-\label{eq:hopppre1}\\
-\tmap{\Gamma}{3} \cat \underline{x}:\tmap{L}{3}; \tmap{\Lambda_2}{3} ; \tmap{\Delta_2}{3} & \proves & \pmap{Q}{3} \hastype \Proc \label{eq:hopppre2}
-\\
-\tmap{\Gamma}{3} \cat \underline{x}:\tmap{L}{3}; \es ; \es & \proves & \underline{x} \hastype \tmap{L}{3} \label{eq:hopppre3}
+	\tmap{\Gamma}{3}; \tmap{\Lambda_1}{3}; \tmap{\Delta_1}{3} \cat u:\tmap{S}{3} & \proves &  \pmap{P'}{3} \hastype \Proc
+	\label{eq:hopppre1}
+	\\
+	\tmap{\Gamma}{3} \cat \underline{x}:\tmap{L}{3}; \tmap{\Lambda_2}{3} ; \tmap{\Delta_2}{3} & \proves & \pmap{Q}{3} \hastype \Proc
+	\label{eq:hopppre2}
+	\\
+	\tmap{\Gamma}{3} \cat \underline{x}:\tmap{L}{3}; \es ; \es & \proves & \underline{x} \hastype \tmap{L}{3}
+	\label{eq:hopppre3}
 \end{eqnarray}
+%
 The corresponding typing in \HOp is as follows:
+\begin{eqnarray}
+	\tree{
+		\tree{
+			\tree{}{\eqref{eq:hopppre2}}
+		}{
+			\tmap{\Gamma}{3} \cat x:\tmap{L}{3}; \tmap{\Lambda_2}{3};  \tmap{\Delta_2}{3} \cat z: \tinact \proves \pmap{Q}{3} \hastype \Proc
+		}
+		\qquad
+		\tree{}{\eqref{eq:hopppre3}}
+	}{
+		\tmap{\Gamma}{3}; \tmap{\Lambda_2}{3}; \tmap{\Delta_2}{3} \cat z:\btinp{\tmap{L}{3}} \tinact \proves \binp{z}{\underline{x}} \pmap{Q}{3} \hastype \Proc
+	}
+	\label{eq:hopppre11}
+\end{eqnarray}
 {\small
 \[
-\tree{
-\tree{}{
-				\eqref{eq:hopppre1}}
-				\quad
-\tree{\tree{
-\tree{
-\tree{}{\eqref{eq:hopppre2}}
-}{
-\tmap{\Gamma}{3} \cat x:\tmap{L}{3};   \tmap{\Lambda_2}{3};  \tmap{\Delta_2}{3} \cat
-				z: \tinact
-					\proves  \pmap{Q}{3}
-					\hastype \Proc}
-					\qquad
-					\tree{}{\eqref{eq:hopppre3}}
-}{
-				\tmap{\Gamma}{3};   \tmap{\Lambda_2}{3};  \tmap{\Delta_2}{3} \cat
-				z:\btinp{\tmap{L}{3}} \tinact
-					\proves  \binp{z}{\underline{x}} \pmap{Q}{3}
-					\hastype \Proc }
-					\qquad 
-					\tree{}{\tmap{\Gamma}{3};   \es;  
-				z:\btinp{\tmap{L}{3}} \tinact
-					\proves  z
-					\hastype \btinp{\tmap{L}{3}} \tinact}
-}{
-					\tmap{\Gamma}{3};   \tmap{\Lambda_2}{3};  \tmap{\Delta_2}{3} 
-					\proves  \abs{z}{\binp{z}{\underline{x}} \pmap{Q}{3}}
-					\hastype \lhot{(\btinp{\tmap{L}{3}} \tinact)}
+	\tree{
+		\tree{}{
+			\eqref{eq:hopppre1}}
+			\quad
+			\tree{
+				\eqref{eq:hopppre11}
+				\qquad 
+				\tree{}{\tmap{\Gamma}{3}; \es; z:\btinp{\tmap{L}{3}} \tinact \proves z \hastype \btinp{\tmap{L}{3}} \tinact}
+		}{
+			\tmap{\Gamma}{3}; \tmap{\Lambda_2}{3}; \tmap{\Delta_2}{3} \proves \abs{z}{\binp{z}{\underline{x}} \pmap{Q}{3}} \hastype \lhot{(\btinp{\tmap{L}{3}} \tinact)}
+		}
+	}{
+		\tmap{\Gamma}{3}; \tmap{\Lambda_1}{3} \cat \tmap{\Lambda_2}{3}; \tmap{\Delta_1}{3} \cat \tmap{\Delta_2}{3} \cat u:\btout{\lhot{\btinp{\tmap{L}{3}} \tinact}}\tmap{S}{3} 
+		\proves  \bout{u}{\abs{z}{\binp{z}{\underline{x}} \pmap{Q}{3}}} \pmap{P'}{3}
+		\hastype \Proc
+	}
+\]
 }
-}
-{
-					\tmap{\Gamma}{3}; \tmap{\Lambda_1}{3} \cat \tmap{\Lambda_2}{3}; \tmap{\Delta_1}{3} \cat \tmap{\Delta_2}{3} \cat 
-					u:\btout{\lhot{\btinp{\tmap{L}{3}} \tinact}}\tmap{S}{3} 
-					\proves  \bout{u}{\abs{z}{\binp{z}{\underline{x}} \pmap{Q}{3}}} \pmap{P'}{3}
-					\hastype \Proc
-					}
-			\]
-			}
 
 \item Case $P =  \appl{(\abs{x} P)}{(\abs{y} Q)}$.
 We may have different possibilities for the types of each abstraction. 
@@ -315,92 +315,55 @@ Thus, by IH we have:
 \end{eqnarray}
 
 The corresponding typing in \HOp is as follows --- recall that $\tmap{\lhot{C}}{3} = \lhot{\tmap{C}{3}}$.
+\begin{eqnarray}
+	\tree{
+		\tree{
+			\tree{}{\eqref{eq:hopppre4}}
+		}{
+			\tmap{\Gamma}{3}\cat x: \tmap{\shot{C}}{3}; \tmap{\Lambda}{3}; \tmap{\Delta_1}{3} \cat s: \tinact \proves \pmap{P}{3} \hastype \Proc
+		}
+	}{
+		\tmap{\Gamma}{3}; \tmap{\Lambda}{3}; \tmap{\Delta_1}{3} \cat  s:\btinp{\tmap{\lhot{C}}{3}}\tinact \proves \binp{s}{x}\pmap{P}{3} \hastype \Proc
+	}
+	\label{eq:hopppre12}
+\end{eqnarray}
 {\small
 \[
-\tree{
-\tree{
-\tree{
-\tree{
-\tree{}{
-\eqref{eq:hopppre4}
-}
-}{
-\tmap{\Gamma}{3}\cat x: \tmap{\shot{C}}{3}; \tmap{\Lambda}{3}; \tmap{\Delta_1}{3}   \cat 
-s: \tinact 
-\proves
-\pmap{P}{3}
-\hastype \Proc
-}
-}{
-\tmap{\Gamma}{3}; \tmap{\Lambda}{3}; \tmap{\Delta_1}{3}   \cat 
-s:\btinp{\tmap{\lhot{C}}{3}}\tinact 
-\proves 
-\binp{s}{x}\pmap{P}{3}
-\hastype \Proc
-}
-\quad
-\tree{
-\tree{
-\tree{}{
-\eqref{eq:hopppre5}}
-}{
-\tree{
-\tmap{\Gamma}{3}; \es; \tmap{\Delta_2}{3} 
-\cat y:\tmap{ C}{3}
-\proves 
-  \pmap{Q}{3}
-\hastype \Proc
-}{
-\tree{
-\tmap{\Gamma}{3}; \es;   \tmap{\Delta_2}{3} 
-\proves 
- \abs{y}{\pmap{Q}{3}} 
-\hastype \tmap{\lhot{C}}{3}
-}{
-\tmap{\Gamma}{3}; \es;   \tmap{\Delta_2}{3} \cat 
-\dual{s}: \tinact
-\proves 
- \abs{y}{\pmap{Q}{3}} 
-\hastype \tmap{\lhot{C}}{3}
-}
-}
-}
-}{
-\tmap{\Gamma}{3}; \es;   \tmap{\Delta_2}{3} \cat 
-\dual{s}:\btout{\tmap{\lhot{C}}{3}}\tinact
-\proves 
-\bout{\dual{s}}{\abs{y}{\pmap{Q}{3}}}\inact
-\hastype \Proc
-}
-}{
-\tmap{\Gamma}{3}; \tmap{\Lambda}{3}; \tmap{\Delta_1}{3} \cdot \tmap{\Delta_2}{3} \cat 
-s:\btinp{\tmap{\lhot{C}}{3}}\tinact \cat
-\dual{s}:\btout{\tmap{\lhot{C}}{3}}\tinact
-\proves 
-\binp{s}{x}\pmap{P}{3}
-\Par
-\bout{\dual{s}}{\abs{y}{\pmap{Q}{3}}}\inact
-\hastype \Proc
-}
-}{
-\tmap{\Gamma}{3}; \tmap{\Lambda}{3}; \tmap{\Delta_1}{3} \cdot \tmap{\Delta_2}{3} 
-\proves \news{s}(\binp{s}{x}\pmap{P}{3}
-\Par
-\bout{\dual{s}}{\abs{y}{\pmap{Q}{3}}}\inact)
-\hastype \Proc
-}
+	\tree{
+		\tree{
+			\eqref{eq:hopppre12}
+			\quad
+			\tree{
+				\tree{
+					\tree{}{\eqref{eq:hopppre5}}
+				}{
+					\tree{
+						\tmap{\Gamma}{3}; \es; \tmap{\Delta_2}{3} \cat y:\tmap{ C}{3} \proves \pmap{Q}{3} \hastype \Proc
+					}{
+						\tree{
+							\tmap{\Gamma}{3}; \es; \tmap{\Delta_2}{3} \proves \abs{y}{\pmap{Q}{3}} \hastype \tmap{\lhot{C}}{3}
+						}{
+							\tmap{\Gamma}{3}; \es; \tmap{\Delta_2}{3} \cat \dual{s}: \tinact \proves \abs{y}{\pmap{Q}{3}} \hastype \tmap{\lhot{C}}{3}
+						}
+					}
+				}
+			}{
+				\tmap{\Gamma}{3}; \es;   \tmap{\Delta_2}{3} \cat \dual{s}:\btout{\tmap{\lhot{C}}{3}}\tinact \proves \bout{\dual{s}}{\abs{y}{\pmap{Q}{3}}}\inact \hastype \Proc
+			}
+		}{
+			\tmap{\Gamma}{3}; \tmap{\Lambda}{3}; \tmap{\Delta_1}{3} \cdot \tmap{\Delta_2}{3} \cat s:\btinp{\tmap{\lhot{C}}{3}}\tinact \cat \dual{s}:\btout{\tmap{\lhot{C}}{3}}\tinact
+			\proves
+			\binp{s}{x}\pmap{P}{3} \Par \bout{\dual{s}}{\abs{y}{\pmap{Q}{3}}}\inact \hastype \Proc
+		}
+	}{
+		\tmap{\Gamma}{3}; \tmap{\Lambda}{3}; \tmap{\Delta_1}{3} \cdot \tmap{\Delta_2}{3} \proves \news{s}(\binp{s}{x}\pmap{P}{3} \Par \bout{\dual{s}}{\abs{y}{\pmap{Q}{3}}}\inact) \hastype \Proc
+	}
 \]
 }
 
 \end{enumerate}
 \qed
 \end{proof}
-%\else 
-%\begin{proof}
-%Similar with the case of the encoding of $\pmap{P}{1}$. 
-%	\qed
-%\end{proof}
-%\fi
 
 \begin{proposition}[Operational Correspondence. From \HOpp to \HOp]\myrm
 	\label{prop:op_corr_HOpp_to_HOp}
@@ -431,8 +394,9 @@ s:\btinp{\tmap{\lhot{C}}{3}}\tinact \cat
 					{\tmap{\Delta'}{3}}{\pmap{P'}{3}}$.
 
 				\item	If $\ell = \btau$ then
-					$\horel{\tmap{\Gamma}{3}}{\tmap{\Delta}{3}}{\pmap{P}{3}}{\hby{\btau} \hby{\stau}}
-					{\tmap{\Delta'}{3}}{\pmap{P'}{3}}$.
+					$\horel{\tmap{\Gamma}{3}}{\tmap{\Delta}{3}}{\pmap{P}{3}}{\hby{\tau}}
+					{\Delta''}{R}$ and
+					${\tmap{\Gamma}{3}}{\tmap{\Delta'}{3}}{\pmap{P'}{3}}{\wb}{\Delta''}{R}$.
 
 				\item	If $\ell = \tau$ and $\ell \not= \btau$ then %and $\hby{\ell}$ is not a \betatran then
 					$\horel{\tmap{\Gamma}{3}}{\tmap{\Delta}{3}}{\pmap{P}{3}}{\hby{\tau}}
@@ -467,7 +431,8 @@ s:\btinp{\tmap{\lhot{C}}{3}}\tinact \cat
 \end{proposition}
 
 \begin{proof}
-	The proof of Part 1 does a transition induction and
+\begin{enumerate}
+	\item The proof of Part 1 does a transition induction and
 	considers the mapping as defined in \defref{def:enc:HOpp_to_HOp}.
 	We give the most interesting cases.
 
@@ -476,8 +441,8 @@ s:\btinp{\tmap{\lhot{C}}{3}}\tinact \cat
 
 			$\horel{\Gamma}{\Delta}{\appl{(\abs{x}{Q_1})}{\abs{x}{Q_2}}}{\hby{\btau}}{\Delta}{Q_1 \subst{\abs{x}{Q_2}}{x}}$ implies
 \[
-			\mhorel{\tmap{\Gamma}{3}}{\tmap{\Delta}{3}}{ \newsp{s}{ \appl{(\abs{z} \binp{z}{x} \pmap{Q}{3})}{s} \Par \bout{\dual{s}}{\abs{x}{Q_2}} \inact}}{\hby{\btau} \hby{\stau}}
-			{\tmap{\Delta'}{3}}{}{\pmap{Q_1}{3} \subst{\abs{x}{\pmap{Q_2}{3}}}{x}}
+			\horel{\tmap{\Gamma}{3}}{\tmap{\Delta}{3}}{\newsp{s}{\binp{s}{x} \pmap{Q_1}{3} \Par \bout{\dual{s}}{\abs{x}{\pmap{Q_2}{3}}} \inact}}{\hby{\stau}}
+			{\tmap{\Delta'}{3}}{\pmap{Q_1}{3} \subst{\abs{x}{\pmap{Q_2}{3}}}{x}}
 \]
 
 		\item	Case: $P = \bout{n}{\abs{\underline{x}} Q} P$
@@ -485,9 +450,10 @@ s:\btinp{\tmap{\lhot{C}}{3}}\tinact \cat
 			$\horel{\Gamma}{\Delta}{\bout{n}{\abs{\underline{x}} Q} P}{\hby{ \bactout{n}{\abs{x}{Q}}}}{\Delta}{P}$ implies
 
 			$\horel{\tmap{\Gamma}{3}}{\tmap{\Delta}{3}}{\bout{n}{\abs{z} \binp{z}{x} \pmap{Q}{3}} \pmap{P}{3}}{\hby{ \bactout{n}{\abs{z}{\binp{z}{x} \pmap{Q}{3}} } }}{\Delta}{\pmap{P}{3}}$
+		\item Other cases are similar. 
 	\end{itemize}
 
-	The proof of Part 2 also does a transition induction and
+	\item The proof of Part 2 also does a transition induction and
 	considers the mapping as defined in \defref{def:enc:HOpp_to_HOp}.
 	We give the most interesting cases.
 
@@ -510,17 +476,14 @@ s:\btinp{\tmap{\lhot{C}}{3}}\tinact \cat
 \iftodo
 		\item	Case: $P = \bout{n}{\abs{\underline{x}} Q} P$
 
-			$\horel{\tmap{\Gamma}{3}}{\tmap{\Delta}{3}}{\bout{n}{\abs{z} \binp{z}{x} \pmap{Q}{3}} \pmap{P}{3}}{\hby{ \bactout{n}{\abs{z}{\binp{z}{x} \pmap{Q}{3}} } }}{\Delta}{\pmap{P}{3}}$ implies
+			$\horel{\tmap{\Gamma}{3}}{\tmap{\Delta}{3}}{\bout{n}{\abs{z} \binp{z}{x} \pmap{Q}{3}} \pmap{P}{3}}{\hby{ \bactout{n}{\abs{z}{\binp{z}{x} \pmap{Q}{3}} } }}{\Delta}{\pmap{P}{3}}$ and
 
-			$\horel{\Gamma}{\Delta}{\bout{n}{\abs{\underline{x}} Q} P}{\hby{ \bactout{n}{\abs{x}{Q}}}}{\Delta}{P}$ implies
-			\dk{this case is incomplete}
+			$\horel{\Gamma}{\Delta}{\bout{n}{\abs{\underline{x}} Q} P}{\hby{ \bactout{n}{\abs{\underline{x}}{Q}}}}{\Delta}{P}$
+%			\dk{this case is incomplete}
+		\item Other cases are similar. 
 	\end{itemize}
-	\dk{Do more cases}
-\else 
-\item Other cases are similar. 
-\end{itemize}
-\fi
-	\qed
+\end{enumerate}
+\qed
 \end{proof}
 
 \begin{proposition}[Full Abstraction. From \HOpp to \HOp]\myrm
