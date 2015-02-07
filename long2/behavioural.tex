@@ -46,7 +46,7 @@ $n$, $\bactbra{s}{l}$.
 $\fn{\ell}$ and $\bn{\ell}$ denote 
 sets of free/bound names in $\ell$, resp.
 
-The dual action relation is the symmetric relation $\asymp$, that satisfies the rules:
+The dual action relation is the symmetric relation $\asymp$ that satisfies the rules:
 %
 \[
 	\bactsel{n}{l} \asymp \bactbra{\dual{n}}{l}
@@ -387,7 +387,7 @@ between two related processes.
 
 The second behavioural relation we define is the labelled
 characterisation of reduction-closed, barbed congruence,
-called context bisimulation~\cite{San96H}:
+called \emph{context bisimulation}~\cite{San96H}:
 %
 \begin{definition}[Context Bisimulation]\myrm
 	\label{def:context_bis}
@@ -519,8 +519,7 @@ We note that in contrast to previous
 approaches~\cite{SaWabook,JeffreyR05} 
 our {trigger processes} do {\em not}
 use recursion or replication.
-This is crucial for preserving linearity of 
-session names.
+This is crucial to preserve linearity of session names.
 
 
 
@@ -530,9 +529,9 @@ $\abs{x} P$ by exploiting session types.
 We introduce the key concept of {\bf \emph{characteristic process/value}},
 which is the 
 simplest process/value that can inhabit a type.
-Consider, e.g., $S = \btinp{\shot{S_1}} \btout{S_2} \tinact$, the 
+As an example, consider $S = \btinp{\shot{S_1}} \btout{S_2} \tinact$. Type $S$ is a 
 session type that
-firsts input an abstraction, from type $S_1$ to a process, then 
+first inputs an abstraction (from type $S_1$ to a process), then 
 outputs a value of type $S_2$, and terminates.
 Then, the following process:
 %
@@ -541,11 +540,12 @@ Then, the following process:
 \]
 %
 \noi is a characteristic process for $S$ along name $u$.
+In fact, it is easy to see that $Q$ is well-typed by session type $S$.
 The following definition formalizes this intuition.
 %
 \begin{definition}[Characteristic Process]\myrm
 	\label{def:characteristic_process}
-	\noi Let name $u$ and type $U$; then we define the {\em characteristic process}:
+	\noi Let name $u$ and type $U$. Then we define the {\em characteristic process}:
 	$\mapchar{U}{u}$ and the {\em characteristic value} $\omapchar{U}$ as:
 %
 	\[
@@ -911,14 +911,14 @@ trigger processes: $\htrigger{t}{V}$ and $\ftrigger{t}{V}{U}$.
 %
 The higher-order bisimulation definition uses higher order input guarded triggers,
 thus it cannot be used as an equivalence relation for the \sessp sub-calculus.
-An alternative definition of the bisimulation based on the characteristic
-output triggers solves this problem.
+An alternative definition of the bisimulation---based on characteristic
+output triggers---solves this problem.
 
 \begin{definition}[Characteristic Bisimulation]\myrm
 	\label{def:cbisim}
 	Typed relation 
 	$\Re$ is a {\em characteristic bisimulation} if whenever
-	$\horel{\Gamma}{\Delta_1}{P_1}{\ \mathcal{R}\ }{\Delta_2}{Q_1}$ implies:
+	$\horel{\Gamma}{\Delta_1}{P_1}{\ \Re\ }{\Delta_2}{Q_1}$ implies:
 	\begin{enumerate}
 		\item Whenever 
 		 %$\forall \news{\tilde{m_1}} \bactout{n}{V_1: U}$ such that %with \dk{$\Gamma; \es; \Delta \proves V_1 \hastype U$} such that
@@ -956,9 +956,12 @@ output triggers solves this problem.
 
 The next result clarifies our choice of restricting
 higher-order input actions with input triggers and
-characteristic processes; if under the substitution
+characteristic processes: if 
+two processes $P$ and $Q$ are bisimilar 
+under the substitution
 of the characteristic abstraction and the trigger
-input two processes remain bisimilar then they
+input, then 
+$P$ and $Q$ 
 are bisimilar under any abstraction substitution.
 
 \begin{lemma}[Process Substitution]\myrm
@@ -966,10 +969,10 @@ are bisimilar under any abstraction substitution.
 	If 
 %
 	\begin{enumerate}
-		\item	$\horel{\Gamma}{\Delta_1'}{P \subst{\abs{z}{\binp{t}{y} (\appl{y}{z})}}{x}}{\wb}{\Delta_2}{Q \subst{\abs{z}{\binp{t}{y} (\appl{y}{z})}}{x}}$
+		\item	$\horel{\Gamma}{\Delta_1'}{P \subst{\abs{z}{\binp{t}{y} (\appl{y}{z})}}{x}}{\wb}{\Delta_2'}{Q \subst{\abs{z}{\binp{t}{y} (\appl{y}{z})}}{x}}$,
 			for some fresh $t$.
 
-		\item	$\horel{\Gamma}{\Delta_1''}{P \subst{\omapchar{U}}{x}}{\wb}{\Delta_2''}{Q \subst{\omapchar{U}}{x}}$
+		\item	$\horel{\Gamma}{\Delta_1''}{P \subst{\omapchar{U}}{x}}{\wb}{\Delta_2''}{Q \subst{\omapchar{U}}{x}}$, 
 			for some $U$.
 	\end{enumerate}
 %
@@ -996,16 +999,27 @@ coincide with reduction closed, barbed congruence.
 \end{theorem}
 
 \begin{proof}
-	The full details of the proof are in \appref{app:sub_coinc}.
-	The theorem is split into a hierarchy of Lemmas. 
-	\lemref{lem:wb_eq_wbf} establishes $\wb\ =\ \wbf$.
-	\lemref{lem:wb_is_wbc} exploits the process substitution result
+	The full details of the proof are in \appref{app:sub_coinc}. There, 
+	the proof is split into a series of lemmas:
+	\begin{enumerate}[$-$]
+\item	\lemref{lem:wb_eq_wbf} establishes $\wb\ =\ \wbf$.
+\item	\lemref{lem:wb_is_wbc} exploits the process substitution result
 	(\lemref{lem:proc_subst}) to prove that $\wb \subseteq \wbc$.
-	\lemref{lem:wbc_is_cong} shows that $\wbc$ is a congruence
+\item	\lemref{lem:wbc_is_cong} shows that $\wbc$ is a congruence
 	which implies $\wbc \subseteq \cong$.
-	The final result comes from \lemref{lem:cong_is_wb} where
-	we use label testing to show that $\cong \subseteq \wb$ using
-	the technique in developed in~\cite{Hennessy07}. The formulation of input
+\item	\lemref{lem:cong_is_wb} shows  that $\cong \subseteq \wb$, using
+	the technique developed in~\cite{Hennessy07}.
+\end{enumerate}
+%	
+%	\lemref{lem:wb_eq_wbf} establishes $\wb\ =\ \wbf$.
+%	\lemref{lem:wb_is_wbc} exploits the process substitution result
+%	(\lemref{lem:proc_subst}) to prove that $\wb \subseteq \wbc$.
+%	\lemref{lem:wbc_is_cong} shows that $\wbc$ is a congruence
+%	which implies $\wbc \subseteq \cong$.
+%	The final result comes from \lemref{lem:cong_is_wb} where
+%	we use label testing to show that $\cong \subseteq \wb$ using
+%	the technique developed in~\cite{Hennessy07}. 
+	The formulation of input
 	triggers in the bisimulation relation allows us to prove
 	the latter result without using a matching operator.
 	\qed
@@ -1043,24 +1057,26 @@ $\beta$-reductions:
 	Let  $\Gamma; \es; \Delta \proves P \hastype \Proc$ be a balanced \HOp process. 
 	Transition $\horel{\Gamma}{\Delta}{P}{\hby{\tau}}{\Delta'}{P'}$ is called:
 	\begin{enumerate}[$-$]
-		\item	{\em Session transition}, written
-			$\horel{\Gamma}{\Delta}{P}{\hby{\stau}}{\Delta'}{P'}$,
-			whenever the untyped transition $P \by{\tau} P'$ using 
+		\item {\em Session transition} whenever the untyped transition $P \by{\tau} P'$ 
+		is derived using 
 			rule~$\ltsrule{Tau}$ 
 		(where $\subj{\ell_1}$ and $\subj{\ell_2}$ in the premise 
 		are dual endpoints), 
 		possibly followed by uses of  $\ltsrule{Alpha}$, $\ltsrule{Res}$, $\ltsrule{Rec}$, or $\ltsrule{Par${}_L$}/
 		\ltsrule{Par${}_R$}$.
 		
-		\item	{\em \betatran}, written
-			$\horel{\Gamma}{\Delta}{P}{\hby{\btau}}{\Delta'}{P'}$,
-			whenever the untyped transition $P \by{\tau} P'$
-			is derived on rule $\ltsrule{App}$,
+		\item	{\em \betatran}	whenever the untyped transition $P \by{\tau} P'$
+			is derived using rule $\ltsrule{App}$,
 			possibly followed by uses of  $\ltsrule{Alpha}$, $\ltsrule{Res}$, $\ltsrule{Rec}$, or $\ltsrule{Par${}_L$}/
 		\ltsrule{Par${}_R$}$.
 	\end{enumerate}
 %
-	We write $\horel{\Gamma}{\Delta}{P}{\hby{\dtau}}{\Delta'}{P'}$ for
+We write
+$\horel{\Gamma}{\Delta}{P}{\hby{\stau}}{\Delta'}{P'}$
+and 
+$\horel{\Gamma}{\Delta}{P}{\hby{\btau}}{\Delta'}{P'}$
+to denote session and $\beta$-transitions, resp. Also, 
+	 $\horel{\Gamma}{\Delta}{P}{\hby{\dtau}}{\Delta'}{P'}$ denotes
 	either a session transition or a \betatran.
 \end{definition}
 
@@ -1074,8 +1090,10 @@ $\beta$-reductions:
 
 \begin{proof}
 	The proof relies on the fact that processes of the
-	form $\Gamma; \es; \Delta \proves \bout{s}{V} P_1 \Par \binp{k}{x} P_2$
-	cannot have any typed transition observables and the fact
+	form $\Gamma; \es; \Delta \proves \bout{s}{V} P_1 \Par \binp{\dual{s}}{x} P_2$
+	cannot have any typed transition observables 
+	(for both $s$ and $\dual{s}$ are defined in $\Delta$)
+	and the fact
 	that bisimulation is a congruence.
 	See details in \appref{app:sub_tau_inert} (Page \pageref{app:sub_tau_inert}).
 	\qed
