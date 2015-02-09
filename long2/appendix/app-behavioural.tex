@@ -33,9 +33,16 @@ We now proceed to state and proof these lemmas, together with some auxiliary res
 \end{lemma}
 
 \begin{proof}
-	\noi We first prove the direction $\wb \subseteq \wbf$.
+	\noi We prove the direction $\wb \subseteq \wbf$. The
+	direction $\wbf \subseteq \wb$ is similar.
 
-	\noi Consider $\horel{\Gamma}{\Delta_1}{P}{\wb}{\Delta_2}{Q}$.
+	\noi Consider
+%
+	\[
+		\Re = \set{\horel{\Gamma}{\Delta_1}{P}{\ ,\ }{\Delta_2}{Q} \setbar \horel{\Gamma}{\Delta_1}{P}{\wb}{\Delta_2}{Q}}
+	\]
+%
+	We show that $\Re$ is a characteristic bisimulation.
 	The proof does a case analysis on the transition label $\ell$.
 
 	\noi - Case $\ell = \news{\tilde{m_1}} \bactout{n}{V_1}$ is the non-trivial case.
@@ -60,7 +67,7 @@ We now proceed to state and proof these lemmas, together with some auxiliary res
 		{\Delta_2}{}{\newsp{\tilde{m_2}}{Q' \Par \hotrigger{t}{x}{s}{V_2}}}
 	\]
 %
-	From the latter result we can derive that for $\Gamma; \es; \Delta \proves V_1 \hastype U$:
+	From the last result we can derive that for $\Gamma; \es; \Delta \proves V_1 \hastype U$:
 %
 	\[
 		\mhorel{\Gamma}{\Delta_1'}{\newsp{\tilde{m_1}}{P' \Par \hotrigger{t}{x}{s}{V_1}}}
@@ -117,15 +124,15 @@ We now proceed to state and proof these lemmas, together with some auxiliary res
 %  LINEAR SUBSTITUTION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-The next lemma implies a process substitution as a corollary.
+The next lemma implies a process substitution lemma as a corollary.
 Given two processes that are bisimilar under trigerred substitution
 and characteristic process substitution, we can prove that they are
 bisimilar under every process substitution. This result is
 the key result for proving the soundness of the bisimulation. 
-We prove for the case of the general polyadic abstractions. 
+%We prove for the case of the general polyadic abstractions. 
 
-We also use one of the equalities in the substitution lemmas. 
-However all results hold for other equivalences. 
+%We also use one of the equalities in the substitution lemmas. 
+%However all results hold for other equivalences. 
 
 \newcommand{\auxtr}[1]{\abs{\tilde{x}}{\binp{#1}{y} (\appl{y}{\tilde{x}})}}
 
@@ -169,7 +176,7 @@ However all results hold for other equivalences.
 			&&}
 	\end{eqnarray*}
 %
-	\noi  We show that $\Re$ is a bisimulation up-to \betatran.
+	\noi  We show that $\Re$ is a bisimulation up-to \betatran (\lemref{lem:tau_inert}).
 
 	\noi We do a case analysis on the transition:
 %
@@ -453,13 +460,18 @@ However all results hold for other equivalences.
 \end{comment}
 \end{proof}
 
+We can generalise the result of the linear process substitution Lemma
+to prove process substitution (\lemref{lem:proc_subst}).
+Intuitevely, we can subsequently apply linear process substitution
+to achieve process substitution.
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %	Process Substitution
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{lemma}[Process Substitution]\rm
-%	\label{lem:proc_subst}
+	\label{app:lem:proc_subst}
 	If 
 %
 	\begin{enumerate}
@@ -1125,10 +1137,14 @@ However all results hold for other equivalences.
 %  CONG IS WB
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+We prove the result $\cong \subseteq \wb$ following
+the technique developed in~\cite{Hennessy07} and
+refined for session types in~\cite{KYHH2015,KY2015}.
+
 \begin{definition}[Definibility]\rm
 	Let $\Gamma; \emptyset; \Delta_1 \proves P \hastype \Proc$.
-	An external action $\ell$ is definable whenever
-	there exists process
+	A visible action $\ell$ is definable whenever
+	there exists (testing) process
 	$\Gamma; \emptyset; \Delta_2 \proves T\lrangle{\ell, \suc} \hastype \Proc$
 	with $\suc$ fresh name % and $N$ a set of names.
 	such that:
@@ -1170,7 +1186,7 @@ However all results hold for other equivalences.
 %
 \end{definition}
 
-We first show that every external action $\ell$ is {\em definable}.
+We first show that every visible action $\ell$ is {\em definable}.
 
 \begin{lemma}[Definibility]
 	\label{lem:definibility}
@@ -1486,15 +1502,17 @@ We first show that every external action $\ell$ is {\em definable}.
 \end{proof}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% T - Innertness
+% tau - Innertness
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \subsection{$\tau$-inertness}
 \label{app:sub_tau_inert}
 
+We prove Part 1 of \propref{lem:tau_inert}.
+
 \begin{proposition}[$\tau$-inertness]\rm
 	Let balanced \HOp process $\Gamma; \es; \Delta \proves P \hastype \Proc$.
-	$\horel{\Gamma}{\Delta}{P}{\hby{\stau}}{\Delta'}{P'}$ implies
+	$\horel{\Gamma}{\Delta}{P}{\hby{\dtau}}{\Delta'}{P'}$ implies
 	$\horel{\Gamma}{\Delta}{P}{\wb}{\Delta'}{P'}$.
 \end{proposition}
 
