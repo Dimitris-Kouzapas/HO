@@ -66,87 +66,73 @@ and (ii)~$\news{\tilde{m}} \bactout{n}{V} \asymp \bactinp{\dual{n}}{V}$}.
 %\end{tabular}
 \smallskip
 
+
+
+%%%%%%%%%%%%%%%%%%%% LTS Figure %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{figure}[t]
 \[
-\ltsrule{App} \quad 
-(\abs{x}{P}) \, u   \by{\tau}  P \subst{u}{x} 
-\]
-	\[
-	\begin{array}{ll}
-\ltsrule{Snd}\	\bout{n}{V} P \by{\bactout{n}{V}} P 
-&
-\ltsrule{Rv}\	\binp{n}{x} P \by{\bactinp{n}{V}} P\subst{V}{x} 
-\\[3mm]
- \ltsrule{Sel}\ \bsel{s}{l}{P} \by{\bactsel{s}{l}} P
-&
-\hspace{-1cm}
-\ltsrule{Bra}\ \bbra{s}{l_i:P_i}_{i \in I} \by{\bactbra{s}{l_j}} P_j
-\quad (j\in I)
-\\[3mm]
-\ltsrule{Alpha}
+	\begin{array}{c}
+		\ltsrule{App} \ 
+		(\abs{x}{P}) \, V   \by{\tau} P \subst{V}{x}
+		\qquad
+		\ltsrule{Snd}\	\bout{n}{V} P \by{\bactout{n}{V}} P 
+		\qquad
+		\ltsrule{Rv}\	\binp{n}{x} P \by{\bactinp{n}{V}} P\subst{V}{x} 
+		\\[3mm]
+		\ltsrule{Sel}\ \bsel{s}{l}{P} \by{\bactsel{s}{l}} P
+		\qquad \quad
+		\ltsrule{Bra}\ \bbra{s}{l_i:P_i}_{i \in I} \by{\bactbra{s}{l_j}} P_j \ (j\in I)
+		\\[3mm]
+
+		\ltsrule{Alpha}
 		\tree{
 			P \scong_\alpha Q \quad Q\by{\ell} P'
 		}{
 			P \by{\ell} P'
 		}
-&
- \ltsrule{Res}	\tree{
+		\qquad \quad
+		\ltsrule{Res}
+		\tree{
 			P \by{\ell} P' \quad n \notin \fn{\ell}
 		}{
 			\news{n} P \by{\ell} \news{n} P' 
 		}
-\\[5mm]	
-\ltsrule{New}	\tree{
-		P \by{\news{\tilde{m}} \bactout{n}{V}} P' \quad 
-               m \in \fn{V}
+		\\[5mm]
+
+		\ltsrule{New}
+		\tree{
+			P \by{\news{\tilde{m}} \bactout{n}{V}} P' \quad m \in \fn{V}
 		}{
-			\news{m} P \by{\news{m\cat\tilde{m}'} 
-\bactout{n}{V}} P'
-		}	
-&
-\ltsrule{Rec}	\tree{
-	 P\subst{\recp{X}{P}}{\rvar{X}}
-		 \by{\ell} P' 
-		}{
-			\recp{X}{P}  \by{\ell} P'
-		}	
-\end{array}
-\]
-\[
-\begin{array}{ll}
-%\ltsrule{New}&	\tree{
-%		P \by{\news{\tilde{m}} \bactout{n}{V}} P' \quad 
-%               m \in \fn{V}
-%		}{
-%			\news{m} P \by{\news{m\cat\tilde{m}'} 
-%\bactout{n}{V}} P'
-%		}
-%		\\[6mm]
-\ltsrule{Tau}	& \tree{
-			P \by{\ell_1} P' \qquad Q \by{\ell_2} Q' \qquad \ell_1 \asymp \ell_2
-		}{
-			P \Par Q \by{\tau} \newsp{\bn{\ell_1} \cup \bn{\ell_2}}{P' \Par Q'}
-		} 
-		\\[4mm]
- \ltsrule{Par${}_L$}	& \tree{
+			\news{m} P \by{\news{m\cat\tilde{m}'} \bactout{n}{V}} P'
+		}
+		\qquad \quad
+		\ltsrule{Par${}_L$}
+		\tree{
 
 			P \by{\ell} P' \quad \bn{\ell} \cap \fn{Q} = \es
 		}{
 			P \Par Q \by{\ell} P' \Par Q
 		}
+		\\[5mm]
 
-%\\[3mm]
-%		\tree{
-%			Q \by{\ell} Q' \quad \bn{\ell} \cap \fn{P} = \es
-%		}{
-%			P \Par Q \by{\ell} P \Par Q'
-%		}\ \ltsrule{RPar}
+		\ltsrule{Tau}
+		\tree{
+			P \by{\ell_1} P' \qquad Q \by{\ell_2} Q' \qquad \ell_1 \asymp \ell_2
+		}{
+			P \Par Q \by{\tau} \newsp{\bn{\ell_1} \cup \bn{\ell_2}}{P' \Par Q'}
+		} 
+		\qquad \quad
+		\ltsrule{Rec}
+		\tree{
+			P\subst{\recp{X}{P}}{\rvar{X}} \by{\ell} P' 
+		}{
+			\recp{X}{P}  \by{\ell} P'
+		}
 	\end{array}
-	\]
-%We omit $\ltsrule{Par${}_R$}$. 
+\]
 	\caption{The Untyped LTS. We omit rule $\ltsrule{Par${}_R$}$.  \label{fig:untyped_LTS}}
-\Hlinefig
 \end{figure}
+%%%%%%%%%%%%%%%%%%%% End LTS Figure %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \myparagraph{LTS over Untyped Processes.}
 The labelled transition system (LTS) over untyped processes
 is given in
@@ -266,145 +252,97 @@ environments (\defref{def:ses_red}).
 %The conditions for input follow the conditions
 %for the $\by{\ell}$ definition.
 
-
+%%%%%%%%%%%%%%%%%%%% Environment LTS Figure %%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{figure}[t]
 \[
 \begin{array}{lc}
-	\eltsrule{SRv}&\tree{
-			\dual{s} \notin \dom{\Delta} \quad \Gamma; \Lambda'; \Delta' \proves V \hastype U
-		}{
-			(\Gamma; \Lambda; \Delta \cat s: \btinp{U} S) \by{\bactinp{s}{V}} (\Gamma; \Lambda\cat\Lambda'; \Delta\cat\Delta' \cat s: S)
-		}
-		\\[8mm]
-		\eltsrule{ShRv}&\tree{
-			\Gamma; \es; \es \proves a \hastype \chtype{U}
-			\quad
-			\Gamma; \Lambda'; \Delta' \proves V \hastype U
-		}{
-			(\Gamma; \Lambda; \Delta) \by{\bactinp{a}{{V}}} (\Gamma; \Lambda\cat\Lambda'; \Delta\cat\Delta')
-		}
-%		\eltsrule{RRcv}&\tree {
-%\begin{array}{c}
-%(\Gamma_1; \Lambda_1; \Delta_1) \by{\bactinp{n}{V}} (\Gamma_2; \Lambda_2; \Delta_2)
-%\\
-%			\begin{array}{lll}
-%				 V  =  
-%(\abs{{x}}{\binp{t}{y} (\appl{y}{{x}})}
-% \vee  \abs{{x}}{\map{U}^{{x}}}  \vee m)  \textrm{ with } t \textrm{ fresh} 
-%			\end{array}
-%			\end{array}
-%		}{
-%			(\Gamma_1; \Lambda_1; \Delta_1) \hby{\bactinp{n}{V}} (\Gamma_2; \Lambda_1; \Delta_2)
-%		}
-	\end{array}
-	\]
-	\[
-	\begin{array}{l}
-		\eltsrule{SSnd}\\
-\tree{
-			\begin{array}{lll}
-			\Gamma \cat \Gamma'; \Lambda'; \Delta' \proves V \hastype U
-&				
-				\Gamma'; \es; \Delta_j \proves m_j  \hastype U_j
-& 
-				\dual{s} \notin \dom{\Delta}
-\\
-						\Delta'\backslash \cup_j \Delta_j \subseteq (\Delta \cat s: S)
-& 
-	\Gamma'; \es; \Delta_j' \proves \dual{m}_j  \hastype U_j'
-& 
-				\Lambda' \subseteq \Lambda
-%				\dual{s} \notin \dom{\Delta}
-%				\qquad 
-%				\Gamma \cat \Gamma'; \Lambda'; \Delta_1 \cat \Delta_2 \proves V \hastype U
-%				\qquad
-%				\tilde{m} = m_1 \dots m_n
-%				\\
-%				\Gamma'; \es; \Delta_2 \proves m_1 \dots m_n \hastype U_1
-%				\qquad
-%				\Gamma'; \es; \Delta_3 \proves \dual{m}_1 \dots \dual{m}_n \hastype U_2
-%				\qquad
-%				\Lambda' \subseteq \Lambda
-%				\qquad
-%				\Delta_1 \subseteq (\Delta \cat s: S)
-			\end{array}
-		}{
-			(\Gamma; \Lambda; \Delta \cat s: \btout{U} S) \by{\news{\tilde{m}} \bactout{s}{V}} (\Gamma \cat \Gamma'; \Lambda\backslash\Lambda';
-			(\Delta \cat s: S \cat \cup_j \Delta_j') \backslash \Delta')
-		}
-\\[6mm]
-\eltsrule{ShSnd}\\
-\tree{
+	\eltsrule{SRv}&
+	\tree{
+		\dual{s} \notin \dom{\Delta}
+		\quad
+		\Gamma; \Lambda'; \Delta' \proves V \hastype U
+	}{
+		(\Gamma; \Lambda; \Delta \cat s: \btinp{U} S) \by{\bactinp{s}{V}} (\Gamma; \Lambda\cat\Lambda'; \Delta\cat\Delta' \cat s: S)
+	}
+	\\[6mm]
+	\eltsrule{ShRv}&
+	\tree{
+		\Gamma; \es; \es \proves a \hastype \chtype{U}
+		\quad
+		\Gamma; \Lambda'; \Delta' \proves V \hastype U
+	}{
+		(\Gamma; \Lambda; \Delta) \by{\bactinp{a}{{V}}} (\Gamma; \Lambda\cat\Lambda'; \Delta\cat\Delta')
+	}
+	\\[6mm]
+	\eltsrule{SSnd} &
+	\tree{
 		\begin{array}{lll}
-			\Gamma \cat \Gamma' ; \Lambda'; \Delta' \proves V \hastype U &  
-		\Gamma'; \es; \Delta_j \proves m_j \hastype U_j
-& \Gamma ; \es ; \es \proves a \hastype \chtype{U}
-				\\
-			\Delta'\backslash \cup_j \Delta_j 
-                         \subseteq \Delta
-& 
-		\Gamma'; \es; \Delta_j' \proves \dual{m}_j\hastype U_j'
-& 
-				\Lambda' \subseteq \Lambda
-			\end{array}
-%			\begin{array}{c}
-%				\Gamma \cat \Gamma' \cat a: \chtype{U}; \Lambda'; \Delta_1 \cat \Delta_2 \proves V \hastype U
-%				\qquad
-%				\tilde{m} = m_1 \dots m_n
-%				\\
-%				\Gamma'; \es; \Delta_2 \proves m_1 \dots m_n \hastype U_1
-%				\qquad
-%				\Gamma'; \es; \Delta_3 \proves \dual{m}_1 \dots \dual{m}_n \hastype U_2
-%				\qquad
-%				\Lambda' \subseteq \Lambda
-%				\qquad
-%				\Delta_1 \subseteq \Delta
-%			\end{array}
-		}{
-			(\Gamma ; \Lambda; \Delta) \by{\news{\tilde{m}} \bactout{a}{V}} (\Gamma \cat \Gamma' ; \Lambda\backslash\Lambda';
-			(\Delta \cat \cup_j \Delta_j') \backslash \Delta')
-		}
+			\Gamma \cat \Gamma'; \Lambda'; \Delta' \proves V \hastype U
+			&				
+			\Gamma'; \es; \Delta_j \proves m_j  \hastype U_j
+			& 
+			\dual{s} \notin \dom{\Delta}
+			\\
+			\Delta'\backslash \cup_j \Delta_j \subseteq (\Delta \cat s: S)
+			& 
+			\Gamma'; \es; \Delta_j' \proves \dual{m}_j  \hastype U_j'
+			& 
+			\Lambda' \subseteq \Lambda
+		\end{array}
+	}{
+		(\Gamma; \Lambda; \Delta \cat s: \btout{U} S)
+		\by{\news{\tilde{m}} \bactout{s}{V}}
+		(\Gamma \cat \Gamma'; \Lambda\backslash\Lambda'; (\Delta \cat s: S \cat \cup_j \Delta_j') \backslash \Delta')
+	}
+	\\[6mm]
+	\eltsrule{ShSnd}&
+	\tree{
+		\begin{array}{lll}
+			\Gamma \cat \Gamma' ; \Lambda'; \Delta' \proves V \hastype U
+			&  
+			\Gamma'; \es; \Delta_j \proves m_j \hastype U_j
+			&
+			\Gamma ; \es ; \es \proves a \hastype \chtype{U}
+			\\
+			\Delta'\backslash \cup_j \Delta_j \subseteq \Delta
+			&
+			\Gamma'; \es; \Delta_j' \proves \dual{m}_j\hastype U_j'
+			& 
+			\Lambda' \subseteq \Lambda
+		\end{array}
+	}{
+		(\Gamma ; \Lambda; \Delta) \by{\news{\tilde{m}}
+		\bactout{a}{V}}
+		(\Gamma \cat \Gamma'; \Lambda\backslash\Lambda'; (\Delta \cat \cup_j \Delta_j') \backslash \Delta')
+	}
+	\\[6mm]
+	\eltsrule{Sel}&
+	\tree{
+		\dual{s} \notin \dom{\Delta} \quad j \in I
+	}{
+		(\Gamma; \Lambda; \Delta \cat s: \btsel{l_i: S_i}_{i \in I}) \by{\bactsel{s}{l_j}} (\Gamma; \Lambda; \Delta \cat s:S_j)
+	}
+	\\[6mm]
+	\eltsrule{Bra}&
+	\tree{
+		\dual{s} \notin \dom{\Delta} \quad j \in I
+	}{
+		(\Gamma; \Lambda; \Delta \cat s: \btbra{l_i: T_i}_{i \in I}) \by{\bactbra{s}{l_j}} (\Gamma; \Lambda; \Delta \cat s:S_j)
+	}
+	\\[6mm]
+	\eltsrule{Tau}&
+	\tree{
+		\Delta_1 \red \Delta_2 \vee \Delta_1 = \Delta_2
+	}{
+		(\Gamma; \Lambda; \Delta_1) \by{\tau} (\Gamma; \Lambda; \Delta_2)
+	}
 \end{array}
 \]
-\[
-\begin{array}{lc}
-		\eltsrule{Sel}&\tree{
-			\dual{s} \notin \dom{\Delta} \quad j \in I
-		}{
-			(\Gamma; \Lambda; \Delta \cat s: \btsel{l_i: S_i}_{i \in I}) \by{\bactsel{s}{l_j}} (\Gamma; \Lambda; \Delta \cat s:S_j)
-		}
-\\[8mm]
-		\eltsrule{Bra}&\tree{
-			\dual{s} \notin \dom{\Delta} \quad j \in I
-		}{
-			(\Gamma; \Lambda; \Delta \cat s: \btbra{l_i: T_i}_{i \in I}) \by{\bactbra{s}{l_j}} (\Gamma; \Lambda; \Delta \cat s:S_j)
-		}
-		\\[8mm]
-		\eltsrule{Tau}&\tree{
-			\Delta_1 \red \Delta_2 \vee \Delta_1 = \Delta_2
-		}{
-			(\Gamma; \Lambda; \Delta_1) \by{\tau} (\Gamma; \Lambda; \Delta_2)
-		}
-%\\[6mm]
-%		\eltsrule{RRcv}&\tree {
-%\begin{array}{c}
-%(\Gamma_1; \Lambda_1; \Delta_1) \by{\bactinp{n}{V}} (\Gamma_2; \Lambda_2; \Delta_2)
-%\\
-%			\begin{array}{lll}
-%				 V  =  
-%(\abs{{x}}{\binp{t}{y} (\appl{y}{{x}})}
-% \vee  \abs{{x}}{\map{U}^{{x}}}  \vee m)  \textrm{ with } t \textrm{ fresh} 
-%			\end{array}
-%			\end{array}
-%		}{
-%			(\Gamma_1; \Lambda_1; \Delta_1) \hby{\bactinp{n}{V}} (\Gamma_2; \Lambda_1; \Delta_2)
-%		}
-	\end{array}
-	\]
 \caption{Labelled Transition System for Typed Environments. 
 \label{fig:envLTS}}
 \Hlinefig
 \end{figure}
+%%%%%%%%%%%%%%%%%%%% End Environment LTS Figure %%%%%%%%%%%%%%%%%%%%%%
 \noi
 The weakening property on shared environments ensures that
 $(\Gamma_2, \Lambda_1, \Delta_1) \hby{\ell} (\Gamma_2, \Lambda_2, \Delta_2)$
@@ -519,11 +457,9 @@ To define a congruence relation, we introduce the family $\C$ of contexts:\\
 %	A context $\C$ is defined as:
 \noi 
 \begin{tabular}{rl}
-	$\C::=$\!\!\!\! & $\hole \bnfbar \bout{u}{V} \C \bnfbar \binp{u}{x} \C
-\bnfbar \bout{u}{\lambda x.\C} P
-\bnfbar \news{n} \C$\\
-             $\bnfbar$\!\!\!\!& $(\lambda x.\C)u \bnfbar \recp{X}{\C} \bnfbar \C \Par P \bnfbar P \Par \C$\\ 
-$\bnfbar$\!\!\!\!& $\bsel{u}{l} \C \bnfbar \bbra{u}{l_1:P_1,\cdots,l_i:\C,\cdots,l_n:P_n}$\\
+	$\C::=$ & $\hole \bnfbar \bout{u}{V} \C \bnfbar \binp{u}{x} \C \bnfbar \bout{u}{\lambda x.\C} P \bnfbar \news{n} \C$
+	$(\lambda x.\C)u \bnfbar \recp{X}{\C}$\\ 
+	$\bnfbar$ & $\C \Par P \bnfbar P \Par \C \bnfbar \bsel{u}{l} \C \bnfbar \bbra{u}{l_1:P_1,\cdots,l_i:\C,\cdots,l_n:P_n}$\\
 	\end{tabular}
 \smallskip 
 
@@ -650,47 +586,68 @@ We define characteristic processes/values:
 
 \smallskip
 
+%%%%%%%%%%%%%%%%%%%%%%%% Characteristic Process Figure %%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{figure}[t]
-	\[
-	\begin{array}{c}
-		\begin{array}{rclcl}
-			\mapchar{\btinp{U} S}{u} &\!\!\defeq\!\!
-& \binp{u}{x} (\mapchar{S}{u} \Par \mapchar{U}{x})
-			\\
-			\mapchar{\btout{U} S}{u} &\!\!\defeq\!\!& \bout{u}{\omapchar{U}} \mapchar{S}{u} %& & n \textrm{ fresh}
-			\\
-			\mapchar{\btsel{l : S}}{u} &\!\!\defeq\!\!& \bsel{u}{l} \mapchar{S}{u}
-			\\
-			\mapchar{\btbra{l_i: S_i}_{i \in I}}{u} &\!\!\defeq\!\!& \bbra{u}{l_i: \mapchar{S_i}{u}}_{i \in I}
-			\\
-		\mapchar{\tvar{t}}{u} \!\defeq\! \varp{X}_{\vart{t}}
-& & 
-			\mapchar{\trec{t}{S}}{u} \!\defeq\! \recp{X_{\vart{t}}}{\mapchar{S}{u}}
-			\\
-			\mapchar{\tinact}{u} &\!\!\defeq\!\!& \inact
-			\\
-\mapchar{\chtype{S}}{u} \!\defeq\! \bout{u}{\omapchar{S}} \inact & & 
-\quad\mapchar{\chtype{L}}{u} \!\defeq\! \bout{u}{\omapchar{L}} \inact
-			\\
-\mapchar{\shot{C}}{u} & \!\!\defeq\!\! & \mapchar{\lhot{C}}{u} \!\defeq\! 
-\appl{u}{\omapchar{C}}
-\end{array}
-\\
-\Hline
-\\
-		\begin{array}{rcll}
-\omapchar{S} &\!\!\defeq\!\!& s & (s \textrm{ fresh})
-			\\
-\omapchar{\chtype{S}} \defeq \omapchar{\chtype{L}} &\!\!\defeq\!\!& a & 
-(a \textrm{ fresh})\quad\quad
-			\\
-			\omapchar{\shot{C}} \defeq \omapchar{\lhot{C}} &\!\!\defeq\!\!& \abs{x}{\mapchar{C}{x}}
-		\end{array}
+\[
+	\begin{array}{rclcrcl}
+		\mapchar{\btinp{U} S}{u}
+		&\defeq&
+		\binp{u}{x} (\mapchar{S}{u} \Par \mapchar{U}{x})
+		&&
+		\mapchar{\btout{U} S}{u}
+		&\defeq&
+		\bout{u}{\omapchar{U}} \mapchar{S}{u} %& & n \textrm{ fresh}
+		\\
+
+		\mapchar{\btsel{l : S}}{u}
+		& \defeq &
+		\bsel{u}{l} \mapchar{S}{u}
+		&&
+		\mapchar{\btbra{l_i: S_i}_{i \in I}}{u}
+		& \defeq &
+		\bbra{u}{l_i: \mapchar{S_i}{u}}_{i \in I}
+		\\
+
+		\mapchar{\tvar{t}}{u}
+		&\defeq&
+		\varp{X}_{\vart{t}}
+		& & 
+		\mapchar{\trec{t}{S}}{u}
+		&\defeq&
+		\recp{X_{\vart{t}}}{\mapchar{S}{u}}
+		\\
+
+		\mapchar{\tinact}{u}
+		& \defeq &
+		\inact
+		& & 
+		\mapchar{\chtype{S}}{u} 
+		&\defeq&
+		\bout{u}{\omapchar{S}} \inact
+		\\
+
+		\mapchar{\chtype{L}}{u}
+		&\defeq&
+		\bout{u}{\omapchar{L}} \inact
+		&&
+		\mapchar{\shot{U}}{u}
+		&\defeq &
+		\mapchar{\lhot{U}}{u}
+		\, \defeq \,
+		\appl{u}{\omapchar{U}}
+		\\
+		\\
+		\omapchar{S} & \defeq & s \quad (s \textrm{ fresh})
+		&&
+		\omapchar{\chtype{S}} \defeq \omapchar{\chtype{L}} &\defeq& a \quad (a \textrm{ fresh})
+		\\
+		\omapchar{\shot{U}} &\defeq& \omapchar{\lhot{U}} \,\defeq\, \abs{x}{\mapchar{U}{x}}
 	\end{array}
-	\]
+\]
 \caption{Characteristic Processes \jpc{(top)} and Values \jpc{(bottom)}.\label{fig:char}}
-\Hlinefig
+%\Hlinefig
 \end{figure}
+%%%%%%%%%%%%%%%%%%%%%%%% End Characteristic Process Figure %%%%%%%%%%%%%%%%%%%%%
 
 %	\[
 %	\begin{array}{rcllrcll}
