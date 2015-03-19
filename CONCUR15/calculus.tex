@@ -3,13 +3,14 @@
 We introduce the 
 \emph{Higher-Order Session $\pi$-Calculus} (\HOp).
 \HOp includes both name- and abstraction-passing 
-as well as recursion; it is a subcalculus 
-of the language
+as well as recursion; it is 
+essentially 
+the process language
 studied 
 in~\cite{tlca07}. 
-Following the literature~\cite{JeffreyR05},
-for simplicity of the presentation
-we concentrate on the second-order call-by-value \HOp.  
+%Following the literature~\cite{JeffreyR05},
+%for simplicity of the presentation
+%we concentrate on the second-order call-by-value \HOp.  
 %(In \secref{sec:extension} we consider extensions of 
 %\HOp with higher-order abstractions 
 %and polyadicity in name-passing/abstractions.)
@@ -26,10 +27,8 @@ we concentrate on the second-order call-by-value \HOp.
 %expressive enough to capture key features of session communication, 
 %such as delegation and recursion.
 
-\subsection{Syntax of \HOp}
+\subsection{Syntax}
 \label{subsec:syntax}
-\noindent\myparagraph{Values} The syntax of \HOp is defined in \figref{fig:syntax}
-
 %%%%%%%%%%%%%%%%%%%%%% HOp Syntax Figure %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
 \begin{figure}[t]
 	\[
@@ -48,13 +47,14 @@ we concentrate on the second-order call-by-value \HOp.
 \end{figure}
 %%%%%%%%%%%%%%%%%%%%%% End HOp Syntax Figure %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+\noindent\myparagraph{Values} The syntax of \HOp is defined in \figref{fig:syntax}.
 We use $a,b,c, \dots$ (resp.~$s, \dual{s}, \dots$) 
 to range over shared (resp. session) names. 
 We use $m, n, t, \dots$ for session or shared names. 
 We define the dual operation over names $n$ as $\dual{n}$ with
 $\dual{\dual{s}} = s$ and $\dual{a} = a$.
 Intuitively, names $s$ and $\dual{s}$ are dual (two) \emph{endpoints} while 
-shared names represent shared (non-deterministic) points. 
+shared names represent non-deterministic points. 
 Variables are denoted with $x, y, z, \dots$, 
 and recursive variables are denoted with $\varp{X}, \varp{Y} \dots$.
 An abstraction %(or higher-order value) 
@@ -66,8 +66,7 @@ and
 abstractions $\abs{x}{P}$ (first- and higher-order values, resp.). 
 
 \myparagraph{Terms} 
-include the
-$\pi$-calculus prefixes for sending and receiving values $V$.
+include $\pi$-calculus constructs for sending/receiving values $V$.
 Process $\bout{u}{V} P$ denotes the output of value $V$
 over name $u$, with continuation $P$;
 process $\binp{u}{x} P$ denotes the input prefix on name $u$ of a value
@@ -82,10 +81,12 @@ $\appl{V}{W}$
 is the application
 which substitutes values $W$ on the abstraction~$V$. 
 \dk{Typing  ensures \jpc{that} $V$ is not a name.}
-Prefix $\bsel{u}{l} P$ selects label $l$ on name $u$ and then behaves as $P$.
+Processes $\bbra{u}{l_i: P_i}_{i \in I}$  and $\bsel{u}{l} P$ define labeled choice:
+given a finite index set $I$, process $\bbra{u}{l_i: P_i}_{i \in I}$ offers a choice 
+among processes with pairwise distinct labels;
+%on labels $l_i$ with continuation $P_i$, given that $i \in I$.
+ process $\bsel{u}{l} P$ selects label $l$ on name $u$ and then behaves as $P$.
 %Given $i \in I$ 
-Process $\bbra{u}{l_i: P_i}_{i \in I}$ offers a choice on labels $l_i$ with
-continuation $P_i$, given that $i \in I$.
 %Others are standard c
 Constructs for 
 inaction $\inact$,  parallel composition $P_1 \Par P_2$, and 
@@ -102,27 +103,27 @@ If $\fv{P} = \emptyset$, we call $P$ {\em closed}.
 %; and closed $P$ without 
 %free session names a {\em program}. 
 
-\subsection{Subcalculi of \HOp}
-\label{subsec:subcalculi}
-\noi
-We define two subcalculi of \HOp. 
-%We now define several sub-calculi of \HOp. 
-The first is the 
-{\em core higher-order session calculus} (denoted \HO),
-which lacks recursion and name passing; its 
-formal syntax is obtained from \figref{fig:syntax} by excluding 
-constructs in \nonhosyntax{\text{grey}}.
-The second subcalculus is 
-the {\em session $\pi$-calculus} 
-(denoted $\sessp$), which 
-lacks  the
-higher-order constructs
-(i.e., abstraction passing and application), but includes recursion.
-Let $\CAL \in \{\HOp, \HO, \sessp\}$. We write 
-$\CAL^{-\mathsf{sh}}$ for $\CAL$ without shared names
-(we delete $a,b$ from $n$). 
-We shall demonstrate that 
-$\HOp$, $\HO$, and $\sessp$ have the same expressivity.
+%\subsection{Subcalculi of \HOp}
+%\label{subsec:subcalculi}
+%\noi
+%We define two subcalculi of \HOp. 
+%%We now define several sub-calculi of \HOp. 
+%The first is the 
+%{\em core higher-order session calculus} (denoted \HO),
+%which lacks recursion and name passing; its 
+%formal syntax is obtained from \figref{fig:syntax} by excluding 
+%constructs in \nonhosyntax{\text{grey}}.
+%The second subcalculus is 
+%the {\em session $\pi$-calculus} 
+%(denoted $\sessp$), which 
+%lacks  the
+%higher-order constructs
+%(i.e., abstraction passing and application), but includes recursion.
+%Let $\CAL \in \{\HOp, \HO, \sessp\}$. We write 
+%$\CAL^{-\mathsf{sh}}$ for $\CAL$ without shared names
+%(we delete $a,b$ from $n$). 
+%We shall demonstrate that 
+%$\HOp$, $\HO$, and $\sessp$ have the same expressivity.
 
 \subsection{Operational Semantics}
 	\label{subsec:semantics}
