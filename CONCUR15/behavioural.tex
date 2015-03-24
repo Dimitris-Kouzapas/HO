@@ -357,6 +357,23 @@ Our typed LTS  combines
 the LTSs in \figref{fig:untyped_LTS}
 and \figref{fig:envLTS}. 
 
+\begin{example}
+	Consider environment tuple
+	\[
+		(\Gamma; \es; s: \btout{\lhot{\btout{S} \tinact}} \tinact \cat s': S)
+	\]
+	and typed value
+	\[
+		\Gamma; \es; s': S \cat m: \btinp{\tinact} \tinact \proves \abs{x} \bout{x}{s'} \binp{m}{z} \inact \hastype \lhot{\btout{\tinact} \tinact}
+	\]
+	We can then observe that the premises of environment rule $\eltsrule{SSnd}$
+	are satisfied to derive that
+	\[
+		(\Gamma; \es; s: \btout{\lhot{\btout{S} \tinact}} \tinact \cat s': S) \by{\news{m} \bactout{s}{V}} (\Gamma; \es; s: \tinact)
+	\]
+\end{example}
+
+
 \smallskip
 
 \begin{definition}[Typed Transition System]\label{d:tlts}\rm
@@ -718,6 +735,35 @@ We define characteristic processes/values:
 do inhabit  their associated type. 
 The following example motivates the refined 
 LTS explained in \secref{sec:overview}.
+
+\begin{proposition}
+	\begin{itemize}
+		\item	Let session type $S$, then $\Gamma; \es; \Delta \cat s: S \proves \mapchar{S}{s} \hastype \Proc$.
+		\item	Let session type $\chtype{U}$, then $\Gamma \cat a: \chtype{U}; \es; \Delta \proves \mapchar{\chtype{U}}{a} \hastype \Proc$.
+	\end{itemize}
+\end{proposition}
+
+
+\begin{proof}
+	By induction on the definition of $\mapchar{U}{n}$.
+\end{proof}
+
+\begin{example}
+	Consider for example the type $U = \shot{(\shot{(\shot{(\btout{S} \tinact)})})}$.
+	The characteristic process of the above type is:
+%
+	\begin{eqnarray*}
+		\mapchar{\btinp{U} \inact}{s}\\
+		= && \binp{s}{x} \mapchar{\shot{(\shot{(\shot{(\btout{S} \tinact)})})}}{x}\\
+		= && \binp{s}{x} \appl{x}{\omapchar{\shot{(\shot{(\btout{S} \tinact)})}}}\\
+		= && \binp{s}{x} \appl{x}{(\abs{y}{\mapchar{\shot{(\btout{S} \tinact)}}{y}})}\\
+		= && \binp{s}{x} \appl{x}{(\abs{y}{\appl{y}{\omapchar{\btout{S} \tinact}})}}\\
+		= && \binp{s}{x} \appl{x}{(\abs{y}{\appl{y}{n})}}\\
+	\end{eqnarray*}
+%
+\end{example}
+
+
 \smallskip  
 
 \begin{example}[The Need for Refined Typed LTS]
