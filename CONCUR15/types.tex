@@ -11,31 +11,36 @@ thus it is simpler.
 %\subsection{Types}
 %\label{subsec:types}
 \myparagraph{Types.}
-The syntax of types of \HOp is given below: 
+The syntax of types of \HOp is given below:
 \[
-\begin{array}{lrl}
-\text{(value)}	& U \bnfis &	\nonhosyntax{C} \bnfbar L\\[1mm]  % \bnfbar \Proc
-\text{(name)}   & C  \bnfis &	S \bnfbar \chtype{S}
-\bnfbar \chtype{L}
-	\\[1mm]
-\text{(abstr)} & L \bnfis &	\shot{C} \bnfbar \lhot{C}
-	\\[1mm]
-\text{(session)} &  S \bnfis & 	\btout{U} S \bnfbar \btinp{U} S 
-\bnfbar \btsel{l_i:S_i}_{i \in I} \\ 
- & \bnfbar & \btbra{l_i:S_i}_{i \in I}
-	  \bnfbar  \trec{t}{S} \bnfbar \vart{t}  \bnfbar \tinact
-\end{array}
-\]
-\dk{Value type $U$ includes
+	\begin{array}{cc}
+		\begin{array}{lcl}
+			\text{(value)} & U \bnfis & C \bnfbar L
+			\\[1mm]
+			\text{(name)} & C \bnfis & S \bnfbar \chtype{S} \bnfbar \chtype{L}
+			\\[1mm]
+			\text{(abstr)} & L \bnfis & \shot{U} \bnfbar \lhot{U}
+		\end{array}
+		&
+		\begin{array}{lcl}
+			\text{(session)} & S \bnfis &  \btout{U} S \bnfbar \btinp{U} S \bnfbar \tinact
+			\\[1mm]
+			&\bnfbar& \btsel{l_i:S_i}_{i \in I} \bnfbar \trec{t}{S} \bnfbar \vart{t}
+			\\[1mm]
+			&\bnfbar& \btbra{l_i:S_i}_{i \in I}
+		\end{array}
+	\end{array}
+	\]
+Value type $U$ includes
 the first-order types $C$ and the higher-order
 types $L$. Session types are denoted with $S$ and
 shared types with $\chtype{S}$ and $\chtype{L}$.
 %Note that we dissallow type $\chtype{U}$, thus
 %in the type discipline shared names cannot carry shared names.
-}
+
 %In name types, $\chtype{U}$ is shared name types 
 %which are sent via shared names. 
-Types $\shot{C}$ and $\lhot{C}$ denote
+Types $\shot{U}$ and $\lhot{U}$ denote
 {\em shared} and {\em linear} higher-order 
 %\jpc{functional}
 types, respectively.
@@ -45,7 +50,7 @@ types, respectively.
 %session names used once. 
  
 We write $S$ to denote %binary 
-session types.  {\em Output type}
+session types. {\em Output type}
 $\btout{U} S$ %is assigned to a name that 
 first sends a value of
 type $U$ and then follows the type described by $S$.  Dually,
@@ -59,11 +64,11 @@ i.e.,  $\trec{t}{\vart{t}}$ is not allowed.
 %to encode $\HOp$ into $\HO$.
 Type $\tinact$ is the termination type. 
 
-Types of \HO exclude $\nonhosyntax{C}$ from 
-value types of \HOp; the types of \sessp exclude $L$. 
-From each $\CAL \in \{\HOp, \HO, \pi \}$, $\CAL^{-\mathsf{sh}}$ 
-excludes shared name types ($\chtype{S}$ and $\chtype{L}$), 
-from name type $C$.
+%Types of \HO exclude $\nonhosyntax{C}$ from 
+%value types of \HOp; the types of \sessp exclude $L$. 
+%From each $\CAL \in \{\HOp, \HO, \pi \}$, $\CAL^{-\mathsf{sh}}$ 
+%excludes shared name types ($\chtype{S}$ and $\chtype{L}$), 
+%from name type $C$.
 
 Following \cite{TGC14},
 we write $S_1 \dualof S_2$ if 
@@ -83,7 +88,7 @@ incorporating the fixed point construction
 and processes $P$:
 \begin{center}
 \begin{tabular}{c}
-	$\Gamma; \Lambda; \Delta \proves V \hastype U \qquad \qquad \qquad \Gamma; \Lambda; \Delta \proves P \hastype \Proc$
+	$\Gamma; \Lambda; \Delta \proves V \hastype U \qquad \qquad \qquad \qquad \qquad \Gamma; \Lambda; \Delta \proves P \hastype \Proc$
 \end{tabular}
 \end{center}
 \noi The first judgement
@@ -92,9 +97,11 @@ has type $U$, whereas the second judgement states that under
 environments $\Gamma; \Lambda; \Delta$ process $P$ has the process type~$\Proc$. The environments are defined below:
 \[
 \begin{array}{l}
- \Lambda \bnfis  \emptyset \bnfbar \Lambda \cat \AT{x}{\lhot{C}}
-\quad\quad \Delta  \ \bnfis  \ \emptyset \bnfbar \Delta \cat \AT{u}{S} \\
- \Gamma  \bnfis  \emptyset \bnfbar \Gamma \cat \varp{x}: \shot{C} \bnfbar \Gamma \cat u: \chtype{S} \bnfbar \Gamma \cat u: \chtype{L} 
+	\Lambda \bnfis \emptyset \bnfbar \Lambda \cat \AT{x}{\lhot{U}}
+	\qquad\qquad
+	\Delta  \bnfis  \emptyset \bnfbar \Delta \cat \AT{u}{S}
+	\\
+	\Gamma  \bnfis  \emptyset \bnfbar \Gamma \cat \varp{x}: \shot{U} \bnfbar \Gamma \cat u: \chtype{S} \bnfbar \Gamma \cat u: \chtype{L} 
         \bnfbar \Gamma \cat \rvar{X}: \Delta
 \end{array}
 \]
@@ -168,8 +175,8 @@ We define the relation $\red$ on session environments as:\\[-2mm]
 \smallskip
 
 %The following result %Theorem 7.3 in M\&Y
-\noi We state the type soundness results of \HOp; it implies 
-the type soundness of the sub-calculi \HO, \sessp, and $\CAL^{-\mathsf{sh}}$. 
+\noi We state the type soundness results of \HOp: %; it implies 
+%the type soundness of the sub-calculi \HO, \sessp, and $\CAL^{-\mathsf{sh}}$. 
 
 \smallskip
 

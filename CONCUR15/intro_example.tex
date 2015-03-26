@@ -1,0 +1,57 @@
+\newcommand{\rtype}{\mathsf{roomtype}}
+\newcommand{\price}{\mathsf{price}}
+\newcommand{\accept}{\mathsf{accept}}
+\newcommand{\reject}{\mathsf{reject}}
+\newcommand{\creditc}{\mathsf{credit}}
+
+\newcommand{\Client}{\mathsf{Client}}
+
+\[
+	\begin{array}{rcl}
+		P &\defeq& \bout{x}{\rtype} \binp{x}{\price} \bout{y}{\price}
+		y \triangleleft \left\{
+				\begin{array}{l}
+					\accept: \bsel{x}{\accept} \bout{x}{\creditc} \inact,\\
+					\reject: \bsel{x}{\reject} \inact
+				\end{array}
+				\right\}
+		\\
+		\Client_1 &\defeq& \newsp{h_1, h_2}{\bout{s_1}{\abs{x}{P \subst{h_1}{y}}} \bout{s_2}{\abs{x}{P \subst{h_1}{y}}} \inact \Par\\
+			&&
+			\begin{array}{lll}
+				\binp{\dual{h_1}}{x} \binp{\dual{h_2}}{y} & \If\ x \leq y\ \Then & \bsel{\dual{h_1}}{\accept} \bsel{\dual{h_2}}{\reject} \inact\\
+				& \Else& \bsel{\dual{h_1}}{\reject} \bsel{\dual{h_2}}{\accept} \inact
+			\end{array}
+		}
+		\\
+		\\
+		P_1 &\defeq&	\bout{x}{\rtype} \binp{x}{\price_1} \bout{y}{\price_1} \binp{y}{\price_2}\\
+			&&
+				\begin{array}{ll}
+					\If\ \price_1 \leq \price_2\ \Then & \bsel{x}{\accept} \bout{x}{\creditc} \inact\\
+					\Else & \bsel{x}{\reject} \inact
+				\end{array}
+		\\
+		P_1 &\defeq&	\bout{x}{\rtype} \binp{x}{\price_1} \binp{y}{\price_2} \bout{y}{\price_1}\\
+			&&
+				\begin{array}{ll}
+					\If\ \price_1 \leq \price_2\ \Then & \bsel{x}{\accept} \bout{x}{\creditc} \inact\\
+					\Else & \bsel{x}{\reject} \inact
+				\end{array}
+		\\
+		\Client_2 &\defeq& \newsp{h}{\bout{s_1}{\abs{x}{P \subst{h}{y}}} \bout{s_2}{\abs{x}{P \subst{\dual{h}}{y}}} \inact}
+	\end{array}
+\]
+
+\begin{itemize}
+	\item	Process $P$ is the remote code responsible for negotiation with a hotel.
+	\item	Process $P$ sends the room type to the hotel and then receives a quote.
+		It then sends the price through an external channel and expects a choice
+		whether to accept or reject the offer.
+
+	\item	$\Client_1$ creates two new channels $h_1, h_2$ and sends to two
+		different hotels two instances of the code in $P$ where the external
+		channels are substituted with the new channels $h_1$ and $h_2$ respectively.
+		The dual endpoints of $h_1$ and $h_2$ get the prices from the two
+		remote codes and then the logic decides which quote to accept and which to reject.
+\end{itemize}

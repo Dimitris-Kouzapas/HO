@@ -32,12 +32,20 @@
 
 %\subsection{Higher-Order Session Calculi}
 \noindent
+%\myparagraph{Context.}
 By combining features from the $\lambda$-calculus and the $\pi$-calculus, 
 in \emph{higher-order process calculi} exchanged values may contain  processes. 
-In this paper, we consider higher-order calculi with \emph{session primitives},
-thus enabling the specification of reciprocal exchanges (protocols) 
-for higher-order mobile processes, 
-which can be verified via type-checking using \emph{session types}~\cite{honda.vasconcelos.kubo:language-primitives}.
+In this paper we consider \HOp, a higher-order calculus with \emph{session primitives}:
+in addition to 
+functional
+abstractions and applications, \HOp 
+contains constructs for 
+synchronisation on shared names, 
+  session communication on linear names (value passing, 
+labelled choice), and recursion.
+Thus, \HOp processes may specify reciprocal exchanges (protocols) 
+for higher-order mobile processes that
+ can be verified via type-checking using \emph{session types}~\cite{honda.vasconcelos.kubo:language-primitives}.
 %These calculi allow us to specify   
 %session protocols in which higher-order values 
 %(mobile code) can be exchanged in a type-safe manner. 
@@ -48,11 +56,12 @@ which can be verified via type-checking using \emph{session types}~\cite{honda.v
 %%directed %point-to-point 
 %communications.
 The study of higher-order concurrency has received significant attention, 
-from untyped and typed perspectives (see, e.g.,~\cite{ThomsenB:plachoasgcfhop,SangiorgiD:expmpa,San96int,JeffreyR05,MostrousY15,DBLP:journals/iandc/LanesePSS11,DBLP:conf/icalp/LanesePSS10,DBLP:conf/esop/KoutavasH11,XuActa2012}).
+from untyped and typed perspectives (see, e.g.,~\cite{ThomsenB:plachoasgcfhop,SangiorgiD:expmpa,JeffreyR05,DBLP:journals/iandc/LanesePSS11,DBLP:conf/esop/KoutavasH11,MostrousY15}).
 %in particular via  comparisons with the first-order mobility of the $\pi$-calculus~\cite{MilnerR:calmp1}. 
 Although models of session-typed 
 communication with features of higher-order concurrency exist~\cite{tlca07,DBLP:journals/jfp/GayV10},
-their  \emph{tractable behavioural equivalences} and \emph{relative expressiveness}
+their  \emph{tractable behavioural equivalences} 
+%and \emph{relative expressiveness}
 remain little understood. 
 %for higher-order session calculi. 
 %these two issues 
@@ -64,83 +73,99 @@ remain little understood.
 %session types are expressive enough to describe complex 
 %communication structures found in practical protocols,  expressible, e.g., via recursive session types.
 %Clarifying the status of typed equivalences and relative expressiveness for session languages
-Clarifying their status is not only useful for, 
-e.g.,~justifying non-trivial mobile protocol
-optimisations, but also for transferring key reasoning techniques
-between (higher-order) session calculi. Our discovery 
-is that \emph{linearity} of session types plays a vital role to 
-offer new equalities and fully abstract encodability, 
-which to our best knowledge have not been proposed before.   
+Clarifying their status is essential to, e.g., 
+justify non-trivial protocol optimisations involving both name- and process-passing mobility.
+%but also for transferring key reasoning techniques between (higher-order) session calculi. 
+Our discovery is that \emph{linearity} of session types plays a vital role to 
+offer equalities and characterisations
+% and fully abstract encodability, 
+which to our knowledge have not been proposed before.   
 
-The main higher-order language in our work, denoted \HOp,
-extends the higher-order $\pi$-calculus~\cite{SangiorgiD:expmpa} with session primitives:
-it contains constructs for 
-%session establishment
-synchronisation on shared names, 
-recursion, 
-name abstractions (i.e., functions from name identifiers  to processes, 
-\jpc{denoted}
-$\lambda x.P$) and applications 
-\jpc{(denoted $(\lambda x.P)a$)};
-and session communication (value passing and
-labelled choice using linear names). 
-We study two significant subcalculi of \HOp, 
-\jpc{which}
-distil higher- and first-order mobility:
-the \HO-calculus, which is \HOp without recursion and name passing, and 
-the session \sessp-calculus \jpc{(here denoted~\sessp)}, which is \HOp without abstractions and applications.  
-While \sessp is, 
-in essence, the calculus in~\cite{honda.vasconcelos.kubo:language-primitives}, 
-this paper shows that \HO  is a new core calculus 
-for higher-order session concurrency.
+%In this paper we study
+%%address  behavioural equivalences for 
+%\HOp, 
+%%study behavioral equalities for \HOp, 
+%an extension of the higher-order $\pi$-calculus~\cite{SangiorgiD:expmpa} with session primitives:
+%\HOp contains constructs for 
+%%session establishment
+%synchronisation on shared names, 
+%recursion, 
+% (linear) session communication (value passing and
+%labelled choice),
+%abstractions and applications. 
+%Abstractions are functions from values to processes, 
+%\jpc{denoted}
+%$\lambda x.P$; applications are 
+%denoted $(\lambda x.P)V$, where the value $V$ is either a name or an abstraction.
+%We study two significant subcalculi of \HOp, 
+%\jpc{which}
+%distil higher- and first-order mobility:
+%the \HO-calculus, which is \HOp without recursion and name passing, and 
+%the session \sessp-calculus \jpc{(here denoted~\sessp)}, which is \HOp without abstractions and applications.  
+%While \sessp is, 
+%in essence, the calculus in~\cite{honda.vasconcelos.kubo:language-primitives}, 
+%this paper shows that \HO  is a new core calculus 
+%for higher-order session concurrency.
 
-In this paper, we address tractable behavioural equivalences
-for \HOp.
-A well-studied behavioural equivalence in the higher-order setting 
-is \emph{context bisimilarity}~\cite{San96H},
-a labelled characterisation of reduction-closed, barbed congruence, 
-which offers an appropriate discriminative power at the price of heavy universal quantifications in output clauses.
-Obtaining alternative characterisations 
+A well-studied behavioural equality in the higher-order setting 
+is \emph{context bisimilarity}~\cite{San96H}. This is 
+a labelled characterisation of reduction-closed, barbed congruence 
+that offers an adequate distinguishing power at the price of heavy universal quantifications in output clauses.
+Obtaining alternative characterisations of context bisimilarity
 is thus a recurring issue 
-in the study of higher-order calculi. 
+in the study of higher-order calculi---see, e.g.,~\cite{SangiorgiD:expmpa,San96H,JeffreyR05,DBLP:journals/cl/KoutavasH12}. 
 Our approach 
-shows that protocol specifications given by session types are 
-essential to  limit 
+to this long-standing problem is to 
+rely on protocol specifications---as given by session types---to limit 
 the behaviour of higher-order session processes. 
-Exploiting elementary processes inhabiting session types, 
-this limitation is formally enforced by 
-a refined (typed) labelled transition system (LTS)
-that narrows down the spectrum of allowed process behaviours, 
-thus enabling tractable reasoning techniques. 
-Two tractable characterisations of bisimilarity 
-are then introduced. 
+This limitation is formally enforced by 
+a refined labelled transition system (LTS)
+which effectively 
+narrows down the spectrum of allowed process behaviours, 
+exploiting elementary processes inhabiting session types.
+%thus enabling tractable reasoning techniques. 
+We propose \emph{characteristic bisimilarity}: this is 
+a new notion of typed bisimilarity that is 
+\emph{tractable}, in that 
+it relies on the refined LTS for input actions and, more importantly, 
+does not appeal to universal quantifications on output actions. 
 %shown to coincide with context bisimilarity.
-Remarkably, using session types we prove that these %tractable
-bisimilarities coincide with context bisimilarity, without using
+Our main result is that characteristic  %tractable
+bisimilarity coincides with context bisimilarity:
+in addition to its intrinsic value as an useful reasoning technique, this result is remarkable 
+also from a technical perspective, in that associated 
+completeness proofs do not require 
 operators for 
-name-matching.
+name-matching in the process language, in contrast to known methods for untyped higher-order processes
+with recursion (cf.~\cite{JeffreyR05}).
 %Remarkably session type structures enable to provide 
 %a coincidence without name-matching operators in the calculi.
 
 
-\myparagraph{Outline / Contributions.} This paper 
-is structured as follows:
-\begin{enumerate}[$\bullet$]
-\item \secref{sec:overview} overviews key ideas of our tractable bisimulations.
-\item \secref{sec:calculus} presents the higher-order session calculus \HOp and its 
-subcalculi \HO and \sessp.  Then, \secref{sec:types} gives the session type system
-and states type soundness for \HOp and its variants.
-\item \secref{sec:behavioural} 
-develops \emph{higher-order} and \emph{characteristic} bisimilarities, our two
-tractable characterisations of contextual equivalence which 
-alleviate the issues of context bisimilarity~\cite{San96H}. These 
-relations are shown to coincide in \HOp (\thmref{the:coincidence}).
+%\myparagraph{Outline / Contributions.} 
 
-\item \secref{sec:relwork} concludes with related works. The appendix summarises the typing system. 
-\end{enumerate}
-\noi
-The paper is self-contained. 
-{\bf\em Additional related work, more examples, omitted definitions, and  proofs 
+This paper 
+is structured as follows.
+%\begin{enumerate}[$\bullet$]
+%\item 
+Next, \secref{sec:overview} overviews key ideas of characteristic bisimilarity, 
+our 
+tractable characterisation of contextual equivalence.
+%\item 
+Then, \secref{sec:calculus} presents the higher-order session calculus \HOp. 
+\secref{sec:types} gives the session type system
+and states type soundness for \HOp and its variants.
+%\item 
+\secref{sec:behavioural} 
+develops %\emph{higher-order} and 
+\emph{characteristic} bisimilarity,  which 
+alleviates the issues of context bisimilarity~\cite{San96H} and is shown  
+to coincide for well-typed \HOp processes (\thmref{the:coincidence}).
+\secref{sec:relwork} concludes with related works. The appendix summarises the typing system. 
+%\end{enumerate}
+%\noi
+%The paper is self-contained. 
+\textbf{Omitted definitions and proofs and additional related work/examples  
 %can be found
 are 
 in~\cite{KouzapasPY15}.} 

@@ -3,16 +3,17 @@
 We introduce the 
 \emph{Higher-Order Session $\pi$-Calculus} (\HOp).
 \HOp includes both name- and abstraction-passing 
-as well as recursion; it is a subcalculus 
-of the language
+as well as recursion; it is 
+essentially 
+the process language
 studied 
 in~\cite{tlca07}. 
-Following the literature~\cite{JeffreyR05},
-for simplicity of the presentation
-we concentrate on the second-order call-by-value \HOp.  
-(In \secref{sec:extension} we consider extensions of 
-\HOp with higher-order abstractions 
-and polyadicity in name-passing/abstractions.)
+%Following the literature~\cite{JeffreyR05},
+%for simplicity of the presentation
+%we concentrate on the second-order call-by-value \HOp.  
+%(In \secref{sec:extension} we consider extensions of 
+%\HOp with higher-order abstractions 
+%and polyadicity in name-passing/abstractions.)
 %We also introduce two subcalculi of \HOp. In particular, we define the 
 %core higher-order session
 %calculus (\HO), which 
@@ -26,42 +27,34 @@ and polyadicity in name-passing/abstractions.)
 %expressive enough to capture key features of session communication, 
 %such as delegation and recursion.
 
-\subsection{Syntax of \HOp}
+\subsection{Syntax}
 \label{subsec:syntax}
-\noindent\myparagraph{Values} The syntax of \HOp is defined in \figref{fig:syntax}
+%%%%%%%%%%%%%%%%%%%%%% HOp Syntax Figure %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
 \begin{figure}[t]
-\[ 
-\begin{array}{lll}
-u,w  ::=  n \ | \ x,y,z
-& n ::= a,b  \ | \ s, \dual{s} 
-& V,W  ::=   \nonhosyntax{u} \ | \ \abs{x}{P}
-\end{array}
-\]
-\[
-\begin{array}{rclllll}
-P,Q \!\!\!\!\!\! & ::= & \!\! \bout{u}{V}{P}  \bnfbar  \binp{u}{x}{P} \bnfbar
- \bsel{u}{l} P \bnfbar \bbra{u}{l_i:P_i}_{i \in I}   \\[1mm]
- & \bnfbar & \!\!  \nonhosyntax{\rvar{X} \bnfbar \recp{X}{P}} \bnfbar \appl{V}{u} \bnfbar P\Par Q \bnfbar \news{n} P 
-\bnfbar 
-%ny
-%\appl{x}{u}
-
- \inact
-%\\[1mm]
- %    & \bnfbar & \nonhosyntax{\rvar{X} \bnfbar \recp{X}{P}}
-\end{array}
-\]
- \caption{Syntax of \HOp (\HO lacks the constructs in \nonhosyntax{\text{grey}}).}
-\label{fig:syntax}
-\Hlinefig
+	\[
+		\begin{array}{rcl}
+			u,w &\bnfis& n \bnfbar x,y,z \qquad
+			n \bnfis a,b  \bnfbar s, \dual{s} \qquad 
+			V,W  \bnfis u \bnfbar \abs{x}{P} \\[1mm]
+			P,Q & \bnfis & \bout{u}{V}{P}  \bnfbar  \binp{u}{x}{P} \bnfbar
+			\bsel{u}{l} P \bnfbar \bbra{u}{l_i:P_i}_{i \in I}   \\[1mm]
+			& \bnfbar & \rvar{X} \bnfbar \recp{X}{P} \bnfbar \appl{V}{W} \bnfbar P\Par Q \bnfbar \news{n} P \bnfbar \inact
+		\end{array}
+	\]
+	\caption{Syntax of \HOp.}
+	\label{fig:syntax}
+%\Hlinefig
 \end{figure}
+%%%%%%%%%%%%%%%%%%%%%% End HOp Syntax Figure %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\noindent\myparagraph{Values} The syntax of \HOp is defined in \figref{fig:syntax}.
 We use $a,b,c, \dots$ (resp.~$s, \dual{s}, \dots$) 
 to range over shared (resp. session) names. 
 We use $m, n, t, \dots$ for session or shared names. 
 We define the dual operation over names $n$ as $\dual{n}$ with
 $\dual{\dual{s}} = s$ and $\dual{a} = a$.
 Intuitively, names $s$ and $\dual{s}$ are dual (two) \emph{endpoints} while 
-shared names represent shared (non-deterministic) points. 
+shared names represent non-deterministic points. 
 Variables are denoted with $x, y, z, \dots$, 
 and recursive variables are denoted with $\varp{X}, \varp{Y} \dots$.
 An abstraction %(or higher-order value) 
@@ -73,8 +66,7 @@ and
 abstractions $\abs{x}{P}$ (first- and higher-order values, resp.). 
 
 \myparagraph{Terms} 
-include the
-$\pi$-calculus prefixes for sending and receiving values $V$.
+include $\pi$-calculus constructs for sending/receiving values $V$.
 Process $\bout{u}{V} P$ denotes the output of value $V$
 over name $u$, with continuation $P$;
 process $\binp{u}{x} P$ denotes the input prefix on name $u$ of a value
@@ -85,14 +77,16 @@ which binds the recursive variable $\varp{X}$ in process $P$.
 Process 
 %ny
 %$\appl{x}{u}$ 
-$\appl{V}{u}$ 
+$\appl{V}{W}$ 
 is the application
-which substitutes name $u$ on the abstraction~$V$. 
+which substitutes values $W$ on the abstraction~$V$. 
 \dk{Typing  ensures \jpc{that} $V$ is not a name.}
-Prefix $\bsel{u}{l} P$ selects label $l$ on name $u$ and then behaves as $P$.
+Processes $\bbra{u}{l_i: P_i}_{i \in I}$  and $\bsel{u}{l} P$ define labeled choice:
+given a finite index set $I$, process $\bbra{u}{l_i: P_i}_{i \in I}$ offers a choice 
+among processes with pairwise distinct labels;
+%on labels $l_i$ with continuation $P_i$, given that $i \in I$.
+ process $\bsel{u}{l} P$ selects label $l$ on name $u$ and then behaves as $P$.
 %Given $i \in I$ 
-Process $\bbra{u}{l_i: P_i}_{i \in I}$ offers a choice on labels $l_i$ with
-continuation $P_i$, given that $i \in I$.
 %Others are standard c
 Constructs for 
 inaction $\inact$,  parallel composition $P_1 \Par P_2$, and 
@@ -109,49 +103,52 @@ If $\fv{P} = \emptyset$, we call $P$ {\em closed}.
 %; and closed $P$ without 
 %free session names a {\em program}. 
 
-\subsection{Subcalculi of \HOp}
-\label{subsec:subcalculi}
-\noi
-We define two subcalculi of \HOp. 
-%We now define several sub-calculi of \HOp. 
-The first is the 
-{\em core higher-order session calculus} (denoted \HO),
-which lacks recursion and name passing; its 
-formal syntax is obtained from \figref{fig:syntax} by excluding 
-constructs in \nonhosyntax{\text{grey}}.
-The second subcalculus is 
-the {\em session $\pi$-calculus} 
-(denoted $\sessp$), which 
-lacks  the
-higher-order constructs
-(i.e., abstraction passing and application), but includes recursion.
-Let $\CAL \in \{\HOp, \HO, \sessp\}$. We write 
-$\CAL^{-\mathsf{sh}}$ for $\CAL$ without shared names
-(we delete $a,b$ from $n$). 
-We shall demonstrate that 
-$\HOp$, $\HO$, and $\sessp$ have the same expressivity.
+%\subsection{Subcalculi of \HOp}
+%\label{subsec:subcalculi}
+%\noi
+%We define two subcalculi of \HOp. 
+%%We now define several sub-calculi of \HOp. 
+%The first is the 
+%{\em core higher-order session calculus} (denoted \HO),
+%which lacks recursion and name passing; its 
+%formal syntax is obtained from \figref{fig:syntax} by excluding 
+%constructs in \nonhosyntax{\text{grey}}.
+%The second subcalculus is 
+%the {\em session $\pi$-calculus} 
+%(denoted $\sessp$), which 
+%lacks  the
+%higher-order constructs
+%(i.e., abstraction passing and application), but includes recursion.
+%Let $\CAL \in \{\HOp, \HO, \sessp\}$. We write 
+%$\CAL^{-\mathsf{sh}}$ for $\CAL$ without shared names
+%(we delete $a,b$ from $n$). 
+%We shall demonstrate that 
+%$\HOp$, $\HO$, and $\sessp$ have the same expressivity.
 
 \subsection{Operational Semantics}
-\label{subsec:semantics}
-\begin{figure}
-\[
-\begin{array}{rclrcrclr}
-(\abs{x}{P}) \, u  & \red & P \subst{u}{x} 
-& \orule{App}
-		\\[1mm]
-%\bout{a}{V} P \Par \binp{a}{x} Q & \red & P \Par Q \subst{V}{x} 
-%& \orule{Com}
-%		\\[1mm]
-\bout{n}{V} P \Par \binp{\dual{n}}{x} Q & \red & P \Par Q \subst{V}{x} 
-& \orule{Pass}
-		\\[1mm]
-		\bsel{n}{l_j} Q \Par \bbra{\dual{n}}{l_i : P_i}_{i \in I} & \red & Q \Par P_j ~~(j \in I)~~  & \orule{Sel}\\[1mm]
-		P \red P' & \Rightarrow & \news{n} P  \red  \news{n} P'  & \orule{Res}\\[1mm]
-			P \red P' & \Rightarrow  &  P \Par Q  \red   P' \Par Q  & \orule{Par}\\[1mm]
+	\label{subsec:semantics}
+	\begin{figure}
+	\[
+		\begin{array}{rclrcrclr}
+			(\abs{x}{P}) \, V  & \red & P \subst{V}{x}
+			& \orule{App}
+			\\[1mm]
+
+			\bout{n}{V} P \Par \binp{\dual{n}}{x} Q & \red & P \Par Q \subst{V}{x} 
+			& \orule{Pass}
+			\\[1mm]
+
+			\bsel{n}{l_j} Q \Par \bbra{\dual{n}}{l_i : P_i}_{i \in I} & \red & Q \Par P_j ~~(j \in I)~~ 
+			& \orule{Sel}
+			\\[1mm]
+
+			P \red P' & \Rightarrow & \news{n} P  \red  \news{n} P'  & \orule{Res}
+			\\[1mm]
+			P \red P' & \Rightarrow  &  P \Par Q  \red   P' \Par Q  & \orule{Par}
+			\\[1mm]
 			P \scong Q \red Q' \scong P' & \Rightarrow & P  \red  P' & \orule{Cong}
 	\end{array}
-\]
-{\small
+	\]
 \[
 	\begin{array}{c}
 		P \Par \inact \scong P
@@ -159,29 +156,29 @@ $\HOp$, $\HO$, and $\sessp$ have the same expressivity.
 		P_1 \Par P_2 \scong P_2 \Par P_1
 		\quad
 		P_1 \Par (P_2 \Par P_3) \scong (P_1 \Par P_2) \Par P_3
-		%\quad
-		%P \scong Q \textrm{ if } P \scong_\alpha Q
-		\\[1mm]
-		\news{n} \inact \scong \inact
 		\quad 
-		P \Par \news{n} Q \scong \news{n}(P \Par Q)
-		\	(n \notin \fn{P})\quad 
 		\recp{X}{P} \scong P\subst{\recp{X}{P}}{\rvar{X}}
-		\quad
+		\\[1mm]
+
+		\news{n} \inact \scong \inact
+		\qquad 
+		P \Par \news{n} Q \scong \news{n}(P \Par Q)
+		\	(n \notin \fn{P})
+		\qquad
 		P \scong Q \textrm{ if } P \scong_\alpha Q
+
 %		\qquad
 %		\dk{V \scong W \textrm{ if } V \scong_\alpha W
-%\quad \abs{x}{P} \scong \abs{x}{Q} \textrm{ if } P \scong Q}
+%		\quad \abs{x}{P} \scong \abs{x}{Q} \textrm{ if } P \scong Q}
 	\end{array}
 \]
-}
 \caption{Operational Semantics of $\HOp$. 
 \label{fig:reduction}}
 \Hlinefig
 \end{figure}
 \noindent \figref{fig:reduction} defines the operational semantics 
 of \HOp.
-$\orule{App}$ is a name application; 
+$\orule{App}$ is a value application; 
 $\orule{Pass}$ defines a shared interaction at $n$ 
 (\jpc{with} $\dual{n}=n$) or a session interaction;  
 $\orule{Sel}$ is the standard rule for labelled choice/selection:

@@ -1,11 +1,15 @@
 % !TEX root = main.tex
 \noi We develop a theory for observational equivalences over
 session typed \HOp processes. The theory follows the principles
-laid by the previous work of the authors
-\cite{KYHH2015,KY2015}.
-We introduce three different bisimulations and prove
+laid in our previous works~\cite{KYHH2015,KY2015}.
+We introduce 
+%three different bisimulations 
+characteristic bisimulation
+and prove
 \jpc{that}
-all of them coincide with typed, reduction-closed,
+%all of them coincide 
+it coincides
+with reduction-closed,
 barbed congruence (\thmref{the:coincidence}).
 
 
@@ -22,30 +26,31 @@ The interaction is defined on action $\ell$:
 \begin{tabular}{l}
 	$\ell	\bnfis   \tau 
 		\bnfbar	\bactinp{n}{V} 
-		\bnfbar	\news{\tilde{m}} \bactout{n}{V}
+		\bnfbar	\news{\widetilde{m}} \bactout{n}{V}
 		\bnfbar	\bactsel{n}{l} 
 		\bnfbar	\bactbra{n}{l} $
 \end{tabular}
 \end{center}
-\noi The internal action is defined by label $\tau$.
-Action $\news{\tilde{m}} \bactout{n}{V}$ denotes the sending of value $V$
+\noi 
+Label $\tau$ defines internal actions.
+Action $\news{\widetilde{m}} \bactout{n}{V}$ denotes the sending of value $V$
 over channel $n$ with
-a possible empty set of names $\tilde{m}$ being restricted 
-(we may write $\bactout{n}{V}$ when $\tilde{m}$ is empty).
+a possible empty set of names $\widetilde{m}$ being restricted 
+(we may write $\bactout{n}{V}$ when $\widetilde{m}$ is empty).
 %and 
-%$\news{\tilde{m}} \bactout{n}{\AT{V}{U}}$
+%$\news{\widetilde{m}} \bactout{n}{\AT{V}{U}}$
 %when the type of $V$ is~$U$.
 Dually, the action for value reception is 
 $\bactinp{n}{V}$.
-We also have actions for select
+Actions for select
 and branch on
-a label~$l$; these are denoted $\bactsel{n}{l}$ and $\bactbra{n}{l}$, resp.
+a label~$l$ are denoted $\bactsel{n}{l}$ and $\bactbra{n}{l}$, resp.
 We write $\fn{\ell}$ and $\bn{\ell}$ to denote the
  sets of free/bound names in $\ell$, resp.
 %and set $\mathsf{n}(\ell)=\bn{\ell}\cup \fn{\ell}$. 
-Given a label $\ell \neq \tau$, we write 
+Given $\ell \neq \tau$, we write 
 $\subj{\ell}$
-to denote the \emph{subject} of the action.
+to denote the \emph{subject} of $\ell$.
 
 
 \emph{Dual actions} %, defined below, 
@@ -56,97 +61,83 @@ Formally, duality
 \jpc{on actions}
 is the symmetric relation $\asymp$ that satisfies:
 \jpc{(i)~$\bactsel{n}{l} \asymp \bactbra{\dual{n}}{l}$ 
-and (ii)~$\news{\tilde{m}} \bactout{n}{V} \asymp \bactinp{\dual{n}}{V}$}.
+and (ii)~$\news{\widetilde{m}} \bactout{n}{V} \asymp \bactinp{\dual{n}}{V}$}.
 %
 %\begin{tabular}{c}
 %	$\bactsel{n}{l} \asymp \bactbra{\dual{n}}{l}
 %	\qquad \qquad \qquad
-%	\news{\tilde{m}} \bactout{n}{V} \asymp \bactinp{\dual{n}}{V}$s
+%	\news{\widetilde{m}} \bactout{n}{V} \asymp \bactinp{\dual{n}}{V}$s
 %
 %\end{tabular}
 \smallskip
 
+
+
+%%%%%%%%%%%%%%%%%%%% LTS Figure %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{figure}[t]
 \[
-\ltsrule{App} \quad 
-(\abs{x}{P}) \, u   \by{\tau}  P \subst{u}{x} 
-\]
-	\[
-	\begin{array}{ll}
-\ltsrule{Snd}\	\bout{n}{V} P \by{\bactout{n}{V}} P 
-&
-\ltsrule{Rv}\	\binp{n}{x} P \by{\bactinp{n}{V}} P\subst{V}{x} 
-\\[3mm]
- \ltsrule{Sel}\ \bsel{s}{l}{P} \by{\bactsel{s}{l}} P
-&
-\hspace{-1cm}
-\ltsrule{Bra}\ \bbra{s}{l_i:P_i}_{i \in I} \by{\bactbra{s}{l_j}} P_j
-\quad (j\in I)
-\\[3mm]
-\ltsrule{Alpha}
+	\begin{array}{c}
+		\ltsrule{App} \ 
+		(\abs{x}{P}) \, V   \by{\tau} P \subst{V}{x}
+		\qquad
+		\ltsrule{Snd}\	\bout{n}{V} P \by{\bactout{n}{V}} P 
+		\qquad
+		\ltsrule{Rv}\	\binp{n}{x} P \by{\bactinp{n}{V}} P\subst{V}{x} 
+		\\[3mm]
+		\ltsrule{Sel}\ \bsel{s}{l}{P} \by{\bactsel{s}{l}} P
+		\qquad \quad
+		\ltsrule{Bra}\ \bbra{s}{l_i:P_i}_{i \in I} \by{\bactbra{s}{l_j}} P_j \ (j\in I)
+		\\[3mm]
+
+		\ltsrule{Alpha}
 		\tree{
 			P \scong_\alpha Q \quad Q\by{\ell} P'
 		}{
 			P \by{\ell} P'
 		}
-&
- \ltsrule{Res}	\tree{
+		\qquad \quad
+		\ltsrule{Res}
+		\tree{
 			P \by{\ell} P' \quad n \notin \fn{\ell}
 		}{
 			\news{n} P \by{\ell} \news{n} P' 
 		}
-\\[5mm]	
-\ltsrule{New}	\tree{
-		P \by{\news{\tilde{m}} \bactout{n}{V}} P' \quad 
-               m \in \fn{V}
+		\\[5mm]
+
+		\ltsrule{New}
+		\tree{
+			P \by{\news{\widetilde{m}} \bactout{n}{V}} P' \quad m \in \fn{V}
 		}{
-			\news{m} P \by{\news{m\cat\tilde{m}'} 
-\bactout{n}{V}} P'
-		}	
-&
-\ltsrule{Rec}	\tree{
-	 P\subst{\recp{X}{P}}{\rvar{X}}
-		 \by{\ell} P' 
-		}{
-			\recp{X}{P}  \by{\ell} P'
-		}	
-\end{array}
-\]
-\[
-\begin{array}{ll}
-%\ltsrule{New}&	\tree{
-%		P \by{\news{\tilde{m}} \bactout{n}{V}} P' \quad 
-%               m \in \fn{V}
-%		}{
-%			\news{m} P \by{\news{m\cat\tilde{m}'} 
-%\bactout{n}{V}} P'
-%		}
-%		\\[6mm]
-\ltsrule{Tau}	& \tree{
-			P \by{\ell_1} P' \qquad Q \by{\ell_2} Q' \qquad \ell_1 \asymp \ell_2
-		}{
-			P \Par Q \by{\tau} \newsp{\bn{\ell_1} \cup \bn{\ell_2}}{P' \Par Q'}
-		} 
-		\\[4mm]
- \ltsrule{Par${}_L$}	& \tree{
+			\news{m} P \by{\news{m\cat\widetilde{m}'} \bactout{n}{V}} P'
+		}
+		\qquad \quad
+		\ltsrule{Par${}_L$}
+		\tree{
 
 			P \by{\ell} P' \quad \bn{\ell} \cap \fn{Q} = \es
 		}{
 			P \Par Q \by{\ell} P' \Par Q
 		}
+		\\[5mm]
 
-%\\[3mm]
-%		\tree{
-%			Q \by{\ell} Q' \quad \bn{\ell} \cap \fn{P} = \es
-%		}{
-%			P \Par Q \by{\ell} P \Par Q'
-%		}\ \ltsrule{RPar}
+		\ltsrule{Tau}
+		\tree{
+			P \by{\ell_1} P' \qquad Q \by{\ell_2} Q' \qquad \ell_1 \asymp \ell_2
+		}{
+			P \Par Q \by{\tau} \newsp{\bn{\ell_1} \cup \bn{\ell_2}}{P' \Par Q'}
+		} 
+		\qquad \quad
+		\ltsrule{Rec}
+		\tree{
+			P\subst{\recp{X}{P}}{\rvar{X}} \by{\ell} P' 
+		}{
+			\recp{X}{P}  \by{\ell} P'
+		}
 	\end{array}
-	\]
-%We omit $\ltsrule{Par${}_R$}$. 
+\]
 	\caption{The Untyped LTS. We omit rule $\ltsrule{Par${}_R$}$.  \label{fig:untyped_LTS}}
-\Hlinefig
 \end{figure}
+%%%%%%%%%%%%%%%%%%%% End LTS Figure %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \myparagraph{LTS over Untyped Processes.}
 The labelled transition system (LTS) over untyped processes
 is given in
@@ -165,9 +156,9 @@ observable action.
 %If a restricted name occurs free,  
 If a restricted name occurs free in
 the carried value of an output action,
-the process performs scope opening (rule $\ltsrule{New}$).  
-Rule $\ltsrule{Rec}$ handles recursion unfolding.
-Rule $\ltsrule{Tau}$ 
+the process performs scope opening (rule~$\ltsrule{New}$).  
+Rule~$\ltsrule{Rec}$ handles recursion unfolding.
+Rule~$\ltsrule{Tau}$ 
 states that two parallel processes which perform
 dual actions can synchronise by an internal transition.
 %states that if two parallel processes can perform
@@ -187,7 +178,7 @@ defines a labelled transition relation between
 a triple of environments, 
 denoted
 $(\Gamma_1, \Lambda_1, \Delta_1) \by{\ell} (\Gamma_2, \Lambda_2, \Delta_2)$.
-It extends the transition systems
+It extends the LTSs
 in \cite{KYHH2015,KY2015} 
 to higher-order sessions. 
 
@@ -214,18 +205,18 @@ Rule~$\eltsrule{ShRv}$ is for shared names and follows similar principles.
 \myparagraph{Output Actions} are defined by rules~$\eltsrule{SSnd}$
 and $\eltsrule{ShSnd}$.  
 Rule $\eltsrule{SSnd}$ states the conditions for observing action
-$\news{\tilde{m}} \bactout{s}{V}$ on a type tuple 
+$\news{\widetilde{m}} \bactout{s}{V}$ on a type tuple 
 $(\Gamma, \Lambda, \Delta\cdot \AT{s}{S})$. 
 The session environment $\Delta$ with $\AT{s}{S}$ 
 should include the session environment of the sent value $V$, 
 {\em excluding} the session environments of names $m_j$ 
-in $\tilde{m}$ which restrict the scope of value $V$. 
+in $\widetilde{m}$ which restrict the scope of value $V$. 
 Similarly, the linear variable environment 
 $\Lambda'$ of $V$ should be included in $\Lambda$. 
-Scope extrusion of session names in $\tilde{m}$ requires
-that the dual endpoints of $\tilde{m}$ should appear in
+Scope extrusion of session names in $\widetilde{m}$ requires
+that the dual endpoints of $\widetilde{m}$ should appear in
 the resulting session environment. Similarly for shared 
-names in $\tilde{m}$ that are extruded.  
+names in $\widetilde{m}$ that are extruded.  
 All free values used for typing $V$ are subtracted from the
 resulting type tuple. The prefix of session $s$ is consumed
 by the action.
@@ -234,9 +225,9 @@ the name must be typed with $\chtype{U}$; conditions on $V$ are identical to tho
 % the requirements 
 on rule~$\eltsrule{SSnd}$.
 %\NY{Given a $V$ of type $U$, we sometimes annotate the output action 
-%$\news{\tilde{m}} \bactout{n}{V}$
+%$\news{\widetilde{m}} \bactout{n}{V}$
 %%with the type of $V$ 
-%as $\news{\tilde{m}} \bactout{n}{\AT{V}{U}}$.}
+%as $\news{\widetilde{m}} \bactout{n}{\AT{V}{U}}$.}
 
 \myparagraph{Other Actions}
 Rules $\eltsrule{Sel}$ and $\eltsrule{Bra}$ describe actions for
@@ -266,153 +257,122 @@ environments (\defref{def:ses_red}).
 %The conditions for input follow the conditions
 %for the $\by{\ell}$ definition.
 
-
+%%%%%%%%%%%%%%%%%%%% Environment LTS Figure %%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{figure}[t]
 \[
 \begin{array}{lc}
-	\eltsrule{SRv}&\tree{
-			\dual{s} \notin \dom{\Delta} \quad \Gamma; \Lambda'; \Delta' \proves V \hastype U
-		}{
-			(\Gamma; \Lambda; \Delta \cat s: \btinp{U} S) \by{\bactinp{s}{V}} (\Gamma; \Lambda\cat\Lambda'; \Delta\cat\Delta' \cat s: S)
-		}
-		\\[8mm]
-		\eltsrule{ShRv}&\tree{
-			\Gamma; \es; \es \proves a \hastype \chtype{U}
-			\quad
-			\Gamma; \Lambda'; \Delta' \proves V \hastype U
-		}{
-			(\Gamma; \Lambda; \Delta) \by{\bactinp{a}{{V}}} (\Gamma; \Lambda\cat\Lambda'; \Delta\cat\Delta')
-		}
-%		\eltsrule{RRcv}&\tree {
-%\begin{array}{c}
-%(\Gamma_1; \Lambda_1; \Delta_1) \by{\bactinp{n}{V}} (\Gamma_2; \Lambda_2; \Delta_2)
-%\\
-%			\begin{array}{lll}
-%				 V  =  
-%(\abs{{x}}{\binp{t}{y} (\appl{y}{{x}})}
-% \vee  \abs{{x}}{\map{U}^{{x}}}  \vee m)  \textrm{ with } t \textrm{ fresh} 
-%			\end{array}
-%			\end{array}
-%		}{
-%			(\Gamma_1; \Lambda_1; \Delta_1) \hby{\bactinp{n}{V}} (\Gamma_2; \Lambda_1; \Delta_2)
-%		}
-	\end{array}
-	\]
-	\[
-	\begin{array}{l}
-		\eltsrule{SSnd}\\
-\tree{
-			\begin{array}{lll}
-			\Gamma \cat \Gamma'; \Lambda'; \Delta' \proves V \hastype U
-&				
-				\Gamma'; \es; \Delta_j \proves m_j  \hastype U_j
-& 
-				\dual{s} \notin \dom{\Delta}
-\\
-						\Delta'\backslash \cup_j \Delta_j \subseteq (\Delta \cat s: S)
-& 
-	\Gamma'; \es; \Delta_j' \proves \dual{m}_j  \hastype U_j'
-& 
-				\Lambda' \subseteq \Lambda
-%				\dual{s} \notin \dom{\Delta}
-%				\qquad 
-%				\Gamma \cat \Gamma'; \Lambda'; \Delta_1 \cat \Delta_2 \proves V \hastype U
-%				\qquad
-%				\tilde{m} = m_1 \dots m_n
-%				\\
-%				\Gamma'; \es; \Delta_2 \proves m_1 \dots m_n \hastype U_1
-%				\qquad
-%				\Gamma'; \es; \Delta_3 \proves \dual{m}_1 \dots \dual{m}_n \hastype U_2
-%				\qquad
-%				\Lambda' \subseteq \Lambda
-%				\qquad
-%				\Delta_1 \subseteq (\Delta \cat s: S)
-			\end{array}
-		}{
-			(\Gamma; \Lambda; \Delta \cat s: \btout{U} S) \by{\news{\tilde{m}} \bactout{s}{V}} (\Gamma \cat \Gamma'; \Lambda\backslash\Lambda';
-			(\Delta \cat s: S \cat \cup_j \Delta_j') \backslash \Delta')
-		}
-\\[6mm]
-\eltsrule{ShSnd}\\
-\tree{
+	\eltsrule{SRv}&
+	\tree{
+		\dual{s} \notin \dom{\Delta}
+		\quad
+		\Gamma; \Lambda'; \Delta' \proves V \hastype U
+	}{
+		(\Gamma; \Lambda; \Delta \cat s: \btinp{U} S) \by{\bactinp{s}{V}} (\Gamma; \Lambda\cat\Lambda'; \Delta\cat\Delta' \cat s: S)
+	}
+	\\[7mm]
+	\eltsrule{ShRv}&
+	\tree{
+		\Gamma; \es; \es \proves a \hastype \chtype{U}
+		\quad
+		\Gamma; \Lambda'; \Delta' \proves V \hastype U
+	}{
+		(\Gamma; \Lambda; \Delta) \by{\bactinp{a}{{V}}} (\Gamma; \Lambda\cat\Lambda'; \Delta\cat\Delta')
+	}
+	\\[7mm]
+	\eltsrule{SSnd} &
+	\tree{
 		\begin{array}{lll}
-			\Gamma \cat \Gamma' ; \Lambda'; \Delta' \proves V \hastype U &  
-		\Gamma'; \es; \Delta_j \proves m_j \hastype U_j
-& \Gamma ; \es ; \es \proves a \hastype \chtype{U}
-				\\
-			\Delta'\backslash \cup_j \Delta_j 
-                         \subseteq \Delta
-& 
-		\Gamma'; \es; \Delta_j' \proves \dual{m}_j\hastype U_j'
-& 
-				\Lambda' \subseteq \Lambda
-			\end{array}
-%			\begin{array}{c}
-%				\Gamma \cat \Gamma' \cat a: \chtype{U}; \Lambda'; \Delta_1 \cat \Delta_2 \proves V \hastype U
-%				\qquad
-%				\tilde{m} = m_1 \dots m_n
-%				\\
-%				\Gamma'; \es; \Delta_2 \proves m_1 \dots m_n \hastype U_1
-%				\qquad
-%				\Gamma'; \es; \Delta_3 \proves \dual{m}_1 \dots \dual{m}_n \hastype U_2
-%				\qquad
-%				\Lambda' \subseteq \Lambda
-%				\qquad
-%				\Delta_1 \subseteq \Delta
-%			\end{array}
-		}{
-			(\Gamma ; \Lambda; \Delta) \by{\news{\tilde{m}} \bactout{a}{V}} (\Gamma \cat \Gamma' ; \Lambda\backslash\Lambda';
-			(\Delta \cat \cup_j \Delta_j') \backslash \Delta')
-		}
+			\Gamma \cat \Gamma'; \Lambda'; \Delta' \proves V \hastype U
+			&				
+			\Gamma'; \es; \Delta_j \proves m_j  \hastype U_j
+			& 
+			\dual{s} \notin \dom{\Delta}
+			\\
+			\Delta'\backslash \cup_j \Delta_j \subseteq (\Delta \cat s: S)
+			& 
+			\Gamma'; \es; \Delta_j' \proves \dual{m}_j  \hastype U_j'
+			& 
+			\Lambda' \subseteq \Lambda
+		\end{array}
+	}{
+		(\Gamma; \Lambda; \Delta \cat s: \btout{U} S)
+		\by{\news{\widetilde{m}} \bactout{s}{V}}
+		(\Gamma \cat \Gamma'; \Lambda\backslash\Lambda'; (\Delta \cat s: S \cat \cup_j \Delta_j') \backslash \Delta')
+	}
+	\\[7mm]
+	\eltsrule{ShSnd}&
+	\tree{
+		\begin{array}{lll}
+			\Gamma \cat \Gamma' ; \Lambda'; \Delta' \proves V \hastype U
+			&  
+			\Gamma'; \es; \Delta_j \proves m_j \hastype U_j
+			&
+			\Gamma ; \es ; \es \proves a \hastype \chtype{U}
+			\\
+			\Delta'\backslash \cup_j \Delta_j \subseteq \Delta
+			&
+			\Gamma'; \es; \Delta_j' \proves \dual{m}_j\hastype U_j'
+			& 
+			\Lambda' \subseteq \Lambda
+		\end{array}
+	}{
+		(\Gamma ; \Lambda; \Delta) \by{\news{\widetilde{m}}
+		\bactout{a}{V}}
+		(\Gamma \cat \Gamma'; \Lambda\backslash\Lambda'; (\Delta \cat \cup_j \Delta_j') \backslash \Delta')
+	}
+	\\[7mm]
+	\eltsrule{Sel}&
+	\tree{
+		\dual{s} \notin \dom{\Delta} \quad j \in I
+	}{
+		(\Gamma; \Lambda; \Delta \cat s: \btsel{l_i: S_i}_{i \in I}) \by{\bactsel{s}{l_j}} (\Gamma; \Lambda; \Delta \cat s:S_j)
+	}
+	\\[7mm]
+	\eltsrule{Bra}&
+	\tree{
+		\dual{s} \notin \dom{\Delta} \quad j \in I
+	}{
+		(\Gamma; \Lambda; \Delta \cat s: \btbra{l_i: T_i}_{i \in I}) \by{\bactbra{s}{l_j}} (\Gamma; \Lambda; \Delta \cat s:S_j)
+	}
+	\\[7mm]
+	\eltsrule{Tau}&
+	\tree{
+		\Delta_1 \red \Delta_2 \vee \Delta_1 = \Delta_2
+	}{
+		(\Gamma; \Lambda; \Delta_1) \by{\tau} (\Gamma; \Lambda; \Delta_2)
+	}
 \end{array}
 \]
-\[
-\begin{array}{lc}
-		\eltsrule{Sel}&\tree{
-			\dual{s} \notin \dom{\Delta} \quad j \in I
-		}{
-			(\Gamma; \Lambda; \Delta \cat s: \btsel{l_i: S_i}_{i \in I}) \by{\bactsel{s}{l_j}} (\Gamma; \Lambda; \Delta \cat s:S_j)
-		}
-\\[8mm]
-		\eltsrule{Bra}&\tree{
-			\dual{s} \notin \dom{\Delta} \quad j \in I
-		}{
-			(\Gamma; \Lambda; \Delta \cat s: \btbra{l_i: T_i}_{i \in I}) \by{\bactbra{s}{l_j}} (\Gamma; \Lambda; \Delta \cat s:S_j)
-		}
-		\\[8mm]
-		\eltsrule{Tau}&\tree{
-			\Delta_1 \red \Delta_2 \vee \Delta_1 = \Delta_2
-		}{
-			(\Gamma; \Lambda; \Delta_1) \by{\tau} (\Gamma; \Lambda; \Delta_2)
-		}
-%\\[6mm]
-%		\eltsrule{RRcv}&\tree {
-%\begin{array}{c}
-%(\Gamma_1; \Lambda_1; \Delta_1) \by{\bactinp{n}{V}} (\Gamma_2; \Lambda_2; \Delta_2)
-%\\
-%			\begin{array}{lll}
-%				 V  =  
-%(\abs{{x}}{\binp{t}{y} (\appl{y}{{x}})}
-% \vee  \abs{{x}}{\map{U}^{{x}}}  \vee m)  \textrm{ with } t \textrm{ fresh} 
-%			\end{array}
-%			\end{array}
-%		}{
-%			(\Gamma_1; \Lambda_1; \Delta_1) \hby{\bactinp{n}{V}} (\Gamma_2; \Lambda_1; \Delta_2)
-%		}
-	\end{array}
-	\]
 \caption{Labelled Transition System for Typed Environments. 
 \label{fig:envLTS}}
 \Hlinefig
 \end{figure}
+%%%%%%%%%%%%%%%%%%%% End Environment LTS Figure %%%%%%%%%%%%%%%%%%%%%%
 \noi
 The weakening property on shared environments ensures that
 $(\Gamma_2, \Lambda_1, \Delta_1) \hby{\ell} (\Gamma_2, \Lambda_2, \Delta_2)$
 if
 $(\Gamma_1, \Lambda_1, \Delta_1) \hby{\ell} (\Gamma_2, \Lambda_2, \Delta_2)$.
-We define the typed LTS combining 
+Our typed LTS  combines
 the LTSs in \figref{fig:untyped_LTS}
 and \figref{fig:envLTS}. 
+
+\begin{example}
+	Consider environment tuple
+	\[
+		(\Gamma; \es; s: \btout{\lhot{\btout{S} \tinact}} \tinact \cat s': S)
+	\]
+	and typed value
+	\[
+		\Gamma; \es; s': S \cat m: \btinp{\tinact} \tinact \proves \abs{x} \bout{x}{s'} \binp{m}{z} \inact \hastype \lhot{\btout{\tinact} \tinact}
+	\]
+	We can then observe that the premises of environment rule $\eltsrule{SSnd}$
+	are satisfied to derive that
+	\[
+		(\Gamma; \es; s: \btout{\lhot{\btout{S} \tinact}} \tinact \cat s': S) \by{\news{m} \bactout{s}{V}} (\Gamma; \es; s: \tinact)
+	\]
+\end{example}
+
 
 \smallskip
 
@@ -429,7 +389,7 @@ $(\Gamma, \emptyset, \Delta_1) \by{\ell} (\Gamma, \emptyset, \Delta_2)$
 with $\Gamma; \emptyset; \Delta_i \proves P_i \hastype \Proc$ 
 ($i=1,2$).
 %\dk{We sometimes annotated the output action with
-%the type of value $V$ as in $\tilde{m} \bactout{n}{V: U}$.}
+%the type of value $V$ as in $\widetilde{m} \bactout{n}{V: U}$.}
 %
 % Efficient 
 %\item 
@@ -494,7 +454,7 @@ with respect to types.
 \begin{definition}[Barbs]\rm
 Let $P$ be a closed process. We define:
 \begin{enumerate}
-		\item	$P \barb{n}$ if $P \scong \newsp{\tilde{m}}{\bout{n}{V} P_2 \Par P_3}, n \notin \tilde{m}$. %; $P \Barb{n}$ if $P \red^* \barb{n}$.
+		\item	$P \barb{n}$ if $P \scong \newsp{\widetilde{m}}{\bout{n}{V} P_2 \Par P_3}, n \notin \widetilde{m}$. %; $P \Barb{n}$ if $P \red^* \barb{n}$.
 
 		\item	$\Gamma; \Delta \proves P \barb{n}$ if
 			$\Gamma; \emptyset; \Delta \proves P \hastype \Proc$ with $P \barb{n}$ and $\dual{n} \notin \dom{\Delta}$.
@@ -519,11 +479,9 @@ To define a congruence relation, we introduce the family $\C$ of contexts:\\
 %	A context $\C$ is defined as:
 \noi 
 \begin{tabular}{rl}
-	$\C::=$\!\!\!\! & $\hole \bnfbar \bout{u}{V} \C \bnfbar \binp{u}{x} \C
-\bnfbar \bout{u}{\lambda x.\C} P
-\bnfbar \news{n} \C$\\
-             $\bnfbar$\!\!\!\!& $(\lambda x.\C)u \bnfbar \recp{X}{\C} \bnfbar \C \Par P \bnfbar P \Par \C$\\ 
-$\bnfbar$\!\!\!\!& $\bsel{u}{l} \C \bnfbar \bbra{u}{l_1:P_1,\cdots,l_i:\C,\cdots,l_n:P_n}$\\
+	$\C::=$ & $\hole \bnfbar \bout{u}{V} \C \bnfbar \binp{u}{x} \C \bnfbar \bout{u}{\lambda x.\C} P \bnfbar \news{n} \C$
+	$(\lambda x.\C)u \bnfbar \recp{X}{\C}$\\ 
+	$\bnfbar$ & $\C \Par P \bnfbar P \Par \C \bnfbar \bsel{u}{l} \C \bnfbar \bbra{u}{l_1:P_1,\cdots,l_i:\C,\cdots,l_n:P_n}$\\
 	\end{tabular}
 \smallskip 
 
@@ -578,29 +536,29 @@ for all $\horel{\Gamma}{\Delta_1}{P_1}{\ \Re \ }{\Delta_2}{Q_1}$,
 	\begin{enumerate}[1)] 
 	\item Whenever 
 $\horel{\Gamma}{\Delta_1}{P_1}
-        {\by{\news{\tilde{m_1}} \bactout{n}{V_1}}}{\Delta_1'}{P_2}$,
+        {\by{\news{\widetilde{m_1}} \bactout{n}{V_1}}}{\Delta_1'}{P_2}$,
 there exist 
 $Q_2$, $V_2$, $\Delta'_2$
 such that 
-$\horel{\Gamma}{\Delta_2}{Q_1}{\By{\news{\tilde{m_2}} \bactout{n}{V_2}}}{\Delta_2'}{Q_2}$ and 
+$\horel{\Gamma}{\Delta_2}{Q_1}{\By{\news{\widetilde{m_2}} \bactout{n}{V_2}}}{\Delta_2'}{Q_2}$ and 
 for all $R$ with $\fv{R}=x$:
-\[\horel{\Gamma}{\Delta_1''}{\newsp{\tilde{m_1}}{P_2 \Par R\subst{V_1}{x}}}
+\[\horel{\Gamma}{\Delta_1''}{\newsp{\widetilde{m_1}}{P_2 \Par R\subst{V_1}{x}}}
 				{\ \Re\ }
-				{\Delta_2''}{\newsp{\tilde{m_2}}{Q_2 \Par R\subst{V_2}{x}}};\]  
-%\item	$\forall \news{\tilde{m_1}'} \bactout{n}{\tilde{m_1}}$ such that
+				{\Delta_2''}{\newsp{\widetilde{m_2}}{Q_2 \Par R\subst{V_2}{x}}};\]  
+%\item	$\forall \news{\widetilde{m_1}'} \bactout{n}{\widetilde{m_1}}$ such that
 %			\[
-%				\horel{\Gamma}{\Delta_1}{P_1}{\by{\news{\tilde{m_1}'} \bactout{n}{\tilde{m_1}}}}{\Delta_1'}{P_2}
+%				\horel{\Gamma}{\Delta_1}{P_1}{\by{\news{\widetilde{m_1}'} \bactout{n}{\widetilde{m_1}}}}{\Delta_1'}{P_2}
 %			\]
-%			implies that $\exists Q_2, \tilde{m_2}$ such that
+%			implies that $\exists Q_2, \widetilde{m_2}$ such that
 %			\[
-%				\horel{\Gamma}{\Delta_2}{Q_1}{\By{\news{\tilde{m_2}'} \bactout{n}{\tilde{m_2}}}}{\Delta_2'}{Q_2}
+%				\horel{\Gamma}{\Delta_2}{Q_1}{\By{\news{\widetilde{m_2}'} \bactout{n}{\widetilde{m_2}}}}{\Delta_2'}{Q_2}
 %			\]
-%			and $\forall R$ with $\tilde{x} = \fn{R}$, 
+%			and $\forall R$ with $\widetilde{x} = \fn{R}$, 
 %			then
 %			\[
-%				\horel{\Gamma}{\Delta_1''}{\newsp{\tilde{m_1}'}{P_2 \Par R \subst{\tilde{m_1}}{\tilde{x}}}}
+%				\horel{\Gamma}{\Delta_1''}{\newsp{\widetilde{m_1}'}{P_2 \Par R \subst{\widetilde{m_1}}{\widetilde{x}}}}
 %				{\ \Re \ }
-%				{\Delta_2''}{\newsp{\tilde{m_2}'}{Q_2 \Par R \subst{\tilde{m_2}}{\tilde{x}}}}
+%				{\Delta_2''}{\newsp{\widetilde{m_2}'}{Q_2 \Par R \subst{\widetilde{m_2}}{\widetilde{x}}}}
 %			\]
 		\item	
 For all $\horel{\Gamma}{\Delta_1}{P_1}{\by{\ell}}{\Delta_1'}{P_2}$ such that 
@@ -617,10 +575,13 @@ $\horel{\Gamma}{\Delta_2}{Q_1}{\By{\hat{\ell}}}{\Delta_2'}{Q_2}$
 
 \smallskip 
 
-\noi As explained in \secref{subsec:intro:bisimulation}, 
+\noi As hinted at in %\secref{subsec:intro:bisimulation}, 
+\secref{sec:overview},
 in the general case,
 context bisimulation 
-is hard to compute. Below we introduce $\hwb$ and $\fwb$.
+is hard to compute. Below we introduce 
+\emph{characteristic bisimulations}.
+%$\hwb$ and  $\fwb$.
 %due to: (1) the universal
 %quantification over contexts in the output case;
 %and (2) a higher-order input prefix which can observe
@@ -628,17 +589,17 @@ is hard to compute. Below we introduce $\hwb$ and $\fwb$.
 %infinitely many different processes can match
 %the session type of an input prefix).
 
-\subsection{Higher-Order  and  
-Characteristic  Bisimulations ($\hwb$/$\fwb$)}\label{ss:hwb}
+\subsection{%Higher-Order  and  
+Characteristic  Bisimulations ($\fwb$)}\label{ss:hwb}
 \noi 
-We formalise the novelties motivated in \secref{subsec:intro:bisimulation}.
+We formalise the novelties motivated in \secref{sec:overview}.
 Our main result is \thmref{the:coincidence}.
 We define characteristic processes/values:
 
 \begin{definition}[Characteristic Process and Values]\rm
 \label{def:char}
-%	Let names $\tilde{k}$ and type $\tilde{C}$; then we define a {\em characteristic process}:
-%	$\map{\tilde{C}}^{\tilde{k}}$:
+%	Let names $\widetilde{k}$ and type $\widetilde{C}$; then we define a {\em characteristic process}:
+%	$\map{\widetilde{C}}^{\widetilde{k}}$:
 %	\[
 %		\map{C_1, \cdots, C_n}^{k_1 \cdots k_n} = \map{C_1}^{k_1} \Par \dots \Par \map{C_n}^{k_n}		
 %	\]
@@ -650,47 +611,68 @@ We define characteristic processes/values:
 
 \smallskip
 
+%%%%%%%%%%%%%%%%%%%%%%%% Characteristic Process Figure %%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{figure}[t]
-	\[
-	\begin{array}{c}
-		\begin{array}{rclcl}
-			\mapchar{\btinp{U} S}{u} &\!\!\defeq\!\!
-& \binp{u}{x} (\mapchar{S}{u} \Par \mapchar{U}{x})
-			\\
-			\mapchar{\btout{U} S}{u} &\!\!\defeq\!\!& \bout{u}{\omapchar{U}} \mapchar{S}{u} %& & n \textrm{ fresh}
-			\\
-			\mapchar{\btsel{l : S}}{u} &\!\!\defeq\!\!& \bsel{u}{l} \mapchar{S}{u}
-			\\
-			\mapchar{\btbra{l_i: S_i}_{i \in I}}{u} &\!\!\defeq\!\!& \bbra{u}{l_i: \mapchar{S_i}{u}}_{i \in I}
-			\\
-		\mapchar{\tvar{t}}{u} \!\defeq\! \varp{X}_{\vart{t}}
-& & 
-			\mapchar{\trec{t}{S}}{u} \!\defeq\! \recp{X_{\vart{t}}}{\mapchar{S}{u}}
-			\\
-			\mapchar{\tinact}{u} &\!\!\defeq\!\!& \inact
-			\\
-\mapchar{\chtype{S}}{u} \!\defeq\! \bout{u}{\omapchar{S}} \inact & & 
-\quad\mapchar{\chtype{L}}{u} \!\defeq\! \bout{u}{\omapchar{L}} \inact
-			\\
-\mapchar{\shot{C}}{u} & \!\!\defeq\!\! & \mapchar{\lhot{C}}{u} \!\defeq\! 
-\appl{u}{\omapchar{C}}
-\end{array}
-\\
-\Hline
-\\
-		\begin{array}{rcll}
-\omapchar{S} &\!\!\defeq\!\!& s & (s \textrm{ fresh})
-			\\
-\omapchar{\chtype{S}} \defeq \omapchar{\chtype{L}} &\!\!\defeq\!\!& a & 
-(a \textrm{ fresh})\quad\quad
-			\\
-			\omapchar{\shot{C}} \defeq \omapchar{\lhot{C}} &\!\!\defeq\!\!& \abs{x}{\mapchar{C}{x}}
-		\end{array}
+\[
+	\begin{array}{rclcrcl}
+		\mapchar{\btinp{U} S}{u}
+		&\defeq&
+		\binp{u}{x} (\mapchar{S}{u} \Par \mapchar{U}{x})
+		&&
+		\mapchar{\btout{U} S}{u}
+		&\defeq&
+		\bout{u}{\omapchar{U}} \mapchar{S}{u} %& & n \textrm{ fresh}
+		\\
+
+		\mapchar{\btsel{l : S}}{u}
+		& \defeq &
+		\bsel{u}{l} \mapchar{S}{u}
+		&&
+		\mapchar{\btbra{l_i: S_i}_{i \in I}}{u}
+		& \defeq &
+		\bbra{u}{l_i: \mapchar{S_i}{u}}_{i \in I}
+		\\
+
+		\mapchar{\tvar{t}}{u}
+		&\defeq&
+		\varp{X}_{\vart{t}}
+		& & 
+		\mapchar{\trec{t}{S}}{u}
+		&\defeq&
+		\recp{X_{\vart{t}}}{\mapchar{S}{u}}
+		\\
+
+		\mapchar{\tinact}{u}
+		& \defeq &
+		\inact
+		& & 
+		\mapchar{\chtype{S}}{u} 
+		&\defeq&
+		\bout{u}{\omapchar{S}} \inact
+		\\
+
+		\mapchar{\chtype{L}}{u}
+		&\defeq&
+		\bout{u}{\omapchar{L}} \inact
+		&&
+		\mapchar{\shot{U}}{u}
+		&\defeq &
+		\mapchar{\lhot{U}}{u}
+		\, \defeq \,
+		\appl{u}{\omapchar{U}}
+		\\
+		\\
+		\omapchar{S} & \defeq & s \quad (s \textrm{ fresh})
+		&&
+		\omapchar{\chtype{S}} \defeq \omapchar{\chtype{L}} &\defeq& a \quad (a \textrm{ fresh})
+		\\
+		\omapchar{\shot{U}} &\defeq& \omapchar{\lhot{U}} \,\defeq\, \abs{x}{\mapchar{U}{x}}
 	\end{array}
-	\]
+\]
 \caption{Characteristic Processes \jpc{(top)} and Values \jpc{(bottom)}.\label{fig:char}}
-\Hlinefig
+%\Hlinefig
 \end{figure}
+%%%%%%%%%%%%%%%%%%%%%%%% End Characteristic Process Figure %%%%%%%%%%%%%%%%%%%%%
 
 %	\[
 %	\begin{array}{rcllrcll}
@@ -749,10 +731,39 @@ We define characteristic processes/values:
 %%and $\mapchar{C}{u}$. 
 %%\end{IEEEproof}
 
-\noi We can easily verify that characteristic processes/values are
-inhabitants of their associated type. 
+\noi We can easily verify that characteristic processes/values  
+do inhabit  their associated type. 
 The following example motivates the refined 
-LTS explained in \secref{subsec:intro:bisimulation}.
+LTS explained in \secref{sec:overview}.
+
+\begin{proposition}
+	\begin{itemize}
+		\item	Let session type $S$, then $\Gamma; \es; \Delta \cat s: S \proves \mapchar{S}{s} \hastype \Proc$.
+		\item	Let session type $\chtype{U}$, then $\Gamma \cat a: \chtype{U}; \es; \Delta \proves \mapchar{\chtype{U}}{a} \hastype \Proc$.
+	\end{itemize}
+\end{proposition}
+
+
+\begin{proof}
+	By induction on the definition of $\mapchar{U}{n}$.
+\end{proof}
+
+\begin{example}
+	Consider for example the type $U = \shot{(\shot{(\shot{(\btout{S} \tinact)})})}$.
+	The characteristic process of the above type is:
+%
+	\begin{eqnarray*}
+		\mapchar{\btinp{U} \inact}{s}\\
+		= && \binp{s}{x} \mapchar{\shot{(\shot{(\shot{(\btout{S} \tinact)})})}}{x}\\
+		= && \binp{s}{x} \appl{x}{\omapchar{\shot{(\shot{(\btout{S} \tinact)})}}}\\
+		= && \binp{s}{x} \appl{x}{(\abs{y}{\mapchar{\shot{(\btout{S} \tinact)}}{y}})}\\
+		= && \binp{s}{x} \appl{x}{(\abs{y}{\appl{y}{\omapchar{\btout{S} \tinact}})}}\\
+		= && \binp{s}{x} \appl{x}{(\abs{y}{\appl{y}{n})}}\\
+	\end{eqnarray*}
+%
+\end{example}
+
+
 \smallskip  
 
 \begin{example}[The Need for Refined Typed LTS]
@@ -772,7 +783,7 @@ Consider typed processes $P_1, P_2$:
 %We can show that 
 where
 $\Gamma; \es; \Delta \cat s: \btinp{\shot{(\btinp{C} \tinact)}} \tinact \proves P_i \hastype \Proc$ ($i \in \{1,2\}$).
-If the above processes input and substitute over $x$
+If $P_1$ and $P_2$ input and substitute over $x$
 the characteristic value $\dk{\omapchar{\shot{(\btinp{C} \tinact)}} =} \abs{x}{\binp{x}{y} \inact}$, 
 then they evolve into:%(\ref{eq:5}) and (\ref{eq:6}) in become:
 \begin{center}
@@ -794,11 +805,12 @@ then their derivatives are not bisimilar.
 
 Observing only the characteristic value 
 results in an under-discriminating bisimulation.
-However, if a trigger value, 
+However, if a trigger value
 $\abs{{x}}{\binp{t}{y} (\appl{y}{{x}})}$ 
 is received on $s$, 
-then we can distinguish 
-processes in \eqref{equ:6}:  
+then we can distinguish $P_1$ and $P_2$ 
+%processes 
+in \eqref{equ:6}:  
 %
 \small
 \begin{eqnarray*}
@@ -820,7 +832,7 @@ One question that arises here is whether the trigger value is enough
 to distinguish two processes, hence no need of 
 characteristic values as the input. 
 This is not the case since the trigger value
-alone also results in an over-discriminating bisimulation relation.
+alone also results in an under-discriminating bisimulation relation.
 In fact the  trigger value can be observed on any input prefix
 of {\em any type}. For example, consider the following processes:
 %
@@ -867,7 +879,7 @@ then they would become:
 
 \smallskip 
 %\noi We define the \emph{refined} typed LTS. 
-\noi As explained in \secref{subsec:intro:bisimulation}, we define the
+\noi As explained in \secref{sec:overview}, we define the
 \emph{refined} typed LTS
 by considering a transition rule for input in which admitted values are
 trigger or characteristic values or names:
@@ -888,31 +900,46 @@ trigger or characteristic values or names:
 	%restricted environment transition relation using the
 	%following rule %using the environment transition relation defined in 
 	using the input rules in \figref{fig:envLTS}:
-	\[
-	\begin{array}{rl}
-			\eltsrule{RRcv}&\tree {
-	\begin{array}{c}
+	\[ \!\!\!
+	\begin{array}{l}
+%			\eltsrule{RRcv}&\tree {
+%	\begin{array}{c}
+%	(\Gamma_1; \Lambda_1; \Delta_1) \by{\bactinp{n}{V}} (\Gamma_2; \Lambda_2; \Delta_2)
+%	\\
+%				\begin{array}{lll}
+%					V = m \vee V  \scong
+%					\abs{{x}}{\binp{t}{y} (\appl{y}{{x}})}
+%					\vee  V \scong \omapchar{U}%\abs{{x}}{\map{U}^{{x}}}
+%					\textrm{ with } t \textrm{ fresh} 
+%				\end{array}
+%				\end{array}
+%			}{
+%				(\Gamma_1; \Lambda_1; \Delta_1) \hby{\bactinp{n}{V}} (\Gamma_2; \Lambda_2; \Delta_2)
+%			}
+			
+						\eltsrule{RRcv}\,\tree {
+	%\begin{array}{c}
 	(\Gamma_1; \Lambda_1; \Delta_1) \by{\bactinp{n}{V}} (\Gamma_2; \Lambda_2; \Delta_2)
-	\\
-				\begin{array}{lll}
-					V = m \vee V  \scong
-					\abs{{x}}{\binp{t}{y} (\appl{y}{{x}})}
+	\quad
+					V = m 
 					\vee  V \scong \omapchar{U}%\abs{{x}}{\map{U}^{{x}}}
-					\textrm{ with } t \textrm{ fresh} 
-				\end{array}
-				\end{array}
+										\vee V  \scong \abs{{x}}{\binp{t}{y} (\appl{y}{{x}})}
+					\text{ {\small with $t$ fresh}} 
+				%\end{array}
 			}{
 				(\Gamma_1; \Lambda_1; \Delta_1) \hby{\bactinp{n}{V}} (\Gamma_2; \Lambda_2; \Delta_2)
 			}
+			
+			
 	\end{array}
 	\]
-	\noi $\eltsrule{RRcv}$ is defined on top
+	\noi Rule $\eltsrule{RRcv}$ is defined on top
 	of rules $\eltsrule{SRv}$ and $\eltsrule{ShRv}$
 	in \figref{fig:envLTS}.
 %	uses the environment transition
 %	$(\Gamma, \Lambda_1, \Delta_1) \hby{\ell} (\Gamma, \Lambda_2, \Delta_2)$
 %	in \figref{fig:envLTS}. 
-\dk{	We then use the non-receiving rules in \figref{fig:envLTS}
+\dk{	We  use the non-receiving rules in \figref{fig:envLTS}
 	together with rule $\eltsrule{RRcv}$
 	to define 
 	$\horel{\Gamma}{\Delta_1}{P_1}{\hby{\ell}}{\Delta_2}{P_2}$
@@ -926,7 +953,7 @@ trigger or characteristic values or names:
 $\horel{\Gamma}{\Delta_1}{P_1}{\hby{\ell}}{\Delta_2}{P_2}$ implies  
 $\horel{\Gamma}{\Delta_1}{P_1}{\by{\ell}}{\Delta_2}{P_2}$.
 Below we sometimes write  
-$\hby{\news{\tilde{m}} \bactout{n}{\AT{V}{U}}}$
+$\hby{\news{\widetilde{m}} \bactout{n}{\AT{V}{U}}}$
 when the type of $V$ is~$U$.
 
 %See \exref{ex:motivation} for the reason why {\em both} 
@@ -936,17 +963,19 @@ when the type of $V$ is~$U$.
 
 \smallskip 
 
-\myparagraph{The Two Bisimulations.} We define 
-\emph{higher-order} 
-and
+\myparagraph{Characteristic Bisimulations.} We define 
+%\emph{higher-order} and
 \emph{characteristic
 bisimulations}, 
-two tractable bisimulations for $\HO$ and $\HOp$.
+%two tractable bisimulations for $\HO$ and $\HOp$.
+a tractable bisimulations for $\HOp$.
 As explained in \secref{sec:overview},
-the two bisimulations use different trigger processes:
+%the two bisimulations 
+characteristic bisimulations
+use trigger processes:
 %the key difference between them is in the trigger processes they use:
 \begin{eqnarray*}
-\htrigger{t}{V_1}  & \defeq &  \hotrigger{t}{V} \label{eqb:0} \\
+%\htrigger{t}{V_1}  & \defeq &  \hotrigger{t}{V} \label{eqb:0} \\
 	\ftrigger{t}{V}{U} & \defeq &  \fotrigger{t}{x}{s}{\btinp{U} \tinact}{V} 	\label{eqb:4}
 \end{eqnarray*}
 %\noi
@@ -959,25 +988,63 @@ the two bisimulations use different trigger processes:
 
 \smallskip 
 
-\begin{definition}[Higher-Order Bisimilarity]\rm
-	\label{d:hbw}
-A typed relation $\Re$ is a {\em  HO bisimulation} if 
+%\begin{definition}[Higher-Order Bisimilarity]\rm
+%	\label{d:hbw}
+%A typed relation $\Re$ is a {\em  HO bisimulation} if 
+%for all $\horel{\Gamma}{\Delta_1}{P_1}{\ \Re \ }{\Delta_2}{Q_1}$ 
+%\begin{enumerate}[1)]
+%\item 
+%Whenever 
+%$\horel{\Gamma}{\Delta_1}{P_1}{\hby{\news{\widetilde{m_1}} \bactout{n}{V_1}}}{\Delta_1'}{P_2}$, there exist 
+%$Q_2$, $V_2$, $\Delta'_2$ such that 
+%$\horel{\Gamma}{\Delta_2}{Q_1}{\Hby{\news{\widetilde{m_2}} \bactout{n}{V_2}}}{\Delta_2'}{Q_2}$ and, for fresh $t$, 
+%\[
+%\begin{array}{lrlll}
+%\Gamma; \Delta''_1  \proves  {\newsp{\widetilde{m_1}}{P_2 \Par 
+%\htrigger{t}{V_1}}}
+%\ \Re 
+%\ \Delta''_2 \proves {\newsp{\widetilde{m_2}}{Q_2 \Par \htrigger{t}{V_2}}}
+%\end{array}
+%\]
+%		\item	
+%For all $\horel{\Gamma}{\Delta_1}{P_1}{\hby{\ell}}{\Delta_1'}{P_2}$ such that 
+%$\ell$ is not an output, 
+% there exist $Q_2$, $\Delta'_2$ such that 
+%$\horel{\Gamma}{\Delta_2}{Q_1}{\Hby{\hat{\ell}}}{\Delta_2'}{Q_2}$
+%			and
+%			$\horel{\Gamma}{\Delta_1'}{P_2}{\ \Re \ }{\Delta_2'}{Q_2}$; and 
+%
+%                      \item	The symmetric cases of 1 and 2.                
+%	\end{enumerate}
+%	The largest such bisimulation
+%	is called \emph{higher-order bisimilarity} \jpc{and} denoted by $\hwb$.
+%\end{definition}
+
+ 
+We define characteristic bisimilarity:
+% is given using characteristic trigger processes. 
+
+\begin{definition}[Characteristic Bisimilarity]\rm
+	\label{d:fwb}
+A typed relation $\Re$ is a {\em  characteristic bisimulation} if 
 for all $\horel{\Gamma}{\Delta_1}{P_1}{\ \Re \ }{\Delta_2}{Q_1}$ 
 \begin{enumerate}[1)]
 \item 
-Whenever 
-$\horel{\Gamma}{\Delta_1}{P_1}{\hby{\news{\tilde{m_1}} \bactout{n}{V_1}}}{\Delta_1'}{P_2}$, there exist 
-$Q_2$, $V_2$, $\Delta'_2$ such that 
-$\horel{\Gamma}{\Delta_2}{Q_1}{\Hby{\news{\tilde{m_2}} \bactout{n}{V_2}}}{\Delta_2'}{Q_2}$ and, for fresh $t$, 
-\[
-\begin{array}{lrlll}
-\Gamma; \Delta''_1  \proves  {\newsp{\tilde{m_1}}{P_2 \Par 
-\htrigger{t}{V_1}}}
-\ \Re 
-\ \Delta''_2 \proves {\newsp{\tilde{m_2}}{Q_2 \Par \htrigger{t}{V_2}}}
-\end{array}
-\]
-		\item	
+	Whenever 
+	$\horel{\Gamma}{\Delta_1}{P_1}{\hby{\news{\widetilde{m_1}} \bactout{n}{\dk{V_1: U}}}}{\Delta_1'}{P_2}$ %with $\Gamma; \es; \Delta \proves V_1 \hastype U$,  
+	then there exist 
+	$Q_2$, $V_2$, $\Delta'_2$ such that 
+	$\horel{\Gamma}{\Delta_2}{Q_1}{\Hby{\news{\widetilde{m_2}}\bactout{n}{\dk{V_2: U}}}}{\Delta_2'}{Q_2}$ %with $\Gamma; \es; \Delta' \proves V_2 \hastype U$,  
+	and, for fresh $t$, \\ 
+	$%\begin{array}{lrlll}
+	\Gamma; \Delta''_1  \proves  {\newsp{\widetilde{m_1}}{P_2 \Par 
+	\ftrigger{t}{V_1}{U_1}}}
+	  \,\Re\,
+	 \Delta''_2 \proves {\newsp{\widetilde{m_2}}{Q_2 \Par \ftrigger{t}{V_2}{U_2}}}
+%\end{array}
+$
+		
+\item	
 For all $\horel{\Gamma}{\Delta_1}{P_1}{\hby{\ell}}{\Delta_1'}{P_2}$ such that 
 $\ell$ is not an output, 
  there exist $Q_2$, $\Delta'_2$ such that 
@@ -988,98 +1055,103 @@ $\horel{\Gamma}{\Delta_2}{Q_1}{\Hby{\hat{\ell}}}{\Delta_2'}{Q_2}$
                       \item	The symmetric cases of 1 and 2.                
 	\end{enumerate}
 	The largest such bisimulation
-	is called \emph{higher-order bisimilarity} \jpc{and} denoted by $\hwb$.
+	is called \emph{characteristic bisimilarity} \jpc{and} denoted by $\fwb$.
 \end{definition}
 
 \smallskip 
 
-\noi 
-We define characteristic bisimilarity:
-% is given using characteristic trigger processes. 
+%\begin{definition}[Characteristic Bisimilarity]\rm
+%	\label{d:fwb}
+%	Characteristic bisimilarity, denoted by $\fwb$, is defined \jpc{by} replacing 
+%	Clause 1) in \defref{d:hbw} with the following clause:\\[1mm]
+%	Whenever 
+%	$\horel{\Gamma}{\Delta_1}{P_1}{\hby{\news{\widetilde{m_1}} \bactout{n}{\dk{V_1: U}}}}{\Delta_1'}{P_2}$ %with $\Gamma; \es; \Delta \proves V_1 \hastype U$,  
+%	then there exist 
+%	$Q_2$, $V_2$, $\Delta'_2$ such that 
+%	$\horel{\Gamma}{\Delta_2}{Q_1}{\Hby{\news{\widetilde{m_2}}\bactout{n}{\dk{V_2: U}}}}{\Delta_2'}{Q_2}$ %with $\Gamma; \es; \Delta' \proves V_2 \hastype U$,  
+%	and, for fresh $t$, \\[1mm]
+%	$\begin{array}{lrlll}
+%	\!\!\Gamma; \Delta''_1  \proves  {\newsp{\widetilde{m_1}}{P_2 \Par 
+%	\ftrigger{t}{V_1}{U_1}}}
+%	\ \!\!\Re\!\!
+%	\ \Delta''_2 \proves {\newsp{\widetilde{m_2}}{Q_2 \Par \ftrigger{t}{V_2}{U_2}}}
+%\end{array}
+%$
+%\end{definition}
+%
+%\smallskip 
 
-\smallskip 
-
-\begin{definition}[Characteristic Bisimilarity]\rm
-	\label{d:fwb}
-	Characteristic bisimilarity, denoted by $\fwb$, is defined \jpc{by} replacing 
-	Clause 1) in \defref{d:hbw} with the following clause:\\[1mm]
-	Whenever 
-	$\horel{\Gamma}{\Delta_1}{P_1}{\hby{\news{\tilde{m_1}} \bactout{n}{\dk{V_1: U}}}}{\Delta_1'}{P_2}$ %with $\Gamma; \es; \Delta \proves V_1 \hastype U$,  
-	then there exist 
-	$Q_2$, $V_2$, $\Delta'_2$ such that 
-	$\horel{\Gamma}{\Delta_2}{Q_1}{\Hby{\news{\tilde{m_2}}\bactout{n}{\dk{V_2: U}}}}{\Delta_2'}{Q_2}$ %with $\Gamma; \es; \Delta' \proves V_2 \hastype U$,  
-	and, for fresh $t$, \\[1mm]
-	$\begin{array}{lrlll}
-	\!\!\Gamma; \Delta''_1  \proves  {\newsp{\tilde{m_1}}{P_2 \Par 
-	\ftrigger{t}{V_1}{U_1}}}
-	\ \!\!\Re\!\!
-	\ \Delta''_2 \proves {\newsp{\tilde{m_2}}{Q_2 \Par \ftrigger{t}{V_2}{U_2}}}
-\end{array}
-$
-\end{definition}
-
-\smallskip 
-
-\noi We now state our main theorem: typed bisimilarities collapse. 
+\noi We now state our main theorem: %typed bisimilarities collapse. 
 
 \smallskip 
 
 \begin{theorem}[Coincidence]\rm
+%	\label{the:coincidence}
+%$\cong$, $\wbc$, $\hwb$ and $\fwb$ coincide in $\CAL\in \{\HOp, \HO\}$
+%and 
+%$\cong$, $\wbc$ and $\fwb$ coincide in $\CAL\in \{\HOp, \HO, \sessp\}$. 
 	\label{the:coincidence}
-$\cong$, $\wbc$, $\hwb$ and $\fwb$ coincide in $\CAL\in \{\HOp, \HO\}$
-and 
-$\cong$, $\wbc$ and $\fwb$ coincide in $\CAL\in \{\HOp, \HO, \sessp\}$. 
+$\cong$, $\wbc$,  and $\fwb$ coincide in $\HOp$. 
 \end{theorem}
 
-\smallskip 
-
-\noi Thus, we may use $\hwb$ for tractable reasoning %is the most tractable 
-in the higher-order setting;  
-%the calculus is limited  
-%the $\sessp$-calculus, 
-%into~\jpc{\sessp}
-in the first-order setting of $\sessp$
-we can still use~$\fwb$. 
-
-
-\smallskip  
-
-\noi Processes that do not use shared names are inherently deterministic. 
-The following \jpc{determinacy property will be} useful 
-\dk{for proving our expressiveness results (\secref{sec:positive})}.
-%for both positive and negative results. 
-We require an auxiliary definition. 
-A transition $\horel{\Gamma}{\Delta}{P}{\hby{\tau}}{\Delta'}{P'}$ is said
-		{\em deterministic} if it is derived using~$\ltsrule{App}$ or~$\ltsrule{Tau}$ 
-		(where $\subj{\ell_1}$ and $\subj{\ell_2}$ in the premise 
-		are dual endpoints), 
-		possibly followed by uses of  $\ltsrule{Alpha}$, $\ltsrule{Res}$, $\ltsrule{Rec}$, or $\ltsrule{Par${}_L$}/\ltsrule{Par${}_R$}$.
-
-
+\begin{proof}[Proof (Sketch)]
+DIMITRIS, PLEASE ADD SKETCH.
+\end{proof}
 %\smallskip 
 
-\begin{lemma}[$\tau$-Inertness]\rm
-	\label{lem:tau_inert}
-	\begin{enumerate}[1)]
-		\item %(deterministic transitions) 
-		Let $\horel{\Gamma}{\Delta}{P}{\hby{\tau}}{\Delta'}{P'}$ be a deterministic transition,
-		with balanced $\Delta$. Then 
-		$\Gamma; \Delta \proves P \cong \Delta'\proves P'$ 
-		with $\Delta \red^\ast \Delta'$ balanced.
-%		Transition $\horel{\Gamma}{\Delta}{P}{\hby{\tau}}{\Delta'}{P'}$ is called
-%		{\em deterministic} if it is derived by $\ltsrule{App}$ or 
-%		$\ltsrule{Tau}$ where $\subj{\ell_1}$ and $\subj{\ell_2}$ in the premise 
-%		are dual session names. Suppose $\Delta$ is balanced. Then 
+\noi 
+%Thus, we may use $\hwb$ for tractable reasoning %is the most tractable 
+%in the higher-order setting;  
+%%the calculus is limited  
+%%the $\sessp$-calculus, 
+%%into~\jpc{\sessp}
+%in the first-order setting of $\sessp$
+%we can still use~$\fwb$. 
+
+\noi Thus, we may use $\fwb$ for tractable reasoning %is the most tractable 
+in the higher-order setting.
+
+PERHAPS REVISIT EXAMPLE \ref{ex:motivation}??
+
+
+%\smallskip  
+%
+%\noi Processes that do not use shared names are inherently deterministic. 
+%The following \jpc{determinacy property will be} useful 
+%\dk{for proving our expressiveness results (\secref{sec:positive})}.
+%%for both positive and negative results. 
+%We require an auxiliary definition. 
+%A transition $\horel{\Gamma}{\Delta}{P}{\hby{\tau}}{\Delta'}{P'}$ is said
+%		{\em deterministic} if it is derived using~$\ltsrule{App}$ or~$\ltsrule{Tau}$ 
+%		(where $\subj{\ell_1}$ and $\subj{\ell_2}$ in the premise 
+%		are dual endpoints), 
+%		possibly followed by uses of  $\ltsrule{Alpha}$, $\ltsrule{Res}$, $\ltsrule{Rec}$, or $\ltsrule{Par${}_L$}/\ltsrule{Par${}_R$}$.
+%
+%
+%%\smallskip 
+%
+%\begin{lemma}[$\tau$-Inertness]\rm
+%	\label{lem:tau_inert}
+%	\begin{enumerate}[1)]
+%		\item %(deterministic transitions) 
+%		Let $\horel{\Gamma}{\Delta}{P}{\hby{\tau}}{\Delta'}{P'}$ be a deterministic transition,
+%		with balanced $\Delta$. Then 
 %		$\Gamma; \Delta \proves P \cong \Delta'\proves P'$ 
-%		with $\Delta \red^\ast \Delta'$ balanced. 
-		\item 
-		%Let $P$ is the $\HOp^{-\mathsf{sh}}$-calculus. 
-		Let $P$ be an $\HOp^{-\mathsf{sh}}$ process. 
-		Assume $\Gamma; \emptyset; \Delta \proves P \hastype \Proc$. Then 
-		$P \red^\ast P'$ implies $\Gamma; \Delta \proves 
-		P \cong \Delta'\proves P'$ with $\Delta \red^\ast \Delta'$. 
-	\end{enumerate}
-\end{lemma}
+%		with $\Delta \red^\ast \Delta'$ balanced.
+%%		Transition $\horel{\Gamma}{\Delta}{P}{\hby{\tau}}{\Delta'}{P'}$ is called
+%%		{\em deterministic} if it is derived by $\ltsrule{App}$ or 
+%%		$\ltsrule{Tau}$ where $\subj{\ell_1}$ and $\subj{\ell_2}$ in the premise 
+%%		are dual session names. Suppose $\Delta$ is balanced. Then 
+%%		$\Gamma; \Delta \proves P \cong \Delta'\proves P'$ 
+%%		with $\Delta \red^\ast \Delta'$ balanced. 
+%		\item 
+%		%Let $P$ is the $\HOp^{-\mathsf{sh}}$-calculus. 
+%		Let $P$ be an $\HOp^{-\mathsf{sh}}$ process. 
+%		Assume $\Gamma; \emptyset; \Delta \proves P \hastype \Proc$. Then 
+%		$P \red^\ast P'$ implies $\Gamma; \Delta \proves 
+%		P \cong \Delta'\proves P'$ with $\Delta \red^\ast \Delta'$. 
+%	\end{enumerate}
+%\end{lemma}
 
 
 %\smallskip 
