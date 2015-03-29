@@ -1,13 +1,15 @@
 % !TEX root = main.tex
 \noindent 
-We introduce the 
+We introduce the syntax and semantics of the 
 \emph{Higher-Order Session $\pi$-Calculus} (\HOp).
-\HOp includes both name- and abstraction-passing 
+\HOp includes both name- and abstraction-passing, shared and session communication,  
 as well as recursion; it is 
 essentially 
 the process language
-studied 
-in~\cite{tlca07}. 
+proposed 
+in~\cite{tlca07} (where tractable bisimilarities are not studied). 
+\smallskip
+
 %Following the literature~\cite{JeffreyR05},
 %for simplicity of the presentation
 %we concentrate on the second-order call-by-value \HOp.  
@@ -27,10 +29,28 @@ in~\cite{tlca07}.
 %expressive enough to capture key features of session communication, 
 %such as delegation and recursion.
 
-\subsection{Syntax}
-\label{subsec:syntax}
+%\subsection{Syntax}
+%\label{subsec:syntax}
 %%%%%%%%%%%%%%%%%%%%%% HOp Syntax Figure %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
-\begin{figure}[t]
+%\begin{figure}[t]
+%	\[
+%		\begin{array}{rcl}
+%			u,w &\bnfis& n \bnfbar x,y,z \qquad
+%			n \bnfis a,b  \bnfbar s, \dual{s} \qquad 
+%			V,W  \bnfis u \bnfbar \abs{x}{P} \\[1mm]
+%			P,Q & \bnfis & \bout{u}{V}{P}  \bnfbar  \binp{u}{x}{P} \bnfbar
+%			\bsel{u}{l} P \bnfbar \bbra{u}{l_i:P_i}_{i \in I}   \\[1mm]
+%			& \bnfbar & \rvar{X} \bnfbar \recp{X}{P} \bnfbar \appl{V}{W} \bnfbar P\Par Q \bnfbar \news{n} P \bnfbar \inact
+%		\end{array}
+%	\]
+%	\caption{Syntax of \HOp.}
+%	\label{fig:syntax}
+%%\Hlinefig
+%\end{figure}
+%%%%%%%%%%%%%%%%%%%%%% End HOp Syntax Figure %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+	\begin{figure}
 	\[
 		\begin{array}{rcl}
 			u,w &\bnfis& n \bnfbar x,y,z \qquad
@@ -41,13 +61,54 @@ in~\cite{tlca07}.
 			& \bnfbar & \rvar{X} \bnfbar \recp{X}{P} \bnfbar \appl{V}{W} \bnfbar P\Par Q \bnfbar \news{n} P \bnfbar \inact
 		\end{array}
 	\]
-	\caption{Syntax of \HOp.}
-	\label{fig:syntax}
-%\Hlinefig
-\end{figure}
-%%%%%%%%%%%%%%%%%%%%%% End HOp Syntax Figure %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	\[
+	\begin{array}{c}
+		P \Par \inact \scong P
+		\quad
+		P_1 \Par P_2 \scong P_2 \Par P_1
+		\quad
+		P_1 \Par (P_2 \Par P_3) \scong (P_1 \Par P_2) \Par P_3
+		\quad 
+		\recp{X}{P} \scong P\subst{\recp{X}{P}}{\rvar{X}}
+		\\%[1mm]
 
-\noindent\myparagraph{Values} The syntax of \HOp is defined in \figref{fig:syntax}.
+		\news{n} \inact \scong \inact
+		\qquad 
+		P \Par \news{n} Q \scong \news{n}(P \Par Q)
+		\	(n \notin \fn{P})
+		\qquad
+		P \scong Q \textrm{ if } P \scong_\alpha Q
+	\end{array}
+\]
+	\[
+		\!\!\!\begin{array}{lllcrll}
+			\orule{App} & (\abs{x}{P}) \, V   \red    P \subst{V}{x}
+			& 
+			  
+
+			\orule{Pass} & \bout{n}{V} P \Par \binp{\dual{n}}{x} Q   \red   P \Par Q \subst{V}{x} 
+			
+			\\[1mm]
+
+			 \orule{Res} & P \red P'  \Rightarrow  \news{n} P  \red  \news{n} P' 
+
+			&  
+			\orule{Sel}
+			&  \!\!\! \bsel{n}{l_j} Q \Par \bbra{\dual{n}}{l_i : P_i}_{i \in I}  \red   Q \Par P_j ~~(j \in I)
+			
+			\\[1mm]
+			\orule{Par} & P \red P'   \Rightarrow    P \Par Q  \red   P' \Par Q  
+			&  
+			\orule{Cong} & P \scong Q \red Q' \scong P'   \Rightarrow  P  \red  P' 
+	\end{array}
+	\]
+\caption{$\HOp$: Syntax and Operational Semantics (Structural Congruence and Reduction Relation).
+\label{fig:redsem}}
+\Hlinefig
+\end{figure}
+
+\noindent\myparagraph{Syntax.} 
+The syntax of \HOp is defined in \figref{fig:redsem} (upper part).
 We use $a,b,c, \dots$ (resp.~$s, \dual{s}, \dots$) 
 to range over shared (resp. session) names. 
 We use $m, n, t, \dots$ for session or shared names. 
@@ -64,10 +125,9 @@ Values $V,W$ include
 identifiers $u, v, \ldots$ %(first-order values) 
 and 
 abstractions $\abs{x}{P}$ (first- and higher-order values, resp.). 
-
-\myparagraph{Terms} 
+{Terms} 
 include $\pi$-calculus constructs for sending/receiving values $V$.
-Process $\bout{u}{V} P$ denotes the output of value $V$
+Process $\bout{u}{V} P$ denotes the output of   $V$
 over name $u$, with continuation $P$;
 process $\binp{u}{x} P$ denotes the input prefix on name $u$ of a value
 that 
@@ -125,87 +185,85 @@ If $\fv{P} = \emptyset$, we call $P$ {\em closed}.
 %We shall demonstrate that 
 %$\HOp$, $\HO$, and $\sessp$ have the same expressivity.
 
-\subsection{Operational Semantics}
-	\label{subsec:semantics}
-	\begin{figure}
-	\[
-%		\begin{array}{rclrcrclr}
-%			(\abs{x}{P}) \, V  & \red & P \subst{V}{x}
-%			& \orule{App}
+
+%	\begin{figure}
+%	\[
+%		\begin{array}{rcl}
+%			u,w &\bnfis& n \bnfbar x,y,z \qquad
+%			n \bnfis a,b  \bnfbar s, \dual{s} \qquad 
+%			V,W  \bnfis u \bnfbar \abs{x}{P} \\[1mm]
+%			P,Q & \bnfis & \bout{u}{V}{P}  \bnfbar  \binp{u}{x}{P} \bnfbar
+%			\bsel{u}{l} P \bnfbar \bbra{u}{l_i:P_i}_{i \in I}   \\[1mm]
+%			& \bnfbar & \rvar{X} \bnfbar \recp{X}{P} \bnfbar \appl{V}{W} \bnfbar P\Par Q \bnfbar \news{n} P \bnfbar \inact
+%		\end{array}
+%	\]
+%	\[
+%
+%		\!\!\!\begin{array}{lllcrll}
+%			\orule{App} & (\abs{x}{P}) \, V   \red    P \subst{V}{x}
+%			& 
+%			  
+%
+%			\orule{Pass} & \bout{n}{V} P \Par \binp{\dual{n}}{x} Q   \red   P \Par Q \subst{V}{x} 
+%			
 %			\\[1mm]
 %
-%			\bout{n}{V} P \Par \binp{\dual{n}}{x} Q & \red & P \Par Q \subst{V}{x} 
-%			& \orule{Pass}
-%			\\[1mm]
+%			 \orule{Res} & P \red P'  \Rightarrow  \news{n} P  \red  \news{n} P' 
 %
-%			\bsel{n}{l_j} Q \Par \bbra{\dual{n}}{l_i : P_i}_{i \in I} & \red & Q \Par P_j ~~(j \in I)~~ 
-%			& \orule{Sel}
+%			&  
+%			\orule{Sel}
+%			&  \!\!\! \bsel{n}{l_j} Q \Par \bbra{\dual{n}}{l_i : P_i}_{i \in I}  \red   Q \Par P_j ~~(j \in I)
+%			
 %			\\[1mm]
-%
-%			P \red P' & \Rightarrow & \news{n} P  \red  \news{n} P'  & \orule{Res}
-%			\\[1mm]
-%			P \red P' & \Rightarrow  &  P \Par Q  \red   P' \Par Q  & \orule{Par}
-%			\\[1mm]
-%			P \scong Q \red Q' \scong P' & \Rightarrow & P  \red  P' & \orule{Cong}
+%			\orule{Par} & P \red P'   \Rightarrow    P \Par Q  \red   P' \Par Q  
+%			&  
+%			\orule{Cong} & P \scong Q \red Q' \scong P'   \Rightarrow  P  \red  P' 
 %	\end{array}
-		\!\!\!\begin{array}{lllcrll}
-			\orule{App} & (\abs{x}{P}) \, V   \red    P \subst{V}{x}
-			& 
-			  
-
-			\orule{Pass} & \bout{n}{V} P \Par \binp{\dual{n}}{x} Q   \red   P \Par Q \subst{V}{x} 
-			
-			\\[1mm]
-
-			 \orule{Res} & P \red P'  \Rightarrow  \news{n} P  \red  \news{n} P' 
-
-			&  
-			\orule{Sel}
-			&  \!\!\! \bsel{n}{l_j} Q \Par \bbra{\dual{n}}{l_i : P_i}_{i \in I}  \red   Q \Par P_j ~~(j \in I)
-			
-			\\[1mm]
-			\orule{Par} & P \red P'   \Rightarrow    P \Par Q  \red   P' \Par Q  
-			&  
-			\orule{Cong} & P \scong Q \red Q' \scong P'   \Rightarrow  P  \red  P' 
-	\end{array}
-	\]
-\[
-	\begin{array}{c}
-		P \Par \inact \scong P
-		\quad
-		P_1 \Par P_2 \scong P_2 \Par P_1
-		\quad
-		P_1 \Par (P_2 \Par P_3) \scong (P_1 \Par P_2) \Par P_3
-		\quad 
-		\recp{X}{P} \scong P\subst{\recp{X}{P}}{\rvar{X}}
-		\\%[1mm]
-
-		\news{n} \inact \scong \inact
-		\qquad 
-		P \Par \news{n} Q \scong \news{n}(P \Par Q)
-		\	(n \notin \fn{P})
-		\qquad
-		P \scong Q \textrm{ if } P \scong_\alpha Q
-
+%	\]
+%\[
+%	\begin{array}{c}
+%		P \Par \inact \scong P
+%		\quad
+%		P_1 \Par P_2 \scong P_2 \Par P_1
+%		\quad
+%		P_1 \Par (P_2 \Par P_3) \scong (P_1 \Par P_2) \Par P_3
+%		\quad 
+%		\recp{X}{P} \scong P\subst{\recp{X}{P}}{\rvar{X}}
+%		\\%[1mm]
+%
+%		\news{n} \inact \scong \inact
+%		\qquad 
+%		P \Par \news{n} Q \scong \news{n}(P \Par Q)
+%		\	(n \notin \fn{P})
 %		\qquad
-%		\dk{V \scong W \textrm{ if } V \scong_\alpha W
-%		\quad \abs{x}{P} \scong \abs{x}{Q} \textrm{ if } P \scong Q}
-	\end{array}
-\]
-\caption{Operational Semantics of $\HOp$. 
-\label{fig:reduction}}
-\Hlinefig
-\end{figure}
-\noindent \figref{fig:reduction} defines the operational semantics 
+%		P \scong Q \textrm{ if } P \scong_\alpha Q
+%
+%%		\qquad
+%%		\dk{V \scong W \textrm{ if } V \scong_\alpha W
+%%		\quad \abs{x}{P} \scong \abs{x}{Q} \textrm{ if } P \scong Q}
+%	\end{array}
+%\]
+%\caption{Operational Semantics of $\HOp$. 
+%\label{fig:reduction}}
+%\Hlinefig
+%\end{figure}
+
+\smallskip
+\noindent \myparagraph{Operational Semantics.}
+%	\label{subsec:semantics}
+	\figref{fig:redsem} (lower part) defines the operational semantics 
 of \HOp.
-$\orule{App}$ is a value application; 
-$\orule{Pass}$ defines a shared interaction at $n$ 
+We define a reduction relation which relies 
+on 
+a \emph{structural congruence} $\scong$, in the standard way. % are defined in \figref{fig:reduction} (bottom). 
+\jpc{We assume the expected extension of $\scong$ to values $V$.}
+Reduction is denoted $\red$; some intuitions on the rules in \figref{fig:redsem} (lower part) follow.
+Rule~$\orule{App}$ is a value application; 
+rule~$\orule{Pass}$ defines a shared interaction at $n$ 
 (\jpc{with} $\dual{n}=n$) or a session interaction;  
-$\orule{Sel}$ is the standard rule for labelled choice/selection:
+rule~$\orule{Sel}$ is the standard rule for labelled choice/selection:
 given an index set $I$, 
 a process selects label $l_j$ on name $n$ over a set of
 labels $\set{l_i}_{i \in I}$ offered by a branching 
 on the dual endpoint $\dual{n}$; and other rules are standard.
-Rules for \emph{structural congruence} are defined in \figref{fig:reduction} (bottom). 
-\jpc{We assume the expected extension of $\scong$ to values $V$.}
 We write $\red^\ast$ for a multi-step reduction. 
