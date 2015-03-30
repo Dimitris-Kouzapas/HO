@@ -1,26 +1,28 @@
+% !TEX root = main.tex
 %\section{Example}
 
 
 \begin{example}
-	Consider typed process
-\[
-	\Gamma; \es; \Delta \cat n: \btout{U} \tinact \proves \bout{n}{\abs{x}{\appl{x}(\abs{y}{\bout{y}{m}} \inact)}} \inact \hastype \Proc
-\]
-	with $U = \shot{(\shot{(\shot{(\btout{S} \tinact)})})}$
-	We will count the number of steps require to check the bisimilarity
-	of the above process with it self. Note that
+	Consider process
+	$\Gamma; \es; \Delta \cat n: \btout{U} \tinact \proves \bout{n}{\abs{x}{\appl{x}(\abs{y}{\bout{y}{m}} \inact)}} \inact \hastype \Proc$
+	with $U = \shot{(\shot{(\shot{(\btout{S} \tinact)})})}$. 
+	We will compare with~\cite{JeffreyR05} by counting the steps required to check the bisimilarity
+	of this process with itself. Note that
+	$\mapchar{\btinp{U} \inact}{s} = \binp{s}{x} \appl{x}{(\abs{y}{\appl{y}{a})}}$, for some fresh $a$.
 %
-	\begin{eqnarray*}
-		\mapchar{\btinp{U} \inact}{s}\\
-		= && \binp{s}{x} \mapchar{\shot{(\shot{(\shot{(\btout{S} \tinact)})})}}{x}\\
-		= && \binp{s}{x} \appl{x}{\omapchar{\shot{(\shot{(\btout{S} \tinact)})}}}\\
-		= && \binp{s}{x} \appl{x}{(\abs{y}{\mapchar{\shot{(\btout{S} \tinact)}}{y}})}\\
-		= && \binp{s}{x} \appl{x}{(\abs{y}{\appl{y}{\omapchar{\btout{S} \tinact}})}}\\
-		= && \binp{s}{x} \appl{x}{(\abs{y}{\appl{y}{a})}}\\
-	\end{eqnarray*}
+%	\begin{eqnarray*}
+%		\mapchar{\btinp{U} \inact}{s}\\
+%		= && \binp{s}{x} \mapchar{\shot{(\shot{(\shot{(\btout{S} \tinact)})})}}{x}\\
+%		= && \binp{s}{x} \appl{x}{\omapchar{\shot{(\shot{(\btout{S} \tinact)})}}}\\
+%		= && \binp{s}{x} \appl{x}{(\abs{y}{\mapchar{\shot{(\btout{S} \tinact)}}{y}})}\\
+%		= && \binp{s}{x} \appl{x}{(\abs{y}{\appl{y}{\omapchar{\btout{S} \tinact}})}}\\
+%		= && \binp{s}{x} \appl{x}{(\abs{y}{\appl{y}{a})}}\\
+%	\end{eqnarray*}
 %
-	The characteristic process of
-	the type $\shot{(\shot{(\shot{(\btout{S} \tinact)})})}$ is
+%	The characteristic process of
+%	the type $\shot{(\shot{(\shot{(\btout{S} \tinact)})})}$ is
+
+\noi In our approach, we would have the following typed transitions:
 
 	\begin{tabular}{rrl}
 		(1)& & $\Gamma; \es; \Delta \cat n: \btout{U} \tinact \proves \bout{n}{\abs{x}{\appl{x}(\abs{y}{\bout{y}{m}} \inact)}} \inact$ \\
@@ -34,7 +36,7 @@
 		(7) &$\by{\tau}$& $\Gamma; \es; \Delta \proves \bout{a}{m} \inact$
 	\end{tabular}
 
-On Jeffrey and Rathke Semantics:
+\noi In the approach defined in~\cite{JeffreyR05} we would have:
 
 	\begin{tabular}{rrl}
 		(1)& & $\Gamma; \es; \Delta \cat n: \btout{U} \tinact \proves \bout{n}{\abs{x}{\appl{x}(\abs{y}{\bout{y}{m}} \inact)}} \inact$ \\
@@ -46,14 +48,17 @@ On Jeffrey and Rathke Semantics:
 		(6) &$\by{\bactinp{k}{a}}$& $\Gamma; \es; \Delta \proves \repl{} \binp{t}{x} \appl{x}(\abs{y}{\bout{y}{m}} \inact) \Par \repl{} \binp{k}{y} \bout{y}{m} \inact \Par \appl{\abs{y}{\bout{y}{m} \inact}}{a}$\\
 		(7) &$\by{\tau}$& $\Gamma; \es; \Delta \proves \repl{} \binp{t}{x} \appl{x}(\abs{y}{\bout{y}{m}} \inact) \Par \repl{} \binp{k}{y} \bout{y}{m} \inact \Par \bout{a}{m} \inact$
 	\end{tabular}
+	
+\noi This simple example shows how both approaches feature the same number of (typed) transitions.
+It is interesting to see how our approach based on refined LTS and characteristic bisimilarity requires less observable actions than that in~\cite{JeffreyR05}.
+Also, as we are able to distinguish between linear and shared names, we require less replicated processes than in~\cite{JeffreyR05}. 
 
-
-	Comparing
-	\begin{itemize}
-		\item	Same number of transitions.
-		\item	J \& R more observable actions.
-		\item	J \& R replicated processes.
-	\end{itemize}
+%	Comparing
+%	\begin{itemize}
+%		\item	Same number of transitions.
+%		\item	J \& R more observable actions.
+%		\item	J \& R replicated processes.
+%	\end{itemize}
 
 \end{example}
 

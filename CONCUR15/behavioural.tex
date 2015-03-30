@@ -202,15 +202,15 @@ In rule~$\eltsrule{SRv}$
 the type of value $V$
 and the type of the object associated to the session type on $s$ 
 should coincide. 
-Moreover, 
-the resulting type tuple must contain the environments 
+%Moreover, 
+The resulting type tuple must contain the environments 
 associated to $V$. 
 The %condition $\dual{s} \notin \dom{\Delta}$
-rule requires that 
-the dual endpoint $\dual{s}$ is not 
-present in the session environment, since if it were present
-the only communication that could take place is the interaction
-between the two endpoints (using rule~$\eltsrule{Tau}$ below).
+%rule requires that 
+the dual endpoint $\dual{s}$ cannot not be
+present in the session environment: if it were present
+the only possible communication would be the interaction
+between the two endpoints (cf. rule~$\eltsrule{Tau}$).
 Rule~$\eltsrule{ShRv}$ is for shared names and follows similar principles.
 
 \myparagraph{Output Actions} are defined by rules~$\eltsrule{SSnd}$
@@ -222,7 +222,7 @@ The session environment $\Delta$ with $\AT{s}{S}$
 should include the session environment of the sent value $V$, 
 {\em excluding} the session environments of names $m_j$ 
 in $\widetilde{m}$ which restrict the scope of value $V$. 
-Similarly, the linear variable environment 
+Analogously, the linear variable environment 
 $\Lambda'$ of $V$ should be included in $\Lambda$. 
 Scope extrusion of session names in $\widetilde{m}$ requires
 that the dual endpoints of $\widetilde{m}$ should appear in
@@ -246,9 +246,10 @@ select and branch.
 %Both
 %rules require the absence of the dual endpoint from the session
 %environment.%, and the presence of the action labels in the type.
-Hidden transitions defined by rule $\eltsrule{Tau}$ 
-do not change the session environment or they follow the reduction on session
-environments (\defref{d:wtenvred}).
+Rule $\eltsrule{Tau}$ defines
+internal transitions: 
+it either keeps the session environment unchanged or 
+reduces it following \defref{d:wtenvred}.
 
 %A second environment LTS, denoted $\hby{\ell}$,
 %is defined in the lower part of \figref{fig:envLTS}.
@@ -764,21 +765,23 @@ LTS explained in %\secref{sec:overview}.
 the introduction.
 
 \begin{proposition}
-	\begin{itemize}
-		\item	Let session type $S$, then $\Gamma; \es; \Delta \cat s: S \proves \mapchar{S}{s} \hastype \Proc$.
-		\item	Let session type $\chtype{U}$, then $\Gamma \cat a: \chtype{U}; \es; \Delta \proves \mapchar{\chtype{U}}{a} \hastype \Proc$.
-	\end{itemize}
+%	\begin{itemize}
+		%\item	
+		Let $S$ be a session type. Then $\Gamma; \es; \Delta \cat s: S \proves \mapchar{S}{s} \hastype \Proc$.
+		%\item	
+		Also, let $\chtype{U}$ be a first-order (channel) type. Then $\Gamma \cat a: \chtype{U}; \es; \Delta \proves \mapchar{\chtype{U}}{a} \hastype \Proc$.
+%	\end{itemize}
 \end{proposition}
 
 
-\begin{proof}
-	By induction on the definition of $\mapchar{U}{n}$.
-\end{proof}
+%\begin{proof}
+%	By induction on the definition of $\mapchar{U}{n}$.
+%\end{proof}
 
 \begin{example}
 	Consider the type $U = \shot{(\shot{(\shot{(\btout{S} \tinact)})})}$.
 	It is easy to verify that %the characteristic process %of the above type is:
-	$\mapchar{\btinp{U} \inact}{s} = \binp{s}{x} \appl{x}{(\abs{y}{\appl{y}{n})}}$.
+	$\mapchar{\btinp{U} \inact}{s} = \binp{s}{x} \appl{x}{(\abs{y}{\appl{y}{n})}}$, for some fresh $n$.
 %%
 %	\begin{eqnarray*}
 %		\mapchar{\btinp{U} \inact}{s} = && \binp{s}{x} \mapchar{\shot{(\shot{(\shot{(\btout{S} \tinact)})})}}{x}\\
@@ -795,10 +798,10 @@ the introduction.
 
 \begin{example}[The Need for Refined Typed LTS]
 \label{ex:motivation}
-First we demonstrate that observing a characteristic value
-input alone is not sufficient
+First we show that observing a characteristic value
+input alone is not enough
 \dk{to define a sound bisimulation closure}.
-Consider typed processes $P_1, P_2$:
+Consider   processes $P_1, P_2$:
 %
 \begin{eqnarray}
 	P_1 = \binp{s}{x} (\appl{x}{s_1} \Par \appl{x}{s_2}) 
@@ -861,7 +864,7 @@ characteristic values as the input.
 This is not the case since the trigger value
 alone also results in an under-discriminating bisimulation relation.
 In fact the  trigger value can be observed on any input prefix
-of {\em any type}. For example, consider the following processes:
+of {\em any type}. For example, consider the processes
 %
 \begin{eqnarray}
 	\Gamma; \es; \Delta \proves \newsp{s}{\binp{n}{x} (\appl{x}{s}) \Par \bout{\dual{s}}{\abs{x} P} \inact} \hastype \Proc\label{equ:7}
@@ -869,7 +872,7 @@ of {\em any type}. For example, consider the following processes:
 	\Gamma; \es; \Delta \proves \newsp{s}{\binp{n}{x} (\appl{x}{s}) \Par \bout{\dual{s}}{\abs{x} Q} \inact} \hastype \Proc\label{equ:8}
 \end{eqnarray}
 %
-\noi if processes in \eqref{equ:7}/\eqref{equ:8}
+\noi If these processes %in \eqref{equ:7}/\eqref{equ:8}
 input the trigger value, we obtain: % they evolved to 
 \begin{eqnarray*}
 %\Gamma; \es; \Delta \proves 
@@ -887,7 +890,7 @@ assume a bisimulation definition that allows only trigger value input.
 %
 %\noi It is easy to obtain a closure if allow only the
 %trigger value as the input value. 
-But if processes in \eqref{equ:7}/\eqref{equ:8}
+But if the processes in \eqref{equ:7} and \eqref{equ:8}
 input the characteristic value $\abs{z}{\binp{z}{x} (\appl{x}{m})}$,  
 then they would become:
 %
@@ -1000,10 +1003,10 @@ bisimulations},
 %two tractable bisimulations for $\HO$ and $\HOp$.
 a tractable bisimulations for $\HOp$.
 As explained in %\secref{sec:overview},
-the introduction,
+the Introduction,
 %the two bisimulations 
 characteristic bisimulations
-use trigger processes:
+use trigger processes (cf. \eqref{eq:4}):
 %the key difference between them is in the trigger processes they use:
 \begin{eqnarray*}
 %\htrigger{t}{V_1}  & \defeq &  \hotrigger{t}{V} \label{eqb:0} \\
@@ -1052,7 +1055,7 @@ use trigger processes:
 %\end{definition}
 
  
-We define characteristic bisimilarity:
+%We define characteristic bisimilarity:
 % is given using characteristic trigger processes. 
 
 \begin{definition}[Characteristic Bisimilarity]\rm
@@ -1112,7 +1115,9 @@ $\horel{\Gamma}{\Delta_2}{Q_1}{\Hby{\hat{\ell}}}{\Delta_2'}{Q_2}$
 %
 %\smallskip 
 
-\noi We now state our main theorem: %typed bisimilarities collapse. 
+\noi We now state our main theorem: typed bisimilarities collapse for \HOp processes. 
+It allows us to use $\fwb$ as a tractable reasoning %is the most tractable 
+technique for higher-order processes with sessions.
 
 \smallskip 
 
@@ -1126,11 +1131,18 @@ $\cong$, $\wbc$,  and $\fwb$ coincide in $\HOp$.
 \end{theorem}
 
 \begin{proof}[Proof (Sketch)]
-DIMITRIS, PLEASE ADD SKETCH.
+We use an auxiliary equivalence called \emph{higher-order bisimilarity},  $\hwb$, which 
+is defined as $\fwb$ but by
+using  trigger processes with higher-order communication (cf. \eqref{equ:0}).
+We first show that $\fwb$ and $\hwb$ coincide; then, we show that $\hwb$ coincides with $\wbc$ and $\cong$.
+A key result is a process substitution lemma which simplifies reasoning 
+for $\hwb$
+by exploiting characteristic processes/values.
+See~\cite{KouzapasPY15} for full details.
 \end{proof}
 %\smallskip 
 
-\noi 
+%\noi 
 %Thus, we may use $\hwb$ for tractable reasoning %is the most tractable 
 %in the higher-order setting;  
 %%the calculus is limited  
@@ -1139,8 +1151,7 @@ DIMITRIS, PLEASE ADD SKETCH.
 %in the first-order setting of $\sessp$
 %we can still use~$\fwb$. 
 
-\noi Thus, we may use $\fwb$ for tractable reasoning %is the most tractable 
-in the higher-order setting.
+
 
 %PERHAPS REVISIT EXAMPLE \ref{ex:motivation}??
 
