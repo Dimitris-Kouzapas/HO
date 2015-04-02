@@ -274,22 +274,20 @@ We write $\red^\ast$ for a multi-step reduction.
 \begin{example}[Hotel Booking Scenario]\label{exam:proc}
 To illustrate \HOp and its expressive power, 
 we consider a usecase scenario that adapts the example given by Mostrous and Yoshida~\cite{MostrousY15}.
-We introduce a usecase scenario where a $\Client$ process wants to book
-a hotel. % for her holidays. % in a remote island
+The scenario involves a $\Client$ process that wants to book
+a hotel room. % for her holidays. % in a remote island
 %The Client 
 $\Client$
 narrows  her choice down to two hotels, and requires 
  a quote from the two in order to
-make her choice. The round-trip time (RTT) required for
+decide. The round-trip time (RTT) required for
 taking quotes from the two hotels in not optimal, % (cf.~\cite{MostrousY15}),
-so she decides to send remote codes to both hotels
-to automatically negotiate and book the hotel for
-her. 
-
-We present two implementations; the first one is given as follows:
+so she  sends mobile codes to both hotels
+to automatically negotiate and book a room. 
+We present two \HOp implementations of this scenario; the first one is  as follows:
 %
-\[
-	\begin{array}{rcl}
+%\[
+	\begin{eqnarray*}%{rcl}
 		P &\defeq& \bout{x}{\rtype} \binp{x}{\Quote} \bout{y}{\Quote}
 		y \triangleleft \left\{
 				\begin{array}{l}
@@ -297,16 +295,18 @@ We present two implementations; the first one is given as follows:
 					\reject: \bsel{x}{\reject} \inact
 				\end{array}
 				\right\}
-		\\[6mm]
-		\Client_1 &\defeq& \newsp{h_1, h_2}{\bout{s_1}{\abs{x}{P \subst{h_1}{y}}} \bout{s_2}{\abs{x}{P \subst{h_2}{y}}} \inact \Par\\
-			&&
+		\\ %[3mm]
+		\Client_1 &\defeq& \newsp{h_1, h_2}{\bout{s_1}{\abs{x}{P \subst{h_1}{y}}} \bout{s_2}{\abs{x}{P \subst{h_2}{y}}} \inact \Par f \\
+		& & 
+%			&&
 			\begin{array}{lll}
-				\binp{\dual{h_1}}{x} \binp{\dual{h_2}}{y} & \If\ x \leq y\ \Then & \bsel{\dual{h_1}}{\accept} \bsel{\dual{h_2}}{\reject} \inact\\
-				& \Else& \bsel{\dual{h_1}}{\reject} \bsel{\dual{h_2}}{\accept} \inact
+				\binp{\dual{h_1}}{x} \binp{\dual{h_2}}{y} & \If\ x \leq y\  & \Then \bsel{\dual{h_1}}{\accept} \bsel{\dual{h_2}}{\reject} \inact\\
+				& & \Else \bsel{\dual{h_1}}{\reject} \bsel{\dual{h_2}}{\accept} \inact
 			\end{array}
+%\binp{\dual{h_1}}{x} \binp{\dual{h_2}}{y}  \If x \leq y\ \Then  \bsel{\dual{h_1}}{\accept} \bsel{\dual{h_2}}{\reject} \inact \Else  \bsel{\dual{h_1}}{\reject} \bsel{\dual{h_2}}{\accept} \inact
 		}
-	\end{array}
-\]
+	\end{eqnarray*}
+%\]
 %
 \begin{itemize}
 	\item	Process $P$ is the remote code responsible for negotiation with a hotel.
