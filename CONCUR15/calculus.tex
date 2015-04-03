@@ -284,11 +284,15 @@ decide. The round-trip time (RTT) required for
 taking quotes from the two hotels in not optimal, % (cf.~\cite{MostrousY15}),
 so she  sends mobile codes to both hotels
 to automatically negotiate and book a room. 
-We present two \HOp implementations of this scenario; the first one is  as follows:
+We now present two \HOp implementations of this scenario.
+For convenience, we write $\If e\ \Then (P\ \Else \ Q)$ 
+to denote a conditional process (encodable using labeled choice)
+that executes $P$ or $Q$ depending on boolean expression $e$.
+The first implementation is  as follows:
 %
 %\[
 	\begin{eqnarray*}%{rcl}
-		P &\defeq& \bout{x}{\rtype} \binp{x}{\Quote} \bout{y}{\Quote}
+		 P  \!\!\! & \defeq &  \!\!\! \bout{x}{\rtype} \binp{x}{\Quote} \bout{y}{\Quote}
 		y \triangleleft \left\{
 				\begin{array}{l}
 					\accept: \bsel{x}{\accept} \bout{x}{\creditc} \inact,\\
@@ -296,20 +300,15 @@ We present two \HOp implementations of this scenario; the first one is  as follo
 				\end{array}
 				\right\}
 		\\ %[3mm]
-		\Client_1 &\defeq& \newsp{h_1, h_2}{\bout{s_1}{\abs{x}{P \subst{h_1}{y}}} \bout{s_2}{\abs{x}{P \subst{h_2}{y}}} \inact \Par f \\
+		 \Client_1 \!\!\! & \defeq  &  \!\!\! \newsp{h_1, h_2}{\bout{s_1}{\abs{x}{P \subst{h_1}{y}}} \bout{s_2}{\abs{x}{P \subst{h_2}{y}}} \inact \Par  \\
 		& & 
-%			&&
-			\begin{array}{lll}
-				\binp{\dual{h_1}}{x} \binp{\dual{h_2}}{y} & \If\ x \leq y\  & \Then \bsel{\dual{h_1}}{\accept} \bsel{\dual{h_2}}{\reject} \inact\\
-				& & \Else \bsel{\dual{h_1}}{\reject} \bsel{\dual{h_2}}{\accept} \inact
-			\end{array}
-%\binp{\dual{h_1}}{x} \binp{\dual{h_2}}{y}  \If x \leq y\ \Then  \bsel{\dual{h_1}}{\accept} \bsel{\dual{h_2}}{\reject} \inact \Else  \bsel{\dual{h_1}}{\reject} \bsel{\dual{h_2}}{\accept} \inact
+		\!\!\! \binp{\dual{h_1}}{x} \binp{\dual{h_2}}{y}  \If\ x \leq y\   \Then (\bsel{\dual{h_1}}{\accept} \bsel{\dual{h_2}}{\reject} \inact \ \Else \ \bsel{\dual{h_1}}{\reject} \bsel{\dual{h_2}}{\accept} \inact )
 		}
 	\end{eqnarray*}
 %\]
 %
-Process $\Client_1$ sends the two abstractions instances of process $P$
-		to the two hotels via sessions $s_1$ and $s_2$, respectively.
+Process $\Client_1$ sends two abstractions with body $P$, one to each hotel, 
+		using sessions $s_1$ and $s_2$.
 	Process $P$ is the mobile code responsible for negotiating with a hotel.
 		Name $x$ in $P$ is meant to be instantiated by the hotel as the negotiating
 		endpoint. Channel $y$ is used to interact with $\Client_1$.	
@@ -322,7 +321,7 @@ Process $\Client_1$ sends the two abstractions instances of process $P$
 				$\Client_1$ instantiates two copies of  $P$ as abstractions
 		on session $x$. It uses two
 		fresh endpoints $h_1, h_2$ to substitute channel $y$
-		in the two instances of $P$. This enables communication with the mobile code(s).
+		in $P$. This enables communication with the mobile code(s).
 		In fact, 
 		$\Client_1$ uses the dual endpoints $\dual{h_1}$ and $\dual{h_2}$
 		to receive the negotiation
@@ -339,13 +338,15 @@ to interact with each other (rather than with $\Client_1$) to reach to a consens
 %
 \[
 	\begin{array}{rcl}
-		Q_1 &\defeq&	\bout{x}{\rtype} \binp{x}{\Quote_1} \bout{y}{\Quote_1} \binp{y}{\Quote_2}\\
-			&&
-				\begin{array}{ll}
-					\If\ \Quote_1 \leq \Quote_2 &\Then  \bsel{x}{\accept} \bout{x}{\creditc} \inact \  \Else \ \bsel{x}{\reject} \inact %\\
-				%	 & \Else \bsel{x}{\reject} \inact
-				\end{array}
-		\\
+	    R & \defeq & \If\ \Quote_1 \leq \Quote_2 \, \Then  (\bsel{x}{\accept} \bout{x}{\creditc} \inact \  \Else \ \bsel{x}{\reject} \inact) \\
+		Q_1 &\defeq&	\bout{x}{\rtype} \binp{x}{\Quote_1} \bout{y}{\Quote_1} \binp{y}{\Quote_2} R \\
+		Q_2 &\defeq&	\bout{x}{\rtype} \binp{x}{\Quote_1} \binp{y}{\Quote_2} \bout{y}{\Quote_1} R \\
+%			&&
+%				\begin{array}{ll}
+%					\If\ \Quote_1 \leq \Quote_2 &\Then  \bsel{x}{\accept} \bout{x}{\creditc} \inact \  \Else \ \bsel{x}{\reject} \inact %\\
+%				%	 & \Else \bsel{x}{\reject} \inact
+%				\end{array}
+%		\\
 %		Q_2 &\defeq&	\bout{x}{\rtype} \binp{x}{\Quote_1} \binp{y}{\Quote_2} \bout{y}{\Quote_1}\\
 %			&&
 %				\begin{array}{ll}
@@ -358,12 +359,12 @@ to interact with each other (rather than with $\Client_1$) to reach to a consens
 \]
 %\end{example}
 Processes $Q_1$ and $Q_2$  negotiate a quote from the
-		hotel in the same fashion as process $P$ in the previous implementation.
-		Notice that $Q_2$ is defined exactly as $Q_1$ except for the sequence of messages on~$y$:
-		rather than 
-		sending $\Quote_1$ first and receiving $\Quote_2$ later, 
-		process $Q_2$ receives $\Quote_2$ first and sends $\Quote_1$ later.
-		The key difference with respect to process $P$ in $\Client_1$ is that $y$ is used for
+		hotel in the same fashion as process $P$ in $\Client_1$.
+%		Notice that $Q_2$ is defined exactly as $Q_1$ except for the sequence of messages on~$y$:
+%		rather than 
+%		sending $\Quote_1$ first and receiving $\Quote_2$ later, 
+%		process $Q_2$ receives $\Quote_2$ first and sends $\Quote_1$ later.
+		The key difference with respect to $P$ is that $y$ is used for
 		interaction between process $Q_1$ and $Q_2$. Both processes send
 		their quotes to each other and then internally follow the same
 		logic to reach to a decision.
@@ -394,8 +395,8 @@ Processes $Q_1$ and $Q_2$  negotiate a quote from the
 %		instances of $P_1$ and $P_2$ to the two hotels.
 %\end{itemize}
 
-Differences between $\Client_1$ and $\Client_2$ are more easily seen in \figref{fig:exam}. 
-We assign session types to these processes in Example \ref{exam:type}.
+Differences between $\Client_1$ and $\Client_2$ are more easily seen in the sequence diagrams of \figref{fig:exam}. 
+We will assign session types to these client processes in Example \ref{exam:type}.
 Later on, we will show that they are behaviorally equivalent using characteristic bisimilarity.
 \begin{figure}
 \input{diagram}
