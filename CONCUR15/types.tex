@@ -127,6 +127,43 @@ and processes $P$:
 says that under environments $\Gamma; \Lambda; \Delta$ value $V$
 has type $U$; the second judgement says that under
 environments $\Gamma; \Lambda; \Delta$ process $P$ has the process type~$\Proc$.
+The type soundness result for \HOp (Thm.~\ref{t:sr})
+relies on two auxiliary notions on session environments: 
+%that contain dual endpoints typed with dual types.
+%The following definition ensures two session endpoints 
+%are dual each other. 
+
+%\smallskip
+
+\begin{definition}[Session Environments: Balanced/Reduction]\label{d:wtenvred}%\rm
+	Let $\Delta$ be a session environment.
+	\begin{enumerate}[$\bullet$]
+	\item We say that a session environment $\Delta$ is {\em balanced} if whenever
+	$s: S_1, \dual{s}: S_2 \in \Delta$ then $S_1 \dualof S_2$.
+	\item We define the reduction relation $\red$ on session environments as: %\\ %[-2mm]
+\begin{eqnarray*}
+	\Delta \cat s: \btout{U} S_1 \cat \dual{s}: \btinp{U} S_2  & \red & 
+	\Delta \cat s: S_1 \cat \dual{s}: S_2  \\
+	\Delta \cat s: \btsel{l_i: S_i}_{i \in I} \cat \dual{s}: \btbra{l_i: S_i'}_{i \in I} &\red& \Delta \cat s: S_k \cat \dual{s}: S_k' \ (k \in I)
+\end{eqnarray*}
+\end{enumerate}
+\end{definition}
+
+\noi We rely on a typing system is very similar to the one developed in~\cite{tlca07,MostrousY15}. 
+We state the type soundness result for \HOp processes;
+see \appref{app:types} for details of the associated proofs.
+
+\smallskip
+
+\begin{theorem}[Type Soundness]\label{t:sr}%\rm
+			Suppose $\Gamma; \es; \Delta \proves P \hastype \Proc$
+			with
+			$\Delta$ balanced. 
+			Then $P \red P'$ implies $\Gamma; \es; \Delta'  \proves P' \hastype \Proc$
+			and $\Delta = \Delta'$ or $\Delta \red \Delta'$
+			with $\Delta'$ balanced. 
+\end{theorem}
+
 
 \begin{example}[Hotel Booking Revisited]\label{exam:type}
 We give types to the process of Example~\ref{exam:proc}.
@@ -152,44 +189,6 @@ $~~
 $.
 %
 \end{example}
-
-\noi The type soundness result for \HOp (Thm.~\ref{t:sr})
-relies on two auxiliary notions on session environments: 
-%that contain dual endpoints typed with dual types.
-%The following definition ensures two session endpoints 
-%are dual each other. 
-
-%\smallskip
-
-\begin{definition}[Session Environments: Balanced/Reduction]\label{d:wtenvred}%\rm
-	Let $\Delta$ be a session environment.
-	\begin{enumerate}[$\bullet$]
-	\item We say that a session environment $\Delta$ is {\em balanced} if whenever
-	$s: S_1, \dual{s}: S_2 \in \Delta$ then $S_1 \dualof S_2$.
-	\item We define the reduction relation $\red$ on session environments as: %\\ %[-2mm]
-\begin{eqnarray*}
-	\Delta \cat s: \btout{U} S_1 \cat \dual{s}: \btinp{U} S_2  & \red & 
-	\Delta \cat s: S_1 \cat \dual{s}: S_2  \\
-	\Delta \cat s: \btsel{l_i: S_i}_{i \in I} \cat \dual{s}: \btbra{l_i: S_i'}_{i \in I} &\red& \Delta \cat s: S_k \cat \dual{s}: S_k' \ (k \in I)
-\end{eqnarray*}
-\end{enumerate}
-\end{definition}
-
-\noi We rely on a typing system is very similar to the one detailed in~\cite{tlca07,MostrousY15}. 
-Thus, we fully describe it  in \appref{app:types}. 
-We state the type soundness result for \HOp processes: 
-
-\smallskip
-
-\begin{theorem}[Type Soundness]\label{t:sr}%\rm
-			Suppose $\Gamma; \es; \Delta \proves P \hastype \Proc$
-			with
-			$\Delta$ balanced. 
-			Then $P \red P'$ implies $\Gamma; \es; \Delta'  \proves P' \hastype \Proc$
-			and $\Delta = \Delta'$ or $\Delta \red \Delta'$
-			with $\Delta'$ balanced. 
-\end{theorem}
-
 
 %%\begin{definition}[Balanced]\label{d:wtenv}%\rm
 %%	%Let $\Delta$ be a session environment.
