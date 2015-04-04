@@ -1,103 +1,116 @@
+\section{Hotel Booking}
+\label{hotel_closure}
 \begin{proposition}
 	Assuming $S' = \btsel{\accept: \btout{\creditc} \tinact, \reject: \tinact}$ and
 	$S = \btout{\rtype} \btinp{\Quote} S'$
 	then
-	$\es; \es; s_1: \btout{\lhot{S}} \tinact \cat s_2: \btout{\lhot{S}} \tinact \proves \Client_1\ \wb\ \btout{\lhot{S}} \tinact \cat s_2: \btout{\lhot{S}} \tinact \proves \Client_1$.
+\[
+	\ahorel
+	{\es}{s_1: \btout{\lhot{S}} \tinact \cat s_2: \btout{\lhot{S}} \tinact}{\Client_1}
+	{\wbf}
+	{s_1: \btout{\lhot{S}} \tinact \cat s_2: \btout{\lhot{S}} \tinact}{\Client_2}
+\]
 \end{proposition}
 
 \begin{proof}
-	We show that each typed process simulates the other. We observe $\Client_1$ as:
+	We show that each typed process simulates the other.
+
+	The characteristic process for type $\btinp{\lhot{S}} \inact$ is
+	\begin{eqnarray*}
+		\mapchar{\btinp{\lhot{S}} \tinact}{s} &=& \binp{s}{x} (\mapchar{\tinact}{s} \Par \mapchar{\lhot{S}}{x})\\
+		&=& \binp{s}{x} (\inact \Par \abs{x}{\omapchar{S}})\\
+		&=& \binp{s}{x} (\inact \Par \abs{x}{k}) \qquad k \textrm{ fresh}\\
+		&\scong& \binp{s}{x} (\abs{x}{k})
+	\end{eqnarray*}
+
+	We observe $\Client_1$ as:
 \[
-	\begin{array}{rcl}
-		&& \es; \es; s_1: \btout{\lhot{S}} \tinact \cat s_2: \btout{\lhot{S}} \tinact \proves \Client_1
-	\\
+	\begin{array}{ll}
+		& \es; \es; s_1: \btout{\lhot{S}} \tinact \cat s_2: \btout{\lhot{S}} \tinact \proves \Client_1
+\\
 
-		&\by{\bactout{s_1}{\abs{x}{P \subst{h_1}{y}}}}&
+		\by{\bactout{s_1}{\abs{x}{P \subst{h_1}{y}}}}&
 		\es; \es; s_2: \btout{\lhot{S}} \tinact \cat k_1: S \proves \newsp{h_1, h_2}{\bout{s_2}{\abs{x}{P \subst{h_2}{y}}} \inact \Par\\
-		&&
+		&
 		\begin{array}{lll}
 			\binp{\dual{h_1}}{x} \binp{\dual{h_2}}{y} & \If\ x \leq y\ \Then & \bsel{\dual{h_1}}{\accept} \bsel{\dual{h_2}}{\reject} \inact\\
 			& \Else& \bsel{\dual{h_1}}{\reject} \bsel{\dual{h_2}}{\accept} \inact
 		\end{array} \\
-		&& \Par \newsp{s}{\mapchar{\btinp{\lhot{S}}}{s} \Par \bout{\dual{s}}{\abs{x}{P \subst{h_1}{y}}} \inact }}
-	\\
-
-		&\by{\bactout{s_2}{\abs{x}{P \subst{h_2}{y}}}}&
+		& \Par \binp{t_1}{x} \newsp{s}{\mapchar{\btinp{\lhot{S}}}{s} \Par \bout{\dual{s}}{\abs{x}{P \subst{h_1}{y}}} \inact }}
+\\
+		\by{\bactout{s_2}{\abs{x}{P \subst{h_2}{y}}}}&
 		\es; \es; k_1: S \cat k_2: S \proves \newsp{h_1, h_2}{\\
-		&&
+		&
 		\begin{array}{lll}
 			\binp{\dual{h_1}}{x} \binp{\dual{h_2}}{y} & \If\ x \leq y\ \Then & \bsel{\dual{h_1}}{\accept} \bsel{\dual{h_2}}{\reject} \inact\\
 			& \Else& \bsel{\dual{h_1}}{\reject} \bsel{\dual{h_2}}{\accept} \inact
 		\end{array} \\
-		&& \Par \newsp{s}{\binp{s}{x} \appl{x}{k_1} \Par \bout{\dual{s}}{\abs{x}{P \subst{h_1}{y}}} \inact }\\
-		&& \Par \newsp{s}{\mapchar{\btinp{\lhot{S}}}{s} \Par \bout{\dual{s}}{\abs{x}{P \subst{h_2}{y}}} \inact }}
-	\\
+		& \Par \binp{t_1}{x} \newsp{s}{\binp{s}{x} \appl{x}{k_1} \Par \bout{\dual{s}}{\abs{x}{P \subst{h_1}{y}}} \inact }\\
+		& \Par \binp{t_2}{x} \newsp{s}{\mapchar{\btinp{\lhot{S}}}{s} \Par \bout{\dual{s}}{\abs{x}{P \subst{h_2}{y}}} \inact }}
+\\
 
-		&\by{\tau}\by{\tau}&
+		\by{\bactinp{t_1}{b}} \by{\bactinp{t_2}{b}} \by{\tau}\by{\tau}&
 		\es; \es; k_1: S \cat k_2: S \proves \newsp{h_1, h_2}{\\
-		&&
+		&
 		\begin{array}{lll}
 			\binp{\dual{h_1}}{x} \binp{\dual{h_2}}{y} & \If\ x \leq y\ \Then & \bsel{\dual{h_1}}{\accept} \bsel{\dual{h_2}}{\reject} \inact\\
 			& \Else& \bsel{\dual{h_1}}{\reject} \bsel{\dual{h_2}}{\accept} \inact
 		\end{array} \\
-		&& \Par P\subst{h_1}{y} \subst{k_1}{x} \Par P\subst{h_1}{y} \subst{k_2}{x}}
-	\\
+		& \Par P\subst{h_1}{y} \subst{k_1}{x} \Par P\subst{h_1}{y} \subst{k_2}{x}}
+\\
 
-		\multicolumn{3}{l}{
-		\by{\bactout{k_1}{\rtype}} \by{\bactout{k_2}{\rtype}} \by{\bactinp{k_1}{\Quote}} \by{\bactinp{k_2}{\Quote} }
-		}
-	\\
+		\by{\bactout{k_1}{\rtype}} \by{\bactout{k_2}{\rtype}}
+		\\
+		\by{\bactinp{k_1}{\Quote}} \by{\bactinp{k_2}{\Quote}}
+\\
 
-		&& \es; \es; k_1: S' \cat k_2: S' \proves \newsp{h_1, h_2}{\\
-		&&
-			\begin{array}{lll}
-				\binp{\dual{h_1}}{x} \binp{\dual{h_2}}{y} & \If\ x \leq y\ \Then & \bsel{\dual{h_1}}{\accept} \bsel{\dual{h_2}}{\reject} \inact\\
-				& \Else& \bsel{\dual{h_1}}{\reject} \bsel{\dual{h_2}}{\accept} \inact
-			\end{array}\\
-		&& \Par
-		\bout{h_1}{\Quote}
+		& \es; \es; k_1: S' \cat k_2: S' \proves \newsp{h_1, h_2}{\\
+		&
+		\begin{array}{lll}
+			\binp{\dual{h_1}}{x} \binp{\dual{h_2}}{y} & \If\ x \leq y\ \Then & \bsel{\dual{h_1}}{\accept} \bsel{\dual{h_2}}{\reject} \inact\\
+			& \Else& \bsel{\dual{h_1}}{\reject} \bsel{\dual{h_2}}{\accept} \inact
+		\end{array}\\
+		& \Par \bout{h_1}{\Quote}
 		h_1 \triangleleft \left\{
-				\begin{array}{l}
-					\accept: \bsel{k_1}{\accept} \bout{k_1}{\creditc} \inact,\\
-					\reject: \bsel{k_1}{\reject} \inact
-				\end{array}
-				\right\} \\
-		&& \Par
+		\begin{array}{l}
+			\accept: \bsel{k_1}{\accept} \bout{k_1}{\creditc} \inact,\\
+			\reject: \bsel{k_1}{\reject} \inact
+		\end{array}
+		\right\} \\
+		& \Par
 		\bout{h_2}{\Quote}
 		h_2 \triangleleft \left\{
-				\begin{array}{l}
-					\accept: \bsel{k_2}{\accept} \bout{k_2}{\creditc} \inact,\\
-					\reject: \bsel{k_2}{\reject} \inact
-				\end{array}
-				\right\} }
-	\\
-
-		&\by{\tau} \by{\tau} \by{\tau}&
+		\begin{array}{l}
+			\accept: \bsel{k_2}{\accept} \bout{k_2}{\creditc} \inact,\\
+			\reject: \bsel{k_2}{\reject} \inact
+		\end{array}
+		\right\} }
+\\
+		\by{\tau} \by{\tau} \by{\tau}&
 		\es; \es; k_1: S' \cat k_2: S' \proves \newsp{h_1, h_2}{\\
-		&& \bsel{\dual{h_1}}{\accept} \bsel{\dual{h_2}}{\reject} \inact\\
-		&& \Par
+		& \bsel{\dual{h_1}}{\accept} \bsel{\dual{h_2}}{\reject} \inact\\
+		& \Par
 		h_1 \triangleleft \left\{
-				\begin{array}{l}
-					\accept: \bsel{k_1}{\accept} \bout{k_1}{\creditc} \inact,\\
-					\reject: \bsel{k_1}{\reject} \inact
-				\end{array}
-				\right\} \\
-		&& \Par
+		\begin{array}{l}
+			\accept: \bsel{k_1}{\accept} \bout{k_1}{\creditc} \inact,\\
+			\reject: \bsel{k_1}{\reject} \inact
+		\end{array}
+		\right\} \\
+		& \Par
 		h_2 \triangleleft \left\{
-				\begin{array}{l}
-					\accept: \bsel{k_2}{\accept} \bout{k_2}{\creditc} \inact,\\
-					\reject: \bsel{k_2}{\reject} \inact
-				\end{array}
-				\right\} }
-	\\
-
-		&\by{\tau} \by{\tau}&
+		\begin{array}{l}
+			\accept: \bsel{k_2}{\accept} \bout{k_2}{\creditc} \inact,\\
+			\reject: \bsel{k_2}{\reject} \inact
+		\end{array}
+		\right\} }
+\\
+		\by{\tau} \by{\tau}&
 		\es; \es; k_1: S' \cat k_2: S' \proves
 		\bsel{k_1}{\accept} \bout{k_1}{\creditc} \inact 
 		\Par \bsel{k_2}{\reject} \inact
-	\\
+\\
 
-		&\by{\bactsel{k_1}{\accept}} \by{\bactsel{k_2}{\reject}} \by{\bactsel{k_1}{\creditc}}&
+		\by{\bactsel{k_1}{\accept}} \by{\bactsel{k_2}{\reject}} \by{\bactsel{k_1}{\creditc}}&
 		\es; \es; \es \proves \inact
 	\end{array}
 \]
@@ -105,68 +118,81 @@
 	We can observe the same sequence of external transitions for $\Client_2$:
 
 \[
-	\begin{array}{rcl}
-		&& \es; \es; s_1: \btout{\lhot{S}} \tinact \cat s_2: \btout{\lhot{S}} \tinact \proves \Client_2
-		\\
+	\begin{array}{ll}
+		& \es; \es; s_1: \btout{\lhot{S}} \tinact \cat s_2: \btout{\lhot{S}} \tinact \proves \Client_2
+\\[3mm]
 
-		&\by{\bactout{s_1}{\abs{x}{P_1 \subst{h}{y}}}}&
+		\by{\bactout{s_1}{\abs{x}{P_1 \subst{h}{y}}}}&
 		\es; \es; s_2: \btout{\lhot{S}} \tinact \cat k_1: S \proves \newsp{h}{\bout{s_2}{\abs{x}{P_2 \subst{\dual{h}}{y}}} \inact\\
-		&& \Par \newsp{s}{\mapchar{\btinp{\lhot{S}}}{s} \Par \bout{\dual{s}}{\abs{x}{P_1 \subst{h}{y}}} \inact }}
-		\\
+		& \Par \binp{t_1}{x} \newsp{s}{\mapchar{\btinp{\lhot{S}}}{s} \Par \bout{\dual{s}}{\abs{x}{P_1 \subst{h}{y}}} \inact }}
+\\[3mm]
 
-		&\by{\bactout{s_2}{\abs{x}{P_2 \subst{\dual{h}}{y}}}}&
+		\by{\bactout{s_2}{\abs{x}{P_2 \subst{\dual{h}}{y}}}}&
 		\es; \es; k_1: S \cat k_2: S \proves \newsp{h}{\\
-		&& \newsp{s}{\binp{s}{x} \appl{x}{k_1} \Par \bout{\dual{s}}{\abs{x}{P_1 \subst{h}{y}}} \inact }\\
-		&& \Par \newsp{s}{\mapchar{\btinp{\lhot{S}}}{s} \Par \bout{\dual{s}}{\abs{x}{P_2 \subst{\dual{h}}{y}}} \inact }}
-		\\
+		& \binp{t_1}{x} \newsp{s}{\binp{s}{x} \appl{x}{k_1} \Par \bout{\dual{s}}{\abs{x}{P_1 \subst{h}{y}}} \inact }\\
+		& \Par \binp{t_2}{x} \newsp{s}{\mapchar{\btinp{\lhot{S}}}{s} \Par \bout{\dual{s}}{\abs{x}{P_2 \subst{\dual{h}}{y}}} \inact }}
+\\[3mm]
 
-		&\by{\tau}\by{\tau}&
+		\by{\bactinp{t_1}{b}} \by{\bactinp{t_2}{b}} \by{\tau}\by{\tau}&
 		\es; \es; k_1: S \cat k_2: S \proves \newsp{h}{
 		P\subst{h}{y} \subst{k_1}{x} \Par P\subst{\dual{h}}{y} \subst{k_2}{x}}
-		\\
+\\[3mm]
 
-		\multicolumn{3}{l}{
-		\by{\bactout{k_1}{\rtype}} \by{\bactout{k_2}{\rtype}} \by{\bactinp{k_1}{\Quote}} \by{\bactinp{k_2}{\Quote} }
-		}
-		\\
+		\by{\bactout{k_1}{\rtype}} \by{\bactout{k_2}{\rtype}}&
+\\
+		\by{\bactinp{k_1}{\Quote}} \by{\bactinp{k_2}{\Quote}}&
+\\[3mm]
 
-		&& \es; \es; k_1: S' \cat k_2: S' \proves \newsp{h}{\\
-		&& \bout{h}{\Quote_1} \binp{h}{\Quote_2}\\
-		&&
-		\begin{array}{ll}
-			\If\ \Quote_1 \leq \Quote_2\ \Then & \bsel{k_1}{\accept} \bout{k_1}{\creditc} \inact\\
-			\Else & \bsel{k_1}{\reject} \inact
-		\end{array}\\
-		&& \Par \binp{\dual{h}}{\Quote_2} \bout{\dual{h}}{\Quote_1}\\
-		&&
-		\begin{array}{ll}
-			\If\ \Quote_1 \leq \Quote_2\ \Then & \bsel{k_2}{\accept} \bout{k_2}{\creditc} \inact\\
-			\Else & \bsel{k_2}{\reject} \inact
-		\end{array}
-		}
-\\
-		&\by{\tau} \by{\tau}&
-		\es; \es; k_1: S' \cat k_2: S' \proves\\
-		&&
-		\begin{array}{ll}
-			\If\ \Quote_1 \leq \Quote_2\ \Then & \bsel{k_1}{\accept} \bout{k_1}{\creditc} \inact\\
-			\Else & \bsel{k_1}{\reject} \inact
-		\end{array}\\
-		&&
-		\begin{array}{ll}
-			\If\ \Quote_1 \leq \Quote_2\ \Then & \bsel{k_2}{\accept} \bout{k_2}{\creditc} \inact\\
-			\Else & \bsel{k_2}{\reject} \inact
-		\end{array}
-\\
-		&\by{\tau} \by{\tau}&
+		& \es; \es; k_1: S' \cat k_2: S' \proves \newsp{h}{
+		\bout{h}{\Quote_1} \binp{h}{\Quote_2} R \subst{k_1}{x} \\
+		& \Par \binp{\dual{h}}{\Quote_2} \bout{\dual{h}}{\Quote_1} R \subst{k_2}{x}}
+\\[3mm]
+		\by{\tau} \by{\tau}&
+		\es; \es; k_1: S' \cat k_2: S' \proves R \subst{k_1}{x} \Par R \subst{k_2}{x}
+\\[3mm]
+		\by{\tau} \by{\tau}&
 		\es; \es; k_1: S' \cat k_2: S' \proves
 		\bsel{k_1}{\accept} \bout{k_1}{\creditc} \inact 
 		\Par \bsel{k_2}{\reject} \inact
-		\\
-
-		&\by{\bactsel{k_1}{\accept}} \by{\bactsel{k_2}{\reject}} \by{\bactsel{k_1}{\creditc}}&
+\\[3mm]
+		\by{\bactsel{k_1}{\accept}} \by{\bactsel{k_2}{\reject}} \by{\bactsel{k_1}{\creditc}}&
 		\es; \es; \es \proves \inact
 	\end{array}
 \]
-
 \end{proof}
+
+\begin{comment}
+\begin{proposition}[Hotel Booking Equivalence]
+	Let
+	$S = \btout{\rtype} \btinp{\Quote} \btsel{\accept: \btout{\creditc} \tinact, \reject: \tinact}$
+	and $\Delta = s_1: \btout{\lhot{S}} \tinact \cat s_2: \btout{\lhot{S}} \tinact$
+	then
+	$ \horel
+	{\es}{\Delta}{\Client_1}
+	{\wbf}
+	{\Delta}{\Client_2}$
+\end{proposition}
+
+\begin{proof}[Proof (Sketch)]
+	We show a bisimulation closure by following transitions on each $\Client$.
+	We show the initial higher order transitions. A more detailed proof sketch
+	can be found in \appref{hotel_closure}.
+
+	\noi First we find the characteristic process
+	$\mapchar{\btinp{\lhot{S}} \tinact}{s} = \binp{s}{x} (\abs{x}{k})$
+
+\[
+	\begin{array}{lll}
+		& \es; \es; s_1: \Delta \proves \Client_2
+		\\
+		\by{\bactout{s_1}{\abs{x}{P_1 \subst{h}{y}}}}
+		\\
+		\by{\bactout{s_2}{\abs{x}{P_2 \subst{\dual{h}}{y}}}}
+		& \es; \es; k_1: S \cat k_2: S \proves \\
+		&& \newsp{h}{
+		\binp{t_1}{x} \newsp{s}{\binp{s}{x} \appl{x}{k_1} \Par \bout{\dual{s}}{\abs{x}{P_1 \subst{h}{y}}} \inact }\\
+		&& \Par \binp{t_2}{x} \newsp{s}{\binp{s}{x} \appl{x}{k_2} \Par \bout{\dual{s}}{\abs{x}{P_2 \subst{\dual{h}}{y}}} \inact }}
+	\end{array}
+\]
+\end{proof}
+\end{comment}
