@@ -474,11 +474,9 @@ with respect to types.
 \begin{definition}[Barbs]\rm
 Let $P$ be a closed process. We define:
 \begin{enumerate}
-		\item	$P \barb{n}$ if $P \scong \newsp{\widetilde{m}}{\bout{n}{V} P_2 \Par P_3}, n \notin \widetilde{m}$. %; $P \Barb{n}$ if $P \red^* \barb{n}$.
-
-		\item	$\Gamma; \Delta \proves P \barb{n}$ if
-			$\Gamma; \emptyset; \Delta \proves P \hastype \Proc$ with $P \barb{n}$ and $\dual{n} \notin \dom{\Delta}$.
-
+		\item	(a) $P \barb{n}$ if $P \scong \newsp{\widetilde{m}}{\bout{n}{V} P_2 \Par P_3}, n \notin \widetilde{m}$; %; $P \Barb{n}$ if $P \red^* \barb{n}$. and $\Gamma; \Delta \proves P \barb{n}$ if
+(b)			$\Gamma; \emptyset; \Delta \proves P \hastype \Proc$ with $P \barb{n}$ and $\dual{n} \notin \dom{\Delta}$
+\item  
 	$\Gamma; \Delta \proves P \Barb{n}$ if $P \red^* P'$ and
 			$\Gamma; \Delta' \proves P' \barb{n}$.			
 	\end{enumerate}
@@ -494,19 +492,14 @@ When $n$ is a session name we require that its dual endpoint $\dual{n}$ is not p
 in %the session environment 
 $\Delta$.
 
-To define a congruence relation, we introduce the family $\C$ of contexts:\\  
-
-%\begin{definition}[Context]\rm
-%	A context $\C$ is defined as:
-\noi 
+To define a congruence relation, we introduce the family $\C$ of contexts:
+\begin{center}
 \begin{tabular}{rl}
 	$\C::=$ & $\hole \bnfbar \bout{u}{V} \C \bnfbar \binp{u}{x} \C \bnfbar \bout{u}{\lambda x.\C} P \bnfbar \news{n} \C$
 	$(\lambda x.\C)u \bnfbar \recp{X}{\C}$\\ 
-	$\bnfbar$ & $\C \Par P \bnfbar P \Par \C \bnfbar \bsel{u}{l} \C \bnfbar \bbra{u}{l_1:P_1,\cdots,l_i:\C,\cdots,l_n:P_n}$\\
+	$\bnfbar$ & $\C \Par P \bnfbar P \Par \C \bnfbar \bsel{u}{l} \C \bnfbar \bbra{u}{l_1:P_1,\cdots,l_i:\C,\cdots,l_n:P_n}$
 	\end{tabular}
-\smallskip 
-
-\noi 
+\end{center}
 Notation $\context{\C}{P}$ replaces 
 \jpc{the hole}
 $\hole$ in $\C$ with $P$.
@@ -843,7 +836,6 @@ then we can distinguish $P_1$ and $P_2$
 %processes 
 in \eqref{equ:6}:  
 %
-\small
 \begin{eqnarray*}
 %	\Gamma; \es; \Delta &\proves& 
 	P_1 \By{\ell} \binp{t}{x} (\appl{x}{s_1}) \Par 
@@ -868,21 +860,21 @@ In fact the  trigger value can be observed on any input prefix
 of {\em any type}. For example, consider the processes
 %
 \begin{eqnarray}
-	\Gamma; \es; \Delta \proves \newsp{s}{\binp{n}{x} (\appl{x}{s}) \Par \bout{\dual{s}}{\abs{x} P} \inact} \hastype \Proc\label{equ:7}
-	\\
-	\Gamma; \es; \Delta \proves \newsp{s}{\binp{n}{x} (\appl{x}{s}) \Par \bout{\dual{s}}{\abs{x} Q} \inact} \hastype \Proc\label{equ:8}
+	\Gamma; \es; \Delta \proves \newsp{s}{\binp{n}{x} (\appl{x}{s}) \Par \bout{\dual{s}}{\abs{x} R_1} \inact} \hastype \Proc
+\ \mbox{and}\ 
+	\Gamma; \es; \Delta \proves \newsp{s}{\binp{n}{x} (\appl{x}{s}) \Par \bout{\dual{s}}{\abs{x} R_2} \inact} \hastype \Proc\label{equ:7}\label{equ:8}
 \end{eqnarray}
 %
 \noi If these processes %in \eqref{equ:7}/\eqref{equ:8}
 input the trigger value, we obtain: % they evolved to 
 \begin{eqnarray*}
 %\Gamma; \es; \Delta \proves 
-	\newsp{s}{\binp{t}{x} (\appl{x}{s}) \Par \bout{\dual{s}}{\abs{x} P} \inact} 
+	\newsp{s}{\binp{t}{x} (\appl{x}{s}) \Par \bout{\dual{s}}{\abs{x} R_1} \inact} 
 %\hastype \Proc
 	\mbox{ and }
 %      \\
 %\Gamma; \es; \Delta \proves 
-	\newsp{s}{\binp{t}{x} (\appl{x}{s}) \Par \bout{\dual{s}}{\abs{x} Q} \inact}
+	\newsp{s}{\binp{t}{x} (\appl{x}{s}) \Par \bout{\dual{s}}{\abs{x} R_2} \inact}
 %\hastype \Proc
 \end{eqnarray*}
 
@@ -891,16 +883,17 @@ assume a bisimulation definition that allows only trigger value input.
 %
 %\noi It is easy to obtain a closure if allow only the
 %trigger value as the input value. 
-But if processes in \eqref{equ:7} and \eqref{equ:8}
+But if processes in \eqref{equ:7}
 input the characteristic value $\abs{z}{\binp{z}{x} (\appl{x}{m})}$,  
 then they would become:
 %
 \begin{eqnarray*}
-	\Gamma; \es; \Delta \proves \newsp{s}{\binp{s}{x} (\appl{x}{m}) \Par \bout{\dual{s}}{\abs{x} P} \inact} \wbc \Delta \proves P \subst{m}{x}
-	\\
-	\Gamma; \es; \Delta \proves \newsp{s}{\binp{s}{x} (\appl{x}{m}) \Par \bout{\dual{s}}{\abs{x} Q} \inact} \wbc \Delta \proves Q \subst{m}{x}
+	\Gamma; \es; \Delta \proves \newsp{s}{\binp{s}{x} (\appl{x}{m}) \Par \bout{\dual{s}}{\abs{x} R_i} \inact} \wbc \Delta \proves R_i \subst{m}{x}
+\quad (i=1,2)
+%	\\
+%	\Gamma; \es; \Delta \proves \newsp{s}{\binp{s}{x} (\appl{x}{m}) \Par \bout{\dual{s}}{\abs{x} Q} \inact} \wbc \Delta \proves Q \subst{m}{x}
 \end{eqnarray*}
-\noi which are not bisimilar if $P \subst{m}{x} \not\wb Q \subst{m}{x}$.
+\noi which are not bisimilar if $R_1 \subst{m}{x} \not\wb R_2 \subst{m}{x}$.
 %\qed
 %In conclusion, these examples explain a need of both 
 %trigger and characteristic values 
