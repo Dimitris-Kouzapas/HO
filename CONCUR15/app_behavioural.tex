@@ -1,7 +1,12 @@
 %\section{Behavioural Semantics}
 
 We present the proofs for 
-\thmref{the:coincidence}.
+Theorem~\ref{the:coincidence} (Page \pageref{the:coincidence}).
+Our proofs appeal to an auxiliary result on 
+deterministic transitions (\lemref{lem:up_to_deterministic_transition}).
+This auxiliary result is presented next.
+Then we present the proof of \thmref{the:coincidence}, based on \emph{higher-order bisimilarity}.
+
 
 %the theorem in \secref{sec:behavioural}.
 
@@ -226,11 +231,11 @@ relies on an auxiliary typed behavioral equivalence, \emph{higher-order bisimila
 				\horel{\Gamma}{\Delta_2}{Q_1}{\Hby{\news{\widetilde{m_2}} \bactout{n}{V_2}}}{\Delta_2'}{Q_2}
 			\]
 			and, for a fresh $t$, 
-			\[
+			$
 				\horel{\Gamma}{\Delta_1''}{\newsp{\widetilde{m_1}}{P_2 \Par \htrigger{t}{V_1}}}
 				{\ \Re\ }
-				{\Delta_2''}{}{\newsp{\widetilde{m_2}}{Q_2 \Par \htrigger{t}{V_2}}}.
-			\]
+				{\Delta_2''}{}{\newsp{\widetilde{m_2}}{Q_2 \Par \htrigger{t}{V_2}}}$.
+			
 %
 		\item	For all 
 			$
@@ -267,6 +272,7 @@ several lemmas:
 
 \noi
 We now proceed to state and proof these lemmas, together with some auxiliary results.
+\thmref{app:thm:coincidence} (Page~\pageref{app:thm:coincidence}) summarizes the coincidence result.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %  WB = WBF
@@ -281,8 +287,7 @@ We now proceed to state and proof these lemmas, together with some auxiliary res
 \begin{proof}
 	\noi We only prove the direction $\wb \subseteq \wbf$. The
 	direction $\wbf \subseteq \wb$ is similar.
-
-	\noi Consider
+Consider:
 %
 	\[
 		\Re = \set{\horel{\Gamma}{\Delta_1}{P}{\ ,\ }{\Delta_2}{Q} \setbar \horel{\Gamma}{\Delta_1}{P}{\wb}{\Delta_2}{Q}}
@@ -391,11 +396,11 @@ the key result for proving the soundness of the bisimulation.
 		\item	$\Gamma; x: U; \Delta_1''' \proves P_2 \hastype \Proc$ and $\Gamma; x: U; \Delta_2''' \proves Q_2 \hastype \Proc$.
 		\item	$\horel{\Gamma}{\Delta_1'}{\newsp{\widetilde{m_1}}{P_1 \Par P_2 \subst{\auxtr{t}}{x}}}
 			{\wb}
-			{\Delta_2'}{\newsp{\widetilde{m_2}}{Q_1 \Par Q_2 \subst{\auxtr{t}}{x}}}$, \\
+			{\Delta_2'}{\newsp{\widetilde{m_2}}{Q_1 \Par Q_2 \subst{\auxtr{t}}{x}}}$, 
 			for some fresh $t$.
 
 		\item	$\horel{\Gamma}{\Delta_1''}{\newsp{\widetilde{m_1}}{P_1 \Par P_2 \subst{\omapchar{U}}{x}}}
-			{\wb}{\Delta_2''}{\newsp{\widetilde{m_2}}{Q_1 \Par Q_2 \subst{\omapchar{U}}{x}}}$,\\
+			{\wb}{\Delta_2''}{\newsp{\widetilde{m_2}}{Q_1 \Par Q_2 \subst{\omapchar{U}}{x}}}$,
 			for some $U$.
 	\end{enumerate}
 %
@@ -706,6 +711,7 @@ the key result for proving the soundness of the bisimulation.
 \end{comment}
 \end{proof}
 
+\noindent
 We can generalise the result of the linear process substitution lemma
 to prove process substitution (\lemref{app:lem:proc_subst}).
 Intuitively, we can subsequently apply linear process substitution
@@ -814,7 +820,8 @@ to achieve process substitution.
 			& \Gamma; \es; \Delta_2'& \proves &
 			\newsp{\widetilde{m_2}'}{Q_1 \subst{\auxtr{t}}{x} \Par Q_2 \subst{\auxtr{t}}{x}}\\
 			\Hby{} && &
-			\newsp{\widetilde{m_2}'}{Q_1' \subst{\auxtr{t}}{x} \Par Q_2' \subst{\auxtr{t}}{x} \Par \appl{x}{\widetilde{m}} \subst{\auxtr{t}}{x}} \\
+			\newsp{\widetilde{m_2}'}{Q_1' \subst{\auxtr{t}}{x} \Par Q_2' \subst{\auxtr{t}}{x} \Par \\
+			&&& \qquad \qquad \appl{x}{\widetilde{m}} \subst{\auxtr{t}}{x}} \\
 			\hby{\btau} \hby{\bactinp{t}{\auxtr{t'}}}
 			& \Delta_2''& \proves& \newsp{\widetilde{m_2}'}{(Q_1' \Par Q_2') \subst{\auxtr{t}}{x} \Par \appl{y}{\widetilde{m}} \subst{\auxtr{t'}}{y}}
 %			\hby{\bactinp{t}{\abs{\widetilde{x}}{\binp{t'}{y} \appl{y}{\widetilde{x}}}}}
@@ -885,7 +892,7 @@ to achieve process substitution.
 
 \begin{lemma}\rm
 	\label{lem:wb_is_wbc}
-	$\wb\ \subseteq\ \wbc$
+	$\wb\ \subseteq\ \wbc$.
 \end{lemma}
 
 \begin{proof}
@@ -1595,10 +1602,8 @@ We first show that every visible action $\ell$ is {\em definable}.
 
 \begin{proof}
 	\noi Let
-	\[
-		\horel{\Gamma}{\Delta_1}{P_1}{\cong}{\Delta_2}{P_2}
-	\]
-	\noi We distinguish two cases:
+		$\horel{\Gamma}{\Delta_1}{P_1}{\cong}{\Delta_2}{P_2}$.
+	We distinguish two cases:
 
 %% Case tau
 	\noi - Case:
@@ -1730,7 +1735,7 @@ We first show that every visible action $\ell$ is {\em definable}.
 % Proof of the main theorem
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\begin{theorem}[Concidence] We have:
+\begin{theorem}[Concidence]\label{app:thm:coincidence} We have:
 	\begin{enumerate}
 		\item	$\wbc\ =\ \wb$.
 		\item	$\wbc\ =\ \cong$.
@@ -1742,8 +1747,7 @@ We first show that every visible action $\ell$ is {\em definable}.
 		\lemref{lem:cong_is_wb} proves $\cong\ \subseteq\ \wb$.
 		\lemref{lem:wb_is_wbc} proves $\wb\ \subseteq\ \wbc$.
 		\lemref{lem:wbc_is_cong} proves $\wbc\ \subseteq\ \cong$.
-
-	\noi From the above results, we conclude $\cong\ \subseteq\ \wb\ =\ \wbf\ \subseteq\ \wbc\ \subseteq\ \cong$. 
+ From the above results, we conclude $\cong\ \subseteq\ \wb\ =\ \wbf\ \subseteq\ \wbc\ \subseteq\ \cong$. 
 	%\qed
 \end{proof}
 
