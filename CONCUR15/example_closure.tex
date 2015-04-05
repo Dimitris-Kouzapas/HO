@@ -1,5 +1,6 @@
-\section{Hotel Booking}
+\section{Hotel Booking Scenario}
 \label{hotel_closure}
+
 \begin{proposition}
 	Let $S' = \btsel{\accept: \btout{\creditc} \tinact, \reject: \tinact}$,
 	$S = \btout{\rtype} \btinp{\Quote} S'$
@@ -14,26 +15,27 @@
 	\noi For fresh sessions $s, k$ we get
 	$
 		\mapchar{\btinp{\lhot{S}} \tinact}{s} = \binp{s}{x} (\mapchar{\tinact}{s} \Par \mapchar{\lhot{S}}{x})
-%		= \binp{s}{x} (\inact \Par \abs{x}{\omapchar{S}})
-%		= \binp{s}{x} (\inact \Par \abs{x}{k})
-		\scong \binp{s}{x} (\abs{x}{k})
+%		= \binp{s}{x} (\inact \Par \appl{x}{\omapchar{S}})
+%		= \binp{s}{x} (\inact \Par \appl{x}{k})
+		\scong \binp{s}{x} (\appl{x}{k})
 	$
 	
 
 	\noi To observe $\Client_1$ assume:
 %
 	\begin{eqnarray*}
-	R &\scong& \If\ x \leq y\ \Then (\bsel{\dual{h_1}}{\accept} \bsel{\dual{h_2}}{\reject} \inact
-	\Else \bsel{\dual{h_1}}{\reject} \bsel{\dual{h_2}}{\accept} \inact)\\
-	Q &\scong& z \triangleleft \left\{
-		\begin{array}{l}
-			\accept: \bsel{k_2}{\accept} \bout{k_2}{\creditc} \inact,\\
-			\reject: \bsel{k_2}{\reject} \inact
-		\end{array}
-		\right\}
+		R' &\scong& \If\ x \leq y\ \Then (\bsel{\dual{h_1}}{\accept} \bsel{\dual{h_2}}{\reject} \inact
+		\Else \bsel{\dual{h_1}}{\reject} \bsel{\dual{h_2}}{\accept} \inact)\\
+		Q &\scong& \bbra{z}{\accept: \bsel{k_2}{\accept} \bout{k_2}{\creditc} \inact, \reject: \bsel{k_2}{\reject} \inact}
+%		Q &\scong& z \triangleleft \left\{
+%		\begin{array}{l}
+%			\accept: \bsel{k_2}{\accept} \bout{k_2}{\creditc} \inact,\\
+%			\reject: \bsel{k_2}{\reject} \inact
+%		\end{array}
+%		\right\}
 	\end{eqnarray*}
 %
-	\noi We now observe $\Client_1$ as:
+	\noi We can now observe $\Client_1$ as:
 \[
 	\begin{array}{ll}
 		& \es; \es; \Delta \proves \Client_1
@@ -42,14 +44,14 @@
 		\by{\bactout{s_1}{\abs{x}{P \subst{h_1}{y}}}}&
 		\es; \es; s_2: \btout{\lhot{S}} \tinact \cat k_1: S \proves \\
 		& \newsp{h_1, h_2}{\bout{s_2}{\abs{x}{P \subst{h_2}{y}}} \inact
-		\Par \binp{\dual{h_1}}{x} \binp{\dual{h_2}}{y} R\\
+		\Par \binp{\dual{h_1}}{x} \binp{\dual{h_2}}{y} R'\\
 		& \Par \ftrigger{t_1}{P \subst{h_1}{y}}{\lhot{S}}}
 		%\binp{t_1}{x} \newsp{s}{\mapchar{\btinp{\lhot{S}}}{s} \Par \bout{\dual{s}}{\abs{x}{P \subst{h_1}{y}}} \inact }}
 		\\[1mm]
 
 		\by{\bactout{s_2}{\abs{x}{P \subst{h_2}{y}}}}&
 		\es; \es; k_1: S \cat k_2: S \proves \newsp{h_1, h_2}{
-		\binp{\dual{h_1}}{x} \binp{\dual{h_2}}{y} R\\
+		\binp{\dual{h_1}}{x} \binp{\dual{h_2}}{y} R'\\
 		& \ftrigger{t_1}{P \subst{h_1}{y}}{\lhot{S}} \Par \ftrigger{t_2}{P \subst{h_2}{y}}{\lhot{S}}}
 %		\Par \binp{t_1}{x} \newsp{s}{\binp{s}{x} \appl{x}{k_1} \Par \bout{\dual{s}}{\abs{x}{P \subst{h_1}{y}}} \inact }\\
 %		& \Par \binp{t_2}{x} \newsp{s}{\mapchar{\btinp{\lhot{S}}}{s} \Par \bout{\dual{s}}{\abs{x}{P \subst{h_2}{y}}} \inact }}
@@ -57,14 +59,14 @@
 
 		\by{\bactinp{t_1}{b}} \by{\bactinp{t_2}{b}} \by{\tau}\by{\tau}&
 		\es; \es; k_1: S \cat k_2: S \proves \newsp{h_1, h_2}{
-		\binp{\dual{h_1}}{x} \binp{\dual{h_2}}{y} R\\
+		\binp{\dual{h_1}}{x} \binp{\dual{h_2}}{y} R'\\
 		& \Par P\subst{h_1}{y} \subst{k_1}{x} \Par P\subst{h_1}{y} \subst{k_2}{x}}
 		\\[1mm]
 
 		\by{\bactout{k_1}{\rtype}} \by{\bactout{k_2}{\rtype}}\\
 		\by{\bactinp{k_1}{\Quote}} \by{\bactinp{k_2}{\Quote}}
 		& \es; \es; k_1: S' \cat k_2: S' \proves \newsp{h_1, h_2}{
-		\binp{\dual{h_1}}{x} \binp{\dual{h_2}}{y} R\\
+		\binp{\dual{h_1}}{x} \binp{\dual{h_2}}{y} R'\\
 		& \Par \bout{h_1}{\Quote} Q \subst{h_1}{z} \Par \bout{h_2}{\Quote} Q \subst{h_2}{z}}
 		\\[1mm]
 
@@ -92,17 +94,17 @@
 		& \es; \es; \Delta \proves \Client_2
 \\[1mm]
 
-		\by{\bactout{s_1}{\abs{x}{P_1 \subst{h}{y}}}}&
-		\es; \es; s_2: \btout{\lhot{S}} \tinact \cat k_1: S \proves \newsp{h}{\bout{s_2}{\abs{x}{P_2 \subst{\dual{h}}{y}}} \inact\\
-		& \Par \ftrigger{t_1}{P_1 \subst{h}{y}}{\lhot{S}}}
-		% \binp{t_1}{x} \newsp{s}{\mapchar{\btinp{\lhot{S}}}{s} \Par \bout{\dual{s}}{\abs{x}{P_1 \subst{h}{y}}} \inact }}
+		\by{\bactout{s_1}{\abs{x}{Q_1 \subst{h}{y}}}}&
+		\es; \es; s_2: \btout{\lhot{S}} \tinact \cat k_1: S \proves \newsp{h}{\bout{s_2}{\abs{x}{Q_2 \subst{\dual{h}}{y}}} \inact\\
+		& \Par \ftrigger{t_1}{Q_1 \subst{h}{y}}{\lhot{S}}}
+		% \binp{t_1}{x} \newsp{s}{\mapchar{\btinp{\lhot{S}}}{s} \Par \bout{\dual{s}}{\abs{x}{Q_1 \subst{h}{y}}} \inact }}
 \\[1mm]
 
-		\by{\bactout{s_2}{\abs{x}{P_2 \subst{\dual{h}}{y}}}}&
+		\by{\bactout{s_2}{\abs{x}{Q_2 \subst{\dual{h}}{y}}}}&
 		\es; \es; k_1: S \cat k_2: S \proves \newsp{h}{\\
-		& \ftrigger{t_1}{P_1 \subst{h}{y}}{\lhot{S}} \Par \ftrigger{t_2}{P_2 \subst{\dual{h}}{y}}{\lhot{S}}}
-%		\binp{t_1}{x} \newsp{s}{\binp{s}{x} \appl{x}{k_1} \Par \bout{\dual{s}}{\abs{x}{P_1 \subst{h}{y}}} \inact }\\
-%		& \Par \binp{t_2}{x} \newsp{s}{\mapchar{\btinp{\lhot{S}}}{s} \Par \bout{\dual{s}}{\abs{x}{P_2 \subst{\dual{h}}{y}}} \inact }}
+		& \ftrigger{t_1}{Q_1 \subst{h}{y}}{\lhot{S}} \Par \ftrigger{t_2}{Q_2 \subst{\dual{h}}{y}}{\lhot{S}}}
+%		\binp{t_1}{x} \newsp{s}{\binp{s}{x} \appl{x}{k_1} \Par \bout{\dual{s}}{\abs{x}{Q_1 \subst{h}{y}}} \inact }\\
+%		& \Par \binp{t_2}{x} \newsp{s}{\mapchar{\btinp{\lhot{S}}}{s} \Par \bout{\dual{s}}{\abs{x}{Q_2 \subst{\dual{h}}{y}}} \inact }}
 \\[1mm]
 
 		\by{\bactinp{t_1}{b}} \by{\bactinp{t_2}{b}} \by{\tau}\by{\tau}&
@@ -167,12 +169,12 @@
 		\\
 		\\
 		\es; \es; s_1: \Delta \proves \Client_2
-		&\by{\bactout{s_1}{\abs{x}{P_1 \subst{h}{y}}}}
-		\by{\bactout{s_2}{\abs{x}{P_2 \subst{\dual{h}}{y}}}}
+		&\by{\bactout{s_1}{\abs{x}{Q_1 \subst{h}{y}}}}
+		\by{\bactout{s_2}{\abs{x}{Q_2 \subst{\dual{h}}{y}}}}
 		\\
 		\es; \es; k_1: S \cat k_2: S \proves & \newsp{h}{
-		\binp{t_1}{x} \newsp{s}{\binp{s}{x} \appl{x}{k_1} \Par \bout{\dual{s}}{\abs{x}{P_1 \subst{h}{y}}} \inact }\\
-		&\Par \binp{t_2}{x} \newsp{s}{\binp{s}{x} \appl{x}{k_2} \Par \bout{\dual{s}}{\abs{x}{P_2 \subst{\dual{h}}{y}}} \inact }}
+		\binp{t_1}{x} \newsp{s}{\binp{s}{x} \appl{x}{k_1} \Par \bout{\dual{s}}{\abs{x}{Q_1 \subst{h}{y}}} \inact }\\
+		&\Par \binp{t_2}{x} \newsp{s}{\binp{s}{x} \appl{x}{k_2} \Par \bout{\dual{s}}{\abs{x}{Q_2 \subst{\dual{h}}{y}}} \inact }}
 	\end{array}
 \]
 	\noi We can then show that the resulting typed processes

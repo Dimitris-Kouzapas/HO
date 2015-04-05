@@ -1126,13 +1126,17 @@ and~\cite{KouzapasPY15} for full details.
 \end{proposition}
 
 \begin{proof}[Proof (Sketch)]
-	We show a bisimulation closure by following transitions on each $\Client$.
-	We show the initial higher order transitions. A more detailed proof sketch
-	can be found in \appref{hotel_closure}.
+	\noi We show a bisimulation closure by following transitions on each $\Client$.
+	%We show the initial higher order transitions.
+	A more detailed proof sketch can be found in \appref{hotel_closure}.
 
-	\noi First we find the characteristic process
-	$\mapchar{\btinp{\lhot{S}} \tinact}{s} = \binp{s}{x} (\abs{x}{k})$
+	\noi First we compute the characteristic process
+	$\mapchar{\btinp{\lhot{S}} \tinact}{s} = \binp{s}{x} (\appl{x}{k})$.
 
+	\noi We show that the two processes can simulate each other on
+	the first two output transitions, that also generate the trigger
+	processes.
+%
 \[
 	\begin{array}{ll}
 		\es; \es; \Delta \proves \Client_1
@@ -1145,8 +1149,9 @@ and~\cite{KouzapasPY15} for full details.
 		\newsp{h_1, h_2}{\binp{\dual{h_1}}{x} \binp{\dual{h_2}}{y}\\
 		& \If\ x \leq y\ \Then (\bsel{\dual{h_1}}{\accept} \bsel{\dual{h_2}}{\reject} \inact
 		\Else \bsel{\dual{h_1}}{\reject} \bsel{\dual{h_2}}{\accept} \inact)\\
-		& \Par \binp{t_1}{x} \newsp{s}{\binp{s}{x} \appl{x}{k_1} \Par \bout{\dual{s}}{\abs{x}{P \subst{h_1}{y}}} \inact }\\
-		& \Par \binp{t_2}{x} \newsp{s}{\mapchar{\btinp{\lhot{S}}}{s} \Par \bout{\dual{s}}{\abs{x}{P \subst{h_2}{y}}} \inact }}
+		& \ftrigger{t_1}{\abs{x}{P \subst{h_1}{y}}}{\lhot{S}} \Par \ftrigger{t_2}{\abs{x}{P \subst{h_2}{y}}}{\lhot{S}}}
+%		& \Par \binp{t_1}{x} \newsp{s}{\binp{s}{x} \appl{x}{k_1} \Par \bout{\dual{s}}{\abs{x}{P \subst{h_1}{y}}} \inact }\\
+%		& \Par \binp{t_2}{x} \newsp{s}{\mapchar{\btinp{\lhot{S}}}{s} \Par \bout{\dual{s}}{\abs{x}{P \subst{h_2}{y}}} \inact }}
 		\\
 		\\
 		\es; \es; s_1: \Delta \proves \Client_2
@@ -1154,12 +1159,13 @@ and~\cite{KouzapasPY15} for full details.
 		\by{\bactout{s_2}{\abs{x}{P_2 \subst{\dual{h}}{y}}}}
 		\\
 		\es; \es; k_1: S \cat k_2: S \proves & \newsp{h}{
-		\binp{t_1}{x} \newsp{s}{\binp{s}{x} \appl{x}{k_1} \Par \bout{\dual{s}}{\abs{x}{P_1 \subst{h}{y}}} \inact }\\
-		&\Par \binp{t_2}{x} \newsp{s}{\binp{s}{x} \appl{x}{k_2} \Par \bout{\dual{s}}{\abs{x}{P_2 \subst{\dual{h}}{y}}} \inact }}
+		\ftrigger{t_1}{\abs{x}{Q_1 \subst{h}{y}}}{\lhot{S}} \Par \ftrigger{t_2}{\abs{x}{Q_2 \subst{\dual{h}}{y}}}{\lhot{S}}}
+%		\binp{t_1}{x} \newsp{s}{\binp{s}{x} \appl{x}{k_1} \Par \bout{\dual{s}}{\abs{x}{P_1 \subst{h}{y}}} \inact }\\
+%		&\Par \binp{t_2}{x} \newsp{s}{\binp{s}{x} \appl{x}{k_2} \Par \bout{\dual{s}}{\abs{x}{P_2 \subst{\dual{h}}{y}}} \inact }}
 	\end{array}
 \]
 	\noi We can then show that the resulting typed processes
-	are behaviourally equivalent by following simple chasing diagrams.
+	are behaviourally equivalent by simulating each other on the same external transitions.
 \end{proof}
 
 %\smallskip 
