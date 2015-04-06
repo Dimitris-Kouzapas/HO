@@ -1,11 +1,13 @@
 % !TEX root = main.tex
 %\section{Example}
 
-\noi We further contrast our approach with that in~\cite{JeffreyR05} by example.
+\noi 
+Following up the claim made in \S\,\ref{sec:relwork}, 
+we contrast our approach with that in~\cite{JeffreyR05} in a concrete, representative example.
 \begin{example}
 
 	Consider process
-	$\Gamma; \es; \Delta \cat n: \btout{U} \tinact \proves \bout{n}{\abs{x}{\appl{x}(\abs{y}{\bout{y}{m}} \inact)}} \inact \hastype \Proc$
+	$$\Gamma; \es; \Delta \cat n: \btout{U} \tinact \proves \bout{n}{\abs{x}{\appl{x}(\abs{y}{\bout{y}{m}} \inact)}} \inact \hastype \Proc$$
 	with $U = \shot{(\shot{(\shot{(\btout{S} \tinact)})})}$. 
 	We describe the transitions required to check the bisimilarity
 	of this process with itself. 
@@ -14,15 +16,18 @@
 	\Gamma; \es; \Delta \cat n: \btout{U} \tinact \proves \bout{n}{\abs{x}{\appl{x}(\abs{y}{\bout{y}{m}} \inact)}} \inact \by{\bactout{n}{\abs{x}{\appl{x}(\abs{y}{\bout{y}{m}} \inact)}}}\Gamma; \es; \Delta \proves \inact
 	$$
 	In the framework of~\cite{JeffreyR05} a similar (but untyped) output transition takes place.
-    In \figref{f:comparison} we compare the closures obtained by the definition of bisimilarity in our approach (lines (1) to (6)) and in~\cite{JeffreyR05} (lines (7) to (12)).
-    In line (1), we let $V = \abs{x}{\appl{x}(\abs{y}{\bout{y}{m}} \inact)}$ and 
-	$\mapchar{\btinp{U} \inact}{s} = \binp{s}{x} \appl{x}{(\abs{y}{(\appl{y}{a}))}}$, for some fresh $a$.
-	Then we have one visible input transition, followed by four internal transitions; no replicated processes are needed.
+    In \figref{f:comparison} we compare the closures obtained by the definition of bisimilarity in our approach (lines (1) to (5)) and in~\cite{JeffreyR05} (lines (6) to (10)).
+    In the upper part, we let 
+    \begin{eqnarray*}
+    V & = & \abs{x}{\appl{x}(\abs{y}{\bout{y}{m}} \inact)} \\
+	\mapchar{\btinp{U} \inact}{s} & = & \binp{s}{x} \appl{x}{(\abs{y}{(\appl{y}{a}))}}\qquad \text{for some fresh $a$}
+	\end{eqnarray*}
+	Then we have one visible input transition (line (1)), followed by four internal transitions; no replicated processes are needed.
 	The approach of~\cite{JeffreyR05} uses 
-	the same number of transitions, but more visible transitions are required
-	(three, in lines (8), (10), and (11)) and at the end, two replicated processes remain.
+	the same number of transitions (five), but more visible transitions are required
+	(three, in lines (6), (8), and (9)) and at the end, two replicated processes remain.
 	This is how linearity information in session types allows us to have more economical closures.
-	Note that $\tau_l$ and $\tau_k$ in lines (8) and (10) denote triggered processes on names $l$ and $k$.
+	Note that $\tau_l$ and $\tau_k$ in lines (6) and (8) denote triggered processes on names $l$ and $k$.
 	
 	
 %This simple example shows how both approaches feature the same number of (typed) transitions.
@@ -46,27 +51,28 @@
 \begin{figure}
 \begin{tabular}{|c|}
 \hline 
-	\begin{tabular}{rrcl}
+	\begin{tabular}{rcl}
 %		(1)& & $\Gamma; \es; \Delta \cat n: \btout{U} \tinact \proves \bout{n}{\abs{x}{\appl{x}(\abs{y}{\bout{y}{m}} \inact)}} \inact$ \\
 %		&$\by{\bactout{n}{\abs{x}{\appl{x}(\abs{y}{\bout{y}{m}} \inact)}}}$& $\Gamma; \es; \Delta \proves \inact$\\
-		(1) & $\ftrigger{t}{V}{U}$ &  $=$ & $\Gamma; \es; \Delta \proves \binp{t}{z} \newsp{s}{\mapchar{\btinp{U} \inact}{s} \Par \bout{\dual{s}}{\abs{x}{\appl{x}(\abs{y}{\bout{y}{m}} \inact)}} \inact}$\\
-		&  &$=$& $\Gamma; \es; \Delta \proves \binp{t}{z} \newsp{s}{\binp{s}{x} \appl{x}{(\abs{y}{(\appl{y}{a}))}} \Par \bout{\dual{s}}{\abs{x}{\appl{x}(\abs{y}{\bout{y}{m}} \inact)}} \inact}$\\
-		(2) &  &$\by{\bactinp{t}{b}}$& $\Gamma; \es; \Delta \proves \newsp{s}{\binp{s}{x} \appl{x}{(\abs{y}{(\appl{y}{a}))}} \Par \bout{\dual{s}}{\abs{x}{\appl{x}(\abs{y}{\bout{y}{m}} \inact)}} \inact}$\\
-		(3)&  &$\by{\tau}$& $\Gamma; \es; \Delta \proves \appl{\abs{x}{\appl{x}(\abs{y}{\bout{y}{m} \inact})}}{(\abs{y}{(\appl{y}{a}))}}$\\
-		(4)&  &$\by{\tau}$& $\Gamma; \es; \Delta \proves \appl{(\abs{y}{(\appl{y}{a})})}{(\abs{y}{\bout{y}{m} \inact})} $\\
-		(5) &  &$\by{\tau}$& $\Gamma; \es; \Delta \proves \appl{(\abs{y}{\bout{y}{m} \inact})}{a}$\\
-		(6) &  &$\by{\tau}$& $\Gamma; \es; \Delta \proves \bout{a}{m} \inact$ \vspace{1mm}
+         &    &   $\ftrigger{t}{V}{U}$  \\
+		   &  $=$ & $\Gamma; \es; \Delta \proves \binp{t}{z} \newsp{s}{\mapchar{\btinp{U} \inact}{s} \Par \bout{\dual{s}}{\abs{x}{\appl{x}(\abs{y}{\bout{y}{m}} \inact)}} \inact}$\\
+		&  $=$& $\Gamma; \es; \Delta \proves \binp{t}{z} \newsp{s}{\binp{s}{x} \appl{x}{(\abs{y}{(\appl{y}{a}))}} \Par \bout{\dual{s}}{\abs{x}{\appl{x}(\abs{y}{\bout{y}{m}} \inact)}} \inact}$\\
+		(1)   &$\by{\bactinp{t}{b}}$& $\Gamma; \es; \Delta \proves \newsp{s}{\binp{s}{x} \appl{x}{(\abs{y}{(\appl{y}{a}))}} \Par \bout{\dual{s}}{\abs{x}{\appl{x}(\abs{y}{\bout{y}{m}} \inact)}} \inact}$\\
+		(2)  &$\by{\tau}$& $\Gamma; \es; \Delta \proves \appl{\abs{x}{\appl{x}(\abs{y}{\bout{y}{m} \inact})}}{(\abs{y}{(\appl{y}{a}))}}$\\
+		(3)  &$\by{\tau}$& $\Gamma; \es; \Delta \proves \appl{(\abs{y}{(\appl{y}{a})})}{(\abs{y}{\bout{y}{m} \inact})} $\\
+		(4)   &$\by{\tau}$& $\Gamma; \es; \Delta \proves \appl{(\abs{y}{\bout{y}{m} \inact})}{a}$\\
+		(5)   &$\by{\tau}$& $\Gamma; \es; \Delta \proves \bout{a}{m} \inact$ \vspace{1mm}
 	\end{tabular} 
 	\\ \hline
 		\begin{tabular}{rrl}
 %		(1)& & $\Gamma; \es; \Delta \cat n: \btout{U} \tinact \proves \bout{n}{\abs{x}{\appl{x}(\abs{y}{\bout{y}{m}} \inact)}} \inact$ \\
 %		&$\by{\bactout{n}{\abs{x}{\appl{x}(\abs{y}{\bout{y}{m}} \inact)}}}$& $\Gamma; \es; \Delta \proves \inact$\\
-		(7) & & $\Gamma; \es; \Delta \proves \repl{} \binp{t}{x} \appl{x}(\abs{y}{\bout{y}{m}} \inact) $\\
-		(8) &$\by{\bactinp{t}{\tau_l}}$& $\Gamma; \es; \Delta \proves \repl{} \binp{t}{x} \appl{x}(\abs{y}{\bout{y}{m}} \inact) \Par \appl{(\abs{x}{\appl{x}(\abs{y}{\bout{y}{m}} \inact)})}{\tau_l}$\\
-		(9) &$\by{\tau}$& $\Gamma; \es; \Delta \proves \repl{} \binp{t}{x} \appl{x}(\abs{y}{\bout{y}{m}} \inact) \Par \appl{\tau_l}{(\abs{y}{\bout{y}{m}} \inact)}$\\
-		(10) &$\by{\bactout{l}{\tau_k}}$& $\Gamma; \es; \Delta \proves \repl{} \binp{t}{x} \appl{x}(\abs{y}{\bout{y}{m}} \inact) \Par \repl{} \binp{k}{y} \bout{y}{m} \inact $\\
-		(11) &$\by{\bactinp{k}{a}}$& $\Gamma; \es; \Delta \proves \repl{} \binp{t}{x} \appl{x}(\abs{y}{\bout{y}{m}} \inact) \Par \repl{} \binp{k}{y} \bout{y}{m} \inact \Par \appl{(\abs{y}{\bout{y}{m} \inact})}{a}$\\
-		(12) &$\by{\tau}$& $\Gamma; \es; \Delta \proves \repl{} \binp{t}{x} \appl{x}(\abs{y}{\bout{y}{m}} \inact) \Par \repl{} \binp{k}{y} \bout{y}{m} \inact \Par \bout{a}{m} \inact$
+		 & & $\Gamma; \es; \Delta \proves \repl{} \binp{t}{x} \appl{x}(\abs{y}{\bout{y}{m}} \inact) $\\
+		(6) &$\by{\bactinp{t}{\tau_l}}$& $\Gamma; \es; \Delta \proves \repl{} \binp{t}{x} \appl{x}(\abs{y}{\bout{y}{m}} \inact) \Par \appl{(\abs{x}{\appl{x}(\abs{y}{\bout{y}{m}} \inact)})}{\tau_l}$\\
+		(7) &$\by{\tau}$& $\Gamma; \es; \Delta \proves \repl{} \binp{t}{x} \appl{x}(\abs{y}{\bout{y}{m}} \inact) \Par \appl{\tau_l}{(\abs{y}{\bout{y}{m}} \inact)}$\\
+		(8) &$\by{\bactout{l}{\tau_k}}$& $\Gamma; \es; \Delta \proves \repl{} \binp{t}{x} \appl{x}(\abs{y}{\bout{y}{m}} \inact) \Par \repl{} \binp{k}{y} \bout{y}{m} \inact $\\
+		(9) &$\by{\bactinp{k}{a}}$& $\Gamma; \es; \Delta \proves \repl{} \binp{t}{x} \appl{x}(\abs{y}{\bout{y}{m}} \inact) \Par \repl{} \binp{k}{y} \bout{y}{m} \inact \Par \appl{(\abs{y}{\bout{y}{m} \inact})}{a}$\\
+		(10) &$\by{\tau}$& $\Gamma; \es; \Delta \proves \repl{} \binp{t}{x} \appl{x}(\abs{y}{\bout{y}{m}} \inact) \Par \repl{} \binp{k}{y} \bout{y}{m} \inact \Par \bout{a}{m} \inact$
 	\end{tabular}
 	 \\ \hline
 	\end{tabular}
