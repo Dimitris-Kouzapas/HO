@@ -10,8 +10,11 @@ Key notions are \emph{triggered} and \emph{characteristic processes/values}.
 
 \myparagraph{Issues of Context Bisimilarity.}
 Context bisimilarity ($\wbc$, \defref{def:wbc}) is an overly demanding relation on higher-order processes. 
-The first demanding issue arises from the universal quantification on the output clause of context bisimilarity:
-Suppose $P \,\Re\, Q$, for some context bisimulation $\Re$. Then:
+There are two issues, associated to demanding requirements appearing in clauses for output and input actions. 
+%The first demanding issue arises from the universal quantification on the output clause of context bisimilarity:
+A \emph{first issue} appears in 
+the universal quantification on the output clause of context bisimilarity.
+Suppose $P \,\Re\, Q$, for some context bisimulation $\Re$. Then we have:
 \begin{enumerate}[$(\star)$]
 	\item	Whenever 
 		$P \by{\news{\widetilde{m_1}} \bactout{n}{V}} P'$
@@ -19,27 +22,30 @@ Suppose $P \,\Re\, Q$, for some context bisimulation $\Re$. Then:
 		$Q'$ and $W$
 		such that 
 		$Q \by{\news{\widetilde{m_2}} \bactout{n}{W}} Q'$
-		and, \emph{\textbf{for all} $R$}  with $\fv{R}=x$, 
+		and, \\ \emph{\textbf{for all} $R$}  with $\fv{R}=x$, 
 		$\newsp{\widetilde{m_1}}{P' \Par R\subst{V}{x}} \,\Re\, \newsp{\widetilde{m_2}}{Q' \Par R\subst{W}{x}}$.
 \end{enumerate}
 \noi 
-Above, 
-$\news{\widetilde{m_1}} \bactout{n}{V}$ is the output label of 
-value $V$ with extrusion of names in $\widetilde{m_1}$. 
-The second issue follows the fact that we work with an \emph{early}
-labelled transition system (LTS), thus an higher-order input prefix observes
+where
+$\news{\widetilde{m}} \bactout{n}{V}$ is the output label of 
+value $V$ 
+along $n$
+with extrusion of names in $\widetilde{m}$. 
+The \emph{second issue} 
+appears in input clauses, and 
+follows from the fact that we work with an \emph{early}
+labelled transition system (LTS). Thus, a higher-order input prefix may observe
 finitely many different input values.
-To reduce the above burdens,
+To alleviate these burdens,
 %induced by 
 %universal quantification,
-we introduce 
-\emph{characteristic}  
-bisimilarity ($\fwb$)
-by taking the following two steps: 
-%
+in our notion of
+\emph{characteristic
+bisimilarity} ($\fwb$)
+we take two steps: 
 \begin{enumerate}[(a)]
-	\item replace $(\star)$ with a clause involving a more tractable process closure; and 
-	\item refine the input LTS rule 
+	\item We replace $(\star)$ with a clause involving a \emph{more tractable} process closure; and 
+	\item We refine  input transitions 
 	to avoid observing infinitely many actions on the same input prefix.
 \end{enumerate}
 
@@ -93,16 +99,22 @@ we take the following two steps:
 %
 %\smallskip
 \end{comment}
-
-\myparagraph{Trigger Processes.} % with Session Communication.}
-We  write $\binp{s}{x}{P}$ 
-for an input on the (linear) endpoint $s$, and 
+\noi
+%Before 
+%explaining how we address (a) and (b), we
+%introduce some  notation. We  
+Below, we 
+write $\binp{s}{x}{P}$ 
+for an input on (linear) endpoint $s$, 
 and $\bout{\dual{s}}{V} Q$
 for an output of value $V$ 
 on endpoint $\dual{s}$ (the dual of~$s$).
-Concerning~(a), we exploit session types. 
-We 
-first 
+Also, we write $R \by{\bactinp{n}{V}} R'$ to denote an input transition along $n$.
+
+
+\myparagraph{Trigger Processes.} % with Session Communication.}
+To address~(a), we exploit session types. 
+We first 
 observe that closure $R\subst{V}{x}$ 
 in $(\star)$
 is context bisimilar to the process
@@ -116,7 +128,7 @@ since
 application and dual endpoint reduction
 %($s$ and $\dual{s}$) 
 are deterministic.  
-Below we write $Q \by{\bactinp{n}{V}} Q'$ to denote an input transition along $n$.
+
 Now let us
 consider process $T_{V}$ below, where $t$ is a fresh name.  
 %\begin{equation}\label{equ:0}
@@ -139,7 +151,7 @@ already suggests a tractable formulation of
 bisimilarity without the demanding 
 output clause $(\star)$. 
 %However, 
-Trigger process $T_{V}$ in \eqref{equ:2} requires a higher-order communication along $t$.
+Trigger process $T_{V}$ in~\eqref{equ:2} requires a higher-order communication along $t$.
 %As we explain now, we can do better than this; the key is using \emph{elementary inhabitants} of session types.
 As we explain below, we can give an alternative trigger process; the key is using \emph{elementary inhabitants} of session types.
 %Given a fresh name $t$, we write $\htrigger{t}{V}$ to  stand for a trigger process $T_{V}$ for value $V$.
@@ -152,7 +164,7 @@ As we explain below, we can give an alternative trigger process; the key is usin
 %$\abs{z}{\binp{z}{x} R}$.   
 
 \myparagraph{Characteristic Processes and Values.}
-Concerning (b), we limit the possible 
+To address (b), we limit the possible 
 input values (such as $\abs{z}{\binp{z}{x} R}$ above) %processes 
 by exploiting session types.
 The key concept is that of {\bf \emph{characteristic process/value}}
@@ -160,22 +172,23 @@ of a type,
 %The characteristic process of a session type $S$ is the process inhabiting $S$. 
 the 
 simplest term inhabiting that type (\defref{def:char}).
-This way, e.g., let $S = \btinp{\shot{S_1}} \btout{S_2} \tinact$
+This way, for instance, let $S = \btinp{\shot{S_1}} \btout{S_2} \tinact$
 be a session type: first
 input an abstraction, %from values $S_1$ to processes, 
 then output a value of type $S_2$.
 Then, process $\binp{u}{x} (\bout{u}{s_2} \inact \Par \appl{x}{s_1})$
 is a characteristic process for $S$ 
-\jpc{along name $u$.}
+\jpc{along $u$.}
 %Thus, characteristic processes follow the communication structures decreed by session types.
 Given a session type $S$, we write $\mapchar{S}{u} $
-for its characteristic process along name $u$
+for its characteristic process along   $u$
 (cf.~\defref{def:char}).
 Also, %Similarly, 
-given value type $U$, we write 
-$\omapchar{U}$ to denote its characteristic value.
-We use the %characteristic %Precisely, we exploit  the
- characteristic value %$\lambda x.\mapchar{U}{x}$. %$\lambda x.\mapchar{U}{x}$. 
+given value type $U$, then
+$\omapchar{U}$ denotes its characteristic value.
+As we explain now, we use 
+%the %characteristic %Precisely, we exploit  the
+% characteristic value %$\lambda x.\mapchar{U}{x}$. %$\lambda x.\mapchar{U}{x}$. 
 $\omapchar{U}$
  to limit input transitions.
 
@@ -188,18 +201,19 @@ This is necessary, because it turns out
 that a characteristic value 
 alone as the observable input 
 is not enough to define a sound bisimulation.
-Roughly speaking, the trigger value is used
+Intuitively, the trigger value is used
 to observe/simulate application processes.
 %to {\em count} the number of free higher-order variables inside 
 %the receiver. 
 %\jpc{See Example~\ref{ex:motivation} for further details.}
-
-Based on 
-the above discussion, we refine 
+Based on the above discussion, we refine 
 the (early) transition rule for input actions. 
 %We write $P \by{\bactinp{n}{V}} P'$ for the input transition along $n$.
-The refined transition rule for input roughly becomes 
-(see \defref{def:rlts} for details):
+The refined %transition 
+rule 
+%for input 
+roughly becomes 
+(see \defref{def:rlts}):
 %\[
 %\tree {
 %	P \by{\bactinp{n}{V}} P' \quad 
