@@ -8,7 +8,43 @@ formulate characteristic bisimilarity.
 Key notions are \emph{triggered} and \emph{characteristic processes/values}.
 
 
+\myparagraph{Issues of Context Bisimilarity.}
+Context bisimilarity ($\wbc$, \defref{def:wbc}) is an overly demanding relation on higher-order processes. 
+The first demanding issue arises from the universal quantification on the output clause of context bisimilarity:
+Suppose $P \,\Re\, Q$, for some context bisimulation $\Re$. Then:
+\begin{enumerate}[$(\star)$]
+	\item	Whenever 
+		$P \by{\news{\widetilde{m_1}} \bactout{n}{V}} P'$
+		there exist
+		$Q'$ and $W$
+		such that 
+		$Q \by{\news{\widetilde{m_2}} \bactout{n}{W}} Q'$
+		and, \emph{\textbf{for all} $R$}  with $\fv{R}=x$, 
+		$\newsp{\widetilde{m_1}}{P' \Par R\subst{V}{x}} \,\Re\, \newsp{\widetilde{m_2}}{Q' \Par R\subst{W}{x}}$.
+\end{enumerate}
+\noi 
+Above, 
+$\news{\widetilde{m_1}} \bactout{n}{V}$ is the output label of 
+value $V$ with extrusion of names in $\widetilde{m_1}$. 
+The second issue follows the fact that we work with an \emph{early}
+labelled transition system (LTS), thus an higher-order input prefix observes
+finitely many different input values.
+To reduce the above burdens,
+%induced by 
+%universal quantification,
+we introduce 
+\emph{characteristic}  
+bisimilarity ($\fwb$)
+by taking the following two steps: 
+%
+\begin{enumerate}[(a)]
+	\item replace $(\star)$ with a clause involving a more tractable process closure; and 
+	\item refine the input LTS rule 
+	to avoid observing infinitely many actions on the same input prefix.
+\end{enumerate}
 
+
+\begin{comment}
 \myparagraph{Issues of Context Bisimilarity.}
 %The characterisation of contextual congruence given by 
 Context bisimilarity ($\wbc$, \defref{def:wbc}) is an overly demanding relation on higher-order processes. 
@@ -56,6 +92,7 @@ we take the following two steps:
 \end{enumerate}
 %
 %\smallskip
+\end{comment}
 
 \myparagraph{Trigger Processes.} % with Session Communication.}
 We  write $\binp{s}{x}{P}$ 
@@ -79,7 +116,7 @@ since
 application and dual endpoint reduction
 %($s$ and $\dual{s}$) 
 are deterministic.  
-Below we write $P \by{\bactinp{n}{V}} P'$ to denote an input transition along $n$.
+Below we write $Q \by{\bactinp{n}{V}} Q'$ to denote an input transition along $n$.
 Now let us
 consider process $T_{V}$ below, where $t$ is a fresh name.  
 %\begin{equation}\label{equ:0}
@@ -101,8 +138,10 @@ offer a value at a fresh name; this class of
 already suggests a tractable formulation of 
 bisimilarity without the demanding 
 output clause $(\star)$. 
-However, the trigger $T_{V}$ in \eqref{equ:2} requires a higher-order communication along $t$.
-As we explain now, we can do better than this; the key is using \emph{elementary inhabitants} of session types.
+%However, 
+Trigger process $T_{V}$ in \eqref{equ:2} requires a higher-order communication along $t$.
+%As we explain now, we can do better than this; the key is using \emph{elementary inhabitants} of session types.
+As we explain below, we can give an alternative trigger process; the key is using \emph{elementary inhabitants} of session types.
 %Given a fresh name $t$, we write $\htrigger{t}{V}$ to  stand for a trigger process $T_{V}$ for value $V$.
 
 \smallskip
@@ -125,7 +164,7 @@ This way, e.g., let $S = \btinp{\shot{S_1}} \btout{S_2} \tinact$
 be a session type: first
 input an abstraction, %from values $S_1$ to processes, 
 then output a value of type $S_2$.
-Then, process $Q = \binp{u}{x} (\bout{u}{s_2} \inact \Par \appl{x}{s_1})$
+Then, process $\binp{u}{x} (\bout{u}{s_2} \inact \Par \appl{x}{s_1})$
 is a characteristic process for $S$ 
 \jpc{along name $u$.}
 %Thus, characteristic processes follow the communication structures decreed by session types.
@@ -139,6 +178,65 @@ We use the %characteristic %Precisely, we exploit  the
  characteristic value %$\lambda x.\mapchar{U}{x}$. %$\lambda x.\mapchar{U}{x}$. 
 $\omapchar{U}$
  to limit input transitions.
+
+\myparagraph{Refined Input Transitions.}
+To refine the input transition system, we need to observe 
+an additional value, 
+$\abs{{x}}{\binp{t}{y} (\appl{y}{{x}})}$, 
+called the {\bf\em trigger value}. 
+This is necessary, because it turns out
+that a characteristic value 
+alone as the observable input 
+is not enough to define a sound bisimulation.
+Roughly speaking, the trigger value is used
+to observe/simulate application processes.
+%to {\em count} the number of free higher-order variables inside 
+%the receiver. 
+%\jpc{See Example~\ref{ex:motivation} for further details.}
+
+Based on 
+the above discussion, we refine 
+the (early) transition rule for input actions. 
+%We write $P \by{\bactinp{n}{V}} P'$ for the input transition along $n$.
+The refined transition rule for input roughly becomes 
+(see \defref{def:rlts} for details):
+%\[
+%\tree {
+%	P \by{\bactinp{n}{V}} P' \quad 
+%	V = m \vee V \scong \abs{{x}}{\binp{t}{y} (\appl{y}{{x}})}
+%	\vee  V \scong \omapchar{U}  \textrm{ with } t \textrm{ fresh} 
+%}{
+%	P' \hby{\bactinp{n}{V}} P'
+%}
+%\]
+$$
+\boxed{
+~~P \by{\bactinp{n}{V}} P' ~\land~ (V = m \vee V \scong \abs{{x}}{\binp{t}{y} (\appl{y}{{x}})} \vee  V \scong \omapchar{U}  \textrm{ with } t \textrm{ fresh}) ~~\Rightarrow~~
+P' \hby{\bactinp{n}{V}} P'~~}
+$$
+\noi
+Thus, our refined LTS admits only names, trigger values, and characteristic values in inputs.
+Note the distinction between standard and refined transitions: $\by{\bactinp{n}{V}}$ vs. $\hby{\bactinp{n}{V}}$.
+Using this rule, we define an alternative  LTS
+with refined 
+\jpc{(higher-order)}
+input. %; all other rules are kept unchanged.
+This refined LTS is used for 
+%both higher-order ($\hwb$) and 
+characteristic  bisimulation 
+%(Defs.~\ref{d:hbw} and~\ref{d:fwb}),
+($\fwb$, Def.~\ref{d:fwb}),
+in which the demanding clause~$(\star)$ is replaced with 
+a more tractable output clause based on 
+%trigger processes \jpc{(cf.~\eqref{equ:2})}  and 
+characteristic 
+trigger processes
+\jpc{(cf.~\eqref{eq:4})}.
+%respectively.
+%We show that $\hwb$ is useful for \HOp and \HO, and that~$\fwb$ can be uniformly used in all subcalculi, including \sessp. 
+
+
+\myparagraph{Characteristic Trigger Process}
 Following the same reasoning as (\ref{equ:2}), 
 we can use an alternative trigger process, called
 {\bf\em characteristic trigger process} with type 
@@ -154,6 +252,8 @@ $U$ to replace clause
 
 %Note that if $U=L$, $\ftrigger{t}{V}{U}$ subsumes 
 %$\htrigger{t}{V}$. 
+\noi
+This is justified because in~\eqref{equ:2} $T_V \hby{\bactinp{t}{\omapchar{\btinp{U} \tinact}}} \wbc \newsp{s}{\mapchar{\btinp{U} \tinact}{s} \Par \bout{\dual{s}}{V} \inact }$.
 \noi 
 \jpc{Thus, unlike process~\eqref{equ:2}, the characteristic trigger process 
 in~\eqref{eq:4}
@@ -166,22 +266,7 @@ do {\em not} use recursion or
 replication. This is key to preserve linearity of session endpoints.  
 
 
-To refine the input transition system, we need to observe 
-an additional value, 
-$\abs{{x}}{\binp{t}{y} (\appl{y}{{x}})}$, 
-called the {\bf\em trigger value}. 
-This is necessary, because it turns out
-that a characteristic value 
-alone as the observable input 
-is not enough to define a sound bisimulation.
-Roughly speaking, the trigger value is used
-to observe/simulate application processes.
-%to {\em count} the number of free higher-order variables inside 
-%the receiver. 
-%\jpc{See Example~\ref{ex:motivation} for further details.}
-
-
-
+\begin{comment}
 %\smallskip 
 \myparagraph{Refined Input Transitions.}
 Based on 
@@ -224,6 +309,7 @@ trigger processes
 \jpc{(cf.~\eqref{eq:4})}.
 %respectively.
 %We show that $\hwb$ is useful for \HOp and \HO, and that~$\fwb$ can be uniformly used in all subcalculi, including \sessp. 
+\end{comment}
 
 \NY{It is also noteworthy that \HOp lacks name matching, 
 which is usually crucial to prove completeness of bisimilarity---see, e.g.,~\cite{JeffreyR05}.
