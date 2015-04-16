@@ -285,17 +285,16 @@ narrows  her choice down to two hotels, and requires
  a quote from the two in order to
 decide. The round-trip time (RTT) required for
 taking quotes from the two hotels in not optimal, % (cf.~\cite{MostrousY15}),
-so she  sends mobile codes to both hotels
+so the client  sends mobile codes to both hotels
 to automatically negotiate and book a room. 
 We now present two \HOp implementations of this scenario.
-For convenience, we write $\If e\ \Then (P\ \Else \ Q)$ 
-to denote a conditional process (encodable using labelled choice)
-that executes $P$ or $Q$ depending on boolean expression $e$.
+For convenience, we write $\If e\ \Then (P_1\ \Else \ P_2)$ 
+to denote a conditional process that executes $P_1$ or $P_2$ depending on boolean expression $e$ (encodable using labelled choice).
 The first implementation is  as follows:
 %
 %\[
 	\begin{eqnarray*}%{rcl}
-		 P  \!\!\! & \defeq &  \!\!\! \bout{x}{\rtype} \binp{x}{\Quote} \bout{y}{\Quote}
+		 P_{xy}  \!\!\! & \defeq &  \!\!\! \bout{x}{\rtype} \binp{x}{\Quote} \bout{y}{\Quote}
 		y \triangleleft \left\{
 				\begin{array}{l}
 					\accept: \bsel{x}{\accept} \bout{x}{\creditc} \inact,\\
@@ -303,19 +302,20 @@ The first implementation is  as follows:
 				\end{array}
 				\right\}
 		\\ %[3mm]
-		 \Client_1 \!\!\! & \defeq  &  \!\!\! \newsp{h_1, h_2}{\bout{s_1}{\abs{x}{P \subst{h_1}{y}}} \bout{s_2}{\abs{x}{P \subst{h_2}{y}}} \inact \Par  \\
+		 \Client_1 \!\!\! & \defeq  &  \!\!\! \newsp{h_1, h_2}{\bout{s_1}{\abs{x}{P_{xy} \subst{h_1}{y}}} \bout{s_2}{\abs{x}{P_{xy} \subst{h_2}{y}}} \inact \Par  \\
 		& & 
 		\!\!\! \binp{\dual{h_1}}{x} \binp{\dual{h_2}}{y}  \If\ x \leq y\   \Then (\bsel{\dual{h_1}}{\accept} \bsel{\dual{h_2}}{\reject} \inact \ \Else \ \bsel{\dual{h_1}}{\reject} \bsel{\dual{h_2}}{\accept} \inact )
 		}
 	\end{eqnarray*}
 %\]
 %
-Process $\Client_1$ sends two abstractions with body $P$, one to each hotel, 
+Process $\Client_1$ sends two abstractions with body $P_{xy}$, one to each hotel, 
 		using sessions $s_1$ and $s_2$.
-	Process $P$ is the mobile code responsible for negotiating with a hotel.
-		Name $x$ in $P$ is meant to be instantiated by the hotel as the negotiating
-		endpoint. Channel $y$ is used to interact with $\Client_1$.	
-		We have that $P$: (i)  sends the room requirements to the hotel;
+	Process $P_{xy}$ is the mobile code: % responsible for negotiating with a hotel
+	while
+		name $x$ is meant to be instantiated by the hotel as the negotiating
+		endpoint, name $y$ is used to interact with $\Client_1$.	
+		We have that $P_{xy}$: (i)  sends the room requirements to the hotel;
 		(ii) receives a quote from the hotel;
 		(iii) sends the quote to  $\Client_1$;
 		(iv) expects a choice from   $\Client_1$ whether to accept or reject the offer;
@@ -324,7 +324,7 @@ Process $\Client_1$ sends two abstractions with body $P$, one to each hotel,
 				$\Client_1$ instantiates two copies of  $P$ as abstractions
 		on session $x$. It uses two
 		fresh endpoints $h_1, h_2$ to substitute channel $y$
-		in $P$. This enables communication with the mobile code(s).
+		in $P_{xy}$. This enables communication with the mobile code(s).
 		In fact, 
 		$\Client_1$ uses the dual endpoints $\dual{h_1}$ and $\dual{h_2}$
 		to receive the negotiation
@@ -334,16 +334,16 @@ Process $\Client_1$ sends two abstractions with body $P$, one to each hotel,
 		Notice that the above implementation does not add a significant gain
 to the time needed for the entire protocol to take
 place, since the two remote processes are required
-to send and receive data to $\Client_1$.
+to send/receive data to $\Client_1$.
 We present now an alternative implementation
 of the same scenario, in which two mobile processes are meant 
 to interact with each other (rather than with $\Client_1$) to reach to a consensus:
 %
 \[
 	\begin{array}{rcl}
-	    R & \defeq & \If\ \Quote_1 \leq \Quote_2 \, \Then  (\bsel{x}{\accept} \bout{x}{\creditc} \inact \  \Else \ \bsel{x}{\reject} \inact) \\
-		Q_1 &\defeq&	\bout{x}{\rtype} \binp{x}{\Quote_1} \bout{y}{\Quote_1} \binp{y}{\Quote_2} R \\
-		Q_2 &\defeq&	\bout{x}{\rtype} \binp{x}{\Quote_1} \binp{y}{\Quote_2} \bout{y}{\Quote_1} R \\
+	    R_x & \defeq & \If\ \Quote_1 \leq \Quote_2 \, \Then  (\bsel{x}{\accept} \bout{x}{\creditc} \inact \  \Else \ \bsel{x}{\reject} \inact) \\
+		Q_1 &\defeq&	\bout{x}{\rtype} \binp{x}{\Quote_1} \bout{y}{\Quote_1} \binp{y}{\Quote_2} R_x \\
+		Q_2 &\defeq&	\bout{x}{\rtype} \binp{x}{\Quote_1} \binp{y}{\Quote_2} \bout{y}{\Quote_1} R_x \\
 %			&&
 %				\begin{array}{ll}
 %					\If\ \Quote_1 \leq \Quote_2 &\Then  \bsel{x}{\accept} \bout{x}{\creditc} \inact \  \Else \ \bsel{x}{\reject} \inact %\\
@@ -362,12 +362,12 @@ to interact with each other (rather than with $\Client_1$) to reach to a consens
 \]
 %\end{example}
 Processes $Q_1$ and $Q_2$  negotiate a quote from the
-		hotel in the same fashion as process $P$ in $\Client_1$.
+		hotel in the same fashion as process $P_{xy}$ in $\Client_1$.
 %		Notice that $Q_2$ is defined exactly as $Q_1$ except for the sequence of messages on~$y$:
 %		rather than 
 %		sending $\Quote_1$ first and receiving $\Quote_2$ later, 
 %		process $Q_2$ receives $\Quote_2$ first and sends $\Quote_1$ later.
-		The key difference with respect to $P$ is that $y$ is used for
+		The key difference with respect to $P_{xy}$ is that $y$ is used for
 		interaction between process $Q_1$ and $Q_2$. Both processes send
 		their quotes to each other and then internally follow the same
 		logic to reach to a decision.
