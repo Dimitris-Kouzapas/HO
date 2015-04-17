@@ -598,9 +598,9 @@ is hard to compute. Below we introduce
 \subsection{%Higher-Order  and  
 Characteristic  Bisimulations ($\fwb$)}\label{ss:hwb}
 \noi 
-We formalise the ideas motivated in % \secref{sec:overview}.
+We formalise the ideas given in % \secref{sec:overview}.
 the introduction.
-Our main result is \thmref{the:coincidence}.
+%Our main result is \thmref{the:coincidence}.
 We define characteristic processes/values:
 
 \begin{definition}[Characteristic Process and Values]\rm
@@ -742,7 +742,7 @@ We define characteristic processes/values:
 %%and $\mapchar{C}{u}$. 
 %%\end{IEEEproof}
 
-\noi We can easily verify that characteristic processes/values  
+\noi We can verify that characteristic processes/values  
 do inhabit  their associated type by induction of types. 
 The following examples motivates the refined 
 LTS explained in %\secref{sec:overview}.
@@ -762,20 +762,20 @@ the introduction.
 %	By induction on the definition of $\mapchar{U}{n}$.
 %\end{proof}
 
-\begin{example}
-	Consider the type $U = \shot{(\shot{(\shot{(\btout{S} \tinact)})})}$.
-	It is easy to verify that %the characteristic process %of the above type is:
-	$\mapchar{\btinp{U} \inact}{s} = \binp{s}{x} \appl{x}{(\abs{y}{\appl{y}{n})}}$, for some fresh $n$.
-%%
-%	\begin{eqnarray*}
-%		\mapchar{\btinp{U} \inact}{s} = && \binp{s}{x} \mapchar{\shot{(\shot{(\shot{(\btout{S} \tinact)})})}}{x}\\
-%		= && \binp{s}{x} \appl{x}{\omapchar{\shot{(\shot{(\btout{S} \tinact)})}}}\\
-%		= && \binp{s}{x} \appl{x}{(\abs{y}{\mapchar{\shot{(\btout{S} \tinact)}}{y}})}\\
-%		= && \binp{s}{x} \appl{x}{(\abs{y}{\appl{y}{\omapchar{\btout{S} \tinact}})}}\\
-%		= && \binp{s}{x} \appl{x}{(\abs{y}{\appl{y}{n})}}\\
-%	\end{eqnarray*}
-%%
-\end{example}
+%\begin{example}
+%	Consider the type $U = \shot{(\shot{(\shot{(\btout{S} \tinact)})})}$.
+%	It is easy to verify that %the characteristic process %of the above type is:
+%	$\mapchar{\btinp{U} \inact}{s} = \binp{s}{x} \appl{x}{(\abs{y}{\appl{y}{n})}}$, for some fresh $n$.
+%%%
+%%	\begin{eqnarray*}
+%%		\mapchar{\btinp{U} \inact}{s} = && \binp{s}{x} \mapchar{\shot{(\shot{(\shot{(\btout{S} \tinact)})})}}{x}\\
+%%		= && \binp{s}{x} \appl{x}{\omapchar{\shot{(\shot{(\btout{S} \tinact)})}}}\\
+%%		= && \binp{s}{x} \appl{x}{(\abs{y}{\mapchar{\shot{(\btout{S} \tinact)}}{y}})}\\
+%%		= && \binp{s}{x} \appl{x}{(\abs{y}{\appl{y}{\omapchar{\btout{S} \tinact}})}}\\
+%%		= && \binp{s}{x} \appl{x}{(\abs{y}{\appl{y}{n})}}\\
+%%	\end{eqnarray*}
+%%%
+%\end{example}
 
 
 \begin{example}[The Need for Refined Typed LTS]
@@ -829,23 +829,24 @@ in~\eqref{equ:6}:
 	P_1 \By{\ell} \binp{t}{x} (\appl{x}{s_1}) \Par 
 \binp{t}{x} (\appl{x}{s_2})
 %\hastype \Proc
-	\mbox{~~and~~}
+	\mbox{~and~}
 %	\Gamma; \es; \Delta &\proves& 
 	P_2 \By{\ell} \binp{t}{x} (\appl{x}{s_1}) \Par \binp{s_2}{y} \inact 
 %\hastype \Proc
+\quad \text{($\ell = s?\ENCan{\abs{{x}}{\binp{t}{y} (\appl{y}{{x}})}}$)}
 \end{eqnarray*}
 \normalsize
 %\noi resulting two distinct processes.  
 %
-\noi where 
-$\ell = s?\ENCan{\abs{{x}}{\binp{t}{y} (\appl{y}{{x}})}}$.
-One question that arises here is whether the trigger value is enough
-to distinguish two processes, hence no need of 
-characteristic values as the input. 
-This is not the case since the trigger value
+%\noi where 
+%$\ell = s?\ENCan{\abs{{x}}{\binp{t}{y} (\appl{y}{{x}})}}$.
+One question is whether the trigger value is enough
+to distinguish two processes (hence no need of 
+characteristic values). % as the input. 
+This is not the case: the trigger value
 alone also results in an under-discriminating bisimulation relation.
-In fact the  trigger value can be observed on any input prefix
-of {\em any type}. For example, consider the processes
+In fact, the  trigger value can be observed on any input prefix
+of {\em any type}. For example, consider processes
 %
 \begin{eqnarray}
 %	\Gamma; \es; \Delta \proves 
@@ -965,8 +966,8 @@ trigger or characteristic values or names:
 \end{definition}
 
 \noi Note 
-$\horel{\Gamma}{\Delta_1}{P_1}{\hby{\ell}}{\Delta_2}{P_2}$ implies  
-$\horel{\Gamma}{\Delta_1}{P_1}{\by{\ell}}{\Delta_2}{P_2}$.
+$\horel{\Gamma}{\Delta_1}{P_1}{\hby{\ell}}{\Delta_2}{P_2}$ (refined input) implies  
+$\horel{\Gamma}{\Delta_1}{P_1}{\by{\ell}}{\Delta_2}{P_2}$ (ordinary input).
 Below we sometimes write  
 $\hby{\news{\widetilde{m}} \bactout{n}{\AT{V}{U}}}$
 when the type of $V$ is~$U$.
@@ -1104,10 +1105,11 @@ $\beta$-reductions are deterministic.
 \begin{definition}[Deterministic Transition]\myrm
 \label{def:dettrans}
 	Let  $\Gamma; \es; \Delta \proves P \hastype \Proc$ be a balanced \HOp process. 
-	Transition $\horel{\Gamma}{\Delta}{P}{\hby{\tau}}{\Delta'}{P'}$ is called:
-\vspace{-2mm}
-	\begin{enumerate}[$-$]
-		\item {\em Session transition} whenever the untyped transition $P \by{\tau} P'$ 
+	Transition $\horel{\Gamma}{\Delta}{P}{\hby{\tau}}{\Delta'}{P'}$ is called
+%\vspace{-2mm}
+%	\begin{enumerate}[$-$]
+%		\item 
+		{\em session transition} whenever the   transition $P \by{\tau} P'$ 
 		is derived using 
 			rule~$\ltsrule{Tau}$ 
 		(where $\subj{\ell_1}$ and $\subj{\ell_2}$ in the premise 
@@ -1115,11 +1117,13 @@ $\beta$-reductions are deterministic.
 		possibly followed by uses of  $\ltsrule{Alpha}$, $\ltsrule{Res}$, $\ltsrule{Rec}$, or $\ltsrule{Par${}_L$}/
 		\ltsrule{Par${}_R$}$.
 		
-		\item	{\em \betatran}	whenever the untyped transition $P \by{\tau} P'$
+		%\item
+		Transition $\horel{\Gamma}{\Delta}{P}{\hby{\tau}}{\Delta'}{P'}$ is called
+			{\em \betatran}	whenever the   transition $P \by{\tau} P'$
 			is derived using rule $\ltsrule{App}$,
 			possibly followed by uses of  $\ltsrule{Alpha}$, $\ltsrule{Res}$, $\ltsrule{Rec}$, or $\ltsrule{Par${}_L$}/
-		\ltsrule{Par${}_R$}$.
-	\end{enumerate}
+		\ltsrule{Par${}_R$}$. \\
+%	\end{enumerate}
 %
 %We write
 %$\horel{\Gamma}{\Delta}{P}{\hby{\stau}}{\Delta'}{P'}$
@@ -1163,18 +1167,17 @@ $\cong$, $\wbc$,  and $\fwb$ coincide in $\HOp$.
 \vspace{-1mm}
 \end{theorem}
 \begin{proof}[Proof (Sketch)]
-We use an auxiliary equivalence called \emph{higher-order bisimilarity} (denoted $\hwb$, see \defref{def:bisim} in the Appendix) which 
+We use an auxiliary equivalence called \emph{higher-order bisimilarity} (denoted~$\hwb$, see \defref{def:bisim}) which 
 is defined as $\fwb$ but by
 using  trigger processes with higher-order communication (cf. \eqref{equ:2}).
-We first show that $\fwb$ and $\hwb$ coincide by using 
-Proposition~\ref{lem:tau_inert}; 
+We first show that $\fwb$ and $\hwb$ coincide by using~\propref{lem:tau_inert}; 
 then, we show that $\hwb$ coincides with $\wbc$ and $\cong$. 
-A key result is a process substitution lemma which simplifies reasoning 
+A key result is a  substitution lemma which simplifies reasoning 
 for $\hwb$
 by exploiting characteristic processes/values.
 See
 \appref{app:beh}
-and~\cite{KouzapasPY15} for full details.
+and~\cite{KouzapasPY15} for details.
 \end{proof}
 Now we prove the bisimulation of the client processes 
 $\Client_1$ and $\Client_2$ 
@@ -1194,10 +1197,10 @@ Then
 \begin{proof}[Proof (Sketch)]
 	\noi We show a bisimulation closure by following transitions on each $\Client$.
 	%We show the initial higher order transitions.
-	More details  can be found in \appref{hotel_closure}.
+	See \appref{hotel_closure} for details.
 	First, the characteristic process is given as:
 	$\mapchar{\btinp{\lhot{S}} \tinact}{s} = \binp{s}{x} (\appl{x}{k})$.
-We now show that the two clients can simulate each other on
+We show that the clients can simulate each other on
 the first two output transitions, that also generate the trigger
 processes:
 %
