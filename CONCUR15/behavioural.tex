@@ -1,10 +1,10 @@
 % !TEX root = main.tex
-\noi We develop a theory for observational equivalences over
-session typed \HOp processes. The theory follows the principles
+\noi We develop a theory for observational equivalence over
+session typed \HOp processes that follows the principles
 laid in our previous works~\cite{KYHH2015,KY2015}.
 We introduce 
 %three different bisimulations 
-characteristic bisimulation
+\emph{characteristic bisimulation} (\defref{d:fwb})
 and prove
 \jpc{that}
 %all of them coincide 
@@ -36,7 +36,7 @@ Interaction is defined on action labels $\ell$:
 Label $\tau$ defines internal actions.
 Action $\news{\widetilde{m}} \bactout{n}{V}$ denotes the sending of value $V$
 over channel $n$ with
-a possible empty set of names $\widetilde{m}$ being restricted 
+a possible empty set of restricted names $\widetilde{m}$ 
 (we may write $\bactout{n}{V}$ when $\widetilde{m}$ is empty).
 %and 
 %$\news{\widetilde{m}} \bactout{n}{\AT{V}{U}}$
@@ -216,7 +216,7 @@ The resulting type tuple must contain the environments
 associated to $V$. 
 The %condition $\dual{s} \notin \dom{\Delta}$
 %rule requires that 
-the dual endpoint $\dual{s}$ cannot not be
+dual endpoint $\dual{s}$ cannot be
 present in the session environment: if it were present
 the only possible communication would be the interaction
 between the two endpoints (cf. rule~$\eltsrule{Tau}$).
@@ -378,10 +378,6 @@ reduces it (\defref{d:wtenvred}).
 \vspace{-2mm}
 \end{figure}
 %%%%%%%%%%%%%%%%%%%% End Environment LTS Figure %%%%%%%%%%%%%%%%%%%%%%
-\noi
-Our typed LTS  combines
-the LTSs in \figref{fig:untyped_LTS}
-and \figref{fig:envLTS}. 
 
 \begin{example}
 	Consider environment %tuple
@@ -402,6 +398,13 @@ $U=\btout{\lhot{\btout{S} \tinact}} \tinact$.
 		(\Gamma; \es; s: \btout{\lhot{\btout{S} \tinact}} \tinact \cat s': S) \by{\news{m} \bactout{s}{V}} (\Gamma; \es; s: \tinact)
 	\]
 \end{example}
+
+\noi
+Our typed LTS  combines
+the LTSs in \figref{fig:untyped_LTS}
+and \figref{fig:envLTS}. 
+
+
 
 
 \begin{definition}[Typed Transition System]\label{d:tlts}\rm
@@ -550,10 +553,10 @@ $\hole$ in $\C$ with process $P$.
 
 \subsection{Context Bisimulation ($\wbc$)}
 \label{subsec:bisimulation}
-\noi The first bisimulation which we define 
+\noi The first bisimulation that we define 
 is the standard (weak) context bisimulation~\cite{San96H}. 
 %
-\begin{definition}[Context Bisimulation]\rm
+\begin{definition}[Context Bisimilarity]\rm
 \label{def:wbc}
 A typed relation $\Re$ is {\em a context bisimulation} if
 for all $\horel{\Gamma}{\Delta_1}{P_1}{\ \Re \ }{\Delta_2}{Q_1}$, 
@@ -594,7 +597,7 @@ $\horel{\Gamma}{\Delta_2}{Q_1}{\By{\hat{\ell}}}{\Delta_2'}{Q_2}$
 
                       \item	The symmetric cases of 1 and 2.                
 	\end{enumerate}
-	The largest such bisimulation is called context bisimilarity \jpc{and} denoted by $\wbc$.
+	The largest such bisimulation is called \emph{context bisimilarity} \jpc{and} denoted by $\wbc$.
 \end{definition}
 
 \noi As hinted at in %\secref{subsec:intro:bisimulation}, 
@@ -759,12 +762,8 @@ We define characteristic processes/values:
 %%and $\mapchar{C}{u}$. 
 %%\end{IEEEproof}
 
-\noi We can verify that characteristic processes/values  
-do inhabit  their associated type by induction of types. 
-The following examples motivates the refined 
-LTS explained in %\secref{sec:overview}.
-the introduction.
-
+%\noi We can verify that characteristic processes/values  
+%do inhabit their associated type. %; the proof is by induction on types. 
 \begin{proposition}
 %	\begin{itemize}
 		%\item	
@@ -773,6 +772,12 @@ the introduction.
 		Also, let $\chtype{U}$ be a first-order (channel) type. Then $\Gamma \cat a: \chtype{U}; \es; \Delta \proves \mapchar{\chtype{U}}{a} \hastype \Proc$.
 %	\end{itemize}
 \end{proposition}
+
+The following example motivates the refined 
+LTS explained in %\secref{sec:overview}.
+the introduction.
+
+
 
 
 %\begin{proof}
@@ -904,7 +909,7 @@ then they would become, under appropriate $\Gamma$ and $\Delta$:
 %	\\
 %	\Gamma; \es; \Delta \proves \newsp{s}{\binp{s}{x} (\appl{x}{m}) \Par \bout{\dual{s}}{\abs{x} Q} \inact} \wbc \Delta \proves Q \subst{m}{x}
 \end{eqnarray*}
-\noi which are not bisimilar if $R_1 \subst{m}{x} \not\wb R_2 \subst{m}{x}$.
+\noi which are not bisimilar if $R_1 \subst{m}{x} \not\wbc R_2 \subst{m}{x}$.
 %\qed
 %In conclusion, these examples explain a need of both 
 %trigger and characteristic values 
@@ -1062,7 +1067,7 @@ uses trigger processes (cf.~\eqref{eq:4}):
 \begin{definition}[Characteristic Bisimilarity]\rm
 	\label{d:fwb}
 A typed relation $\Re$ is a {\em  characteristic bisimulation} if 
-for all $\horel{\Gamma}{\Delta_1}{P_1}{\ \Re \ }{\Delta_2}{Q_1}$ 
+for all $\horel{\Gamma}{\Delta_1}{P_1}{\ \Re \ }{\Delta_2}{Q_1}$, 
 \begin{enumerate}[1)]
 \item 
 	Whenever 
@@ -1186,7 +1191,7 @@ $\cong$, $\wbc$,  and $\fwb$ coincide in $\HOp$.
 \begin{proof}[Proof (Sketch)]
 We use 
 \emph{higher-order bisimilarity} ($\hwb$, see \defref{def:bisim}), 
-an auxiliary equivalence which 
+an auxiliary equivalence that
 is defined as $\fwb$ but by
 using  trigger processes with higher-order communication (cf.~\eqref{equ:2}).
 We first show that $\fwb$ and $\hwb$ coincide by using~\propref{lem:tau_inert}; 
@@ -1198,9 +1203,11 @@ See
 \appref{app:beh}
 and~\cite{KouzapasPY15} for full details.
 \end{proof}
-Now we prove the bisimulation of the client processes 
+Now we prove 
+that  processes 
 $\Client_1$ and $\Client_2$ 
-in Example \ref{exam:proc}.
+in Example \ref{exam:proc}
+are behaviourally equivalent.
 
 \begin{proposition}\label{p:examp}
 	Let
