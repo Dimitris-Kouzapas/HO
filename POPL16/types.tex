@@ -1,0 +1,190 @@
+% !TEX root = main.tex
+\noi %Here we define 
+This section defines a session typing system for \HOp and states its main properties. 
+Our system distills the key features of~\cite{tlca07,MostrousY15},
+thus it is simpler.
+%Our system is simpler than that in~\cite{tlca07,MostrousY15}, thus distilling the key
+%features of higher-order sessions. %communications. %in a session-typed setting.
+
+\smallskip 
+
+%\subsection{Types}
+%\label{subsec:types}
+\myparagraph{Types.}
+The syntax of types of \HOp is given below: 
+\[
+\begin{array}{lrl}
+\text{(value)}	& U \bnfis &	\nonhosyntax{C} \bnfbar L\\[1mm]  % \bnfbar \Proc
+\text{(name)}   & C  \bnfis &	S \bnfbar \chtype{S}
+\bnfbar \chtype{L}
+	\\[1mm]
+\text{(abstr)} & L \bnfis &	\shot{C} \bnfbar \lhot{C}
+	\\[1mm]
+\text{(session)} &  S \bnfis & 	\btout{U} S \bnfbar \btinp{U} S 
+\bnfbar \btsel{l_i:S_i}_{i \in I} \\ 
+ & \bnfbar & \btbra{l_i:S_i}_{i \in I}
+	  \bnfbar  \trec{t}{S} \bnfbar \vart{t}  \bnfbar \tinact
+\end{array}
+\]
+\dk{Value type $U$ includes
+the first-order types $C$ and the higher-order
+types $L$. Session types are denoted with $S$ and
+shared types with $\chtype{S}$ and $\chtype{L}$.
+%Note that we dissallow type $\chtype{U}$, thus
+%in the type discipline shared names cannot carry shared names.
+}
+%In name types, $\chtype{U}$ is shared name types 
+%which are sent via shared names. 
+Types $\shot{C}$ and $\lhot{C}$ denote
+{\em shared} and {\em linear} higher-order 
+%\jpc{functional}
+types, respectively.
+%,
+%used to type abstraction values.
+%$\lhot{C}$ \cite{tlca07,mostrous_phd} ensures values which contain free 
+%session names used once. 
+ 
+We write $S$ to denote %binary 
+session types.  {\em Output type}
+$\btout{U} S$ %is assigned to a name that 
+first sends a value of
+type $U$ and then follows the type described by $S$.  Dually,
+$\btinp{U} S$ denotes an {\em input type}. The {\em branching type}
+$\btbra{l_i:S_i}_{i \in I}$ and the {\em selection type}
+$\btsel{l_i:S_i}_{i \in I}$ define the labelled choice. 
+We assume the {\em recursive type} $\trec{t}{S}$ is guarded,
+i.e.,  $\trec{t}{\vart{t}}$ is not allowed. 
+%We stress that carried type $U$ in $\btout{U} S$ and
+%$\btinp{U} S$ can contain free type variables, which is crucial
+%to encode $\HOp$ into $\HO$.
+Type $\tinact$ is the termination type. 
+
+Types of \HO exclude $\nonhosyntax{C}$ from 
+value types of \HOp; the types of \sessp exclude $L$. 
+From each $\CAL \in \{\HOp, \HO, \pi \}$, $\CAL^{-\mathsf{sh}}$ 
+excludes shared name types ($\chtype{S}$ and $\chtype{L}$), 
+from name type $C$.
+
+Following \cite{TGC14},
+we write $S_1 \dualof S_2$ if 
+$S_1$ is the dual of $S_2$.   
+Intuitively, 
+the duality of types is obtained by 
+dualising $!$ by $?$, $?$ by $!$, $\oplus$ by $\&$ and $\&$ by $\oplus$,  
+incorporating the fixed point construction 
+(see \defref{def:dual} in the Appendix). 
+
+\smallskip 
+
+%\subsection{Typing System of \HOp}
+%\label{subsec:typing}
+\myparagraph{Typing Judgements of \HOp.}
+\noi We define typing judgements for values $V$
+and processes $P$:
+\begin{center}
+\begin{tabular}{c}
+	$\Gamma; \Lambda; \Delta \proves V \hastype U \qquad \qquad \qquad \Gamma; \Lambda; \Delta \proves P \hastype \Proc$
+\end{tabular}
+\end{center}
+\noi The first judgement
+states that under environments $\Gamma; \Lambda; \Delta$ value $V$
+has type $U$, whereas the second judgement states that under
+environments $\Gamma; \Lambda; \Delta$ process $P$ has the process type~$\Proc$. The environments are defined below:
+\[
+\begin{array}{l}
+ \Lambda \bnfis  \emptyset \bnfbar \Lambda \cat \AT{x}{\lhot{C}}
+\quad\quad \Delta  \ \bnfis  \ \emptyset \bnfbar \Delta \cat \AT{u}{S} \\
+ \Gamma  \bnfis  \emptyset \bnfbar \Gamma \cat \varp{x}: \shot{C} \bnfbar \Gamma \cat u: \chtype{S} \bnfbar \Gamma \cat u: \chtype{L} 
+        \bnfbar \Gamma \cat \rvar{X}: \Delta
+\end{array}
+\]
+\noi 
+$\Gamma$ maps variables and shared names to value types, and recursive 
+variables to session environments;  
+it admits weakening, contraction, and exchange principles.
+$\Lambda$ is a mapping from variables to 
+%the
+ linear %functional 
+higher-order
+types; and $\Delta$ is a mapping from 
+session names to session types. 
+Both $\Lambda$ and $\Delta$ %behave linearly: they 
+are
+only subject to exchange.  
+We require that the domains of $\Gamma,
+\Lambda$ and $\Delta$ are pairwise distinct. 
+$\Delta_1\cdot \Delta_2$ means 
+a disjoint union of $\Delta_1$ and $\Delta_2$.  
+We are interested in \emph{balanced} session environments: 
+%that contain dual endpoints typed with dual types.
+%The following definition ensures two session endpoints 
+%are dual each other. 
+
+\smallskip
+
+\begin{definition}[Balanced]\label{d:wtenv}%\rm
+	%Let $\Delta$ be a session environment.
+	We say that a session environment $\Delta$ is {\em balanced} if whenever
+	$s: S_1, \dual{s}: S_2 \in \Delta$ then $S_1 \dualof S_2$.
+\end{definition}
+
+\smallskip
+
+\myparagraph{The Typing System of \HOp.}
+Since the typing system is similar to~\cite{tlca07,MostrousY15}, 
+we fully describe it  in \appref{app:types}.  The %rest of the 
+paper can
+be read without knowing the details of the typing system. 
+\jpc{Type soundness relies on the following auxiliary notion}.
+%We list the key properties.
+
+\smallskip
+
+\begin{definition}[Reduction of Session Environment]%\rm
+\label{def:ses_red}
+We define the relation $\red$ on session environments as:\\[-2mm]
+\begin{center}
+\begin{tabular}{l}
+	$\Delta \cat s: \btout{U} S_1 \cat \dual{s}: \btinp{U} S_2 \red
+	\Delta \cat s: S_1 \cat \dual{s}: S_2$\\[1mm]
+	$\Delta \cat s: \btsel{l_i: S_i}_{i \in I} \cat \dual{s}: \btbra{l_i: S_i'}_{i \in I} \red \Delta \cat s: S_k \cat \dual{s}: S_k' \ (k \in I)$
+\end{tabular}
+\end{center}
+%\begin{tabular}{rcl}
+%	\setlength{\tabcolsep}{0pt}
+%	$\Delta \cat s: \btout{U} S_1 \cat \dual{s}: \btinp{U} S_2$ & $\red$ & 
+%	$\Delta \cat s: S_1 \cat \dual{s}: S_2$\\[1mm]
+%	$\Delta \cat s: \btsel{l_i: S_i}_{i \in I} \cat \dual{s}: \btbra{l_i: S_i'}_{i \in I}$ & $\red$ & $\Delta \cat s: S_k \cat \dual{s}: S_k' \ (k \in I)$
+%\end{tabular}
+%\[
+%\begin{array}{rcl}
+%\Delta \cat s: \btout{U} S_1 \cat \dual{s}: \btinp{U} S_2 & \red & 
+%\Delta \cat s: S_1 \cat \dual{s}: S_2\\[1mm]
+%\Delta \cat s: \btsel{l_i: S_i}_{i \in I} \cat \dual{s}: \btbra{l_i: S_i'}_{i \in I} & \red & \Delta \cat s: S_k \cat \dual{s}: S_k' \ (k \in I)
+%\end{array}
+%\]
+\end{definition}
+
+\smallskip
+
+%The following result %Theorem 7.3 in M\&Y
+\noi We state the type soundness results of \HOp; it implies 
+the type soundness of the sub-calculi \HO, \sessp, and $\CAL^{-\mathsf{sh}}$. 
+
+\smallskip
+
+\begin{theorem}[Type Soundness]\label{t:sr}%\rm
+%	\begin{enumerate}[1.]
+%		\item	(Subject Congruence) Suppose $\Gamma; \es; \Delta \proves P \hastype \Proc$.
+%			Then $P \scong P'$ implies $\Gamma; \es; \Delta \proves P' \hastype \Proc$.
+%
+%		\item
+%			(Subject Reduction)
+			Suppose $\Gamma; \es; \Delta \proves P \hastype \Proc$
+			with
+			$\Delta$ balanced. 
+			Then $P \red P'$ implies $\Gamma; \es; \Delta'  \proves P' \hastype \Proc$
+			and $\Delta = \Delta'$ or $\Delta \red \Delta'$
+			with $\Delta'$ balanced. 
+%	\end{enumerate}
+\end{theorem}

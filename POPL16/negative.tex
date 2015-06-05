@@ -1,0 +1,110 @@
+% !TEX root = main.tex
+
+\subsection{A Negative Result}
+\noi As most session calculi, 
+\HOp includes communication on both shared and linear names.
+The former enables non determinism and unrestricted behaviour; the latter allows to represent
+deterministic and linear communication structures.
+The expressive power of shared names is also illustrated by our 
+encoding from \HOp into \sessp (\thmref{f:enc:hotopi}).
+%Shared and linear names are fundamentally different; still, to the best of our knowledge,
+%the status of shared communication, in terms of expressiveness, has not been formalized for session calculi.
+This result begs the question: 
+%\dk{can we further encode the replicated triggers in the encoding from \HOp to \HO using only session names?}
+can we represent shared name interaction using session name interaction?
+%are shared names truly indispensable for communication, or could they
+%be encoded using linear communication?
+Here we prove that shared names actually add expressiveness to \HOp:
+we show
+the non existence of a minimal encoding 
+(cf.~\defref{def:goodenc})
+of shared name 
+communication into linear 
+communication. 
+%for their behavior cannot be represented using purely deterministic processes.
+%To this end, we show the non existence of a minimal encoding 
+%(cf.~\defref{def:goodenc}(ii))
+%of shared name communication into linear 
+%communication. 
+
+\smallskip 
+
+\NY{
+\begin{theorem}\rm
+\label{t:negative}
+There is no %semantic preserving 
+minimal
+encoding 
+from $\sessp$ to $\HOp^{\minussh}$. Hence, 
+for any $\CAL_1,\CAL_2\in \{ \HOp, \HO, \sessp\}$, 
+there is no 
+minimal encoding from  
+$\tyl{L}_{\CAL_1}$ 
+into $\tyl{L}_{\CAL_2^{-\mathsf{sh}}}$.
+\end{theorem}
+}
+
+\smallskip 
+
+The proof of \thmref{t:negative} relies on
+%As described next, 
+$\tau$-inertness (\lemref{lem:tau_inert}) %is critical in the proof.
+%Recall that minimal encodings preserve barbs 
+and barb preservation~(\propref{p:barbpres}).
+By 
+	\defref{d:enc:hopitoho} and~\ref{d:enc:hopitopi} 
+	and \propref{f:enc:hopitoho} and~\ref{f:enc:hotopi}, 
+we have:
+\smallskip 
+\NY{
+\begin{corollary}
+Let $\CAL_1,\CAL_2\in \{ \HOp, \HO, \sessp\}$.  
+Then there exists a precise encoding 
+from 
+$\tyl{L}_{\CAL_1^{-\mathsf{sh}}}$ 
+into $\tyl{L}_{\CAL_2^{-\mathsf{sh}}}$.
+\end{corollary}
+}
+
+
+\begin{comment}
+\begin{IEEEproof}[Proof]
+	Let $\horel{\Gamma_1}{\Delta_1}{P_1}{\not\wb}{\Delta_2}{P_2}$
+	with $P = \breq{a}{s} \inact \Par \bacc{a}{x} P_1 \Par \bacc{a}{x} P_2$ and	let $\Gamma; \emptyset; \Delta \proves P \hastype \Proc$.
+	Assume also a encoding
+	$\enc{\cdot}{\cdot}: \sessp \longrightarrow \HOp^{\minussh}$
+is minimum. 
+	From operational correspondence we obtain:
+\[
+\begin{array}{rcl}
+		P \red P_1 \Par \bacc{a}{x} P_2 &\textrm{implies}& \map{P} \red \map{P_1 \Par \bacc{a}{x} P_2}\\
+		P \red P_2 \Par \bacc{a}{x} P_1 &\textrm{implies}& \map{P} \red \map{P_2 \Par \bacc{a}{x} P_1}
+\end{array}
+\]
+	From the fact that
+	$\horel{\Gamma_1}{\Delta_1}{P_1}{\not\wb}{\Delta_2}{P_2}$
+	we can derive that
+%
+	\[
+		\horel{\Gamma_1'}{\Delta_1'}{P_1 \Par \bacc{a}{x} P_2}{\not\wb}{\Delta_2'}{P_2 \Par \bacc{a}{x} P_1}
+	\]
+%
+	From \lemref{lem:tau_inert}(2) we know that
+%
+\[
+\begin{array}{rcl}
+		\horel{\mapt{\Gamma}}{\mapt{\Delta}}{\map{P}}{\wb}{\mapt{\Delta_1'}}{\map{P_1 \Par \bacc{a}{x} P_2}}\wb 
+{\mapt{\Delta_2'}}\proves {\map{P_2 \Par \bacc{a}{x} P_1}}
+\end{array}
+\]
+%
+	\noi thus
+$\horel{\mapt{\Gamma}}{\mapt{\Delta_1'}}{\map{P_1 \Par \bacc{a}{x} P_2}}{\wb}{\mapt{\Delta_2'}}{\map{P_2 \Par \bacc{a}{x} P_1}}$, 
+%
+	which contradicts the assumption. 
+%	so there is no mapping $\map{\cdot}: \pHO \longrightarrow \spi$ that enjoys
+%	the operational correspondence and full abstraction properties.
+\end{IEEEproof}
+\end{comment}
+
+
