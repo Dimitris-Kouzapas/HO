@@ -8,9 +8,9 @@ We first define a typed calculus parameterised by a syntax, operational semantic
 
 \begin{definition}[Typed Calculus]\label{d:tcalculus}\rm
 A \emph{typed calculus} $\tyl{L}$ is a tuple
-          $\calc{\CAL}{\cal{T}}{\hby{\ell}}{\wb}{\proves}$
+          $\calc{\CAL}{\cal{T}}{\hby{\tau}}{\wb}{\proves}$
 	where $\CAL$ and $\cal{T}$ are sets of processes and types, 
-respectively; and $\hby{\ell}$, $\wb$, and $\proves$ 
+respectively; and $\hby{\tau}$, $\wb$, and $\proves$ 
 	denote a transition system, a typed equivalence, and a typing system for $\CAL$, respectively. 
 \end{definition}
 
@@ -41,6 +41,8 @@ respectively; and $\hby{\ell}$, $\wb$, and $\proves$
 \smallskip 
 
 \noi 
+As we explain later, we write $\hby{\tau}$ to denote an operational semantics defined in terms of
+$\tau$-transitions (to characterise reductions).
 Based on this definition, later on we define concrete instances of (higher-order) typed calculi.
 Our notion of encoding considers mappings on processes, 
 types, and transition labels: 
@@ -48,16 +50,18 @@ types, and transition labels:
 \begin{definition}[Typed Encoding]\rm
 \label{def:tenc}
         Let  
-        $\tyl{L}_1=\calc{\!\CAL_1}{{\cal{T}}_1}{\hby{\ell}_1}{\wb_1}{\proves_1}$
+        $\tyl{L}_1=\calc{\!\CAL_1}{{\cal{T}}_1}{\hby{\tau}_1}{\wb_1}{\proves_1}$
         and
-        $\tyl{L}_2=\calc{\CAL_2}{{\cal{T}}_2}{\hby{\ell}_2}{\wb_2}{\proves_2}$
+        $\tyl{L}_2=\calc{\CAL_2}{{\cal{T}}_2}{\hby{\tau}_2}{\wb_2}{\proves_2}$
          be typed calculi. 
-        Let $\mathcal{A}_{i}$ be the set of labels in $\hby{\ell}_i$ ($i=1,2$).
-	Given mappings $\map{\cdot}: \CAL_1 \to \CAL_2$, 
-	$\mapt{\cdot}: {\cal{T}}_1 \to {\cal{T}}_2$, and 
-	$\mapa{\cdot}: \mathcal{A}_1 \to \mathcal{A}_2$, 
+        %Let $\mathcal{A}_{i}$ be the set of labels in $\hby{\ell}_i$ ($i=1,2$).
+	Given mappings $\map{\cdot}: \CAL_1 \to \CAL_2$ and
+	$\mapt{\cdot}: {\cal{T}}_1 \to {\cal{T}}_2$, 
+%	and $\mapa{\cdot}: \mathcal{A}_1 \to \mathcal{A}_2$, 
 	we write 
-	$\enco{\map{\cdot}, \mapt{\cdot}, \mapa{\cdot}} : \tyl{L}_1 \to \tyl{L}_2$ to denote the \emph{typed encoding} of $\tyl{L}_1$ into $\tyl{L}_2$.
+%	$\enco{\map{\cdot}, \mapt{\cdot}, \mapa{\cdot}} : 
+		$\enco{\map{\cdot}, \mapt{\cdot}} : 
+	\tyl{L}_1 \to \tyl{L}_2$ to denote the \emph{typed encoding} of $\tyl{L}_1$ into $\tyl{L}_2$.
 \end{definition}
 
 \smallskip 
@@ -88,22 +92,22 @@ domains of $\Delta$ and $\Gamma$
 	\label{def:sep}
 	%We say that 
 	The typed encoding 
-	$\enco{\map{\cdot}, \mapt{\cdot}, \mapa{\cdot}}: \tyl{L}_1 \to \tyl{L}_2$ is \emph{syntax preserving}
+	$\enco{\map{\cdot}, \mapt{\cdot}}: \tyl{L}_1 \to \tyl{L}_2$ is \emph{syntax preserving}
 	if it is:
 	
 	\begin{enumerate}[1.]
 		\item	\emph{Homomorphic wrt parallel},   if 
-		$\mapt{\Gamma}; \emptyset; \mapt{\Delta_1 \cat \Delta_2} \proves_1 \map{P_1 \Par P_2} \hastype \Proc$
+		$\mapt{\Gamma}; \emptyset; \mapt{\Delta_1 \cat \Delta_2} \proves_2 \map{P_1 \Par P_2} \hastype \Proc$
 		then 
 		$\mapt{\Gamma}; \emptyset; \mapt{\Delta_1} \cat \mapt{\Delta_2} \proves_2 \map{P_1} \Par \map{P_2} \hastype \Proc$.
 
 		\item	\emph{Compositional wrt restriction},  if 
-		$\mapt{\Gamma}; \emptyset; \mapt{\Delta} \proves_1 \map{\news{n}P} \hastype \Proc$
+		$\mapt{\Gamma}; \emptyset; \mapt{\Delta} \proves_2 \map{\news{n}P} \hastype \Proc$
 		then 
 		$\mapt{\Gamma}; \emptyset; \mapt{\Delta} \proves_2 \news{n}\map{P} \hastype \Proc$.
 		
 		\item \emph{Name invariant},   if
-		$\mapt{\sigma(\Gamma)}; \emptyset; \mapt{\sigma(\Delta)} \proves_1 \map{\sigma(P)} \hastype \Proc$
+		$\mapt{\sigma(\Gamma)}; \emptyset; \mapt{\sigma(\Delta)} \proves_2 \map{\sigma(P)} \hastype \Proc$
 		then \\
 		$\sigma(\mapt{\Gamma}); \emptyset; \sigma(\mapt{\Delta}) \proves_2 \sigma(\map{P}) \hastype \Proc$, 
 		for any injective renaming  of names $\sigma$.
@@ -127,9 +131,11 @@ Next we define semantic criteria: %for typed encodings.
 
 \begin{definition}[Semantic Preserving Encoding]\rm
 \label{def:ep}
-       Let  $\tyl{L}_i=\calc{\CAL_i}{{\cal{T}}_i}{\hby{\ell}_i}{\wb_i}{\proves_i}$
-       ($i=1,2$) be typed calculi. 
-We say that $\enco{\map{\cdot}, \mapt{\cdot}, \mapa{\cdot}}: \tyl{L}_1 \to \tyl{L}_2$ is a \emph{semantic preserving encoding}
+       Consider typed calculi
+        $\tyl{L}_1=\calc{\CAL_1}{{\cal{T}}_1}{\hby{\tau}_1}{\wb_1}{\proves_1}$
+       and $\tyl{L}_2=\calc{\CAL_2}{{\cal{T}}_2}{\hby{\tau}_2}{\wb_2}{\proves_2}$.
+%       ($i=1,2$) be typed calculi. 
+We say that $\enco{\map{\cdot}, \mapt{\cdot}}: \tyl{L}_1 \to \tyl{L}_2$ is a \emph{semantic preserving encoding}
 if it satisfies the properties below.
 %Given a label $\ell \neq \tau$, we write 
 %$\mathsf{sub}(\ell)$
@@ -141,27 +147,30 @@ if it satisfies the properties below.
 	$\Gamma; \emptyset; \Delta \proves_1 P \hastype \Proc$ then 
 	$\mapt{\Gamma}; \emptyset; \mapt{\Delta} \proves_2 \map{P} \hastype \Proc$,  
 	for any   $P$ in $\CAL_1$.
-			\item \emph{Subject preserving}: if $\subj{\ell} = u$ then $\subj{\mapa{\ell}} =u$.
+			%\item \emph{Subject preserving}: if $\subj{\ell} = u$ then $\subj{\mapa{\ell}} =u$.
 
+			\item \emph{Barb preserving}: if $\Gamma; \Delta \proves_1 P \barb{n}$
+		then $\mapt{\Gamma}; \mapt{\Delta} \proves_2 \map{P} \Barb{n}$
 
 	\item \emph{Operational Correspondence}: If $\Gamma; \emptyset; \Delta \proves_1 P \hastype \Proc$ then
 		\begin{enumerate}
 			\item	\NY{Completeness: 
 			   If  
-$\stytraargi{\Gamma}{\ell_1}{\Delta}{P}{\Delta'}{P'}{1}{1}$
-			   then $\exists \ell_2, Q, \Delta''$ s.t. 
- (i)~$\wtytraargi{\mapt{\Gamma}}{\ell_2}{\mapt{\Delta}}{\map{P}}{\mapt{\Delta''}}{Q}{2}{2}$,
-			    (ii)~$\ell_2 = \mapa{\ell_1}$, 
+$\stytraargi{\Gamma}{\tau}{\Delta}{P}{\Delta'}{P'}{1}{1}$
+			   then \\ $\exists Q, \Delta''$ s.t. 
+ (i)~$\wtytraargi{\mapt{\Gamma}}{}{\mapt{\Delta}}{\map{P}}{\mapt{\Delta''}}{Q}{2}{2}$
+			    %(ii)~$\ell_2 = \mapa{\ell_1}$, 
 			    and \\
-				(iii)~${\mapt{\Gamma}};{\mapt{\Delta''}}\proves_2 {Q}{\wb_2}
+				(ii)~${\mapt{\Gamma}};{\mapt{\Delta''}}\proves_2 {Q}{\wb_2}
 {\mapt{\Delta'}}\proves_2 {\map{P'}}$.}
 				
 			\item	Soundness:   
-				If  $\wtytraargi{\mapt{\Gamma}}{\ell_2}{\mapt{\Delta}}{\map{P}}{\mapt{\Delta'}}{Q}{2}{2}$
-				then $\exists \ell_1, P', \Delta''$ s.t.  
-				(i)~$\stytraargi{\Gamma}{\ell_1}{\Delta}{P}{\Delta''}{P'}{1}{1}$,
-				(ii)~$\ell_2 = \mapa{\ell_1}$, and
-				(iii)~
+				If  $\wtytraargi{\mapt{\Gamma}}{}{\mapt{\Delta}}{\map{P}}{\mapt{\Delta'}}{Q}{2}{2}$
+				then \\ $\exists P', \Delta''$ s.t.  
+				(i)~$\stytraargi{\Gamma}{\tau}{\Delta}{P}{\Delta''}{P'}{1}{1}$
+				%(ii)~$\ell_2 = \mapa{\ell_1}$, 
+				and \\
+				(ii)~
 ${\mapt{\Gamma}};{\mapt{\Delta''}}\proves_2 {\map{P'}}{\wb_2}
 {\mapt{\Delta'}}\proves_2 {Q}$.
 
@@ -169,7 +178,7 @@ ${\mapt{\Gamma}};{\mapt{\Delta''}}\proves_2 {\map{P'}}{\wb_2}
 		
 		\item \emph{Full Abstraction:} 
 		\wbbarg{\Gamma}{}{\Delta_1}{P}{\Delta_2}{Q}{1}
-		if and only if
+		if and only if \\
 		\wbbarg{\mapt{\Gamma}}{}{\mapt{\Delta_1}}{\map{P}}{\mapt{\Delta_2}}{\map{Q}}{2}.
 		
 	\end{enumerate}
@@ -185,8 +194,8 @@ Operational correspondence, standardly divided into completeness and soundness, 
 on~\cite{DBLP:journals/iandc/Gorla10,DBLP:conf/icalp/LanesePSS10};
 it relies on 
 %the typed LTS of \defref{def:rlts}, 
-labelled transitions
-rather than on reduction.
+%labelled transitions rather than on 
+$\tau$-labeled transitions (reductions).
 Completeness ensures that an action of the source process is mimicked
 by an action of its associated encoding; soundness is its converse.
 %Soundness ensures that the source process is mimicked 
@@ -194,7 +203,7 @@ by an action of its associated encoding; soundness is its converse.
 %Completeness and soundness rely on 
 %the typed LTS of \defref{def:rlts}, 
 %rather than on reductions;
-Labels are considered up to  mapping $\mapa{\cdot}$, which offers flexibility when comparing different calculi. We require that $\mapa{\cdot}$ preserves  subjects, in accordance with the criteria in~\cite{DBLP:conf/icalp/LanesePSS10}.
+%Labels are considered up to  mapping $\mapa{\cdot}$, which offers flexibility when comparing different calculi. We require that $\mapa{\cdot}$ preserves  subjects, in accordance with the criteria in~\cite{DBLP:conf/icalp/LanesePSS10}.
 \jpc{Above, operational correspondence is stated in generic terms.}
 It is worth stressing that 
 the operational correspondence statements 
@@ -210,27 +219,27 @@ stronger encodability results.
 From the criteria in \defref{def:sep} and~\ref{def:ep}
 we have the following derived criterion: 
 
-\smallskip 
+%\smallskip 
+%
+%\begin{proposition}[Barb Preservation]\label{p:barbpres}
+%Let
+%	$\enco{\map{\cdot}, \mapt{\cdot}, \mapa{\cdot}}: \tyl{L}_1 \to \tyl{L}_2$
+%	be a typed encoding.
+%%	\begin{enumerate}[1.]
+%%	\item Suppose the typed encoding is name invariant. Then $u \in \fn{P}$ implies $u \in \fn{\map{P}}$.
+%%	\item 
+%	Suppose the encoding is both
+%% name invariant (cf.~\defref{def:sep}),
+% operationally complete (cf.~\defref{def:ep}-3(a)) 
+% and subject preserving (cf.~\defref{def:ep}-2).
+% Then, it is also \emph{barb preserving}, i.e., 
+%$\Gamma; \Delta \proves_1 P \barb{n}$
+%implies
+%$\mapt{\Gamma}; \mapt{\Delta} \proves_2 \map{P} \Barb{n}$.
+%%\end{enumerate}
+%\end{proposition}
 
-\begin{proposition}[Barb Preservation]\label{p:barbpres}
-Let
-	$\enco{\map{\cdot}, \mapt{\cdot}, \mapa{\cdot}}: \tyl{L}_1 \to \tyl{L}_2$
-	be a typed encoding.
-%	\begin{enumerate}[1.]
-%	\item Suppose the typed encoding is name invariant. Then $u \in \fn{P}$ implies $u \in \fn{\map{P}}$.
-%	\item 
-	Suppose the encoding is both
-% name invariant (cf.~\defref{def:sep}),
- operationally complete (cf.~\defref{def:ep}-3(a)) 
- and subject preserving (cf.~\defref{def:ep}-2).
- Then, it is also \emph{barb preserving}, i.e., 
-$\Gamma; \Delta \proves_1 P \barb{n}$
-implies
-$\mapt{\Gamma}; \mapt{\Delta} \proves_2 \map{P} \Barb{n}$.
-%\end{enumerate}
-\end{proposition}
-
-\smallskip 
+%\smallskip 
 
 %\begin{proof}%[Sketch]
 %%Part (1) follows by contradiction.
@@ -258,12 +267,13 @@ We may now define \emph{precise} and \emph{minimal} typed criteria:
 \begin{definition}[Typed Encodings: Precise and Minimal]\rm\label{def:goodenc}
 We say that 
 	the typed encoding 
-	$\enco{\map{\cdot}, \mapt{\cdot}, \mapa{\cdot}}: \tyl{L}_1 \to \tyl{L}_2$ is 
+	$\enco{\map{\cdot}, \mapt{\cdot} %, \mapa{\cdot}
+	}: \tyl{L}_1 \to \tyl{L}_2$ is 
 	\begin{enumerate}[$\bullet$]
 	\item \emph{precise}, if it is both syntax and semantic preserving (cf.~\defref{def:sep} and~\ref{def:ep}).
 	\item \emph{minimal}, if it is syntax preserving 
 	(cf.~\defref{def:sep}),
-	%barb preserving, 
+	barb preserving (cf.~\defref{def:ep}-2), 
 	and operationally complete (cf.~\defref{def:ep}-3(a)).
 	\end{enumerate}
 \end{definition}
@@ -282,12 +292,15 @@ Further we have:
 \begin{proposition}[Composability of Precise Encodings]\rm
 	\label{pro:composition}
 	Let %encodings 
-	$\enco{\map{\cdot}^{1}, \mapt{\cdot}^{1}, \mapa{\cdot}^{1}}: \tyl{L}_1 \to \tyl{L}_2$
+	$\enco{\map{\cdot}^{1}, \mapt{\cdot}^{1}%, \mapa{\cdot}^{1}
+	}: \tyl{L}_1 \to \tyl{L}_2$
 	and 
-	$\enco{\map{\cdot}^{2}, \mapt{\cdot}^{2}, \mapa{\cdot}^{2}}: \tyl{L}_2 \to \tyl{L}_3$
+	$\enco{\map{\cdot}^{2}, \mapt{\cdot}^{2}%, \mapa{\cdot}^{2}
+	}: \tyl{L}_2 \to \tyl{L}_3$
 	be two precise typed encodings.
 	Then their composition, denoted 
-	$\enco{\map{\cdot}^{2} \circ \map{\cdot}^{1}, \mapt{\cdot}^{2} \circ \mapt{\cdot}^{1}, \mapa{\cdot}^{2}\circ \mapa{\cdot}^{1}}: \tyl{L}_1 \to \tyl{L}_3$
+	$\enco{\map{\cdot}^{2} \circ \map{\cdot}^{1}, \mapt{\cdot}^{2} \circ \mapt{\cdot}^{1} %, \mapa{\cdot}^{2}\circ \mapa{\cdot}^{1}
+	}: \tyl{L}_1 \to \tyl{L}_3$
 	is precise. 
 \end{proposition}
 
@@ -295,15 +308,15 @@ Further we have:
 
 \noi {\bf\em Concrete Typed Calculi:}
 In \secref{sec:positive} %and \secref{sec:negative}, 
-we consider the following concrete instances of typed calculi (cf.~\defref{d:tcalculus}):
+we consider the following concrete instances of typed calculi (cf.~\defref{d:tcalculus}): \\
 %
 %\begin{enumerate}[-]
 %	\item
-	$\tyl{L}_{\HOp}=\calc{\HOp}{{\cal{T}}_1}{\hby{\ell}}{\hwb}{\proves}$,
+	$\tyl{L}_{\HOp}=\calc{\HOp}{{\cal{T}}_1}{\hby{\tau}}{\hwb}{\proves}$,
 %	\item
-	$\tyl{L}_{\HO}=\calc{\HO}{{\cal{T}}_2}{\hby{\ell}}{\hwb}{\proves}$, and
+	$\tyl{L}_{\HO}=\calc{\HO}{{\cal{T}}_2}{\hby{\tau}}{\hwb}{\proves}$, and
 %	\item
-	$\tyl{L}_{\sessp}=\calc{\sessp}{{\cal{T}}_3}{\hby{\ell}}{\fwb}{\proves}$ 
+	$\tyl{L}_{\sessp}=\calc{\sessp}{{\cal{T}}_3}{\hby{\tau}}{\fwb}{\proves}$ 
 %\end{enumerate}
 %
 where: 
