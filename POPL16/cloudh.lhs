@@ -21,7 +21,6 @@
 
 
 %format tt = "\,`\!"
-%format :~> = ":\leadsto"
 
 \newcommand{\dnote}[1]{\textcolor{blue}{Dom: #1}}
 
@@ -80,7 +79,7 @@ of the |IO| monad and actually performing the communication/spawning/etc.
 > instance Effect Session where
 >    type Plus Session s t = UnionS s t
 >    type Unit Session     = '[]
->    type Inv Session s t  = (NoDualNames s t ~ NoSeqDuals)
+>    type Inv Session s t  = ()
 
 >    return :: a -> Session (Unit Session) a
 >    return a = Session (P.return a)
@@ -96,56 +95,18 @@ of the |IO| monad and actually performing the communication/spawning/etc.
 
 -- Type-level machinery for composing session information
 
-> data DualCon = NoSeqDuals | DualConflict ChanName
-
-> type family NoDualNames s t :: DualCon where
->             NoDualNames '[] s  = NoSeqDuals
->             NoDualNames s '[]  = NoSeqDuals
->             NoDualNames ((c :-> s) ': ss) ts = And (NonDualNames' c ts) (NoDualNames ss ts)
->             NoDualNames ((c :~> s) ': ss) ts = NoDualNames ss ts
-
-> type family NonDualNames' c t :: DualCon where
->             NonDualNames' c '[] = NoSeqDuals
->             NonDualNames' (Ch c) (((Op c) :-> s) ': ss) = DualConflict (Ch c)
->             NonDualNames' (Op c) (((Ch c) :-> s) ': ss) = DualConflict (Op c)
->             NonDualNames' c ((d :-> s) ': ss) = NonDualNames' c ss
->             NonDualNames' c ((d :~> s) ': ss) = NonDualNames' c ss
->
-> type family And (s :: DualCon) (t :: DualCon) :: DualCon where
->             And (DualConflict c) x = DualConflict c
->             And x (DualConflict c) = DualConflict c
->             And NoSeqDuals NoSeqDuals = NoSeqDuals
-
 > type UnionS s t = Nub (Sort (Append s t))
 
 > type family Nub t where
 >    Nub '[]           = '[]
 >    Nub '[e]          = '[e]
 >    Nub ((c :-> s) ': (c :-> t) ': ss) = Nub ((c :-> (SessionPlus s t)) ': ss)
->    Nub ((c :~> s) ': (c :~> t) ': ss) = Nub ((c :~> (SessionPlus s t)) ': ss) 
 >    Nub (e ': f ': s) = e ': Nub (f ': s)
 
 > type instance Cmp ((Ch c) :-> a) ((Op d) :-> b) = LT
 > type instance Cmp ((Op c) :-> a) ((Ch d) :-> b) = GT
 > type instance Cmp ((Ch c) :-> a) ((Ch d) :-> b) = CmpChan c d
 > type instance Cmp ((Op c) :-> a) ((Op d) :-> b) = CmpChan c d
-
-All repeats, but deal with :~> 
-
-> type instance Cmp ((Ch c) :~> a) ((Op d) :~> b) = LT
-> type instance Cmp ((Op c) :~> a) ((Ch d) :~> b) = GT
-> type instance Cmp ((Ch c) :~> a) ((Ch d) :~> b) = CmpChan c d
-> type instance Cmp ((Op c) :~> a) ((Op d) :~> b) = CmpChan c d
-
-> type instance Cmp ((Ch c) :~> a) ((Op d) :-> b) = LT
-> type instance Cmp ((Op c) :~> a) ((Ch d) :-> b) = GT
-> type instance Cmp ((Ch c) :~> a) ((Ch d) :-> b) = CmpChan c d
-> type instance Cmp ((Op c) :~> a) ((Op d) :-> b) = CmpChan c d
-
-> type instance Cmp ((Ch c) :-> a) ((Op d) :~> b) = LT
-> type instance Cmp ((Op c) :-> a) ((Ch d) :~> b) = GT
-> type instance Cmp ((Ch c) :-> a) ((Ch d) :~> b) = CmpChan c d
-> type instance Cmp ((Op c) :-> a) ((Op d) :~> b) = CmpChan c d
 
 > type family CmpChan c d where
 >             CmpChan c c = EQ
@@ -207,9 +168,6 @@ encapsulated Concurrent Haskell channel [todo: convert to a Cloud Haskell channe
 
 > infixl 2 :->
 > data (k :: ChanName) :-> (v :: *)
-
-> infixl 2 :~>
-> data (k :: ChanName) :~> (v :: *)
 
 %endif
 
@@ -277,13 +235,11 @@ That is, the channels |Ch c| and |Op c| are only in scope for |Session s b|.
 > type family Del (c :: ChanName) (s :: [*]) :: [*] where
 >     Del c '[]           = '[]
 >     Del c ((c :-> s) ': xs) = Del c xs
->     Del c ((c :~> s) ': xs) = Del c xs
 >     Del c (x ': xs)     = x ': (Del c xs)
 >
 > type family Lookup s c where
 >             Lookup '[] c               = End 
 >             Lookup ((c :-> t) ': xs) c = t
->             Lookup ((c :~> t) ': xs) c = t
 >             Lookup (x ': xs)     c     = Lookup xs c
 
 %endif
@@ -301,31 +257,13 @@ and |~| is the type equality predicate.
 
 %endif
 
-The effect monad used to sequence session information also has some predicates
-to check that dual session channels do not appear in the same (sequential) session.
-For example, the following is a type error: 
+The session type encoding here is for an asynchronous calculus. In which case, the following
+is allowed:
 
-\begin{code}% This code fails to type check
-foo2a = new (\(c :: (Channel (Ch C)), c' :: (Channel (Op C))) -> 
-                  do Ping <- recv c'
-                     send c Ping
-                     return ())
-\end{code}% this is not really code
-
-The produces a type error: 
-%%
-\begin{verbatim}
-cloudh.lhs:283:23:
-    Couldn't match type `'DualConflict ('Op 'C)' with `'NoSeqDuals'
-    In a stmt of a 'do' block: Ping <- recv c'
-......
-\end{verbatim}
-%%
-
-(In the case of delegation, this check is not used, so delegated channels
-can appear in sequential composition with their dual channel names- this is 
-an interesting subtlety that requires a bit of extra work in the background. It is
-not seen at the top-level though).
+> foo2 = new (\(c :: (Channel (Ch C)), c' :: (Channel (Op C))) -> 
+>                   do Ping <- recv c'
+>                      send c Ping
+>                      return ())
 
 To use channels properly, we need parallel composition. This is given by:
 
@@ -349,9 +287,7 @@ To use channels properly, we need parallel composition. This is given by:
 > type family NotMember (c :: ChanName) (s :: [*]) :: Bool where
 >             NotMember c '[] = True
 >             NotMember c ((c :-> s) ': xs) = False
->             NotMember c ((c :~> s) ': xs) = False
 >             NotMember c ((d :-> s) ': xs) = NotMember c xs
->             NotMember c ((d :~> s) ': xs) = NotMember c xs
 
 %endif
 
@@ -380,13 +316,9 @@ to wrap the session types of channels being passed:
 
 Channels can then be sent with |chSend| primitive:
 
-> chSend :: Channel c -> Channel d -> Session '[c :-> (DelgS s) :! End, d :~> s] ()
+> chSend :: Channel c -> Channel d -> Session '[c :-> (DelgS s) :! End, d :-> s] ()
 
 i.e., we can send a channel |d| with session type |s| over |c|. 
-
-[Note, the different mapping |:~>| instead of |:->| for |d|, this marks to the type system
-that this channel has been delegated, therefore it can appear in the same environment
-as the dual channel of |d|.]
 
 %if False
 
@@ -507,6 +439,26 @@ This simply has type |client4 :: Channel ('Ch 'C) -> Session '['Ch 'C :-> (Ping 
 We can then interfact with this in a usual straightforwad way.
 
 > process4 = new (\(c, c') -> (client4 c) `par` (do {x <- recv c'; print x }))
+
+
+%A more complicated example reuses the abstraction in the client with different
+%channels:
+
+%> -- client5 :: Channel (Ch C) -> Channel (Ch X) -> Session '[Ch C :-> (Ping :! End), Ch X :-> (Pong :! End)] ()
+%> client5 (c :: Channel (Ch C)) (x :: (Channel (Ch X))) = do 
+%>                let f = Abs (Proxy :: (Proxy '[(Ch X) :-> Pong :! End])) 
+%>                                (\c -> do -- send c Ping)
+%>                                          send x Pong)
+%>                appH f c
+%
+%> process5 = new (\(c :: Channel (Ch C), c') -> 
+%>                new (\(x :: Channel (Ch X), x') ->
+%>                  (client5 c x) `par`
+%>                        do v <- recv x'
+%>                           print v
+%>                           --v <- recv x'
+%>                           --print v
+%>                  ))
 
 
 \end{document}
