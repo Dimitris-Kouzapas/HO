@@ -31,7 +31,7 @@ the session-typed $\pi$+$\lambda$-calculus into Haskell}
 
 %if False
 
-> {-# LANGUAGE RebindableSyntax, TypeOperators, DataKinds, KindSignatures, PolyKinds, TypeFamilies, ConstraintKinds, NoMonomorphismRestriction, MultiParamTypeClasses, FlexibleInstances, FlexibleContexts, DeriveDataTypeable, StandaloneDeriving, ExistentialQuantification, RankNTypes, UndecidableInstances, EmptyDataDecls, ScopedTypeVariables, GADTs, InstanceSigs #-}
+> {-# LANGUAGE RebindableSyntax, TypeOperators, DataKinds, KindSignatures, PolyKinds, TypeFamilies, ConstraintKinds, NoMonomorphismRestriction, MultiParamTypeClasses, FlexibleInstances, FlexibleContexts, DeriveDataTypeable, StandaloneDeriving, ExistentialQuantification, RankNTypes, UndecidableInstances, EmptyDataDecls, ScopedTypeVariables, GADTs, InstanceSigs, ImplicitParams #-}
 
 > module Main where
 
@@ -53,6 +53,9 @@ the session-typed $\pi$+$\lambda$-calculus into Haskell}
 > import GHC.Prim
 
 > import Data.Type.Set hiding (X, Y, Z, (:->), Nub, Union)
+
+> ifThenElse True e1 e2 = e1
+> ifThenElse False e1 e2 = e2
 
 %endif
 
@@ -127,7 +130,9 @@ of the |IO| monad and actually performing the communication/spawning/etc.
 >             SessionPlus (t :! s) s' = t :! (SessionPlus s s')
 >             SessionPlus (Sel Left s t) s' = Sel Left (SessionPlus s s') t
 >             SessionPlus (Sel Right s t) s' = Sel Right s (SessionPlus t s')
->             --SessionPlus (Sup :+ s t) s' + Sup :+ (SessionPlus s s') (SessionPlus t s')
+>             SessionPlus (s :& t) End  = (s :& t)
+>             -- probably bogus
+>             --SessionPlus (Sel Sup s t) s' = Sel Sup (SessionPlus s s') (SessionPlus t s')
 
 
 %endif
@@ -497,8 +502,11 @@ more complicated branch/select can be encoded) with two labels:
 > data Sup 
 
 > data Label l where
->        LeftL :: Label Left
->        RightL :: Label Right
+>        LeftL :: String -> Label Left
+>        RightL :: String -> Label Right
+
+The label data constructors |LeftL| and |RightL| also take string parameters for
+convenience (to act as comments in the code). 
 
 Note that whilst 'Sup' is a viable type-level label, there is no way to construct a label
 value with this type index. This is used for subtyping, where |Sup| represents a selection
@@ -526,7 +534,7 @@ get composed after that use |c| will add their session types into branch corresp
 to the label. For example:
 
 > foo3 (c :: (Channel (Ch C))) = 
->          do select c LeftL
+>          do select c (LeftL "l")
 >             v <- recv c
 >             send c (42::Int)
 
@@ -552,8 +560,8 @@ Branching then has the following type:
 > branch (Channel c) f g = Session $
 >                            (P.>>=) (C.readChan (unsafeCoerce c))
 >                              (\l -> case l of 
->                                       LeftL -> getProcess $ f LeftL
->                                       RightL -> getProcess $ g RightL)
+>                                       LeftL l -> getProcess $ f (LeftL l)
+>                                       RightL l -> getProcess $ g (RightL l))
 
 %endif
 
@@ -568,11 +576,65 @@ session is that of |(Del c s1)| unioned with |c| mapping to the |(Lookup s1 c) :
 Here's an example:
 
 > process7 = new (\(c :: (Channel (Ch C)), c') -> 
->               do { select c LeftL; send c 42 }
->                       `par` branch c' (\LeftL  -> do { v <- recv c'; print v })
->                                       (\RightL -> do { return (); return () } ))
+>               do { select c (LeftL ""); send c 42 }
+>                       `par` branch c' (\(LeftL "") -> do { v <- recv c'; print v })
+>                                       (\(RightL "") -> do { return (); return () } ))
 >               
 
 |run process7| yields 42 as expected. 
+
+> selSupL :: Session '[c :-> Sel l s End] () -> Session '[c :-> Sel Sup s t] ()
+> selSupL s = Session $ getProcess s
+
+> selSupR :: Session '[c :-> Sel l End s] () -> Session '[c :-> Sel Sup t s] ()
+> selSupR s = Session $ getProcess s
+
+ ifT :: Bool -> Channel c -> Session c s1 -> Session c s2 -> 
+ ifT guard c b1 b2 = new (\(d, d') -> 
+                         (branch d (\(LeftL "True") -> b1)
+                                   (\(RightL "False") -> b2))
+                      `par` (if guard then selSup $ select d (LeftL "True")
+                                      else selSup $ select d (RightL "False")))
+               
+
+\section{Hotel booking scenario} 
+
+> p :: (?room :: String, ?credit :: Int) => 
+>        Channel (Ch X) -> Abs (Int :! (End :& End)) '[(Ch X) :-> String :! (Int :? (Sel Sup (Int :! End) End))]
+>
+> p x = Abs (Proxy :: Proxy '[(Ch X) :-> String :! (Int :? (Sel Sup (Int :! End) End))]) 
+>         (\(y :: (Channel (Ch Y))) -> 
+>           do send x ?room
+>              quote <- recv x
+>              send y quote
+>              branch y (\(LeftL "accept") -> selSupL$ do select x (LeftL "accept")
+>                                                         send x ?credit)
+>                       (\(RightL "reject") -> selSupR $ select x (RightL "reject")))
+ 
+ foofoo (s1 :: (Channel (Ch Y))) (s2 :: (Channel (Ch Z))) (h1 :: (Channel (Ch C))) (h2 :: (Channel (Ch D))) (x :: (Channel (Ch X))) = 
+                do send s1 (appH (p x) h1)
+                   send s2 (appH (p x) h2)
+
+> {- 
+> client (s1 :: (Channel (Ch Y))) (s2 :: (Channel (Ch Z))) =
+>          new (\(h1 :: (Channel (Ch C)), h1') ->
+>             new (\(h2 :: (Channel (Ch D)), h2') -> 
+>                (do send s1 ( (\(x :: (Channel (Ch X))) -> appH (p x) h1))
+>                    send s2 ( (\(x :: (Channel (Ch X))) -> appH (p x) h2)))
+>            `par` (do x <- recv h1'
+>                      y <- recv h2'
+>                      if (x <= y) then do selSupL $ select h1' (LeftL "accept") 
+>                                          selSupR $ select h2' (RightL "reject")
+>                                  else do selSupR $ select h1' (RightL "reject")
+>                                          selSupL $ select h2' (LeftL "acccept"))))
+>  -}
+> 
+
+> fooa = if True 
+>          then (undefined :: (Session '[Op C :-> Sel Sup End t, Op D :-> Sel Sup t0 End] ()))
+>          else (undefined :: (Session '[Op C :-> Sel Sup t End, Op D :-> Sel Sup End t0] ()))
+
+-}
+
 
 \end{document}
