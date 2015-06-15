@@ -36,12 +36,18 @@ the session-typed $\pi$+$\lambda$-calculus into Haskell}
 > module Main where
 
 > import Control.Concurrent ( threadDelay )
-> import qualified Control.Concurrent.Chan as C
-> import qualified Control.Concurrent as Conc
+
+import qualified Control.Concurrent.Chan as C
+import qualified Control.Concurrent as Conc
 
 > import Data.Binary
 > import Data.Proxy
 > import Data.Typeable
+
+> import Control.Distributed.Process hiding (send,recv,liftIO,newChan,spawnLocal)
+> import qualified Control.Distributed.Process as CP
+> import Control.Distributed.Process.Node
+> import Network.Transport.TCP
 
 > import qualified Prelude as P
 > import Prelude hiding (Monad(..),print)
@@ -59,7 +65,7 @@ the session-typed $\pi$+$\lambda$-calculus into Haskell}
 The basis of the $\pi+\lambda$ encoding in Haskell is a \emph{graded monad}
 which is used to track session information. This is encoded via the data type:
 
-> data Session (s :: [*]) a = Session {getProcess :: IO a}
+> data Session (s :: [*]) a = Session {getProcess :: Process a}
 
 This wraps the |IO| monad in a binary type constructor |Session| with deconstructor
 |getProcess :: Session s a -> IO a| and with a tag |s| used for type-level session information.
@@ -68,8 +74,12 @@ We define a type-refined version of |getProcess| which allows us to run a comput
 only when the session environment is empty, that is, the process is closed with
 respect to channels.
 
-> run :: Session '[] a -> IO a
-> run = getProcess
+> run :: Session '[] () -> IO ()
+> run s = (P.>>=) (createTransport "127.0.0.1" "8090" defaultTCPParameters)
+>           (\transport -> 
+>             case transport of 
+>                  Right transp -> (P.>>=) (newLocalNode transp initRemoteTable) (\node -> runProcess node (getProcess s))
+>                  Left x -> error $ show x)
 
 We can therefore run any session which will evaluate everything inside
 of the |IO| monad and actually performing the communication/spawning/etc.
@@ -154,14 +164,14 @@ We define a (finite) set of channel name symbols |ChanNameSymbol|
 mostly to do with CloudHaskell internals I have avoided the
 generalisation for the moment].
 
-> data ChanNameSymbol = X | Y | Z | C | D 
-> data ChanName = Ch ChanNameSymbol | Op ChanNameSymbol
+> data ChanNameSymbol = X | Y | Z | C | D  deriving Typeable
+> data ChanName = Ch ChanNameSymbol | Op ChanNameSymbol deriving Typeable
 
 |ChanName| thus can describe the dual end of a channel with |Op|. 
 These are just names for channels. Channels themselves comprise an 
 encapsulated Concurrent Haskell channel [todo: convert to a Cloud Haskell channel]
 
-> data Channel (n :: ChanName) = forall a . Channel (C.Chan a) deriving Typeable
+> data Channel (n :: ChanName) = Channel (SendPort ()) (ReceivePort ()) deriving Typeable
 
 
 %if False
@@ -179,7 +189,7 @@ We can now define the core primitives for send and receive, which have types:
 
 %if False
 
-> send (Channel c) t = Session (C.writeChan (unsafeCoerce c) t)
+> send (Channel sc _) t = Session (sendChan (unsafeCoerce sc) t)
 
 %endif
 
@@ -187,7 +197,7 @@ We can now define the core primitives for send and receive, which have types:
 
 %if False
 
-> recv (Channel c) = Session (C.readChan (unsafeCoerce c))
+> recv (Channel _ rc) = Session (receiveChan (unsafeCoerce rc))
 
 %endif
 
@@ -230,7 +240,7 @@ That is, the channels |Ch c| and |Op c| are only in scope for |Session s b|.
 
 %if False
 
-> new f = Session $ ((P.>>=) C.newChan (\c -> getProcess $ f (Channel c, Channel c)))
+> new f = Session $ ((P.>>=) CP.newChan (\(cs, cr) -> getProcess $ f (Channel cs cr, Channel cs cr)))
 
 > type family Del (c :: ChanName) (s :: [*]) :: [*] where
 >     Del c '[]           = '[]
@@ -271,8 +281,8 @@ To use channels properly, we need parallel composition. This is given by:
 
 %if False
 
-> par x y = Session $ ((P.>>) (Conc.forkIO $ getProcess x) 
->                       ((P.>>) (Conc.forkIO $ getProcess y) (P.return ())))
+> par x y = Session $ ((P.>>) (CP.spawnLocal $ getProcess x) 
+>                       ((P.>>) (CP.spawnLocal $ getProcess y) (P.return ())))
 
 > {- spawnLocal x
 >              spawnLocal y
@@ -316,13 +326,19 @@ to wrap the session types of channels being passed:
 
 Channels can then be sent with |chSend| primitive:
 
-> chSend :: Channel c -> Channel d -> Session '[c :-> (DelgS s) :! End, d :-> s] ()
+> chSend ::  (Binary (Channel d)) => 
+>            Channel c -> Channel d -> Session '[c :-> (DelgS s) :! End, d :-> s] ()
 
 i.e., we can send a channel |d| with session type |s| over |c|. 
 
 %if False
 
-> chSend (Channel c) t = Session (C.writeChan (unsafeCoerce c) t)
+> chSend (Channel sc _) t = Session (sendChan (unsafeCoerce sc) t)
+
+> instance Binary (Channel c) where
+>    put (Channel sc rc) = put (sc, rc)
+>    get = (P.>>=) get (\(sc, rc) -> P.return (Channel sc rc))
+
 
 %endif
 
@@ -335,7 +351,7 @@ as an argument:
 
 %if False
                                                             
-> chRecv (Channel c) f = Session ((P.>>=) (C.readChan (unsafeCoerce c)) (getProcess . f))
+> chRecv (Channel _ rc) f = Session ((P.>>=) (receiveChan (unsafeCoerce rc)) (getProcess . f))
 
 %endif
 
@@ -405,8 +421,8 @@ First, we abstract functions via a type constructor |Abs|
 
 > data Abs t s = Abs (Proxy s) (forall c . (Channel c -> Session (UnionS s '[c :-> t]) ()))
 
-The |Abs| data constructor takes a function of type |forall c
-. (Channel c -> Session (UnionS s '[c :-> t]) ())|, that is, a
+The |Abs| data constructor takes a function of type |forall c . 
+(Channel c -> Session (UnionS s '[c :-> t]) ())|, that is, a
 function from \emph{universally quanitifed} channel name |c| to a
 |Session| environment |s| where |c :-> t| is a member). Since |UnionS|
 is a non-injective function we also need a (trivial) type annotation
@@ -416,8 +432,8 @@ which describes a function which takes some channel with session type |t| and
 has session environment |s|, cf.
 
 \begin{equation*}
-\inference{\Delta, c : T \vdash C : \Diamond}
-          {\Delta \vdash \lambda c . C : T \multimap \Diamond}
+\inference{\Delta, c : T \vdash C : \diamond}
+          {\Delta \vdash \lambda c . C : T \multimap \diamond}
 \end{equation*}
 
 This can then be applied by the following primitive 
