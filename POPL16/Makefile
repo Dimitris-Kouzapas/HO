@@ -2,7 +2,7 @@ default: main
 
 main: 
 	sed "s/\'\[/tt[/g" conchask.lhs > conchask.bak.lhs	
-	lhs2TeX conchask.lhs -o conchask.tex
+	lhs2TeX conchask.bak.lhs -o conchask.tex
 	pdflatex conchask.tex
 
 cloudh: 
