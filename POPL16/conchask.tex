@@ -1,0 +1,718 @@
+\documentclass{article}
+
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{url}
+\usepackage{semantic}
+\usepackage{stmaryrd}
+\usepackage{xypic}
+\usepackage{hyperref}
+\usepackage{subfigure}
+\usepackage{graphics}
+\usepackage{color}
+\usepackage{xy}
+\xyoption{all}
+
+%% ODER: format ==         = "\mathrel{==}"
+%% ODER: format /=         = "\neq "
+%
+%
+\makeatletter
+\@ifundefined{lhs2tex.lhs2tex.sty.read}%
+  {\@namedef{lhs2tex.lhs2tex.sty.read}{}%
+   \newcommand\SkipToFmtEnd{}%
+   \newcommand\EndFmtInput{}%
+   \long\def\SkipToFmtEnd#1\EndFmtInput{}%
+  }\SkipToFmtEnd
+
+\newcommand\ReadOnlyOnce[1]{\@ifundefined{#1}{\@namedef{#1}{}}\SkipToFmtEnd}
+\usepackage{amstext}
+\usepackage{amssymb}
+\usepackage{stmaryrd}
+\DeclareFontFamily{OT1}{cmtex}{}
+\DeclareFontShape{OT1}{cmtex}{m}{n}
+  {<5><6><7><8>cmtex8
+   <9>cmtex9
+   <10><10.95><12><14.4><17.28><20.74><24.88>cmtex10}{}
+\DeclareFontShape{OT1}{cmtex}{m}{it}
+  {<-> ssub * cmtt/m/it}{}
+\newcommand{\texfamily}{\fontfamily{cmtex}\selectfont}
+\DeclareFontShape{OT1}{cmtt}{bx}{n}
+  {<5><6><7><8>cmtt8
+   <9>cmbtt9
+   <10><10.95><12><14.4><17.28><20.74><24.88>cmbtt10}{}
+\DeclareFontShape{OT1}{cmtex}{bx}{n}
+  {<-> ssub * cmtt/bx/n}{}
+\newcommand{\tex}[1]{\text{\texfamily#1}}	% NEU
+
+\newcommand{\Sp}{\hskip.33334em\relax}
+
+
+\newcommand{\Conid}[1]{\mathit{#1}}
+\newcommand{\Varid}[1]{\mathit{#1}}
+\newcommand{\anonymous}{\kern0.06em \vbox{\hrule\@width.5em}}
+\newcommand{\plus}{\mathbin{+\!\!\!+}}
+\newcommand{\bind}{\mathbin{>\!\!\!>\mkern-6.7mu=}}
+\newcommand{\rbind}{\mathbin{=\mkern-6.7mu<\!\!\!<}}% suggested by Neil Mitchell
+\newcommand{\sequ}{\mathbin{>\!\!\!>}}
+\renewcommand{\leq}{\leqslant}
+\renewcommand{\geq}{\geqslant}
+\usepackage{polytable}
+
+%mathindent has to be defined
+\@ifundefined{mathindent}%
+  {\newdimen\mathindent\mathindent\leftmargini}%
+  {}%
+
+\def\resethooks{%
+  \global\let\SaveRestoreHook\empty
+  \global\let\ColumnHook\empty}
+\newcommand*{\savecolumns}[1][default]%
+  {\g@addto@macro\SaveRestoreHook{\savecolumns[#1]}}
+\newcommand*{\restorecolumns}[1][default]%
+  {\g@addto@macro\SaveRestoreHook{\restorecolumns[#1]}}
+\newcommand*{\aligncolumn}[2]%
+  {\g@addto@macro\ColumnHook{\column{#1}{#2}}}
+
+\resethooks
+
+\newcommand{\onelinecommentchars}{\quad-{}- }
+\newcommand{\commentbeginchars}{\enskip\{-}
+\newcommand{\commentendchars}{-\}\enskip}
+
+\newcommand{\visiblecomments}{%
+  \let\onelinecomment=\onelinecommentchars
+  \let\commentbegin=\commentbeginchars
+  \let\commentend=\commentendchars}
+
+\newcommand{\invisiblecomments}{%
+  \let\onelinecomment=\empty
+  \let\commentbegin=\empty
+  \let\commentend=\empty}
+
+\visiblecomments
+
+\newlength{\blanklineskip}
+\setlength{\blanklineskip}{0.66084ex}
+
+\newcommand{\hsindent}[1]{\quad}% default is fixed indentation
+\let\hspre\empty
+\let\hspost\empty
+\newcommand{\NB}{\textbf{NB}}
+\newcommand{\Todo}[1]{$\langle$\textbf{To do:}~#1$\rangle$}
+
+\EndFmtInput
+\makeatother
+%
+%
+%
+%
+%
+%
+% This package provides two environments suitable to take the place
+% of hscode, called "plainhscode" and "arrayhscode". 
+%
+% The plain environment surrounds each code block by vertical space,
+% and it uses \abovedisplayskip and \belowdisplayskip to get spacing
+% similar to formulas. Note that if these dimensions are changed,
+% the spacing around displayed math formulas changes as well.
+% All code is indented using \leftskip.
+%
+% Changed 19.08.2004 to reflect changes in colorcode. Should work with
+% CodeGroup.sty.
+%
+\ReadOnlyOnce{polycode.fmt}%
+\makeatletter
+
+\newcommand{\hsnewpar}[1]%
+  {{\parskip=0pt\parindent=0pt\par\vskip #1\noindent}}
+
+% can be used, for instance, to redefine the code size, by setting the
+% command to \small or something alike
+\newcommand{\hscodestyle}{}
+
+% The command \sethscode can be used to switch the code formatting
+% behaviour by mapping the hscode environment in the subst directive
+% to a new LaTeX environment.
+
+\newcommand{\sethscode}[1]%
+  {\expandafter\let\expandafter\hscode\csname #1\endcsname
+   \expandafter\let\expandafter\endhscode\csname end#1\endcsname}
+
+% "compatibility" mode restores the non-polycode.fmt layout.
+
+\newenvironment{compathscode}%
+  {\par\noindent
+   \advance\leftskip\mathindent
+   \hscodestyle
+   \let\\=\@normalcr
+   \let\hspre\(\let\hspost\)%
+   \pboxed}%
+  {\endpboxed\)%
+   \par\noindent
+   \ignorespacesafterend}
+
+\newcommand{\compaths}{\sethscode{compathscode}}
+
+% "plain" mode is the proposed default.
+% It should now work with \centering.
+% This required some changes. The old version
+% is still available for reference as oldplainhscode.
+
+\newenvironment{plainhscode}%
+  {\hsnewpar\abovedisplayskip
+   \advance\leftskip\mathindent
+   \hscodestyle
+   \let\hspre\(\let\hspost\)%
+   \pboxed}%
+  {\endpboxed%
+   \hsnewpar\belowdisplayskip
+   \ignorespacesafterend}
+
+\newenvironment{oldplainhscode}%
+  {\hsnewpar\abovedisplayskip
+   \advance\leftskip\mathindent
+   \hscodestyle
+   \let\\=\@normalcr
+   \(\pboxed}%
+  {\endpboxed\)%
+   \hsnewpar\belowdisplayskip
+   \ignorespacesafterend}
+
+% Here, we make plainhscode the default environment.
+
+\newcommand{\plainhs}{\sethscode{plainhscode}}
+\newcommand{\oldplainhs}{\sethscode{oldplainhscode}}
+\plainhs
+
+% The arrayhscode is like plain, but makes use of polytable's
+% parray environment which disallows page breaks in code blocks.
+
+\newenvironment{arrayhscode}%
+  {\hsnewpar\abovedisplayskip
+   \advance\leftskip\mathindent
+   \hscodestyle
+   \let\\=\@normalcr
+   \(\parray}%
+  {\endparray\)%
+   \hsnewpar\belowdisplayskip
+   \ignorespacesafterend}
+
+\newcommand{\arrayhs}{\sethscode{arrayhscode}}
+
+% The mathhscode environment also makes use of polytable's parray 
+% environment. It is supposed to be used only inside math mode 
+% (I used it to typeset the type rules in my thesis).
+
+\newenvironment{mathhscode}%
+  {\parray}{\endparray}
+
+\newcommand{\mathhs}{\sethscode{mathhscode}}
+
+% texths is similar to mathhs, but works in text mode.
+
+\newenvironment{texthscode}%
+  {\(\parray}{\endparray\)}
+
+\newcommand{\texths}{\sethscode{texthscode}}
+
+% The framed environment places code in a framed box.
+
+\def\codeframewidth{\arrayrulewidth}
+\RequirePackage{calc}
+
+\newenvironment{framedhscode}%
+  {\parskip=\abovedisplayskip\par\noindent
+   \hscodestyle
+   \arrayrulewidth=\codeframewidth
+   \tabular{@{}|p{\linewidth-2\arraycolsep-2\arrayrulewidth-2pt}|@{}}%
+   \hline\framedhslinecorrect\\{-1.5ex}%
+   \let\endoflinesave=\\
+   \let\\=\@normalcr
+   \(\pboxed}%
+  {\endpboxed\)%
+   \framedhslinecorrect\endoflinesave{.5ex}\hline
+   \endtabular
+   \parskip=\belowdisplayskip\par\noindent
+   \ignorespacesafterend}
+
+\newcommand{\framedhslinecorrect}[2]%
+  {#1[#2]}
+
+\newcommand{\framedhs}{\sethscode{framedhscode}}
+
+% The inlinehscode environment is an experimental environment
+% that can be used to typeset displayed code inline.
+
+\newenvironment{inlinehscode}%
+  {\(\def\column##1##2{}%
+   \let\>\undefined\let\<\undefined\let\\\undefined
+   \newcommand\>[1][]{}\newcommand\<[1][]{}\newcommand\\[1][]{}%
+   \def\fromto##1##2##3{##3}%
+   \def\nextline{}}{\) }%
+
+\newcommand{\inlinehs}{\sethscode{inlinehscode}}
+
+% The joincode environment is a separate environment that
+% can be used to surround and thereby connect multiple code
+% blocks.
+
+\newenvironment{joincode}%
+  {\let\orighscode=\hscode
+   \let\origendhscode=\endhscode
+   \def\endhscode{\def\hscode{\endgroup\def\@currenvir{hscode}\\}\begingroup}
+   %\let\SaveRestoreHook=\empty
+   %\let\ColumnHook=\empty
+   %\let\resethooks=\empty
+   \orighscode\def\hscode{\endgroup\def\@currenvir{hscode}}}%
+  {\origendhscode
+   \global\let\hscode=\orighscode
+   \global\let\endhscode=\origendhscode}%
+
+\makeatother
+\EndFmtInput
+%
+
+
+
+\newcommand{\dnote}[1]{\textcolor{blue}{Dom: #1}}
+
+\begin{document}
+
+\section{A brief overview of the effect-system based encoding of 
+the session-typed $\pi$+$\lambda$-calculus into Haskell}
+
+
+The basis of the $\pi+\lambda$ encoding in Haskell is a \emph{graded monad}
+which is used to track session information. This is encoded via the data type:
+\begin{hscode}\SaveRestoreHook
+\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{3}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
+\>[3]{}\mathbf{data}\;\Conid{Session}\;(\Varid{s}\mathbin{::}[\mskip1.5mu \mathbin{*}\mskip1.5mu])\;\Varid{a}\mathrel{=}\Conid{Session}\;\{\mskip1.5mu \Varid{getProcess}\mathbin{::}\Conid{IO}\;\Varid{a}\mskip1.5mu\}{}\<[E]%
+\ColumnHook
+\end{hscode}\resethooks
+This wraps the \ensuremath{\Conid{IO}} monad in a binary type constructor \ensuremath{\Conid{Session}} with deconstructor
+\ensuremath{\Varid{getProcess}\mathbin{::}\Conid{Session}\;\Varid{s}\;\Varid{a}\to \Conid{IO}\;\Varid{a}} and with a tag \ensuremath{\Varid{s}} used for type-level session information.
+In practise, we only need \ensuremath{\Varid{getProcess}} internally, so this can be hidden. 
+We define a type-refined version of \ensuremath{\Varid{getProcess}} which allows us to run a computation
+only when the session environment is empty, that is, the process is closed with
+respect to channels.
+\begin{hscode}\SaveRestoreHook
+\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{3}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
+\>[3]{}\Varid{run}\mathbin{::}\Conid{Session}\;\,`\!\;[\mskip1.5mu \mskip1.5mu]\;\Varid{a}\to \Conid{IO}\;\Varid{a}{}\<[E]%
+\\
+\>[3]{}\Varid{run}\mathrel{=}\Varid{getProcess}{}\<[E]%
+\ColumnHook
+\end{hscode}\resethooks
+We can therefore run any session which will evaluate everything inside
+of the \ensuremath{\Conid{IO}} monad and actually performing the communication/spawning/etc.
+
+
+
+Type-level session information will take the form of a list of mappings from
+channel names to session types, written like: \ensuremath{\,`\!\;[\mskip1.5mu \Varid{c}\mathbin{:->}\Conid{S},\Varid{d}\mathbin{:->}\Conid{T},\mathbin{...}\mskip1.5mu]}.
+This list will get treated as a set when we compose computations together, that is
+there are no duplicate mappings of some channel variable \ensuremath{\Varid{c}}, and the ordering
+will be normalise (this is a minor point and shouldn't affect too much here).
+
+Session types are defined by the following type constructors: 
+\begin{hscode}\SaveRestoreHook
+\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{3}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
+\>[3]{}\mbox{\onelinecomment  Session types}{}\<[E]%
+\\
+\>[3]{}\mathbf{data}\;\Varid{a}\mathbin{:!}\Varid{s}{}\<[E]%
+\\
+\>[3]{}\mathbf{data}\;\Varid{a}\mathbin{:?}\Varid{s}{}\<[E]%
+\\
+\>[3]{}\mathbf{data}\;\Conid{End}{}\<[E]%
+\ColumnHook
+\end{hscode}\resethooks
+Duality of session type is then defined as a simple type-level function:
+\begin{hscode}\SaveRestoreHook
+\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{3}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{7}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
+\>[3]{}\mathbf{type}\;\Varid{family}\;\Conid{Dual}\;\Varid{s}\;\mathbf{where}{}\<[E]%
+\\
+\>[3]{}\hsindent{4}{}\<[7]%
+\>[7]{}\Conid{Dual}\;\Conid{End}\mathrel{=}\Conid{End}{}\<[E]%
+\\
+\>[3]{}\hsindent{4}{}\<[7]%
+\>[7]{}\Conid{Dual}\;(\Varid{t}\mathbin{:!}\Varid{s})\mathrel{=}\Varid{t}\mathbin{:?}(\Conid{Dual}\;\Varid{s}){}\<[E]%
+\\
+\>[3]{}\hsindent{4}{}\<[7]%
+\>[7]{}\Conid{Dual}\;(\Varid{t}\mathbin{:?}\Varid{s})\mathrel{=}\Varid{t}\mathbin{:!}(\Conid{Dual}\;\Varid{s}){}\<[E]%
+\ColumnHook
+\end{hscode}\resethooks
+We define a (finite) set of channel name symbols \ensuremath{\Conid{ChanNameSymbol}}
+[this can be generalised away, but for some slightly subtle reasons
+mostly to do with CloudHaskell internals I have avoided the
+generalisation for the moment].
+\begin{hscode}\SaveRestoreHook
+\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{3}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
+\>[3]{}\mathbf{data}\;\Conid{ChanNameSymbol}\mathrel{=}\Conid{X}\mid \Conid{Y}\mid \Conid{Z}\mid \Conid{C}\mid \Conid{D}{}\<[E]%
+\\
+\>[3]{}\mathbf{data}\;\Conid{ChanName}\mathrel{=}\Conid{Ch}\;\Conid{ChanNameSymbol}\mid \Conid{Op}\;\Conid{ChanNameSymbol}{}\<[E]%
+\ColumnHook
+\end{hscode}\resethooks
+\ensuremath{\Conid{ChanName}} thus can describe the dual end of a channel with \ensuremath{\Conid{Op}}. 
+These are just names for channels. Channels themselves comprise an 
+encapsulated Concurrent Haskell channel [todo: convert to a Cloud Haskell channel]
+\begin{hscode}\SaveRestoreHook
+\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{3}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
+\>[3]{}\mathbf{data}\;\Conid{Channel}\;(\Varid{n}\mathbin{::}\Conid{ChanName})\mathrel{=}\Varid{forall}\;\Varid{a}\mathbin{\circ}\Conid{Channel}\;(\Conid{\Conid{C}.Chan}\;\Varid{a})\;\mathbf{deriving}\;\Conid{Typeable}{}\<[E]%
+\ColumnHook
+\end{hscode}\resethooks
+
+
+\subsection{$\pi$-calculus part}
+
+We can now define the core primitives for send and receive, which have types:
+\begin{hscode}\SaveRestoreHook
+\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{3}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
+\>[3]{}\Varid{send}\mathbin{::}\Conid{Channel}\;\Varid{c}\to \Varid{t}\to \Conid{Session}\;\,`\!\;[\mskip1.5mu \Varid{c}\mathbin{:->}\Varid{t}\mathbin{:!}\Conid{End}\mskip1.5mu]\;(){}\<[E]%
+\ColumnHook
+\end{hscode}\resethooks
+\begin{hscode}\SaveRestoreHook
+\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{3}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
+\>[3]{}\Varid{recv}\mathbin{::}\Conid{Channel}\;\Varid{c}\to \Conid{Session}\;\,`\!\;[\mskip1.5mu \Varid{c}\mathbin{:->}\Varid{t}\mathbin{:?}\Conid{End}\mskip1.5mu]\;\Varid{t}{}\<[E]%
+\ColumnHook
+\end{hscode}\resethooks
+
+These both take a named channel \ensuremath{\Conid{Channel}\;\Varid{c}} and return a \ensuremath{\Conid{Session}} computation
+indexed by the session environment \ensuremath{\,`\!\;[\mskip1.5mu \Varid{c}\mathbin{:->}\Conid{S}\mskip1.5mu]} where \ensuremath{\Conid{S}} is either a send
+or receive action (terminated by \ensuremath{\Conid{End}}). These can then be composed using
+the \ensuremath{\mathbf{do}}-notation, which sequentially composes sesssion information.
+For example:
+\begin{hscode}\SaveRestoreHook
+\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{3}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{32}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{36}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
+\>[3]{}\mathbf{data}\;\Conid{Ping}\mathrel{=}\Conid{Ping}\;\mathbf{deriving}\;\Conid{Show}{}\<[E]%
+\\
+\>[3]{}\mathbf{data}\;\Conid{Pong}\mathrel{=}\Conid{Pong}\;\mathbf{deriving}\;\Conid{Show}{}\<[E]%
+\\[\blanklineskip]%
+\>[3]{}\Varid{foo}\;(\Varid{c}\mathbin{::}\Conid{Channel}\;(\Conid{Ch}\;\Conid{C}))\mathrel{=}{}\<[32]%
+\>[32]{}\mathbf{do}\;{}\<[36]%
+\>[36]{}\Varid{send}\;\Varid{c}\;\Conid{Ping}{}\<[E]%
+\\
+\>[36]{}\Varid{x}\leftarrow \Varid{recv}\;\Varid{c}{}\<[E]%
+\\
+\>[36]{}\Varid{return}\;((\Varid{x}\mathbin{+}\mathrm{1})\mathbin{::}\Conid{Int}){}\<[E]%
+\ColumnHook
+\end{hscode}\resethooks
+\noindent
+This function is of type:
+%
+\begin{equation*}
+\ensuremath{\Varid{foo}\mathbin{::}\Conid{Channel}\;(\Conid{Ch}\;\Conid{C})\to \Conid{Session}\;\,`\!\;[\mskip1.5mu \Conid{Ch}\;\Conid{C}\mathbin{:->}(\Conid{Ping}\mathbin{:!}(\Conid{Int}\mathbin{:?}\Conid{End}))\mskip1.5mu]\;\Conid{Int}}
+\end{equation*}
+%
+describing the session channel behaviour for \ensuremath{\Conid{C}}. 
+
+I've given an explicit name to the channel \ensuremath{\Varid{c}} here via a type
+signature, which names it as \ensuremath{\Conid{Ch}\;\Conid{C}}. This isn't strictly necessary
+here, but it leads to a huge simplification in the inferred type.
+
+The \ensuremath{\Varid{new}} combinator then models $\nu$,  which takes
+a function mapping from a pair of two channels names
+\ensuremath{\Conid{Ch}\;\Varid{c}} and \ensuremath{\Conid{Op}\;\Conid{C}} to a session with behaviour \ensuremath{\Varid{s}}, and creates
+a session where any mention to \ensuremath{\Conid{Ch}\;\Varid{c}} or \ensuremath{\Conid{Op}\;\Varid{c}} is removed:
+\begin{hscode}\SaveRestoreHook
+\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{3}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{13}{@{}>{\hspre}c<{\hspost}@{}}%
+\column{13E}{@{}l@{}}%
+\column{17}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
+\>[3]{}\Varid{new}\mathbin{::}(\Conid{Duality}\;\Varid{s}\;\Varid{c})\Rightarrow {}\<[E]%
+\\
+\>[3]{}\hsindent{14}{}\<[17]%
+\>[17]{}((\Conid{Channel}\;(\Conid{Ch}\;\Varid{c}),\Conid{Channel}\;(\Conid{Op}\;\Varid{c}))\to \Conid{Session}\;\Varid{s}\;\Varid{b}){}\<[E]%
+\\
+\>[3]{}\hsindent{10}{}\<[13]%
+\>[13]{}\to {}\<[13E]%
+\>[17]{}\Conid{Session}\;(\Conid{Del}\;(\Conid{Ch}\;\Varid{c})\;(\Conid{Del}\;(\Conid{Op}\;\Varid{c})\;\Varid{s}))\;\Varid{b}{}\<[E]%
+\ColumnHook
+\end{hscode}\resethooks
+That is, the channels \ensuremath{\Conid{Ch}\;\Varid{c}} and \ensuremath{\Conid{Op}\;\Varid{c}} are only in scope for \ensuremath{\Conid{Session}\;\Varid{s}\;\Varid{b}}.
+
+
+The \ensuremath{\Conid{Duality}} predicate asks whether the session environment \ensuremath{\Varid{s}} contains
+dual session types for channel \ensuremath{\Conid{Ch}\;\Conid{C}} and its dual \ensuremath{\Conid{Op}\;\Varid{c}}. 
+
+
+The session type encoding here is for an asynchronous calculus. In which case, the following
+is allowed:
+\begin{hscode}\SaveRestoreHook
+\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{3}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{21}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{24}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
+\>[3]{}\Varid{foo2}\mathrel{=}\Varid{new}\;(\lambda (\Varid{c}\mathbin{::}(\Conid{Channel}\;(\Conid{Ch}\;\Conid{C})),\Varid{c'}\mathbin{::}(\Conid{Channel}\;(\Conid{Op}\;\Conid{C})))\to {}\<[E]%
+\\
+\>[3]{}\hsindent{18}{}\<[21]%
+\>[21]{}\mathbf{do}\;\Conid{Ping}\leftarrow \Varid{recv}\;\Varid{c'}{}\<[E]%
+\\
+\>[21]{}\hsindent{3}{}\<[24]%
+\>[24]{}\Varid{send}\;\Varid{c}\;\Conid{Ping}{}\<[E]%
+\\
+\>[21]{}\hsindent{3}{}\<[24]%
+\>[24]{}\Varid{return}\;()){}\<[E]%
+\ColumnHook
+\end{hscode}\resethooks
+To use channels properly, we need parallel composition. This is given by:
+\begin{hscode}\SaveRestoreHook
+\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{3}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
+\>[3]{}\Varid{par}\mathbin{::}(\Conid{Disjoint}\;\Varid{s}\;\Varid{t})\Rightarrow \Conid{Session}\;\Varid{s}\;()\to \Conid{Session}\;\Varid{t}\;()\to \Conid{Session}\;(\Conid{UnionS}\;\Varid{s}\;\Varid{t})\;(){}\<[E]%
+\ColumnHook
+\end{hscode}\resethooks
+
+\noindent
+The binary predicate \ensuremath{\Conid{Disjoint}} here checks that \ensuremath{\Varid{s}} and \ensuremath{\Varid{t}} do not contain any of the same
+channels. \ensuremath{\Conid{UnionS}} takes the disjoint union of the two environments. 
+
+We can now define a complete example with communication:
+\begin{hscode}\SaveRestoreHook
+\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{3}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{18}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
+\>[3]{}\Varid{server}\;\Varid{c}\mathrel{=}\mathbf{do}\;{}\<[18]%
+\>[18]{}\Conid{Ping}\leftarrow \Varid{recv}\;\Varid{c}{}\<[E]%
+\\
+\>[18]{}\Varid{print}\;\text{\tt \char34 Server:~Got~a~ping\char34}{}\<[E]%
+\\[\blanklineskip]%
+\>[3]{}\Varid{process}\mathrel{=}\Varid{new}\;(\lambda (\Varid{c},\Varid{c'})\to \Varid{par}\;(\Varid{send}\;\Varid{c}\;\Conid{Ping})\;(\Varid{server}\;\Varid{c'})){}\<[E]%
+\ColumnHook
+\end{hscode}\resethooks
+Which we can run with \ensuremath{\Varid{run}\;\Varid{process}} getting \ensuremath{\text{\tt \char34 Server:~Got~a~ping\char34}}.
+Note that the types here are completely inferred, giving 
+\ensuremath{\Varid{process}\mathbin{::}\Conid{Session}\;\,`\!\;[\mskip1.5mu \mskip1.5mu]\;()}. 
+
+\subsubsection{Delegation}
+
+So far we have dealt with only first-order channels (in the sense that they
+can pass only values and not other channels). We introduce a ``delegate'' type
+to wrap the session types of channels being passed:
+\begin{hscode}\SaveRestoreHook
+\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{3}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
+\>[3]{}\mathbf{data}\;\Conid{DelgS}\;\Varid{s}{}\<[E]%
+\ColumnHook
+\end{hscode}\resethooks
+Channels can then be sent with \ensuremath{\Varid{chSend}} primitive:
+\begin{hscode}\SaveRestoreHook
+\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{3}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
+\>[3]{}\Varid{chSend}\mathbin{::}\Conid{Channel}\;\Varid{c}\to \Conid{Channel}\;\Varid{d}\to \Conid{Session}\;\,`\!\;[\mskip1.5mu \Varid{c}\mathbin{:->}(\Conid{DelgS}\;\Varid{s})\mathbin{:!}\Conid{End},\Varid{d}\mathbin{:->}\Varid{s}\mskip1.5mu]\;(){}\<[E]%
+\ColumnHook
+\end{hscode}\resethooks
+i.e., we can send a channel \ensuremath{\Varid{d}} with session type \ensuremath{\Varid{s}} over \ensuremath{\Varid{c}}. 
+
+
+The dual of this is a little more subtle. Receiving a delegated channel is given
+by combinator, which is not a straightforward monadic function, but takes a function
+as an argument:
+\begin{hscode}\SaveRestoreHook
+\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{3}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{18}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{20}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
+\>[3]{}\Varid{chRecv}\mathbin{::}{}\<[18]%
+\>[18]{}\Conid{Channel}\;\Varid{c}\to (\Conid{Channel}\;\Varid{d}\to \Conid{Session}\;\Varid{s}\;\Varid{a})\to {}\<[E]%
+\\
+\>[18]{}\hsindent{2}{}\<[20]%
+\>[20]{}\Conid{Session}\;(\Conid{UnionS}\;\,`\!\;[\mskip1.5mu \Varid{c}\mathbin{:->}(\Conid{DelgS}\;(\Conid{Lookup}\;\Varid{s}\;\Varid{d}))\mathbin{:?}(\Conid{Lookup}\;\Varid{s}\;\Varid{c})\mskip1.5mu]\;(\Conid{Del}\;\Varid{d}\;\Varid{s}))\;\Varid{a}{}\<[E]%
+\ColumnHook
+\end{hscode}\resethooks
+
+\noindent
+
+Given a channel \ensuremath{\Varid{c}}, and a computation which binds channel \ensuremath{\Varid{d}} to produces behaviour
+\ensuremath{\Varid{c}}, then this is provided by receiving \ensuremath{\Varid{d}} over \ensuremath{\Varid{c}}. Thus the resulting computation
+is the union of \ensuremath{\Varid{c}} mapping to the session type of \ensuremath{\Varid{d}} in the session environment 
+\ensuremath{\Varid{s}}, composed with the \ensuremath{\Varid{s}} but with \ensuremath{\Varid{d}} deleted (removed). 
+
+Here is an example using delegation. Consider the following process \ensuremath{\Varid{server2}}
+which receives a channel \ensuremath{\Varid{d}} on \ensuremath{\Varid{c}}, and then seds a ping on it:
+\begin{hscode}\SaveRestoreHook
+\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{3}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{16}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
+\>[3]{}\Varid{server2}\;\Varid{c}\mathrel{=}\Varid{chRecv}\;\Varid{c}\;{}\<[E]%
+\\
+\>[3]{}\hsindent{13}{}\<[16]%
+\>[16]{}(\lambda (\Varid{d}\mathbin{::}\Conid{Channel}\;(\Conid{Ch}\;\Conid{D}))\to \Varid{send}\;\Varid{d}\;\Conid{Ping}){}\<[E]%
+\ColumnHook
+\end{hscode}\resethooks
+(Note, I have had to include explicit types to give a concrete name to the channel \ensuremath{\Varid{d}},
+this is an unfortunate artefact of the current encoding, but not too bad from a theoretical
+perspect).
+
+The type of \ensuremath{\Varid{server2}} is inferred as:
+%%
+\begin{equation*}
+\ensuremath{\Varid{server2}\mathbin{::}\Conid{Channel}\;\Varid{c}\to \Conid{Session}\;\,`\!\;[\mskip1.5mu \Varid{c}\mathbin{:->}(\Conid{DelgS}\;(\Conid{Ping}\mathbin{:!}\Conid{End})\mathbin{:?}\Conid{Lookup}\;\,`\!\;[\mskip1.5mu \text{\tt 'Ch~'}\;\Conid{D}\mathbin{:->}(\Conid{Ping}\mathbin{:!}\Conid{End})\mskip1.5mu]\;\Varid{c})\mskip1.5mu]\;()}
+\end{equation*}
+
+We then define a client to interact with this that binds \ensuremath{\Varid{d}} (and its dual \ensuremath{\Varid{d'}}),
+then sends \ensuremath{\Varid{d}} over \ensuremath{\Varid{c}} and waits to receive a ping on \ensuremath{\Varid{d'}}
+\begin{hscode}\SaveRestoreHook
+\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{3}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{10}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{32}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{35}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
+\>[3]{}\Varid{client2}\;(\Varid{c}\mathbin{::}\Conid{Channel}\;(\Conid{Ch}\;\Conid{C}))\mathrel{=}{}\<[E]%
+\\
+\>[3]{}\hsindent{7}{}\<[10]%
+\>[10]{}\Varid{new}\;(\lambda (\Varid{d}\mathbin{::}(\Conid{Channel}\;(\Conid{Ch}\;\Conid{D})),\Varid{d'})\to {}\<[E]%
+\\
+\>[10]{}\hsindent{22}{}\<[32]%
+\>[32]{}\mathbf{do}\;\Varid{chSend}\;\Varid{c}\;\Varid{d}{}\<[E]%
+\\
+\>[32]{}\hsindent{3}{}\<[35]%
+\>[35]{}\Conid{Ping}\leftarrow \Varid{recv}\;\Varid{d'}{}\<[E]%
+\\
+\>[32]{}\hsindent{3}{}\<[35]%
+\>[35]{}\Varid{print}\;\text{\tt \char34 Client:~got~a~ping\char34}){}\<[E]%
+\ColumnHook
+\end{hscode}\resethooks
+This has inferred type:
+%%
+\begin{equation*}
+\ensuremath{\Varid{client2}\mathbin{::}\Conid{Dual}\;\Varid{s}\mathord{\sim}(\Conid{Ping}\mathbin{:?}\Conid{End})\Rightarrow \Conid{Channel}\;(\text{\tt 'Ch~'}\;\Conid{C})\to \Conid{Session}\;\,`\!\;[\mskip1.5mu \text{\tt 'Ch~'}\;\Conid{C}\mathbin{:->}(\Conid{DelgS}\;\Varid{s}\mathbin{:!}\Conid{End})\mskip1.5mu]\;()}
+\end{equation*}
+%%
+The type constraint says that the dual of \ensuremath{\Varid{s}} is a session that receives a \ensuremath{\Conid{Ping}}, 
+so \ensuremath{\Varid{s}} is \ensuremath{\Conid{Ping}\mathbin{:!}\Conid{End}}. 
+
+We then compose \ensuremath{\Varid{server2}} and \ensuremath{\Varid{client2}} in parallel, binding the
+channels \ensuremath{\Varid{c}} and its dual \ensuremath{\Varid{c'}} to give to client and server.
+\begin{hscode}\SaveRestoreHook
+\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{3}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
+\>[3]{}\Varid{process2}\mathrel{=}\Varid{new}\;(\lambda (\Varid{c},\Varid{c'})\to \Varid{par}\;(\Varid{client2}\;\Varid{c})\;(\Varid{server2}\;\Varid{c'})){}\<[E]%
+\ColumnHook
+\end{hscode}\resethooks
+This type checks and can be then run (\ensuremath{\Varid{run}\;\Varid{process2}}) yielding \ensuremath{\text{\tt \char34 Client:~got~a~ping\char34}}.
+
+
+\subsection{$\lambda$-part}
+
+Since we are studying the $\pi+\lambda$-calculus, we can abstract over channels with
+linear functions. So far we have abstracted over channels, but not in an \emph{operational
+sense}- think of this more as let-binding style substitution (cut). We now introduce
+linear functions which can abstract over channels (and the session types of those channels, 
+which the previous form of abstraction above \textbf{doesn't do}, it just abstracts over 
+names, not the session types associated with their names).
+
+First, we abstract functions via a type constructor \ensuremath{\Conid{Abs}}
+\begin{hscode}\SaveRestoreHook
+\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{3}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
+\>[3]{}\mathbf{data}\;\Conid{Abs}\;\Varid{t}\;\Varid{s}\mathrel{=}\Conid{Abs}\;(\Conid{Proxy}\;\Varid{s})\;(\Varid{forall}\;\Varid{c}\mathbin{\circ}(\Conid{Channel}\;\Varid{c}\to \Conid{Session}\;(\Conid{UnionS}\;\Varid{s}\;\,`\!\;[\mskip1.5mu \Varid{c}\mathbin{:->}\Varid{t}\mskip1.5mu])\;())){}\<[E]%
+\ColumnHook
+\end{hscode}\resethooks
+The \ensuremath{\Conid{Abs}} data constructor takes a function of type \ensuremath{\Varid{forall}\;\Varid{c}\mathbin{\circ}(\Conid{Channel}\;\Varid{c}\to \Conid{Session}\;(\Conid{UnionS}\;\Varid{s}\;\,`\!\;[\mskip1.5mu \Varid{c}\mathbin{:->}\Varid{t}\mskip1.5mu])\;())}, that is, a
+function from \emph{universally quanitifed} channel name \ensuremath{\Varid{c}} to a
+\ensuremath{\Conid{Session}} environment \ensuremath{\Varid{s}} where \ensuremath{\Varid{c}\mathbin{:->}\Varid{t}} is a member). Since \ensuremath{\Conid{UnionS}}
+is a non-injective function we also need a (trivial) type annotation
+that explains exactly what is the remaining channel- this is \ensuremath{\Conid{Proxy}\;\Varid{s}}
+(I'll shown an example in the moment).  This returns a result \ensuremath{\Conid{Abs}\;\Varid{t}\;\Varid{s}}
+which describes a function which takes some channel with session type \ensuremath{\Varid{t}} and
+has session environment \ensuremath{\Varid{s}}, cf.
+
+\begin{equation*}
+\inference{\Delta, c : T \vdash C : \Diamond}
+          {\Delta \vdash \lambda c . C : T \multimap \Diamond}
+\end{equation*}
+
+This can then be applied by the following primitive 
+\begin{hscode}\SaveRestoreHook
+\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{3}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
+\>[3]{}\Varid{appH}\mathbin{::}\Conid{Abs}\;\Varid{t}\;\Varid{s}\to \Conid{Channel}\;\Varid{c}\to \Conid{Session}\;(\Conid{UnionS}\;\Varid{s}\;\,`\!\;[\mskip1.5mu \Varid{c}\mathbin{:->}\Varid{t}\mskip1.5mu])\;(){}\<[E]%
+\\
+\>[3]{}\Varid{appH}\;(\Conid{Abs}\;\anonymous \;\Varid{k})\;\Varid{c}\mathrel{=}\Varid{k}\;\Varid{c}{}\<[E]%
+\ColumnHook
+\end{hscode}\resethooks
+
+Thus, given a linear session function \ensuremath{\Conid{Abs}\;\Varid{t}\;\Varid{s}} and some channel \ensuremath{\Varid{c}} then
+we get a session with environment \ensuremath{\Varid{s}} and a mapping \ensuremath{\Varid{c}\mathbin{:->}\Varid{t}}. 
+Here's an example: a client abstract over a channel, and then applies it within
+the same process:
+\begin{hscode}\SaveRestoreHook
+\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{3}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{18}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
+\>[3]{}\Varid{client4}\;(\Varid{c}\mathbin{::}\Conid{Channel}\;(\Conid{Ch}\;\Conid{C}))\mathrel{=}\mathbf{do}{}\<[E]%
+\\
+\>[3]{}\hsindent{15}{}\<[18]%
+\>[18]{}\mathbf{let}\;\Varid{f}\mathrel{=}\Conid{Abs}\;(\Conid{Proxy}\mathbin{::}(\Conid{Proxy}\;\,`\!\;[\mskip1.5mu \mskip1.5mu]))\;(\lambda \Varid{c}\to \Varid{send}\;\Varid{c}\;\Conid{Ping}){}\<[E]%
+\\
+\>[3]{}\hsindent{15}{}\<[18]%
+\>[18]{}\Varid{appH}\;\Varid{f}\;\Varid{c}{}\<[E]%
+\ColumnHook
+\end{hscode}\resethooks
+This simply has type \ensuremath{\Varid{client4}\mathbin{::}\Conid{Channel}\;(\text{\tt 'Ch~'}\;\Conid{C})\to \Conid{Session}\;\,`\!\;[\mskip1.5mu \text{\tt 'Ch~'}\;\Conid{C}\mathbin{:->}(\Conid{Ping}\mathbin{:!}\Conid{End})\mskip1.5mu]\;()}.
+We can then interfact with this in a usual straightforwad way.
+\begin{hscode}\SaveRestoreHook
+\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{3}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
+\>[3]{}\Varid{process4}\mathrel{=}\Varid{new}\;(\lambda (\Varid{c},\Varid{c'})\to (\Varid{client4}\;\Varid{c})\mathbin{`\Varid{par}`}(\mathbf{do}\;\{\mskip1.5mu \Varid{x}\leftarrow \Varid{recv}\;\Varid{c'};\Varid{print}\;\Varid{x}\mskip1.5mu\})){}\<[E]%
+\ColumnHook
+\end{hscode}\resethooks
+
+%A more complicated example reuses the abstraction in the client with different
+%channels:
+
+%> -- client5 :: Channel (Ch C) -> Channel (Ch X) -> Session tt[Ch C :-> (Ping :! End), Ch X :-> (Pong :! End)] ()
+%> client5 (c :: Channel (Ch C)) (x :: (Channel (Ch X))) = do 
+%>                let f = Abs (Proxy :: (Proxy tt[(Ch X) :-> Pong :! End])) 
+%>                                (\c -> do -- send c Ping)
+%>                                          send x Pong)
+%>                appH f c
+%
+%> process5 = new (\(c :: Channel (Ch C), c') -> 
+%>                new (\(x :: Channel (Ch X), x') ->
+%>                  (client5 c x) `par`
+%>                        do v <- recv x'
+%>                           print v
+%>                           --v <- recv x'
+%>                           --print v
+%>                  ))
+
+
+\end{document}
