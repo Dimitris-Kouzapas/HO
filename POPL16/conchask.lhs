@@ -540,9 +540,9 @@ to the label. For example:
 
 |foo3| has the inferred type: 
 
-\begni{equation*}
+\begin{equation*}
 |foo3 :: Channel ('Ch 'C)
-     -> Session '['Ch 'C :-> Sel Left (t :? (Int :! End)) End] ()
+     -> Session '['Ch 'C :-> Sel Left (t :? (Int :! End)) End] ()|
 \end{equation*}
 
 That is, we see that after selecting the left branch, then |c| is used to receive
@@ -571,7 +571,7 @@ left branch is taken and the process if the right branch is taken. Each gives
 a session environment |s1| and |s2| but apart from a session type for |c|, these
 must be equal (shown by the constraint |(Del c s1) ~ (Del c s2)|. Finally, the returned
 session is that of |(Del c s1)| unioned with |c| mapping to the |(Lookup s1 c) :& (Lookup s2 c)|,
-\ie{}, the branching pair of the session types for |c| in the left and right branches.
+i.e., the branching pair of the session types for |c| in the left and right branches.
 
 Here's an example:
 
@@ -581,21 +581,13 @@ Here's an example:
 >                                       (\(RightL "") -> do { return (); return () } ))
 >               
 
-|run process7| yields 42 as expected. 
+Then |run process7| yields 42 as expected. 
 
 > selSupL :: Session '[c :-> Sel l s End] () -> Session '[c :-> Sel Sup s t] ()
 > selSupL s = Session $ getProcess s
 
 > selSupR :: Session '[c :-> Sel l End s] () -> Session '[c :-> Sel Sup t s] ()
-> selSupR s = Session $ getProcess s
-
- ifT :: Bool -> Channel c -> Session c s1 -> Session c s2 -> 
- ifT guard c b1 b2 = new (\(d, d') -> 
-                         (branch d (\(LeftL "True") -> b1)
-                                   (\(RightL "False") -> b2))
-                      `par` (if guard then selSup $ select d (LeftL "True")
-                                      else selSup $ select d (RightL "False")))
-               
+> selSupR s = Session $ getProcess s               
 
 \section{Hotel booking scenario} 
 
@@ -611,10 +603,12 @@ Here's an example:
 >                                                         send x ?credit)
 >                       (\(RightL "reject") -> selSupR $ select x (RightL "reject")))
  
- foofoo (s1 :: (Channel (Ch Y))) (s2 :: (Channel (Ch Z))) (h1 :: (Channel (Ch C))) (h2 :: (Channel (Ch D))) (x :: (Channel (Ch X))) = 
-                do send s1 (appH (p x) h1)
-                   send s2 (appH (p x) h2)
-
+> {-
+> foofoo (s1 :: (Channel (Ch Y))) (s2 :: (Channel (Ch Z))) (h1 :: (Channel (Ch C))) (h2 :: (Channel (Ch D))) (x :: (Channel (Ch X))) = 
+>                do send s1 (appH (p x) h1)
+>                   send s2 (appH (p x) h2)
+> -}
+>
 > {- 
 > client (s1 :: (Channel (Ch Y))) (s2 :: (Channel (Ch Z))) =
 >          new (\(h1 :: (Channel (Ch C)), h1') ->
@@ -623,18 +617,17 @@ Here's an example:
 >                    send s2 ( (\(x :: (Channel (Ch X))) -> appH (p x) h2)))
 >            `par` (do x <- recv h1'
 >                      y <- recv h2'
->                      if (x <= y) then do selSupL $ select h1' (LeftL "accept") 
->                                          selSupR $ select h2' (RightL "reject")
->                                  else do selSupR $ select h1' (RightL "reject")
->                                          selSupL $ select h2' (LeftL "acccept"))))
->  -}
-> 
+>                      if (x <= y) then do selSupL (select h1' (LeftL "accept"))
+>                                          selSupR (select h2' (RightL "reject"))
+>                                  else do selSupR (select h1' (RightL "reject"))
+>                                          selSupL (select h2' (LeftL "acccept")))))
+> -}
 
 > fooa = if True 
 >          then (undefined :: (Session '[Op C :-> Sel Sup End t, Op D :-> Sel Sup t0 End] ()))
 >          else (undefined :: (Session '[Op C :-> Sel Sup t End, Op D :-> Sel Sup End t0] ()))
 
--}
+
 
 
 \end{document}
