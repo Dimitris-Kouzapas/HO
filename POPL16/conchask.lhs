@@ -414,7 +414,10 @@ names, not the session types associated with their names).
 
 First, we abstract functions via a type constructor |Abs|
 
-> data Abs t s = forall c . Abs (Proxy s) (Channel c -> Session (UnionS s '[c :-> t]) ())
+> data Abs t a = forall c s . Abs (Proxy s) (Channel c -> Session (UnionS s '[c :-> t]) a)
+
+> absH :: (Proxy s) -> (Channel c -> Session (UnionS s '[c :-> t]) a) -> Session s (Abs t a)  
+> absH p f = Session (P.return $ Abs p f)
 
 The |Abs| data constructor takes a function of type |(Channel c ->
 Session (UnionS s '[c :-> t]) ())|, that is, a function from some
@@ -433,8 +436,11 @@ cf.
 
 This can then be applied by the following primitive 
 
-> appH :: Abs t s -> Channel c -> Session (UnionS s '[c :-> t]) ()
-> appH (Abs _ k) c = let (Session s) = k (unsafeCoerce c) in Session s
+> -- appH :: Abs t a -> Channel c -> Session (UnionS s '[c :-> t]) a
+> appH = undefined -- (Abs _ k) c = let (Session s) = k (unsafeCoerce c) in Session s
+
+> appH' :: Abs t a -> Channel c -> Session '[c :-> t] a
+> appH' (Abs _ k) c = let (Session s) = k (unsafeCoerce c) in Session s
 
 Whatever concrete name was used for the channel in the abstracted process is replaced
 by the channel name here.
@@ -446,7 +452,7 @@ the same process:
 
 > client4 (c :: Channel (Ch C)) = do 
 >                let f = Abs (Proxy :: (Proxy '[])) (\c -> send c Ping)
->                appH f c
+>                appH' f c
 
 This simply has type |client4 :: Channel ('Ch 'C) -> Session '['Ch 'C :-> (Ping :! End)] ()|.
 We can then interfact with this in a usual straightforwad way.
@@ -458,11 +464,11 @@ A more complicated example reuses the abstraction in the client with different
 channels:
 
 > client5 (c :: Channel (Ch C)) (d :: (Channel (Ch D))) (x :: (Channel (Ch X))) = do 
->                let f = Abs (Proxy :: (Proxy '[(Ch X) :-> Pong :! End])) 
+>                f <- absH (Proxy :: (Proxy '[(Ch X) :-> Pong :! End])) 
 >                                (\(c :: (Channel (Ch D))) -> do send c Ping
 >                                                                send x Pong)
->                appH f c 
->                appH f d
+>                appH' f c 
+>                -- appH' f d  -- ah but linearity... (should be a non-linear apply, this is liner apply)
 
 > process5 = new (\(c :: Channel (Ch C), c') -> 
 >                new (\(x :: Channel (Ch X), x') ->
@@ -472,18 +478,18 @@ channels:
 >                             print v
 >                             v <- recv x'
 >                             print v
->                             v <- recv d'
->                             print v
->                             v <- recv x'
->                             print v
+>                             --v <- recv d'
+>                             --print v
+>                             --v <- recv x'
+>                             --print v
 >                    )))
 
 Dimtris example
 
 > client6 (c :: (Channel (Ch C))) (d :: (Channel (Ch D))) = 
->     do let f = Abs (Proxy :: Proxy '[(Ch C) :-> Int :! End] )
->                     (\(z :: (Channel (Ch Z))) -> (send z 42 `par` send c 7))
->        appH f d
+>     do f <- absH (Proxy :: Proxy '[(Ch C) :-> Int :! End] )
+>                      (\(z :: (Channel (Ch Z))) -> (send z 42 `par` send c 7))
+>        appH' f d
 
 > process6 = new (\(c :: (Channel (Ch C)), c') -> 
 >              new (\(d :: (Channel (Ch D)), d') ->
@@ -591,8 +597,9 @@ Then |run process7| yields 42 as expected.
 
 \section{Hotel booking scenario} 
 
+> {-
 > p :: (?room :: String, ?credit :: Int) => 
->        Channel (Ch X) -> Abs (Int :! (End :& End)) '[(Ch X) :-> String :! (Int :? (Sel Sup (Int :! End) End))]
+>        Channel (Ch X) -> Session '[(Ch X) :-> String :! (Int :? (Sel Sup (Int :! End) End))] (Abs (Int :! (End :& End)) '[(Ch X) :-> String :! (Int :? (Sel Sup (Int :! End) End))])
 >
 > p x = Abs (Proxy :: Proxy '[(Ch X) :-> String :! (Int :? (Sel Sup (Int :! End) End))]) 
 >         (\(y :: (Channel (Ch Y))) -> 
@@ -602,27 +609,42 @@ Then |run process7| yields 42 as expected.
 >              branch y (\(LeftL "accept") -> selSupL$ do select x (LeftL "accept")
 >                                                         send x ?credit)
 >                       (\(RightL "reject") -> selSupR $ select x (RightL "reject")))
- 
-> {-
-> foofoo (s1 :: (Channel (Ch Y))) (s2 :: (Channel (Ch Z))) (h1 :: (Channel (Ch C))) (h2 :: (Channel (Ch D))) (x :: (Channel (Ch X))) = 
->                do send s1 (appH (p x) h1)
->                   send s2 (appH (p x) h2)
 > -}
->
-> {- 
+
+> p' :: (?room :: String, ?credit :: Int) => 
+>        Channel (Ch Y) -> Session '[(Ch Y) :-> (Int :! (End :& End))] (Abs (String :! (Int :? (Sel Sup (Int :! End) End))) ())
+> p' y = absH Proxy
+>         (\(x :: (Channel (Ch X))) -> 
+>           do send x ?room
+>              quote <- recv x
+>              send y quote
+>              branch y (\(LeftL "accept") -> selSupL$ do select x (LeftL "accept")
+>                                                         send x ?credit)
+>                       (\(RightL "reject") -> selSupR $ select x (RightL "reject")))
+
+> p :: (?room :: String, ?credit :: Int) => 
+>           Session '[] (Abs (Int :! (End :& End)) (Abs (String :! (Int :? (Sel Sup (Int :! End) End))) ()))
+> p = absH Proxy p'
+ 
+ 
 > client (s1 :: (Channel (Ch Y))) (s2 :: (Channel (Ch Z))) =
 >          new (\(h1 :: (Channel (Ch C)), h1') ->
 >             new (\(h2 :: (Channel (Ch D)), h2') -> 
->                (do send s1 ( (\(x :: (Channel (Ch X))) -> appH (p x) h1))
->                    send s2 ( (\(x :: (Channel (Ch X))) -> appH (p x) h2)))
+>                (do p' <- p 
+>                    p'' <- p  
+>                    pa <- appH' p' h1
+>                    pb <- appH' p'' h2
+>                    send s1 pa 
+>                    send s2 pb)
 >            `par` (do x <- recv h1'
 >                      y <- recv h2'
 >                      if (x <= y) then do selSupL (select h1' (LeftL "accept"))
 >                                          selSupR (select h2' (RightL "reject"))
 >                                  else do selSupR (select h1' (RightL "reject"))
 >                                          selSupL (select h2' (LeftL "acccept")))))
-> -}
 
+
+> 
 > fooa = if True 
 >          then (undefined :: (Session '[Op C :-> Sel Sup End t, Op D :-> Sel Sup t0 End] ()))
 >          else (undefined :: (Session '[Op C :-> Sel Sup t End, Op D :-> Sel Sup End t0] ()))
