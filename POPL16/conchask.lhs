@@ -26,7 +26,7 @@
 
 \begin{document}
 
-\section{A brief overview of the effect-system based encoding of 
+\section{Overview of the effect-system based encoding of 
 the session-typed $\pi$+$\lambda$-calculus into Haskell}
 
 %if False
@@ -172,7 +172,7 @@ generalisation for the moment].
 These are just names for channels. Channels themselves comprise an 
 encapsulated Concurrent Haskell channel [todo: convert to a Cloud Haskell channel]
 
-> data Channel (n :: ChanName) = forall a . Channel (C.Chan a) deriving Typeable
+> data Channel (n :: ChanName) = forall a . Channel (C.Chan a) 
 
 
 %if False
@@ -188,6 +188,7 @@ We can now define the core primitives for send and receive, which have types:
 
 > send :: Channel c -> t -> Session '[c :-> t :! End] ()
 
+\vspace{-2.3em}
 %if False
 
 > send (Channel c) t = Session (C.writeChan (unsafeCoerce c) t)
@@ -271,10 +272,10 @@ and |~| is the type equality predicate.
 The session type encoding here is for an asynchronous calculus. In which case, the following
 is allowed:
 
-> foo2 = new (\(c :: (Channel (Ch C)), c' :: (Channel (Op C))) -> 
->                   do Ping <- recv c'
->                      send c Ping
->                      return ())
+> foo2 = new (\(c :: (Channel (Ch C)), c') ->
+>                   do  Ping <- recv c'
+>                       send c Ping
+>                       return ())
 
 To use channels properly, we need parallel composition. This is given by:
 
@@ -360,8 +361,7 @@ is the union of |c| mapping to the session type of |d| in the session environmen
 Here is an example using delegation. Consider the following process |server2|
 which receives a channel |d| on |c|, and then seds a ping on it:
 
-> server2 c = chRecv c
->              (\(d :: Channel (Ch D)) -> send d Ping)
+> server2 c = chRecv c (\(d :: Channel (Ch D)) -> send d Ping)
 
 (Note, I have had to include explicit types to give a concrete name to the channel |d|,
 this is an unfortunate artefact of the current encoding, but not too bad from a theoretical
@@ -369,29 +369,24 @@ perspect).
 
 The type of |server2| is inferred as:
 %%
-\begin{equation*}
-|server2  :: 
-Channel c
-     -> Session '[c :-> (DelgS (Ping :! End) :? Lookup '['Ch 'D :-> (Ping :! End)] c)] ()|
-\end{equation*}
+< server2  ::  Channel c
+<          ->  Session '[c :-> (DelgS (Ping :! End) :? Lookup '['Ch 'D :-> (Ping :! End)] c)] ()|
 
 We then define a client to interact with this that binds |d| (and its dual |d'|),
 then sends |d| over |c| and waits to receive a ping on |d'|
 
 > client2 (c :: Channel (Ch C)) = 
 >        new (\(d :: (Channel (Ch D)), d') -> 
->                              do chSend c d
->                                 Ping <- recv d'
->                                 print "Client: got a ping")
+>                              do  chSend c d
+>                                  Ping <- recv d'
+>                                  print "Client: got a ping")
 
 This has inferred type:
 %%
-\begin{equation*}
-|client2
-  :: Dual s ~ (Ping :? End) =>
-     Channel ('Ch 'C) -> Session '['Ch 'C :-> (DelgS s :! End)] ()|
-\end{equation*}
-%%
+< client2
+<  ::  Dual s ~ (Ping :? End) =>
+<      Channel ('Ch 'C) -> Session '['Ch 'C :-> (DelgS s :! End)] ()
+
 The type constraint says that the dual of |s| is a session that receives a |Ping|, 
 so |s| is |Ping :! End|. 
 
@@ -405,51 +400,61 @@ This type checks and can be then run (|run process2|) yielding |"Client: got a p
 
 \subsection{$\lambda$-part}
 
-Since we are studying the $\pi+\lambda$-calculus, we can abstract over channels with
-linear functions. So far we have abstracted over channels, but not in an \emph{operational
-sense}- think of this more as let-binding style substitution (cut). We now introduce
-linear functions which can abstract over channels (and the session types of those channels, 
-which the previous form of abstraction above \textbf{doesn't do}, it just abstracts over 
-names, not the session types associated with their names).
+Since we are embedding the $\pi+\lambda$-calculus, we can abstract over channels with
+linear functions. So far we have defined functions which take particular names channels
+as arguments, but we have not abstracted over channels names. We now introduce
+linear functions which can abstract over channels (and the session types of those channels).
 
-First, we abstract functions via a type constructor |Abs|
+We abstract functions via a type constructor |Abs|
 
 > data Abs t a = forall c s . Abs (Proxy s) (Channel c -> Session (UnionS s '[c :-> t]) a)
+
+The |Abs| data constructor should be considered as abstract [it can be hidden]. Instead,
+we provide the follow constructor for (linear) abstractions: 
 
 > absL :: (Proxy s) -> (Channel c -> Session (UnionS s '[c :-> t]) a) -> Session s (Abs t a)  
 > absL p f = Session (P.return $ Abs p f)
 
-The |Abs| data constructor takes a function of type |(Channel c ->
-Session (UnionS s '[c :-> t]) ())|, that is, a function from some
+The |absL| constructor takes a function of type |(Channel c ->
+Session (UnionS s '[c :-> t]) a)|, that is, a function from some
 channel |c| to a |Session| environment |s| where |c :-> t| is a
 member). Since |UnionS| is a non-injective function we also need a
  type annotation that explains exactly what is the remaining
-channel- this is |Proxy s| (I'll show an example in the moment).
-This returns a result |Abs t s| which describes a function which takes
-some channel with session type |t| and has session environment |s|,
-cf.
-
+behaviour - this is |Proxy s| (I'll show an example in the moment).
+This returns a result |Session s (Abs t a)| which describes a function which takes
+some channel with session type |t|, returns a result of type |a|, and is
+ embedded in a session with environment |s|, cf.
+%
 \begin{equation*}
-\inference{\Delta, c : T \vdash C : \Diamond}
-          {\Delta \vdash \lambda c . C : T \multimap \Diamond}
+\inference{\Delta, c : T \vdash C : \diamond}
+          {\Delta \vdash \lambda c . C : T \multimap \diamond}
 \end{equation*}
 
-This can then be applied by the following primitive 
+The main different here is that we can actual return a result (of type |a|), rather than just
+being a process $\diamond$. \dnote{We need to decide whether we want to keep the ability for a value
+to returns from an abstraction, but for the moment it makes the hotel example easier (see Section~\ref{sec:hotel}).}
+
+These functions can then be applied by the following primitive:  
 
 > appL :: Abs t a -> Channel c -> Session '[c :-> t] a
+
+%if False 
+
 > appL (Abs _ k) c = let (Session s) = k (unsafeCoerce c) in Session s
+
+%endif
 
 Whatever concrete name was used for the channel in the abstracted process is replaced
 by the channel name here.
 
-Thus, given a linear session function |Abs t s| and some channel |c| then
-we get a session with environment |s| and a mapping |c :-> t|. 
+Thus, given a linear session function |Abs t a| and some channel |c| then
+we get a session with mapping |c :-> t|. 
 Here's an example: a client abstract over a channel, and then applies it within
 the same process:
 
-> client4 (c :: Channel (Ch C)) = do 
->                f <- absL (Proxy :: (Proxy '[])) (\c -> send c Ping)
->                appL f c
+> client4 (c :: Channel (Ch C)) = 
+>             do  f <- absL (Proxy :: (Proxy '[])) (\c -> send c Ping)
+>                 appL f c
 
 This simply has type |client4 :: Channel ('Ch 'C) -> Session '['Ch 'C :-> (Ping :! End)] ()|.
 We can then interfact with this in a usual straightforwad way.
@@ -457,43 +462,50 @@ We can then interfact with this in a usual straightforwad way.
 > process4 = new (\(c, c') -> (client4 c) `par` (do {x <- recv c'; print x }))
 
 
-A more complicated example reuses the abstraction in the client with different
-channels:
+A more complicated example creates a closure over an other channel |x|:
 
-> client5 (c :: Channel (Ch C)) (d :: (Channel (Ch D))) (x :: (Channel (Ch X))) = do 
->                f <- absL (Proxy :: (Proxy '[(Ch X) :-> Pong :! End])) 
->                                (\(c :: (Channel (Ch D))) -> do send c Ping
->                                                                send x Pong)
->                appL f c 
->                -- appL f d  -- ah but linearity... (should be a non-linear apply, this is liner apply)
+> client5 (c :: Channel (Ch C)) (x :: (Channel (Ch X))) = 
+>    do  f <- absL  (Proxy :: (Proxy '[(Ch X) :-> Pong :! End])) 
+>                   (\(c :: (Channel (Ch D))) -> do  send c Ping
+>                                                    send x Pong)
+>        appL f c 
+>        -- appL f d  -- not allowed due to linearity... 
 
-> process5 = new (\(c :: Channel (Ch C), c') -> 
->                new (\(x :: Channel (Ch X), x') ->
->                  new (\(d :: Channel (Ch D), d') ->
->                    (client5 c d x) `par`
->                          do v <- recv c'
->                             print v
->                             v <- recv x'
->                             print v
->                             --v <- recv d'
->                             --print v
->                             --v <- recv x'
->                             --print v
->                    )))
+The type is inferred type (although, note, we had to do some explicit typing with the |Proxy|), as:
 
-Dimtris example
+< client5  :: Channel ('Ch 'C)
+<          -> Channel ('Ch 'X)
+<          -> Session '['Ch 'C :-> (Ping :! End), 'Ch 'X :-> (Pong :! End)] ()
+%
+We can then interact with this process in the expected way: 
+
+> process5 =  new (\(c :: Channel (Ch C), c') -> 
+>                 new (\(x :: Channel (Ch X), x') ->
+>                     (client5 c x) `par`
+>                           do  v <- recv c'
+>                               print v
+>                               v <- recv x'
+>                               print v))
+
+Where |run process5| prints \texttt{Ping} then \texttt{Pong}. 
+\dnote{TODO: should we also include a non-linear function application/abstraction for completeneess with
+HO?}
+
+Dimtris' example:
 
 > client6 (c :: (Channel (Ch C))) (d :: (Channel (Ch D))) = 
->     do f <- absL (Proxy :: Proxy '[(Ch C) :-> Int :! End] )
->                      (\(z :: (Channel (Ch Z))) -> (send z 42 `par` send c 7))
->        appL f d
+>     do  f <- absL  (Proxy :: Proxy '[(Ch C) :-> Int :! End])
+>                    (\(z :: (Channel (Ch Z))) -> (send z 42 `par` send c 7))
+>         appL f d
 
-> process6 = new (\(c :: (Channel (Ch C)), c') -> 
->              new (\(d :: (Channel (Ch D)), d') ->
->                     do client6 c d
->                        v1 <- recv c' 
->                        v2 <- recv d'
->                        return (v1 + v2)))
+> process6 =  new (\(c :: (Channel (Ch C)), c') -> 
+>               new (\(d :: (Channel (Ch D)), d') ->
+>                     do  client6 c d
+>                         v1 <- recv c' 
+>                         v2 <- recv d'
+>                         return (v1 + v2)))
+
+|run process6| returns |49| as expected.
 
 \subsection{Branching and choice}
 
@@ -537,26 +549,24 @@ get composed after that use |c| will add their session types into branch corresp
 to the label. For example:
 
 > foo3 (c :: (Channel (Ch C))) = 
->          do select c (LeftL "l")
->             v <- recv c
->             send c (42::Int)
+>          do  select c (LeftL "l")
+>              v <- recv c
+>              send c (42::Int)
 
 |foo3| has the inferred type: 
 
-\begin{equation*}
-|foo3 :: Channel ('Ch 'C)
-     -> Session '['Ch 'C :-> Sel Left (t :? (Int :! End)) End] ()|
-\end{equation*}
+< foo3 :: Channel ('Ch 'C)
+<     -> Session '['Ch 'C :-> Sel Left (t :? (Int :! End)) End] ()|
 
 That is, we see that after selecting the left branch, then |c| is used to receive
 some |t| and then send an |Int|. 
 
 Branching then has the following type:
 
-> branch :: ((Del c s1) ~ (Del c s2)) => 
->             Channel c -> (Label Left -> Session s1 a)
->                       -> (Label Right -> Session s2 a)
->                       -> Session (UnionS (Del c s1) '[c :-> ((Lookup s1 c) :& (Lookup s2 c))]) a
+> branch ::  ((Del c s1) ~ (Del c s2)) => 
+>              Channel c  -> (Label Left -> Session s1 a)
+>                         -> (Label Right -> Session s2 a)
+>                        -> Session (UnionS (Del c s1) '[c :-> ((Lookup s1 c) :& (Lookup s2 c))]) a
 
 %if False
 
@@ -578,52 +588,79 @@ i.e., the branching pair of the session types for |c| in the left and right bran
 
 Here's an example:
 
-> process7 = new (\(c :: (Channel (Ch C)), c') -> 
->               do { select c (LeftL ""); send c 42 }
->                       `par` branch c' (\(LeftL "") -> do { v <- recv c'; print v })
->                                       (\(RightL "") -> do { return (); return () } ))
+> process7 = new  (\(c :: (Channel (Ch C)), c') -> 
+>                   do { select c (LeftL ""); send c 42 }
+>                     `par` branch c'  (\(LeftL "") -> do { v <- recv c'; print v })
+>                                      (\(RightL "") -> do { return (); return () } ))
 >               
 
 Then |run process7| yields 42 as expected. 
 
+In order to take super types on selections, we define the following coercions that 
+use the axiom $\mathbf{end} <: S$ to introduce an arbtirary supertype for $\mathbf{end}$ 
+on the left-hande side of a selection or right:
+
 > selSupL :: Session '[c :-> Sel l s End] () -> Session '[c :-> Sel Sup s t] ()
 > selSupL s = Session $ getProcess s
-
+>
 > selSupR :: Session '[c :-> Sel l End s] () -> Session '[c :-> Sel Sup t s] ()
 > selSupR s = Session $ getProcess s               
 
-\section{Hotel booking scenario} 
+These are useful in the hotel example:
 
-> p' :: (?room :: String, ?credit :: Int) => 
->        Channel (Ch Y) -> Session '[(Ch Y) :-> (Int :! (End :& End))] (Abs (String :! (Int :? (Sel Sup (Int :! End) End))) ())
-> p' y = absL Proxy 
->         (\(x :: (Channel (Ch X))) -> 
->           do send x ?room
->              quote <- recv x
->              send y quote
->              branch y (\(LeftL "accept") -> selSupL$ do select x (LeftL "accept")
->                                                         send x ?credit)
->                       (\(RightL "reject") -> selSupR $ select x (RightL "reject")))
+\section{Hotel booking scenario} 
+\label{sec:hotel}
+
+The $P_{xy}$ process is encoded using two layers of abstraction to abstract over $y$ and $x$ (in that order).
+We use Haskell's implicit parameters feature to insert |room| and |credit| information, which are abstract
+here. $P_{xy}$ is defined via |p|:
 
 > p :: (?room :: String, ?credit :: Int) => 
->           Session '[] (Abs (Int :! (End :& End)) (Abs (String :! (Int :? (Sel Sup (Int :! End) End))) ()))
-> p = absL Proxy p' 
+>         Session '[]  (Abs (Int :! (End :& End)) 
+>                         (Abs (String :! (Int :? (Sel Sup (Int :! End) End))) ()))
+>
+> p  =  absL Proxy (\(y :: (Channel (Ch Y))) -> 
+>       absL Proxy (\(x :: (Channel (Ch X))) -> 
+>               do  send x  (?room)
+>                   quote <- recv x
+>                   send y quote
+>                   branch y  (\(LeftL "accept") -> selSupL $ do  select x (LeftL "accept")
+>                                                                 send x  (?credit))
+>                             (\(RightL "reject") -> selSupR $ select x (RightL "reject"))))
+
  
+[Don't let the question marks ? here confused, they are nothing to do with sending, this just marks
+them as 'dynamic'/implicit parameters for Haskell]
+
+The client is then: 
+
 > client (s1 :: (Channel (Ch Y))) (s2 :: (Channel (Ch Z))) =
->          new (\(h1 :: (Channel (Ch C)), h1') ->
+>             new (\(h1 :: (Channel (Ch C)), h1') ->
 >             new (\(h2 :: (Channel (Ch D)), h2') -> 
->                (do p0 <- p 
->                    p1 <- p  
->                    ph1 <- appL p0 h1  -- \lambda x . P_{x,y} {h1/y}
->                    ph2 <- appL p1 h2 --  \lambda x . P_{x,y} {h2/y}
->                    send s1 ph1 
->                    send s2 ph2)
->            `par` (do x <- recv h1'
->                      y <- recv h2'
->                      if (x <= y) then do selSupL (select h1' (LeftL "accept"))
->                                          selSupR (select h2' (RightL "reject"))
->                                  else do selSupR (select h1' (RightL "reject"))
->                                          selSupL (select h2' (LeftL "acccept")))))
+>                (do  p0 <- p 
+>                     p1 <- p  
+>                     ph1 <- appL p0 h1  -- implements $\lambda x . P_{x,y} \{h1/y\}$
+>                     ph2 <- appL p1 h2  -- implements $\lambda x . P_{x,y} \{h2/y\}$
+>                     send s1 ph1 
+>                     send s2 ph2)
+>            `par` (do  x <- recv h1'
+>                       y <- recv h2'
+>                       if (x <= y)  then do  selSupL (select h1' (LeftL "accept"))
+>                                             selSupR (select h2' (RightL "reject"))
+>                                    else do  selSupR (select h1' (RightL "reject"))
+>                                             selSupL (select h2' (LeftL "acccept")))))
 
+Which has its type inferred as:
 
+< client
+<  :: (?credit::Int, ?room::String) =>
+<        Channel ('Ch 'Y)
+<     -> Channel ('Ch 'Z)
+<     -> Session
+<          '['Ch 'Y
+<            :-> (Abs (String :! (Int :? Sel Sup (Int :! End) End)) () :! End),
+<            'Ch 'Z
+<            :-> (Abs (String :! (Int :? Sel Sup (Int :! End) End)) () :! End)]
+<          ()
+ 
 \end{document}
