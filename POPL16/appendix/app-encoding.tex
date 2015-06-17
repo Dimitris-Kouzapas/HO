@@ -1,7 +1,63 @@
 % !TEX root = ../main.tex
 \section{Expressiveness Results}
 
+In this section we give the proofs for the expressiveness
+results stated in Section~\ref{sec:positive}.
 
+For the purpose of proving Operational Correspondence
+in this section we prove a stronger result than the result
+suggested in Definition~\ref{def:ep}(2). We state the
+requirements below.
+
+\begin{definition}[Operational Correspondence]\rm
+	\label{app:def:opc_strong}
+	Consider typed calculi
+	$\tyl{L}_1 = \calc{\CAL_1}{{\cal{T}}_1}{\hby{\ell_1}_1}{\wb_1}{\proves_1}$
+	and $\tyl{L}_2=\calc{\CAL_2}{{\cal{T}}_2}{\hby{\ell_2}_2}{\wb_2}{\proves_2}$.
+	Let $\mathcal{A}_i$ be the set of labels from relation $\hby{\ell_i}$
+	($i=1,2$) and let mapping $\mapa{\cdot} : \mathcal{A}_1 \to \mathcal{A}_2$.
+
+	We say that $\enco{\map{\cdot}, \mapt{\cdot}}: \tyl{L}_1 \to \tyl{L}_2$ is a
+	\emph{operational corresponce}
+	if it satisfies the property:
+	If $\Gamma; \emptyset; \Delta \proves_1 P \hastype \Proc$ then
+		\begin{enumerate}
+			\item	Completeness:
+				If  $\stytraargi{\Gamma}{\ell_1}{\Delta}{P}{\Delta'}{P'}{1}{1}$
+				then\\
+				$\exists Q, \Delta''$ s.t. 
+				(i)~$\wtytraargi{\mapt{\Gamma}}{\ell_2}{\mapt{\Delta}}{\map{P}}{\mapt{\Delta''}}{Q}{2}{2}$
+				(ii)~$\ell_2 = \mapa{\ell_1}$, 
+				and \\
+				(ii)~${\mapt{\Gamma}};{\mapt{\Delta''}}\proves_2 {Q}{\wb_2}{\mapt{\Delta'}}\proves_2 {\map{P'}}$.
+				
+			\item	Soundness:   
+				If  $\wtytraargi{\mapt{\Gamma}}{\ell_2}{\mapt{\Delta}}{\map{P}}{\mapt{\Delta'}}{Q}{2}{2}$
+				then \\ $\exists P', \Delta''$ s.t.  
+				(i)~$\stytraargi{\Gamma}{\ell_1}{\Delta}{P}{\Delta''}{P'}{1}{1}$
+				(ii)~$\ell_2 = \mapa{\ell_1}$, 
+				and \\
+				(ii)~${\mapt{\Gamma}};{\mapt{\Delta''}}\proves_2 {\map{P'}}{\wb_2}{\mapt{\Delta'}}\proves_2 {Q}$.
+		\end{enumerate}
+\end{definition}
+
+\begin{proposition}
+	Consider typed calculi
+	$\tyl{L}_1 = \calc{\CAL_1}{{\cal{T}}_1}{\hby{\ell_1}_1}{\wb_1}{\proves_1}$
+	and $\tyl{L}_2=\calc{\CAL_2}{{\cal{T}}_2}{\hby{\ell_2}_2}{\wb_2}{\proves_2}$.
+	Let $\mathcal{A}_i$ be the set of labels from relation $\hby{\ell_i}$
+	($i=1,2$) and let mapping $\mapa{\cdot} : \mathcal{A}_1 \to \mathcal{A}_2$.
+
+	If $\mapa{\tau} = \tau$ then
+	the requirements of Definition~\ref{app:def:opc_strong} imply
+	the requirements of Definition~\ref{def:ep}(2).
+\end{proposition}
+
+\begin{proof}
+	The proof is trivial by substituting the $\tau$ action
+	on labels $\ell_1$ and $\ell_2$ in Definition~\ref{app:def:opc_strong}
+	to get Definition~\ref{def:ep}(2).
+\end{proof}
 
 \begin{comment}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -158,8 +214,21 @@ and the following type derivation:
 \subsection{Properties for $\enco{\pmapp{\cdot}{1}{f}, \tmap{\cdot}{1}, \mapa{\cdot}^{1}}: \HOp \to \HO$}
 \label{app:enc_HOp_to_HO}
 
-We repeat the statement of \propref{prop:typepres_HOp_to_HO}, 
-as in Page \pageref{prop:typepres_HOp_to_HO}:
+%We repeat the statement of \propref{prop:typepres_HOp_to_HO},
+%as in Page \pageref{prop:typepres_HOp_to_HO}:
+
+In this section we prove \thmref{f:enc:hopitoho}, in Page~\pageref{f:enc:hopitoho}
+that requires that encoding
+$\enco{\pmapp{\cdot}{1}{f}, \tmap{\cdot}{1}, \mapa{\cdot}^{1}}: \HOp \to \HO$ is precise.
+A precise encoding requires to prove three independent results:
+\begin{itemize}
+	\item	Type preservation, stated in Lemma~\ref{app:prop:typepres_HOp_to_HO}.
+	\item	Operational Correspondence, stated in Lemma~\ref{app:prop:op_corr_HOp_to_HO}.
+		Note that we prove a stronger operational correspondence condition,
+		as in Definition~\ref{app:def:opc_strong},
+		than the condition suggested in Definition~\ref{def:ep}(2).
+	\item	Full Abstraction, stated in Lemma~\ref{app:prop:fulla_HOp_to_HO}.
+\end{itemize}
 
 %% Type Preservation
 
@@ -541,9 +610,46 @@ as in Page \pageref{prop:typepres_HOp_to_HO}:
 
 %%% Operational Correspondence
 
-We repeat the statement of
-\propref{prop:op_corr_HOp_to_HO}, 
-as in Page \pageref{prop:op_corr_HOp_to_HO}:
+%We repeat the statement of
+%\propref{prop:op_corr_HOp_to_HO}, 
+%as in Page \pageref{prop:op_corr_HOp_to_HO}:
+
+Before we prove operational correspondence we
+define mapping from $\mapa{\cdot}^{1}: \mathcal{A} \to \mathcal{A}$
+where $\mathcal{A}$ is the set of labels of the relation
+$\hby{\ell}$:
+\begin{definition}[$\mapa{\cdot}^{1}: \mathcal{A} \to \mathcal{A}$]
+	Let $\mathcal{A}$ is the set of labels of the relation
+	$\hby{\ell}$ then we define:
+
+\[
+	\begin{array}{rcl}
+		\mapa{(\nu \tilde{m})\bactout{n}{m}}^{1}
+		&\!\!\!\!\defeq\!\!\!\!&
+		(\nu \tilde{m})\bactout{n}{\abs{z}{\,\binp{z}{x} (\appl{x}{m})} }
+		\\
+		\mapa{\bactinp{n}{m}}^{1}
+		&\!\!\!\!\defeq\!\!\!\!&
+		\bactinp{n}{\abs{z}{\,\binp{z}{x} (\appl{x}{m})} }
+		\\
+		\mapa{(\nu \tilde{m})\bactout{n}{\abs{{x}}{P}}}^{1}
+		&\!\!\!\!\defeq\!\!\!\!& 
+		(\nu \tilde{m})\bactout{n}{\abs{{x}}{\pmapp{P}{1}{\es}}}
+		\\
+		\mapa{\bactinp{n}{\abs{{x}}{P}}}^{1}
+		&\!\!\!\!\defeq\!\!\!\!&
+		\bactinp{n}{\abs{{x}}{\pmapp{P}{1}{\es}}}\\
+		\mapa{\bactsel{n}{l} }^{1} \!\!\defeq\!\! \bactsel{n}{l} 
+		\quad
+		\mapa{\bactbra{n}{l} }^{1} &\!\!\!\!\defeq\!\!\!\!& \bactbra{n}{l} 
+		\quad \quad 
+		\mapa{\tau}^{1} \!\!\defeq\!\! \tau
+	\end{array}
+\]
+\end{definition}
+
+We now state and prove a detailed version of the operational corresponce
+in Definition~\ref{app:def:opc_strong}.
 
 \begin{proposition}[Operational Correspondence, \HOp into \HO]\rm
 	\label{app:prop:op_corr_HOp_to_HO}
