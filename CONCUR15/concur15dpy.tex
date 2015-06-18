@@ -10,7 +10,6 @@
 % for section-numbered lemmas etc., use "numberwithinsect"
  
 \usepackage{microtype,xspace,enumerate,comment,stmaryrd}%if unwanted, comment out or use option "draft"
-%\usepackage{times}
 \usepackage{mathpartir}
 %\graphicspath{{./graphics/}}%helpful if your graphic files are in another directory
 \input{macros}
@@ -21,21 +20,30 @@
 \title{Characteristic Bisimulations for Higher-Order Session Processes}
 \titlerunning{Characteristic Bisimulations for Higher-Order Session Processes} %optional, in case that the title is too long; the running title should fit into the top page column
 
-\author{Dimitrios Kouzapas$^{\text{1}}$}
-\author{Jorge A. P\'{e}rez$^{\text{2}}$}
-\author{Nobuko Yoshida$^{\text{1}}$}
-\affil{1~~~ Imperial College London 
-\qquad 
-2~~~ University of Groningen} 
-%\qquad 2~~~ University of Glasgow}
-%\affil[2]{University of Groningen}
-%\affil[3]{University of Glasgow}
+\author[1,2]{Dimitrios Kouzapas}
+\author[3]{Jorge A. P\'{e}rez}
+\author[1]{Nobuko Yoshida}
+\affil[1]{Imperial College London, UK
+%\\ \url{yoshida@doc.ic.ac.uk}
+}
+\affil[2]{University of Glasgow, UK
+%\\ \url{Dimitrios.Kouzapas@glasgow.ac.uk}
+}
+\affil[3]{University of Groningen, The Netherlands 
+%\\ \url{j.a.perez@rug.nl}
+}
+
 \authorrunning{D. Kouzapas and J.\,A. P\'{e}rez and N. Yoshida} %mandatory. First: Use abbreviated first/middle names. Second (only in severe cases): Use first author plus 'et. al.'
 
-\Copyright{D. Kouzapas and J.\,A. P\'{e}rez and N. Yoshida}%mandatory, please use full first names. LIPIcs license is "CC-BY";  http://creativecommons.org/licenses/by/3.0/
+\Copyright{Dimitrios Kouzapas and Jorge A. P\'{e}rez and Nobuko Yoshida}%mandatory, please use full first names. LIPIcs license is "CC-BY";  http://creativecommons.org/licenses/by/3.0/
 
-%\subjclass{Dummy classification -- please refer to \url{http://www.acm.org/about/class/ccs98-html}}% mandatory: Please choose ACM 1998 classifications from http://www.acm.org/about/class/ccs98-html . E.g., cite as "F.1.1 Models of Computation". 
-%\keywords{Dummy keyword -- please provide 1--5 keywords}% mandatory: Please provide 1-5 keywords
+\subjclass{
+F.3.1 Specifying and Verifying and Reasoning about Programs;
+F.3.2 Semantics of Programming Languages.
+}
+%Dummy classification -- please refer to \url{http://www.acm.org/about/class/ccs98-html}}% mandatory: Please choose ACM 1998 classifications from http://www.acm.org/about/class/ccs98-html . E.g., cite as "F.1.1 Models of Computation". 
+\keywords{Behavioral equivalences, session types,
+ higher-order process calculi.}% mandatory: Please provide 1-5 keywords
 %% Author macros::end %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
 %%Editor-only macros:: begin (do not touch as author)%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -47,8 +55,8 @@
 %  {1}% volume
 %  {1}% issue
 %  {1}% starting page number
-%\EventShortName{}
-%\DOI{10.4230/LIPIcs.xxx.yyy.p}% to be completed by the volume editor
+%\EventShortName{CONCUR}
+\DOI{10.4230/LIPIcs.xxx.yyy.p}% to be completed by the volume editor
 %% Editor-only macros::end %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \usepackage{tikz}
@@ -85,8 +93,7 @@ We demonstrate how characteristic bisimilarity can be used to justify optimisati
 \section{Introduction}
 \label{sec:intro}
 
-\noindent
-\myparagraph{Context.}
+\subparagraph{Context.}
 In \emph{higher-order process calculi} 
 communicated
 values %exchanged in communications 
@@ -144,9 +151,7 @@ session-based concurrency. A characterisation
 %context bisimilarity 
 that solves this limitation was developed by Jeffrey and Rathke in~\cite{JeffreyR05}.
 
-\smallskip
-
-\myparagraph{This Work.}
+\subparagraph{This Work.}
 Building upon~\cite{SangiorgiD:expmpa,San96H,JeffreyR05}, 
 our discovery is that \emph{linearity} of session types plays a vital role 
 in solving 
@@ -186,10 +191,245 @@ with recursive types~\cite{JeffreyR05}.
 %Remarkably session type structures enable to provide 
 %a coincidence without name-matching operators in the calculi.
 
-\input{overview}
+\smallskip 
+We explain how we exploit session types to 
+define characteristic bisimilarity.
+Key notions are \emph{triggered} and \emph{characteristic processes/values}.
+Below, we 
+write $\binp{s}{x}{P}$ 
+for an input on %(linear) 
+endpoint $s$, 
+and $\bout{\dual{s}}{V} Q$
+for an output of value $V$ 
+on endpoint $\dual{s}$ (the \emph{dual} of~$s$).
+Also, $R \by{\bactinp{n}{V}} R'$ denotes an input transition along $n$
+and
+$R \by{\news{\widetilde{m}} \bactout{n}{V}} R'$
+denotes an output transition along $n$, 
+sending value $V$, and extruding names $\widetilde{m}$. 
+Weak transitions are as usual.
+Throughout the paper, we write $\Re, \Re',\ldots$ to denote binary relations on (typed) processes.
+
+
+%\smallskip
+\subparagraph{Issues of Context Bisimilarity.}
+Context bisimilarity ($\wbc$, \defref{def:wbc}) is an overly demanding relation on higher-order processes. 
+There are two issues, associated to demanding clauses for output and input actions. 
+%The first demanding issue arises from the universal quantification on the output clause of context bisimilarity:
+A \emph{first issue} %appears in 
+is 
+the universal quantification on the output clause of context bisimilarity.
+Suppose $P \,\Re\, Q$, for some context bisimulation~$\Re$. We have:
+\begin{enumerate}[$(\star)$]
+	\item	Whenever 
+		$P \by{\news{\widetilde{m_1}} \bactout{n}{V}} P'$
+		there exist
+		$Q'$ and $W$
+		such that 
+		$Q \By{\news{\widetilde{m_2}} \bactout{n}{W}} Q'$
+		and, \\ \emph{\textbf{for all} $R$}  with $\fv{R}=x$, 
+		$\newsp{\widetilde{m_1}}{P' \Par R\subst{V}{x}} \,\Re\, \newsp{\widetilde{m_2}}{Q' \Par R\subst{W}{x}}$.
+\end{enumerate}
+
+\noi The \emph{second issue} is due to inputs: it  
+%appears in input clauses, and 
+follows from 
+the fact that we work with an \emph{early}
+labelled transition system (LTS). Thus, %a higher-order 
+an input prefix may observe
+finitely many different values.
+To alleviate this burden,
+%induced by 
+%universal quantification,
+in %our notion of
+\emph{characteristic
+bisimilarity} ($\fwb$)
+we take two (related) steps: 
+\begin{enumerate}[(a)]
+	\item We replace $(\star)$ with a clause involving a \emph{more tractable} process closure; and 
+	\item We refine  inputs % transitions 
+	to avoid observing infinitely many actions on the same input prefix.
+\end{enumerate}
+
+
+
+
+\subparagraph{Trigger Processes.} % with Session Communication.}
+To address~(a), we exploit session types. 
+We first 
+observe that closure $R\subst{V}{x}$ 
+in $(\star)$
+is context bisimilar to the process
+%\begin{equation}\label{equ:1}
+	$P = \newsp{s}{\appl{(\abs{z}{\binp{z}{x}{R}})}{s} \Par \bout{\dual{s}}{V} \inact}$.
+%\end{equation}
+%\noi 
+In fact,
+we do have $P \wbc R\subst{V}{x}$, 
+since 
+application and 
+reduction of 
+dual endpoints 
+%($s$ and $\dual{s}$) 
+are deterministic.  
+
+Now let us
+consider process $T_{V}$ below, where $t$ is a fresh name.  
+%\begin{equation}\label{equ:0}
+%\end{equation}
+%We call $\abs{z}{\binp{z}{x} R}$ a {\bf\em trigger value}. 
+If $T_{V}$ inputs value $\abs{z}{\binp{z}{x} R}$ then
+we can simulate the closure of $P$:
+\begin{equation}\label{equ:2}
+%\hotrigger{t}{V_1} 
+T_{V} = \hotrigger{t}{x}{s}{V} \quad\mbox{and}\quad 
+T_{V}
+\by{\bactinp{t}{\abs{z}{\binp{z}{x} R}}} P 
+\wbc 
+R\subst{V}{x}
+\end{equation}
+Processes such as $T_{V}$ 
+offer a value at a fresh name; this class of 
+{\bf\em trigger processes} 
+already suggests a tractable formulation of 
+bisimilarity without the demanding 
+%output 
+clause $(\star)$. 
+%However, 
+%Trigger p
+Process $T_{V}$ in~\eqref{equ:2} requires a higher-order communication along $t$.
+%As we explain now, we can do better than this; the key is using \emph{elementary inhabitants} of session types.
+As we explain below, we can give an alternative trigger process; the key is using \emph{elementary inhabitants} of session types.
+%Given a fresh name $t$, we write $\htrigger{t}{V}$ to  stand for a trigger process $T_{V}$ for value $V$.
 
 \smallskip
-\myparagraph{Outline.} 
+
+%Then we can use 
+%$\newsp{\tilde{m_1}}{P_1 \Par \htrigger{t}{V_1}}$ instead 
+%of Clause 1) in Definition \ref{def:wbc} if we input 
+%$\abs{z}{\binp{z}{x} R}$.   
+
+\subparagraph{Characteristic Processes and Values.}
+To address (b), we limit the possible 
+input values (such as $\abs{z}{\binp{z}{x} R}$ above) %processes 
+by exploiting session types.
+The key concept is that of {\bf \emph{characteristic process/value}}
+of a type,  
+%The characteristic process of a session type $S$ is the process inhabiting $S$. 
+the 
+simplest term inhabiting that type (\defref{def:char}).
+This way, for instance, let $S = \btinp{\shot{S_1}} \btout{S_2} \tinact$
+be a session type: first
+input an abstraction, %from values $S_1$ to processes, 
+then output a value of type $S_2$.
+Then, process $\binp{u}{x} (\bout{u}{s_2} \inact \Par \appl{x}{s_1})$
+is a characteristic process for $S$ 
+\jpc{along $u$.}
+%Thus, characteristic processes follow the communication structures decreed by session types.
+Given a session type $S$, we write $\mapchar{S}{u} $
+for its characteristic process along   $u$
+(cf.~\defref{def:char}).
+Also, %Similarly, 
+given value type $U$, then
+$\omapchar{U}$ denotes its characteristic value.
+As we explain now, we use 
+%the %characteristic %Precisely, we exploit  the
+% characteristic value %$\lambda x.\mapchar{U}{x}$. %$\lambda x.\mapchar{U}{x}$. 
+$\omapchar{U}$
+ to limit input transitions.
+
+\subparagraph{Refined Input Transitions.}
+To refine  input transitions, we need to observe 
+an additional value, 
+$\abs{{x}}{\binp{t}{y} (\appl{y}{{x}})}$, 
+called the {\bf\em trigger value}. 
+This is necessary: it turns out
+that a characteristic value 
+alone as the observable input 
+is not enough to define a sound bisimulation (cf. \exref{ex:motivation}).
+Intuitively, the trigger value is used
+to observe/simulate application processes.
+%to {\em count} the number of free higher-order variables inside 
+%the receiver. 
+%\jpc{See Example~\ref{ex:motivation} for further details.}
+Based on the above discussion, we refine 
+the transition rule for input actions (cf. \defref{def:rlts}). 
+%We write $P \by{\bactinp{n}{V}} P'$ for the input transition along $n$.
+Roughly, the 
+refined
+rule 
+is:
+%\[
+%\tree {
+%	P \by{\bactinp{n}{V}} P' \quad 
+%	V = m \vee V \scong \abs{{x}}{\binp{t}{y} (\appl{y}{{x}})}
+%	\vee  V \scong \omapchar{U}  \textrm{ with } t \textrm{ fresh} 
+%}{
+%	P' \hby{\bactinp{n}{V}} P'
+%}
+%\]
+$$
+\boxed{
+~~P \by{\bactinp{n}{V}} P' \,\land\, (V = m \vee V \scong \abs{{x}}{\binp{t}{y} (\appl{y}{{x}})} \vee  V \scong \omapchar{U}  \textrm{ with } t \textrm{ fresh}) ~~\Rightarrow~~
+P' \hby{\bactinp{n}{V}} P'~~}
+$$
+\noi
+Note the distinction between standard and refined transitions: $\by{\bactinp{n}{V}}$ vs. $\hby{\bactinp{n}{V}}$.
+Our refined  rule for \jpc{(higher-order)} input admits only names, trigger values, and characteristic values.
+Using this rule, we define an alternative, refined  LTS on typed processes: 
+we use it to define
+%both higher-order ($\hwb$) and 
+characteristic  bisimulation 
+%(Defs.~\ref{d:hbw} and~\ref{d:fwb}),
+($\fwb$, Def.~\ref{d:fwb}),
+in which the demanding clause~$(\star)$ is replaced with 
+a more tractable output clause based on 
+%trigger processes \jpc{(cf.~\eqref{equ:2})}  and 
+characteristic 
+trigger processes
+\jpc{(cf.~\eqref{eq:4})}.
+%respectively.
+%We show that $\hwb$ is useful for \HOp and \HO, and that~$\fwb$ can be uniformly used in all subcalculi, including \sessp. 
+
+
+\subparagraph{Characteristic Triggers.}
+Following the same reasoning as (\ref{equ:2}), 
+we can use an alternative trigger process, called
+{\bf\em characteristic trigger process} with type 
+$U$ to replace clause
+% (1) in Definition~\ref{def:wbc}:
+($\star$): % in \defref{def:wbc}:
+\begin{equation}
+	\label{eq:4}
+	\boxed{
+	~~\ftrigger{t}{V}{U} \defeq \fotrigger{t}{x}{s}{\btinp{U} \tinact}{V}~~
+	}
+\end{equation}
+
+%Note that if $U=L$, $\ftrigger{t}{V}{U}$ subsumes 
+%$\htrigger{t}{V}$. 
+\noi
+This is justified because in~\eqref{equ:2} $T_V \hby{\bactinp{t}{\omapchar{\btinp{U} \tinact}}} \wbc \newsp{s}{\mapchar{\btinp{U} \tinact}{s} \Par \bout{\dual{s}}{V} \inact }$.
+\noi 
+\jpc{Thus, unlike process~\eqref{equ:2}, the characteristic trigger process 
+in~\eqref{eq:4}
+does not involve a
+higher-order communication on %fresh name 
+$t$.}
+In contrast to previous approaches~\cite{SangiorgiD:expmpa,JeffreyR05} 
+our %{trigger processes} 
+ characteristic trigger processes 
+do {\em not} use recursion or 
+replication. This is key to preserve linearity of session endpoints.  
+
+
+\NY{It is also noteworthy that \HOp lacks name matching, 
+which is usually crucial to prove completeness of bisimilarity---see, e.g.,~\cite{JeffreyR05}.
+Instead of matching, we use types:
+a process trigger embeds a name into a characteristic
+process so to observe its session behaviour.}
+
+\subparagraph{Outline.}
 %This paper  is structured as follows.
 %\begin{enumerate}[$\bullet$]
 %\item 
@@ -208,14 +448,6 @@ states our main result: characteristic and context bisimilarities coincide for
 %is shown  to coincide for 
 well-typed \HOp processes (\thmref{the:coincidence}).
 \secref{sec:relwork}~concludes with related works. 
-%The appendix summarises the typing system. 
-%\end{enumerate}
-%\noi
-%The paper is self-contained. 
-\textbf{The Appendix contains omitted definitions/proofs.
-%; and 
-%additional expressive results and related work/examples in \cite{KouzapasPY15}.
-} 
 
 
 
@@ -300,14 +532,14 @@ in~\cite{tlca07} (where tractable bisimilarities are not addressed).
 	\vspace{-2mm}
 \end{figure}
 
-\noindent\myparagraph{Syntax.} 
+\subparagraph{Syntax.} 
 The syntax of \HOp is defined in \figref{fig:redsem} (upper part).
 We use $a,b,c, \dots$ (resp.~$s, \dual{s}, \dots$) 
 to range over shared (resp. session) names. 
 We use $m, n, t, \dots$ for session or shared names. 
 We define the dual operation over names $n$ as $\dual{n}$ with
 $\dual{\dual{s}} = s$ and $\dual{a} = a$.
-Intuitively, names $s$ and $\dual{s}$ are dual (two) \emph{endpoints} while 
+Intuitively, names $s$ and $\dual{s}$ are dual  \emph{endpoints} while 
 shared names represent non-deterministic points. 
 Variables are denoted with $x, y, z, \dots$, 
 and recursive variables are denoted with $\varp{X}, \varp{Y} \dots$.
@@ -318,6 +550,7 @@ Values $V,W$ include
 identifiers $u, v, \ldots$ %(first-order values) 
 and 
 abstractions $\abs{x}{P}$ (first- and higher-order values, resp.). 
+
 {Terms} 
 include $\pi$-calculus constructs for sending/receiving values $V$.
 Process $\bout{u}{V} P$ denotes the output of   $V$
@@ -325,8 +558,10 @@ over name $u$, with continuation $P$;
 process $\binp{u}{x} P$ denotes the input prefix on name $u$ of a value
 that 
 will substitute variable $x$ in continuation $P$. 
-Recursion is expressed by $\recp{X}{P}$,
-which binds the recursive variable $\varp{X}$ in process $P$.
+Recursion %is expressed by 
+$\recp{X}{P}$
+%which 
+binds the recursive variable $\varp{X}$ in process $P$.
 Process 
 %ny
 %$\appl{x}{u}$ 
@@ -344,23 +579,22 @@ among processes with pairwise distinct labels;
 Constructs for 
 inaction $\inact$,  parallel composition $P_1 \Par P_2$, and 
 name restriction $\news{n} P$ are standard.
-Session name restriction $\news{s} P$ simultaneously binds endpoints $s$ and $\dual{s}$ in $P$.
+Session name restriction $\news{s} P$ %simultaneously 
+binds endpoints $s$ and $\dual{s}$ in $P$.
 %A well-formed process relies on assumptions for
 %guarded recursive processes.
-We use $\fv{P}$ and $\fn{P}$ to denote a set of free 
+We use $\fv{P}$ and $\fn{P}$ to denote sets of free 
 %\jpc{recursion}
 variables and names; 
-and assume $V$ in $\bout{u}{V}{P}$ does not include free recursive 
-variables $\rvar{X}$. 
+we assume $V$ in $\bout{u}{V}{P}$ does not include free recursive 
+variables. % $\rvar{X}$. 
 If $\fv{P} = \emptyset$, we call $P$ {\em closed}.
 %; and closed $P$ without 
 %free session names a {\em program}. 
 
 
 
-\smallskip
-
-\noindent \myparagraph{Semantics.}
+ \subparagraph{Semantics.}
 %	\label{subsec:semantics}
 	\figref{fig:redsem} (lower part) defines the operational semantics 
 of \HOp, given as
@@ -539,11 +773,11 @@ see \appref{app:types} for a full description.
 %Our system is simpler than that in~\cite{tlca07,MostrousY15}, thus distilling the key
 %features of higher-order sessions. %communications. %in a session-typed setting.
 
-\smallskip 
+ 
 
 %\subsection{Types}
 %\label{subsec:types}
-\myparagraph{Types.}
+\subparagraph{Types.}
 The syntax of types of \HOp is given below:
 \[
 	\begin{array}{cc}
@@ -603,21 +837,21 @@ Type $\tinact$ is the termination type.
 %excludes shared name types ($\chtype{S}$ and $\chtype{L}$), 
 %from name type $C$.
 
-%Following \cite{TGC14},
-We write $S_1 \dualof S_2$ if 
+Following \cite{onSessionDualityBDGK},
+we write $S_1 \dualof S_2$ if 
 $S_1$ is the \emph{dual} of $S_2$.   
-See the Appendix (\defref{def:dual}) for a definition; 
-intuitively, 
+%See the Appendix (\defref{def:dual}) for a definition; 
+Intuitively, 
 duality
 converts $!$ into $?$ and $\oplus$ into $\&$ (and viceversa). 
 %incorporating also the fixed point construction.
 %(see in the Appendix). 
 
-\smallskip 
+ 
 
 %\subsection{Typing System of \HOp}
 %\label{subsec:typing}
-\myparagraph{Typing Environments and Judgements.}
+\subparagraph{Typing Environments and Judgements.}
 \noi Typing \emph{environments} are defined below:
 %\[
 \begin{eqnarray*}
@@ -644,10 +878,11 @@ only subject to exchange.
 %We require that t
 The domains of $\Gamma,
 \Lambda$ and $\Delta$ are assumed pairwise distinct. 
-$\Delta_1\cdot \Delta_2$ means 
+$\Delta_1\cdot \Delta_2$ is 
 the disjoint union of $\Delta_1$ and $\Delta_2$.  
-We define \emph{typing judgements} for values $V$
-and processes $P$:
+We define \emph{typing judgements} for values 
+%$V$
+and processes: % $P$:
 %\begin{center}
 %\begin{tabular}{c}
 	$$\Gamma; \Lambda; \Delta \proves V \hastype U \qquad \qquad \qquad \qquad \qquad \Gamma; \Lambda; \Delta \proves P \hastype \Proc$$
@@ -929,7 +1164,7 @@ $(\Gamma, \Lambda_1, \Delta_1) \hby{\ell} (\Gamma', \Lambda_2, \Delta_2)$.
 
 
 
-\myparagraph{Input Actions} 
+\subparagraph{Input Actions} 
 are defined by 
 rules~$\eltsrule{SRv}$ and $\eltsrule{ShRv}$.
 %describe the input action
@@ -949,7 +1184,7 @@ the only possible communication would be the interaction
 between the two endpoints (cf. rule~$\eltsrule{Tau}$).
 Rule~$\eltsrule{ShRv}$ is for shared names and follows similar principles.
 
-\myparagraph{Output Actions} are defined by rules~$\eltsrule{SSnd}$
+\subparagraph{Output Actions} are defined by rules~$\eltsrule{SSnd}$
 and $\eltsrule{ShSnd}$.  
 Rule $\eltsrule{SSnd}$ states the conditions for observing action
 $\news{\widetilde{m}} \bactout{s}{V}$ on a type tuple 
@@ -976,7 +1211,7 @@ on rule~$\eltsrule{SSnd}$.
 %%with the type of $V$ 
 %as $\news{\widetilde{m}} \bactout{n}{\AT{V}{U}}$.}
 
-\myparagraph{Other Actions}
+\subparagraph{Other Actions}
 Rules $\eltsrule{Sel}$ and $\eltsrule{Bra}$ describe actions for
 select and branch.
 %Both
@@ -1366,6 +1601,15 @@ We define characteristic processes/values:
 	$\mapchar{U}{u}$ and the {\em characteristic value} $\omapchar{U}$.
 \end{definition}
 
+\begin{proposition}%[Characteristic Processes/Values Inhabit Their Types]
+%	\begin{itemize}
+		%\item	
+		Let $S$ be a session type. Then $\Gamma; \es; \Delta \cat s: S \proves \mapchar{S}{s} \hastype \Proc$.
+		%\item	
+		Also, let $\chtype{U}$ be a first-order (channel) type. Then $\Gamma \cat a: \chtype{U}; \es; \Delta \proves \mapchar{\chtype{U}}{a} \hastype \Proc$.
+%	\end{itemize}
+\end{proposition}
+
 %%%%%%%%%%%%%%%%%%%%%%%% Characteristic Process Figure %%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{figure}[t]
 \[
@@ -1435,73 +1679,8 @@ We define characteristic processes/values:
 
 %%%%%%%%%%%%%%%%%%%%%%%% End Characteristic Process Figure %%%%%%%%%%%%%%%%%%%%%
 
-%	\[
-%	\begin{array}{rcllrcll}
-%		\map{\btinp{C} S}^{u} &=& \binp{u}{x} (\map{S}^{u} \Par 
-%\map{{C}}^{x})\\
-%		\map{\btout{C} S}^{u} &=& \bout{u}{n} \map{S}^{u} & n\textrm{ fresh}
-%		\\
-%		\map{\btsel{l : S}}^{u} &=& \bsel{u}{l} \map{S}^{u}
-%\\
-%		\map{\btbra{l_i: S_i}_{i \in I}}^{u} &=& \bbra{k}{l_i: \map{S_i}^{u}}_{i \in I}
-%		\\
-
-%		\map{\tvar{t}}^{u} &=& \rvar{X}_{\tvar{t}}
-%\\
-%		\map{\trec{t}{S}}^{u} &=& \mu \rvar{X}_{\tvar{t}}.\map{S}^{u}
-%		\\
-
-%		\map{\btout{\lhot{C}} S}^{u} &=& \bout{u}{\abs{x}{\map{C}^{x}}} \map{S}^u
-%\\
-%		\map{\btinp{\lhot{C}} S}^{u} &=& \binp{u}{x} (\map{S}^u \Par \appl{x}{n}) & {n}\textrm{ fresh}
-%		\\
-%		\map{\btout{\shot{C}} S}^{u} &=& \bout{u}{\abs{x}{\map{C}^{x}}}
-%\map{S}^u \\
-%		\map{\btinp{\shot{C}} S}^{u} &=& \binp{u}{x} (\map{S}^u \Par \appl{x}{n}) & n\textrm{ fresh}
-%		\\
-
-%%		\map{\btinp{\chtype{S}} S}^{k} &=& \binp{k}{x} (\map{S}^k \Par \map{\chtype{S}}^y)
-%%		&&
-%%		\map{\btout{\chtype{S}} S}^{k} &=& \bout{k}{a} \map{S}^k  & a\textrm{ fresh}
-%%		\\
-%		\map{\tinact}^{u} &=& \inact
-%\\
-%		\map{\chtype{S}}^{u} &=& \bout{u}{s} \inact &s\textrm{ fresh}
-%\\
-%		\map{\chtype{\lhot{C}}}^{u} &=& \bout{u}{\abs{x} \map{C}^{x}} \inact
-%		\\
-%		\map{\chtype{\shot{C}}}^{u} &=& \bout{u}{\abs{x} \map{C}^{x}} \inact
-%	\end{array}
-%	\]
-%\end{definition}
 
 
-%\noi Characteristic processes are inhabitants of their associated type:
-
-%\begin{proposition}[Characteristic Processes]\rm
-%\label{pro:characteristic}
-%\begin{enumerate}
-%\item $\Gamma; \emptyset; \Delta \cat u:S \proves \mapchar{S}{u} \hastype \Proc$; and $\Gamma \cat u:\chtype{S}; \emptyset; \Delta \proves \mapchar{\chtype{S}}{u} \hastype \Proc$; and 
-%\item  	If $\Gamma; \emptyset; \Delta \proves \mapchar{C}{u} \hastype \Proc$
-%	then
-%	$\Gamma; \es; \Delta \proves u \hastype C$.
-%\end{enumerate}
-%\end{proposition}
-%%\begin{IEEEproof}
-%%	By induction on $\mapchar{S}{u}$, $\mapchar{\chtype{S}}{u}$
-%%and $\mapchar{C}{u}$. 
-%%\end{IEEEproof}
-
-%\noi We can verify that characteristic processes/values  
-%do inhabit their associated type. %; the proof is by induction on types. 
-\begin{proposition}%[Characteristic Processes/Values Inhabit Their Types]
-%	\begin{itemize}
-		%\item	
-		Let $S$ be a session type. Then $\Gamma; \es; \Delta \cat s: S \proves \mapchar{S}{s} \hastype \Proc$.
-		%\item	
-		Also, let $\chtype{U}$ be a first-order (channel) type. Then $\Gamma \cat a: \chtype{U}; \es; \Delta \proves \mapchar{\chtype{U}}{a} \hastype \Proc$.
-%	\end{itemize}
-\end{proposition}
 
 The following example motivates the refined 
 LTS explained in %\secref{sec:overview}.
@@ -1710,9 +1889,9 @@ when the type of $V$ is~$U$.
 %and characteristic values ($\lambda x.\map{U}^{{x}}$) are required 
 %to define the following two bisimulations. 
 
-\smallskip 
+ 
 
-\myparagraph{Characteristic Bisimulations.} We define 
+\subparagraph{Characteristic Bisimulations.} We define 
 %\emph{higher-order} and
 \emph{characteristic
 bisimulations}, 
@@ -2067,7 +2246,13 @@ allows to observe first-order values instead
 of higher-order values. It differs from~\cite{San96H,JeffreyR05} in that 
 the mapping between higher- and first-order values is no longer implicit.
 
-
+\subparagraph{Acknowledgments} This work has been partially sponsored by the
+EPSRC Post Doc Fellowship, EP/K011715/1, EP/K034413/1,
+ and EP/L00058X/1, 
+EU project FP7-612985 UpScale,
+and EU
+COST Action IC1201: Behavioural Types for Reliable Large-Scale Software Systems. % (BETTY).
+P\'{e}rez is  also affiliated to NOVA  Laboratory for Computer Science and Informatics (NOVA LINCS),  Universidade Nova de Lisboa, Portugal.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -2075,8 +2260,8 @@ the mapping between higher- and first-order values is no longer implicit.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %\bibliographystyle{IEEEtran}
-%\bibliographystyle{plain}
-\bibliographystyle{abbrv}% the recommended bibstyle
+\bibliographystyle{plain}
+%\bibliographystyle{abbrv}% the recommended bibstyle
 {\bibliography{session}}
 
 
