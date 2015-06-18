@@ -26,8 +26,40 @@
 
 \begin{document}
 
+\paragraph{Instructions}
+
+\begin{itemize}
+\item \textbf{Run this file in Haskell}: Go the command line and do
+\texttt{ghci conchask.lhs} - you can then interact with the examples. For example:
+%
+\begin{verbatim}
+$ ghci conchask.lhs
+GHCi, version 7.10.1: http://www.haskell.org/ghc/  :? for help
+[1 of 1] Compiling Main             ( conchask.lhs, interpreted )
+Ok, modules loaded: Main.
+*Main> run process5
+Ping
+Pong
+*Main> :t client5
+client5
+  :: Channel ('Ch 'C)
+     -> Channel ('Ch 'X)
+     -> Session '['Ch 'C :-> (Ping :! End), 'Ch 'X :-> (Pong :! End)] ()
+\end{verbatim}
+
+\item \textbf{Compile the LaTeX version of this file to pdf}: From the command line
+run \texttt{make}. This will generate \emph{conchask.pdf}. But you will need Haskell
+and lhs2TeX installed. If you have Haskell installed, you can then install lhs2TeX easily with:
+%%
+\begin{verbatim}
+cabal update
+cabal install lhs2TeX
+\end{verbatim}
+%%
+\end{itemize}
+
 \section{Overview of the effect-system based encoding of 
-the session-typed $\pi$+$\lambda$-calculus into Haskell}
+the session-typed $HO\pi$-calculus into Haskell}
 
 %if False
 
@@ -59,7 +91,7 @@ the session-typed $\pi$+$\lambda$-calculus into Haskell}
 
 %endif
 
-The basis of the $\pi+\lambda$ encoding in Haskell is a \emph{graded monad}
+The basis of the $HO\pi$ encoding in Haskell is a \emph{graded monad}
 which is used to track session information. This is encoded via the data type:
 
 > data Session (s :: [*]) a = Session {getProcess :: IO a}
@@ -400,7 +432,7 @@ This type checks and can be then run (|run process2|) yielding |"Client: got a p
 
 \subsection{$\lambda$-part}
 
-Since we are embedding the $\pi+\lambda$-calculus, we can abstract over channels with
+Since we are embedding the $HO\pi$-calculus, we can abstract over channels with
 linear functions. So far we have defined functions which take particular names channels
 as arguments, but we have not abstracted over channels names. We now introduce
 linear functions which can abstract over channels (and the session types of those channels).
@@ -663,4 +695,13 @@ Which has its type inferred as:
 <            :-> (Abs (String :! (Int :? Sel Sup (Int :! End) End)) () :! End)]
 <          ()
  
+This is equivalent to the session typing for |client|:
+
+\begin{equation*}
+\begin{array}{l}
+y : ![ \; (![\textbf{String}]. ?[\textbf{Int}] . \oplus[\mathsf{accept} : ![\textbf{Int}], \mathsf{reject} : \mathbf{end}]) \multimap \diamond], \\
+z : ![ \; (![\textbf{String}]. ?[\textbf{Int}] . \oplus[\mathsf{accept} : ![\textbf{Int}], \mathsf{reject} : \mathbf{end}]) \multimap \diamond]
+\end{array} \vdash \emph{client}
+\end{equation*}
+
 \end{document}
