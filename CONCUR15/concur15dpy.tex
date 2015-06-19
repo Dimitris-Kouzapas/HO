@@ -202,10 +202,10 @@ endpoint $s$,
 and $\bout{\dual{s}}{V} Q$
 for an output of value $V$ 
 on endpoint $\dual{s}$ (the \emph{dual} of~$s$).
-Also, $R \by{\bactinp{n}{V}} R'$ denotes an input transition along $n$
+Also, $R \by{\bactinp{s}{V}} R'$ denotes an input transition along $n$
 and
-$R \by{\news{\widetilde{m}} \bactout{n}{V}} R'$
-denotes an output transition along $n$, 
+$R \by{\news{\widetilde{m}} \bactout{s}{V}} R'$
+denotes an output transition along $s$, 
 sending value $V$, and extruding names $\widetilde{m}$. 
 Weak transitions are as usual.
 Throughout the paper, we write $\Re, \Re',\ldots$ to denote binary relations on (typed) processes.
@@ -222,11 +222,11 @@ the universal quantification on the output clause of context bisimilarity.
 Suppose $P \,\Re\, Q$, for some context bisimulation~$\Re$. We have:
 \begin{enumerate}[$(\star)$]
 	\item	Whenever 
-		$P \by{\news{\widetilde{m_1}} \bactout{n}{V}} P'$
+		$P \by{\news{\widetilde{m_1}} \bactout{s}{V}} P'$
 		there exist
 		$Q'$ and $W$
 		such that 
-		$Q \By{\news{\widetilde{m_2}} \bactout{n}{W}} Q'$
+		$Q \By{\news{\widetilde{m_2}} \bactout{s}{W}} Q'$
 		and, \\ \emph{\textbf{for all} $R$}  with $\fv{R}=x$, 
 		$\newsp{\widetilde{m_1}}{P' \Par R\subst{V}{x}} \,\Re\, \newsp{\widetilde{m_2}}{Q' \Par R\subst{W}{x}}$.
 \end{enumerate}
@@ -237,7 +237,7 @@ follows from
 the fact that we work with an \emph{early}
 labelled transition system (LTS). Thus, %a higher-order 
 an input prefix may observe
-finitely many different values.
+infinitely many different values.
 To alleviate this burden,
 %induced by 
 %universal quantification,
@@ -370,11 +370,11 @@ is:
 %\]
 $$
 \boxed{
-~~P \by{\bactinp{n}{V}} P' \,\land\, (V = m \vee V \scong \abs{{x}}{\binp{t}{y} (\appl{y}{{x}})} \vee  V \scong \omapchar{U}  \textrm{ with } t \textrm{ fresh}) ~~\Rightarrow~~
-P' \hby{\bactinp{n}{V}} P'~~}
+~~P \by{\bactinp{s}{V}} P' \,\land\, (V = m \vee V \scong \abs{{x}}{\binp{t}{y} (\appl{y}{{x}})} \vee  V \scong \omapchar{U}  \textrm{ with } t \textrm{ fresh}) ~~\Rightarrow~~
+P' \hby{\bactinp{s}{V}} P'~~}
 $$
 \noi
-Note the distinction between standard and refined transitions: $\by{\bactinp{n}{V}}$ vs. $\hby{\bactinp{n}{V}}$.
+Note the distinction between standard and refined transitions: $\by{\bactinp{s}{V}}$ vs. $\hby{\bactinp{s}{V}}$.
 Our refined  rule for \jpc{(higher-order)} input admits only names, trigger values, and characteristic values.
 Using this rule, we define an alternative, refined  LTS on typed processes: 
 we use it to define
@@ -627,7 +627,7 @@ $\Client$
 narrows the choice down to two hotels, and requires 
  a quote from the two in order to
 decide. The round-trip time (RTT) required for
-taking quotes from the two hotels in not optimal, % (cf.~\cite{MostrousY15}),
+taking quotes from the two hotels is not optimal, % (cf.~\cite{MostrousY15}),
 so the client sends mobile processes to both hotels
 to automatically negotiate and book a room. 
 
@@ -931,24 +931,27 @@ see \appref{app:types} for details of the associated proofs.
 
 
 \begin{example}[Hotel Booking Revisited]\label{exam:type}
-We give types to the client
-processes of~\exref{exam:proc}.
 Assume $S = \btout{\Quote} \btbra{\accept: \tinact, \reject: \tinact}$ and
 $U = \btout{\rtype} \btinp{\Quote} \btsel{\accept: \btout{\creditc} \tinact, \reject: \tinact }$.
-The type for $\abs{x}{P}$ is $\es; \es; y: S \proves \abs{x}{P} \hastype \lhot{U}$
-and the type for $\Client_1$ is
-$~~
-	\es; \es; s_1: \btout{\lhot{U}} \tinact \cat s_2: \btout{\lhot{U}} \tinact \proves \Client_1 \hastype \Proc
-$.
-
-
-The types for $Q_1$ and $Q_2$ are
-$	\es; \es; y: \btout{\Quote} \btinp{\Quote} \tinact \proves \abs{x}{Q_i} \hastype \lhot{U}
-$ ($i=1,2$)
-and the type for $\Client_2$ is
-$~~
-	\es; \es; s_1: \btout{\lhot{U}} \tinact \cat s_2: \btout{\lhot{U}} \tinact \proves \Client_2 \hastype \Proc
-$.
+We give types to the client processes of~\exref{exam:proc}:
+\begin{eqnarray*}
+\es; \es; y: S & \proves &  \abs{x}{P_{xy}} \hastype \lhot{U} \\
+\es; \es; s_1: \btout{\lhot{U}} \tinact \cat s_2: \btout{\lhot{U}} \tinact & \proves &  \Client_1 \hastype \Proc \\
+\es; \es; y: \btout{\Quote} \btinp{\Quote} \tinact & \proves &  \abs{x}{Q_i} \hastype \lhot{U} \quad (i=1,2)\\
+\es; \es; s_1: \btout{\lhot{U}} \tinact \cat s_2: \btout{\lhot{U}} \tinact & \proves &  \Client_2 \hastype \Proc
+\end{eqnarray*}
+%The type for $\abs{x}{P_{xy}}$ is $\es; \es; y: S \proves \abs{x}{P_{xy}} \hastype \lhot{U}$
+%and the type for $\Client_1$ is
+%$~~
+%	\es; \es; s_1: \btout{\lhot{U}} \tinact \cat s_2: \btout{\lhot{U}} \tinact \proves \Client_1 \hastype \Proc
+%$.
+%The types for $Q_1$ and $Q_2$ are
+%$	\es; \es; y: \btout{\Quote} \btinp{\Quote} \tinact \proves \abs{x}{Q_i} \hastype \lhot{U}
+%$ ($i=1,2$)
+%and the type for $\Client_2$ is
+%$~~
+%	\es; \es; s_1: \btout{\lhot{U}} \tinact \cat s_2: \btout{\lhot{U}} \tinact \proves \Client_2 \hastype \Proc
+%$.
 \end{example}
 
 
@@ -1349,13 +1352,14 @@ reduces it (\defref{d:wtenvred}).
 	and typed value
 	\[
 		\Gamma; \es; s': S \cat m: \btinp{\tinact} \tinact \proves V \, \hastype \, 
-\lhot{\btout{\tinact} \tinact} \quad \mbox{with} \quad 
+\lhot{\btout{S} \tinact} \quad \mbox{with} \quad 
 V= \abs{x} \bout{x}{s'} \binp{m}{z} \inact
 	\]
+We illustrate	rule~$\eltsrule{SSnd}$ in \figref{fig:envLTS}.
 Let 
 $\Delta'_1=\{\overline{m}: \btout{\tinact} \tinact\}$ and 
-$U=\btout{\lhot{\btout{S} \tinact}} \tinact$.
-	Then by $\eltsrule{SSnd}$, we can derive:
+$U= \lhot{\btout{S} \tinact}$.
+	Then we can derive:
 	\[
 		(\Gamma; \es; s: \btout{\lhot{\btout{S} \tinact}} \tinact \cat s': S) \by{\news{m} \bactout{s}{V}} (\Gamma; \es; s: \tinact)
 	\]
@@ -1506,7 +1510,10 @@ $\hole$ in $\C$ with process $P$.
 %			\item	If $\Gamma;\emptyset;\Delta \proves P_2 \barb{s}$ then $\Gamma;\emptyset;\Delta \proves P_1 \Barb{s}$.
 %		\end{itemize}
 
-		\item	For all $\C$, there exist $\Delta_1'',\Delta_2''$: $\horel{\Gamma}{\Delta_1''}{\context{\C}{P_1}}{\ \Re\ }{\Delta_2''}{\context{\C}{P_2}}$; 
+%		\item	For all $\C$, there exist $\Delta_1'',\Delta_2''$: $\horel{\Gamma}{\Delta_1''}{\context{\C}{P_1}}{\ \Re\ }{\Delta_2''}{\context{\C}{P_2}}$; 
+%		\item	For all $\C$, we have $\horel{\Gamma}{\Delta_1''}{\context{\C}{P_1}}{\ \Re\ }{\Delta_2''}{\context{\C}{P_2}}$, for some $\Delta_1''$,$\Delta_2''$; 
+		\item	For all $\C$, $\Delta_1''$, $\Delta_2''$ we have: $\horel{\Gamma}{\Delta_1''}{\context{\C}{P_1}}{\ \Re\ }{\Delta_2''}{\context{\C}{P_2}}$; 
+
 		                      \item	The symmetric cases of 1 and 2.                
 	\end{enumerate}
 	The largest such relation is denoted with $\cong$.
@@ -1525,6 +1532,7 @@ the standard (weak) context bisimilarity.
 \label{def:wbc}
 A typed relation $\Re$ is {\em a context bisimulation} if
 for all $\horel{\Gamma}{\Delta_1}{P_1}{\ \Re \ }{\Delta_2}{Q_1}$, 
+\vspace{-3mm}
 	\begin{enumerate}[1)] 
 	\item Whenever 
 $\horel{\Gamma}{\Delta_1}{P_1}
@@ -1599,6 +1607,7 @@ We define characteristic processes/values:
 	Let $u$ and $U$ be a name and a type, respectively.
 	\figref{fig:char} defines the {\em characteristic process} 
 	$\mapchar{U}{u}$ and the {\em characteristic value} $\omapchar{U}$.
+%	For $\omapchar{S}$, $\omapchar{\chtype{S}}$, and $\omapchar{\chtype{L}}$ freshness is assumed with respect to any names in their contexts.
 \end{definition}
 
 \begin{proposition}%[Characteristic Processes/Values Inhabit Their Types]
@@ -1672,7 +1681,9 @@ We define characteristic processes/values:
 	\end{array}
 \]
 \vspace{-5mm}
-\caption{Characteristic Processes \jpc{(top)} and Values \jpc{(bottom)}.\label{fig:char}}
+\caption{Characteristic Processes \jpc{(top)} and Values \jpc{(bottom)} as in \defref{def:char}.
+For $\omapchar{S}$, $\omapchar{\chtype{S}}$, and $\omapchar{\chtype{L}}$ freshness is assumed with respect to any names in their contexts.
+\label{fig:char}}
 %\Hlinefig
 \vspace{-3mm}
 \end{figure}
@@ -2013,7 +2024,7 @@ technique for higher-order processes with sessions.
 %$\cong$, $\wbc$ and $\fwb$ coincide in $\CAL\in \{\HOp, \HO, \sessp\}$. 
 	\label{the:coincidence}
 $\cong$, $\wbc$,  and $\fwb$ coincide in $\HOp$. 
-\vspace{-1mm}
+%\vspace{-1mm}
 \end{theorem}
 \begin{proof}[Proof (Sketch)]
 We use 
