@@ -4,7 +4,40 @@
 the higher-order communication without name-passing nor 
 recursion (\HO) (\secref{subsec:HOpi_to_HO}); and 
 (2)~\HOp into the first-order name-passing communication
-with recursion (\sessp) (\secref{subsec:HOp_to_sessp}). 
+with recursion (\sessp) (\secref{subsec:HOp_to_sessp}).
+
+\dk{
+We further prove that the two encodings are precise.
+An important issue to adress on the precissenes of
+the encoding is that of type preservation. In the
+context of types it is not enough to check that
+the reduction semantics and the behavioural equivalences
+correspond. Type preservation gives a corresponding result on the
+type derivation of the encoded process, thus we can
+see that the encoding is preserving a specific type
+behaviour. For example consider the followin encoding
+of first-order passing into higher-order passing:
+\[
+	\begin{array}{rcl}
+		\map{\bout{n}{m} P} &=& \binp{n}{x} (\map{P} \Par \appl{x}{m})\\
+		\map{\binp{n}{x} P} &=& \bout{n}{\abs{x} P} \inact
+	\end{array}
+\]
+%
+Using the above encoding we could simulate name passing, e.g:
+\[
+	\begin{array}{rcl}
+		\bout{n}{m} P \Par \binp{\dual{n}}{x} Q &\red& P \Par Q \subst{m}{x}\\
+		\map{\bout{n}{m} P \Par \binp{\dual{n}}{x} Q} &=&\\
+		\binp{n}{x} (\map{P} \appl{x}{m}) \Par \bout{\dual{n}}{\abs{x} \map{Q}} \inact &\red&
+		\map{P} \Par \appl{\abs{x}{\map{Q}}}{m}\\
+		&\red&
+		\map{P} \Par \map{Q}\subst{m}{x}
+	\end{array}
+\]
+
+}
+
 
 \subsection{From \HOp to \HO}
 \label{subsec:HOpi_to_HO}
