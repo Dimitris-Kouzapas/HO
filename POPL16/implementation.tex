@@ -1,0 +1,72 @@
+The \PHOpp calculus has all the ingredients for a straightforward
+representation of $\lambda$-terms:
+\begin{itemize}
+	\item	first and higher order abstractions/applications.
+	\item	curried abstractions are represented as polyadic abstractions.
+\end{itemize}
+The \PHOpp calculus has channels that allow first- and higher-order
+passing, along with the standard parallel composition operator.
+Furthermore, the calculus makes use of a session type system to
+type processes.
+In a sense the \PHOpp can be used to have a straightforward representation
+of session typed parallel $\lambda$-terms that communicated on channels.
+
+On the other hand the Concurrent Haskell programming language uses the
+Haskell programming language, where all its operators are encodable in
+$\lambda$-terms and typed in System $F_{\omega}$ and a system
+library which is typed using the $IO$ monad 
+and allows for parallel Haskell processes that communicate on channels.
+
+We can identify the correponding terms of \PHOpp in Concurrent Haskell:
+\begin{itemize}
+	\item	$\map{x} = x$
+	\item	$\map{\abs{\tilde{x}}{P}} = \backslash x_1 \rightarrow \dots \backslash x_n \rightarrow \map{P}$
+	\item	$\map{\appl{V}{V}} = \appl{\map{V}}{\map{V}}$
+	\item	$\map{\bout{n}{V} P} = \dots$
+	\item	$\map{\binp{n}{x} P} = \dots$
+	\item	$\map{P\Par Q} = \mathsf{fork} \dots$
+	\item	$\map{\inact} = \epsilon$
+	\item	$\map{\bsel{s}{P}} = \dots$
+	\item	$\map{\bbra{s}{l_i: P}_{i \in I}} = \dots \mathsf{case}\ x\ \mathsf{of}\ \set{l_i}: \map{P_i}$
+	\item	$\map{\recp{X}{P}} = \mathsf{fixpoint\ operator}$
+\end{itemize}
+
+In the above encoding the Concurrent Haskell operators enjoy the full power
+of $\lambda$-terms with the basic operators of the Concurrent Haskell library.
+Furthermore, the types on the left are typed on session types and the
+types on the right are typed on System $F_\omega$.
+
+By implementing an embedding of the $\PHOpp$ session type system into 
+System $F_\omega$ we can have a straightforward embedding of $\PHOpp$
+in Concurrent Haskell.
+
+
+The main contribution of this section comes by:
+\begin{itemize}
+	\item	reversing the above mapping
+	\item	relying on the fact that session types embed (i.e.~are isomorphic) with polymorphic logic, \cite{DBLP:conf/esop/CairesPPT13}
+\end{itemize}
+
+Now we can claim that $\PHOpp$ is the first complete
+theoretical model that can encode the full capabilities of Concurrent
+Haskell.
+
+Going beyond the $\PHOpp$ calculus we have developed a series
+of encodings that allow us to encode $\PHOpp$ in a number
+of its sub-calculus. So, we can further identify fragments of
+the above encodings to have a core represantation of Concurrent
+Haskell into session typed higher order calculus.
+Our results show that Concurrent Haskell is encodable
+in the terms of Concurrent Haskell that represent
+$\HOp, \HO$ and, $\sessp$ with the latter two being
+core representations.
+
+We argue that it is more convenient to use $\HO$ rather
+than $\sessp$ as a core theoretical model for Concurrent Haskell,
+so \dk{we have implemented an encoding of Concurent Haskell $\lambda$-terms
+and communication primitives in the fragment of Concurrent Haskell that
+represents \HO}.
+
+\dk{At this point maybe a correspondence between the type derivation
+of the session type system and a type derivation of Concurrent Haskell
+session typed processes is in order.}
