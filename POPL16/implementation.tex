@@ -1,3 +1,5 @@
+\newcommand{\hask}[1]{\text{\fontfamily{cmtt}\selectfont #1}}
+
 The \PHOpp calculus has all the ingredients for a straightforward
 representation of $\lambda$-terms:
 \begin{itemize}
@@ -20,14 +22,19 @@ and allows for parallel Haskell processes that communicate on channels.
 We can identify the correponding terms of \PHOpp in Concurrent Haskell:
 \begin{itemize}
 	\item	$\map{x} = x$
-	\item	$\map{\abs{\tilde{x}}{P}} = \backslash x_1 \rightarrow \dots \backslash x_n \rightarrow \map{P}$
-	\item	$\map{\appl{V}{V}} = \appl{\map{V}}{\map{V}}$
-	\item	$\map{\bout{n}{V} P} = \dots$
-	\item	$\map{\binp{n}{x} P} = \dots$
-	\item	$\map{P\Par Q} = \mathsf{fork} \dots$
-	\item	$\map{\inact} = ()$
-	\item	$\map{\bsel{s}{P}} = \dots$
-	\item	$\map{\bbra{s}{l_i: P}_{i \in I}} = \dots \mathsf{case}\ x\ \mathsf{of}\ \set{l_i}: \map{P_i}$
+	\item	$\map{\abs{\tilde{x}}{P}} = \hask{absL ($\lambda{}x_1$ -> ... absL ($\lambda{}x_n$  -> $\map{P}$))}$
+% \backslash x_1 \rightarrow \dots \backslash x_n \rightarrow \map{P}$
+	\item	$\map{\appl{V}{V}} = \hask{appL $\map{V}$ $\map{V}$}$
+	\item	$\map{\bout{n}{V} P} = \hask{(send $\map{n}$ $\map{V}$) >>= ($\lambda$() -> $\map{P}$)}$
+	\item	$\map{\bout{n}{n'} P} = \hask{(chSend $\map{n}$ \map{n'}) >>= ($\lambda$() -> $\map{P}$)}$
+	\item	$\map{\binp{n}{x} P} = \hask{(recv $\map{n}$) >>= ($\lambda$x -> $\map{P}$)}$
+	\item	$\map{\binp{n}{n'} P} = \hask{chRecv $\map{n}$ ($\lambda$\map{n'} -> $\map{P}$)}$
+	\item	$\map{P\Par Q} = \hask{par $\map{P}$ $\map{Q}$}$
+	\item	$\map{\inact} = \hask{return ()}$
+	\item	$\map{\bsel{s}{P}} = \hask{(select $\map{s}$ $\map{l}$) >>= ($\lambda$() -> $\map{P}$)}$
+	\item	$\map{\bbra{s}{l_i: P}_{i \in I}} = \hask{branch $\map{s}$ ($\lambda{}l_0$ -> $\map{P_0}$) 
+($\lambda{}l_1$ -> $\map{P_1}$)}$
+%\dots \mathsf{case}\ x\ \mathsf{of}\ \set{l_i}: \map{P_i}$
 	\item	$\map{\recp{X}{P}} = \mathsf{fixpoint\ operator}$
 \end{itemize}
 
@@ -70,3 +77,94 @@ represents \HO}.
 \dk{At this point maybe a correspondence between the type derivation
 of the session type system and a type derivation of Concurrent Haskell
 session typed processes is in order.}
+
+\subsection{Derivability}
+
+Let $\Gamma \vdash M :: t$ be typing derivations for Haskell programs. We write concrete
+Haskell syntax in \hask{teletype}, and meta variables (denoting Haskell programs or types)
+in standard font. 
+
+The core of the embedding is the graded monad \hask{Session} which
+takes two parameters, a type-level representation of session types
+environments, of the form \hask{\{n$_1$ :-> $S_1$, ..., n$_k$ :-> $S_k$\}} for channel names
+\hask{n$_1$} to \hask{n$_k$} with corresponding session types \hask{S$_1$} to \hask{S$_k$}. 
+
+Type-level session types are formed by the following inductive grammar of 
+type constructors for names (with endpoints) $n$, name symbols $m$, session types $S$ and
+labels $l$:
+%%
+\begin{align*}
+n & ::= \hask{Ch} \, m \mid \hask{Op} \, m \\
+m & ::= \hask{A} \mid \hask{B} \mid \hask{C} \mid \ldots \\
+S & ::= \hask{End} \mid \hask{$t$:!$S$} \mid \hask{(Delg $S$):!$S$} \mid \hask{$t$:?$S$} \mid 
+\hask{(Delg $S$):?$S$}\\
+ & \quad\; \mid \hask{Sel $l$ $S$ $S$} \mid \hask{$S$ :\& $S$} \\
+l & ::= \hask{Left} \mid \hask{Right} \mid \hask{Sup}
+\end{align*}
+%%
+where $t$ ranges over Haskell types, 
+\hask{Delg} denotes a delegated channel with its session type.
+
+\newcommand{\interp}[1]{\map{#1}}
+
+We define an interpretation function $\interp{-}$, overloaded on terms, types, and contexts,
+that maps $HO\pi$ terms, types, and contexts to Haskell.  For session types this is defined:
+%%
+\begin{align*}
+\interp{\btout{L} S} & = \hask{$\interp{L}$ :! $\interp{S}$} \\
+\interp{\btout{S} S} & = \hask{(Delg $\interp{S}$) :! $\interp{S}$} \\
+\interp{\btinp{L} S} & = \hask{$\interp{L}$ :? $\interp{S}$} \\
+\interp{\btinp{S} S} & = \hask{(Delg $\interp{S}$) :? $\interp{S}$} \\
+\interp{\btsel{l_0:S}} & = \hask{Sel Left \interp{S} t} \\
+\interp{\btsel{l_1:S}} & = \hask{Sel Right t \interp{S}} \\
+\interp{\btsel{l_n:S}} & = \hask{Sel Left $\interp{\btsel{l_{n-1}:S}}$ t} \\
+\interp{\btsel{l_i:S_i}_{i \in \textit{fin$(n)$}}} & = \hask{Sel Sup ($\interp{\btsel{(l_i : S_i) \backslash (l_n : S_n)}_{i \in \textit{fin$(n-1)$}}}$) $\interp{S_n}$} \\
+\interp{\btbra{l_i:S_i}_{i \in \textit{fin$(n)$}}} & = \hask{$\interp{\btbra{(l_i : S_i) \backslash (l_n : S_n)}_{i \in \textit{fin$(n-1)$}}}$ :\& $\interp{S_n}$} \\
+\interp{\texttt{end}} & = \hask{End} 
+\end{align*}
+%%
+The interpretation of contexts preserves the structure, applying the session-type interpretation.
+
+We define a sequential composition operator for session-types and contexts, written $\bullet$,
+defined:
+%%
+\begin{align*}
+\begin{array}{rl}
+S \; \bullet\; \hask{end} & \; = \; S \\
+\hask{end} \; \bullet\; S & \; = \; S \\
+\hask{$t$ :! $S$} \; \bullet \; T & \; = \; \hask{$t$ :! $(S \; \bullet \; T)$} \\
+\hask{$t$ :? $S$} \; \bullet \; T & \; = \; \hask{$t$ :? $(S \; \bullet \; T)$} \\
+\oplus[\tilde{l} : \tilde{S}] \bullet \; T & \; = \; \oplus[\tilde{l} : \tilde{S} \; \bullet \; T] \\
+\&[\tilde{l} : \tilde{S}] \bullet \; T & \; = \; \&[\tilde{l} : \tilde{S} \; \bullet \; T] 
+\end{array}
+\end{align*}
+%%
+
+\paragraph{Correspondence between rules}
+\begin{align*}
+&		\trule{Send-val} \;\; \tree{
+			\Gamma; \Lambda_1; \Delta_1 \proves P \hastype \Proc
+			\quad
+			\Gamma; \emptyset; \emptyset \proves V \hastype L
+			\quad
+			u:S \in \Delta_1 
+		}{
+			\Gamma; \Lambda_1; (\Delta_1 \setminus u:S) \cat u:\btout{L} S \proves \bout{u}{V} P \hastype \Proc
+		} \\[0.6em]
+\Rightarrow \quad  & \dfrac{\interp{\Gamma} \vdash \interp{P} : \hask{Session $\interp{\Delta_1}$ ()} \quad \interp{\Gamma} \vdash \interp{V} : \interp{L}}
+                    {\Gamma, \; \hask{c} : \hask{Channel $\interp{u}$} \vdash \hask{(send c $\interp{V}$) >>= ($\lambda$() -> $\interp{P}$)}} \\
+            & \qquad\quad \hask{:: Session \{$\interp{u}$ :-> $\interp{L}$:! End\}$\,\bullet \; \interp{\Delta_1}$ ()}
+\end{align*}
+
+\begin{align*}
+&		\trule{Rcv-val } \;\; \tree{
+		\Gamma; \Lambda_1; \Delta_1 \cat u: S \proves P \hastype \Proc
+			\quad
+			\Gamma; \emptyset; \emptyset \proves {x} \hastype {L}
+		}{
+			\Gamma \backslash x; \Lambda_1; \Delta_1 \cat u: \btinp{L} S \vdash \binp{u}{{x}} P \hastype \Proc
+		} \\[0.6em]
+\Rightarrow \quad & \dfrac{\interp{\Gamma, x : L} \vdash \interp{P} : \hask{Session $\interp{\Delta_1 \cat u: S}$ ()}}
+                          {\interp{\Gamma}, \; \hask{c} : \hask{Channel $\interp{u}$} \vdash \hask{(recv c) >>= ($\lambda$x -> $\interp{P}$)}} \\
+ & \qquad\quad \hask{:: Session \{$\interp{u}$ :-> $\interp{L}$:? End\}$\,\bullet \; \interp{\Delta_1 \cat u: S}$ ()}
+\end{align*}

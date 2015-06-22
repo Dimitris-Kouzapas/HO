@@ -695,7 +695,12 @@ z : ![ \; (![\textbf{String}]. ?[\textbf{Int}] . \oplus[\mathsf{accept} : ![\tex
 
 \section{Typed encoding - HO$\pi$ to HO}
 
+\subsection{Derivability of typing}
 
+> sendD :: Channel c -> t -> Session g b -> Session (UnionS '[c :-> t :! End] g) b
+> sendD c v p = send c v >>= (\() -> p)
+
+> {-
 > sendConv
 >  :: Channel (Ch X)
 >     -> Channel (Ch Y)
@@ -705,6 +710,7 @@ z : ![ \; (![\textbf{String}]. ?[\textbf{Int}] . \oplus[\mathsf{accept} : ![\tex
 >                            (\(z :: (Channel (Ch Z))) -> do x <- recv z
 >                                                            appL x w)
 >                     send u f
+> -}
 
 
 
