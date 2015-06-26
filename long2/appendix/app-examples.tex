@@ -1,0 +1,148 @@
+% !TEX root = ../main.tex
+\newcommand{\Client}{\mathsf{Client}}
+\newcommand{\rtype}{\mathsf{room}}
+\newcommand{\Quote}{\mathsf{quote}}
+\newcommand{\accept}{\mathsf{accept}}
+\newcommand{\reject}{\mathsf{reject}}
+\newcommand{\creditc}{\mathsf{credit}}
+
+\section{Examples: Hotel Booking Scenario}
+To illustrate \HOp and its expressive power, 
+we consider a usecase scenario that adapts the example given by Mostrous and Yoshida~\cite{tlca07,MostrousY15}.
+The scenario involves a $\Client$ process that wants to book
+a hotel room. % for her holidays. % in a remote island
+%The Client 
+$\Client$
+narrows the choice down to two hotels, and requires 
+ a quote from the two in order to
+decide. The round-trip time (RTT) required for
+taking quotes from the two hotels in not optimal, % (cf.~\cite{MostrousY15}),
+so the client sends mobile processes to both hotels
+to automatically negotiate and book a room. 
+
+We now present two \HOp implementations of this scenario.
+For convenience, we write $\If e\ \Then (P_1\ \Else \ P_2)$ 
+to denote a conditional process that executes $P_1$ or $P_2$ depending on boolean expression $e$ (encodable using labelled choice).
+The \emph{first implementation} is  as follows:
+%
+%\[
+	\begin{eqnarray*}%{rcl}
+		 P_{xy}  \!\!\! & \defeq &  \!\!\! \bout{x}{\rtype} \binp{x}{\Quote} \bout{y}{\Quote}
+		y \triangleright \left\{
+				\begin{array}{l}
+					\accept: \bsel{x}{\accept} \bout{x}{\creditc} \inact,\\
+					\reject: \bsel{x}{\reject} \inact
+				\end{array}
+				\right\}
+		\\ %[3mm]
+		 \Client_1 \!\!\!\!\! & \defeq  &  \!\!\! \newsp{h_1, h_2}{\bout{s_1}{\abs{x}{P_{xy} \subst{h_1}{y}}} \bout{s_2}{\abs{x}{P_{xy} \subst{h_2}{y}}} \inact \Par  \\
+		& & 
+		\!\!\! \binp{\dual{h_1}}{x} \binp{\dual{h_2}}{y}  \If x \leq y\   \Then (\bsel{\dual{h_1}}{\accept} \bsel{\dual{h_2}}{\reject} \inact \ \Else \ \bsel{\dual{h_1}}{\reject} \bsel{\dual{h_2}}{\accept} \inact )
+		}
+	\end{eqnarray*}
+%\]
+%
+Process $\Client_1$ sends two abstractions with body $P_{xy}$, one to each hotel, 
+		using sessions $s_1$ and $s_2$.
+		That is, $P_{xy}$ is the mobile code:
+	while
+		name $x$ is meant to be instantiated by the hotel as the negotiating
+		endpoint, name $y$ is used to interact with $\Client_1$.	
+		Intuitively, process $P_{xy}$ (i)  sends the room requirements to the hotel;
+		(ii) receives a quote from the hotel;
+		(iii) sends the quote to  $\Client_1$;
+		(iv) expects a choice from   $\Client_1$ whether to accept or reject the offer;
+		(v) if the choice is accept then it informs the hotel and performs the booking;
+		otherwise, if the choice is reject then it informs the hotel and ends the session.
+				$\Client_1$ instantiates two copies of  $P_{xy}$ as abstractions
+		on session $x$. It uses two
+		fresh endpoints $h_1, h_2$ to substitute channel $y$
+		in $P_{xy}$. This enables communication with the mobile code(s).
+		In fact, 
+		$\Client_1$ uses the dual endpoints $\dual{h_1}$ and $\dual{h_2}$
+		to receive the negotiation
+		result from the two remote instances of $P$ and then inform the two
+		processes for the final booking decision.
+
+Notice that	the above implementation does not affect
+the time needed for the whole protocol to execute,
+since the two remote processes are used
+to send/receive data to $\Client_1$.
+
+We present now a \emph{second  implementation}
+%of the same scenario, 
+in which the two mobile processes are meant 
+to interact with each other (rather than with the client) to reach to an agreement:
+%
+\[
+	\begin{array}{rcl}
+	    R_x & \defeq & \If\ \Quote_1 \leq \Quote_2 \, \Then  (\bsel{x}{\accept} \bout{x}{\creditc} \inact \  \Else \ \bsel{x}{\reject} \inact) \\
+		Q_1 &\defeq&	\bout{x}{\rtype} \binp{x}{\Quote_1} \bout{y}{\Quote_1} \binp{y}{\Quote_2} R_x \\
+		Q_2 &\defeq&	\bout{x}{\rtype} \binp{x}{\Quote_1} \binp{y}{\Quote_2} \bout{y}{\Quote_1} R_x \\
+%			&&
+%				\begin{array}{ll}
+%					\If\ \Quote_1 \leq \Quote_2 &\Then  \bsel{x}{\accept} \bout{x}{\creditc} \inact \  \Else \ \bsel{x}{\reject} \inact %\\
+%				%	 & \Else \bsel{x}{\reject} \inact
+%				\end{array}
+%		\\
+%		Q_2 &\defeq&	\bout{x}{\rtype} \binp{x}{\Quote_1} \binp{y}{\Quote_2} \bout{y}{\Quote_1}\\
+%			&&
+%				\begin{array}{ll}
+%					\If\ \Quote_1 \leq \Quote_2  & \Then \bsel{x}{\accept} \bout{x}{\creditc} \inact\\
+%					 & \Else \bsel{x}{\reject} \inact
+%				\end{array}
+%		\\
+		\Client_2 &\defeq& \newsp{h}{\bout{s_1}{\abs{x}{Q_1 \subst{h}{y}}} \bout{s_2}{\abs{x}{Q_2 \subst{\dual{h}}{y}}} \inact}
+	\end{array}
+\]
+%\end{example}
+Processes $Q_1$ and $Q_2$  negotiate a quote from the
+		hotel in the same fashion as process $P_{xy}$ in $\Client_1$.
+%		Notice that $Q_2$ is defined exactly as $Q_1$ except for the sequence of messages on~$y$:
+%		rather than 
+%		sending $\Quote_1$ first and receiving $\Quote_2$ later, 
+%		process $Q_2$ receives $\Quote_2$ first and sends $\Quote_1$ later.
+		The key difference with respect to $P_{xy}$ is that $y$ is used for
+		interaction between process $Q_1$ and $Q_2$. Both processes send
+		their quotes to each other and then internally follow the same
+		logic to reach to a decision.
+		Process  $\Client_2$ then uses sessions $s_1$ and $s_2$ to send the two
+		instances of $Q_1$ and $Q_2$ to the two hotels, using them 
+	 as abstractions
+		on name $x$. It further substitutes
+		the two endpoints of a fresh channel $h$ to channels $y$ respectively,
+		in order for the two instances to communicate with each other.
+
+
+
+%\begin{itemize}
+%	\item	Processes $P_1$ and $P_2$ are responsible for negotiating a quote from the
+%		hotel in the same fashion as process $P$ in the previous implementation.
+%
+%	\item	The difference with process $P$ is that the channel $y$ is used for
+%		interaction between process $P_1$ and $P_2$. Both processes send
+%		there quotes to each other and then internally follow the same
+%		logic to reach to a decision.
+%
+%	\item	The role of $\Client_2$ is to instantiate $P_1$ and $P_2$ as abstractions
+%		on name $x$. It further substitutes
+%		the two endpoints of a fresh channel $h$ to channels $y$ respectively,
+%		in order for the two instances to be able to communicate with each other.
+%
+%	\item	Process $\Client_2$ then uses sessions $s_1$ and $s_2$ to send the two
+%		instances of $P_1$ and $P_2$ to the two hotels.
+%\end{itemize}
+
+The differences between $\Client_1$ and $\Client_2$ can be  seen in the sequence diagrams of \figref{fig:exam}. 
+We will assign session types to these client processes in Example \ref{exam:type}.
+Later on, we will show that they are behaviourally equivalent using characteristic bisimilarity;
+see \propref{p:examp}.
+\begin{figure}[!t]
+\input{diagram}
+\caption{Sequence diagrams for $\Client_1$ and $\Client_2$ as in Example~\ref{exam:proc}\label{fig:exam}.}
+\vspace{-2mm}
+\end{figure}
+
+
+
+\section{Comparison with Jeffrey and Rathke's Approach}
