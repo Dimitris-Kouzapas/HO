@@ -7,6 +7,7 @@
 \newcommand{\creditc}{\mathsf{credit}}
 
 \section{Examples: Hotel Booking Scenario}
+
 To illustrate \HOp and its expressive power, 
 we consider a usecase scenario that adapts the example given by Mostrous and Yoshida~\cite{tlca07,MostrousY15}.
 The scenario involves a $\Client$ process that wants to book
@@ -19,6 +20,9 @@ decide. The round-trip time (RTT) required for
 taking quotes from the two hotels in not optimal, % (cf.~\cite{MostrousY15}),
 so the client sends mobile processes to both hotels
 to automatically negotiate and book a room. 
+
+\subsection{The Scenario, as \HOp Processes}\label{appss:exam}
+
 
 We now present two \HOp implementations of this scenario.
 For convenience, we write $\If e\ \Then (P_1\ \Else \ P_2)$ 
@@ -79,19 +83,6 @@ to interact with each other (rather than with the client) to reach to an agreeme
 	    R_x & \defeq & \If\ \Quote_1 \leq \Quote_2 \, \Then  (\bsel{x}{\accept} \bout{x}{\creditc} \inact \  \Else \ \bsel{x}{\reject} \inact) \\
 		Q_1 &\defeq&	\bout{x}{\rtype} \binp{x}{\Quote_1} \bout{y}{\Quote_1} \binp{y}{\Quote_2} R_x \\
 		Q_2 &\defeq&	\bout{x}{\rtype} \binp{x}{\Quote_1} \binp{y}{\Quote_2} \bout{y}{\Quote_1} R_x \\
-%			&&
-%				\begin{array}{ll}
-%					\If\ \Quote_1 \leq \Quote_2 &\Then  \bsel{x}{\accept} \bout{x}{\creditc} \inact \  \Else \ \bsel{x}{\reject} \inact %\\
-%				%	 & \Else \bsel{x}{\reject} \inact
-%				\end{array}
-%		\\
-%		Q_2 &\defeq&	\bout{x}{\rtype} \binp{x}{\Quote_1} \binp{y}{\Quote_2} \bout{y}{\Quote_1}\\
-%			&&
-%				\begin{array}{ll}
-%					\If\ \Quote_1 \leq \Quote_2  & \Then \bsel{x}{\accept} \bout{x}{\creditc} \inact\\
-%					 & \Else \bsel{x}{\reject} \inact
-%				\end{array}
-%		\\
 		\Client_2 &\defeq& \newsp{h}{\bout{s_1}{\abs{x}{Q_1 \subst{h}{y}}} \bout{s_2}{\abs{x}{Q_2 \subst{\dual{h}}{y}}} \inact}
 	\end{array}
 \]
@@ -115,34 +106,266 @@ Processes $Q_1$ and $Q_2$  negotiate a quote from the
 
 
 
-%\begin{itemize}
-%	\item	Processes $P_1$ and $P_2$ are responsible for negotiating a quote from the
-%		hotel in the same fashion as process $P$ in the previous implementation.
-%
-%	\item	The difference with process $P$ is that the channel $y$ is used for
-%		interaction between process $P_1$ and $P_2$. Both processes send
-%		there quotes to each other and then internally follow the same
-%		logic to reach to a decision.
-%
-%	\item	The role of $\Client_2$ is to instantiate $P_1$ and $P_2$ as abstractions
-%		on name $x$. It further substitutes
-%		the two endpoints of a fresh channel $h$ to channels $y$ respectively,
-%		in order for the two instances to be able to communicate with each other.
-%
-%	\item	Process $\Client_2$ then uses sessions $s_1$ and $s_2$ to send the two
-%		instances of $P_1$ and $P_2$ to the two hotels.
-%\end{itemize}
-
 The differences between $\Client_1$ and $\Client_2$ can be  seen in the sequence diagrams of \figref{fig:exam}. 
-We will assign session types to these client processes in Example \ref{exam:type}.
+Next, we will assign session types to these client processes. % in Example \ref{exam:type}.
 Later on, we will show that they are behaviourally equivalent using characteristic bisimilarity;
 see \propref{p:examp}.
 \begin{figure}[!t]
 \input{diagram}
-\caption{Sequence diagrams for $\Client_1$ and $\Client_2$ as in Example~\ref{exam:proc}\label{fig:exam}.}
-\vspace{-2mm}
+\caption{Sequence diagrams for $\Client_1$ and $\Client_2$ as in \S\,\ref{appss:exam}\label{fig:exam}.}
+%\vspace{-2mm}
 \end{figure}
 
+\paragraph{Types.}
+Assume $S = \btout{\Quote} \btbra{\accept: \tinact, \reject: \tinact}$ and
+$U = \btout{\rtype} \btinp{\Quote} \btsel{\accept: \btout{\creditc} \tinact, \reject: \tinact }$.
+We give types to the client processes of~\S\,\ref{appss:exam}:
+\begin{eqnarray*}
+\es; \es; y: S & \proves &  \abs{x}{P_{xy}} \hastype \lhot{U} \\
+\es; \es; s_1: \btout{\lhot{U}} \tinact \cat s_2: \btout{\lhot{U}} \tinact & \proves &  \Client_1 \hastype \Proc \\
+\es; \es; y: \btout{\Quote} \btinp{\Quote} \tinact & \proves &  \abs{x}{Q_i} \hastype \lhot{U} \quad (i=1,2)\\
+\es; \es; s_1: \btout{\lhot{U}} \tinact \cat s_2: \btout{\lhot{U}} \tinact & \proves &  \Client_2 \hastype \Proc
+\end{eqnarray*}
 
+%\paragraph{Typed LTS.}
+%	Consider environment %tuple
+%	$
+%		(\Gamma; \es; s: \btout{\lhot{\btout{S} \tinact}} \tinact \cat s': S)
+%	$
+%	and typed value
+%	\[
+%		\Gamma; \es; s': S \cat m: \btinp{\tinact} \tinact \proves V \, \hastype \, 
+%\lhot{\btout{S} \tinact} \quad \mbox{with} \quad 
+%V= \abs{x} \bout{x}{s'} \binp{m}{z} \inact
+%	\]
+%We illustrate	rule~$\eltsrule{SSnd}$ in \figref{fig:envLTS}.
+%Let 
+%$\Delta'_1=\{\overline{m}: \btout{\tinact} \tinact\}$ and 
+%$U= \lhot{\btout{S} \tinact}$.
+%	Then we can derive:
+%	\[
+%		(\Gamma; \es; s: \btout{\lhot{\btout{S} \tinact}} \tinact \cat s': S) \by{\news{m} \bactout{s}{V}} (\Gamma; \es; s: \tinact)
+%	\]
 
-\section{Comparison with Jeffrey and Rathke's Approach}
+\subsection{Equivalence of the Client Implementations}
+Now we prove 
+that  processes 
+$\Client_1$ and $\Client_2$ 
+in \S\,\ref{appss:exam}
+are behaviourally equivalent.
+
+\begin{proposition}\label{p:examp}
+	Let
+	$S = \btout{\rtype} \btinp{\Quote} \btsel{\accept: \btout{\creditc} \tinact, \reject: \tinact}$ and 
+$\Delta = s_1: \btout{\lhot{S}} \tinact \cat s_2: \btout{\lhot{S}} \tinact$. 
+Then
+	$ \horel
+	{\es}{\Delta}{\Client_1}
+	{\wbf}
+	{\Delta}{\Client_2}$. %and $\Client_1$, $\Client_2$ in Example \ref{exam:proc}. 
+%\vspace{-2mm}
+\end{proposition}
+
+\begin{proof}
+	\noi We show a case where each typed process simulates the other.
+
+	\noi For fresh sessions $s, k$ we get
+	$
+		\mapchar{\btinp{\lhot{S}} \tinact}{s} = \binp{s}{x} (\mapchar{\tinact}{s} \Par \mapchar{\lhot{S}}{x})
+%		= \binp{s}{x} (\inact \Par \appl{x}{\omapchar{S}})
+%		= \binp{s}{x} (\inact \Par \appl{x}{k})
+		\scong \binp{s}{x} (\appl{x}{k})
+	$
+	
+
+	\noi To observe $\Client_1$ assume:
+%
+	\begin{eqnarray*}
+		R' &\scong& \If\ x \leq y\ \Then (\bsel{\dual{h_1}}{\accept} \bsel{\dual{h_2}}{\reject} \inact
+		\Else \bsel{\dual{h_1}}{\reject} \bsel{\dual{h_2}}{\accept} \inact)\\
+		Q &\scong& \bbra{z}{\accept: \bsel{k_2}{\accept} \bout{k_2}{\creditc} \inact, \reject: \bsel{k_2}{\reject} \inact}
+%		Q &\scong& z \triangleleft \left\{
+%		\begin{array}{l}
+%			\accept: \bsel{k_2}{\accept} \bout{k_2}{\creditc} \inact,\\
+%			\reject: \bsel{k_2}{\reject} \inact
+%		\end{array}
+%		\right\}
+	\end{eqnarray*}
+%
+	\noi We can now observe $\Client_1$ as:
+\[
+	\begin{array}{ll}
+		& \es; \es; \Delta \proves \Client_1
+		\\[1mm]
+
+		\by{\bactout{s_1}{\abs{x}{P_{xy} \subst{h_1}{y}}}}&
+		\es; \es; s_2: \btout{\lhot{S}} \tinact \cat k_1: S \proves \\
+		& \newsp{h_1, h_2}{\bout{s_2}{\abs{x}{P_{xy} \subst{h_2}{y}}} \inact
+		\Par \binp{\dual{h_1}}{x} \binp{\dual{h_2}}{y} R'\\
+		& \Par \ftrigger{t_1}{P_{xy} \subst{h_1}{y}}{\lhot{S}}}
+		%\binp{t_1}{x} \newsp{s}{\mapchar{\btinp{\lhot{S}}}{s} \Par \bout{\dual{s}}{\abs{x}{P \subst{h_1}{y}}} \inact }}
+		\\[1mm]
+
+		\by{\bactout{s_2}{\abs{x}{P_{xy} \subst{h_2}{y}}}}&
+		\es; \es; k_1: S \cat k_2: S \proves \newsp{h_1, h_2}{
+		\binp{\dual{h_1}}{x} \binp{\dual{h_2}}{y} R'\\
+		& \ftrigger{t_1}{P_{xy} \subst{h_1}{y}}{\lhot{S}} \Par \ftrigger{t_2}{P_{xy} \subst{h_2}{y}}{\lhot{S}}}
+%		\Par \binp{t_1}{x} \newsp{s}{\binp{s}{x} \appl{x}{k_1} \Par \bout{\dual{s}}{\abs{x}{P \subst{h_1}{y}}} \inact }\\
+%		& \Par \binp{t_2}{x} \newsp{s}{\mapchar{\btinp{\lhot{S}}}{s} \Par \bout{\dual{s}}{\abs{x}{P \subst{h_2}{y}}} \inact }}
+		\\[1mm]
+
+		\by{\bactinp{t_1}{b}} \by{\bactinp{t_2}{b}} \by{\dtau}\by{\dtau}&
+		\es; \es; k_1: S \cat k_2: S \proves \newsp{h_1, h_2}{
+		\binp{\dual{h_1}}{x} \binp{\dual{h_2}}{y} R'\\
+		& \Par P_{xy}\subst{h_1}{y} \subst{k_1}{x} \Par P_{xy}\subst{h_1}{y} \subst{k_2}{x}}
+		\\[1mm]
+
+		\by{\bactout{k_1}{\rtype}} \by{\bactout{k_2}{\rtype}}\\
+		\by{\bactinp{k_1}{\Quote}} \by{\bactinp{k_2}{\Quote}}
+		& \es; \es; k_1: S' \cat k_2: S' \proves \newsp{h_1, h_2}{
+		\binp{\dual{h_1}}{x} \binp{\dual{h_2}}{y} R'\\
+		& \Par \bout{h_1}{\Quote} Q \subst{h_1}{z} \Par \bout{h_2}{\Quote} Q \subst{h_2}{z}}
+		\\[1mm]
+
+		\by{\dtau} \by{\dtau} \by{\dtau}&
+		\es; \es; k_1: S' \cat k_2: S' \proves \\
+		& \newsp{h_1, h_2}{\bsel{\dual{h_1}}{\accept} \bsel{\dual{h_2}}{\reject} \inact
+		\Par Q \subst{h_1}{z} \Par Q \subst{h_2}{z}}
+		\\[1mm]
+
+		\by{\dtau} \by{\dtau}&
+		\es; \es; k_1: S' \cat k_2: S' \proves
+		\bsel{k_1}{\accept} \bout{k_1}{\creditc} \inact 
+		\Par \bsel{k_2}{\reject} \inact
+		\\[1mm]
+
+		\by{\bactsel{k_1}{\accept}} \by{\bactsel{k_2}{\reject}} \by{\bactsel{k_1}{\creditc}}&
+		\es; \es; \es \proves \inact
+	\end{array}
+\]
+
+\noi	We can observe the same sequence of external transitions for $\Client_2$:
+
+\[
+	\begin{array}{ll}
+		& \es; \es; \Delta \proves \Client_2
+\\[1mm]
+
+		\by{\bactout{s_1}{\abs{x}{Q_1 \subst{h}{y}}}}&
+		\es; \es; s_2: \btout{\lhot{S}} \tinact \cat k_1: S \proves \newsp{h}{\bout{s_2}{\abs{x}{Q_2 \subst{\dual{h}}{y}}} \inact\\
+		& \Par \ftrigger{t_1}{Q_1 \subst{h}{y}}{\lhot{S}}}
+		% \binp{t_1}{x} \newsp{s}{\mapchar{\btinp{\lhot{S}}}{s} \Par \bout{\dual{s}}{\abs{x}{Q_1 \subst{h}{y}}} \inact }}
+\\[1mm]
+
+		\by{\bactout{s_2}{\abs{x}{Q_2 \subst{\dual{h}}{y}}}}&
+		\es; \es; k_1: S \cat k_2: S \proves \newsp{h}{\\
+		& \ftrigger{t_1}{Q_1 \subst{h}{y}}{\lhot{S}} \Par \ftrigger{t_2}{Q_2 \subst{\dual{h}}{y}}{\lhot{S}}}
+%		\binp{t_1}{x} \newsp{s}{\binp{s}{x} \appl{x}{k_1} \Par \bout{\dual{s}}{\abs{x}{Q_1 \subst{h}{y}}} \inact }\\
+%		& \Par \binp{t_2}{x} \newsp{s}{\mapchar{\btinp{\lhot{S}}}{s} \Par \bout{\dual{s}}{\abs{x}{Q_2 \subst{\dual{h}}{y}}} \inact }}
+\\[1mm]
+
+		\by{\bactinp{t_1}{b}} \by{\bactinp{t_2}{b}} \by{\dtau}\by{\dtau}&
+		\es; \es; k_1: S \cat k_2: S \proves \newsp{h}{
+		P\subst{h}{y} \subst{k_1}{x} \Par P_{xy}\subst{\dual{h}}{y} \subst{k_2}{x}}
+\\[1mm]
+
+		\by{\bactout{k_1}{\rtype}} \by{\bactout{k_2}{\rtype}}\\
+		\by{\bactinp{k_1}{\Quote}} \by{\bactinp{k_2}{\Quote}}
+		& \es; \es; k_1: S' \cat k_2: S' \proves \newsp{h}{
+		\bout{h}{\Quote_1} \binp{h}{\Quote_2} R \subst{k_1}{x} \\
+		& \Par \binp{\dual{h}}{\Quote_2} \bout{\dual{h}}{\Quote_1} R \subst{k_2}{x}}
+\\[1mm]
+		\by{\dtau} \by{\dtau}&
+		\es; \es; k_1: S' \cat k_2: S' \proves R \subst{k_1}{x} \Par R \subst{k_2}{x}
+\\[1mm]
+		\by{\dtau} \by{\dtau}&
+		\es; \es; k_1: S' \cat k_2: S' \proves
+		\bsel{k_1}{\accept} \bout{k_1}{\creditc} \inact 
+		\Par \bsel{k_2}{\reject} \inact
+\\[1mm]
+		\by{\bactsel{k_1}{\accept}} \by{\bactsel{k_2}{\reject}} \by{\bactsel{k_1}{\creditc}}&
+		\es; \es; \es \proves \inact
+	\end{array}
+\]
+\end{proof}
+
+\section{Comparison with Jeffrey and Rathke, By Example}
+\label{app:jandr}
+
+\noi 
+Following up the claim made in \S\,\ref{sec:related}
+we contrast our approach with that in~\cite{JeffreyR05} in a concrete, representative example.
+
+	Consider process
+	$$\Gamma; \es; \Delta \cat n: \btout{U} \tinact \proves \bout{n}{\abs{x}{\appl{x}(\abs{y}{\bout{y}{m}} \inact)}} \inact \hastype \Proc$$
+	with $U = \shot{(\shot{(\shot{(\btout{S} \tinact)})})}$. 
+	We describe the transitions required to check the bisimilarity
+	of this process with itself. 
+	In our framework, first we have a typed transition
+	$$
+	\Gamma; \es; \Delta \cat n: \btout{U} \tinact \proves \bout{n}{\abs{x}{\appl{x}(\abs{y}{\bout{y}{m}} \inact)}} \inact \by{\bactout{n}{\abs{x}{\appl{x}(\abs{y}{\bout{y}{m}} \inact)}}}\Gamma; \es; \Delta \proves \inact
+	$$
+	In the framework of~\cite{JeffreyR05} a similar (but untyped) output transition takes place.
+    In \figref{f:comparison} we compare the closures obtained by the definition of bisimilarity in our approach (lines (1) to (5)) and in~\cite{JeffreyR05} (lines (6) to (10)).
+    In the upper part, we let 
+    \begin{eqnarray*}
+    V & = & \abs{x}{\appl{x}(\abs{y}{\bout{y}{m}} \inact)} \\
+	\mapchar{\btinp{U} \inact}{s} & = & \binp{s}{x} \appl{x}{(\abs{y}{(\appl{y}{a}))}}\qquad \text{for some fresh $a$}
+	\end{eqnarray*}
+	Then we have one visible input transition (line (1)), followed by four deterministic internal transitions; no replicated processes are needed.
+	The approach of~\cite{JeffreyR05} uses 
+	the same number of transitions (five), but more visible transitions are required
+	(three, in lines (6), (8), and (9)) and at the end, two replicated processes remain.
+	This is how linearity information in session types allows us to have more economical closures.
+	Note that $\tau_l$ and $\tau_k$ in lines (6) and (8) denote triggered processes on names $l$ and $k$.
+	
+	
+%This simple example shows how both approaches feature the same number of (typed) transitions.
+%It is interesting to see how our approach based on refined LTS and characteristic bisimilarity requires less observable actions than that in~\cite{JeffreyR05}.
+%Also, as we are able to distinguish between linear and shared names, we require less replicated processes than in~\cite{JeffreyR05}.
+	
+	
+%
+%	\begin{eqnarray*}
+%		\mapchar{\btinp{U} \inact}{s}\\
+%		= && \binp{s}{x} \mapchar{\shot{(\shot{(\shot{(\btout{S} \tinact)})})}}{x}\\
+%		= && \binp{s}{x} \appl{x}{\omapchar{\shot{(\shot{(\btout{S} \tinact)})}}}\\
+%		= && \binp{s}{x} \appl{x}{(\abs{y}{\mapchar{\shot{(\btout{S} \tinact)}}{y}})}\\
+%		= && \binp{s}{x} \appl{x}{(\abs{y}{\appl{y}{\omapchar{\btout{S} \tinact}})}}\\
+%		= && \binp{s}{x} \appl{x}{(\abs{y}{\appl{y}{a})}}\\
+%	\end{eqnarray*}
+%
+%	The characteristic process of
+%	the type $\shot{(\shot{(\shot{(\btout{S} \tinact)})})}$ is
+
+\begin{figure}[!t]
+%\begin{tabular}{c}
+%\hline 
+	\begin{tabular}{rcl}
+%		(1)& & $\Gamma; \es; \Delta \cat n: \btout{U} \tinact \proves \bout{n}{\abs{x}{\appl{x}(\abs{y}{\bout{y}{m}} \inact)}} \inact$ \\
+%		&$\by{\bactout{n}{\abs{x}{\appl{x}(\abs{y}{\bout{y}{m}} \inact)}}}$& $\Gamma; \es; \Delta \proves \inact$\\
+         &    &   $\ftrigger{t}{V}{U}$  \\
+		   &  $=$ & $\Gamma; \es; \Delta \proves \binp{t}{z} \newsp{s}{\mapchar{\btinp{U} \inact}{s} \Par \bout{\dual{s}}{\abs{x}{\appl{x}(\abs{y}{\bout{y}{m}} \inact)}} \inact}$\\
+		&  $=$& $\Gamma; \es; \Delta \proves \binp{t}{z} \newsp{s}{\binp{s}{x} \appl{x}{(\abs{y}{(\appl{y}{a}))}} \Par \bout{\dual{s}}{\abs{x}{\appl{x}(\abs{y}{\bout{y}{m}} \inact)}} \inact}$\\
+		(1)   &$\by{\bactinp{t}{b}}$& $\Gamma; \es; \Delta \proves \newsp{s}{\binp{s}{x} \appl{x}{(\abs{y}{(\appl{y}{a}))}} \Par \bout{\dual{s}}{\abs{x}{\appl{x}(\abs{y}{\bout{y}{m}} \inact)}} \inact}$\\
+		(2)  &$\by{\dtau}$& $\Gamma; \es; \Delta \proves \appl{\abs{x}{\appl{x}(\abs{y}{\bout{y}{m} \inact})}}{(\abs{y}{(\appl{y}{a}))}}$\\
+		(3)  &$\by{\dtau}$& $\Gamma; \es; \Delta \proves \appl{(\abs{y}{(\appl{y}{a})})}{(\abs{y}{\bout{y}{m} \inact})} $\\
+		(4)   &$\by{\dtau}$& $\Gamma; \es; \Delta \proves \appl{(\abs{y}{\bout{y}{m} \inact})}{a}$\\
+		(5)   &$\by{\dtau}$& $\Gamma; \es; \Delta \proves \bout{a}{m} \inact$ \vspace{1mm} 
+%	\end{tabular} 
+	\\ \hline
+%		\begin{tabular}{rrl}
+%		(1)& & $\Gamma; \es; \Delta \cat n: \btout{U} \tinact \proves \bout{n}{\abs{x}{\appl{x}(\abs{y}{\bout{y}{m}} \inact)}} \inact$ \\
+%		&$\by{\bactout{n}{\abs{x}{\appl{x}(\abs{y}{\bout{y}{m}} \inact)}}}$& $\Gamma; \es; \Delta \proves \inact$\\
+		 & & $\Gamma; \es; \Delta \proves \repl{} \binp{t}{x} \appl{x}(\abs{y}{\bout{y}{m}} \inact) $\\
+		(6) &$\by{\bactinp{t}{\tau_l}}$& $\Gamma; \es; \Delta \proves \repl{} \binp{t}{x} \appl{x}(\abs{y}{\bout{y}{m}} \inact) \Par \appl{(\abs{x}{\appl{x}(\abs{y}{\bout{y}{m}} \inact)})}{\tau_l}$\\
+		(7) &$\by{\dtau}$& $\Gamma; \es; \Delta \proves \repl{} \binp{t}{x} \appl{x}(\abs{y}{\bout{y}{m}} \inact) \Par \appl{\tau_l}{(\abs{y}{\bout{y}{m}} \inact)}$\\
+		(8) &$\by{\news{k} \bactout{l}{\tau_k}}$& $\Gamma; \es; \Delta \proves \repl{} \binp{t}{x} \appl{x}(\abs{y}{\bout{y}{m}} \inact) \Par \repl{} \binp{k}{y} \bout{y}{m} \inact $\\
+		(9) &$\by{\bactinp{k}{a}}$& $\Gamma; \es; \Delta \proves \repl{} \binp{t}{x} \appl{x}(\abs{y}{\bout{y}{m}} \inact) \Par \repl{} \binp{k}{y} \bout{y}{m} \inact \Par \appl{(\abs{y}{\bout{y}{m} \inact})}{a}$\\
+		(10) &$\by{\dtau}$& $\Gamma; \es; \Delta \proves \repl{} \binp{t}{x} \appl{x}(\abs{y}{\bout{y}{m}} \inact) \Par \repl{} \binp{k}{y} \bout{y}{m} \inact \Par \bout{a}{m} \inact$
+	\end{tabular}
+	 %\\ \hline
+	%\end{tabular}
+\caption{Comparing our approach (upper part) and Jeffrey and Rathke's~\cite{JeffreyR05} (lower part).\label{f:comparison} }
+\end{figure}
+
