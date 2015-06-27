@@ -1,0 +1,337 @@
+% !TEX root = main.tex
+\newcommand{\Client}{\mathsf{Client}}
+\newcommand{\rtype}{\mathsf{room}}
+\newcommand{\Quote}{\mathsf{quote}}
+\newcommand{\accept}{\mathsf{accept}}
+\newcommand{\reject}{\mathsf{reject}}
+\newcommand{\creditc}{\mathsf{credit}}
+
+\section{An Example: Hotel Booking Scenario}\label{s:exam}
+
+To illustrate \HOp and its expressive power, 
+we consider a usecase scenario that adapts the example given by Mostrous and Yoshida~\cite{tlca07,MostrousY15}.
+The scenario involves a $\Client$ process that wants to book
+a hotel room. % for her holidays. % in a remote island
+%The Client 
+$\Client$
+narrows the choice down to two hotels, and requires 
+ a quote from the two in order to
+decide. The round-trip time (RTT) required for
+taking quotes from the two hotels in not optimal, % (cf.~\cite{MostrousY15}),
+so the client sends mobile processes to both hotels
+to automatically negotiate and book a room. 
+
+\paragraph{The Scenario, as \HOp Processes}\label{appss:exam}
+
+
+We now present two \HOp implementations of this scenario.
+For convenience, we write $\If e\ \Then (P_1\ \Else \ P_2)$ 
+to denote a conditional process that executes $P_1$ or $P_2$ depending on boolean expression $e$ (encodable using labelled choice).
+The \emph{first implementation} is  as follows:
+%
+%\[
+	\begin{eqnarray*}%{rcl}
+		 P_{xy}  \!\!\! & \defeq &  \!\!\! \bout{x}{\rtype} \binp{x}{\Quote} \bout{y}{\Quote}
+		y \triangleright \left\{
+				\begin{array}{l}
+					\accept: \bsel{x}{\accept} \bout{x}{\creditc} \inact,\\
+					\reject: \bsel{x}{\reject} \inact
+				\end{array}
+				\right\}
+		\\ %[3mm]
+		 \Client_1 \!\!\!\!\! & \defeq  &  \!\!\! \newsp{h_1, h_2}{\bout{s_1}{\abs{x}{P_{xy} \subst{h_1}{y}}} \bout{s_2}{\abs{x}{P_{xy} \subst{h_2}{y}}} \inact \Par \binp{\dual{h_1}}{x} \binp{\dual{h_2}}{y} \\
+		& & 
+		\quad  \If x \leq y\   \Then (\bsel{\dual{h_1}}{\accept} \bsel{\dual{h_2}}{\reject} \inact \ \Else \ \bsel{\dual{h_1}}{\reject} \bsel{\dual{h_2}}{\accept} \inact )
+		}
+	\end{eqnarray*}
+%\]
+%
+Process $\Client_1$ sends two abstractions with body $P_{xy}$, one to each hotel, 
+		using sessions $s_1$ and $s_2$.
+		That is, $P_{xy}$ is the mobile code:
+	while
+		name $x$ is meant to be instantiated by the hotel as the negotiating
+		endpoint, name $y$ is used to interact with $\Client_1$.	
+		Intuitively, process $P_{xy}$ (i)  sends the room requirements to the hotel;
+		(ii) receives a quote from the hotel;
+		(iii) sends the quote to  $\Client_1$;
+		(iv) expects a choice from   $\Client_1$ whether to accept or reject the offer;
+		(v) if the choice is accept then it informs the hotel and performs the booking;
+		otherwise, if the choice is reject then it informs the hotel and ends the session.
+				$\Client_1$ instantiates two copies of  $P_{xy}$ as abstractions
+		on session $x$. It uses two
+		fresh endpoints $h_1, h_2$ to substitute channel $y$
+		in $P_{xy}$. This enables communication with the mobile code(s).
+		In fact, 
+		$\Client_1$ uses the dual endpoints $\dual{h_1}$ and $\dual{h_2}$
+		to receive the negotiation
+		result from the two remote instances of $P$ and then inform the two
+		processes for the final booking decision.
+
+Notice that	the above implementation does not affect
+the time needed for the whole protocol to execute,
+since the two remote processes are used
+to send/receive data to $\Client_1$.
+
+We present now a \emph{second  implementation}
+%of the same scenario, 
+in which the two mobile processes are meant 
+to interact with each other (rather than with the client) to reach to an agreement:
+%
+\[
+	\begin{array}{rcl}
+	    R_x & \defeq & \If\ \Quote_1 \leq \Quote_2 \, \Then  (\bsel{x}{\accept} \bout{x}{\creditc} \inact \  \Else \ \bsel{x}{\reject} \inact) \\
+		Q_1 &\defeq&	\bout{x}{\rtype} \binp{x}{\Quote_1} \bout{y}{\Quote_1} \binp{y}{\Quote_2} R_x \\
+		Q_2 &\defeq&	\bout{x}{\rtype} \binp{x}{\Quote_1} \binp{y}{\Quote_2} \bout{y}{\Quote_1} R_x \\
+		\Client_2 &\defeq& \newsp{h}{\bout{s_1}{\abs{x}{Q_1 \subst{h}{y}}} \bout{s_2}{\abs{x}{Q_2 \subst{\dual{h}}{y}}} \inact}
+	\end{array}
+\]
+%\end{example}
+Processes $Q_1$ and $Q_2$  negotiate a quote from the
+		hotel in the same fashion as process $P_{xy}$ in $\Client_1$.
+%		Notice that $Q_2$ is defined exactly as $Q_1$ except for the sequence of messages on~$y$:
+%		rather than 
+%		sending $\Quote_1$ first and receiving $\Quote_2$ later, 
+%		process $Q_2$ receives $\Quote_2$ first and sends $\Quote_1$ later.
+		The key difference with respect to $P_{xy}$ is that $y$ is used for
+		interaction between process $Q_1$ and $Q_2$. Both processes send
+		their quotes to each other and then internally follow the same
+		logic to reach to a decision.
+		Process  $\Client_2$ then uses sessions $s_1$ and $s_2$ to send the two
+		instances of $Q_1$ and $Q_2$ to the two hotels, using them 
+	 as abstractions
+		on name $x$. It further substitutes
+		the two endpoints of a fresh channel $h$ to channels $y$ respectively,
+		in order for the two instances to communicate with each other.
+
+
+
+The differences between $\Client_1$ and $\Client_2$ can be  seen in the sequence diagrams of \figref{fig:exam}. 
+Next, we will assign session types to these client processes. % in Example \ref{exam:type}.
+Later on, we will show that they are behaviourally equivalent using characteristic bisimilarity;
+see \propref{p:examp}.
+\begin{figure}[!t]
+\input{diagram}
+\caption{Sequence diagrams for $\Client_1$ and $\Client_2$ as in \S\,\ref{appss:exam}\label{fig:exam}.}
+%\vspace{-2mm}
+\end{figure}
+
+\paragraph{Assigning Types to Clients.}
+Assume $S = \btout{\Quote} \btbra{\accept: \tinact, \reject: \tinact}$ and
+$U = \btout{\rtype} \btinp{\Quote} \btsel{\accept: \btout{\creditc} \tinact, \reject: \tinact }$.
+We give types to the client processes of~\S\,\ref{appss:exam}:
+\begin{eqnarray*}
+\es; \es; y: S & \proves &  \abs{x}{P_{xy}} \hastype \lhot{U} \\
+\es; \es; s_1: \btout{\lhot{U}} \tinact \cat s_2: \btout{\lhot{U}} \tinact & \proves &  \Client_1 \hastype \Proc \\
+\es; \es; y: \btout{\Quote} \btinp{\Quote} \tinact & \proves &  \abs{x}{Q_i} \hastype \lhot{U} \quad (i=1,2)\\
+\es; \es; s_1: \btout{\lhot{U}} \tinact \cat s_2: \btout{\lhot{U}} \tinact & \proves &  \Client_2 \hastype \Proc
+\end{eqnarray*}
+
+%\paragraph{Typed LTS.}
+%	Consider environment %tuple
+%	$
+%		(\Gamma; \es; s: \btout{\lhot{\btout{S} \tinact}} \tinact \cat s': S)
+%	$
+%	and typed value
+%	\[
+%		\Gamma; \es; s': S \cat m: \btinp{\tinact} \tinact \proves V \, \hastype \, 
+%\lhot{\btout{S} \tinact} \quad \mbox{with} \quad 
+%V= \abs{x} \bout{x}{s'} \binp{m}{z} \inact
+%	\]
+%We illustrate	rule~$\eltsrule{SSnd}$ in \figref{fig:envLTS}.
+%Let 
+%$\Delta'_1=\{\overline{m}: \btout{\tinact} \tinact\}$ and 
+%$U= \lhot{\btout{S} \tinact}$.
+%	Then we can derive:
+%	\[
+%		(\Gamma; \es; s: \btout{\lhot{\btout{S} \tinact}} \tinact \cat s': S) \by{\news{m} \bactout{s}{V}} (\Gamma; \es; s: \tinact)
+%	\]
+
+\paragraph{Equivalence of the Client Implementations.}
+Now we prove 
+that  processes 
+$\Client_1$ and $\Client_2$ 
+in \S\,\ref{appss:exam}
+are behaviourally equivalent.
+
+\begin{proposition}\label{p:examp}
+	Let
+	$S = \btout{\rtype} \btinp{\Quote} \btsel{\accept: \btout{\creditc} \tinact, \reject: \tinact}$ and 
+$\Delta = s_1: \btout{\lhot{S}} \tinact \cat s_2: \btout{\lhot{S}} \tinact$. 
+Then
+	$ \horel
+	{\es}{\Delta}{\Client_1}
+	{\wbf}
+	{\Delta}{\Client_2}$. %and $\Client_1$, $\Client_2$ in Example \ref{exam:proc}. 
+%\vspace{-2mm}
+\end{proposition}
+
+\begin{proof}[Sketch]
+	\noi We show a bisimulation closure by following transitions on each $\Client$.
+	%We show the initial higher order transitions.
+	%See~\cite{KouzapasPY15} 
+	See~\appref{app:s:exam} for details.
+	First, the characteristic process is given as:
+	$$\mapchar{\btinp{\lhot{S}} \tinact}{s} = \binp{s}{x} (\appl{x}{k})$$
+We show that the clients can simulate each other on
+the first two output transitions, that also generate the trigger
+processes:
+%
+\[
+	\begin{array}{lll}
+&	\es; \es; \Delta \proves \Client_1
+	&
+		\by{\bactout{s_1}{\abs{x}{P_{xy} \subst{h_1}{y}}}}
+		\by{\bactout{s_2}{\abs{x}{P_{xy} \subst{h_2}{y}}}}
+		\\
+&		\es; \es; k_1: S \cat k_2: S \proves
+		& \!\!
+		\newsp{h_1, h_2}{\binp{\dual{h_1}}{x} \binp{\dual{h_2}}{y}\\
+&		& \If\ x \leq y\ \Then (\bsel{\dual{h_1}}{\accept} \bsel{\dual{h_2}}{\reject} \inact
+		\Else \bsel{\dual{h_1}}{\reject} \bsel{\dual{h_2}}{\accept} \inact)\\
+&		& \Par \ftrigger{t_1}{\abs{x}{P_{xy} \subst{h_1}{y}}}{\lhot{S}} \Par \ftrigger{t_2}{\abs{x}{P_{xy} \subst{h_2}{y}}}{\lhot{S}}}
+%		& \Par \binp{t_1}{x} \newsp{s}{\binp{s}{x} \appl{x}{k_1} \Par \bout{\dual{s}}{\abs{x}{P \subst{h_1}{y}}} \inact }\\
+%		& \Par \binp{t_2}{x} \newsp{s}{\mapchar{\btinp{\lhot{S}}}{s} \Par \bout{\dual{s}}{\abs{x}{P \subst{h_2}{y}}} \inact }}
+		\\[2mm]
+%\mbox{and}
+ &
+		\es; \es; \Delta \proves \Client_2
+		&\by{\bactout{s_1}{\abs{x}{Q_1 \subst{h}{y}}}}
+		\by{\bactout{s_2}{\abs{x}{Q_2 \subst{\dual{h}}{y}}}}
+		\\
+&		\es; \es; k_1: S \cat k_2: S \proves & \newsp{h}{
+		\ftrigger{t_1}{\abs{x}{Q_1 \subst{h}{y}}}{\lhot{S}} \Par \ftrigger{t_2}{\abs{x}{Q_2 \subst{\dual{h}}{y}}}{\lhot{S}}}
+%		\binp{t_1}{x} \newsp{s}{\binp{s}{x} \appl{x}{k_1} \Par \bout{\dual{s}}{\abs{x}{P_1 \subst{h}{y}}} \inact }\\
+%		&\Par \binp{t_2}{x} \newsp{s}{\binp{s}{x} \appl{x}{k_2} \Par \bout{\dual{s}}{\abs{x}{P_2 \subst{\dual{h}}{y}}} \inact }}
+	\end{array}
+\]
+	\noi 
+After these transitions, 
+we can analyse that 
+the resulting processes are behaviourally equivalent
+since they have the same visible transitions; the rest 
+is internal deterministic transitions. 
+\end{proof}
+
+%\begin{proof}
+%	\noi We show a case where each typed process simulates the other.
+%
+%	\noi For fresh sessions $s, k$ we get
+%	$
+%		\mapchar{\btinp{\lhot{S}} \tinact}{s} = \binp{s}{x} (\mapchar{\tinact}{s} \Par \mapchar{\lhot{S}}{x})
+%%		= \binp{s}{x} (\inact \Par \appl{x}{\omapchar{S}})
+%%		= \binp{s}{x} (\inact \Par \appl{x}{k})
+%		\scong \binp{s}{x} (\appl{x}{k})
+%	$
+%	
+%
+%	\noi To observe $\Client_1$ assume:
+%%
+%	\begin{eqnarray*}
+%		R' &\scong& \If\ x \leq y\ \Then (\bsel{\dual{h_1}}{\accept} \bsel{\dual{h_2}}{\reject} \inact
+%		\Else \bsel{\dual{h_1}}{\reject} \bsel{\dual{h_2}}{\accept} \inact)\\
+%		Q &\scong& \bbra{z}{\accept: \bsel{k_2}{\accept} \bout{k_2}{\creditc} \inact, \reject: \bsel{k_2}{\reject} \inact}
+%%		Q &\scong& z \triangleleft \left\{
+%%		\begin{array}{l}
+%%			\accept: \bsel{k_2}{\accept} \bout{k_2}{\creditc} \inact,\\
+%%			\reject: \bsel{k_2}{\reject} \inact
+%%		\end{array}
+%%		\right\}
+%	\end{eqnarray*}
+%%
+%	\noi We can now observe $\Client_1$ as:
+%\[
+%	\begin{array}{ll}
+%		& \es; \es; \Delta \proves \Client_1
+%		\\[1mm]
+%
+%		\by{\bactout{s_1}{\abs{x}{P_{xy} \subst{h_1}{y}}}}&
+%		\es; \es; s_2: \btout{\lhot{S}} \tinact \cat k_1: S \proves \\
+%		& \newsp{h_1, h_2}{\bout{s_2}{\abs{x}{P_{xy} \subst{h_2}{y}}} \inact
+%		\Par \binp{\dual{h_1}}{x} \binp{\dual{h_2}}{y} R'\\
+%		& \Par \ftrigger{t_1}{P_{xy} \subst{h_1}{y}}{\lhot{S}}}
+%		%\binp{t_1}{x} \newsp{s}{\mapchar{\btinp{\lhot{S}}}{s} \Par \bout{\dual{s}}{\abs{x}{P \subst{h_1}{y}}} \inact }}
+%		\\[1mm]
+%
+%		\by{\bactout{s_2}{\abs{x}{P_{xy} \subst{h_2}{y}}}}&
+%		\es; \es; k_1: S \cat k_2: S \proves \newsp{h_1, h_2}{
+%		\binp{\dual{h_1}}{x} \binp{\dual{h_2}}{y} R'\\
+%		& \ftrigger{t_1}{P_{xy} \subst{h_1}{y}}{\lhot{S}} \Par \ftrigger{t_2}{P_{xy} \subst{h_2}{y}}{\lhot{S}}}
+%%		\Par \binp{t_1}{x} \newsp{s}{\binp{s}{x} \appl{x}{k_1} \Par \bout{\dual{s}}{\abs{x}{P \subst{h_1}{y}}} \inact }\\
+%%		& \Par \binp{t_2}{x} \newsp{s}{\mapchar{\btinp{\lhot{S}}}{s} \Par \bout{\dual{s}}{\abs{x}{P \subst{h_2}{y}}} \inact }}
+%		\\[1mm]
+%
+%		\by{\bactinp{t_1}{b}} \by{\bactinp{t_2}{b}} \by{\dtau}\by{\dtau}&
+%		\es; \es; k_1: S \cat k_2: S \proves \newsp{h_1, h_2}{
+%		\binp{\dual{h_1}}{x} \binp{\dual{h_2}}{y} R'\\
+%		& \Par P_{xy}\subst{h_1}{y} \subst{k_1}{x} \Par P_{xy}\subst{h_1}{y} \subst{k_2}{x}}
+%		\\[1mm]
+%
+%		\by{\bactout{k_1}{\rtype}} \by{\bactout{k_2}{\rtype}}\\
+%		\by{\bactinp{k_1}{\Quote}} \by{\bactinp{k_2}{\Quote}}
+%		& \es; \es; k_1: S' \cat k_2: S' \proves \newsp{h_1, h_2}{
+%		\binp{\dual{h_1}}{x} \binp{\dual{h_2}}{y} R'\\
+%		& \Par \bout{h_1}{\Quote} Q \subst{h_1}{z} \Par \bout{h_2}{\Quote} Q \subst{h_2}{z}}
+%		\\[1mm]
+%
+%		\by{\dtau} \by{\dtau} \by{\dtau}&
+%		\es; \es; k_1: S' \cat k_2: S' \proves \\
+%		& \newsp{h_1, h_2}{\bsel{\dual{h_1}}{\accept} \bsel{\dual{h_2}}{\reject} \inact
+%		\Par Q \subst{h_1}{z} \Par Q \subst{h_2}{z}}
+%		\\[1mm]
+%
+%		\by{\dtau} \by{\dtau}&
+%		\es; \es; k_1: S' \cat k_2: S' \proves
+%		\bsel{k_1}{\accept} \bout{k_1}{\creditc} \inact 
+%		\Par \bsel{k_2}{\reject} \inact
+%		\\[1mm]
+%
+%		\by{\bactsel{k_1}{\accept}} \by{\bactsel{k_2}{\reject}} \by{\bactsel{k_1}{\creditc}}&
+%		\es; \es; \es \proves \inact
+%	\end{array}
+%\]
+%
+%\noi	We can observe the same sequence of external transitions for $\Client_2$:
+%
+%\[
+%	\begin{array}{ll}
+%		& \es; \es; \Delta \proves \Client_2
+%\\[1mm]
+%
+%		\by{\bactout{s_1}{\abs{x}{Q_1 \subst{h}{y}}}}&
+%		\es; \es; s_2: \btout{\lhot{S}} \tinact \cat k_1: S \proves \newsp{h}{\bout{s_2}{\abs{x}{Q_2 \subst{\dual{h}}{y}}} \inact\\
+%		& \Par \ftrigger{t_1}{Q_1 \subst{h}{y}}{\lhot{S}}}
+%		% \binp{t_1}{x} \newsp{s}{\mapchar{\btinp{\lhot{S}}}{s} \Par \bout{\dual{s}}{\abs{x}{Q_1 \subst{h}{y}}} \inact }}
+%\\[1mm]
+%
+%		\by{\bactout{s_2}{\abs{x}{Q_2 \subst{\dual{h}}{y}}}}&
+%		\es; \es; k_1: S \cat k_2: S \proves \newsp{h}{\\
+%		& \ftrigger{t_1}{Q_1 \subst{h}{y}}{\lhot{S}} \Par \ftrigger{t_2}{Q_2 \subst{\dual{h}}{y}}{\lhot{S}}}
+%%		\binp{t_1}{x} \newsp{s}{\binp{s}{x} \appl{x}{k_1} \Par \bout{\dual{s}}{\abs{x}{Q_1 \subst{h}{y}}} \inact }\\
+%%		& \Par \binp{t_2}{x} \newsp{s}{\mapchar{\btinp{\lhot{S}}}{s} \Par \bout{\dual{s}}{\abs{x}{Q_2 \subst{\dual{h}}{y}}} \inact }}
+%\\[1mm]
+%
+%		\by{\bactinp{t_1}{b}} \by{\bactinp{t_2}{b}} \by{\dtau}\by{\dtau}&
+%		\es; \es; k_1: S \cat k_2: S \proves \newsp{h}{
+%		P\subst{h}{y} \subst{k_1}{x} \Par P_{xy}\subst{\dual{h}}{y} \subst{k_2}{x}}
+%\\[1mm]
+%
+%		\by{\bactout{k_1}{\rtype}} \by{\bactout{k_2}{\rtype}}\\
+%		\by{\bactinp{k_1}{\Quote}} \by{\bactinp{k_2}{\Quote}}
+%		& \es; \es; k_1: S' \cat k_2: S' \proves \newsp{h}{
+%		\bout{h}{\Quote_1} \binp{h}{\Quote_2} R \subst{k_1}{x} \\
+%		& \Par \binp{\dual{h}}{\Quote_2} \bout{\dual{h}}{\Quote_1} R \subst{k_2}{x}}
+%\\[1mm]
+%		\by{\dtau} \by{\dtau}&
+%		\es; \es; k_1: S' \cat k_2: S' \proves R \subst{k_1}{x} \Par R \subst{k_2}{x}
+%\\[1mm]
+%		\by{\dtau} \by{\dtau}&
+%		\es; \es; k_1: S' \cat k_2: S' \proves
+%		\bsel{k_1}{\accept} \bout{k_1}{\creditc} \inact 
+%		\Par \bsel{k_2}{\reject} \inact
+%\\[1mm]
+%		\by{\bactsel{k_1}{\accept}} \by{\bactsel{k_2}{\reject}} \by{\bactsel{k_1}{\creditc}}&
+%		\es; \es; \es \proves \inact
+%	\end{array}
+%\]
+%\end{proof}

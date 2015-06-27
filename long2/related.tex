@@ -267,187 +267,187 @@ observes first-order triggered values instead of
 higher-order values, offering a more direct characterisation of contextual equivalence
 and lifting the restriction to finite types.
 
-We contrast 
-the approach in~\cite{JeffreyR05} and our approach based on 
-higher-order and characteristic bisimilarities. 
-Below we use the notations adopted in~\cite{JeffreyR05}.
- 
-\begin{enumerate}[i)]
-	\item	The work \cite{JeffreyR05} extends the first-order
-		LTS for a trigger interaction whereas 
-		our work uses the higher-order LTS. 
-
-	\item	The output of a higher-order value $\abs{x}{Q}$ on name
-		$n$ in \cite{JeffreyR05}
-		requires the output of
-		a fresh trigger name $t$ (notation $\tau_t$)
-		on channel $n$ 
-		and then the introduction of a replicated triggered process
-		(notation $(t \Leftarrow (x) Q)$). 
-		Hence we have:
-		%
-		\[
-			P \by{\news{t} \bactout{n}{\tau_{t}}} P' \Par (t \Leftarrow (x) Q) \by{\bactinp{t}{v}} P' \Par \appl{(x) Q}{v} \Par (t \Leftarrow (x) Q) 
-		\]
-		%
-	In our characteristic bisimulation, we only observe
-	an output of a value that can be either first- or higher-order as follows:
-		%
-		\[
-			P \hby{\bactout{n}{V}} P' 
-		\]
-		%
-		with $V \equiv \abs{x}{Q}$ or $V = m$.
-
-		A non-replicated triggered process ($\htrigger{t}{V}$)
-		appears in 
-		the parallel context of the acting process when
-		we compare two processes for behavioural equality
-		(cf.~\defref{def:cbisim}).
-		Using the LTS in
-		\defref{def:typed_transition} we can obtain:
-		%
-		\begin{eqnarray*}
-			P' \Par \htrigger{t}{\abs{x}{Q}}
-			&\by{\abs{z}{\binp{z}{y} \repl{} \binp{t}{x} (\appl{y}{x})}}&
-			P' \Par \newsp{s}{\binp{s}{y} \repl{} \binp{t}{x} 
-(\appl{y}{x}) \Par \bout{s}{\abs{x}{Q}} \inact}\\
-			&\by{\tau}&
-			P' \Par \repl{}\binp{t}{y} (\appl{(\abs{x}{Q})}{y})
-		\end{eqnarray*}
-		%
-		that simulates the approach in \cite{JeffreyR05}.
-
-	In addition, the output of the characteristic bisimulation 
-differentiates from
-		the approach in \cite{JeffreyR05} as listed below:
-		\begin{itemize}
-			\item	The typed LTS predicts the case of linear
-				output values and will never allow replication
-				of such a value;
-				if $V$ is linear the input action would have no replication
-				operator, as
-				$\abs{z}{\binp{z}{y} \binp{t}{x} (\appl{y}{x})}$.
-
-			\item	The characteristic bisimulation introduces a uniform approach
-				not only for
-				higher-order values but for first-order values
-				as well, i.e.~triggered process can accept any
-				process that can substitute a first-order value as well.
-				This is derived from the fact that the $\HOp$-calculus makes no use of a matching operator, in contrast
-				to the calculus defined in \cite{JeffreyR05})
-				where name matching is crucial to prove completeness
-				of the bisimilarity relation.
-				Instead of a matching operator, 
-we use types: a characteristic value inhabiting a type
-enables the simplest form of interactions 
-				with the environment.
-
-			\item	Our \HOp-calculus requires only first-order
-				applications. Higher-order applications,
-				as in \cite{JeffreyR05},
-				are presented as an extension in the \HOpp
-				calculus.
-
-			\item	Our trigger process is non-replicated. 
-				It guards the output
-				value with a higher-order input prefix. The
-				functionality of the input is then used to
-				simulate the contextual bisimilarity that subsumes
-				the replicated trigger approach (cf.~\secref{subsec:char_bis}).
-				The transformation of an output action as an input
-				action allows for treating an output
-				using the restricted LTS (\defref{def:restricted_typed_transition}):
-				%
-				\[
-					P' \Par \htrigger{t}{\abs{x}{Q}} \hby{\bactinp{t}{\abs{x}{\mapchar{U}{x}}}}
-					P' \Par \news{s}{ (\appl{\mapchar{U}{x}}{s} \Par \bout{\dual{s}}{\abs{x}{Q}} \inact)}
-				\]
-		\end{itemize}
-		%
-		%In essence we are transforming a replicated trigger into a process
-		%that is input-prefixed on a fresh name that receives a higher-order
-		%value;
-
-	\item	The input of a higher-order value in the \cite{JeffreyR05}
-		requires 
-		the input of a meta-syntactic fresh trigger, which then
-		substituted on the application variable, thus the meta-syntax
-		is extended to represent applications, e.g.:
-%		for triggered application instead
-%		of higher-order applications:
-		%
-		\[
-			\binp{n}{x} P \by{\bactinp{n}{\tau_k}} (\appl{(\abs{x}{P})}{\tau_k}) \by{\tau} P \subst{\tau_k}{x} 
-		\]
-		%
-		Every instance of process variable $x$ in $P$ being substituted
-		with trigger value $\tau_k$ to give an application of the form $(\appl{\tau_k}{x})$.
-		In contrast the approach in the characteristic bisimulation observes the
-		triggered value
-		$\abs{z}\binp{t}{x} (\appl{x}{z})$ as an input instead of the
-		meta-syntactic trigger:
-		%
-		\[
-			\binp{n}{x} P \hby{\bactinp{n}{\abs{z}\binp{t}{x} (\appl{x}{z})}} P \subst{\abs{z}\binp{t}{x} (\appl{x}{z})}{x}
-		\]
-		%
-		Every instance of process variable $x$ in $P$
-		is substituted to give application of the form
-		$\appl{(\abs{z}{\binp{t}{x} (\appl{x}{z})})}{v}$
-		Note that in the characteristic bisimulation, 
-		we can also observe a characteristic process as an input.
-		
-	\item 	Triggered applications in~\cite{JeffreyR05}
-		are observed as an output of the application
-		value over the fresh trigger name:
-%		using an output
-%		lead into an output observation of the
-%		application value over
-%		the fresh trigger name.
-		%
-		\[
-			\appl{\tau_k}{v} \by{\bactout{k}{v}} \inact
-		\]
-		%
-		In contrast in the characteristic bisimulation
-		we have two kind of applications:
-		i) the trigger value application allows us
-		to simulate an application on a fresh trigger name.
-		ii) the characteristic value application
-		allows us to inhabit an application value 
-		and observe the interaction its interaction
-		with the environment as below: 
-%		of 
-		%instead of observing an 
-		%application and its value as an action we observe:
-%		i) allows us to observe a trigger name
-%		through the trigger value application; and
-%		ii) we observe the application
-%		value by inhabiting it in the characteristic value
-%		and observing the interaction of the corresponding
-%		characteristic process with its environment.
-		%
-		\begin{eqnarray*}
-			\appl{(\abs{z}{\binp{t}{x} (\appl{x}{z})})}{v} &\by{\tau}& \binp{t}{x} (\appl{x}{v})
-			\by{\bactinp{t}{\abs{x}{\mapchar{U}{x}}}}
-			\appl{(\abs{x}{\mapchar{U}{x}})}{v}
-			\by{\tau} \mapchar{U}{x} \subst{v}{x}
-		\end{eqnarray*}
-		%
-\end{enumerate}
-
-\noi We have compared our approach to that in~\cite{JeffreyR05} 
-using a representative example.
-We considered the transitions and resulting processes involved in checking bisimilarity of process 
-$\bout{n}{\abs{x}{\appl{x}(\abs{y}{\bout{y}{m}} \inact)}} \inact$
-with itself.
-This comparison, detailed in \appref{app:jandr}, reveals that our approach 
-%based on %even if both techniques require the same number of transitions, 
-%a refined LTS and characteristic bisimilarity 
-requires less visible transitions and replicated processes. 
-Therefore, linearity information does simplify analyses, 
-as it enables simpler witnesses in  coinductive proofs.
+%We contrast 
+%the approach in~\cite{JeffreyR05} and our approach based on 
+%higher-order and characteristic bisimilarities. 
+%Below we use the notations adopted in~\cite{JeffreyR05}.
+% 
+%\begin{enumerate}[i)]
+%	\item	The work \cite{JeffreyR05} extends the first-order
+%		LTS for a trigger interaction whereas 
+%		our work uses the higher-order LTS. 
+%
+%	\item	The output of a higher-order value $\abs{x}{Q}$ on name
+%		$n$ in \cite{JeffreyR05}
+%		requires the output of
+%		a fresh trigger name $t$ (notation $\tau_t$)
+%		on channel $n$ 
+%		and then the introduction of a replicated triggered process
+%		(notation $(t \Leftarrow (x) Q)$). 
+%		Hence we have:
+%		%
+%		\[
+%			P \by{\news{t} \bactout{n}{\tau_{t}}} P' \Par (t \Leftarrow (x) Q) \by{\bactinp{t}{v}} P' \Par \appl{(x) Q}{v} \Par (t \Leftarrow (x) Q) 
+%		\]
+%		%
+%	In our characteristic bisimulation, we only observe
+%	an output of a value that can be either first- or higher-order as follows:
+%		%
+%		\[
+%			P \hby{\bactout{n}{V}} P' 
+%		\]
+%		%
+%		with $V \equiv \abs{x}{Q}$ or $V = m$.
+%
+%		A non-replicated triggered process ($\htrigger{t}{V}$)
+%		appears in 
+%		the parallel context of the acting process when
+%		we compare two processes for behavioural equality
+%		(cf.~\defref{def:cbisim}).
+%		Using the LTS in
+%		\defref{def:typed_transition} we can obtain:
+%		%
+%		\begin{eqnarray*}
+%			P' \Par \htrigger{t}{\abs{x}{Q}}
+%			&\by{\abs{z}{\binp{z}{y} \repl{} \binp{t}{x} (\appl{y}{x})}}&
+%			P' \Par \newsp{s}{\binp{s}{y} \repl{} \binp{t}{x} 
+%(\appl{y}{x}) \Par \bout{s}{\abs{x}{Q}} \inact}\\
+%			&\by{\tau}&
+%			P' \Par \repl{}\binp{t}{y} (\appl{(\abs{x}{Q})}{y})
+%		\end{eqnarray*}
+%		%
+%		that simulates the approach in \cite{JeffreyR05}.
+%
+%	In addition, the output of the characteristic bisimulation 
+%differentiates from
+%		the approach in \cite{JeffreyR05} as listed below:
+%		\begin{itemize}
+%			\item	The typed LTS predicts the case of linear
+%				output values and will never allow replication
+%				of such a value;
+%				if $V$ is linear the input action would have no replication
+%				operator, as
+%				$\abs{z}{\binp{z}{y} \binp{t}{x} (\appl{y}{x})}$.
+%
+%			\item	The characteristic bisimulation introduces a uniform approach
+%				not only for
+%				higher-order values but for first-order values
+%				as well, i.e.~triggered process can accept any
+%				process that can substitute a first-order value as well.
+%				This is derived from the fact that the $\HOp$-calculus makes no use of a matching operator, in contrast
+%				to the calculus defined in \cite{JeffreyR05})
+%				where name matching is crucial to prove completeness
+%				of the bisimilarity relation.
+%				Instead of a matching operator, 
+%we use types: a characteristic value inhabiting a type
+%enables the simplest form of interactions 
+%				with the environment.
+%
+%			\item	Our \HOp-calculus requires only first-order
+%				applications. Higher-order applications,
+%				as in \cite{JeffreyR05},
+%				are presented as an extension in the \HOpp
+%				calculus.
+%
+%			\item	Our trigger process is non-replicated. 
+%				It guards the output
+%				value with a higher-order input prefix. The
+%				functionality of the input is then used to
+%				simulate the contextual bisimilarity that subsumes
+%				the replicated trigger approach (cf.~\secref{subsec:char_bis}).
+%				The transformation of an output action as an input
+%				action allows for treating an output
+%				using the restricted LTS (\defref{def:restricted_typed_transition}):
+%				%
+%				\[
+%					P' \Par \htrigger{t}{\abs{x}{Q}} \hby{\bactinp{t}{\abs{x}{\mapchar{U}{x}}}}
+%					P' \Par \news{s}{ (\appl{\mapchar{U}{x}}{s} \Par \bout{\dual{s}}{\abs{x}{Q}} \inact)}
+%				\]
+%		\end{itemize}
+%		%
+%		%In essence we are transforming a replicated trigger into a process
+%		%that is input-prefixed on a fresh name that receives a higher-order
+%		%value;
+%
+%	\item	The input of a higher-order value in the \cite{JeffreyR05}
+%		requires 
+%		the input of a meta-syntactic fresh trigger, which then
+%		substituted on the application variable, thus the meta-syntax
+%		is extended to represent applications, e.g.:
+%%		for triggered application instead
+%%		of higher-order applications:
+%		%
+%		\[
+%			\binp{n}{x} P \by{\bactinp{n}{\tau_k}} (\appl{(\abs{x}{P})}{\tau_k}) \by{\tau} P \subst{\tau_k}{x} 
+%		\]
+%		%
+%		Every instance of process variable $x$ in $P$ being substituted
+%		with trigger value $\tau_k$ to give an application of the form $(\appl{\tau_k}{x})$.
+%		In contrast the approach in the characteristic bisimulation observes the
+%		triggered value
+%		$\abs{z}\binp{t}{x} (\appl{x}{z})$ as an input instead of the
+%		meta-syntactic trigger:
+%		%
+%		\[
+%			\binp{n}{x} P \hby{\bactinp{n}{\abs{z}\binp{t}{x} (\appl{x}{z})}} P \subst{\abs{z}\binp{t}{x} (\appl{x}{z})}{x}
+%		\]
+%		%
+%		Every instance of process variable $x$ in $P$
+%		is substituted to give application of the form
+%		$\appl{(\abs{z}{\binp{t}{x} (\appl{x}{z})})}{v}$
+%		Note that in the characteristic bisimulation, 
+%		we can also observe a characteristic process as an input.
+%		
+%	\item 	Triggered applications in~\cite{JeffreyR05}
+%		are observed as an output of the application
+%		value over the fresh trigger name:
+%%		using an output
+%%		lead into an output observation of the
+%%		application value over
+%%		the fresh trigger name.
+%		%
+%		\[
+%			\appl{\tau_k}{v} \by{\bactout{k}{v}} \inact
+%		\]
+%		%
+%		In contrast in the characteristic bisimulation
+%		we have two kind of applications:
+%		i) the trigger value application allows us
+%		to simulate an application on a fresh trigger name.
+%		ii) the characteristic value application
+%		allows us to inhabit an application value 
+%		and observe the interaction its interaction
+%		with the environment as below: 
+%%		of 
+%		%instead of observing an 
+%		%application and its value as an action we observe:
+%%		i) allows us to observe a trigger name
+%%		through the trigger value application; and
+%%		ii) we observe the application
+%%		value by inhabiting it in the characteristic value
+%%		and observing the interaction of the corresponding
+%%		characteristic process with its environment.
+%		%
+%		\begin{eqnarray*}
+%			\appl{(\abs{z}{\binp{t}{x} (\appl{x}{z})})}{v} &\by{\tau}& \binp{t}{x} (\appl{x}{v})
+%			\by{\bactinp{t}{\abs{x}{\mapchar{U}{x}}}}
+%			\appl{(\abs{x}{\mapchar{U}{x}})}{v}
+%			\by{\tau} \mapchar{U}{x} \subst{v}{x}
+%		\end{eqnarray*}
+%		%
+%\end{enumerate}
+%
+%\noi We have compared our approach to that in~\cite{JeffreyR05} 
+%using a representative example.
+%We considered the transitions and resulting processes involved in checking bisimilarity of process 
+%$\bout{n}{\abs{x}{\appl{x}(\abs{y}{\bout{y}{m}} \inact)}} \inact$
+%with itself.
+%This comparison, detailed in \appref{app:jandr}, reveals that our approach 
+%%based on %even if both techniques require the same number of transitions, 
+%%a refined LTS and characteristic bisimilarity 
+%requires less visible transitions and replicated processes. 
+%Therefore, linearity information does simplify analyses, 
+%as it enables simpler witnesses in  coinductive proofs.
 
 
 
