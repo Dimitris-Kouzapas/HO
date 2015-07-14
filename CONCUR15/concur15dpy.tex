@@ -42,7 +42,7 @@ F.3.1 Specifying and Verifying and Reasoning about Programs;
 F.3.2 Semantics of Programming Languages.
 }
 %Dummy classification -- please refer to \url{http://www.acm.org/about/class/ccs98-html}}% mandatory: Please choose ACM 1998 classifications from http://www.acm.org/about/class/ccs98-html . E.g., cite as "F.1.1 Models of Computation". 
-\keywords{Behavioral equivalences, session types,
+\keywords{Behavioural equivalences, session types,
  higher-order process calculi.}% mandatory: Please provide 1-5 keywords
 %% Author macros::end %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
@@ -451,7 +451,8 @@ well-typed \HOp processes~(\thmref{the:coincidence}).
 % Calculus
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\section{A Higher-Order Session $\pi$-Calculus}
+\section[A Higher-Order Session Calculus]{A Higher-Order Session $\pi$-Calculus}
+%\section{A Higher-Order Session Calculus}
 \label{sec:calculus}
 
 \noindent 
@@ -500,7 +501,7 @@ in~\cite{tlca07} (where tractable bisimilarities are not addressed).
 	\end{array}
 \]
 	\[
-		\!\!\!\begin{array}{lllcrll}
+		\!\!\!\!\!\begin{array}{lllcrll}
 			\orule{App} & (\abs{x}{P}) \, V   \red    P \subst{V}{x}
 			& 
 			  
@@ -509,11 +510,11 @@ in~\cite{tlca07} (where tractable bisimilarities are not addressed).
 			
 			\\[1mm]
 
-			 \orule{Res} & P \red P'  \Rightarrow  \news{n} P  \red  \news{n} P' 
+			 \orule{Res} & P \red P'  \Rightarrow  \news{n} P  \red  \news{n} P' \!\!\!
 
 			&  
 			\orule{Sel}
-			&  \!\!\! \bsel{n}{l_j} Q \Par \bbra{\dual{n}}{l_i : P_i}_{i \in I}  \red   Q \Par P_j ~~(j \in I)
+			&  \!\!\!\!\! \bsel{n}{l_j} Q \Par \bbra{\dual{n}}{l_i : P_i}_{i \in I}  \red   Q \Par P_j ~~(j \in I)
 			
 			\\[1mm]
 			\orule{Par} & P \red P'   \Rightarrow    P \Par Q  \red   P' \Par Q  
@@ -529,7 +530,7 @@ in~\cite{tlca07} (where tractable bisimilarities are not addressed).
 \end{figure}
 
 \subparagraph{Syntax.} 
-The syntax of \HOp is defined in \figref{fig:redsem} (upper part).
+The syntax of \HOp is given in \figref{fig:redsem} (upper part).
 We use $a,b,c, \dots$ (resp.~$s, \dual{s}, \dots$) 
 to range over shared (resp. session) names. 
 We use $m, n, t, \dots$ for session or shared names. 
@@ -644,7 +645,7 @@ The \emph{first implementation} is  as follows:
 		\\ %[3mm]
 		 \Client_1 \!\!\!\!\! & \defeq  &  \!\!\! \newsp{h_1, h_2}{\bout{s_1}{\abs{x}{P_{xy} \subst{h_1}{y}}} \bout{s_2}{\abs{x}{P_{xy} \subst{h_2}{y}}} \inact \Par  \\
 		& & 
-		\!\!\! \binp{\dual{h_1}}{x} \binp{\dual{h_2}}{y}  \If x \leq y\   \Then (\bsel{\dual{h_1}}{\accept} \bsel{\dual{h_2}}{\reject} \inact \ \Else \ \bsel{\dual{h_1}}{\reject} \bsel{\dual{h_2}}{\accept} \inact )
+		\!\!\! \binp{\dual{h_1}}{x} \binp{\dual{h_2}}{y}  \If x \leq y\,   \Then\! (\bsel{\dual{h_1}}{\accept} \bsel{\dual{h_2}}{\reject} \inact \ \Else \ \bsel{\dual{h_1}}{\reject} \bsel{\dual{h_2}}{\accept} \inact )
 		}
 	\end{eqnarray*}
 %\]
@@ -714,7 +715,387 @@ We will assign session types to these client processes in Example \ref{exam:type
 Later on, we will show that they are behaviourally equivalent using characteristic bisimilarity;
 see \propref{p:examp}.
 \begin{figure}
-\input{diagram}
+%%%%% BEGIN DIAGRAM
+\newcommand{\Hotel}{\mathsf{Hotel}}
+\newcommand{\Code}{\mathsf{Code}}
+
+%\input{diagram}
+
+
+\begin{tikzpicture}
+%	\draw[help lines]		(0, 0) grid (13, 10);
+
+	%%%%%%%%%%%%%%%%%%%%% Scenario 1
+
+	%%%% Nodes
+	\node	(Client1)	at	(0, 10) {\footnotesize $\Client_1$};
+	\node	(Hotel1)	at	(2.5, 10) {\footnotesize $\Hotel_1$};
+	\node	(Hotel2)	at	(5, 10) {\footnotesize $\Hotel_2$};
+
+	\node	(Code1)		at	(1.25, 8.8) {\scriptsize $\Code_1$};
+	\node	(Code2)		at	(3.75, 8.8) {\scriptsize $\Code_2$};
+
+	%%%% Lines for Nodes
+%	\draw[dashed]		(Client1.south west) -- (Client1.south east);
+	\draw
+		let
+			\p1 = (Client1.south),
+			\p2 = (Hotel1.south),
+			\p3 = (Hotel2.south),
+			\p4 = (Code1.south),
+			\p5 = (Code2.south)
+		in
+			(\x1, \y1) -- (\x1, 4.8)
+			(\x2, \y2) -- (\x2, 4.8)
+			(\x3, \y3) -- (\x3, 4.8)
+			(\x4, \y4) -- (\x4, 4.8)
+			(\x5, \y5) -- (\x5, 4.8);
+
+	%%%% Arrows
+	\draw[->]
+		let
+			\p1 = (Client1),
+			\p2 = (Hotel1)
+		in
+			(\x1, 9.6) to node[above] {\scriptsize $\abs{x}{P_{xy}}$} (\x2, 9.6);
+
+	\draw[->]
+		let
+			\p1 = (Client1),
+			\p2 = (Hotel2)
+		in
+			(\x1, 9.2) to node[above] {\qquad \qquad \scriptsize $\abs{x}{P_{xy}}$} (\x2, 9.2);
+
+	\draw[->]
+		let
+			\p1 = (Hotel1)
+		in
+			(\x1, 9.6) -- (Code1.north);
+
+	\draw[->]
+		let
+			\p1 = (Hotel2)
+		in
+			(\x1, 9.2) -- (Code2.north);
+
+
+	\draw[->]
+		let
+			\p1 = (Code1),
+			\p2 = (Hotel1)
+		in
+			(\x1, 8.4) to node[above] {\scriptsize $\rtype$} (\x2, 8.4);
+
+	\draw[->]
+		let
+			\p1 = (Code1),
+			\p2 = (Hotel1)
+		in
+			(\x2, 8) to node[above] {\scriptsize $\Quote$} (\x1, 8);
+
+	\draw[->]
+		let
+			\p1 = (Code2),
+			\p2 = (Hotel2)
+		in
+			(\x1, 8.4) to node[above] {\scriptsize $\rtype$} (\x2, 8.4);
+	\draw[->]
+		let
+			\p1 = (Code2),
+			\p2 = (Hotel2)
+		in
+			(\x2, 8) to node[above] {\scriptsize $\Quote$} (\x1, 8);
+
+	\draw[->]
+		let
+			\p1 = (Code1),
+			\p2 = (Client1)
+		in
+			(\x1, 7.6) to node[above] {\scriptsize $\Quote$} (\x2, 7.6);
+
+	\draw[->]
+		let
+			\p1 = (Code2),
+			\p2 = (Client1)
+		in
+			(\x1, 7.2) to node[above] {\scriptsize $\Quote$} (\x2, 7.2);
+
+
+	%%%% Choice 
+	%% Client1 --> Code1
+	\draw[dashed]
+		let
+			\p1 = (Client1),
+			\p2 = (Code1)
+		in
+			(-0.4, 6.8) to node {$\oplus$} (-0.4, 5.4);
+%			(\x1, 4.8) -- (\x2, 4.8)
+%			(\x1, 2.8) -- (\x2, 2.8);
+
+	\draw[dashed, ->]
+		let
+			\p1 = (Client1),
+			\p2 = (Code1)
+		in
+			(-0.4, 6.8) to node[above] {\scriptsize $\accept$} (\x2, 6.8);
+
+%	\draw[dashed]
+%		let
+%			\p1 = (Code1),
+%			\p2 = (Hotel1)
+%		in
+%			(\x1, 6.4) -- (\x2, 6.4)
+%			(\x1, 5.2) -- (\x2, 5.2)
+%			(\x1, 4) -- (\x2, 4)
+%			(\x1, 3.2) -- (\x2, 3.2);
+
+	\draw[->,dashed]
+		let
+			\p1 = (Code1),
+			\p2 = (Hotel1)
+		in
+			(\x1, 6.2) to node[above] {\scriptsize $\accept$} (\x2, 6.2);
+
+	\draw[->]
+		let
+			\p1 = (Code1),
+			\p2 = (Hotel1)
+		in
+			(\x1, 5.8) to node[above] {\scriptsize $\creditc$} (\x2, 5.8);
+
+	\draw[dashed, ->]
+		let
+			\p1 = (Client1),
+			\p2 = (Code1)
+		in
+			(-0.4, 5.4) to node[above] {\scriptsize $\reject$} (\x2, 5.4);
+
+	\draw[dashed, ->]
+		let
+			\p1 = (Code1),
+			\p2 = (Hotel1)
+		in
+			(\x1, 4.8) to node[above] {\scriptsize $\reject$} (\x2, 4.8);
+
+
+	%%%% Choice 
+	%% Client1 --> Code2
+	\draw[dashed]
+		let
+			\p1 = (Client1),
+			\p2 = (Code2)
+		in
+			(-0.2, 6.6) to node {$\oplus$} (-0.2, 5.2);
+%			(\x1, 4.8) -- (\x2, 4.8)
+%			(\x1, 2.8) -- (\x2, 2.8);
+
+	\draw[dashed, ->]
+		let
+			\p1 = (Client1),
+			\p2 = (Code2)
+		in
+			(-0.2, 6.6) to node[above] {\scriptsize $\accept$} (\x2, 6.6);
+
+%	\draw[dashed]
+%		let
+%			\p1 = (Code1),
+%			\p2 = (Hotel1)
+%		in
+%			(\x1, 6.4) -- (\x2, 6.4)
+%			(\x1, 5.2) -- (\x2, 5.2)
+%			(\x1, 4) -- (\x2, 4)
+%			(\x1, 3.2) -- (\x2, 3.2);
+
+	\draw[->,dashed]
+		let
+			\p1 = (Code2),
+			\p2 = (Hotel2)
+		in
+			(\x1, 6.2) to node[above] {\scriptsize $\accept$} (\x2, 6.2);
+
+	\draw[->]
+		let
+			\p1 = (Code2),
+			\p2 = (Hotel2)
+		in
+			(\x1, 5.8) to node[above] {\scriptsize $\creditc$} (\x2, 5.8);
+
+	\draw[dashed, ->]
+		let
+			\p1 = (Client1),
+			\p2 = (Code2)
+		in
+			(-0.2, 5.2) to node[above] {\scriptsize $\reject$} (\x2, 5.2);
+
+	\draw[dashed, ->]
+		let
+			\p1 = (Code2),
+			\p2 = (Hotel2)
+		in
+			(\x1, 4.8) to node[above] {\scriptsize $\reject$} (\x2, 4.8);
+
+
+	%%%%%%%%%%%%%%%%%%%%% Scenario 2
+
+	%%%% Nodes
+	\node	(Client1)	at	(7.5, 10) {\footnotesize $\Client_2$};
+	\node	(Hotel1)	at	(10, 10) {\footnotesize $\Hotel_1$};
+	\node	(Hotel2)	at	(12.5, 10) {\footnotesize $\Hotel_2$};
+
+	\node	(Code1)		at	(8.75, 8.8) {\scriptsize $\Code_1$};
+	\node	(Code2)		at	(11.25, 8.8) {\scriptsize $\Code_2$};
+
+
+	\draw
+		let
+			\p1 = (Client1.south),
+			\p2 = (Hotel1.south),
+			\p3 = (Hotel2.south),
+			\p4 = (Code1.south),
+			\p5 = (Code2.south)
+		in
+			(\x1, \y1) -- (\x1, 4.8)
+			(\x2, \y2) -- (\x2, 4.8)
+			(\x3, \y3) -- (\x3, 4.8)
+			(\x4, \y4) -- (\x4, 4.8)
+			(\x5, \y5) -- (\x5, 4.8);
+
+	%%%% Arrows
+	\draw[->]
+		let
+			\p1 = (Client1),
+			\p2 = (Hotel1)
+		in
+			(\x1, 9.6) to node[above] {\scriptsize $\abs{x}{Q_1}$} (\x2, 9.6);
+
+	\draw[->]
+		let
+			\p1 = (Client1),
+			\p2 = (Hotel2)
+		in
+			(\x1, 9.2) to node[above] {\qquad \qquad \scriptsize $\abs{x}{Q_2}$} (\x2, 9.2);
+
+	\draw[->]
+		let
+			\p1 = (Hotel1)
+		in
+			(\x1, 9.6) -- (Code1.north);
+
+	\draw[->]
+		let
+			\p1 = (Hotel2)
+		in
+			(\x1, 9.2) -- (Code2.north);
+
+
+	\draw[->]
+		let
+			\p1 = (Code1),
+			\p2 = (Hotel1)
+		in
+			(\x1, 8.4) to node[above] {\scriptsize $\rtype$} (\x2, 8.4);
+
+	\draw[->]
+		let
+			\p1 = (Code1),
+			\p2 = (Hotel1)
+		in
+			(\x2, 8) to node[above] {\scriptsize $\Quote$} (\x1, 8);
+
+	\draw[->]
+		let
+			\p1 = (Code2),
+			\p2 = (Hotel2)
+		in
+			(\x1, 8.4) to node[above] {\scriptsize $\rtype$} (\x2, 8.4);
+	\draw[->]
+		let
+			\p1 = (Code2),
+			\p2 = (Hotel2)
+		in
+			(\x2, 8) to node[above] {\scriptsize $\Quote$} (\x1, 8);
+
+	\draw[->]
+		let
+			\p1 = (Code1),
+			\p2 = (Code2)
+		in
+			(\x1, 7.6) to node[above] {\qquad \qquad \scriptsize $\Quote$} (\x2, 7.6);
+
+	\draw[->]
+		let
+			\p1 = (Code2),
+			\p2 = (Code1)
+		in
+			(\x1, 7.2) to node[above] {\scriptsize $\Quote$ \qquad \qquad \qquad} (\x2, 7.2);
+
+
+	%%%% Choice
+	% Client1 --> Hotel1
+	\draw[dashed]
+		let
+			\p1 = (Code1),
+			\p2 = (Hotel1)
+		in
+			(8.35, 6.8) to node {$\oplus$} (8.35, 6);
+%			(\x1, 5.6) -- (\x2, 5.6)
+%			(\x1, 4.8) -- (\x2, 4.8);
+
+	\draw[dashed, ->]
+		let
+			\p1 = (Code1),
+			\p2 = (Hotel1)
+		in
+			(8.35, 6.8) to node[above] {\scriptsize $\accept$} (\x2, 6.8);
+
+	\draw[->]
+		let
+			\p1 = (Code1),
+			\p2 = (Hotel1)
+		in
+			(\x1, 6.4) to node[above] {\scriptsize $\creditc$} (\x2, 6.4);
+
+	\draw[dashed, ->]
+		let
+			\p1 = (Code1),
+			\p2 = (Hotel1)
+		in
+			(8.35, 6) to node[above] {\scriptsize $\reject$} (\x2, 6);
+
+	% Client2 --> Hotel2
+	\draw[dashed]
+		let
+			\p1 = (Code2),
+			\p2 = (Hotel2)
+		in
+			(10.85, 6.8) to node {$\oplus$} (10.85, 6);
+%			(\x1, 5.6) -- (\x2, 5.6)
+%			(\x1, 4.8) -- (\x2, 4.8);
+
+	\draw[dashed, ->]
+		let
+			\p1 = (Code2),
+			\p2 = (Hotel2)
+		in
+			(10.85, 6.8) to node[above] {\scriptsize $\accept$} (\x2, 6.8);
+
+	\draw[->]
+		let
+			\p1 = (Code2),
+			\p2 = (Hotel2)
+		in
+			(\x1, 6.4) to node[above] {\scriptsize $\creditc$} (\x2, 6.4);
+
+	\draw[dashed, ->]
+		let
+			\p1 = (Code2),
+			\p2 = (Hotel2)
+		in
+			(10.85, 6) to node[above] {\scriptsize $\reject$} (\x2, 6);
+
+\end{tikzpicture}
+%%%%% END DIAGRAM
+
 \caption{Sequence diagrams for $\Client_1$ and $\Client_2$ as in Example~\ref{exam:proc}\label{fig:exam}.}
 %\vspace{-2mm}
 \end{figure}
@@ -754,10 +1135,10 @@ The syntax of types of \HOp is given below:
 			\text{(abstr)} & L \bnfis & \shot{U} \bnfbar \lhot{U}
 		\end{array}
 		&
-		\begin{array}{lcl}
-			\text{(session)} & S \bnfis &  \btout{U} S \bnfbar \btinp{U} S \bnfbar \tinact
+		\!\!\begin{array}{lcl}
+			\text{(session)} & S \bnfis &  \btout{U} S \bnfbar \btinp{U} S \!\bnfbar \tinact
 			\\[1mm]
-			&\bnfbar& \btsel{l_i:S_i}_{i \in I} \bnfbar \trec{t}{S} \bnfbar \vart{t}
+			&\bnfbar& \btsel{l_i:S_i}_{i \in I} \bnfbar \trec{t}{S}\! \bnfbar \vart{t}
 			\\[1mm]
 			&\bnfbar& \btbra{l_i:S_i}_{i \in I}
 		\end{array}
@@ -867,7 +1248,8 @@ relies on two auxiliary notions on session environments:
 
 \begin{definition}[Session Environments: Balanced/Reduction]\label{d:wtenvred}%\rm
 	Let $\Delta$ be a session environment.
-	\begin{enumerate}[$\bullet$]
+%	\begin{enumerate}[$\bullet$]
+   \begin{itemize}
 	\item A session environment $\Delta$ is {\em balanced} if whenever
 	$s: S_1, \dual{s}: S_2 \in \Delta$ then $S_1 \dualof S_2$.
 	\item We define the reduction relation $\red$ on session environments as: %\\ %[-2mm]
@@ -876,7 +1258,8 @@ relies on two auxiliary notions on session environments:
 	\Delta \cat s: S_1 \cat \dual{s}: S_2  \\
 	\Delta \cat s: \btsel{l_i: S_i}_{i \in I} \cat \dual{s}: \btbra{l_i: S_i'}_{i \in I} &\red& \Delta \cat s: S_k \cat \dual{s}: S_k' \ (k \in I)
 \end{eqnarray*}
-\end{enumerate}
+%\end{enumerate}
+   \end{itemize}
 \end{definition}
 
 \noi We rely on a typing system that is similar to the one developed in~\cite{tlca07,MostrousY15}. 
@@ -997,10 +1380,10 @@ and (ii)~$\news{\widetilde{m}} \bactout{n}{V} \asymp \bactinp{\dual{n}}{V}$}.
 %	\inferrule[ ]{ }{b}
 	\inferrule*[left=\ltsrule{App}]{ }{(\abs{x}{P}) \, V   \by{\tau} P \subst{V}{x}}
 %		\ltsrule{App} \ 		(\abs{x}{P}) \, V   \by{\tau} P \subst{V}{x}
-		\qquad
+		\quad~~
 		\inferrule*[left=\ltsrule{Snd}]{ }{\bout{n}{V} P \by{\bactout{n}{V}} P}
 %		\ltsrule{Snd}\	\bout{n}{V} P \by{\bactout{n}{V}} P 
-		\qquad
+		\quad~~
 		\inferrule*[left=\ltsrule{Rv}]{ }{\binp{n}{x} P \by{\bactinp{n}{V}} P\subst{V}{x} }
 %		\ltsrule{Rv}\	\binp{n}{x} P \by{\bactinp{n}{V}} P\subst{V}{x} 
 		\\[2mm]
@@ -1044,7 +1427,7 @@ and (ii)~$\news{\widetilde{m}} \bactout{n}{V} \asymp \bactinp{\dual{n}}{V}$}.
 %			P \Par Q \by{\ell} P' \Par Q
 %		}
 %		\\[5mm]
-\quad ~
+~~~ 
 		\inferrule[\ltsrule{Tau}]{P \by{\ell_1} P' \qquad Q \by{\ell_2} Q' \qquad \ell_1 \asymp \ell_2}{P \Par Q \by{\tau} \newsp{\bn{\ell_1} \cup \bn{\ell_2}}{P' \Par Q'}}
 %		\ltsrule{Tau}
 %		\tree{
@@ -1052,7 +1435,7 @@ and (ii)~$\news{\widetilde{m}} \bactout{n}{V} \asymp \bactinp{\dual{n}}{V}$}.
 %		}{
 %			P \Par Q \by{\tau} \newsp{\bn{\ell_1} \cup \bn{\ell_2}}{P' \Par Q'}
 %		} 
-		\quad ~
+		~~~
 		\inferrule[\ltsrule{Rec}]{P\subst{\recp{X}{P}}{\rvar{X}} \by{\ell} P'}{\recp{X}{P}  \by{\ell} P'}
 %		\ltsrule{Rec}
 %		\tree{
@@ -1324,7 +1707,7 @@ $\ell\not = \tau$ otherwise $\By{}$.
 %in the standard way.
 \end{definition}
 
-\subsection{Reduction-Closed, Barbed Congruence ($\cong$)}
+\subsection[Reduction-Closed, Barbed Congruence]{Reduction-Closed, Barbed Congruence ($\cong$)}
 \label{subsec:rc}
 \noi We now define \emph{typed relations} and \emph{contextual equivalence} (i.e., barbed congruence).  
 %\begin{definition}[Session Environment Confluence]\rm
@@ -1421,7 +1804,7 @@ $\hole$ in $\C$ with process $P$.
 \end{definition}
 
 
-\subsection{Context Bisimilarity ($\wbc$)}
+\subsection[Context Bisimilarity]{Context Bisimilarity ($\wbc$)}
 \label{subsec:bisimulation}
 \noi 
 Following Sangiorgi~\cite{San96H}, 
@@ -1469,7 +1852,7 @@ is hard to compute. Below we introduce
 \emph{characteristic bisimulations}, which are meant to be a \emph{tractable} proof technique over session typed  processes with higher-order communication.
  
 
-\subsection{%Higher-Order  and  
+\subsection[Characteristic  Bisimilarity]{%Higher-Order  and  
 Characteristic  Bisimilarity ($\fwb$)}\label{ss:hwb}
 \noi 
 We formalise the ideas given in % \secref{sec:overview}.
@@ -1554,10 +1937,10 @@ We define characteristic processes/values:
 		%\vspace{-3mm}
 		\[
 		\begin{array}{c}
-		\omapchar{S}  \defeq  s ~~ (s \textrm{ fresh})
-		\qquad
-		\omapchar{\chtype{S}} \defeq \omapchar{\chtype{L}} \defeq a ~~ (a \textrm{ fresh})
-		\qquad
+		\omapchar{S}  \defeq  s ~\, (s \textrm{ fresh})
+		~~~
+		\omapchar{\chtype{S}} \defeq \omapchar{\chtype{L}} \defeq a ~\, (a \textrm{ fresh})
+		~~~
 		\omapchar{\shot{U}} \defeq \omapchar{\lhot{U}} \,\defeq\, \abs{x}{\mapchar{U}{x}}
 	\end{array}
 \]
@@ -1637,13 +2020,14 @@ in~\eqref{equ:6}:
 %	\Gamma; \es; \Delta &\proves& 
 	P_2 \By{\ell} \binp{t}{x} (\appl{x}{s_1}) \Par \binp{s_2}{y} \inact 
 %\hastype \Proc
-\quad \text{($\ell = s?\ENCan{\abs{{x}}{\binp{t}{y} (\appl{y}{{x}})}}$)}
+%~~~ \text{($\ell = s?\ENCan{\abs{{x}}{\binp{t}{y} (\appl{y}{{x}})}}$)}
 \end{eqnarray*}
-\normalsize
+%\normalsize
 %\noi resulting two distinct processes.  
 %
 %\noi where 
 %$\ell = s?\ENCan{\abs{{x}}{\binp{t}{y} (\appl{y}{{x}})}}$.
+with $\ell = s?\ENCan{\abs{{x}}{\binp{t}{y} (\appl{y}{{x}})}}$.
 One question is whether the trigger value is enough
 to distinguish two processes (hence no need of 
 characteristic values). % as the input. 
@@ -1718,20 +2102,18 @@ trigger or characteristic values or names:
 	using the input rules in \figref{fig:envLTS}:
 	\[ \!\!\!
 	\begin{array}{l}
-						\eltsrule{RRcv}\,\tree {
+						\eltsrule{RRcv}\tree {
 	%\begin{array}{c}
-	(\Gamma_1; \Lambda_1; \Delta_1) \by{\bactinp{n}{V}} (\Gamma_2; \Lambda_2; \Delta_2)
+	(\Gamma_1; \Lambda_1; \Delta_1) \!\by{\bactinp{n}{V}}\! (\Gamma_2; \Lambda_2; \Delta_2)
 	~~~
 					V = m 
 					\vee  V \scong \omapchar{U}%\abs{{x}}{\map{U}^{{x}}}
 										\vee V  \scong \abs{{x}}{\binp{t}{y} (\appl{y}{{x}})}
-					\text{ {\small with $t$ fresh}} 
+					\text{ {\small  $t$ fresh}} 
 				%\end{array}
 			}{
 				(\Gamma_1; \Lambda_1; \Delta_1) \hby{\bactinp{n}{V}} (\Gamma_2; \Lambda_2; \Delta_2)
 			}
-			
-			
 	\end{array}
 	\]
 	\noi Rule $\eltsrule{RRcv}$ is defined on top
@@ -1740,11 +2122,11 @@ trigger or characteristic values or names:
 %	uses the environment transition
 %	$(\Gamma, \Lambda_1, \Delta_1) \hby{\ell} (\Gamma, \Lambda_2, \Delta_2)$
 %	in \figref{fig:envLTS}. 
-{	We  use the non-receiving rules in \figref{fig:envLTS}
+	We  use the non-receiving rules in \figref{fig:envLTS}
 	together with rule $\eltsrule{RRcv}$
 	to define 
 	$\horel{\Gamma}{\Delta_1}{P_1}{\hby{\ell}}{\Delta_2}{P_2}$
-	as in \defref{d:tlts}.}
+	as in \defref{d:tlts}.
 %	by replacing $\by{\ell}$ by $\hby{\ell}$ in \defref{d:tlts}. 
 \end{definition}
 
@@ -2046,8 +2428,8 @@ We briefly contrast
 the approach in~\cite{JeffreyR05} and ours based on 
 %{higher-order ($\hwb$) and} 
 characteristic  bisimilarity ($\fwb$):
-\begin{enumerate}[$\bullet$]
-%\begin{enumerate}[i.]
+%\begin{enumerate}[$\bullet$]
+\begin{itemize}
 \item 
 The LTS in~\cite{JeffreyR05} is enriched with extra labels for triggers;
 an output action transition emits a trigger and introduces a parallel replicated trigger.
@@ -2080,7 +2462,8 @@ In our case, \HOp lacks name matching and
 %Contrarily 
 %{In contrast,} 
 we use session types: a characteristic value inhabiting a type enables the simplest form of interactions with the environment.
-\end{enumerate}
+%\end{enumerate}
+\end{itemize}
 %\noi 
 We have compared our approach to that in~\cite{JeffreyR05} 
 using a representative example.
