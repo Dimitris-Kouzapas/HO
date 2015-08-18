@@ -2,6 +2,7 @@
 
 \usepackage{amsmath}
 \usepackage{stmaryrd}
+\usepackage{xspace}
 
 
 \usepackage{comment}
@@ -25,6 +26,51 @@
 		\titlepage
 	\end{frame}
 
+	\begin{frame}{Higher-Order Calculi}
+		\begin{itemize}
+			\item	Higher-order calculi may communicate processes as values.
+		\end{itemize}
+
+		\[
+			\bout{n}{\abs{y}{R}} P \Par \binp{\dual{n}}{x} Q \red P \Par Q \subst{\abs{y}{R}}{x}
+		\]
+	\end{frame}
+
+	\begin{frame}{Higher-Order Sessions}
+		\begin{itemize}
+			\item	\HOp is a higher-order calculus that specifies session protocols
+		\end{itemize}
+
+		\[
+			\tree {
+				\Gamma; \Lambda_1; \Delta_1 \cat n: S_2 \proves P \hastype \Proc
+				\qquad
+				\Gamma; \Lambda_2; \Delta_2 \cat x: S_1 \proves \abs{x}{Q} \hastype \shot{S_1}
+			}{
+				\Gamma; \Lambda_1 \cat \Lambda_2; \Delta_1 \cat \Delta_2 \cat n: \btout{\shot{S_1}} S_2 \proves \bout{n}{\abs{x}{Q}} P \hastype \Proc
+			}
+		\]
+	\end{frame}
+
+	\begin{frame}{Bisimulation for Higher-Order Sessions}
+		\begin{itemize}
+			\item	Contextual Bisimulation is a well known behavioural equivalence for Higher-Order calculi.
+			\item	Contextual Bisimulation is based on heavy quantifications on output and input clauses.
+			\item	Sangiorgi and, subsequently Jeffrey and Rathke offered alernative behavioural characterisations
+				in the untyped setting that do not suffer from universal quantification clauses.
+		\end{itemize}
+	\end{frame}
+
+	\begin{frame}{Bisimulation for Higher-Order Sessions}
+		\begin{itemize}
+			\item	We work on the typed setting using as a basis \HOp.
+			\item	The linear nature of session types allows to define yet
+				another behavioural characterisation for typed Higher-order calculi
+				which we call {\em Characteristic Bisimulation}.
+			
+
+		\end{itemize}
+	\end{frame}
 
 	\begin{frame}{Contextual Bisimulation for Higher-Order Sessions}
 		Suppose $P \,\Re\, Q$, for some context bisimulation~$\Re$. Then:
@@ -81,11 +127,23 @@
 				\dots \emph{\textbf{for all} $R$}  with $\fv{R}=x$, 
 				\[
 					\begin{array}{c}
-						\newsp{\widetilde{m_1}}{P' \Par \newsp{s}{\binp{s}{x} R} \Par  \bout{s}{V} \inact}
+						\newsp{\widetilde{m_1}}{P' \Par \newsp{s}{\binp{s}{x} R \Par  \bout{s}{V} \inact}}
 						\\
 						\Re
 						\\
-						\newsp{\widetilde{m_2}}{Q' \Par \newsp{s}{\binp{s}{x} R} \Par \bout{s}{W} \inact}
+						\newsp{\widetilde{m_2}}{Q' \Par \newsp{s}{\binp{s}{x} R \Par \bout{s}{W} \inact}}
+					\end{array}
+				\]
+				This is because:
+				\[
+					\begin{array}{c}
+						\newsp{s}{\binp{s}{x} R \Par \bout{s}{V} \inact}
+						\by{\tau}
+						R \subst{V}{x}
+						\\
+						\newsp{s}{\binp{s}{x} R \Par \bout{s}{W} \inact}
+						\by{\tau}
+						R \subst{W}{x}
 					\end{array}
 				\]
 		\end{enumerate}
@@ -124,9 +182,13 @@
 		\emph{\textbf{for all} $R$} with $\fv{R}=x$, 
 		\[
 			\begin{array}{c}
-			\newsp{\widetilde{m_1}}{P' \Par \binp{t}{y}\newsp{s}{\binp{s}{z} \appl{y}{z} \Par \bout{s}{V} \inact}}\\
-			\by{\bactinp{t}{\abs{x}{R}}}\\
-			\newsp{\widetilde{m_1}}{P' \Par \newsp{s}{\binp{s}{z} \appl{(\abs{x}{R})}{z}} \Par  \bout{s}{V} \inact}
+			\binp{t}{y}\newsp{s}{\binp{s}{z} \appl{y}{z} \Par \bout{s}{V} \inact}
+			\by{\bactinp{t}{\abs{x}{R}}} \by{\tau}
+			R \subst{V}{x}
+			\\
+			\binp{t}{y}\newsp{s}{\binp{s}{z} \appl{y}{z} \Par \bout{s}{W} \inact}
+			\by{\bactinp{t}{\abs{x}{R}}} \by{\tau}
+			R \subst{W}{x}
 			\end{array}
 		\]
 	\end{frame}
@@ -156,11 +218,12 @@
 	\end{frame}
 
 	\begin{frame}{Higher-Order Contextual Bisimulation: Input}
-		We can now refine the definition of context bisimulation,
-		by using a new reduction relation:
+		We can now define a refined bisimulation relation
+		using a new reduction relation, where the input action
+		clause maintains the property:
 		\\[4mm]
 
-		Suppose $P \,\Re\, Q$, for some context bisimulation~$\Re$. Then:
+		Suppose $P \,\Re\, Q$, for some {\em characteristic} bisimulation~$\Re$. Then:
 		\begin{enumerate}[$(\bullet)$]
 			\item	Whenever {\em we expect to input a value of type $U$} on P:
 				\[
