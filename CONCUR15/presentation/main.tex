@@ -34,6 +34,10 @@
 		\[
 			\bout{n}{\abs{y}{R}} P \Par \binp{\dual{n}}{x} Q \red P \Par Q \subst{\abs{y}{R}}{x}
 		\]
+
+		\[
+			\appl{\abs{x}{P}}{V} \red P \subst{V}{x}
+		\]
 	\end{frame}
 
 	\begin{frame}{Higher-Order Sessions}
@@ -64,11 +68,18 @@
 	\begin{frame}{Bisimulation for Higher-Order Sessions}
 		\begin{itemize}
 			\item	We work on the typed setting using as a basis \HOp.
-			\item	The linear nature of session types allows to define yet
-				another behavioural characterisation for typed Higher-order calculi
+
+			\item	A novel bisimulation based on principles that are
+				used for the first time and that derive out of the session types.
+
+			\item	The linear nature of session types allows to define
+				%yet another
+				a behavioural characterisation for typed Higher-order calculi
 				which we call {\em Characteristic Bisimulation}.
-			\item	The bisimulation is defined on a refined labelled transition system
+
+			\item	Characteristic bisimulation is defined on a refined labelled transition system
 				that restricts process actions following the session behaviour.
+
 			\item	A further interesting result is that, due to types, the proofs do
 				not require the presence of a name matching construct.
 		\end{itemize}
@@ -219,31 +230,110 @@
 	\end{frame}
 
 	\begin{frame}{Higher-Order Contextual Bisimulation: Input}
-		We can now define a refined bisimulation relation
-		using a new reduction relation, where the input action
-		clause maintains the property:
-		\\[4mm]
+		We define a coarser labelled transition system:
 
-		Suppose $P \,\Re\, Q$, for some {\em characteristic} bisimulation~$\Re$. Then:
-		\begin{enumerate}[$(\bullet)$]
-			\item	Whenever {\em we expect to input a value of type $U$} on P:
+		\[
+			\tree {
+				\begin{array}{c}
+					P \by{\bactinp{n}{V}} P' \\
+					V = m \vee V \scong \omapchar{U} \vee V \scong \abs{x}{\binp{t}{y} (\appl{y}{x})} \textrm{ with $t$ fresh}
+				\end{array}
+			}{
+				P \hby{\bactinp{n}{V}} P'
+			}
+		\]
+
+		Value $\abs{x}{\binp{t}{y} (\appl{y}{x})}$ is called {\em trigger value}.
+		Lack of the trigger value in the above definition would result
+		in an under-discriminating equivalence relation.
+	\end{frame}
+
+	\begin{frame}{Characteristic Bisimulation: Trigger Process}
+		In the light of the coarser semantics that
+		relation $\hby{\ell}$ offers, process:
+		\[
+			\newsp{\widetilde{m_1}}{P' \Par \binp{t}{y}\newsp{s}{\binp{s}{z} \appl{y}{z} \Par \bout{s}{V} \inact}}
+		\]
+		is equivalent with process:
+		\[
+			\newsp{\widetilde{m_1}}{P' \Par \binp{t}{y}\newsp{s}{\mapchar{\btinp{U_1} \tinact}{s} \Par \bout{s}{V} \inact}}
+		\]
+	\end{frame}
+
+	\begin{frame}{Characteristic Bisimulation}
+
+		Suppose $P\, \Re\, Q$ for some {\em characteristic} bisimulation~$\Re$. Then
+		\begin{enumerate}[$(\star)$]
+			\item	Whenever
 				\[
-					P \hby{\bactinp{n}{\omapchar{U}}} P'
+					P \hby{\news{\widetilde{m_1}} \bactout{n}{V: U_1}} P'
 				\]
-				then there exists $Q'$ such that
+				there exist $Q'$ and $W$ such that 
 				\[
-					Q \Hby{\bactinp{n}{\omapchar{U}}} Q'
+					Q \Hby{\news{\widetilde{m_2}} \bactout{n}{W: U_2}} Q'
 				\]
-				and
+
 				\[
-					P'\ \Re\ Q'
+					\begin{array}{c}
+						\newsp{\widetilde{m_1}}{P' \Par \binp{t}{y}\newsp{s}{\mapchar{\btinp{U_1} \tinact}{s} \Par \bout{s}{V} \inact}}
+						\\
+						\Re
+						\\
+						\newsp{\widetilde{m_2}}{Q' \Par \binp{t}{y}\newsp{s}{\mapchar{\btinp{U_2} \tinact}{s} \Par \bout{s}{W} \inact}}
+					\end{array}
 				\]
 		\end{enumerate}
 	\end{frame}
 
-	\begin{frame}{Contextual Bisimulation for Higher-Order Sessions}
-		
+	\begin{frame}{Characteristic Bisimulation}
+		\begin{enumerate}[$(\star)$]
+			\item	Whenever
+				\[
+					P \hby{\bactinp{n}{V}} P'
+				\]
+				there exist $Q'$ and $W$ such that 
+				\[
+					Q \Hby{\bactout{n}{V}} Q'
+				\]
+				and
+				\[
+					P'\, \Re\, Q'
+				\]
+		\end{enumerate}
 	\end{frame}
+
+	\begin{frame}{Soundness and Completeness}
+		\begin{theorem}
+			$\cong\ =\ \fwb\ =\ \wbc$
+		\end{theorem}
+	\end{frame}
+
+%	\begin{frame}{Higher-Order Contextual Bisimulation: Input}
+%		We can now define a refined bisimulation relation
+%		using a new reduction relation, where the input action
+%		clause maintains the property:
+%		\\[4mm]
+%
+%		Suppose $P \,\Re\, Q$, for some {\em characteristic} bisimulation~$\Re$. Then:
+%		\begin{enumerate}[$(\bullet)$]
+%			\item	Whenever {\em we expect to input a value of type $U$} on P:
+%				\[
+%					P \hby{\bactinp{n}{\omapchar{U}}} P'
+%				\]
+%				then there exists $Q'$ such that
+%				\[
+%					Q \Hby{\bactinp{n}{\omapchar{U}}} Q'
+%				\]
+%				and
+%				\[
+%					P'\ \Re\ Q'
+%				\]
+%		\end{enumerate}
+%	\end{frame}
+%
+%	\begin{frame}{Contextual Bisimulation for Higher-Order Sessions}
+%
+%	\end{frame}
 	
 
 
