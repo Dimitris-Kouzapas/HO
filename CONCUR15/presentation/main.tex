@@ -3,6 +3,7 @@
 \usepackage{amsmath}
 \usepackage{stmaryrd}
 \usepackage{xspace}
+\usepackage{color}
 
 
 \usepackage{comment}
@@ -24,6 +25,23 @@
 \begin{document}
 	\begin{frame}
 		\titlepage
+
+		{ \tiny %This work has been partially 
+		Sponsored by the The Doctoral Prize Fellowship, EPSRC EP/K011715/1,
+		EPSRC EP/K034413/1, and EPSRC EP/L00058X/1,
+		EU project FP7-612985 UpScale, and EU COST Action IC1201 BETTY.  
+		P\'{e}rez is  also affiliated to
+		%the NOVA Laboratory for Computer Science and Informatics (NOVA LINCS),  
+		Universidade Nova de Lisboa.%, Portugal
+		}
+	\end{frame}
+
+	\begin{frame}{Overview}
+		\begin{itemize}
+			\item	Higher-order calculi and Session Types.
+
+			\item	We present an original equivalence theory for higher-order session processes.
+		\end{itemize}
 	\end{frame}
 
 	\begin{frame}{Higher-Order Calculi}
@@ -85,26 +103,36 @@
 		\end{itemize}
 	\end{frame}
 
+	\begin{frame}{Labelled Transition System}
+		\[
+			\tree {
+				(\Gamma; \es; \Delta) \by{\ell} (\Gamma; \es; \Delta') \qquad P \by{\ell} P'
+			}{
+				\Gamma; \Delta \proves P \by{\ell} \Delta' \proves P'
+			}
+		\]
+	\end{frame}
+
 	\begin{frame}{Higher-Order Contextual Bisimulation: Output}
 		Suppose $P \,\Re\, Q$, for some context bisimulation~$\Re$. Then:
 		\begin{enumerate}[$(\star)$]
 			\item	Whenever
 				\[
-					P \by{\news{\widetilde{m_1}} \bactout{n}{V}} P'
+					\Gamma; \Delta_1 \proves P \by{\news{\widetilde{m_1}} \bactout{n}{V}} \Delta_1' \proves P'
 				\]
 				there exist $Q'$ and $W$ such that 
 				\[
-					Q \By{\news{\widetilde{m_2}} \bactout{n}{W}} Q'
+					\Gamma; \Delta_2 \proves Q \By{\news{\widetilde{m_2}} \bactout{n}{W}} \Delta_2' \proves Q'
 				\]
 				and, \fbox{\emph{\textbf{for all} $R$}}  with $\fv{R}=x$, 
 				\[
-					\newsp{\widetilde{m_1}}{P' \Par R\subst{V}{x}}\ \Re\ \newsp{\widetilde{m_2}}{Q' \Par R\subst{W}{x}}
+					\Gamma; \Delta_1'' \proves \newsp{\widetilde{m_1}}{P' \Par R\subst{V}{x}}\ \Re\ \Delta_2'' \proves \newsp{\widetilde{m_2}}{Q' \Par R\subst{W}{x}}
 				\]
 		\end{enumerate}
 	\end{frame}
 
 	\begin{frame}{Higher-Order Contextual Bisimulation: Output}
-		Equivalently rewrite the conclusion of the ($\star$) clause:
+		Equivalently rewrite the conclusion of the {\color{blue} ($\star$)} clause:
 		\\[2mm]
 
 		Suppose $P \,\Re\, Q$, for some context bisimulation~$\Re$. Then:
@@ -121,12 +149,12 @@
 %				and,
 				\dots \emph{\textbf{for all} $R$}  with $\fv{R}=x$, 
 				\[
-					\begin{array}{c}
-						\newsp{\widetilde{m_1}}{P' \Par \newsp{s}{\binp{s}{x} R \Par  \bout{s}{V} \inact}}
+					\begin{array}{rcc}
+						\Gamma; \Delta_1'' &\proves& \newsp{\widetilde{m_1}}{P' \Par \newsp{s}{\binp{s}{x} R \Par  \bout{s}{V} \inact}}
 						\\
-						\Re
+						&&\Re
 						\\
-						\newsp{\widetilde{m_2}}{Q' \Par \newsp{s}{\binp{s}{x} R \Par \bout{s}{W} \inact}}
+						\Delta_2'' &\proves&  \newsp{\widetilde{m_2}}{Q' \Par \newsp{s}{\binp{s}{x} R \Par \bout{s}{W} \inact}}
 					\end{array}
 				\]
 				This is because:
@@ -145,13 +173,13 @@
 	\end{frame}
 
 	\begin{frame}{Higher-Order Contextual Bisimulation: Output}
-		We can further the $(\star)$ clause as a \underline{non universally quantified} input triggered context:
+		We can further the {\color{blue} ($\star$)} clause as a \underline{non universally quantified} input triggered context:
 		\\[2mm]
 
 		Suppose $P \,\Re\, Q$, for some context bisimulation~$\Re$. Then:
 		\begin{enumerate}[$(\star)$]
 			\item	Whenever\\
-				\dots\\
+				\dots
 %				\[
 %					P \by{\news{\widetilde{m_1}} \bactout{n}{V}} P'
 %				\]
@@ -162,19 +190,17 @@
 %				and,
 				%\dots \emph{\textbf{for all} $R$} with $\fv{R}=x$, 
 				\[
-					\begin{array}{c}
-						\newsp{\widetilde{m_1}}{P' \Par \binp{t}{y}\newsp{s}{\binp{s}{z} \appl{y}{z} \Par \bout{s}{V} \inact}}
+					\begin{array}{rcc}
+						\Gamma; \Delta_1'' &\proves& \newsp{\widetilde{m_1}}{P' \Par \binp{t}{y}\newsp{s}{\binp{s}{z} \appl{y}{z} \Par \bout{s}{V} \inact}}
 						\\
-						\Re
+						&& \Re
 						\\
-						\newsp{\widetilde{m_2}}{Q' \Par \binp{t}{y}\newsp{s}{\binp{s}{z} \appl{y}{z} \Par \bout{s}{W} \inact}}
+						\Delta_1'' &\proves& \newsp{\widetilde{m_2}}{Q' \Par \binp{t}{y}\newsp{s}{\binp{s}{z} \appl{y}{z} \Par \bout{s}{W} \inact}}
 					\end{array}
 				\]
 		\end{enumerate}
 
-		This is because:
-
-		\emph{\textbf{for all} $R$} with $\fv{R}=x$, 
+		This is because \emph{\textbf{for all} $R$} with $\fv{R}=x$, 
 		\[
 			\begin{array}{c}
 			\binp{t}{y}\newsp{s}{\binp{s}{z} \appl{y}{z} \Par \bout{s}{V} \inact}
@@ -193,22 +219,22 @@
 		\begin{enumerate}[$(\bullet)$]
 			\item	\fbox{\emph{\textbf{For all} $V$}} such that:
 				\[
-					P \by{\bactinp{n}{V}} P'
+					\Gamma; \Delta_1 \proves P \by{\bactinp{n}{V}} \Delta_1' \proves P'
 				\]
 				then there exists $Q'$ such that
 				\[
-					Q \By{\bactinp{b}{V}} Q'
+					\Gamma; \Delta_2 \proves Q \By{\bactinp{b}{V}} \Delta_2' \proves Q'
 				\]
 				and
 				\[
-					P'\ \Re\ Q'
+					\Gamma; \Delta_1' \proves P'\ \Re\ \Delta_2' \proves Q'
 				\]
 		\end{enumerate}
 	\end{frame}
 
 	\begin{frame}{Higher-Order Contextual Bisimulation: Input}
 		We can take advantage of session types to improve the
-		$(\bullet)$ clause.
+		{\color{blue} $(\bullet)$} clause.
 		\vspace{3mm}
 
 		\begin{definition}[Characteristic Process]
@@ -266,20 +292,20 @@
 		\begin{enumerate}[$(\star)$]
 			\item	Whenever
 				\[
-					P \hby{\news{\widetilde{m_1}} \bactout{n}{V: U_1}} P'
+					\Gamma; \Delta_1 \proves P \hby{\news{\widetilde{m_1}} \Delta_1' \proves \bactout{n}{V: U_1}} P'
 				\]
 				there exist $Q'$ and $W$ such that 
 				\[
-					Q \Hby{\news{\widetilde{m_2}} \bactout{n}{W: U_2}} Q'
+					\Gamma; \Delta_2 \proves Q \Hby{\news{\widetilde{m_2}} \bactout{n}{W: U_2}} \Delta_2' \proves Q'
 				\]
-
+				and
 				\[
 					\begin{array}{c}
-						\newsp{\widetilde{m_1}}{P' \Par \binp{t}{y}\newsp{s}{\mapchar{\btinp{U_1} \tinact}{s} \Par \bout{s}{V} \inact}}
+						\Gamma; \Delta_1'' \proves \newsp{\widetilde{m_1}}{P' \Par \binp{t}{y}\newsp{s}{\mapchar{\btinp{U_1} \tinact}{s} \Par \bout{s}{V} \inact}}
 						\\
 						\Re
 						\\
-						\newsp{\widetilde{m_2}}{Q' \Par \binp{t}{y}\newsp{s}{\mapchar{\btinp{U_2} \tinact}{s} \Par \bout{s}{W} \inact}}
+						\Delta_2'' \proves \newsp{\widetilde{m_2}}{Q' \Par \binp{t}{y}\newsp{s}{\mapchar{\btinp{U_2} \tinact}{s} \Par \bout{s}{W} \inact}}
 					\end{array}
 				\]
 		\end{enumerate}
@@ -289,20 +315,26 @@
 		\begin{enumerate}[$(\star)$]
 			\item	Whenever
 				\[
-					P \hby{\bactinp{n}{V}} P'
+					\Gamma; \Delta_1 \proves P \hby{\bactinp{n}{V}} \Delta_1' \proves P'
 				\]
 				there exist $Q'$ and $W$ such that 
 				\[
-					Q \Hby{\bactout{n}{V}} Q'
+					\Gamma; \Delta_2 \proves Q \Hby{\bactout{n}{V}} \Delta_2' \proves Q'
 				\]
 				and
 				\[
-					P'\, \Re\, Q'
+					\Gamma; \Delta_1' \proves P'\, \Re\, \Delta_2' \proves Q'
 				\]
 		\end{enumerate}
 	\end{frame}
 
 	\begin{frame}{Soundness and Completeness}
+		\begin{tabular}{lcc}
+			Reduction-closed, Barb-preserving, Congruence&: & $\cong$\\
+			Context Bisimilarity&: & $\wbc$\\
+			Characteristic Bisimilarity&: & $\fwb$
+		\end{tabular}
+
 		\begin{theorem}
 			$\cong\ =\ \fwb\ =\ \wbc$
 		\end{theorem}
