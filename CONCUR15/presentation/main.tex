@@ -307,12 +307,17 @@
 		{\color{blue} $(\bullet)$} clause.
 		\vspace{3mm}
 
-		\begin{definition}[Characteristic Process]
-			A session type $S$ can be inhabited by a simple
-			{\em characteristic} process, $\omapchar{S}$.
+		\begin{definition}[Characteristic Process and Value]
+			\begin{itemize}
+				\item	Type $U$ is inhabited by a simple
+					{\em characteristic} process, $\mapchar{U}{u}$.
+
+				\item	Type $U$ is inhabited by simple
+					{\em characteristic} value, $\omapchar{U}$.
+			\end{itemize}
 %			where $u$ is a name.
 		\end{definition}
-		\vspace{3mm}
+		%\vspace{1mm}
 
 		For example session:
 		\[
@@ -320,9 +325,15 @@
 		\]
 		is inhabited by {\em characteristic process}:
 		\[
-			\omapchar{S} = \binp{u}{x} (\bout{u}{s_2} \inact \Par \appl{x}{s_1})
+			\mapchar{S}{u} = \binp{u}{x} (\bout{u}{s_2} \inact \Par \appl{x}{s_1})
 		\]
 		for a fresh name $u$.
+%		\vspace{3mm}
+%
+%		Characteristic types for values are inhabited as:
+%		\[
+%			\omapchar{S} = s \qquad \omapchar{\shot{S}} = \abs{x}{\mapchar{S}{x}}
+%		\]
 	\end{frame}
 
 	\begin{frame}{Higher-Order Contextual Bisimulation: Input}
@@ -339,9 +350,11 @@
 			}
 		\]
 
-		Value $\abs{x}{\binp{t}{y} (\appl{y}{x})}$ is called {\em trigger value}.
-		Lack of the trigger value in the above definition would result
-		in an under-discriminating equivalence relation.
+		\begin{itemize}
+			\item	Value $\abs{x}{\binp{t}{y} (\appl{y}{x})}$ is called {\em trigger value}
+			\item	Lack of the trigger value in the above definition would result
+				in an under-discriminating equivalence relation (example~12 in the paper)
+		\end{itemize}
 	\end{frame}
 
 	\begin{frame}{Characteristic Bisimulation: Trigger Process}
@@ -441,6 +454,134 @@
 		\end{itemize}
 	\end{frame}
 
+
+	\begin{frame}{Questions?}
+		\begin{center}
+			\huge Thank you for your attention
+		\end{center}
+	\end{frame}
+
+	\begin{frame}{The need for trigger value}
+%		\begin{example}[The Need for Refined Typed LTS]
+%		\label{ex:motivation}
+%		We show that observing a characteristic value
+%		input alone is not enough
+%		\dk{to define a sound bisimulation closure}.
+		Consider   processes: % $P_1, P_2$:
+		%
+		\begin{eqnarray*}
+			P_1 = \binp{s}{x} (\appl{x}{s_1} \Par \appl{x}{s_2}) 
+			& & 
+			P_2 = \binp{s}{x} (\appl{x}{s_1} \Par \binp{s_2}{y} \inact) 
+%			\label{equ:6}
+		\end{eqnarray*}
+		%
+		%We can show that 
+		with
+		\[
+			\Gamma; \es; \Delta \cat s: \btinp{\shot{(\btinp{C} \tinact)}} \tinact \proves P_i \hastype \Proc (i \in \{1,2\})
+		\]
+
+		If $P_1$ and $P_2$ input and substitute over $x$
+		the characteristic value:
+		\[
+			\omapchar{\shot{(\btinp{C} \tinact)}} = \abs{x}{\binp{x}{y} \inact}
+		\] 
+		then they evolve into:%(\ref{eq:5}) and (\ref{eq:6}) in become:
+		\begin{center}
+		%\begin{tabular}{c}
+			$\Gamma; \es; \Delta \proves \binp{s_1}{y} \inact \Par \binp{s_2}{y} \inact \hastype \Proc$
+		%\end{tabular}
+		\end{center}
+		\noi therefore becoming 
+		context bisimilar.
+	\end{frame}
+
+	\begin{frame}{The need for trigger value}
+		%after the input of $\abs{x}{\binp{x}{y}} \inact$.
+		However, $P_1$ and $P_2$
+%		the processes in (\ref{equ:6}) 
+		are
+%clearly
+		{\em not} context bisimilar:
+%		: many input actions
+%		may be used to distinguish them.
+%		For example,
+		If 
+		$P_1$ and $P_2$ input 
+		\[
+			\abs{x} \newsp{s}{\bout{a}{s} \binp{x}{y} \inact}
+		\]
+		with
+		\[
+			\Gamma; \es; \Delta \proves s \hastype \tinact
+		\]
+		then the derivatives
+		\begin{eqnarray*}
+			P_1' &=& \appl{\abs{x}{\newsp{s}{\bout{a}{s} \binp{x}{y} \inact}}}{s_1} \Par \appl{\abs{x}{\newsp{s}{\bout{a}{s} \binp{x}{y} \inact}}}{s_2}\\
+			P_2' &=& \appl{\abs{x}{\newsp{s}{\bout{a}{s} \binp{x}{y} \inact}}}{s_2} \Par \binp{s_2}{y} \inact
+		\end{eqnarray*}
+		are not bisimilar.
+	\end{frame}
+
+	\begin{frame}{The need for trigger value}
+%		Observing only the characteristic value 
+%		results in an under-discriminating bisimulation.
+		However, if a trigger value
+		\[
+			\abs{{x}}{\binp{t}{y} (\appl{y}{{x}})}
+		\]
+		is received on $s$, we can distinguish $P_1$, $P_2$ ($\ell = \bactinp{s}{\abs{{x}}{\binp{t}{y} (\appl{y}{{x}})}}$):
+		%
+		\begin{eqnarray*}
+			P_1 &\By{\ell}& \binp{t}{x} (\appl{x}{s_1}) \Par \binp{t}{x} (\appl{x}{s_2})\\
+%			\mbox{~and~}
+			P_2 &\By{\ell}& \binp{t}{x} (\appl{x}{s_1}) \Par \binp{s_2}{y} \inact
+%			\quad 
+		\end{eqnarray*}
+	\end{frame}
+
+	\begin{frame}{The need for trigger value}
+		The trigger value alone is not enough.
+		Consider processes:
+		%
+		\begin{eqnarray*}
+			&&\newsp{s}{\binp{n}{x} (\appl{x}{s}) \Par \bout{\dual{s}}{\abs{x} R_1} \inact} \\
+			&&\newsp{s}{\binp{n}{x} (\appl{x}{s}) \Par \bout{\dual{s}}{\abs{x} R_2} \inact} 
+		\end{eqnarray*}
+		%
+		On a trigger value input, we obtain:
+		\begin{eqnarray*}
+			&&\newsp{s}{\binp{t}{x} (\appl{x}{s}) \Par \bout{\dual{s}}{\abs{x} R_1} \inact} \\
+			&&\newsp{s}{\binp{t}{x} (\appl{x}{s}) \Par \bout{\dual{s}}{\abs{x} R_2} \inact}
+		\end{eqnarray*}
+
+		\noi thus conclude a bisimulation closure.
+%		we can easily derive a bisimulation closure if we 
+%		assume a bisimulation definition that allows only trigger value input.
+		%
+		%\noi It is easy to obtain a closure if allow only the
+		%trigger value as the input value. 
+		But
+%		if processes in \eqref{equ:7}
+		on a characteristic value ($\abs{z}{\binp{z}{x} (\appl{x}{m})}$) input 
+%		the characteristic value $\abs{z}{\binp{z}{x} (\appl{x}{m})}$,  
+		then they would become:%, under appropriate $\Gamma$ and $\Delta$:
+		%
+		\begin{eqnarray*}
+			\Gamma; \es; \Delta \proves \newsp{s}{\binp{s}{x} (\appl{x}{m}) \Par \bout{\dual{s}}{\abs{x} R_i} \inact} \wbc \Delta \proves R_i \subst{m}{x}
+		\quad (i=1,2)
+		%	\\
+		%	\Gamma; \es; \Delta \proves \newsp{s}{\binp{s}{x} (\appl{x}{m}) \Par \bout{\dual{s}}{\abs{x} Q} \inact} \wbc \Delta \proves Q \subst{m}{x}
+		\end{eqnarray*}
+		\noi which are not bisimilar if $R_1 \subst{m}{x} \not\wbc R_2 \subst{m}{x}$.
+		%\qed
+		%In conclusion, these examples explain a need of both 
+		%trigger and characteristic values 
+		%as an input observation in the input transition relation (\eltsrule{RRcv})
+		%which will be defined in Definition~\ref{def:rlts}.  
+%		\end{example}
+	\end{frame}
 
 %	\begin{frame}{Higher-Order Contextual Bisimulation: Input}
 %		We can now define a refined bisimulation relation
