@@ -40,19 +40,19 @@
 
 	\begin{frame}{Motivation}
 		\begin{itemize}
-			\item	Higher-order session calculi
+			\item	Higher-order session calculus
 
 				\begin{itemize}
+					\item	Session types
 					\item	Values in message may be processes
-					\item	Bridge between process calculi the $\lambda$-calculus
-%					\item	Session typed
+					\item	Bridge between process calculi and the $\lambda$-calculus
 				\end{itemize}
 
 %			\item	Equivalence theory for session typed programs
 
 			\item	Equivalence theory for higher-order sessions is both interesting and challenging
 
-			\item	This paper offers the first {\em tractable} theory, based on labeled bisimilarities
+			\item	This paper offers the first {\em tractable} theory, based on labelled bisimilarities
 				informed by session types. The solution is:
 				\begin{itemize}
 					\item	Natural - follows the behaviour of session types
@@ -72,6 +72,21 @@
 %		\caption{Sequence diagrams for $\Client_1$ and $\Client_2$ as in Example~\ref{exam:proc}\label{fig:exam}.}
 %		\vspace{-2mm}
 %		\end{figure}
+	\end{frame}
+
+	\begin{frame}{Equivalence Theory: Reduction-closed, Barbed-preserving Congruence}
+		\begin{itemize}
+			\item Suppose a symmetric relation $P\ \Re\ Q$. $\Re$ is a reduction-closed, barbed-preserving congruence whenever:
+			\begin{itemize}
+				\item	$P \red P'$ if $Q \Red Q'$ and $P'\ \Re\ Q'$
+				\item	$P \barb{n}$ if $Q \Barb{n}$
+				\item	$\forall C, \context{C}{P}\ \Re\ \context{C}{Q}$
+			\end{itemize}
+
+			\item	Natural equivalence relation
+			\item	Processes not distinguished under any context (observer)
+			\item	Untyped Setting
+		\end{itemize}
 	\end{frame}
 
 
@@ -97,7 +112,8 @@
 			\item	A session based higher-order calculus - typed setting
 %				We work on the typed setting using as a basis a session based higher-order calculus
 
-			\item	A bisimulation based on principles that are
+			\item	A new solution on the higher-order equivelence problem based
+				on principles that are
 				used for the first time and are derived out of the behaviour of session types
 
 			\item	The linear nature of session types allows to define
@@ -148,14 +164,18 @@
 			\tree {
 				\Gamma; \Lambda_1; \Delta_1 \cat n: S_2 \proves P \hastype \Proc
 				\qquad
-				\Gamma; \Lambda_2; \Delta_2 \cat x: S_1 \proves \abs{x}{Q} \hastype \shot{S_1}
+				\tree {
+					\Gamma; \Lambda_2; \Delta_2 \cat x: S_1 \proves Q \hastype \Proc
+				}{
+					\Gamma; \Lambda_2; \Delta_2 \proves \abs{x}{Q} \hastype \shot{S_1}
+				}
 			}{
 				\Gamma; \Lambda_1 \cat \Lambda_2; \Delta_1 \cat \Delta_2 \cat n: \btout{\shot{S_1}} S_2 \proves \bout{n}{\abs{x}{Q}} P \hastype \Proc
 			}
 		\]
 
 		\begin{itemize}
-			\item	Labelled Transition System
+			\item	Labelled transition system
 		\end{itemize}
 
 		\[
@@ -169,7 +189,7 @@
 
 	\begin{frame}{Equivalences}
 		\begin{itemize}
-			\item	Typed Labelled Transition Semantics is used to define
+			\item	Typed labelled transition semantics is used to define
 
 			\begin{tabular}{lcl}
 				$\cong$ &:& Reduction-closed, Barb-preserving, Congruence\\
@@ -243,7 +263,7 @@
 	\end{frame}
 
 	\begin{frame}{Higher-Order Contextual Bisimulation: Output}
-		We can further the \textcolor{blue}{($\star$)} clause as a \underline{non universally quantified} input triggered context:
+		We can further rewrite the \textcolor{blue}{($\star$)} clause as a \underline{non universally quantified} input triggered context:
 		\\[2mm]
 
 		Suppose $P \,\Re\, Q$, for some context bisimulation~$\Re$. Then:
@@ -398,6 +418,7 @@
 	\end{frame}
 
 	\begin{frame}{Characteristic Bisimulation}
+
 		\begin{enumerate}[$(\bullet)$]
 			\item	Whenever
 				\[
@@ -431,7 +452,26 @@
 				\end{theorem}
 
 			\item	No matching construct is required for proofs - types contain all the information needed
+
 		\end{itemize}
+	\end{frame}
+
+	\begin{frame}{No matching: Example}
+			\begin{eqnarray*}
+				&&\es; \es; n: \btout{S} \tinact, m_1 : S \proves P = \bout{n}{m_1} \inact \\
+				&&\es; \es; n: \btout{S} \tinact, m_2 : S \proves Q = \bout{n}{m_2} \inact
+			\end{eqnarray*}
+			Observe actions $\bactout{n}{m_1}$ and $\bactout{n}{m_2}$, respectively.
+			\begin{eqnarray*}
+				&&\es; \es; m_1 : S \proves P' = \btinp{t}{y} \newsp{s}{\mapchar{\btinp{S} \tinact}{s}\Par \bout{\dual{s}}{m_1}\inact} \\
+				&&\es; \es; m_2 : S \proves Q' = \btinp{t}{y} \newsp{s}{\mapchar{\btinp{S} \tinact}{s}\Par \bout{\dual{s}}{m_2}\inact} 
+			\end{eqnarray*}
+
+			\begin{itemize}
+				\item	If $S = \tinact$ then $P$ and $Q$ are bisimilar because there is no further observation on $m_1$ and $m_2$
+				\item	Otherwise $P'$ and $Q'$ can be distinguished because we observe interaction on $m_1$ and $m_2$,
+					respectively.
+			\end{itemize}
 	\end{frame}
 
 	\begin{frame}{Summary of the Results}
