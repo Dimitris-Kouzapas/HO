@@ -14,6 +14,8 @@
 
 \input{macros.tex}
 
+\newcommand{\prcolor}[1]{{\color{blue} #1}}
+
 %%%%%%%%%%%%%%%%%%% Title Page Info%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \title{Characteristic Bisimulations for Higher-Order Session Types}
@@ -45,15 +47,20 @@
 				\begin{itemize}
 					\item	Session types
 					\item	Values in message may be processes
-					\item	Bridge between process calculi and the $\lambda$-calculus
+					\item	Bridge between process calculi and the $\lambda$ calculus
 				\end{itemize}
 
 %			\item	Equivalence theory for session typed programs
 
-			\item	Equivalence theory for higher-order sessions is both interesting and challenging
+			\item	Equivalence theory for higher-order sessions is
+				\begin{itemize}
+					\item	Interesting - real applications, relation between the $\lambda$ calculus and process calculi
+					\item	Challenging - difficult to compute
+				\end{itemize}
+%				interesting and challenging
 
-			\item	This paper offers the first {\em tractable} theory, based on labelled bisimilarities
-				informed by session types. The solution is:
+			\item	This paper offers the first {\em tractable} theory based on labelled bisimilarities
+				informed by session types % The solution is:
 				\begin{itemize}
 					\item	Natural - follows the behaviour of session types
 					\item	Economical - exploits the linearity of session types
@@ -63,25 +70,21 @@
 	\end{frame}
 
 	\begin{frame}{Motivation: Example}
-%		\begin{figure}
 		\input{diagram}
 
-		\[
-			\Client_1 \wbc \Client_2
-		\]
-%		\caption{Sequence diagrams for $\Client_1$ and $\Client_2$ as in Example~\ref{exam:proc}\label{fig:exam}.}
-%		\vspace{-2mm}
-%		\end{figure}
+		\vspace{5mm}
+		$\Client_1$ should be equivalent with $\Client_2$: $\Client_1 \wbc \Client_2$
 	\end{frame}
 
 	\begin{frame}{Equivalence Theory: Reduction-closed, Barbed-preserving Congruence}
 		\begin{itemize}
-			\item Suppose a symmetric relation $P\ \Re\ Q$. $\Re$ is a reduction-closed, barbed-preserving congruence whenever:
-			\begin{itemize}
-				\item	$P \red P'$ if $Q \Red Q'$ and $P'\ \Re\ Q'$
-				\item	$P \barb{n}$ if $Q \Barb{n}$
-				\item	$\forall C, \context{C}{P}\ \Re\ \context{C}{Q}$
-			\end{itemize}
+			\item	A symmetric relation $\Re$ is  a reduction-closed, barbed-preserving congruence
+				if $P\ \Re\ Q$ implies
+				\begin{itemize}
+					\item	$P \red P'$ if $Q \Red Q'$ and $P'\ \Re\ Q'$
+					\item	$P \barb{n}$ if $Q \Barb{n}$
+					\item	$\forall C, \context{C}{P}\ \Re\ \context{C}{Q}$
+				\end{itemize}
 
 			\item	Natural equivalence relation
 			\item	Processes not distinguished under any context (observer)
@@ -117,14 +120,20 @@
 			\item	A session based higher-order calculus - typed setting
 %				We work on the typed setting using as a basis a session based higher-order calculus
 
+			\item	Sessions describe a structured behaviour on the communication semantics of processes
+
 			\item	A new solution on the higher-order equivelence problem based
 				on principles that are
 				used for the first time and are derived out of the behaviour of session types
+		\end{itemize}
+	\end{frame}
 
+
+	\begin{frame}{Equivalence Theory for Higher-Order Sessions}
+		\begin{itemize}
 			\item	The linear nature of session types allows to define
-				%yet another
 				a behavioural characterisation for typed Higher-order calculi
-				which we call {\em Characteristic Bisimulation}
+				which we call {\bf Characteristic Bisimulation}
 
 			\item	Characteristic bisimulation is defined on a refined labelled transition system
 				that restricts process actions following the session behaviour.
@@ -155,7 +164,7 @@
 		\[
 			\begin{array}{rcl}
 				\bout{u}{\abs{y}{R}} P \Par \binp{\dual{u}}{x} Q &\red& P \Par Q \subst{\abs{y}{R}}{x}\\
-				(\appl{\abs{x}{P}}{V}) &\red& P \subst{V}{x}
+				\appl{(\abs{x}{P})}{V} &\red& P \subst{V}{x}
 			\end{array}
 		\]
 	\end{frame}
@@ -209,9 +218,10 @@
 %	\end{frame}
 
 	\begin{frame}{Higher-Order Contextual Bisimulation: Output}
-		Suppose $P \,\Re\, Q$, for some context bisimulation~$\Re$. Then:
+		Suppose $\Gamma; \Delta_1 \proves P\ \Re\ \Delta_2 \proves Q$, for some symmetric $\Re$. Relation $\Re$ is
+		context bisimulation whenever
 		\begin{enumerate}[$(\star)$]
-			\item	Whenever
+			\item	For all $\news{\widetilde{m_1}} \bactout{n}{V}$ such that
 				\[
 					\Gamma; \Delta_1 \proves P \by{\news{\widetilde{m_1}} \bactout{n}{V}} \Delta_1' \proves P'
 				\]
@@ -230,9 +240,51 @@
 		Equivalently rewrite the conclusion of the \textcolor{blue}{($\star$)} clause:
 		\\[2mm]
 
-		Suppose $P \,\Re\, Q$, for some context bisimulation~$\Re$. Then:
+		Suppose $\Gamma; \Delta_1 \proves P\ \Re\ \Delta_2 \proves Q$, for some symmetric $\Re$. Relation $\Re$ is
+		context bisimulation whenever
 		\begin{enumerate}[$(\star)$]
-			\item	Whenever\\
+			\item	\dots\\
+%				\[
+%					P \by{\news{\widetilde{m_1}} \bactout{n}{V}} P'
+%				\]
+%				there exist $Q'$ and $W$ such that 
+%				\[
+%					Q \By{\news{\widetilde{m_2}} \bactout{n}{W}} Q'
+%				\]
+%				and,
+				\emph{\textbf{for all} $R$}  with $\fv{R}=x$, 
+				\[
+					\begin{array}{rcc}
+						\Gamma; \Delta_1'' &\proves& \newsp{\widetilde{m_1}}{P' \Par \prcolor{\newsp{s}{\binp{s}{x} R \Par  \bout{s}{V} \inact}}}
+						\\
+						&&\Re
+						\\
+						\Delta_2'' &\proves&  \newsp{\widetilde{m_2}}{Q' \Par \prcolor{\newsp{s}{\binp{s}{x} R \Par \bout{s}{W} \inact}}}
+					\end{array}
+				\]
+		\end{enumerate}
+		This is because:
+		\[
+			\begin{array}{c}
+				\newsp{s}{\binp{s}{x} R \Par \bout{s}{V} \inact}
+				\by{\tau}
+				R \subst{V}{x}
+				\\
+				\newsp{s}{\binp{s}{x} R \Par \bout{s}{W} \inact}
+				\by{\tau}
+				R \subst{W}{x}
+			\end{array}
+		\]
+	\end{frame}
+
+	\begin{frame}{Higher-Order Contextual Bisimulation: Output}
+		We can further rewrite the \textcolor{blue}{($\star$)} clause as a \underline{non universally quantified} input triggered context:
+		\\[2mm]
+
+		Suppose $\Gamma; \Delta_1 \proves P\ \Re\ \Delta_2 \proves Q$, for some symmetric $\Re$. Relation $\Re$ is
+		context bisimulation whenever
+		\begin{enumerate}[$(\star)$]
+			\item
 				\dots\\
 %				\[
 %					P \by{\news{\widetilde{m_1}} \bactout{n}{V}} P'
@@ -242,55 +294,15 @@
 %					Q \By{\news{\widetilde{m_2}} \bactout{n}{W}} Q'
 %				\]
 %				and,
-				\dots \emph{\textbf{for all} $R$}  with $\fv{R}=x$, 
+				%\dots \emph{\textbf{for all} $R$} with $\fv{R}=x$,
+				and
 				\[
 					\begin{array}{rcc}
-						\Gamma; \Delta_1'' &\proves& \newsp{\widetilde{m_1}}{P' \Par \newsp{s}{\binp{s}{x} R \Par  \bout{s}{V} \inact}}
-						\\
-						&&\Re
-						\\
-						\Delta_2'' &\proves&  \newsp{\widetilde{m_2}}{Q' \Par \newsp{s}{\binp{s}{x} R \Par \bout{s}{W} \inact}}
-					\end{array}
-				\]
-				This is because:
-				\[
-					\begin{array}{c}
-						\newsp{s}{\binp{s}{x} R \Par \bout{s}{V} \inact}
-						\by{\tau}
-						R \subst{V}{x}
-						\\
-						\newsp{s}{\binp{s}{x} R \Par \bout{s}{W} \inact}
-						\by{\tau}
-						R \subst{W}{x}
-					\end{array}
-				\]
-		\end{enumerate}
-	\end{frame}
-
-	\begin{frame}{Higher-Order Contextual Bisimulation: Output}
-		We can further rewrite the \textcolor{blue}{($\star$)} clause as a \underline{non universally quantified} input triggered context:
-		\\[2mm]
-
-		Suppose $P \,\Re\, Q$, for some context bisimulation~$\Re$. Then:
-		\begin{enumerate}[$(\star)$]
-			\item	Whenever\\
-				\dots
-%				\[
-%					P \by{\news{\widetilde{m_1}} \bactout{n}{V}} P'
-%				\]
-%				there exist $Q'$ and $W$ such that 
-%				\[
-%					Q \By{\news{\widetilde{m_2}} \bactout{n}{W}} Q'
-%				\]
-%				and,
-				%\dots \emph{\textbf{for all} $R$} with $\fv{R}=x$, 
-				\[
-					\begin{array}{rcc}
-						\Gamma; \Delta_1'' &\proves& \newsp{\widetilde{m_1}}{P' \Par \binp{t}{y}\newsp{s}{\binp{s}{z} \appl{y}{z} \Par \bout{s}{V} \inact}}
+						\Gamma; \Delta_1'' &\proves& \newsp{\widetilde{m_1}}{P' \Par \prcolor{\binp{t}{y}\newsp{s}{\binp{s}{z} \appl{y}{z} \Par \bout{s}{V} \inact}}}
 						\\
 						&& \Re
 						\\
-						\Delta_1'' &\proves& \newsp{\widetilde{m_2}}{Q' \Par \binp{t}{y}\newsp{s}{\binp{s}{z} \appl{y}{z} \Par \bout{s}{W} \inact}}
+						\Delta_1'' &\proves& \newsp{\widetilde{m_2}}{Q' \Par \prcolor{\binp{t}{y}\newsp{s}{\binp{s}{z} \appl{y}{z} \Par \bout{s}{W} \inact}}}
 					\end{array}
 				\]
 		\end{enumerate}
@@ -310,7 +322,8 @@
 	\end{frame}
 
 	\begin{frame}{Higher-Order Contextual Bisimulation: Input}
-		Suppose $P \,\Re\, Q$, for some context bisimulation~$\Re$. Then:
+		Suppose $\Gamma; \Delta_1 \proves P\ \Re\ \Delta_2 \proves Q$, for some symmetric $\Re$. Relation $\Re$ is
+		context bisimulation whenever
 		\begin{enumerate}[$(\bullet)$]
 			\item	\fbox{\emph{\textbf{For all} $V$}} such that:
 				\[
@@ -318,7 +331,7 @@
 				\]
 				then there exists $Q'$ such that
 				\[
-					\Gamma; \Delta_2 \proves Q \By{\bactinp{b}{V}} \Delta_2' \proves Q'
+					\Gamma; \Delta_2 \proves Q \By{\bactinp{n}{V}} \Delta_2' \proves Q'
 				\]
 				and
 				\[
@@ -328,29 +341,43 @@
 	\end{frame}
 
 	\begin{frame}{Higher-Order Contextual Bisimulation: Input}
-		We can take advantage of session types to improve the
-		\textcolor{blue}{$(\bullet)$} clause.
-		\vspace{3mm}
+		\begin{itemize}
+			\item	$\Gamma; \Delta_1$ informs that $V$ comes from the class of processes with type $U$
+		\end{itemize}
+		\[
+			\Gamma; \es; \Delta \proves V \hastype U
+		\]
+		\begin{itemize}
+			\item	Choose the {\em simplest} process $V$ that inhabits $U$ so to improve
+				the \textcolor{blue}{$(\bullet)$} clause
+		\end{itemize}
+	\end{frame}
+
+	\begin{frame}{Characteristic Bisimulation: Characteristic Process and Value}
+%		We can take advantage of session types to improve the
+%		\textcolor{blue}{$(\bullet)$} clause.
+%		\vspace{3mm}
 
 		\begin{definition}[Characteristic Process and Value]
 			\begin{itemize}
 				\item	Type $U$ is inhabited by a simple
-					{\em characteristic} process, $\mapchar{U}{u}$.
+					{\bf characteristic process}, $\mapchar{U}{u}$,
+					assuming $u$ is a fresh name
 
 				\item	Type $U$ is inhabited by simple
-					{\em characteristic} value, $\omapchar{U}$.
+					{\bf characteristic value}, $\omapchar{U}$
 			\end{itemize}
 %			where $u$ is a name.
 		\end{definition}
 		%\vspace{1mm}
 
-		For example session:
+		For example session
 		\[
 			S = \btinp{\shot{S_1}} \btout{S_2} \tinact
 		\]
-		is inhabited by {\em characteristic process}:
+		is inhabited by {\em characteristic process}
 		\[
-			\mapchar{S}{u} = \binp{u}{x} (\bout{u}{s_2} \inact \Par \appl{x}{s_1})
+			\mapchar{S}{u} = \binp{u}{x} (\appl{x}{s_1} \Par \bout{u}{s_2} \inact)
 		\]
 		for a fresh name $u$.
 %		\vspace{3mm}
@@ -361,45 +388,81 @@
 %		\]
 	\end{frame}
 
-	\begin{frame}{Higher-Order Contextual Bisimulation: Input}
-		We define a coarser labelled transition system:
-
-		\[
-			\tree {
-				\begin{array}{c}
-					%\Gamma; \Delta \proves P \by{\bactinp{n}{V}} \Delta' \proves P' \\
-					(\Gamma_1; \Lambda_1; \Delta_1) \by{\bactinp{n}{V}} (\Gamma_1; \Lambda_2; \Delta_2)\\
-					V = m \vee V \scong \omapchar{U} \vee V \scong \abs{x}{\binp{t}{y} (\appl{y}{x})} \textrm{ with $t$ fresh}
-				\end{array}
-			}{
-				(\Gamma_1; \Lambda_1; \Delta_1) \hby{\bactinp{n}{V}} (\Gamma_1; \Lambda_2; \Delta_2)
-%				\Gamma; \Delta \proves P \hby{\bactinp{n}{V}} \Delta' \proves P'
-			}
-		\]
-
+	\begin{frame}{Characteristic Bisimulation: Labelled Transition System}
 		\begin{itemize}
+			\item	Define a coarser labelled transition system
+			\[
+				\tree {
+					\begin{array}{c}
+						%\Gamma; \Delta \proves P \by{\bactinp{n}{V}} \Delta' \proves P' \\
+						(\Gamma_1; \Lambda_1; \Delta_1) \by{\bactinp{n}{V}} (\Gamma_1; \Lambda_2; \Delta_2)\\
+						\begin{array}{rrcl}
+						& V &=& m \\
+						\vee& V &\scong& \omapchar{U} \\ 
+						\vee& V &\scong& \abs{x}{\binp{t}{y} (\appl{y}{x})} \textrm{ with $t$ fresh}
+						\end{array}
+					\end{array}
+				}{
+					(\Gamma_1; \Lambda_1; \Delta_1) \hby{\bactinp{n}{V}} (\Gamma_1; \Lambda_2; \Delta_2)
+	%				\Gamma; \Delta \proves P \hby{\bactinp{n}{V}} \Delta' \proves P'
+				}
+			\]
+
 			\item	Define $\Gamma; \Delta \proves P \hby{\ell} \Delta' \proves P'$
-			\item	Value $\abs{x}{\binp{t}{y} (\appl{y}{x})}$ is called {\em trigger value}
+			\item	Value $\abs{x}{\binp{t}{y} (\appl{y}{x})}$ is called {\bf trigger value}
 			\item	Lack of the trigger value in the above definition would result
 				in an under-discriminating equivalence relation (example~12 in the paper)
 		\end{itemize}
 	\end{frame}
 
+	\begin{frame}{Characteristic Bisimulation: Trigger Value}
+		\begin{itemize}
+			\item	The trigger value is a universal higher-order input
+				\[
+				\begin{array}{l}
+					\Gamma; \Delta \proves \binp{n}{x} P
+					\by{\bactinp{n}{\abs{x}{\binp{t}{y} (\appl{y}{x})}}}\\
+					\Delta' \cat t: \btinp{U} \tinact \proves P \subst{\abs{x}{\binp{t}{y} (\appl{y}{x})}}{x} 
+				\end{array}
+				\]
+			\item	This is because
+				\[
+					\forall U, \quad \Gamma; \Delta \cat t: \btinp{U} \tinact \proves \abs{x}{\binp{t}{y} (\appl{y}{x})} \hastype U
+				\]
+
+			\item	If an instance of the trigger value inputs a trigger value
+				\begin{eqnarray*}
+					\Gamma; \Delta \cat t_1: \btinp{U} \tinact \proves \binp{t_1}{y} (\appl{y}{n}) & \by{\bactinp{t_1}{\abs{x}{\binp{t_2}{y} (\appl{y}{x})}}} \by{\tau}\\
+					\Delta \cat t_2: \btinp{U} \tinact \proves \binp{t_2}{y} (\appl{y}{n}) %\appl{\abs{x}{\binp{t'}{y} (\appl{y}{x})}}{n} 
+				\end{eqnarray*}
+%			\item	Lack of the trigger value in the above definition would result
+%				in an under-discriminating equivalence relation (example~12 in the paper)
+		\end{itemize}
+	\end{frame}
+
 	\begin{frame}{Characteristic Bisimulation: Trigger Process}
-		In the light of the coarser semantics that
-		relation $\hby{\ell}$ offers, process:
-		\[
-			\newsp{\widetilde{m_1}}{P' \Par \binp{t}{y}\newsp{s}{\binp{s}{z} \appl{y}{z} \Par \bout{s}{V} \inact}}
-		\]
-		is equivalent with process:
-		\[
-			\newsp{\widetilde{m_1}}{P' \Par \binp{t}{y}\newsp{s}{\mapchar{\btinp{U_1} \tinact}{s} \Par \bout{s}{V} \inact}}
-		\]
+		\begin{itemize}
+			\item	In the light of the coarser semantics that
+				relation $\hby{\ell}$ offers, process
+				\[
+					\newsp{\widetilde{m_1}}{P' \Par \binp{t}{y}\newsp{s}{\prcolor{\binp{s}{z} \appl{y}{z}} \Par \bout{s}{V} \inact}}
+				\]
+				is equivalent with {\bf trigger process}
+				\[
+					\newsp{\widetilde{m_1}}{P' \Par \binp{t}{y}\newsp{s}{\prcolor{\mapchar{\btinp{U_1} \tinact}{s}} \Par \bout{s}{V} \inact}}
+				\]
+			\item	This is because
+				\[
+					\mapchar{\btinp{U_1} \tinact}{s} = \binp{s}{z} \appl{y}{z}
+				\]
+		\end{itemize}
 	\end{frame}
 
 	\begin{frame}{Characteristic Bisimulation}
 
-		Suppose $P\, \Re\, Q$ for some {\em characteristic} bisimulation~$\Re$. Then
+%		Suppose $\Gamma; \Delta_1 \proves P\ \Re\ \Delta_2 \proves Q$ for some {\em characteristic} bisimulation~$\Re$. Then
+		Suppose $\Gamma; \Delta_1 \proves P\ \Re\ \Delta_2 \proves Q$, for some symmetric $\Re$. Relation $\Re$ is a
+		{\bf characteristic} bisimulation whenever
 		\begin{enumerate}[$(\star)$]
 			\item	Whenever
 				\[
@@ -429,9 +492,9 @@
 				\[
 					\Gamma; \Delta_1 \proves P \hby{\bactinp{n}{V}} \Delta_1' \proves P'
 				\]
-				there exist $Q'$ and $W$ such that 
+				there exist $Q'$ such that 
 				\[
-					\Gamma; \Delta_2 \proves Q \Hby{\bactout{n}{V}} \Delta_2' \proves Q'
+					\Gamma; \Delta_2 \proves Q \Hby{\bactinp{n}{V}} \Delta_2' \proves Q'
 				\]
 				and
 				\[
@@ -462,20 +525,25 @@
 	\end{frame}
 
 	\begin{frame}{No matching: Example}
-			\begin{eqnarray*}
-				&&\es; \es; n: \btout{S} \tinact, m_1 : S \proves P = \bout{n}{m_1} \inact \\
-				&&\es; \es; n: \btout{S} \tinact, m_2 : S \proves Q = \bout{n}{m_2} \inact
-			\end{eqnarray*}
-			Observe actions $\bactout{n}{m_1}$ and $\bactout{n}{m_2}$, respectively.
-			\begin{eqnarray*}
-				&&\es; \es; m_1 : S \proves P' = \btinp{t}{y} \newsp{s}{\mapchar{\btinp{S} \tinact}{s}\Par \bout{\dual{s}}{m_1}\inact} \\
-				&&\es; \es; m_2 : S \proves Q' = \btinp{t}{y} \newsp{s}{\mapchar{\btinp{S} \tinact}{s}\Par \bout{\dual{s}}{m_2}\inact} 
-			\end{eqnarray*}
-
 			\begin{itemize}
-				\item	If $S = \tinact$ then $P$ and $Q$ are bisimilar because there is no further observation on $m_1$ and $m_2$
-				\item	Otherwise $P'$ and $Q'$ can be distinguished because we observe interaction on $m_1$ and $m_2$,
-					respectively.
+				\item	Assume
+					\begin{eqnarray*}
+						&&\es; \es; n: \btout{S} \tinact, m_1 : S \proves P = \bout{n}{m_1} \inact \\
+						&&\es; \es; n: \btout{S} \tinact, m_2 : S \proves Q = \bout{n}{m_2} \inact
+					\end{eqnarray*}
+				\item	Observe actions $\bactout{n}{m_1}$ and $\bactout{n}{m_2}$, respectively
+					\begin{eqnarray*}
+						&&\es; \es; m_1 : S \proves P' = \btinp{t}{y} \newsp{s}{\mapchar{\btinp{S} \tinact}{s}\Par \bout{\dual{s}}{m_1}\inact} \\
+						&&\es; \es; m_2 : S \proves Q' = \btinp{t}{y} \newsp{s}{\mapchar{\btinp{S} \tinact}{s}\Par \bout{\dual{s}}{m_2}\inact} 
+					\end{eqnarray*}
+
+
+				\item	No need for the observer to match $m_1$ and $m_2$
+				\begin{itemize}
+					\item	If $S = \tinact$ then $P$ and $Q$ are bisimilar because there is no further observation on $m_1$ and $m_2$
+					\item	Otherwise $P'$ and $Q'$ can be distinguished because we observe interaction on $m_1$ and $m_2$,
+						respectively.
+				\end{itemize}
 			\end{itemize}
 	\end{frame}
 
@@ -490,11 +558,12 @@
 
 			\item	Behavioural equivalence theory
 				\begin{itemize}
-					\item	Session typed processes
-					\item	Session types provide additional and crucial information to:
+					\item	Sessions enforce a structured behaviour different than
+						the behaviour of untyped processes %typed processes
+					\item	Sessions provide additional and crucial information to elliminate
 					\begin{itemize}
-						\item	Elliminate heavy quantification requirements
-						\item	Elliminate the need of a name matching construct
+						\item	Heavy quantification requirements
+						\item	The need of a name matching construct
 					\end{itemize}
 				\end{itemize}
 		\end{itemize}
@@ -506,6 +575,8 @@
 			\item	Characteristic Bisimilarity
 				\begin{itemize}
 					\item	First equivalence definition to exploit session type information
+					\item	Follows session behaviour
+					\item	We claim that is easier to compute due to session linearity
 				\end{itemize}
 
 			\item	Characterisation
@@ -540,7 +611,7 @@
 %		We show that observing a characteristic value
 %		input alone is not enough
 %		\dk{to define a sound bisimulation closure}.
-		Consider   processes: % $P_1, P_2$:
+		Consider processes % $P_1, P_2$:
 		%
 		\begin{eqnarray*}
 			P_1 = \binp{s}{x} (\appl{x}{s_1} \Par \appl{x}{s_2}) 
@@ -556,18 +627,18 @@
 		\]
 
 		If $P_1$ and $P_2$ input and substitute over $x$
-		the characteristic value:
+		the characteristic value
 		\[
 			\omapchar{\shot{(\btinp{C} \tinact)}} = \abs{x}{\binp{x}{y} \inact}
 		\] 
-		then they evolve into:%(\ref{eq:5}) and (\ref{eq:6}) in become:
+		then they both evolve into %(\ref{eq:5}) and (\ref{eq:6}) in become:
 		\begin{center}
 		%\begin{tabular}{c}
 			$\Gamma; \es; \Delta \proves \binp{s_1}{y} \inact \Par \binp{s_2}{y} \inact \hastype \Proc$
 		%\end{tabular}
 		\end{center}
 		\noi therefore becoming 
-		context bisimilar.
+		context bisimilar
 	\end{frame}
 
 	\begin{frame}{The need for trigger value}
@@ -581,7 +652,7 @@
 %		may be used to distinguish them.
 %		For example,
 		If 
-		$P_1$ and $P_2$ input 
+		$P_1$ and $P_2$ input and substitute over $x$ the value
 		\[
 			\abs{x} \newsp{s}{\bout{a}{s} \binp{x}{y} \inact}
 		\]
@@ -589,12 +660,12 @@
 		\[
 			\Gamma; \es; \Delta \proves s \hastype \tinact
 		\]
-		then the derivatives
+		then their derivatives
 		\begin{eqnarray*}
-			P_1' &=& \appl{\abs{x}{\newsp{s}{\bout{a}{s} \binp{x}{y} \inact}}}{s_1} \Par \appl{\abs{x}{\newsp{s}{\bout{a}{s} \binp{x}{y} \inact}}}{s_2}\\
-			P_2' &=& \appl{\abs{x}{\newsp{s}{\bout{a}{s} \binp{x}{y} \inact}}}{s_2} \Par \binp{s_2}{y} \inact
+			P_1' &=& \abs{x}{\newsp{s}{\bout{a}{s} \binp{s_1}{y} \inact}} \Par \abs{x}{\newsp{s}{\bout{a}{s} \binp{s_2}{y} \inact}}\\
+			P_2' &=& \abs{x}{\newsp{s}{\bout{a}{s} \binp{s_1}{y} \inact}} \Par \binp{s_2}{y} \inact
 		\end{eqnarray*}
-		are not bisimilar.
+		are not bisimilar
 	\end{frame}
 
 	\begin{frame}{The need for trigger value}
@@ -604,36 +675,36 @@
 		\[
 			\abs{{x}}{\binp{t}{y} (\appl{y}{{x}})}
 		\]
-		is received on $s$, we can distinguish $P_1$, $P_2$ ($\ell = \bactinp{s}{\abs{{x}}{\binp{t}{y} (\appl{y}{{x}})}}$):
+		is received on $s$, we can distinguish $P_1$, $P_2$ %($\ell = \bactinp{s}{\abs{{x}}{\binp{t}{y} (\appl{y}{{x}})}}$):
 		%
 		\begin{eqnarray*}
-			P_1 &\By{\ell}& \binp{t}{x} (\appl{x}{s_1}) \Par \binp{t}{x} (\appl{x}{s_2})\\
+			P_1 &\hby{\bactinp{s}{\abs{{x}}{\binp{t}{y} (\appl{y}{{x}})}}} \hby{\tau}& \binp{t}{x} (\appl{x}{s_1}) \Par \binp{t}{x} (\appl{x}{s_2})\\
 %			\mbox{~and~}
-			P_2 &\By{\ell}& \binp{t}{x} (\appl{x}{s_1}) \Par \binp{s_2}{y} \inact
+			P_2 &\hby{\bactinp{s}{\abs{{x}}{\binp{t}{y} (\appl{y}{{x}})}}} \hby{\tau}& \binp{t}{x} (\appl{x}{s_1}) \Par \binp{s_2}{y} \inact
 %			\quad 
 		\end{eqnarray*}
 	\end{frame}
 
 	\begin{frame}{The need for trigger value}
 		The trigger value alone is not enough.
-		Consider processes:
+		Consider processes
 		%
 		\begin{eqnarray*}
 			&&\newsp{s}{\binp{n}{x} (\appl{x}{s}) \Par \bout{\dual{s}}{\abs{x} R_1} \inact} \\
 			&&\newsp{s}{\binp{n}{x} (\appl{x}{s}) \Par \bout{\dual{s}}{\abs{x} R_2} \inact} 
 		\end{eqnarray*}
 		%
-		On a trigger value input, we obtain:
+		On a trigger value input, we obtain the derivatives
 		\begin{eqnarray*}
 			&&\newsp{s}{\binp{t}{x} (\appl{x}{s}) \Par \bout{\dual{s}}{\abs{x} R_1} \inact} \\
 			&&\newsp{s}{\binp{t}{x} (\appl{x}{s}) \Par \bout{\dual{s}}{\abs{x} R_2} \inact}
 		\end{eqnarray*}
 
-		\noi thus conclude a bisimulation closure.
+		\noi thus concluding a bisimulation closure
 
 		But
 		on a characteristic value ($\abs{z}{\binp{z}{x} (\appl{x}{m})}$) input 
-		then they would become:
+		then they would become
 		%
 		\begin{eqnarray*}
 			\Gamma; \es; \Delta \proves \newsp{s}{\binp{s}{x} (\appl{x}{m}) \Par \bout{\dual{s}}{\abs{x} R_i} \inact} \wbc \Delta \proves R_i \subst{m}{x}
