@@ -1,0 +1,606 @@
+% !TEX root = main.tex
+\noi This section presents two encodability results:
+(1)~The higher-order name-passing communication with recursion (\HOp) into 
+the higher-order communication without name-passing nor 
+recursion (\HO) (\secref{subsec:HOpi_to_HO}); and 
+(2)~\HOp into the first-order name-passing communication
+with recursion (\sessp) (\secref{subsec:HOp_to_sessp}).
+
+\dk{
+We further prove that the two encodings are precise.
+An important issue to adress on the precissenes of
+the encoding is that of type preservation. In the
+context of types it is not enough to check that
+the reduction semantics and the behavioural equivalences
+correspond. Type preservation gives a corresponding result on the
+type derivation of the encoded process, thus we can
+see that the encoding is preserving a specific type
+behaviour. For example consider the followin encoding
+of first-order passing into higher-order passing:
+\[
+	\begin{array}{rcl}
+		\map{\bout{n}{m} P} &=& \binp{n}{x} (\map{P} \Par \appl{x}{m})\\
+		\map{\binp{n}{x} P} &=& \bout{n}{\abs{x} P} \inact
+	\end{array}
+\]
+%
+Using the above encoding we could simulate name passing, e.g:
+\[
+	\begin{array}{rcl}
+		\bout{n}{m} P \Par \binp{\dual{n}}{x} Q &\red& P \Par Q \subst{m}{x}\\
+		\map{\bout{n}{m} P \Par \binp{\dual{n}}{x} Q} &=&\\
+		\binp{n}{x} (\map{P} \Par \appl{x}{m}) \Par \bout{\dual{n}}{\abs{x} \map{Q}} \inact &\red&
+		\map{P} \Par \appl{\abs{x}{\map{Q}}}{m}\\
+		&\red&
+		\map{P} \Par \map{Q}\subst{m}{x}
+	\end{array}
+\]
+The distinctive characteristic of this encoding is that
+it encodes the output prefix into an input prefix, and the
+input prefix into an output prefix which in turn has
+an impact on the relation on the session type of the encoding.
+The interaction structure of the session is not preserved by the
+above encoding.
+The mapping on types gives an insight on the behaviour of processes.
+}
+
+
+\subsection{From \HOp to \HO}
+\label{subsec:HOpi_to_HO}
+\noi We show that $\HO$ is expressive enough to
+represent the full
+ \HOp-calculus.
+The main challenge is to encode (1) name passing 
+and (2) recursion, 
+for which 
+we only use  abstraction passing. For (1), we pass  
+an % simple 
+abstraction which enables to use the name upon application. 
+For (2), we 
+copy a process upon reception; the case of linear abstraction passing
+%presents a limitation 
+is \NY{delicate} 
+because 
+linear abstractions cannot be copied.
+To handle linearity, we define 
+%a preliminary tool which is a mapping from
+a mapping from processes with free names to processes without free
+names (but with free variables instead).
+%from processes \jpc{with free names} to processes without free names (but with free variables) (\defref{d:auxmap}). 
+To this end, we require two auxiliary definitions.
+
+\smallskip 
+
+\begin{definition}\rm 
+\label{def:hop_to_ho}
+	Let $\vmap{\cdot}: 2^{\mathcal{N}} \longrightarrow \mathcal{V}^\omega$
+	be a map of sequences of 
+lexicographically ordered names to sequences of variables, defined
+	inductively as: 
+	$\vmap{\epsilon} = \epsilon$ and $\vmap{n \cat \tilde{m}} = x_n \cat \vmap{\tilde{m}}$. 
+\end{definition}
+
+\smallskip 
+
+%\noi The following auxiliary mapping transforms processes
+%with free names into abstractions and it is
+%used in \defref{d:enc:hopitoho}.
+%
+%\smallskip 
+
+\begin{definition}[Auxiliary Mapping] \label{d:trabs}\label{d:auxmap}
+	Let $\sigma$ be a set of session names.
+	\figref{f:auxmap} defines an auxiliary mapping
+	$\auxmapp{\cdot}{{}}{\sigma}: \HO \to \HO$.
+\end{definition}
+
+%
+\begin{figure}[t]
+\[
+\small
+\begin{array}{rl}
+	\auxmapp{\bout{n}{\abs{x}{Q}} P}{{}}{\sigma} &\!\!\!\!\!\!\defeq
+		\bout{u}{\abs{x}{\auxmapp{Q}{{}}{\sigma}}} \auxmapp{P}{{}}{\sigma}
+\\[1mm]
+%\auxmapp{\bout{n}{m} P}{{}}{\sigma} \defeq
+%	    \bout{u}{v}\auxmapp{P}{{}}{\sigma} 
+\auxmapp{\news{n} P}{{}}{\sigma}  \defeq  \news{n} \auxmapp{P}{{}}{{\sigma \cat n}}
+ & 
+	\auxmapp{P \Par Q}{{}}{\sigma}  \defeq  \auxmapp{P}{{}}{\sigma} \Par \auxmapp{Q}{{}}{\sigma} 
+	\vspace{1mm} \\
+	\auxmapp{\appl{x}{n}}{{}}{\sigma}  \defeq
+		\appl{x}{u} &
+	\auxmapp{\appl{(\lambda x.Q)}{n}}{{}}{\sigma}  \defeq
+		\appl{(\lambda x.\auxmapp{Q}{{}}{\sigma})}{u} \\
+	\auxmapp{\inact}{{}}{\sigma}  \defeq  \inact
+ & 
+			\auxmapp{\binp{n}{x} P}{{}}{\sigma}\defeq
+		\binp{u}{x} \auxmapp{P}{{}}{\sigma} 
+\\[1mm]
+	\auxmapp{\bsel{n}{l} P}{{}}{\sigma} \defeq
+		\bsel{u}{l} \auxmapp{P}{{}}{\sigma} 
+ & 
+	\auxmapp{\bbra{n}{l_i:P_i}_{i \in I}}{{}}{\sigma}  \defeq 
+		\bbra{u}{l_i:\auxmapp{P_i}{{}}{\sigma}}_{i \in I}
+\end{array}
+\]
+%\[
+%	\begin{array}{rcl}
+%          \auxmapp{\news{n} P}{{}}{\sigma} &\bnfis& \news{n} \auxmapp{P}{{}}{{\sigma \cat n}}
+%		\vspace{1mm} \\
+%		\auxmapp{\bout{n}{\abs{x}{Q}} P}{{}}{\sigma} &\bnfis&
+%		\left\{
+%		\begin{array}{rl}
+%			\bout{x_n}{\abs{(x,\vmap{\fn{P}})}{\auxmapp{Q}{{}}{\sigma}}} \auxmapp{P}{{}}{\sigma} & n \notin \sigma\\
+%			\bout{n}{\abs{(x,\vmap{\fn{P}})}{\auxmapp{Q}{{}}{\sigma}}} \auxmapp{P}{{}}{\sigma} & n \in \sigma
+%		\end{array}
+%		\right.
+%			\vspace{1mm}	\\ 
+%		\auxmapp{\bout{n}{m} P}{{}}{\sigma} &\bnfis&
+%		\left\{
+%		\begin{array}{rl}
+%		    \bout{n}{m}\auxmapp{P}{{}}{\sigma} & n, m \in \sigma \\
+%		    \bout{x_n}{m}\auxmapp{P}{{}}{\sigma} & n \not\in \sigma, m \in \sigma \\
+%		    \bout{n}{x_m}\auxmapp{P}{{}}{\sigma} & n \in \sigma, m \not\in \sigma \\
+%		    \bout{x_n}{x_m}\auxmapp{P}{{}}{\sigma} & n, m \not\in \sigma 
+%		\end{array}
+%		\right.
+%		\vspace{1mm} \\ 
+%				\auxmapp{\binp{n}{X} P}{{}}{\sigma} &\bnfis&
+%		\left\{
+%		\begin{array}{rl}
+%			\binp{x_n}{X} \auxmapp{P}{{}}{\sigma} & n \notin \sigma\\
+%			\binp{n}{X} \auxmapp{P}{{}}{\sigma} & n \in \sigma
+%		\end{array}
+%		\right.
+%			\vspace{1mm}	\\ 
+%		\auxmapp{\binp{n}{x}P}{{}}{\sigma} &\bnfis&
+%		\left\{
+%		\begin{array}{rl}
+%		    \binp{n}{x}\auxmapp{P}{{}}{\sigma} & n \in \sigma \\
+%		    \binp{x_n}{x}\auxmapp{P}{{}}{\sigma} & n \not\in \sigma 
+%		\end{array}
+%		\right.
+%		\vspace{1mm} \\ 
+%		\auxmapp{\bsel{n}{l} P}{{}}{\sigma} &\bnfis&
+%		\left\{
+%		\begin{array}{rl}
+%			\bsel{x_n}{l} \auxmapp{P}{{}}{\sigma} & n \notin \sigma\\
+%			\bsel{n}{l} \auxmapp{P}{{}}{\sigma} & n \in \sigma
+%		\end{array}
+%		\right.
+%		\vspace{1mm} \\
+%		\auxmapp{\bbra{n}{l_i:P_i}_{i \in I}}{{}}{\sigma} &\bnfis&
+%		%\auxmapp{\bsel{n}{l} P}{{}}{\sigma} &\bnfis&
+%		\left\{
+%		\begin{array}{rl}
+%			\bbra{x_n}{l_i:\auxmapp{P_i}{{}}{\sigma}}_{i \in I}  & n \notin \sigma\\
+%			\bbra{n}{l_i:\auxmapp{P_i}{{}}{\sigma}}_{i \in I}  & n \in \sigma
+%		\end{array}
+%		\right.
+%		\vspace{1mm} \\
+%		\auxmapp{\appl{\X}{n}}{{}}{\sigma} &\bnfis&
+%		\left\{
+%		\begin{array}{rl}
+%			\appl{\X}{x_n} & n \notin \sigma\\
+%			\appl{\X}{n} & n \in \sigma\\
+%		\end{array}
+%		\right. \\
+%		\auxmapp{\inact}{{}}{\sigma} &\bnfis& \inact\\
+%		\auxmapp{P \Par Q}{{}}{\sigma} &\bnfis& \auxmapp{P}{{}}{\sigma} \Par \auxmapp{Q}{{}}{\sigma} 
+% \end{array}
+%\]
+%The auxiliary map (cf. \defref{d:auxmap}) 
+%used in the encoding of the higher-order communication 
+%with recursive definitions into higher-order communication 
+%without recursive definitions and (\defref{d:enc:fotohorec}).
+\begin{center}
+{\small In all cases: $u = n$ if $n\in \sigma$; otherwise $u = x_n$.}
+\end{center}
+%The mapping is defined homomorphically for inaction and parallel composition.
+\caption{\label{f:auxmap} Auxiliary mapping used to encode \HOp into \HO.}
+\Hlinefig 
+\end{figure}
+
+\smallskip 
+
+\noi This way, given an \HO
+ process $P$ (with $\fn{P} = m_1, \cdots, m_k$),
+ we are interested in its associated abstraction, 
+defined as
+$\abs{x_1\cdots x_n}{\auxmapp{P}{{}}{\emptyset} }$, where $\vmap{m_j} = x_j$, for all $j \in \{1, \ldots, k\}$. 
+In the following we make this intuition precise.
+
+%This transformation from processes into abstractions can be reverted by
+%using abstraction and application with an appropriate sequence of session names:
+%%
+%\begin{proposition}\rm
+%	Let $P$ be a \HOp process and 
+%	suppose $\tilde{x} = \vmap{\tilde{n}}$ where 
+%$\tilde{n} = \fn{P}$.
+%	Then $P \scong \appl{(\abs{\tilde{x}}{\auxmapp{P}{{}}{\emptyset}})}{\tilde{n}}$.
+%%	$\appl{X}{\smap{\fn{P}}} \subst{(\vmap{\fn{P}}) \map{P}^{\emptyset}}{X} \scong P$
+%\end{proposition}
+
+\begin{figure}[t]
+\[
+\begin{array}{rcll}
+\noindent{\bf Types:}\quad\quad\quad\quad\quad\quad
+	\vtmap{{S}}{1}	&\!\!\!\!\!\!\defeq\!\!\!\!\!\!&	\lhot{(\btinp{\lhot{\tmap{S}{1}}} \tinact)} \\
+	\vtmap{\chtype{S}}{1}&\!\!\!\!\!\!\defeq\!\!\!\!\!\!&	\lhot{(\btinp{\shot{\chtype{\tmap{S}{1}}}} \tinact)}  \\
+	\vtmap{\chtype{L}}{1}&\!\!\!\!\!\!\defeq\!\!\!\!\!\!&	\lhot{(\btinp{\shot{\chtype{\tmap{L}{1}}}} \tinact)} \\
+	\vtmap{\lhot{C}}{1} \!\!\defeq\!\! \lhot{\tmap{C}{1}}&& 
+	\vtmap{\shot{C}}{1} \!\!\defeq\!\! \shot{\tmap{C}{1}}\\
+	\tmap{\chtype{S}}{1} \!\!\defeq\!\!	\chtype{\tmap{S}{1}}  &&
+	\tmap{\chtype{L}}{1} \!\!\defeq\!\!	\chtype{\tmap{L}{1}}  \\
+	%		\tmap{\btout{S_1} {S} }{1}	&\!\!\defeq\!\!&	\bbtout{\lhot{\btinp{\lhot{\tmap{S_1}{1}}}\tinact}} \tmap{S}{1}  \\
+	%		\tmap{\btinp{S_1} S }{1}	&\!\!\defeq\!\!&	\bbtinp{\lhot{\btinp{\lhot{\tmap{S_1}{1}}}\tinact}} \tmap{S}{1} \\
+	%		\tmap{\bbtout{\chtype{U}} {S} }{1}	&\!\!\defeq\!\!&	\bbtout{\shot{\btinp{\shot{\chtype{\tmap{U}{1}}}}\tinact}} \tmap{S}{1}  \\
+	%		\tmap{\bbtinp{\chtype{U}} {S} }{1}	&\!\!\defeq\!\!&	\bbtinp{\shot{\btinp{\shot{\chtype{\tmap{U}{1}}}}\tinact}} \tmap{S}{1} \\
+
+	\tmap{\btout{U} S}{1} \!\!\defeq\!\! \btout{{\vtmap{U}{1}}} \tmap{S}{1}&&
+	\tmap{\btinp{U} S}{1} \!\!\defeq\!\! \btinp{{\vtmap{U}{1}}} \tmap{S}{1}\\
+	\tmap{\btsel{l_i: S_i}_{i \in I}}{1} &\!\!\!\!\defeq\!\!\!\!& \btsel{l_i: \tmap{S_i}{1}}_{i \in I}\\
+			\tmap{\btbra{l_i: S_i}_{i \in I}}{1} &\!\!\!\!\defeq\!\!\!\!& \btbra{l_i: \tmap{S_i}{1}}_{i \in I}\\
+	\tmap{\vart{t}}{1} \defeq \vart{t} \quad 
+			\tmap{\trec{t}{S}}{1}  &\!\!\!\!\defeq\!\!\!\!&
+	\trec{t}{\tmap{S}{1}}\quad 
+	\tmap{\tinact}{1}  \defeq  \tinact\\[1mm]
+	\hline
+%	\noindent{\bf Labels:} \quad \quad
+%		\mapa{(\nu \tilde{m})\bactout{n}{m}}^{1} &\!\!\!\!\defeq\!\!\!\!&   
+%(\nu \tilde{m})\bactout{n}{\abs{z}{\,\binp{z}{x} (\appl{x}{m})} } \\
+%		\mapa{\bactinp{n}{m}}^{1} &\!\!\!\!\defeq\!\!\!\!&   \bactinp{n}{\abs{z}{\,\binp{z}{x} (\appl{x}{m})} } \\
+%	\mapa{(\nu \tilde{m})\bactout{n}{\abs{{x}}{P}}}^{1} &\!\!\!\!\defeq\!\!\!\!& 
+%(\nu \tilde{m})\bactout{n}{\abs{{x}}{\pmapp{P}{1}{\es}}}\\
+%			\mapa{\bactinp{n}{\abs{{x}}{P}}}^{1} &\!\!\!\!\defeq\!\!\!\!& \bactinp{n}{\abs{{x}}{\pmapp{P}{1}{\es}}}\\
+%			\mapa{\bactsel{n}{l} }^{1} \!\!\defeq\!\! \bactsel{n}{l} 
+%	\quad 
+%			\mapa{\bactbra{n}{l} }^{1} &\!\!\!\!\defeq\!\!\!\!& \bactbra{n}{l} 
+%	\quad \quad 
+%			\mapa{\tau}^{1} \!\!\defeq\!\! \tau
+%\\[1mm]
+%\hline
+\end{array}
+\]
+\noi{\bf Terms} : \\
+$
+\begin{array}{rcll}
+  \pmapp{\bout{u}{w} P}{1}{f}	&\!\!\defeq\!\!&	\bout{u}{ \abs{z}{\,\binp{z}{x} (\appl{x}{w})} } \pmapp{P}{1}{f} \\
+  \pmapp{\binp{u}{\AT{x}{C}} Q}{1}{f}	&\!\!\defeq\!\!&	\binp{u}{y} \newsp{s}{\appl{y}{s} \Par \bout{\dual{s}}{\abs{x}{\pmapp{Q}{1}{f}}} \inact} \\
+		\pmapp{\bout{u}{\abs{{x}}{Q}} P}{1}{f}  
+&\!\!\defeq\!\!& \bout{u}{\abs{{x}}{\pmapp{Q}{1}{f}}} \pmapp{P}{1}{f} \\
+		\pmapp{\binp{u}{\AT{x}{L}} P}{1}{f} &\!\!\defeq\!\!& \binp{u}{x} \pmapp{P}{1}{f}\\
+		\pmapp{\bsel{s}{l} P}{1}{f} &\!\!\defeq\!\!& \bsel{s}{l} \pmapp{P}{1}{f}\\
+		\pmapp{\bbra{s}{l_i: P_i}_{i \in I}}{1}{f} &\!\!\defeq\!\!& \bbra{s}{l_i: \pmapp{P_i}{1}{f}}_{i \in I}\\
+		\pmapp{\inact}{1}{f} \!\!\defeq\!\!\inact
+& & 
+		\pmapp{\news{n} P}{1}{f} \!\!\defeq\!\! \news{n} \pmapp{P}{1}{f}\\
+\pmapp{{x}\, {u}}{1}{f}
+ \!\!\defeq\!\!
+{x}\, {u}
+& & 		
+\pmapp{\appl{(\lambda x.Q)}{u}}{1}{f}
+ \!\!\defeq\!\!
+\appl{(\lambda x.\pmapp{Q}{1}{f})}{u}
+\\
+\pmapp{P \Par Q}{1}{f} & \!\!\defeq\!\! & 
+\pmapp{P}{1}{f} \Par \pmapp{Q}{1}{f} \\
+		\pmapp{\recp{X}{P}}{1}{f} &\!\!\defeq\!\!&\!\!\!\!\!\!
+	
+\\
+& &\hspace{-15mm}\!\!\!\!\!\!\newsp{s}{\bout{\dual{s}}{\abs{(\vmap{\tilde{n}}, y)} 
+\,{\binp{y}{z_\X} \auxmapp{\pmapp{P}{1}{{f,\{\rvar{X}\to \tilde{n}\}}}}{{}}{\es}}} \inact
+\\ 
+& & \hspace{-5mm}\!\!\!\!\!\!
+ \Par 
+\binp{s}{z_\X} \pmapp{P}{1}{{f,\{\rvar{X}\to \tilde{n}\}}}
+} 
+\quad (\tilde{n} = \fn{P}) \\ 
+\pmapp{\rvar{X}}{1}{f} &\!\!\defeq\!\!& \hspace{-3mm}\newsp{s}{
+\appl{z_X}{(\tilde{n}, s)}\\
+& & \hspace{-5mm} \Par \bbout{\dual{s}}{ \abs{(\vmap{\tilde{n}},y)}{\appl{z_X}{(\vmap{\tilde{n}}, y)}}} \inact}  \quad (\tilde{n} = f(\rvar{X})) \\
+\end{array}
+$\\[1mm]
+%  
+{\small Above $\fn{P}$ denotes a 
+lexicographically ordered
+sequence 
+of free names in $P$.
+The input bound variable $x$ is annotated by a type to distinguish first- and higher-order cases.} \\
+\caption{\label{f:enc:hopi_to_ho}Encoding of \HOp into \HO.}
+%(cf.~\defref{d:enc:fotohorec}).
+%Mappings 
+%$\map{\cdot}^2$,
+%$\mapt{\cdot}^2$, 
+%and 
+%$\mapa{\cdot}^2$
+%are homomorphisms for the other processes/types/labels. 
+\Hlinefig
+\end{figure}
+
+\smallskip 
+
+\begin{definition}[Typed Encoding of \HOp into \HO]
+\label{d:enc:hopitoho}
+Let $f$ be a function from process variables to sequences of name variables.
+%
+%Let $\tyl{L}_{\HOp}=\calc{\HOp}{{\cal{T}}_1}{\hby{\ell}}{\wb_H}{\proves}$
+%and 
+%$\tyl{L}_{\HO}=\calc{\HO}{{\cal{T}}_2}{\hby{\ell}}{\wb_H}{\proves}$. 
+%where 
+%${\cal{T}}_1$ and ${\cal{T}}_2$ are sets of types of $\HOp$ 
+%and $\HO$, respectively, 
+%the typing $\proves$ is defined in 
+%\figref{fig:typerulesmy} 
+%and $\hwb$ is defined in \defref{d:hbw}. 
+We define the typed encoding 
+$\enco{\map{\cdot}^{1}_f, \mapt{\cdot}^{1} %, \mapa{\cdot}^{1}
+}: \tyl{L}_{\HOp} \to \tyl{L}_{\HO}$ in 
+\figref{f:enc:hopi_to_ho}. 
+We assume that the mapping $\mapt{\cdot}^{1}$ on types is extended to 
+session environments $\Delta$
+and
+shared environments $\Gamma$ homomorphically with: 
+\[
+	\begin{array}{l}
+%	    \mapt{\Delta \cat s: S}^{1} & =  & \mapt{\Delta}^{1} \cat s:\mapt{S}^{1} & \\
+%		\mapt{\Gamma \cat u: \chtype{S}}^{1} & =  & \mapt{\Gamma}^{1} \cat u:\chtype{\mapt{S}^{1}} & \\
+%		\mapt{\Gamma \cat u: \chtype{L}}^{1} & = &  \mapt{\Gamma}^{1} \cat u:\chtype{\mapt{L}^{1}} & \\
+		\tmap{\Gamma \cat \varp{X}:\Delta}{1}  =  \tmap{\Gamma}{1} \cat z_X:\shot{(S_1,\ldots,S_m,S^*)} \ 
+	\end{array}
+\]
+with
+$S^* = \trec{t}{\btinp{\shot{(S_1,\ldots,S_m,\vart{t})}} \tinact}$
+%and $\Delta = \{n_1:S_1, \ldots, n_m:S_m\}$. 
+and $\Delta = \{n_i:S_i\}_{1\leq i\leq m}$. 
+\end{definition}
+
+\smallskip 
+\noi Note that $\Delta$ in $\varp{X}:\Delta$ is mapped to a non-tail
+recursive session type with variable $z_X$ (see recursion mappings in \figref{f:enc:hopi_to_ho}).
+Non-tail
+recursive session types \jpc{have been} studied in
+\cite{DBLP:journals/corr/abs-1202-2086,TGC14};
+\jpc{to our knowledge,}
+this is the first application in the
+context of higher-order session types.
+%which carries type variable as the last argument.  
+For simplicity of the presentation, %we use the polyadic name abstraction and passing.
+we use name abstractions with polyadicity.
+A precise encoding of polyadicity into \HO is given in~\secref{subsec:pho}.
+
+We explain the mapping in \figref{f:enc:hopi_to_ho}, focusing 
+on {\em name passing} ($\pmapp{\bout{u}{w} P}{1}{f}$, $\pmapp{\binp{u}{x} P}{1}{f}$),  and  
+{\em recursion} ($\pmapp{\recp{X}{P}}{1}{f}$ and $\pmapp{\rvar{X}}{1}{f}$). 
+
+\myparagraph{Name passing.}
+A name $w$ is   passed as an input-guarded abstraction;
+the abstraction receives a higher-order
+value and continues with the application of $w$ over
+the received higher-order value.
+%A name $m$ is being passed as an input
+%guarded abstraction. 
+%The input prefix receives an abstraction and
+%continues with the application of $n$ over the received abstraction.
+On the receiver side ($\binp{u}{x} P$)
+the encoding realises a mechanism that i) receives
+the input guarded abstraction, then ii) applies it on a fresh  endpoint $s$, 
+and iii)~uses
+the dual endpoint $\dual{s}$ to send the continuation $P$ as the abstraction
+$\abs{x}{P}$. 
+\NY{Then} name substitution is achieved via name application.
+
+\myparagraph{Recursion.}
+The encoding of a recursive process $\recp{X}{P}$  is delicate, for it 
+must preserve the linearity of session endpoints. To this end, we
+\NY{first record a mapping from recursive variable $X$ to process variable $z_X$.
+Then, we encode the recursion body $P$ as a name abstraction
+in which free names of $P$ are converted into name variables, using \defref{d:auxmap}.
+(Notice that $P$ is first encoded into \HO and then transformed using mapping
+$\auxmapp{\cdot}{{}}{\sigma}$.)
+Subsequently, this higher-order value is embedded in an input-guarded 
+``duplicator'' process~\cite{ThomsenB:plachoasgcfhop}. Finally, we define the encoding of $X$ 
+in such a way that it
+simulates recursion unfolding by 
+invoking the duplicator in a by-need fashion.
+That is, upon reception, the \HO abstraction which encodes  the 
+recursion body $P$
+%containing $\auxmapp{P}{{}}{\sigma}$ 
+is duplicated: 
+one copy is used to reconstitute the original recursion body $P$ (through
+the application of $\fn{P}$); another copy is used to re-invoke
+the duplicator when needed. % to simulate recursion unfolding.
+An example of this typed encoding is detailed in~\cite{KouzapasPY15}.
+}
+%The idea follows 
+%a classical recursion encoding \cite{ThomsenB:plachoasgcfhop}.  
+%A mapping of process $P$ is parallel composed, 
+%and also being passed as an input
+%guarded abstraction, parameterised also by a sequence of trigger names $\tilde{n}$. 
+%We record a mapping from $z_X$ (which is a fresh variable of $X$) 
+%to $\tilde{n}$, so that 
+%when the abstraction is substituted to $z_\rvar{X}$ 
+%(which occurs in the mapping of $P\subst{z_X}{X}$), 
+%the correct $\tilde{n}$ is applied. In this way, we can 
+%send and receive an abstraction which holds $P$, repeatedly. 
+
+\smallskip 
+
+\begin{theorem}[Precise Encoding of \HOp into \HO]
+\label{f:enc:hopitoho}
+The encoding from $\tyl{L}_{\HOp}$ into $\tyl{L}_{\HO}$ (cf.~\defref{d:enc:hopitoho})
+is precise. 
+\end{theorem}
+
+\subsection{From \HOp to \sessp}
+\label{subsec:HOp_to_sessp}
+\noi 
+We now discuss the encodability of  $\HO$ into $\sessp$. % where
+%:
+We closely follow the encoding  by 
+Sangiorgi~\cite{San92,SaWabook}, but casted in the setting of session-typed communications. 
+Intuitively, such an encoding  represents the exchange of a process with the exchange of a freshly generated \emph{trigger name}. 
+Trigger names may then be used to activate copies of the process, which becomes a persistent resource represented by an input-guarded replication.
+%Consider the following (naive) adaptation of \cite{San92,SaWabook} 
+%in which session names are used are triggers and 
+%exchanged processes would be have to used exactly once:
+%%
+%\[
+%\begin{array}{l}
+%		\pmap{\bout{u}{\abs{x}{Q}} P}{n}  \defeq   \newsp{s}{\bout{u}{s} (\pmap{P}{n} \Par \binp{\dual{s}}{x} \pmap{Q}{n})} \\
+%		\pmap{\binp{u}{x} P}{n}  \defeq \binp{u}{x} \pmap{P}{n}
+%		\quad 
+%		\pmap{\appl{x}{u}}{n}  \defeq  \bout{x}{u} \inact
+%	\end{array}
+%\]
+%%
+%with the remaining \HOp constructs being mapped homomorphically.
+%Although $\pmap{\cdot}{n}$ captures the correct semantics when
+%dealing with systems that allow only linear abstractions,
+%it suffers from untypability in the presence
+%of shared abstractions. For instance,
+%mapping for $P = \bout{n}{\abs{x}{\bout{x}{m}\inact}} \inact \Par \binp{\dual{n}}{x} (\appl{x}{s_1} \Par \appl{x}{s_2})$
+%would be:
+%%
+%\[
+%	\pmap{P}{n} \defeq
+%	\newsp{s}{\bout{n}{s} \binp{\dual{s}}{x} \bout{x}{m} \inact \Par \binp{\dual{n}}{x} (\bout{x}{s_1} \inact \Par \bout{x}{s_2} \inact)}
+%\]
+%%
+%The above process is untypable since processes $(\bout{x}{s_1} \inact$ and $\bout{x}{s_2} \inact)$
+%cannot be put in parallel because they do not have disjoint session environments.
+On the other hand, session names are linear resources and cannot be replicated.
+%The correct 
+Our
+approach %would be to 
+then uses replicated names
+as triggers for shared resources and non-replicated names
+for linear resources.
+%as triggers instead of session names, when dealing with shared abstractions. 
+
+\smallskip 
+
+\begin{definition}[Typed Encoding of \HOp into \sessp]
+\label{d:enc:hopitopi}
+%Let $\tyl{L}_{\sessp}=\calc{\sessp}{{\cal{T}}_3}{\hby{\ell}}{\fwb}{\proves}$ 
+%where the typing is defined in 
+%\figref{fig:typerulesmy} 
+%and the equivalence $\fwb$ is defined in \defref{d:fwb}.
+%${\cal{T}}_3$ is a set of types of $\sessp$.  
+%%
+We define the typed encoding 
+$\enco{\map{\cdot}^{2}, \mapt{\cdot}^{2} %, \mapa{\cdot}^{2}
+}: \tyl{L}_{\HOp} \to \tyl{L}_{\sessp}$  
+%We define the mappings $\map{\cdot}^{2}$, $\mapt{\cdot}^{2}$, $\mapa{\cdot}^{2}$
+in \figref{f:enc:ho_to_sessp}. 
+\end{definition}
+
+\smallskip 
+\noi 
+Notice that $\mapa{\bactinp{n}{\abs{ x}{P}} }^2$ involves a fresh
+trigger name (linear or shared), 
+which denotes the location of $\pmap{P}{2}$. 
+%(a $\sessp$ process).
+Observe also how $\pmap{\appl{(\abs{x}{P})}{u}}{2}$ naturally induces a name substitution.
+\smallskip 
+\begin{figure}[t]
+\[
+\begin{array}{l}
+	\begin{array}{rcl}
+\noindent{\bf Types:}\hspace{0.5cm} 
+		\tmap{\btout{\lhot{S}}S_1}{2} & \defeq & \bbtout{\chtype{\btinp{\tmap{S}{2}}\tinact}}\tmap{S_1}{2} \\
+		\tmap{\btinp{\lhot{S}}S_1}{2} & \defeq & \bbtinp{\chtype{\btinp{\tmap{S}{2}}\tinact}}\tmap{S_1}{2} 
+\\[1mm]
+\hline
+%\noindent{\bf Labels:}\ 
+%		\mapa{(\nu \tilde{m})\bactout{n}{\abs{ x}{P}} }^2  & \defeq & \news{m} \bactout{n}{m} \\
+%		\mapa{\bactinp{n}{\abs{ x}{P}} }^2 &  \defeq & \bactinp{n}{m}
+%\quad \quad m \text{ fresh}
+%\\[1mm]
+%\hline
+\end{array}
+\end{array}
+\]
+\hspace{4mm}{\bf Terms} :\\
+\noi$
+\begin{array}{rcll}
+		\pmap{\bout{u}{\abs{x}{Q}} P}{2} &\!\!\!\! \defeq \!\!\!\!\!\!\!\!&\!\!\!  \left\{
+		\begin{array}{r}
+		\!\!\!\!	\newsp{a}{\bout{u}{a} (\pmap{P}{2} \Par \repl{} \binp{a}{y} \binp{y}{x} \pmap{Q}{2})\,}\\
+                  (s \notin \fn{Q}) \\
+		\!\!\!\!	\newsp{a}{\bout{u}{a} (\pmap{P}{2} \Par \binp{a}{y} \binp{y}{x} \pmap{Q}{2})\,}\quad\\
+            \textrm{(otherwise)} %\dk{Q \textrm{ linear}} \\
+		\end{array}
+		\right.
+		\\
+\pmap{\binp{u}{x} P}{2} &\!\!\!\! \defeq \!\!\!\! \!\!\!\! &  \binp{u}{x} \pmap{P}{2}
+%\quad \quad \pmap{\appl{(\abs{x}{P})}{u}}{2} \!\! \defeq \!\! \pmap{P\subst{u}{x}}{2}
+\\
+\pmap{\appl{x}{u}}{2} & \!\!\!\! \defeq \!\!\!\! \!\!\!\! & \newsp{s}{\bout{x}{s} \bout{\dual{s}}{u} \inact} \\
+\pmap{\appl{(\abs{x}{P})}{u}}{2} & \!\!\!\! \defeq \!\!\!\! \!\!\!\! & %\newsp{s}{\bout{a}{s} \bout{\dual{s}}{u} \inact} \\
+\newsp{s}{\binp{s}{x} \pmap{P}{2} \Par \bout{\dual{s}}{u} \inact}
+	\end{array}
+$\\[3mm]
+{\small Notice: $\repl{} P$ means $\recp{X}{(P \Par \rvar{X})}$.
+The rest of mappings are homomorphic.}\\ 
+%for others.  %types, labels and processes    
+	\caption{
+Encoding of \HOp into \sessp.
+\label{f:enc:ho_to_sessp}
+}
+\Hlinefig
+\end{figure}
+
+\begin{theorem}[Precise Encoding of \HOp into \sessp]
+\label{f:enc:hotopi}
+The encoding from $\tyl{L}_{\HOp}$ into $\tyl{L}_{\sessp}$ (cf.~\defref{d:enc:hopitopi})
+is precise. 
+\end{theorem}
+
+%\smallskip 
+%
+%\begin{remark}
+%As stated in  \cite[Lem.\,5.2.2]{SangiorgiD:expmpa}, 
+%due to the replicated trigger,  
+%operational correspondence in \defref{def:ep} is refined to prove  
+%full abstraction: 
+%e.g., completeness of the case $\ell_1 \neq \tau$, is changed as follows.
+%Suppose   
+%$\stytraarg{\Gamma}{\ell_1}{\Delta}{P}{\Delta'}{P'}{}$:
+%if $\ell_1 = (\nu \tilde{m})\bactout{n}{\abs{ x}{R}}$, 
+%then %$\exists \ell_2, Q$ s.t. 
+%$\stytraarg{\mapt{\Gamma}^2}{\ell_2}{\mapt{\Delta}^2}{\map{P}^2}{\mapt{\Delta'}^2}{Q}{}$,
+%where 
+%$\ell_2 = (\nu a)\bactout{n}{a}$ and
+%$Q = \pmap{P' \Par  \repl{} \binp{a}{y} \binp{y}{x} R}{2}$.
+%Similarly,
+%if  
+%%$\stytraarg{\Gamma}{\ell_1}{\Delta}{P}{\Delta'}{P'}{}$
+%%with 
+%$\ell_1 = \bactinp{n}{\abs{ x}{R}}$, 
+%then %$\exists \ell_2, Q$ s.t. 
+%$\stytraarg{\mapt{\Gamma}^2}{\ell_2}{\mapt{\Delta}^2}{\map{P}^2}{\mapt{\Delta'}^2}{Q}{}$,
+%where 
+%$\ell_2 = \bactout{n}{a}$ and
+%$\pmap{P'}{2} \wb \news{a}(Q \Par  \repl{} \binp{a}{y} \binp{y}{x} \pmap{R}{2})$.
+%Soundness is stated in a symmetric way; see \cite{KouzapasPY15}. 
+%%Operational correspondence for the encoding in~\defref{d:enc:hopitopi}
+%%is different from that in~\defref{def:ep}, due to triggers. 
+%%In particular,  completeness differs when $\ell_1 \neq \tau$.
+%%This way, e.g., if  
+%%$\stytraarg{\Gamma}{\ell_1}{\Delta}{P}{\Delta'}{P'}{}$
+%%with $\ell_1 = (\nu \tilde{m})\bactout{n}{\abs{ x}{R}}$, 
+%%then %$\exists \ell_2, Q$ s.t. 
+%%$\stytraarg{\mapt{\Gamma}^2}{\ell_2}{\mapt{\Delta}^2}{\map{P}^2}{\mapt{\Delta'}^2}{Q}{}$,
+%%where 
+%%$\ell_2 = (\nu a)\bactout{n}{a}$ and
+%%$Q = \pmap{P' \Par  \repl{} \binp{a}{y} \binp{y}{x} R}{2}$.
+%%This 
+%%statement, essential in proofs of full abstraction,
+%%is the same given by Sangiorgi~\cite{SangiorgiD:expmpa}.
+%%Completeness is as in~\defref{def:ep} when  $\ell_1 = \tau$.
+%%See~\cite{KouzapasPY15} for details.
+%\end{remark}
+
+
