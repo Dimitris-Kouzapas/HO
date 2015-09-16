@@ -1,0 +1,240 @@
+% !TEX root = main.tex
+%\myparagraph{Key points}
+%\begin{enumerate}[1.]
+%%	\item	Session $\pi$ calculus with process passing. DONE
+%%	\item	Identify session $\pi$ and process passing subcalculi and their polyadic variants. DONE
+%%	\item	Bisimulation theory for higher-order session semantics. DONE
+%%	\item	New triggered bisimulation, related to J\&R's. DONE
+%%	\item   Elementary values key to characterizations of behavioural equivalence. DONE
+%	\item	Types provide techniques to prove completeness without matching. \jp{TBD}
+%	\item	We are interested in encodings with properties a la Gorla. 
+%                We extended them to typed setting. \jp{TBD}
+%%	\item	Encode name-passing to pure process abstraction calculus, with name abstractions. DONE
+%%	\item	Type of the recursion encoding uses non tail recursive type $\trec{t}{\btinp{t} \tinact}$. DONE
+%%	\item	Encode higher-order semantics to first order semantics. DONE
+%%	\item	Negative result. Cannot encode shared names using only shared names.
+%%	\item   Extensions with higher-order abstractions and polyadicity also explored. DONE
+%\end{enumerate}
+
+%\smallskip 
+%
+%\myparagraph{Important things to explain}
+%Explain our \HO is very small without containg name passing 
+%\[ 
+%\abs{x}.P \quad \appl{x}{u}
+%\]
+
+%Explain we input only characteristic processes.  
+%
+%\[
+%\lambda x.\mapchar{S}{x}
+%\]
+
+%\subsection{Higher-Order Session Calculi}
+\noindent
+\myparagraph{Context.}
+In \emph{higher-order process calculi} 
+communicated
+values %exchanged in communications 
+may contain  processes.
+Higher-order concurrency has received significant attention 
+from untyped and typed perspectives (see, e.g.,~\cite{SangiorgiD:expmpa,JeffreyR05,DBLP:journals/iandc/LanesePSS11,DBLP:journals/cl/KoutavasH12,MostrousY15}).
+%=== One alternative
+%The combination of features from the $\lambda$-calculus and the $\pi$-calculus
+%enables \emph{higher-order process calculi} to exchange values that may contain  processes.
+%=== Dimitris version: 
+%The combination of features from the $\lambda$-calculus and the $\pi$-calculus,
+%in \emph{higher-order process calculi} allows for exchanged values to contain  processes. 
+%=== Previous version: 
+%By combining features from the $\lambda$-calculus and the $\pi$-calculus, 
+%in \emph{higher-order process calculi} exchanged values may contain  processes. 
+In this work, we consider \HOp, a higher-order process calculus with \emph{session primitives}:
+in addition to 
+functional
+abstractions/applications (as in the call-by-value $\lambda$-calculus), \HOp 
+contains constructs for 
+synchronisation on shared names, 
+  session communication on linear names, 
+  %(value passing, labelled choice), 
+  and recursion.
+Thus, \HOp processes may specify %reciprocal exchanges (protocols) 
+protocols
+for higher-order  processes that
+ can be 
+ %verified via type-checking 
+ type-checked 
+ using \emph{session types}~\cite{honda.vasconcelos.kubo:language-primitives}.
+%These calculi allow us to specify   
+%session protocols in which higher-order values 
+%(mobile code) can be exchanged in a type-safe manner. 
+%; 
+%governed by session types, 
+%such protocols cleanly distinguish between 
+%linear and unrestricted behaviors in 
+%%directed %point-to-point 
+%communications.
+%in particular via  comparisons with the first-order mobility of the $\pi$-calculus~\cite{MilnerR:calmp1}. 
+Although models of session 
+communication with % higher-order features 
+process passing
+exist~\cite{tlca07,DBLP:journals/jfp/GayV10},
+their  \emph{behavioural equivalences} 
+%and \emph{relative expressiveness}
+remain little understood. 
+Since types can limit the contexts (environments) in which processes can interact, typed equivalences
+usually offer {\em coarser} semantics than untyped semantics.
+%for higher-order session calculi. 
+%these two issues 
+%have been throughly studied
+%%are well-understood 
+%for higher-order languages without sessions \cite{},
+%but not for higher-order process calculi with sessions.
+%This is unfortunate, given the wide applicability of session-based concurrency; indeed,
+%session types are expressive enough to describe complex 
+%communication structures found in practical protocols,  expressible, e.g., via recursive session types.
+%Clarifying the status of typed equivalences and relative expressiveness for session languages
+Hence, clarifying the status of these equivalences is key to, e.g., 
+justify non-trivial  optimisations in protocols involving both name- and process-passing.
+%but also for transferring key reasoning techniques between (higher-order) session calculi. 
+%Our discovery is that \emph{linearity} of session types plays a vital role to 
+%offer equalities/characterisations
+%% and fully abstract encodability, 
+%which to our knowledge have not been proposed before.   
+
+
+%In this paper we study
+%%address  behavioural equivalences for 
+%\HOp, 
+%%study behavioral equalities for \HOp, 
+%an extension of the higher-order $\pi$-calculus~\cite{SangiorgiD:expmpa} with session primitives:
+%\HOp contains constructs for 
+%%session establishment
+%synchronisation on shared names, 
+%recursion, 
+% (linear) session communication (value passing and
+%labelled choice),
+%abstractions and applications. 
+%Abstractions are functions from values to processes, 
+%\jpc{denoted}
+%$\lambda x.P$; applications are 
+%denoted $(\lambda x.P)V$, where the value $V$ is either a name or an abstraction.
+%We study two significant subcalculi of \HOp, 
+%\jpc{which}
+%distil higher- and first-order mobility:
+%the \HO-calculus, which is \HOp without recursion and name passing, and 
+%the session \sessp-calculus \jpc{(here denoted~\sessp)}, which is \HOp without abstractions and applications.  
+%While \sessp is, 
+%in essence, the calculus in~\cite{honda.vasconcelos.kubo:language-primitives}, 
+%this paper shows that \HO  is a new core calculus 
+%for higher-order session concurrency.
+
+A well-known behavioural equivalence for higher-order processes
+is \emph{context bisimilarity}~\cite{San96H}. This 
+ characterisation of %reduction-closed, 
+barbed congruence 
+offers an adequate distinguishing power at the price of heavy universal quantifications in output clauses.
+Obtaining alternative 
+characterisations of context bisimilarity
+is thus a recurring, important problem 
+for higher-order calculi---see, e.g.,~\cite{SangiorgiD:expmpa,San96H,JeffreyR05,DBLP:journals/cl/KoutavasH12,DBLP:journals/corr/Xu13a}. 
+In particular, Sangiorgi~\cite{SangiorgiD:expmpa,San96H} has 
+given %important 
+%useful
+characterisations of context bisimilarity
+for higher-order processes; such 
+characterisations, however,  %in~\cite{SangiorgiD:expmpa,San96H} 
+do not scale to  
+  calculi with \emph{recursive types}, which %in our experience 
+  are essential to %the practice of 
+session-based concurrency. A characterisation  
+%context bisimilarity 
+that solves this limitation was developed by Jeffrey and Rathke in~\cite{JeffreyR05}.
+
+\smallskip
+
+\myparagraph{This Work.}
+Building upon~\cite{SangiorgiD:expmpa,San96H,JeffreyR05}, 
+our discovery is that \emph{linearity} of session types plays a vital role 
+%to 
+%offer equalities and characterisations
+% and fully abstract encodability, 
+%which to our knowledge have not been proposed before. 
+% 
+in 
+solving 
+the %long-standing, 
+open problem 
+of characterising context bisimilarity for higher-order mobile processes with session communications.
+Our approach is to exploit 
+%protocol specifications given by session types to limit 
+the coarser semantics induced by session types to limit
+the behaviour of higher-order session processes. 
+ Formally, we enforce this limitation by defining
+a \emph{refined} labelled transition system (LTS)
+which effectively 
+narrows down the spectrum of allowed process behaviours, 
+exploiting elementary processes inhabiting session types.
+%thus enabling tractable reasoning techniques. 
+We then introduce \emph{characteristic bisimilarity}: this  
+ new notion of typed bisimilarity   is 
+\emph{tractable}, in that 
+it relies on the refined LTS for input actions and, more importantly, 
+does not appeal to universal quantifications on output actions. 
+%shown to coincide with context bisimilarity.
+Our main result is that characteristic  %tractable
+bisimilarity coincides with context bisimilarity.
+Besides confirming the value of characteristic bisimilarity as an useful reasoning technique for 
+higher-order processes with sessions,
+%for  specifications of trivial practical scenarios, 
+this result is 
+%also technically 
+remarkable 
+also from a technical perspective, for associated 
+completeness proofs do not require 
+operators for 
+name-matching,
+% in the process language, 
+in contrast to untyped methods for  higher-order processes
+with recursive types~\cite{JeffreyR05}.
+%Remarkably session type structures enable to provide 
+%a coincidence without name-matching operators in the calculi.
+
+\input{overview}
+
+\smallskip
+\myparagraph{Outline.} 
+%This paper  is structured as follows.
+%\begin{enumerate}[$\bullet$]
+%\item 
+Next 
+%%\secref{sec:overview} overviews 
+%we overview the
+%key ideas of characteristic bisimilarity, 
+%our 
+%characterisation of contextual equivalence.
+%%\item 
+%Then, \secref{sec:calculus}  presents 
+we present
+the %higher-order 
+session calculus \HOp. 
+%A small example is given in \S\,X.
+\secref{sec:types} gives the session type system for \HOp
+and states type soundness.
+%\item 
+\secref{sec:behavioural} 
+develops %\emph{higher-order} and 
+\emph{characteristic} bisimilarity and 
+%which alleviates the issues of context bisimilarity~\cite{San96H} and 
+states our main result: characteristic and context bisimilarities coincide for 
+%is shown  to coincide for 
+well-typed \HOp processes (\thmref{the:coincidence}).
+\secref{sec:relwork}~concludes with related works. 
+%The appendix summarises the typing system. 
+%\end{enumerate}
+%\noi
+%The paper is self-contained. 
+\textbf{The Appendix contains omitted definitions/proofs.
+%; and 
+%additional expressive results and related work/examples in \cite{KouzapasPY15}.
+} 
+

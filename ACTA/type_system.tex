@@ -1,0 +1,397 @@
+\begin{figure}[h!]
+\[
+	\begin{array}{lc}
+		\trule{Sess}& \hspace{0cm}\Gamma; \emptyset; \set{u:S} \proves u \hastype S 
+		\quad  
+		\trule{Sh}~~\Gamma \cat u : U; \emptyset; \emptyset \proves u \hastype U
+		%\\[4mm]
+		\quad
+		\trule{LVar}~~ \Gamma; \set{x: \lhot{U}}; \emptyset \proves x \hastype \lhot{U}
+		\\[4mm]
+
+		\trule{Prom}&\hspace{-0.5cm} \tree{
+			\Gamma; \emptyset; \emptyset \proves V \hastype 
+                         \lhot{U}
+		}{
+			\Gamma; \emptyset; \emptyset \proves V \hastype 
+                         \shot{U}
+		} 
+		\quad
+		\trule{EProm}\tree{
+		\Gamma; \Lambda \cat x : \lhot{U}; \Delta \proves P \hastype \Proc
+		}{
+			\Gamma \cat x:\shot{U}; \Lambda; \Delta \proves P \hastype \Proc
+		}
+		\\[6mm]
+
+		\trule{Abs}&\hspace{-0.5cm} \tree{
+			\Gamma; \Lambda; \Delta_1 \proves P \hastype \Proc
+			\quad
+			\Gamma; \es; \Delta_2 \proves x \hastype U
+		}{
+			\Gamma\backslash x; \Lambda; \Delta_1 \backslash \Delta_2 \proves \abs{{x}}{P} \hastype \lhot{{U}}
+		}
+		\\[6mm]
+
+		\trule{App}&\hspace{-0.5cm} \tree{
+			\begin{array}{c}
+				U = \lhot{U'} \lor \shot{U'}
+				\quad
+				\Gamma; \Lambda; \Delta_1 \proves V \hastype U
+				\quad
+				\Gamma; \es; \Delta_2 \proves W \hastype U'
+			\end{array}
+		}{
+			\Gamma; \Lambda; \Delta_1 \cat \Delta_2 \proves \appl{V}{W} \hastype \Proc
+		} 
+		\\[6mm]
+
+%		\trule{Send}~~\tree{
+%			\Gamma; \Lambda_1; \Delta_1 \proves P \hastype \Proc  \quad \Gamma; \Lambda_2; \Delta_2 \vdash V \hastype U  \quad (k:S \in \Delta_1 \cup \Delta_2)
+%		}{
+%			\Gamma; \Lambda_1 \cat \Lambda_2; (\Delta_1 \cat \Delta_2)\backslash\set{k:S} \cat k:\btout{U} S \proves \bout{k}{V} P \hastype \Proc
+%		}
+%		\\[4mm]
+
+		\trule{Send}& \hspace{-0.5cm}\tree{
+			\Gamma; \Lambda_1; \Delta_1 \proves P \hastype \Proc
+			\quad
+			\Gamma; \Lambda_2; \Delta_2 \proves V \hastype U
+			\quad
+			u:S \in \Delta_1 \cat \Delta_2
+		}{
+			\Gamma; \Lambda_1 \cat \Lambda_2; ((\Delta_1 \cat \Delta_2) \setminus u:S) \cat u:\btout{U} S \proves \bout{u}{V} P \hastype \Proc
+		}
+		\\[6mm]
+
+		\trule{Rcv}&\hspace{-0.5cm} \tree{
+		\Gamma; \Lambda_1; \Delta_1 \cat u: S \proves P \hastype \Proc
+			\quad
+			\Gamma; \Lambda_2; \Delta_2 \proves {x} \hastype {U}
+		}{
+			\Gamma \backslash x; \Lambda_1\cat \Lambda_2; \Delta_1\backslash \Delta_2 \cat u: \btinp{U} S \vdash \binp{u}{{x}} P \hastype \Proc
+		}
+\\[6mm]
+%		\trule{RvH}& \tree{
+%			\Gamma; \Lambda_1; \Delta \cat u: S \proves P \hastype \Proc
+%			\quad
+%			\Gamma; \Lambda_2; \es \proves x \hastype L
+%		}{
+%			\Gamma \backslash x; \Lambda_1\backslash\Lambda_2; \Delta \cat u: \btinp{L} S \proves \binp{u}{x} P \hastype \Proc
+%		}
+%		\\[6mm]
+
+%		\trule{RvS}& \tree{
+%		\Gamma; \Lambda; \Delta_1 \cat u: S \proves P \hastype \Proc
+%			\quad
+%			\Gamma; \es; \Delta_2 \proves {x} \hastype {C}
+%		}{
+%			\Gamma \backslash x; \Lambda; \Delta_1\backslash \Delta_2 \cat u: \btinp{C} S \vdash \binp{u}{{x}} P \hastype \Proc
+%		}
+%\\[6mm]
+%		\trule{RvH}& \tree{
+%			\Gamma; \Lambda_1; \Delta \cat u: S \proves P \hastype \Proc
+%			\quad
+%			\Gamma; \Lambda_2; \es \proves x \hastype L
+%		}{
+%			\Gamma \backslash x; \Lambda_1\backslash\Lambda_2; \Delta \cat u: \btinp{L} S \proves \binp{u}{x} P \hastype \Proc
+%		}
+%		\\[6mm]
+
+%		\trule{RcvS}~~\tree{
+%			\Gamma; \Lambda; \Delta \cat k: S_1 \cat x: S_2 \proves P \hastype \Proc
+%		}{
+%			\Gamma; \Lambda; \Delta, k: \btinp{S_2} S_1  \vdash \binp{k}{x}P \hastype \Proc
+%		}
+%		\quad\quad 
+%		\trule{RcvL}~~\tree{
+%			\Gamma; \Lambda \cat X: \lhot{U}; \Delta \cat k: S  \proves P \hastype \Proc
+%		}{
+%			\Gamma; \Lambda; \Delta \cat k:\btinp{\lhot{U}}S  \proves \binp{k}{X}P \hastype \Proc
+%		}
+%		\\[4mm]
+%		\trule{RcvShN}~~\tree{
+%			\Gamma \cat x: \chtype{U}; \Lambda; \Delta \cat k: S_1  \proves P \hastype \Proc
+%		}{
+%			\Gamma; \Lambda; \Delta \cat k:\btinp{\chtype{U}}S_1  \proves \binp{k}{x}P \hastype \Proc
+%		}		
+%		\quad ~~
+%		\trule{RcvSh}~~\tree{
+%			\Gamma \cat X: \shot{U}; \Lambda; \Delta \cat k: S_1  \proves P \hastype \Proc
+%		}{
+%			\Gamma; \Lambda; \Delta \cat k:\btinp{\shot{U}}S_1  \proves \binp{k}{X}P \hastype \Proc
+%		}
+%		\\[4mm]
+
+		\trule{Req}& \hspace{-0.5cm}\tree{
+			\begin{array}{c}
+				\Gamma; \es; \es \proves u \hastype U_1
+				\quad
+				\Gamma; \Lambda; \Delta_1 \proves P \hastype \Proc
+				\quad
+				\Gamma; \es; \Delta_2 \proves V \hastype U_2
+				\\
+				(U_1 = \chtype{S} 
+                                \land %\Leftrightarrow 
+                                U_2 = S)
+				\lor
+				 (U_1 = \chtype{L} 
+                                \land %\Leftrightarrow 
+                                %\Leftrightarrow 
+                                 U_2 = L)
+			\end{array}
+		}{
+			\Gamma; \Lambda; \Delta_1 \cat \Delta_2 \proves \bout{u}{V} P \hastype \Proc
+		}
+		\\[6mm]
+
+%		\trule{ReqH}~~\tree{
+%			\Gamma; \es; \es \proves k \hastype \chtype{U}
+%			\quad
+%			\Gamma; \Lambda_1; \Delta_1 \proves P \hastype \Proc
+%			\quad
+%			\Gamma; \Lambda_2; \Delta_2 \proves (x) Q \hastype U
+%		}{
+%			\Gamma; \Lambda_1 \cat \Lambda_1; \Delta_1 \cat \Delta_2 \proves \bout{k}{(x) Q} P \hastype \Proc
+%		}
+%		\\[6mm]
+
+		\trule{Acc}&\hspace{-0.5cm} \tree{
+			\begin{array}{c}
+			\Gamma; \emptyset; \emptyset \proves u \hastype 
+U_1 
+		\quad
+		\Gamma; \Lambda_1; \Delta_1 \proves P \hastype \Proc
+		\quad
+		\Gamma; \Lambda_2; \Delta_2 \proves x \hastype U_2\\
+				(U_1 = \chtype{S} 
+                                \land %\Leftrightarrow 
+                                U_2 = S)
+				\lor
+				 (U_1 = \chtype{L} 
+                                \land %\Leftrightarrow 
+                                %\Leftrightarrow 
+                                 U_2 = L)
+               \end{array}
+		}{
+			\Gamma\backslash x; \Lambda_1 \backslash \Lambda_2; \Delta_1 \backslash \Delta_2 \proves \binp{u}{x} P \hastype \Proc
+		}
+		\\[6mm]
+
+%		\trule{AcS}& \tree{
+%			\Gamma; \emptyset; \emptyset \proves u \hastype \chtype{S}
+%			\quad
+%			\Gamma; \Lambda_1; \Delta_1 \proves P \hastype \Proc
+%			\quad
+%			\Gamma; \Lambda_2; \Delta_2 \proves x \hastype S
+%		}{
+%			\Gamma; \Lambda_1 \backslash \Lambda_2; \Delta_1 \backslash \Delta_2 \proves \binp{u}{x} P \hastype \Proc
+%		}
+%		\\[6mm]
+
+%		\trule{AcH}& \tree{
+%			\Gamma; \emptyset; \emptyset \proves u \hastype \chtype{L}
+%			\quad
+%			\Gamma; \Lambda_1; \Delta \proves P \hastype \Proc
+%			\quad
+%			\Gamma; \Lambda_2; \es \proves x \hastype L
+%		}{
+%			\Gamma \backslash x; \Lambda_1 \backslash \Lambda_2; \Delta \proves \binp{u}{x} P \hastype \Proc
+%		}
+%		\\[6mm]
+
+		\trule{Bra}& \hspace{-0.5cm}\tree{
+			 \forall i \in I \quad \Gamma; \Lambda; \Delta \cat u:S_i \proves P_i \hastype \Proc
+		}{
+			\Gamma; \Lambda; \Delta \cat u: \btbra{l_i:S_i}_{i \in I} \proves \bbra{u}{l_i:P_i}_{i \in I}\hastype \Proc
+		}
+\\[6mm]
+	 	\trule{Sel}& \hspace{-0.5cm}\tree{
+			\Gamma; \Lambda; \Delta \cat u: S_j  \proves P \hastype \Proc \quad j \in I
+
+		}{
+			\Gamma; \Lambda; \Delta \cat u:\btsel{l_i:S_i}_{i \in I} \proves \bsel{u}{l_j} P \hastype \Proc
+		}
+		\\[6mm]
+
+%		\trule{Conn}~~\tree{
+%			\Gamma; \Lambda; \Delta \cat x:S \proves P \hastype \Proc  \quad \Gamma; \emptyset; \emptyset \proves a \hastype \chtype{S}
+%		}{
+%			\Gamma; \Lambda; \Delta \proves \binp{a}{x} P \hastype \Proc
+%		}
+%		\quad
+%		\trule{ConnL}~~\tree{
+%			\Gamma \cat a : \chtype{\lhot{U}}; \Lambda \cat X: \lhot{U}; \Delta \proves P \hastype \Proc
+%		}{
+%			\Gamma \cat a : \chtype{\lhot{U}}; \Lambda; \Delta \proves \binp{a}{X} P \hastype \Proc
+%		}
+%		\\[4mm]
+%
+%		\trule{ConnSh}~~\tree{
+%			\Gamma  \cat x:\chtype{U}; \Lambda; \Delta \proves P \hastype \Proc  \quad \Gamma; \emptyset; \emptyset \proves a \hastype \chtype{U}
+%		}{
+%			\Gamma; \Lambda; \Delta \proves \binp{a}{x} P \hastype \Proc
+%		}
+%		\quad
+%		\trule{ConnS}~~\tree{
+%			\Gamma \cat a : \chtype{\shot{U}} \cat X: \shot{U}; \Lambda; \Delta \proves P \hastype \Proc
+%		}{
+%			\Gamma \cat a : \chtype{\shot{U}} \cat X: \shot{U}; \Lambda; \Delta \proves \binp{a}{X} P \hastype \Proc
+%		}
+%		\\[4mm]
+
+		\trule{ResS}&\hspace{-0.5cm} \tree{
+			\Gamma; \Lambda; \Delta \cat s:S_1 \cat \dual{s}: S_2 \proves P \hastype \Proc \quad S_1 \dualof S_2
+		}{
+			\Gamma; \Lambda; \Delta \proves \news{s} P \hastype \Proc
+		}
+		\\[6mm]
+		\trule{Res}&\hspace{-0.5cm}\tree{
+			\Gamma\cat a:\chtype{S} ; \Lambda; \Delta \proves P \hastype \Proc
+		}{
+			\Gamma; \Lambda; \Delta \proves \news{a} P \hastype \Proc}\quad 
+%		\trule{Par} \tree{
+%			\Gamma; \Lambda_{1}; \Delta_{1} \proves P_{1} \hastype \Proc \quad \Gamma; \Lambda_{2}; \Delta_{2} \proves P_{2} \hastype \Proc
+%		}{
+%			\Gamma; \Lambda_{1} \cat \Lambda_2; \Delta_{1} \cat \Delta_2 \proves P_1 \Par P_2 \hastype \Proc
+%		}
+		\trule{Par} \tree{
+			\Gamma; \Lambda_{i}; \Delta_{i} \proves P_{i} \hastype \Proc \quad i=1,2
+		}{
+			\Gamma; \Lambda_{1} \cat \Lambda_2; \Delta_{1} \cat \Delta_2 \proves P_1 \Par P_2 \hastype \Proc
+		}
+\\[6mm]
+		\trule{End}& \hspace{-0.5cm}\tree{
+			\Gamma; \Lambda; \Delta  \proves P \hastype T \quad u \not\in \dom{\Gamma, \Lambda,\Delta}
+		}{
+			\Gamma; \Lambda; \Delta \cat u: \tinact  \proves P \hastype \Proc
+		}
+\ 
+	 	\trule{Rec} \tree{
+			\Gamma \cat \rvar{X}: \Delta; \emptyset; \Delta  \proves P \hastype \Proc
+		}{
+			\Gamma ; \emptyset; \Delta  \proves \recp{X}{P} \hastype \Proc
+		}
+		\\[6mm]
+\trule{RVar}& \Gamma \cat \rvar{X}: \Delta; \emptyset; \Delta  \proves \rvar{X} \hastype \Proc
+\quad 
+		\trule{Nil}~~\Gamma; \emptyset; \emptyset \proves \inact \hastype \Proc
+%\\[4mm]
+%	 	\trule{Rec}& \tree{
+%			\Gamma \cat \rvar{X}: \Delta; \emptyset; \emptyset  \proves P \hastype \Proc
+%		}{
+%			\Gamma ; \emptyset; \emptyset  \proves \recp{X}{P} \hastype \Proc
+%		}
+%		\\[4mm]
+%		\\[4mm]
+%		\trule{PSend}~~\tree{
+%			\Gamma; \Lambda; \Delta \cat n: S \proves P \hastype \Proc \qquad \forall i \in I, \Gamma; \es; \Delta_i \proves m_i \hastype C_i
+%		}{
+%			\Gamma; \Lambda; ((\Delta\cat\tilde{\Delta_i})\backslash n:S) \cat n: \btout{\tilde{C_i}_{i \in I}} S\proves \bout{n}{\tilde{m_i}_{i \in I}} P \hastype \Proc
+%		}
+%		\\[4mm]
+%
+%		\trule{PRcv}~~\tree{
+%			\Gamma; \Lambda; \Delta \cat n: S \proves P \hastype \Proc \qquad \forall i \in I, \Gamma_i; \es; \Delta_i \proves x: C_i 
+%		}{
+%			\Gamma\backslash\tilde{\Gamma_i}; \Lambda; \Delta\backslash\tilde{\Delta_i} \cat n: \btinp{\tilde{C_i}_{i \in I}} S \proves \binp{n}{\tilde{x_i}_{i \in I}} P \hastype \Proc
+%		}
+%		\\[4mm]
+%
+%		\trule{PAbs}~~\tree{
+%			\Gamma; \Lambda; \Delta \proves P \hastype \Proc \quad \forall i \in I, \Gamma; \es; \Delta_i \proves x_i \hastype C_i
+%		}{
+%			\Gamma; \Lambda; \Delta\backslash\tilde{\Delta_i} \proves \abs{\tilde{x_i}_{i \in I}}{P} \hastype \lhot{\tilde{C_i}_{i \in I}}
+%		}
+%		\\[4mm]
+%
+%		\trule{App}~~\tree{(U = \lhot{\tilde{C_i}}) \lor (U = \shot{\tilde{C_i}}) \quad
+%			\Gamma; \Lambda; \Delta \proves X \hastype U  \quad \forall i \in I, \Gamma; \es; \Delta_2 \proves k_i \hastype C_i
+%		}{
+%			\Gamma; \Lambda; \Delta \cat \tilde{\Delta_i} \proves \appl{X}{\tilde{k_i}} \hastype \Proc
+%		} 
+%		\\[4mm]
+	\end{array}
+\]
+\caption{Typing Rules for $\HOp$.\label{fig:typerulesmy}}
+\Hline
+\end{figure}
+%\myparagraph{Typing System of \HOp}
+
+The typing system is defined in \figref{fig:typerulesmy}.
+%Types for session names/variables $u$ and
+%directly derived from the linear part of the typing
+%environment, i.e.~type maps $\Delta$ and $\Lambda$.
+Rules $\trule{Sess, Sh, LVar}$ are name and variable introduction rules. 
+The type $\shot{U}$ %for shared higher order values $V$
+is derived using rule $\trule{Prom}$, where we require
+a value with linear type to be typed without a linear
+environment to be typed as a shared type.
+Rule $\trule{EProm}$ allows to freely use a linear
+type variable as shared.
+
+Abstraction values are typed with rule $\trule{Abs}$.
+%The key type for an abstraction is the type for
+%the bound variables of the abstraction, i.e.~for
+%bound variable type $C$ the abstraction
+%has type $\lhot{C}$.
+The dual of abstraction typing is application typing
+governed by rule $\trule{App}$, where we expect
+the type $U$ of an application value $W$ 
+to match the type $\lhot{U}$ or $\shot{U}$
+of the application variable $x$.
+
+%A process prefixed with a session send operator $\bout{k}{V} P$
+%is typed using rule $\trule{Send}$.
+In $\trule{Send}$, 
+the type $U$ of a send value $V$ should appear as a prefix
+on the session type $\btout{U} S$ of $u$.
+$\trule{Rcv}$ is its dual.  
+%defined the typing for the 
+%reception of values $\binp{u}{V} P$.
+%the type $U$ of a receive value should 
+%appear as a prefix on the session type $\btinp{U} S$ of $u$.
+We use a similar approach with session prefixes
+to type interaction between shared names as defined 
+in rules $\trule{Req}$ and $\trule{Acc}$,
+where the type of the sent/received object 
+($S$ and $L$, respectively) should
+match the type of the sent/received subject
+($\chtype{S}$ and $\chtype{L}$, respectively).
+Rules for selection and branching, 
+$\trule{Sel}$ and $\trule{Bra}$, are standard. 
+%Both
+%rules prefix the session type with the selection
+%type $\btsel{l_i: S_i}_{i \in I}$ and
+%$\btbra{l_i:S_i}_{i \in I}$.
+
+A
+shared name creation $a$ creates and restricts
+$a$ in environment $\Gamma$ as defined in 
+rule \trule{Res}. 
+Creation of a session name $s$
+creates and restricts two endpoints with dual types 
+%and restricts
+%them by removing them from the session environment
+%$\Delta$ as defined 
+in rule \trule{ResS}. 
+Rule \trule{Par}, 
+combines the environments
+$\Lambda$ and $\Delta$ of
+the parallel components of a parallel process.
+%to create a type for the entire parallel process.
+The disjointness of environments $\Lambda$ and $\Delta$
+is implied. Rule \trule{End} adds 
+the names with type $\tinact$ in $\Delta$.  
+The recursion requires that the body process 
+matches the type of the recursive
+variable as in rule \trule{Rec}.
+The recursive variable is typed
+directly from the shared environment $\Gamma$ as
+in rule \trule{RVar}.
+The inactive process $\inact$ is typed with no
+linear environments as in \trule{Nil}. 
+
+
+
+

@@ -1,0 +1,164 @@
+\newcommand{\rtype}{\mathsf{roomtype}}
+\newcommand{\Quote}{\mathsf{quote}}
+\newcommand{\accept}{\mathsf{accept}}
+\newcommand{\reject}{\mathsf{reject}}
+\newcommand{\creditc}{\mathsf{credit}}
+
+\newcommand{\Client}{\mathsf{Client}}
+
+\begin{example}[Program Equivalence]
+\label{ex:hotelbooking}
+We introduce the usecase scenario where a Client wants to book
+a hotel for her holidays in a remote island
+(cf.~\cite{MostrousY15} for a similar usecase).
+The Client narrows down her choice to two hotels.
+It then requires a quote from the two hotels in order to
+make her choice. The Round Trip Time required for
+taking quotes from the two hotels in not optimal (cf.~\cite{MostrousY15}),
+so she decides to send remote codes to the hotels
+to automatically negotiate and book the hotel for
+her:
+%
+\[
+	\begin{array}{rcl}
+		P &\defeq& \bout{x}{\rtype} \binp{x}{\Quote} \bout{y}{\Quote}
+		y \triangleleft \left\{
+				\begin{array}{l}
+					\accept: \bsel{x}{\accept} \bout{x}{\creditc} \inact,\\
+					\reject: \bsel{x}{\reject} \inact
+				\end{array}
+				\right\}
+		\\[6mm]
+		\Client_1 &\defeq& \newsp{h_1, h_2}{\bout{s_1}{\abs{x}{P \subst{h_1}{y}}} \bout{s_2}{\abs{x}{P \subst{h_2}{y}}} \inact \Par\\
+			&&
+			\begin{array}{lll}
+				\binp{\dual{h_1}}{x} \binp{\dual{h_2}}{y} & \If\ x \leq y\ \Then & \bsel{\dual{h_1}}{\accept} \bsel{\dual{h_2}}{\reject} \inact\\
+				& \Else& \bsel{\dual{h_1}}{\reject} \bsel{\dual{h_2}}{\accept} \inact
+			\end{array}
+		}
+	\end{array}
+\]
+%
+\begin{itemize}
+	\item	Process $P$ is the remote code responsible for negotiation with a hotel.
+		Channel $x$ is intended to be instantiated by the hotel as the negotiating
+		endpoint. Channel $y$ is used to interact with $\Client_1$.
+
+	\item	Process $P$
+		i) sends the room requirements to the hotel;
+		ii) receives a quote from the hotel;
+		iii) sends the quote to the $\Client_1$;
+		iv) expects a choice from the $\Client_1$ whether to accept or reject the offer and;
+		v) If the choice is accept it informs the hotel and performs the booking,
+		if the choice is reject it informs the hotel and ends the session.
+
+	\item	$\Client_1$ instantiates two copies of process $P$ as abstractions
+		on session $x$. It further uses two
+		fresh endpoints $h_1, h_2$ to substitute channels $y$, respectively,
+		in order for the two instances of $P$ to be able to interact
+		with $\Client_1$.
+	
+	\item	$\Client_1$ then sends the two abstractions instances of $P$
+		to the two hotels via sessions $s_1$ and $s_2$, respectively.
+
+	\item	$\Client_1$ uses the dual endpoints $\dual{h_1}$ and $\dual{h_2}$
+		to receive the negotiation
+		result from the two remote instances of $P$ and then inform the two
+		processes for the final booking decision.
+\end{itemize}
+
+The above scenario does not add a significant gain
+to the time needed for the entire protocol to take
+place, since the two remote processes are required
+to send and receive data to $\Client_1$.
+
+As an alternative we can propose a different implementation
+of the same scenario that requires from the two
+remote processes to interact with each other,
+instead of $\Client_1$, to reach to a consensus:
+%
+\[
+	\begin{array}{rcl}
+		P_1 &\defeq&	\bout{x}{\rtype} \binp{x}{\Quote_1} \bout{y}{\Quote_1} \binp{y}{\Quote_2}\\
+			&&
+				\begin{array}{ll}
+					\If\ \Quote_1 \leq \Quote_2\ \Then & \bsel{x}{\accept} \bout{x}{\creditc} \inact\\
+					\Else & \bsel{x}{\reject} \inact
+				\end{array}
+		\\
+		P_2 &\defeq&	\bout{x}{\rtype} \binp{x}{\Quote_2} \bout{y}{\Quote_1} \bout{y}{\Quote_1}\\
+			&&
+				\begin{array}{ll}
+					\If\ \Quote_1 \leq \Quote_2\ \Then & \bsel{x}{\accept} \bout{x}{\creditc} \inact\\
+					\Else & \bsel{x}{\reject} \inact
+				\end{array}
+		\\
+		\Client_2 &\defeq& \newsp{h}{\bout{s_1}{\abs{x}{P_1 \subst{h}{y}}} \bout{s_2}{\abs{x}{P_2 \subst{\dual{h}}{y}}} \inact}
+	\end{array}
+\]
+\end{example}
+
+\begin{itemize}
+	\item	Processes $P_1$ and $P_2$ are responsible for negotiating a quote from the
+		hotel in the same fashion as process $P$ in the previous implementation.
+
+	\item	The difference with process $P$ is that the channel $y$ is used for
+		interaction between process $P_1$ and $P_2$. Both processes send
+		there quotes to each other and then internally follow the same
+		logic to reach to a decision.
+
+	\item	The role of $\Client_2$ is to instantiate $P_1$ and $P_2$ as abstractions
+		on name $x$. It further substitutes
+		the two endpoints of a fresh channel $h$ to channels $y$ respectively,
+		in order for the two instances to be able to communicate with each other.
+
+	\item	Process $\Client_2$ then uses sessions $s_1$ and $s_2$ to send the two
+		instances of $P_1$ and $P_2$ to the two hotels.
+\end{itemize}
+
+We can show that process $\Client_1$ and $\Client_2$
+are interchangeable by showing that they are bisimilar.
+We use characteristic bisimulation to give a bisimulation
+closure.
+%
+%\begin{eqnarray*}
+%	S &=& \set{
+%		\Client_1, \Client_2\\
+%	&&	\newsp{h_1, h_2}{\bout{s_1}{\abs{x}{P \subst{h_1}{y}}} \bout{s_2}{\abs{x}{P \subst{h_2}{y}}} \inact \Par\\
+%	&&
+%		\begin{array}{lll}
+%			\binp{\dual{h_1}}{x} \binp{\dual{h_2}}{y} & \If\ x \leq y\ \Then & \bsel{\dual{h_1}}{\accept} \bsel{\dual{h_2}}{\reject} \inact\\
+%			& \Else& \bsel{\dual{h_1}}{\reject} \bsel{\dual{h_2}}{\accept} \inact
+%		\end{array}}
+%		}
+%\end{eqnarray*}
+
+\subsection{Types}
+
+Assuming $S = \btout{\Quote} \btbra{\accept: \tinact, \reject: \tinact}$ and
+$U = \btout{\rtype} \btinp{\Quote} \btsel{\accept: \btout{\creditc} \tinact, \reject: \tinact }$.
+The type for $\abs{x}{P}$ is
+%
+\[
+	\es; \es; y: S \proves \abs{x}{P} \hastype \lhot{U}
+\]
+%
+\noi and the type for $\Client_1$ is
+%
+\[
+	\es; \es; s_1: \btout{\lhot{U}} \tinact \cat s_2: \btout{\lhot{U}} \tinact \proves \Client_1 \hastype \Proc
+\]
+%
+The types for $P_1$ and $P_2$ are
+%
+\begin{eqnarray*}
+	\es; \es; y: \btout{\Quote} \btinp{\Quote} \tinact \proves \abs{x}{P_1} \hastype \lhot{U}\\
+	\es; \es; y: \btinp{\Quote} \btout{\Quote} \tinact \proves \abs{x}{P_2} \hastype \lhot{U}
+\end{eqnarray*}
+%
+\noi ant the type for $\Client_2$ is
+%
+\[
+	\es; \es; s_1: \btout{\lhot{U}} \tinact \cat s_2: \btout{\lhot{U}} \tinact \proves \Client_2 \hastype \Proc
+\]
+%
