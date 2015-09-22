@@ -35,21 +35,46 @@
 This paper is about \emph{relative expressiveness} results for 
 \emph{higher-order process calculi}, core programming languages that 
 integrate name- and process-passing in communications.
-We study higher-order languages coupled with \emph{session types} that denote structured protocols. 
+In particular, we study higher-order languages coupled with \emph{session types} that denote structured protocols. 
 %The expressivity relations that we aim to are essential for the transference of reasoning techniques, notably behavioral equivalences, across different typed languages. 
 %Our motivation for studying expressivity relations is to establish a firm foundation for the transference of reasoning techniques, notably behavioral equivalences, across different session typed languages. 
-Results of relative expressiveness are essential to lay out firm foundations for the transference of reasoning techniques, notably behavioral equivalences, across different session typed languages.
+Results of relative expressiveness are indispensable ingredients in the principled transference of reasoning techniques, notably behavioral equivalences, across different session typed languages.
 Since session types denote protocols, 
  establishing expressiveness results formally entails defining 
  not only a translation (\emph{encoding})
-relating source and target process languages, but also a translation 
+relating source and target languages, but also a translation 
 relating their associated type disciplines. 
 We thus aim at a very particular class of correct encodings, namely \emph{fully abstract} and \emph{type-preserving} encodings.
 This is a challenging task, as we elaborate next.
 
+In \emph{session-based concurrency}, concurrent interactions are organized into \emph{sessions}, basic communication units.
+Interaction patterns can then be abstracted as expressive \emph{session types}~\cite{honda.vasconcelos.kubo:language-primitives}, against which process specifications may be checked. 
+Session types define (possibly infinite) sequences of communication actions: send/receive a value, offer/select a behavior.
+For instance, the session type 
+$T_1 = \btinp{\mathsf{str}} \btout{\mathsf{int}}  \tinact$ may be intuitively read as ``receive (?) a value of type $\mathsf{str}$,
+then output (!) a value of type $\mathsf{int}$, finally close the protocol''.
+In the (first-order) $\pi$-calculus~\cite{MilnerR:calmp1}, 
+names/channels are endowed with session types (such as $T_1$)
+representing their intended interactive behavior.
+Session-based concurrency has also been casted in the setting of \emph{higher-order} process
+calculi which, by combining features from the $\lambda$-calculus and the $\pi$-calculus, 
+enable the exchange of values that may contain  processes~\cite{tlca07,DBLP:journals/jfp/GayV10}. 
+Besides offering a natural bridge between concurrent and functional computation, higher-order calculi with session 
+primitives enable the specification of practical scenarios involving code mobility.
+This way, e.g., the session type 
+$T_2 = \btbra{lin:\btinp{\lhot{\mathsf{int}}}\tinact ~ , ~ sha:\btinp{\shot{\mathsf{int}}}\tinact}_{}$
+abstracts a server protocol that allows 
+  clients to select between two 
+kinds of functions from integers to processes (mobile code):
+the function
+can be either \emph{linear} (to be used exactly once)
+or \emph{shared} (to be used without restrictions). 
+Therefore,  to interact safely with a server typed with $T_2$, clients must first make a selection (using labels $lin$ and $sha$)
+and then they should receive the function itself  and close the protocol afterwards.
 
-By combining features from the $\lambda$-calculus and the $\pi$-calculus, 
-in {higher-order process calculi} exchanged values may contain  processes. 
+
+
+
 The study of higher-order concurrency has received significant attention, 
 from untyped and typed perspectives (see, e.g.,~\cite{ThomsenB:plachoasgcfhop,SangiorgiD:expmpa,San96int,MostrousY15,DBLP:journals/iandc/LanesePSS11,DBLP:conf/icalp/LanesePSS10,DBLP:conf/esop/KoutavasH11,XuActa2012}),
 in particular via comparisons with the (first-order) $\pi$-calculus~\cite{MilnerR:calmp1}. 
@@ -74,13 +99,15 @@ and applications.
 While synchronization on shared names (useful to model session establishment) is 
 non deterministic, session communication takes place on linear channels
 and is inherently deterministic. 
-We study two significant subcalculi of \HOp, 
-which distil the essence of higher- and first-order concurrency with sessions:
+
+In this paper we investigate the expressiveness of \HOp in relation to its
+most significant subcalculi: 
 \begin{enumerate}[-]
 \item the \HO-calculus, which is \HOp without recursion and name passing;
 \item the session \sessp-calculus \jpc{(denoted~\sessp)}, i.e., \HOp without abstractions and applications.  
 \end{enumerate}
-While \sessp is, 
+\HO and \sessp distil the essence of higher- and first-order concurrency with sessions:
+while \sessp is, 
 in essence, the first-order calculus in~\cite{honda.vasconcelos.kubo:language-primitives}, 
 this paper shows that \HO  is a new core calculus 
 for higher-order session concurrency.
