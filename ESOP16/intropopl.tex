@@ -38,14 +38,15 @@ integrate name- and process-passing in communications.
 In particular, we study higher-order languages coupled with \emph{session types} that denote structured protocols. 
 %The expressivity relations that we aim to are essential for the transference of reasoning techniques, notably behavioral equivalences, across different typed languages. 
 %Our motivation for studying expressivity relations is to establish a firm foundation for the transference of reasoning techniques, notably behavioral equivalences, across different session typed languages. 
-Results of relative expressiveness are indispensable ingredients in the principled transference of reasoning techniques, notably behavioral equivalences, across different session typed languages.
+Results of relative expressiveness are indispensable ingredients in the principled transference of reasoning techniques, notably behavioral equivalences, across different session languages.
 Since session types denote protocols, 
  establishing expressiveness results formally entails defining 
  not only a translation (\emph{encoding})
 relating source and target languages, but also a translation 
-relating their associated type disciplines. 
+relating their associated type systems. 
 We thus aim at a very particular class of correct encodings, namely \emph{fully abstract} and \emph{type-preserving} encodings.
-This is a challenging task, as we elaborate next.
+%This is a challenging task, as we elaborate next.
+ Below, we elaborate on the challenges involved.
 
 In \emph{session-based concurrency}, concurrent interactions are organized into \emph{sessions}, basic communication units.
 Interaction patterns can then be abstracted as expressive \emph{session types}~\cite{honda.vasconcelos.kubo:language-primitives}, against which process specifications may be checked. 
@@ -100,7 +101,7 @@ first-order abstractions %(i.e., functions from name identifiers  to processes)
 and applications
 (denoted $(\lambda x.P)a$).
 While synchronization on shared names (useful to model session establishment) is 
-non deterministic, session communication is deterministic and takes place on linear channels.
+non deterministic, session communication is deterministic and takes place on linear names.
 In recent work, we have developed a behavioral theory  for \HOp~\cite{characteristic_bis}:
 we introduced
 \emph{characteristic bisimilarity}, a sound and complete 
@@ -119,23 +120,50 @@ in essence, the first-order calculus in~\cite{honda.vasconcelos.kubo:language-pr
 this paper shows that \HO  is a new core calculus 
 for higher-order session concurrency.
 
-The main contributions of this paper are expressiveness results in which 
+%\newpage
+This paper contributes with new expressiveness results in which 
 we assess the expressivity 
- of \HOp, \HO, and \sessp as delineated by typing. 
+ of \HOp, \HO, and \sessp as delineated by session typing. 
 We establish strong correspondences between 
 these calculi  via type-preserving, fully abstract encodings up to 
 behavioural equalities. While encoding \HOp 
 into the $\pi$-calculus preserving session types 
-(extending  known  results for untyped processes) is 
+(extending  known  results for untyped processes~\cite{SangiorgiD:expmpa}) is 
 %\jpc{already}
 significant, 
-our main contribution is 
-an encoding of \HOp into \HO, where name-passing is absent.  
+our contribution is 
+an encoding of \HOp into \HO, where both name-passing and recursion is absent (\secref{subsec:HOpi_to_HO}).  
+There are two key challenges involved in this encoding:
+\begin{enumerate}[a.]
+\item Although encodings of name-passing into process-passing exist~\cite[Ch.13]{SaWabook}, 
+they come with restrictions on name usages;  
+such encodings work for %name-passing 
+calculi 
+%with \emph{capability types} 
+in which only the output capability of names is communicated---a received name cannot be used in subsequent inputs.
+This is far too limiting in a session typed setting, where types describe \emph{communication structures}, rather than individual name capabilities. % at a given time.
 
-MOTIVATION FIRST ENCODING (\secref{subsec:HOpi_to_HO}). \emph{Still to highlight: recursive type required, no recursion, small example.
-(We should also mention the less surprising encoding in \secref{subsec:HOp_to_sessp}.) }
---- We illustrate the essence of encoding name passing into \HO: 
-to encode name output, we ``pack''
+\item In untyped higher-order calculi, 
+there is a well-known encoding 
+of infinite behavior 
+%(recursion and replication)
+that exploits process duplication. 
+Unfortunately, this encoding strategy does not carry over to session typed calculi,
+because linear abstractions cannot be copied. That is, the discipline of  session types severely limits 
+the possibilities for representing infinite behaviors---even simple forms, such as input-guarded replication.
+\end{enumerate}
+
+
+
+
+%MOTIVATION FIRST ENCODING (). \emph{Still to highlight: recursive type required, no recursion, small example.
+
+%--- 
+We describe our approach to these challenges.
+Concerning (a), %we illustrate the essence of 
+to encode name passing into \HO, 
+%to encode name output, 
+we ``pack''
 the name to be passed around into a suitable abstraction; 
 upon reception, the receiver must ``unpack'' this object following a precise protocol.
 More precisely, our encoding 
@@ -147,7 +175,8 @@ in \HO is given as:
   $\map{\binp{a}{x} Q}$	&$=$&	$\binp{a}{y} \newsp{s}{\appl{y}{s} \Par \bout{\dual{s}}{\abs{x}{\map{Q}}} \inact}$
 \end{tabular}
 \end{center}
-\noi where $a,b$ are names; $s$ and $\dual{s}$ are 
+and as a homomorphism for the other operators.
+Above, $a,b$ are names; $s$ and $\dual{s}$ are 
 linear names (called \emph{session endpoints});
 %$\lambda x.P$ is a name abstraction of $P$; $\appl{x}{a}$ is a name application; 
 $\bout{a}{V} P$ and 
@@ -155,21 +184,13 @@ $\binp{a}{x} P$ denote an output and input at~$a$;
 and $\newsp{s}P$ is hiding. 
 A (deterministic) reduction between   endpoints 
 $s$ and $\dual{s}$ guarantees name $b$ is properly unpacked.
-Encoding a recursive process $\recp{X}{P}$ is \NY{also} challenging, for 
-the linearity of endpoints in $P$ must be preserved.
-We encode recursion with non-tail recursive session types; for this 
-we apply recent advances on the theory of session duality~\cite{TGC14,DBLP:journals/corr/abs-1202-2086}.
-%\dk{Encoding of a general recursive process $\recp{X}{P}$ is another challenge, since 
-%it must preserve the linearity of session endpoints appeared in $P$.
-%We encode it with non-tail recursive session types,  
-%for which we apply a recent advance on a session duality theory 
-%\cite{BernardiH14,TGC14,DBLP:journals/corr/abs-1202-2086}.}
 
-It is worth emphasizing that our aim of obtaining type-preserving encodings 
-makes our endeavor more challenging.
-In fact, the requirement of type preservation rules out encoding strategies that, while plausible, do 
+We stress that aiming at type-preserving encodings 
+makes our endeavor more challenging, since it rules out encoding strategies that, while plausible, do 
 not preserve session types. For instance, consider the 
-encoding of $\sessp$ into $\HO$ defined as
+encoding of %$\sessp$ 
+name-passing 
+into $\HO$ defined as
 \begin{center}
 \begin{tabular}{rcll}
   $\umap{\bout{a}{b} P}$	&$=$&	$\binp{a}{x}( \appl{x}{b} \Par \umap{P})$ \\
@@ -182,7 +203,20 @@ As such, it is a perfectly reasonable encoding in an \emph{untyped setting}. How
 individual communication prefixes represent actions in a structured sequence of communications (as expressed and disciplined by session types)
 the encoding $\umap{\cdot}$ would simply destroy the intrinsic meaning of session protocols in the source language.
 
+Concerning (b),Encoding a recursive process $\recp{X}{P}$ is \NY{also} challenging, for 
+the linearity of endpoints in $P$ must be preserved.
+We encode recursion with non-tail recursive session types; for this 
+we apply recent advances on the theory of session duality~\cite{TGC14,DBLP:journals/corr/abs-1202-2086}.
+TO EXPAND.
+%\dk{Encoding of a general recursive process $\recp{X}{P}$ is another challenge, since 
+%it must preserve the linearity of session endpoints appeared in $P$.
+%We encode it with non-tail recursive session types,  
+%for which we apply a recent advance on a session duality theory 
+%\cite{BernardiH14,TGC14,DBLP:journals/corr/abs-1202-2086}.}
+
+
 TO ADD: MOTIVATION ON PRECISE AND MINIMAL ENCODINGS. We should also mention the non encodability result (\secref{ss:negative}).
+(We should also mention the less surprising encoding in \secref{subsec:HOp_to_sessp}.) 
 
 MOTIVATION: EXTENSIONS (\secref{sec:extension}) -- We further extend our encodability results to 
 i)~\HOp with \emph{higher-order} abstractions (denoted \HOpp) 
