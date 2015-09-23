@@ -50,10 +50,10 @@ We thus aim at a very particular class of correct encodings, namely \emph{fully 
 
 In \emph{session-based concurrency}, concurrent interactions are organized into \emph{sessions}, basic communication units.
 Interaction patterns can then be abstracted as expressive \emph{session types}~\cite{honda.vasconcelos.kubo:language-primitives}, against which process specifications may be checked. 
-Session types define (possibly infinite) sequences of communication actions. %: send/receive a value, offer/select a behavior.
-For instance, the session type 
-$T_1 = \btinp{\mathsf{str}} \btout{\mathsf{int}}  \tinact$ may be intuitively read as ``receive (?) a value of type $\mathsf{str}$,
-then output (!) a value of type $\mathsf{int}$, finally close the protocol''.
+These patterns are defined as (possibly recursive) sequences of communication actions (send/receive a value, offer/select a behavior).
+For instance, session type 
+$T_1 = \btinp{\mathsf{str}} \btout{\mathsf{int}}  \tinact$ may be intuitively read as: receive (?) a value of type $\mathsf{str}$,
+then output (!) a value of type $\mathsf{int}$, finally close the protocol.
 In the (first-order) $\pi$-calculus~\cite{MilnerR:calmp1}, 
 session types describe the intended interactive behavior of the names/channels in a process.
 %names/channels are endowed with session types (such as $T_1$) representing their intended interactive behavior.
@@ -61,13 +61,13 @@ Session-based concurrency has also been casted in the setting of \emph{higher-or
 calculi which, by combining features from the $\lambda$-calculus and the $\pi$-calculus, 
 enable the exchange of values that may contain  processes~\cite{tlca07,DBLP:journals/jfp/GayV10}. 
 Besides offering a natural bridge between concurrent and functional computation, 
-higher-order calculi with session primitives enable the specification of practical scenarios involving \emph{code mobility}.
+higher-order calculi with sessions enable the specification of practical scenarios involving \emph{code mobility}.
 In the main higher-order session language that we study here (denoted \HOp),
  values in communications include basic values and shared and session names, but also first-order abstractions---functions from name identifiers to processes. (In contrast, higher-order abstractions---functions from processes to processes---are disallowed.)
 As a result, session types for \HOp allow linear 
 and shared functions as communication objects; 
-given a first-order type $C$ (say, a session name),
-these are denoted $\lhot{C}$ and $\shot{C}$, respectively.
+these are denoted $\lhot{C}$ and $\shot{C}$, respectively, where $C$ is 
+a first-order type $C$ (say, a session name).
 As an example, the session type 
 %$T_2 = \btbra{upload:\btinp{\lhot{\mathsf{int}}}\tinact ~ , ~ sha:\btinp{\shot{\mathsf{int}}}\tinact}_{}$
 $$T_2 = \btbra{up:\btinp{\lhot{C}}\btout{\mathsf{ok}}\tinact ~ , ~ down:\btout{\shot{C}}\btout{\mathsf{ok}}\tinact ~ , ~quit:\btout{\mathsf{bye}}\tinact}_{}$$
@@ -90,7 +90,8 @@ abstracts the protocol of a server that allows
 %their \emph{relative expressiveness}
 %remains little understood. 
 Formally,  \HOp %, a higher-order process language that 
-extends the higher-order $\pi$-calculus~\cite{SangiorgiD:expmpa} with 
+%extends the higher-order $\pi$-calculus~\cite{SangiorgiD:expmpa} with 
+includes
 constructs for 
 %session establishment
 synchronisation along shared names, 
@@ -102,10 +103,10 @@ and applications
 (denoted $(\lambda x.P)a$).
 While synchronization on shared names (useful to model session establishment) is 
 non deterministic, session communication is deterministic and takes place on linear names.
-In recent work, we have developed a behavioral theory  for \HOp~\cite{characteristic_bis}:
+We have recently developed a behavioral theory  for \HOp~\cite{characteristic_bis}:
 we introduced
 \emph{characteristic bisimilarity}, a sound and complete 
-characterization of contextual equivalence that enables tractable analyses.
+characterization of contextual equivalence. % that enables tractable analyses.
 In this paper, 
 in order to enable the transfer of characteristic bisimilarity between variants of \HOp, 
 we turn our attention to the expressiveness of \HOp in relation to its
@@ -121,8 +122,7 @@ this paper shows that \HO  is a new core calculus
 for higher-order session concurrency.
 
 %\newpage
-This paper contributes with new expressiveness results in which 
-we assess the expressivity 
+This paper contributes with new expressiveness results which allows us to assess the expressivity 
  of \HOp, \HO, and \sessp as delineated by session typing. 
 We establish strong correspondences between 
 these calculi  via type-preserving, fully abstract encodings up to 
@@ -131,25 +131,27 @@ into the $\pi$-calculus preserving session types
 (extending  known  results for untyped processes~\cite{SangiorgiD:expmpa}) is 
 %\jpc{already}
 significant, 
-our contribution is 
+our main contribution is 
 an encoding of \HOp into \HO, where both name-passing and recursion is absent (\secref{subsec:HOpi_to_HO}).  
-There are two key challenges involved in this encoding:
+This encoding involves two key challenges:
 \begin{enumerate}[a.]
-\item Although encodings of name-passing into process-passing exist~\cite[Ch.13]{SaWabook}, 
-they come with restrictions on name usages;  
-such encodings work for %name-passing 
+\item Known encodings of name-passing into process-passing~\cite[Ch.13]{SaWabook} are limited in that 
+%they come with restrictions on name usages;  
+they work for %name-passing 
 calculi 
 %with \emph{capability types} 
-in which only the output capability of names is communicated---a received name cannot be used in subsequent inputs.
-This is far too limiting in a session typed setting, where types describe \emph{communication structures}, rather than individual name capabilities. % at a given time.
+in which only the output capability of names is sent. Hence, a received name cannot be used in subsequent inputs.
+This is far too limiting in \HOp, where 
+session names for arbitrary protocols must be passed around (\emph{delegation})
+and types describe  communication  \emph{structures}, rather than individual name capabilities. % at a given time.
 
 \item In untyped higher-order calculi, 
 there is a well-known encoding 
 of infinite behavior 
 %(recursion and replication)
 that exploits process duplication. 
-Unfortunately, this encoding strategy does not carry over to session typed calculi,
-because linear abstractions cannot be copied. That is, the discipline of  session types severely limits 
+Unfortunately, this encoding does not carry over to session typed calculi such as \HOp,
+because linear abstractions cannot be copied. Hence, the discipline of session types severely limits 
 the possibilities for representing infinite behaviors---even simple forms, such as input-guarded replication.
 \end{enumerate}
 
@@ -159,6 +161,7 @@ the possibilities for representing infinite behaviors---even simple forms, such 
 %MOTIVATION FIRST ENCODING (). \emph{Still to highlight: recursive type required, no recursion, small example.
 
 %--- 
+\noi
 We describe our approach to these challenges.
 Concerning (a), %we illustrate the essence of 
 to encode name passing into \HO, 
