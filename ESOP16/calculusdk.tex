@@ -29,38 +29,11 @@ and polyadicity in name-passing/abstractions.)
 
 \subsection{Syntax of \HOp}
 \label{subsec:syntax}
-	\noindent\myparagraph{Values} The syntax of \HOp is defined in \figref{fig:syntax}
-	\begin{figure}[t]
-	\[ 
-		\begin{array}{lll}
-			u,w  ::=  n \ | \ x,y,z
-			&
-			n ::= a,b  \ | \ s, \dual{s} 
-			&
-			V,W  ::=   \nonhosyntax{u} \ | \ \abs{x}{P}
-		\end{array}
-	\]
-	\[
-		\begin{array}{rclllll}
-			P,Q \!\!\!\!\!\!
-			& ::= &
-			\!\! \bout{u}{V}{P}  \bnfbar  \binp{u}{x}{P} \bnfbar
-			\bsel{u}{l} P \bnfbar \bbra{u}{l_i:P_i}_{i \in I}
-			\\[1mm]
-			& \bnfbar &
-			\!\! \nonhosyntax{\rvar{X} \bnfbar \recp{X}{P}} \bnfbar \appl{V}{u} \bnfbar P\Par Q \bnfbar \news{n} P 
-			\bnfbar 
-%ny
-%\appl{x}{u}
-			\inact
-%\\[1mm]
-%    & \bnfbar & \nonhosyntax{\rvar{X} \bnfbar \recp{X}{P}}
-		\end{array}
-	\]
-	\caption{Syntax of \HOp (\HO lacks the constructs in \nonhosyntax{\text{grey}}).}
-	\label{fig:syntax}
-	\Hlinefig
-\end{figure}
+
+\noindent\myparagraph{Values} The syntax of \HOp is defined in \figref{fig:syntax}
+
+\input{figures/syntax}
+
 We use $a,b,c, \dots$ (resp.~$s, \dual{s}, \dots$) 
 to range over shared (resp. session) names. 
 We use $m, n, t, \dots$ for session or shared names. 
@@ -157,64 +130,8 @@ $\HOp$, $\HO$, and $\sessp$ have the same expressivity.
 \subsection{Operational Semantics}
 \label{subsec:semantics}
 
-\begin{figure}[!t]
-\[
-	\begin{array}{rclrcrclr}
-		(\abs{x}{P}) \, u  & \red & P \subst{u}{x} 
-		& \orule{App}
-		\\[1mm]
-%		\bout{a}{V} P \Par \binp{a}{x} Q & \red & P \Par Q \subst{V}{x} 
-%		& \orule{Com}
-%		\\[1mm]
+\input{figures/semantics}
 
-		\bout{n}{V} P \Par \binp{\dual{n}}{x} Q & \red & P \Par Q \subst{V}{x} 
-		& \orule{Pass}
-		\\[1mm]
-
-		\bsel{n}{l_j} Q \Par \bbra{\dual{n}}{l_i : P_i}_{i \in I} & \red & Q \Par P_j ~~(j \in I)~~ 
-		& \orule{Sel}
-		\\[1mm]
-
-		P \red P' & \Rightarrow & \news{n} P  \red  \news{n} P' 
-		& \orule{Res}
-		\\[1mm]
-
-		P \red P' & \Rightarrow  &  P \Par Q  \red   P' \Par Q  
-		& \orule{Par}
-		\\[1mm]
-
-		P \scong Q \red Q' \scong P' & \Rightarrow & P  \red  P'
-		& \orule{Cong}
-	\end{array}
-\]
-{\small
-\[
-	\begin{array}{c}
-		P \Par \inact \scong P
-		\quad
-		P_1 \Par P_2 \scong P_2 \Par P_1
-		\quad
-		P_1 \Par (P_2 \Par P_3) \scong (P_1 \Par P_2) \Par P_3
-		%\quad
-		%P \scong Q \textrm{ if } P \scong_\alpha Q
-		\\[1mm]
-		\news{n} \inact \scong \inact
-		\quad 
-		P \Par \news{n} Q \scong \news{n}(P \Par Q)
-		\	(n \notin \fn{P})\quad 
-		\recp{X}{P} \scong P\subst{\recp{X}{P}}{\rvar{X}}
-		\\[1mm]
-		P \scong Q \textrm{ if } P \scong_\alpha Q
-%		\qquad
-%		\dk{V \scong W \textrm{ if } V \scong_\alpha W
-%\quad \abs{x}{P} \scong \abs{x}{Q} \textrm{ if } P \scong Q}
-	\end{array}
-\]
-}
-\caption{Operational Semantics of $\HOp$. 
-\label{fig:reduction}}
-\Hlinefig
-\end{figure}
 \noindent \figref{fig:reduction} (top) defines the operational semantics 
 of \HOp.
 Rule $\orule{App}$ is the name application; 
@@ -228,4 +145,4 @@ on the dual endpoint $\dual{n}$; and other rules are standard
 $\pi$-calculus rules.
 Rules for \emph{structural congruence} are defined in \figref{fig:reduction} (bottom). 
 \jpc{We assume the expected extension of $\scong$ to values $V$.}
-We write $\red^\ast$ for a multi-step reduction. 
+We write $\red^\ast$ for a multi-step reduction.

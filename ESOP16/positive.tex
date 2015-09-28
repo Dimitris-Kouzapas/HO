@@ -6,6 +6,7 @@ recursion (\HO) (\secref{subsec:HOpi_to_HO}); and
 (2)~\HOp into the first-order name-passing communication
 with recursion (\sessp) (\secref{subsec:HOp_to_sessp}).
 
+\begin{comment}
 \dk{
 We further prove that the two encodings are precise.
 An important issue to adress on the precissenes of
@@ -43,6 +44,7 @@ The interaction structure of the session is not preserved by the
 above encoding.
 The mapping on types gives an insight on the behaviour of processes.
 }
+\end{comment}
 
 
 \subsection{From \HOp to \HO}
@@ -74,8 +76,7 @@ To this end, we require two auxiliary definitions.
 \begin{definition}\rm 
 \label{def:hop_to_ho}
 	Let $\vmap{\cdot}: 2^{\mathcal{N}} \longrightarrow \mathcal{V}^\omega$
-	be a map of sequences of 
-lexicographically ordered names to sequences of variables, defined
+	be a map of sequences of lexicographically ordered names to sequences of variables, defined
 	inductively as: 
 	$\vmap{\epsilon} = \epsilon$ and $\vmap{n \cat \tilde{m}} = x_n \cat \vmap{\tilde{m}}$. 
 \end{definition}
@@ -95,113 +96,7 @@ lexicographically ordered names to sequences of variables, defined
 \end{definition}
 
 %
-\begin{figure}[t]
-\[
-\small
-\begin{array}{rl}
-	\auxmapp{\bout{n}{\abs{x}{Q}} P}{{}}{\sigma} &\!\!\!\!\!\!\defeq
-		\bout{u}{\abs{x}{\auxmapp{Q}{{}}{\sigma}}} \auxmapp{P}{{}}{\sigma}
-\\[1mm]
-%\auxmapp{\bout{n}{m} P}{{}}{\sigma} \defeq
-%	    \bout{u}{v}\auxmapp{P}{{}}{\sigma} 
-\auxmapp{\news{n} P}{{}}{\sigma}  \defeq  \news{n} \auxmapp{P}{{}}{{\sigma \cat n}}
- & 
-	\quad \auxmapp{P \Par Q}{{}}{\sigma}  \defeq  \auxmapp{P}{{}}{\sigma} \Par \auxmapp{Q}{{}}{\sigma} 
-	\vspace{1mm} \\
-	\auxmapp{\appl{x}{n}}{{}}{\sigma}  \defeq
-		\appl{x}{u} & \qquad
-	\auxmapp{\appl{(\lambda x.Q)}{n}}{{}}{\sigma}  \defeq
-		\appl{(\lambda x.\auxmapp{Q}{{}}{\sigma})}{u} \\
-	\auxmapp{\inact}{{}}{\sigma}  \defeq  \inact
- & 
-			\quad \auxmapp{\binp{n}{x} P}{{}}{\sigma}\defeq
-		\binp{u}{x} \auxmapp{P}{{}}{\sigma} 
-\\[1mm]
-	\auxmapp{\bsel{n}{l} P}{{}}{\sigma} \defeq
-		\bsel{u}{l} \auxmapp{P}{{}}{\sigma} 
- & 
-	\quad \auxmapp{\bbra{n}{l_i:P_i}_{i \in I}}{{}}{\sigma}  \defeq 
-		\bbra{u}{l_i:\auxmapp{P_i}{{}}{\sigma}}_{i \in I}
-\end{array}
-\]
-%\[
-%	\begin{array}{rcl}
-%          \auxmapp{\news{n} P}{{}}{\sigma} &\bnfis& \news{n} \auxmapp{P}{{}}{{\sigma \cat n}}
-%		\vspace{1mm} \\
-%		\auxmapp{\bout{n}{\abs{x}{Q}} P}{{}}{\sigma} &\bnfis&
-%		\left\{
-%		\begin{array}{rl}
-%			\bout{x_n}{\abs{(x,\vmap{\fn{P}})}{\auxmapp{Q}{{}}{\sigma}}} \auxmapp{P}{{}}{\sigma} & n \notin \sigma\\
-%			\bout{n}{\abs{(x,\vmap{\fn{P}})}{\auxmapp{Q}{{}}{\sigma}}} \auxmapp{P}{{}}{\sigma} & n \in \sigma
-%		\end{array}
-%		\right.
-%			\vspace{1mm}	\\ 
-%		\auxmapp{\bout{n}{m} P}{{}}{\sigma} &\bnfis&
-%		\left\{
-%		\begin{array}{rl}
-%		    \bout{n}{m}\auxmapp{P}{{}}{\sigma} & n, m \in \sigma \\
-%		    \bout{x_n}{m}\auxmapp{P}{{}}{\sigma} & n \not\in \sigma, m \in \sigma \\
-%		    \bout{n}{x_m}\auxmapp{P}{{}}{\sigma} & n \in \sigma, m \not\in \sigma \\
-%		    \bout{x_n}{x_m}\auxmapp{P}{{}}{\sigma} & n, m \not\in \sigma 
-%		\end{array}
-%		\right.
-%		\vspace{1mm} \\ 
-%				\auxmapp{\binp{n}{X} P}{{}}{\sigma} &\bnfis&
-%		\left\{
-%		\begin{array}{rl}
-%			\binp{x_n}{X} \auxmapp{P}{{}}{\sigma} & n \notin \sigma\\
-%			\binp{n}{X} \auxmapp{P}{{}}{\sigma} & n \in \sigma
-%		\end{array}
-%		\right.
-%			\vspace{1mm}	\\ 
-%		\auxmapp{\binp{n}{x}P}{{}}{\sigma} &\bnfis&
-%		\left\{
-%		\begin{array}{rl}
-%		    \binp{n}{x}\auxmapp{P}{{}}{\sigma} & n \in \sigma \\
-%		    \binp{x_n}{x}\auxmapp{P}{{}}{\sigma} & n \not\in \sigma 
-%		\end{array}
-%		\right.
-%		\vspace{1mm} \\ 
-%		\auxmapp{\bsel{n}{l} P}{{}}{\sigma} &\bnfis&
-%		\left\{
-%		\begin{array}{rl}
-%			\bsel{x_n}{l} \auxmapp{P}{{}}{\sigma} & n \notin \sigma\\
-%			\bsel{n}{l} \auxmapp{P}{{}}{\sigma} & n \in \sigma
-%		\end{array}
-%		\right.
-%		\vspace{1mm} \\
-%		\auxmapp{\bbra{n}{l_i:P_i}_{i \in I}}{{}}{\sigma} &\bnfis&
-%		%\auxmapp{\bsel{n}{l} P}{{}}{\sigma} &\bnfis&
-%		\left\{
-%		\begin{array}{rl}
-%			\bbra{x_n}{l_i:\auxmapp{P_i}{{}}{\sigma}}_{i \in I}  & n \notin \sigma\\
-%			\bbra{n}{l_i:\auxmapp{P_i}{{}}{\sigma}}_{i \in I}  & n \in \sigma
-%		\end{array}
-%		\right.
-%		\vspace{1mm} \\
-%		\auxmapp{\appl{\X}{n}}{{}}{\sigma} &\bnfis&
-%		\left\{
-%		\begin{array}{rl}
-%			\appl{\X}{x_n} & n \notin \sigma\\
-%			\appl{\X}{n} & n \in \sigma\\
-%		\end{array}
-%		\right. \\
-%		\auxmapp{\inact}{{}}{\sigma} &\bnfis& \inact\\
-%		\auxmapp{P \Par Q}{{}}{\sigma} &\bnfis& \auxmapp{P}{{}}{\sigma} \Par \auxmapp{Q}{{}}{\sigma} 
-% \end{array}
-%\]
-%The auxiliary map (cf. \defref{d:auxmap}) 
-%used in the encoding of the higher-order communication 
-%with recursive definitions into higher-order communication 
-%without recursive definitions and (\defref{d:enc:fotohorec}).
-\begin{center}
-{\small In all cases: $u = n$ if $n\in \sigma$; otherwise $u = x_n$.}
-\end{center}
-%The mapping is defined homomorphically for inaction and parallel composition.
-\caption{\label{f:auxmap} Auxiliary mapping used to encode \HOp into \HO.}
-\Hlinefig 
-\end{figure}
-
+\input{figures/aux_map}
 \smallskip 
 
 \noi This way, given an \HO
@@ -222,96 +117,7 @@ In the following we make this intuition precise.
 %%	$\appl{X}{\smap{\fn{P}}} \subst{(\vmap{\fn{P}}) \map{P}^{\emptyset}}{X} \scong P$
 %\end{proposition}
 
-\begin{figure}[h!]
-\[
-\begin{array}{rcll}
-\noindent{\bf Types:}\quad\quad\quad\quad\quad\quad
-	\vtmap{{S}}{1}	&\!\!\!\!\!\!\defeq\!\!\!\!\!\!&	\lhot{(\btinp{\lhot{\tmap{S}{1}}} \tinact)} \\
-	\vtmap{\chtype{S}}{1}&\!\!\!\!\!\!\defeq\!\!\!\!\!\!&	\lhot{(\btinp{\shot{\chtype{\tmap{S}{1}}}} \tinact)}  \\
-	\vtmap{\chtype{L}}{1}&\!\!\!\!\!\!\defeq\!\!\!\!\!\!&	\lhot{(\btinp{\shot{\chtype{\tmap{L}{1}}}} \tinact)} \\
-	\vtmap{\lhot{C}}{1} \!\!\defeq\!\! \lhot{\tmap{C}{1}}&& 
-	\vtmap{\shot{C}}{1} \!\!\defeq\!\! \shot{\tmap{C}{1}}\\
-	\tmap{\chtype{S}}{1} \!\!\defeq\!\!	\chtype{\tmap{S}{1}}  &&
-	\tmap{\chtype{L}}{1} \!\!\defeq\!\!	\chtype{\tmap{L}{1}}  \\
-	%		\tmap{\btout{S_1} {S} }{1}	&\!\!\defeq\!\!&	\bbtout{\lhot{\btinp{\lhot{\tmap{S_1}{1}}}\tinact}} \tmap{S}{1}  \\
-	%		\tmap{\btinp{S_1} S }{1}	&\!\!\defeq\!\!&	\bbtinp{\lhot{\btinp{\lhot{\tmap{S_1}{1}}}\tinact}} \tmap{S}{1} \\
-	%		\tmap{\bbtout{\chtype{U}} {S} }{1}	&\!\!\defeq\!\!&	\bbtout{\shot{\btinp{\shot{\chtype{\tmap{U}{1}}}}\tinact}} \tmap{S}{1}  \\
-	%		\tmap{\bbtinp{\chtype{U}} {S} }{1}	&\!\!\defeq\!\!&	\bbtinp{\shot{\btinp{\shot{\chtype{\tmap{U}{1}}}}\tinact}} \tmap{S}{1} \\
-
-	\tmap{\btout{U} S}{1} \!\!\defeq\!\! \btout{{\vtmap{U}{1}}} \tmap{S}{1}&&
-	\tmap{\btinp{U} S}{1} \!\!\defeq\!\! \btinp{{\vtmap{U}{1}}} \tmap{S}{1}\\
-	\tmap{\btsel{l_i: S_i}_{i \in I}}{1} &\!\!\!\!\defeq\!\!\!\!& \btsel{l_i: \tmap{S_i}{1}}_{i \in I}\\
-			\tmap{\btbra{l_i: S_i}_{i \in I}}{1} &\!\!\!\!\defeq\!\!\!\!& \btbra{l_i: \tmap{S_i}{1}}_{i \in I}\\
-	\tmap{\vart{t}}{1} \defeq \vart{t} \quad 
-			\tmap{\trec{t}{S}}{1}  &\!\!\!\!\defeq\!\!\!\!&
-	\trec{t}{\tmap{S}{1}}\quad 
-	\tmap{\tinact}{1}  \defeq  \tinact\\[1mm]
-	\hline
-%	\noindent{\bf Labels:} \quad \quad
-%		\mapa{(\nu \tilde{m})\bactout{n}{m}}^{1} &\!\!\!\!\defeq\!\!\!\!&   
-%(\nu \tilde{m})\bactout{n}{\abs{z}{\,\binp{z}{x} (\appl{x}{m})} } \\
-%		\mapa{\bactinp{n}{m}}^{1} &\!\!\!\!\defeq\!\!\!\!&   \bactinp{n}{\abs{z}{\,\binp{z}{x} (\appl{x}{m})} } \\
-%	\mapa{(\nu \tilde{m})\bactout{n}{\abs{{x}}{P}}}^{1} &\!\!\!\!\defeq\!\!\!\!& 
-%(\nu \tilde{m})\bactout{n}{\abs{{x}}{\pmapp{P}{1}{\es}}}\\
-%			\mapa{\bactinp{n}{\abs{{x}}{P}}}^{1} &\!\!\!\!\defeq\!\!\!\!& \bactinp{n}{\abs{{x}}{\pmapp{P}{1}{\es}}}\\
-%			\mapa{\bactsel{n}{l} }^{1} \!\!\defeq\!\! \bactsel{n}{l} 
-%	\quad 
-%			\mapa{\bactbra{n}{l} }^{1} &\!\!\!\!\defeq\!\!\!\!& \bactbra{n}{l} 
-%	\quad \quad 
-%			\mapa{\tau}^{1} \!\!\defeq\!\! \tau
-%\\[1mm]
-%\hline
-\end{array}
-\]
-\noi{\bf Terms} : \\
-$
-\begin{array}{rcll}
-  \pmapp{\bout{u}{w} P}{1}{f}	&\!\!\defeq\!\!&	\bout{u}{ \abs{z}{\,\binp{z}{x} (\appl{x}{w})} } \pmapp{P}{1}{f} \\
-  \pmapp{\binp{u}{\AT{x}{C}} Q}{1}{f}	&\!\!\defeq\!\!&	\binp{u}{y} \newsp{s}{\appl{y}{s} \Par \bout{\dual{s}}{\abs{x}{\pmapp{Q}{1}{f}}} \inact} \\
-		\pmapp{\bout{u}{\abs{{x}}{Q}} P}{1}{f}  
-&\!\!\defeq\!\!& \bout{u}{\abs{{x}}{\pmapp{Q}{1}{f}}} \pmapp{P}{1}{f} \\
-		\pmapp{\binp{u}{\AT{x}{L}} P}{1}{f} &\!\!\defeq\!\!& \binp{u}{x} \pmapp{P}{1}{f}\\
-		\pmapp{\bsel{s}{l} P}{1}{f} &\!\!\defeq\!\!& \bsel{s}{l} \pmapp{P}{1}{f}\\
-		\pmapp{\bbra{s}{l_i: P_i}_{i \in I}}{1}{f} &\!\!\defeq\!\!& \bbra{s}{l_i: \pmapp{P_i}{1}{f}}_{i \in I}\\
-		\pmapp{\inact}{1}{f} \!\!\defeq\!\!\inact
-& & 
-		\pmapp{\news{n} P}{1}{f} \!\!\defeq\!\! \news{n} \pmapp{P}{1}{f}\\
-\pmapp{{x}\, {u}}{1}{f}
- \!\!\defeq\!\!
-{x}\, {u}
-& & 		
-\pmapp{\appl{(\lambda x.Q)}{u}}{1}{f}
- \!\!\defeq\!\!
-\appl{(\lambda x.\pmapp{Q}{1}{f})}{u}
-\\
-\pmapp{P \Par Q}{1}{f} & \!\!\defeq\!\! & 
-\pmapp{P}{1}{f} \Par \pmapp{Q}{1}{f} \\
-		\pmapp{\recp{X}{P}}{1}{f} &\!\!\defeq\!\!& 
-	 \newsp{s}{\bout{\dual{s}}{\abs{(\vmap{\tilde{n}}, y)} 
-\,{\binp{y}{z_\X} \auxmapp{\pmapp{P}{1}{{f,\{\rvar{X}\to \tilde{n}\}}}}{{}}{\es}}} \inact \Par 
-\binp{s}{z_\X} \pmapp{P}{1}{{f,\{\rvar{X}\to \tilde{n}\}}}
-} 
-\quad (\tilde{n} = \fn{P}) \\ 
-\pmapp{\rvar{X}}{1}{f} &  \defeq & \hspace{-3mm}\newsp{s}{
-\appl{z_X}{(\tilde{n}, s)} \Par \bbout{\dual{s}}{ \abs{(\vmap{\tilde{n}},y)}{\appl{z_X}{(\vmap{\tilde{n}}, y)}}} \inact}  \quad (\tilde{n} = f(\rvar{X})) \\
-\end{array}
-$\\[1mm]
-%  
-{\small Above $\fn{P}$ denotes a 
-lexicographically ordered
-sequence 
-of free names in $P$.
-The input bound variable $x$ is annotated by a type to distinguish first- and higher-order cases.} \\
-\caption{\label{f:enc:hopi_to_ho}Encoding of \HOp into \HO.}
-%(cf.~\defref{d:enc:fotohorec}).
-%Mappings 
-%$\map{\cdot}^2$,
-%$\mapt{\cdot}^2$, 
-%and 
-%$\mapa{\cdot}^2$
-%are homomorphisms for the other processes/types/labels. 
-\Hlinefig
-\end{figure}
+\input{figures/HOp_to_HO}
 
 \smallskip 
 
@@ -498,53 +304,8 @@ which denotes the location of $\pmap{P}{2}$.
 %(a $\sessp$ process).
 Observe also how $\pmap{\appl{(\abs{x}{P})}{u}}{2}$ naturally induces a name substitution.
 \smallskip 
-\begin{figure}[th]
-\[
-\begin{array}{l}
-	\begin{array}{rcl}
-\noindent{\bf Types:}\hspace{0.5cm} 
-		\tmap{\btout{\lhot{S}}S_1}{2} & \defeq & \bbtout{\chtype{\btinp{\tmap{S}{2}}\tinact}}\tmap{S_1}{2} \\
-		\tmap{\btinp{\lhot{S}}S_1}{2} & \defeq & \bbtinp{\chtype{\btinp{\tmap{S}{2}}\tinact}}\tmap{S_1}{2} 
-\\[1mm]
-\hline
-%\noindent{\bf Labels:}\ 
-%		\mapa{(\nu \tilde{m})\bactout{n}{\abs{ x}{P}} }^2  & \defeq & \news{m} \bactout{n}{m} \\
-%		\mapa{\bactinp{n}{\abs{ x}{P}} }^2 &  \defeq & \bactinp{n}{m}
-%\quad \quad m \text{ fresh}
-%\\[1mm]
-%\hline
-\end{array}
-\end{array}
-\]
-\hspace{4mm}{\bf Terms} :\\
-\noi$
-\begin{array}{rcll}
-		\pmap{\bout{u}{\abs{x}{Q}} P}{2} & \defeq  &  \left\{
-		\begin{array}{r}
-		 	\newsp{a}{\bout{u}{a} (\pmap{P}{2} \Par \repl{} \binp{a}{y} \binp{y}{x} \pmap{Q}{2})\,}\quad
-                  (s \notin \fn{Q}) \\
-		 	\newsp{a}{\bout{u}{a} (\pmap{P}{2} \Par \binp{a}{y} \binp{y}{x} \pmap{Q}{2})\,}\quad
-            \textrm{(otherwise)} %\dk{Q \textrm{ linear}} \\
-		\end{array}
-		\right.
-		\\
-\pmap{\binp{u}{x} P}{2} &\!\!\!\! \defeq \!\!\!\! \!\!\!\! &  \binp{u}{x} \pmap{P}{2}
-%\quad \quad \pmap{\appl{(\abs{x}{P})}{u}}{2} \!\! \defeq \!\! \pmap{P\subst{u}{x}}{2}
-\\
-\pmap{\appl{x}{u}}{2} & \!\!\!\! \defeq \!\!\!\! \!\!\!\! & \newsp{s}{\bout{x}{s} \bout{\dual{s}}{u} \inact} \\
-\pmap{\appl{(\abs{x}{P})}{u}}{2} & \!\!\!\! \defeq \!\!\!\! \!\!\!\! & %\newsp{s}{\bout{a}{s} \bout{\dual{s}}{u} \inact} \\
-\newsp{s}{\binp{s}{x} \pmap{P}{2} \Par \bout{\dual{s}}{u} \inact}
-	\end{array}
-$\\[3mm]
-{\small Notice: $\repl{} P$ means $\recp{X}{(P \Par \rvar{X})}$.
-The rest of mappings are homomorphic.}\\ 
-%for others.  %types, labels and processes    
-	\caption{
-Encoding of \HOp into \sessp.
-\label{f:enc:ho_to_sessp}
-}
-\Hlinefig
-\end{figure}
+
+\input{figures/HOp_to_pi}
 
 \begin{theorem}[Precise Encoding of \HOp into \sessp]
 \label{f:enc:hotopi}
@@ -597,4 +358,6 @@ is precise.
 %%See~\cite{KouzapasPY15} for details.
 %\end{remark}
 
+
+\subsection{Discussion: \HO as an alternative to session $\pi$}
 
