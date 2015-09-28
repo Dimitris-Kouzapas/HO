@@ -41,8 +41,8 @@ We focus on calculi coupled with \emph{session types} that denote interaction pr
 %Our results %of relative expressiveness 
 %enable us to identify 
 Our goal is to identify
-a \emph{core} %process language % concurrency %with session primitives, 
-calculus
+a \emph{core %process language % concurrency %with session primitives, 
+calculus}
 that encompasses both first- and higher-order session communication.
 %equally expressive as several other
 %calculi with sessions.
@@ -83,7 +83,7 @@ $\tinact$ denote recursive and completed protocols, respectively.
 In the (first-order) $\pi$-calculus~\cite{MilnerR:calmp1}, 
 session types describe the intended interactive behavior of the names/channels in a process.
 %names/channels are endowed with session types (such as $T_1$) representing their intended interactive behavior.
-Session-based concurrency has also been casted in the setting of \emph{higher-order} process
+Session-based concurrency has also been casted in \emph{higher-order} process
 calculi which, by combining features from the $\lambda$-calculus and the $\pi$-calculus, 
 enable the exchange of values that may contain processes~\cite{tlca07,DBLP:journals/jfp/GayV10}. 
 Besides offering a natural bridge between concurrent and functional computation, 
@@ -99,10 +99,12 @@ denotes a name). We may have a
 session type such as, e.g.,
 %$T_2 = \btbra{upload:\btinp{\lhot{\mathsf{int}}}\tinact ~ , ~ sha:\btinp{\shot{\mathsf{int}}}\tinact}_{}$
 $$S = \btbra{up:\btinp{\lhot{C}}\btout{\mathsf{ok}}\tinact ~ , ~ down:\btout{\shot{C}}\btout{\mathsf{ok}}\tinact ~ , ~quit:\btout{\mathsf{bye}}\tinact}_{}$$
-which abstracts the protocol of a server that allows 
-  clients to select among distinct  behaviors: %namely, 
-  to \emph{upload} a linear function (which the server is ready to receive), to \emph{download} a shared function (which the server is ready to send), or to \emph{quit} the protocol.
-  In each case, the server sends a message to the client ($\mathsf{ok}$ or $\mathsf{bye}$) before closing the session.
+that abstracts a server that offers different behaviors to clients: 
+%  clients to select among distinct  behaviors: %namely, 
+  to \emph{upload} a linear function, % (to be received by the server), 
+  to \emph{download} a shared function, % (to be sent by the server),
+   or to \emph{quit} the protocol. Subsequently, 
+  the server sends a message ($\mathsf{ok}$ or $\mathsf{bye}$) before closing the session.
 
 
 
@@ -154,18 +156,20 @@ between foundational and practical advances on languages with concurrency and co
 
 
 \jparagraph{Approach}
-Previous studies already suggest 
+%Previous studies already suggest 
+It is known
 that first- and higher-order com\-mu\-ni\-cation %---the paradigms that uniformly coexist in \HOp---
 independently constitute 
 the main sources 
 of expressivity in \HOp. %: \emph{name passing} and constructs for \emph{infinite behavior} (i.e., recursion and replication). 
-On the one hand, the expressivity of name-passing calculi (both untyped and typed) is well known; e.g., the $\pi$-calculus can express the $\lambda$-calculus and 
+On the one hand, the expressivity of name-passing calculi (untyped and typed) is well known; e.g., the $\pi$-calculus can express 
+%the $\lambda$-calculus and 
 process-passing calculi~\cite{SangiorgiD:expmpa}. 
 %In the $\pi$-calculus, recursion and replication can be expressed in terms of each other. 
 On the other hand, higher-order concurrency is itself quite expressive: 
-even higher-order calculi without name passing and recursion are known to be Turing equivalent~\cite{DBLP:journals/iandc/LanesePSS11}.
-Indeed, in higher-order calculi
-recursion and replication operators are redundant, as they can be represented exploiting process passing and duplication~\cite{ThomsenB:plachoasgcfhop}. 
+even  calculi without name passing and recursion are known to be Turing equivalent~\cite{DBLP:journals/iandc/LanesePSS11}.
+Also, in higher-order calculi,
+recursion/replication operators are redundant, as they can be represented using process passing and duplication~\cite{ThomsenB:plachoasgcfhop}. 
 %For these reasons, 
 %Consequently, 
 Based on these observations, 
@@ -177,16 +181,20 @@ that distill the essence of first- and higher-order session-based concurrency:
 \end{enumerate}
 %Interestingly, %\HO and \sessp distil the essence of higher- and first-order session-based concurrency:
 We assess the expressivity 
- of \HOp, \HO, and \sessp as delineated by session typing. 
+ of \HOp, \HO, and \sessp as delineated by session types. 
 We establish strong correspondences between 
-these calculi  via type-preserving, fully abstract encodings up to 
-behavioural equalities. 
+these calculi via 
+type-preserving, fully abstract encodings (up to 
+behavioural equalities)---see \figref{fig:express}. 
 While \sessp is, 
 in essence, the calculus in~\cite{honda.vasconcelos.kubo:language-primitives}, 
 %this paper shows 
 our \emph{main discovery} is 
 that \HO  is a new core calculus 
-for higher-order session concurrency.
+for %higher-order 
+session concurrency.
+%\figref{fig:express} summarises %our expressivity 
+%our encodability results. 
 
 
 %While encoding \HOp 
@@ -195,27 +203,43 @@ for higher-order session concurrency.
 %%\jpc{already}
 %significant, 
 
+
+
 \jparagraph{Contributions}
 Our main contribution is 
 an encoding of \HOp into \HO (\secref{subsec:HOpi_to_HO}).  
 Since \HO lacks 
 both name-passing and recursion, this encoding involves two key challenges:
 \begin{enumerate}[a.]
-\item Known (typed) encodings of name-passing into process-passing~\cite[Ch.13]{SaWabook} are limited: % in that 
+\item In known (typed) 
+encodings of name-passing into process-passing~\cite{SaWabook} %are limited: % in that 
 %they come with restrictions on name usages;  
-they work for %name-passing 
-calculi 
+%they 
+%work for %name-passing 
+%calculi 
 %with \emph{capability types} 
-in which only the output capability of names is sent---a received name cannot be used in subsequent inputs.
+%in which 
+only the output capability of names can be sent---a received name cannot be used in later inputs.
 This is far too limiting in \HOp, where 
- names denoting arbitrary protocols may be passed around (\emph{delegation})
-and types describe  communication  \emph{structures}, rather than individual name capabilities. % at a given time.
+ session names %denoting arbitrary protocols 
+ may be passed around (\emph{delegation})
+and types describe interaction  \emph{structures}, rather than ``loose'' name capabilities. % at a given time.
 
-\item As mentioned above, 
-recursion % and replication)
-can be encoded in untyped higher-order calculi using process duplication. 
-Unfortunately, this kind of encodings do not carry over to session typed calculi such as \HOp,
-because linear abstractions cannot be copied. Hence, the discipline of session types  limits 
+\begin{figure}[t]
+\centering
+\includegraphics[scale=1]{diag.pdf}
+%\vspace{1mm}
+	\caption{Encodability in Higher-Order Sessions. 
+	Precise encodings are defined in \defref{def:goodenc}.
+	\label{fig:express}}
+\Hlinefig
+\end{figure}
+
+\item %As mentioned above, recursion % and replication)
+%can be encoded in untyped higher-order calculi using process duplication. Unfortunately, this kind of encodings 
+Known encodings of recursion in untyped higher-order calculi
+do not carry over to session typed calculi such as \HOp,
+because linear abstractions cannot be copied/duplicated. Hence, the discipline of session types  limits 
 the possibilities for representing infinite behaviors---even simple forms, such as input-guarded replication.
 \end{enumerate}
 
@@ -328,10 +352,12 @@ Finally, concerning (iii), we develop extensions of our encodings to
 \item The extension of \HOp with polyadic name passing and abstraction (\pHOp); 
 \item The super-calculus of \HOpp and \pHOp (\PHOpp), equivalent to the calculus in~\cite{tlca07}.
 \end{enumerate}
-\figref{fig:express} summarises %our expressivity 
-our encodability results. From a global standpoint, 
-these further encodability results formally connect \HOp with existing higher-order process calculi~\cite{tlca07}; 
-also, they further highlight the status of \HO as the core calculus for session concurrency.
+%\figref{fig:express} summarises %our expressivity 
+%our encodability results. 
+%From a global standpoint, our 
+These
+encodability results connect \HOp with existing higher-order process calculi~\cite{tlca07}, and  
+further highlight the status of \HO as the core calculus for session concurrency.
 
 
 
@@ -372,73 +398,16 @@ since
 individual  prefixes represent actions in a structured communication sequence (abstracted by session types)
 the role inversion defined by $\umap{\cdot}$ would alter the meaning of session protocols in the source language.
 
-\begin{figure}[t]
-\centering
-\includegraphics[scale=1]{diag.pdf}
-\vspace{1mm}
-%%ADD~FIGURE!
-%	\centering
-%	\begin{subfigure}[b]{0.45\linewidth}
-%		\centering
-%		\begin{tikzpicture}
-%
-%			\node	(PHOpp)	at	(0, 0.8)		{\PHOpp};
-%			\node	(HOpp)	at	(-1.5, 0.4)	{\HOpp};
-%			\node	(PHOp)	at	(1.5, 0.4)	{\PHOp};
-%			\node	(HOp)	at	(0, 0)		{$\mathsf{HO}{\pi}^{~}$};
-%			\node	(HO)	at	(-1.5, -0.4)	{$\mathsf{HO}{~}^{~}$};
-%			\node	(sessp)	at	(1.5, -0.4)	{$~~\pi^{~}$};
-%
-%			\draw[<-]	(PHOpp) -- (HOpp);	%(0, 1.25) -- (-2, 1);
-%			\draw[<-]	(PHOpp) -- (PHOp);	%(0, 1.25) -- (2, 1);
-%
-%			\draw[<-]	(HOpp) -- (HOp);	%(2, 0.5) -- (0, 0.25);
-%			\draw[<-]	(PHOp) -- (HOp);	%(-2, 0.5) -- (0, 0.25);
-%
-%			\draw[<-]	(HOp) -- (HO);		%(0, -0.25) -- (-2, -0.5);
-%			\draw[<-]	(HOp) -- (sessp);	%(0, -0.25) -- (2, -0.5);
-%
-%%				\node	(PHOpp)	at	(0, 0.8)		{\PHOpp};
-%%				\node	(HOpp)	at	(-2, 0.4)	{\HOpp};
-%%				\node	(PHOp)	at	(2, 0.4)	{\PHOp};
-%%				\node	(HOp)	at	(0, 0)		{$\mathsf{HO}{\pi}^{~}$};
-%%				\node	(HO)	at	(-2, -0.4)	{$\mathsf{HO}{~}^{~}$};
-%%				\node	(sessp)	at	(2, -0.4)	{$~~\pi^{~}$};
-%%
-%%				\draw[->]	(PHOpp) -- (HOpp);	%(0, 1.25) -- (-2, 1);
-%%				\draw[->]	(PHOpp) -- (PHOp);	%(0, 1.25) -- (2, 1);
-%%
-%%				\draw[->]	(HOpp) -- (HOp);	%(2, 0.5) -- (0, 0.25);
-%%				\draw[->]	(PHOp) -- (HOp);	%(-2, 0.5) -- (0, 0.25);
-%%
-%%				\draw[->]	(HOp) -- (HO);		%(0, -0.25) -- (-2, -0.5);
-%%				\draw[->]	(HOp) -- (sessp);	%(0, -0.25) -- (2, -0.5);
-%		\end{tikzpicture}
-%	\end{subfigure}
-%%	\hfill
-%	\begin{subfigure}[b]{0.5\linewidth}
-%		\small
-%		The arrow start calculus wrt arrow tip calculus:
-%		\begin{itemize}
-%			\item	is a sub-calculus.
-%			\item	encodes.
-%		\end{itemize}
-%		Arrow properties are transitive.
-%	\end{subfigure}
-%\\
-	\caption{Encodability in Higher-Order Sessions. 
-	Precise encodings are defined in \defref{def:goodenc}.
-	\label{fig:express}}
-\Hlinefig
-\end{figure}
 
-\smallskip
+
+%\smallskip
 
 \jparagraph{Outline} This paper 
-is structured as follows:
-\begin{enumerate}[$\bullet$]
+is structured as follows.
+%\begin{enumerate}[$\bullet$]
 %\item \secref{sec:overview} overviews key ideas of our tractable bisimulations.
-\item \secref{sec:calculus} presents the higher-order session calculus \HOp and its 
+%\item 
+\secref{sec:calculus} presents the higher-order session calculus \HOp and its 
 subcalculi \HO and \sessp.  Then, \secref{sec:types} gives the session type system
 and states type soundness for \HOp and its variants.
 %\item \secref{sec:behavioural} 
@@ -446,10 +415,12 @@ and states type soundness for \HOp and its variants.
 %tractable characterisations of contextual equivalence which 
 %alleviate the issues of context bisimilarity~\cite{San96H}. These 
 %relations are shown to coincide in \HOp (\thmref{the:coincidence}).
-\item \secref{s:expr} defines \emph{precise (typed) encodings} by extending encodability criteria 
+%\item 
+\secref{s:expr} defines \emph{precise (typed) encodings} by extending encodability criteria 
 studied for
 untyped processes~(e.g.~\cite{DBLP:journals/iandc/Gorla10,DBLP:conf/icalp/LanesePSS10}).
-\item \secref{sec:positive} %and \S\,\ref{sec:negative}
+%\item 
+\secref{sec:positive} %and \S\,\ref{sec:negative}
 gives encodings of \HOp into \HO and of \HOp into~\sessp.
 These encodings 
 are shown to be \emph{precise} (Thms.~\ref{f:enc:hopitoho} and~\ref{f:enc:hotopi}).
@@ -458,18 +429,20 @@ all these calculi are thus equally expressive.
 %Exploiting determinacy and typed equivalences,
 We also prove the non-encodability of shared names
 into linear names (\thmref{t:negative}).
-
-\item \secref{sec:extension} studies extensions of \HOp. We show that 
+%\item
+\secref{sec:extension} studies extensions of \HOp. We show that 
 both \HOpp (the extension with higher-order applications) 
 and \pHOp (the extension with polyadicity) are encodable in \HOp
 (Thms.~\ref{f:enc:hopiptohopi} and \ref{f:enc:phopiptohopi}).
 This connects our work 
 to the existing
 higher-order session calculus in~\cite{tlca07} (here denoted  $\PHOpp$).
+%\item 
+\secref{sec:relwork} concludes with related works. 
+%The appendix summarises the typing system. 
+%\end{enumerate}
+%\noi
 
-\item \secref{sec:relwork} concludes with related works. The appendix summarises the typing system. 
-\end{enumerate}
-\noi
 The paper is self-contained. 
 {\bf\em Additional related work, more examples, omitted definitions, and  proofs 
 %can be found
