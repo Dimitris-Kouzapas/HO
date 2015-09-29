@@ -1,13 +1,20 @@
 % !TEX root = main.tex
-\noindent 
+\section{Higher-Order Session $\pi$-Calculi}
+\label{sec:calculus}
+
+\noindent
+
 We use the the 
 \emph{Higher-Order Session $\pi$-Calculus} (\HOp)
-that was originally introduced in~\cite{characteristic_bis}.
+which is a variant of the calculus originally introduced
+in~\cite{characteristic_bis}.
 \HOp includes both name- and abstraction-passing 
-as well as recursion; it is a subcalculus 
-of the language
-studied 
-in~\cite{tlca07}. 
+as well as recursion; it is a subcalculus of the language studied 
+in~\cite{tlca07}.
+The difference between \HOp and the calculus presented
+in~\cite{characteristic_bis} is the fact that \HOp does
+not allow higher-order value applications. We describe
+the syntax in brief.
 %Following the literature~\cite{JeffreyR05},
 %for simplicity of the presentation
 %we concentrate on the second-order call-by-value \HOp.  
@@ -30,17 +37,21 @@ and polyadicity in name-passing/abstractions.)
 \subsection{Syntax of \HOp}
 \label{subsec:syntax}
 
-\noindent\myparagraph{Values} The syntax of \HOp is defined in \figref{fig:syntax}
+\noindent
+The syntax of \HOp is defined in \figref{fig:syntax}.
 
 \input{figures/syntax}
 
-We use $a,b,c, \dots$ (resp.~$s, \dual{s}, \dots$) 
-to range over shared (resp. session) names. 
-We use $m, n, t, \dots$ for session or shared names. 
-We define the dual operation over names $n$ as $\dual{n}$ with
+\myparagraph{Values}
+Names $a,b,c, \dots$ (resp.~$s, \dual{s}, \dots$) 
+range over shared (resp. session) names. 
+Names $m, n, t, \dots$ are session or shared names.
+Dual endpoints are $\dual{n}$ with
 $\dual{\dual{s}} = s$ and $\dual{a} = a$.
-Intuitively, names $s$ and $\dual{s}$ are dual (two) \emph{endpoints} while 
-shared names represent shared (non-deterministic) points. 
+%We define the dual operation over names $n$ as $\dual{n}$ with
+%$\dual{\dual{s}} = s$ and $\dual{a} = a$.
+%Intuitively, names $s$ and $\dual{s}$ are dual (two) \emph{endpoints} while 
+%shared names represent shared (non-deterministic) points. 
 Variables are denoted with $x, y, z, \dots$, 
 and recursive variables are denoted with $\varp{X}, \varp{Y} \dots$.
 An abstraction %(or higher-order value) 
@@ -54,11 +65,11 @@ abstractions $\abs{x}{P}$ (first- and higher-order values, resp.).
 \myparagraph{Terms} 
 include the
 $\pi$-calculus prefixes for sending and receiving values $V$.
-Process $\bout{u}{V} P$ denotes the output of value $V$
-over name $u$, with continuation $P$;
-process $\binp{u}{x} P$ denotes the input prefix on name $u$ of a value
-that 
-will substitute variable $x$ in continuation $P$. 
+%Process $\bout{u}{V} P$ denotes the output of value $V$
+%over name $u$, with continuation $P$;
+%process $\binp{u}{x} P$ denotes the input prefix on name $u$ of a value
+%that 
+%will substitute variable $x$ in continuation $P$. 
 Recursion is expressed by $\recp{X}{P}$,
 which binds the recursive variable $\varp{X}$ in process $P$.
 Process 
@@ -67,11 +78,13 @@ Process
 $\appl{V}{u}$ 
 is the application
 which substitutes name $u$ on the abstraction~$V$. 
-Typing  ensures \jpc{that} $V$ is not a name.
-Prefix $\bsel{u}{l} P$ selects label $l$ on name $u$ and then behaves as $P$.
+Typing  ensures that $V$ is not a name.
+Processes $\bsel{u}{l} P$ and $\bbra{u}{l_i: P_i}_{i \in I}$ are the
+standard session processes for selecting and branching.
+%Prefix $\bsel{u}{l} P$ selects label $l$ on name $u$ and then behaves as $P$.
 %Given $i \in I$ 
-Process $\bbra{u}{l_i: P_i}_{i \in I}$ offers a choice on labels $l_i$ with
-continuation $P_i$, given that $i \in I$.
+%Process $\bbra{u}{l_i: P_i}_{i \in I}$ offers a choice on labels $l_i$ with
+%continuation $P_i$, given that $i \in I$.
 %Others are standard c
 Constructs for 
 inaction $\inact$,  parallel composition $P_1 \Par P_2$, and 
@@ -79,11 +92,11 @@ name restriction $\news{n} P$ are standard.
 Session name restriction $\news{s} P$ simultaneously binds endpoints $s$ and $\dual{s}$ in $P$.
 %A well-formed process relies on assumptions for
 %guarded recursive processes.
-We use $\fv{P}$ and $\fn{P}$ to denote a set of free 
+Functions $\fv{P}$ and $\fn{P}$ denotet the sets of free 
 %\jpc{recursion}
 variables and names; 
-and assume $V$ in $\bout{u}{V}{P}$ does not include free recursive 
-variables $\rvar{X}$. 
+and \dk{assume $V$ in $\bout{u}{V}{P}$ does not include free recursive 
+variables $\rvar{X}$.}
 If $\fv{P} = \emptyset$, we call $P$ {\em closed}.
 %; and closed $P$ without 
 %free session names a {\em program}. 
@@ -136,13 +149,13 @@ $\HOp$, $\HO$, and $\sessp$ have the same expressivity.
 of \HOp.
 Rule $\orule{App}$ is the name application; 
 Rule $\orule{Pass}$ defines a shared interaction at $n$ 
-(\jpc{with} $\dual{n}=n$) or a session interaction;  
-Rule $\orule{Sel}$ is the standard rule for labelled choice/selection:
-given an index set $I$, 
-a process selects label $l_j$ on name $n$ over a set of
-labels $\set{l_i}_{i \in I}$ offered by a branching 
-on the dual endpoint $\dual{n}$; and other rules are standard
-$\pi$-calculus rules.
+(with $\dual{n}=n$) or a session interaction;  
+Rule $\orule{Sel}$ is the standard rule for labelled choice/selection;%:
+%given an index set $I$, 
+%a process selects label $l_j$ on name $n$ over a set of
+%labels $\set{l_i}_{i \in I}$ offered by a branching 
+%on the dual endpoint $\dual{n}$;
+and other rules are standard $\pi$-calculus rules.
 Rules for \emph{structural congruence} are defined in \figref{fig:reduction} (bottom). 
-\jpc{We assume the expected extension of $\scong$ to values $V$.}
+We assume the expected extension of $\scong$ to values $V$.
 We write $\red^\ast$ for a multi-step reduction.

@@ -1,12 +1,17 @@
 % !TEX root = main.tex
+\subsection{Types and Typing}
+\label{sec:types}
+
 \noi %Here we define 
-This section defines a session typing system for \HOp and states its main properties. 
+This section defines a session typing system for \HOp and states its main properties.
 Our system distills the key features of~\cite{tlca07,MostrousY15},
 thus it is simpler.
+The system almost identical with the system developed in~\cite{characteristic_bis}
+and we describe it in brief.
 %Our system is simpler than that in~\cite{tlca07,MostrousY15}, thus distilling the key
 %features of higher-order sessions. %communications. %in a session-typed setting.
 
-\smallskip 
+%\smallskip 
 
 %\subsection{Types}
 %\label{subsec:types}
@@ -33,38 +38,40 @@ The syntax of types of \HOp is given below:
 						\bnfbar \btbra{l_i:S_i}_{i \in I} \bnfbar  \trec{t}{S} \bnfbar \vart{t}  \bnfbar \tinact
 	\end{array}
 \]
-\dk{Value type $U$ includes
+Value type $U$ includes
 the first-order types $C$ and the higher-order
-types $L$. Session types are denoted with $S$ and
-shared types with $\chtype{S}$ and $\chtype{L}$.
+types $L$.
 %Note that we dissallow type $\chtype{U}$, thus
 %in the type discipline shared names cannot carry shared names.
-}
 %In name types, $\chtype{U}$ is shared name types 
 %which are sent via shared names. 
 Types $\shot{C}$ and $\lhot{C}$ denote
 {\em shared} and {\em linear} higher-order 
 %\jpc{functional}
 types, respectively.
+Session types are denoted with $S$ and
+follow the standard binary session type syntax~\cite{}, with
+the extension that carried types $U$ may be higher-order.
+Shared channel types are denoted with $\chtype{S}$ and $\chtype{L}$.
 %,
 %used to type abstraction values.
 %$\lhot{C}$ \cite{tlca07,mostrous_phd} ensures values which contain free 
 %session names used once. 
  
-We write $S$ to denote %binary 
-session types.  {\em Output type}
-$\btout{U} S$ %is assigned to a name that 
-first sends a value of
-type $U$ and then follows the type described by $S$.  Dually,
-$\btinp{U} S$ denotes an {\em input type}. The {\em branching type}
-$\btbra{l_i:S_i}_{i \in I}$ and the {\em selection type}
-$\btsel{l_i:S_i}_{i \in I}$ define the labelled choice. 
-We assume the {\em recursive type} $\trec{t}{S}$ is guarded,
-i.e.,  $\trec{t}{\vart{t}}$ is not allowed. 
-%We stress that carried type $U$ in $\btout{U} S$ and
-%$\btinp{U} S$ can contain free type variables, which is crucial
-%to encode $\HOp$ into $\HO$.
-Type $\tinact$ is the termination type. 
+%We write $S$ to denote %binary 
+%session types.  {\em Output type}
+%$\btout{U} S$ %is assigned to a name that 
+%first sends a value of
+%type $U$ and then follows the type described by $S$.  Dually,
+%$\btinp{U} S$ denotes an {\em input type}. The {\em branching type}
+%$\btbra{l_i:S_i}_{i \in I}$ and the {\em selection type}
+%$\btsel{l_i:S_i}_{i \in I}$ define the labelled choice. 
+%We assume the {\em recursive type} $\trec{t}{S}$ is guarded,
+%i.e.,  $\trec{t}{\vart{t}}$ is not allowed. 
+%%We stress that carried type $U$ in $\btout{U} S$ and
+%%$\btinp{U} S$ can contain free type variables, which is crucial
+%%to encode $\HOp$ into $\HO$.
+%Type $\tinact$ is the termination type. 
 
 Types of \HO exclude $\nonhosyntax{C}$ from 
 value types of \HOp; the types of \sessp exclude $L$. 
@@ -72,86 +79,18 @@ From each $\CAL \in \{\HOp, \HO, \pi \}$, $\CAL^{-\mathsf{sh}}$
 excludes shared name types ($\chtype{S}$ and $\chtype{L}$), 
 from name type $C$.
 
-Following \cite{TGC14}, we co-inductively define the notion of duality.
-The definition of duality is based on type equivalence.
+Following \cite{TGC14}, we use a co-inductive definition of duality
+We write $S_1 \dualof S_2$ if $S_1$ is the dual of $S_2$.   
+Intuitively, the duality of types is obtained by 
+dualising $!$ by $?$, $?$ by $!$, $\oplus$ by $\&$ and $\&$ by $\oplus$,  
+incorporating the fixed point construction 
+(see \defref{def:dual} in the Appendix). 
 
-\begin{definition}[Type Equivalence]
-\label{def:iso}
-Let $\mathsf{ST}$ a set of closed session types. 
-Two types $S$ and $S'$ are said to be {\em isomorphic} if a pair $(S,S')$ is 
-in the largest fixed point of the monotone function
-$F:\mathcal{P}(\mathsf{ST}\times \mathsf{ST}) \to 
-\mathcal{P}(\mathsf{ST}\times \mathsf{ST})$ defined by:
-
-\hspace{-0.5cm}\begin{tabular}{rcl}
-$F(\Re)$ &$\!\!=\!\!$&	$\set{(\tinact, \tinact)}$\\
-         &$\!\!\cup\!\!$&	$\set{(\btout{U_1} S_1, \btout{U_2} S_2)
-\bnfbar (S_1, S_2),(U_1, U_2)\in \Re}$\\ 
-       &$\!\!\cup\!\!$&	$\set{(\btinp{U_1} S_1, \btinp{U_2} S_2)
-\bnfbar(S_1, S_2),(U_1, U_2)\in \Re}$\\ 
-	&$\!\!\cup\!\!$&	$\set{(\btbra{l_i: S_i}_{i \in I} \,,\, \btbra{l_i: S_i'}_{i \in I}) \bnfbar \forall i\in I. (S_i, S_i')\in \Re}$\\
-	&$\!\!\cup\!\!$&	$\set{(\btsel{l_i: S_i}_{i \in I}\,,\, \btsel{l_i: S_i'}_{i \in I}) \bnfbar \forall i\in I. (S_i, S_i')\in \Re}$\\
-	&$\!\!\cup\!\!$&	$\set{(\trec{t}{S}, S')
-\bnfbar (S\subst{\trec{t}{S}}{\vart{t}},S')\in \Re}$\\
-	&$\!\!\cup\!\!$&	$\set{(S,\trec{t}{S'})
-\bnfbar (S,S'\subst{\trec{t}{S'}}{\vart{t}})\in \Re}$
-\end{tabular}
-	
-\noindent
-Standard arguments ensure that $F$ is monotone, thus the greatest fixed point
-of $F$ exists. We write $S_1 \sim S_2$ if  $(S_1,S_2)\in \Re$. 
-\end{definition}
-
-\smallskip 
-
-We now define duality:
-
-\begin{definition}[Duality]
-	\label{def:dual}
-	Let $\mathsf{ST}$ a set of closed session types. 
-	Two types $S$ and $S'$ are said to be {\em dual} if a pair $(S,S')$ is 
-	in the largest fixed point of the monotone function
-	$F:\mathcal{P}(\mathsf{ST}\times \mathsf{ST}) \to 
-	\mathcal{P}(\mathsf{ST}\times \mathsf{ST})$ defined by:
-	\\[1mm]
-%
-	\begin{tabular}{rcl}
-		$F(\Re)$	&$\!\!=\!\!$&	$\set{(\tinact, \tinact)}$
-		\\
-				&$\!\!\cup\!\!$&	$\set{(\btout{U_1} S_1, \btinp{U_2} S_2)
-							\bnfbar(S_1, S_2)\in \Re, \  U_1 \sim U_2 }$
-		\\ 
-				&$\!\!\cup\!\!$&	$\set{(\btinp{U_1} S_1, \btout{U_2} S_2)
-							\bnfbar(S_1, S_2)\in \Re, \ U_1 \sim U_2}$
-		\\ 
-				&$\!\!\cup\!\!$&	$\set{(\btsel{l_i: S_i}_{i \in I} \,,\, \btbra{l_i: S_i'}_{i \in I}) \bnfbar \forall i\in I. (S_i, S_i')\in \Re}$
-		\\
-				&$\!\!\cup\!\!$&	$\set{(\btbra{l_i: S_i}_{i \in I}\,,\, \btsel{l_i: S_i'}_{i \in I}) \bnfbar \forall i\in I. (S_i, S_i')\in \Re}$
-		\\
-				&$\!\!\cup\!\!$&	$\set{(\trec{t}{S}, S') \bnfbar (S\subst{\trec{t}{S}}{\vart{t}},S')\in \Re}$
-		\\
-				&$\!\!\cup\!\!$&	$\set{(S,\trec{t}{S'}) \bnfbar (S,S'\subst{\trec{t}{S'}}{\vart{t}})\in \Re}$
-		\\[1mm]
-	\end{tabular}\\
-	\noindent
-	%where $U_1 \sim U_2$ means $U_1$ is type equivalent to $U_2$ \cite{yoshida.vasconcelos:language-primitives}.
-	Standard arguments ensure that $F$ is monotone, thus the greatest fixed point
-	of $F$ exists. We write $S_1 \dualof S_2$ if  $(S_1,S_2)\in \Re$. 
-\end{definition}
-
-%we write $S_1 \dualof S_2$ if 
-%$S_1$ is the dual of $S_2$.   
-%Intuitively, 
-%the duality of types is obtained by 
-%dualising $!$ by $?$, $?$ by $!$, $\oplus$ by $\&$ and $\&$ by $\oplus$,  
-%incorporating the fixed point construction 
-%(see \defref{def:dual} in the Appendix). 
-
-\smallskip 
+%\smallskip 
 
 %\subsection{Typing System of \HOp}
 %\label{subsec:typing}
-\myparagraph{Typing Judgements of \HOp.}
+\myparagraph{Typing Judgements}
 \noi We define typing judgements for values $V$ and processes $P$:
 %
 \begin{center}
@@ -198,7 +137,7 @@ We are interested in \emph{balanced} session environments:
 %The following definition ensures two session endpoints 
 %are dual each other. 
 
-\smallskip
+%\smallskip
 
 \begin{definition}[Balanced]\label{d:wtenv}%\rm
 	%Let $\Delta$ be a session environment.
@@ -206,11 +145,11 @@ We are interested in \emph{balanced} session environments:
 	$s: S_1, \dual{s}: S_2 \in \Delta$ then $S_1 \dualof S_2$.
 \end{definition}
 
-\smallskip
+%\smallskip
 
 \myparagraph{The Typing System of \HOp.}
-We are ready to present the typing system for the \HOp,
-which is similar to~\cite{tlca07,MostrousY15}.
+%We are ready to present the typing system for the \HOp,
+%which is similar to~\cite{tlca07,MostrousY15}.
 
 \input{figures/type_system}
 
@@ -250,13 +189,13 @@ We define the relation $\red$ on session environments as:
 %\]
 \end{definition}
 
-\smallskip
+%\smallskip
 
 %The following result %Theorem 7.3 in M\&Y
 \noi We state the type soundness results of \HOp; it implies 
 the type soundness of the sub-calculi \HO, \sessp, and $\CAL^{-\mathsf{sh}}$. 
 
-\smallskip
+%\smallskip
 
 \begin{theorem}[Type Soundness]\label{t:sr}%\rm
 %	\begin{enumerate}[1.]
