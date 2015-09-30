@@ -211,7 +211,8 @@ is duplicated:
 one copy is used to reconstitute the original recursion body $P$ (through
 the application of $\fn{P}$); another copy is used to re-invoke
 the duplicator when needed. % to simulate recursion unfolding.
-An example of this typed encoding is detailed in~\cite{KouzapasPY15}.
+%An example of this typed encoding is detailed in~\cite{KouzapasPY15}.
+We illustrate the encoding by means of an example.
 }
 %The idea follows 
 %a classical recursion encoding \cite{ThomsenB:plachoasgcfhop}.  
@@ -225,7 +226,89 @@ An example of this typed encoding is detailed in~\cite{KouzapasPY15}.
 %the correct $\tilde{n}$ is applied. In this way, we can 
 %send and receive an abstraction which holds $P$, repeatedly. 
 
-\smallskip 
+ 
+
+
+\input{encoding_example}
+
+We now move on to describe the properties of the encoding. 
+First, we state operational correspondence with respect to reductions; 
+the full statement (and proof) can be found in~\cite{KouzapasPY15}.
+
+\begin{proposition}[\HOp into \HO: Operational Correspondence - Excerpt]%\myrm
+	\label{prop:op_corr_HOp_to_HO}
+	Let $P$ be a \HOp process such that $\Gamma; \emptyset; \Delta \proves P \hastype \Proc$.
+	
+%
+	\begin{enumerate}[1.]
+		\item Completeness: 
+			Suppose $\horel{\Gamma}{\Delta}{P}{\hby{\tau}}{\Delta'}{P'}$. Then we have:
+%
+			\begin{enumerate}[a)]
+				\item
+					If  $P' \scong \newsp{\tilde{m}}{P_1 \Par P_2\subst{m}{x}}$
+					then $\exists R$ s.t. \\
+					$\horel{\tmap{\Gamma}{1}}{\tmap{\Delta}{1}}{\pmapp{P}{1}{f}}{\hby{\tau}}{\mapt{\Delta}^{1}}{\newsp{\tilde{m}}{\pmapp{P_1}{1}{f} \Par R}}$,
+					and\\ 
+					$\horel{\tmap{\Gamma}{1}}{\tmap{\Delta}{1}}{\newsp{\tilde{m}}{\pmapp{P_1}{1}{f} \Par R}}{\hby{\btau} \hby{\stau} \hby{\btau}}
+					{\mapt{\Delta}^{1}}{\newsp{\tilde{m}}{\pmapp{P_1}{1}{f} \Par \pmapp{P_2}{1}{f}\subst{m}{x}}}$.
+			
+				\item
+					If  $P' \scong \newsp{\tilde{m}}{P_1 \Par P_2 \subst{\abs{y}Q}{x}}$
+					then \\
+					$\horel{\tmap{\Gamma}{1}}{\tmap{\Delta}{1}}{\pmapp{P}{1}{f}}{\hby{\tau}}
+					{\tmap{\Delta_1}{1}}{\newsp{\tilde{m}}{\pmapp{P_1}{1}{f}\Par \pmapp{P_2}{1}{f}\subst{\abs{y}\pmapp{Q}{1}{\emptyset}}{x}}}$.
+			
+				\item
+					If   $P' \not\scong \newsp{\tilde{m}}{P_1 \Par P_2 \subst{m}{x}} \land P' \not\scong \newsp{\tilde{m}}{P_1 \Par P_2\subst{\abs{y}Q}{x}}$
+					then \\
+					$\horel{\tmap{\Gamma}{1}}{\tmap{\Delta}{1}}{\pmapp{P}{1}{f}}{\hby{\tau}}{\tmap{\Delta'_1}{1}}{ \pmapp{P'}{1}{f}}$.
+			\end{enumerate}
+			
+		\item Soundness:	Suppose $\horel{\tmap{\Gamma}{1}}{\tmap{\Delta}{1}}{\pmapp{P}{1}{f}}{\hby{\tau}}{\tmap{\Delta'}{1}}{Q}$.
+			Then $\Delta' = \Delta$ and 
+					either
+%
+					\begin{enumerate}[(a)]
+						\item	$\exists P'$ s.t. 
+							$\horel{\Gamma}{\Delta}{P}{\hby{\tau}}{\Delta}{P'}$,
+							and $Q = \map{P'}^{1}_f$.	
+
+						\item
+							$\exists P_1, P_2, x, m, Q'$ s.t. 
+							$\horel{\Gamma}{\Delta}{P}{\hby{\tau}}{\Delta}{\newsp{\tilde{m}}{P_1 \Par P_2\subst{m}{x}} }$, and\\
+							$\horel{\tmap{\Gamma}{1}}{\tmap{\Delta}{1}}{Q}{\hby{\btau} \hby{\stau} \hby{\btau}}{\tmap{\Delta}{1}}{\pmapp{P_1}{1}{f} \Par \pmapp{P_2\subst{m}{x}}{1}{f}}$ 
+%							$Q = \map{P_1}^{1}_f \Par Q'$, where $Q'  \Hby{} $.
+
+%						\item $\exists P_1, P_2, x, R$ s.t. 
+%						$\stytra{ \Gamma }{\tau}{ \Delta }{ P}{ \Delta}{ \news{\tilde{m}}(P_1 \Par P_2\subst{\abs{y}R}{x}) }$, and 
+%						$Q = \map{\news{\tilde{m}}(P_1 \Par P_2\subst{\abs{y}R}{x})}^{1}_f$.
+			\end{enumerate}
+		    %\end{enumerate}
+		    
+%		\item   
+%			If  $\wtytra{\mapt{\Gamma}^{1}}{\ell_2}{\mapt{\Delta}^{1}}{\pmapp{P}{1}{f}}{\mapt{\Delta'}^{1}}{Q}$
+%			then $\exists \ell_1, P'$ s.t.  \\
+%			(i)~$\stytra{\Gamma}{\ell_1}{\Delta}{P}{\Delta'}{P'}$,
+%			(ii)~$\ell_2 = \mapa{\ell_1}^{1}$, 
+%			(iii)~$\wbb{\mapt{\Gamma}^{1}}{\ell}{\mapt{\Delta'}^{1}}{\pmapp{P'}{1}{f}}{\mapt{\Delta'}^{1}}{Q}$.
+	\end{enumerate}
+\end{proposition}
+
+\noi Observe how we can explicitly distinguish the role of finite, deterministic reductions 
+(denoted $\hby{\btau}$) 
+in both soundness and completeness statements.
+
+Using operational correspondence, we can show \emph{full abstraction}:
+\begin{proposition}[Full Abstraction, \HOp into \HO]%\myrm
+	\label{prop:fulla_HOp_to_HO}
+	Let $P_1, Q_1$ be \HOp processes. \\
+	$\horel{\Gamma}{\Delta_1}{P_1}{\hwb}{\Delta_2}{Q_1}$
+	if and only if
+	$\horel{\tmap{\Gamma}{1}}{\tmap{\Delta_1}{1}}{\pmapp{P_1}{1}{f}}{\hwb}{\tmap{\Delta_2}{1}}{\pmapp{Q_1}{1}{f}}$.
+\end{proposition}
+
+Based on these propositions, we may state the main result of this section. See~\cite{KouzapasPY15} for details. 
 
 \begin{theorem}[Precise Encoding of \HOp into \HO]
 \label{f:enc:hopitoho}
@@ -233,7 +316,6 @@ The encoding from $\tyl{L}_{\HOp}$ into $\tyl{L}_{\HO}$ (cf.~\defref{d:enc:hopit
 is precise. 
 \end{theorem}
 
-\input{encoding_example}
 
 \subsection{From \HOp to \sessp}
 \label{subsec:HOp_to_sessp}
@@ -308,6 +390,64 @@ Observe also how $\pmap{\appl{(\abs{x}{P})}{u}}{2}$ naturally induces a name sub
 \smallskip 
 
 \input{figures/HOp_to_pi}
+
+We describe key properties of this encoding. First, operational correspondence:
+
+\begin{proposition}[\HOp into \sessp: Operational Correspondence - Excerpt]%\myrm
+	\label{prop:op_corr_HOp_to_p}
+	Let $P$ be an  $\HOp$ process such that  $\Gamma; \emptyset; \Delta \proves P \hastype \Proc$.
+	
+\begin{enumerate}[1.]
+\item Suppose $\horel{\Gamma}{\Delta}{P}{\hby{\tau}}{\Delta'}{P'}$. Then either:
+				\begin{enumerate}[a)]
+					\item	$\exists R$ such that
+						\[
+						\mhorel{\tmap{\Gamma}{2}}{\tmap{\Delta}{2}}{\pmap{P}{2}}
+						{\hby{\tau}}
+						{\tmap{\Delta'}{2}}{}{\newsp{\tilde{m}}{\pmap{P_1}{2} \Par \newsp{a}
+						{\pmap{P_2}{2}\subst{a}{x} \Par \repl{} \binp{a}{y} \binp{y}{x} \pmap{Q}{2}}}}
+						\]
+
+					\item	$\exists R$ such that
+						\[
+						\mhorel{\tmap{\Gamma}{2}}{\tmap{\Delta}{2}}{\pmap{P}{2}}
+						{\hby{\tau}}
+						{\tmap{\Delta'}{2}}{}{\newsp{\tilde{m}}{\pmap{P_1}{2} \Par \newsp{s}
+						{\pmap{P_2}{2}\subst{\dual{s}}{x} \Par \binp{s}{y} \binp{y}{x} \pmap{Q}{2}}}}
+						\]
+
+					\item	%$\ell_1 = \btau$ and
+						$\tmap{\Gamma}{2};\, \tmap{\Delta}{2} \proves \pmap{P}{2}
+						\hby{\tau}
+						\tmap{\Gamma}{2};\, \tmap{\Delta'}{2} \proves \pmap{P'}{2}$
+
+					\item	%$\ell_1 = \btau$ and
+						$\tmap{\Gamma}{2};\, \tmap{\Delta}{2} \proves \pmap{P}{2}
+						\hby{\stau}
+						\tmap{\Gamma}{2};\, \tmap{\Delta'}{2} \proves \pmap{P'}{2}$
+				\end{enumerate}
+
+		
+		%%%%%%% SOUNDNESSS
+		\item Suppose 
+		$\stytra{\mapt{\Gamma}^{2}}{\tau}{\mapt{\Delta}^{2}}{\map{P}^{2}}{\mapt{\Delta'}^{2}}{R}$.  \\
+		Then $\exists P'$ such that
+					$P \hby{\tau} P'$
+					and $\horel{\mapt{\Gamma}^{2}}{\mapt{\Delta'}^{2}}{\map{P'}^{2}}{\wb}{\mapt{\Delta'}^{2}}{R}$.
+	\end{enumerate}
+\end{proposition}
+
+We can show full abstraction:
+
+\begin{proposition}[Full Abstraction, From \HOp to \sessp]\myrm
+	\label{prop:fulla_HOp_to_p}
+	Let $P_1, Q_1$ be \HOp processes.
+	$\horel{\Gamma}{\Delta_1}{P_1}{\hwb}{\Delta_2}{Q_1}$
+	if and only if
+	$\horel{\tmap{\Gamma}{2}}{\tmap{\Delta_1}{2}}{\pmap{P_1}{2}}{\fwb}{\tmap{\Delta_2}{2}}{\pmap{Q_1}{2}}$.
+\end{proposition}
+
+We can state:
 
 \begin{theorem}[Precise Encoding of \HOp into \sessp]
 \label{f:enc:hotopi}
