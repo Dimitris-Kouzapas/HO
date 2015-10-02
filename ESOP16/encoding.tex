@@ -329,6 +329,83 @@ the typing $\proves$ is defined in
 $\hwb$ is as in \defref{d:hbw}; 
 $\fwb$ is as in \defref{d:fwb}.
 
+
+\dk{
+\subsection{Equivalence Relations}
+
+In~\cite{characteristic_bis} we have characterised
+reduction-closed, barbed congruence for the \HOp
+with a tractable bisimularity relation called
+{\em characteristic bisimularity}. The definition
+of the characteristic bisimilarity uses a
+labelled transition system informed by session
+types. The main intuition for the labelled transition
+semantics is the fact that we observe a transition
+on a typed process only if the type environment of
+the process allows it:
+%
+\[
+	\tree {
+		P \hby{\ell} P' \qquad (\Gamma, \Delta) \hby{\ell} (\Gamma, \Delta')
+	}{
+		\Gamma; \es; \Delta \proves P \hby{\ell} \Delta' \proves P' \hastype \Delta'
+	}
+\]
+%
+\noi An example of how types allow transitions can be seen in the rule:
+%
+\[
+	\tree{
+		\dual{s} \notin \dom{\Delta} \qquad \Gamma; \Lambda'; \Delta' \proves V \hastype U
+		\qquad
+		V = m \vee  V \scong \omapchar{U} \vee V \scong \abs{{x}}{\binp{t}{y} (\appl{y}{{x}})}
+					\textrm{ with } t \textrm{ fresh} 
+	}{
+		(\Gamma; \Lambda; \Delta \cat s: \btinp{U} S) \hby{\bactinp{s}{V}} (\Gamma; \Lambda\cat\Lambda'; \Delta\cat\Delta' \cat s: S)
+	}
+\]
+
+The above rule states that an session channel environment can input a value
+if the channel is typed with an input prefix and the input value is either
+a name or a characteristic value or a trigger value. A characteristic value
+is the {\em simplest} process that can inhabit a type, in this case the
+type carried by the session input prefix. A trigger value is the abstraction
+$\abs{{x}}{\binp{t}{y} (\appl{y}{{x}})}$. The above rule is used to restrict
+the input actions that can be observed from a session input prefix.
+For full details of the labelled transition system see~\cite{characteristic_bis}.
+
+Having defined a labelled transition system we can define
+characteristic bisimilarity
+
+\begin{definition}[Characteristic Bisimilarity]\rm
+	\label{d:fwb}
+
+	A typed relation $\Re$ is a {\em characteristic bisimulation} if 
+	for all $\horel{\Gamma}{\Delta_1}{P_1}{\ \Re \ }{\Delta_2}{Q_1}$ 
+	if whenever:
+	\begin{enumerate}[1)]
+		\item	$\horel{\Gamma}{\Delta_1}{P_1}{\hby{\news{\tilde{m_1}} \bactout{n}{V_1: U}}}{\Delta_1'}{P_2}$
+				then there exist  $Q_2$, $V_2$, $\Delta'_2$ such that 
+				$\horel{\Gamma}{\Delta_2}{Q_1}{\Hby{\news{\tilde{m_2}}\bactout{n}{V_2: U}}}{\Delta_2'}{Q_2}$
+				and, for fresh $t$,
+				$
+				\begin{array}{lrlll}
+					\Gamma; \Delta''_1 \proves {\newsp{\tilde{m_1}}{P_2 \Par  \ftrigger{t}{V_1}{U_1}}}
+					\ \Re\ \Delta''_2 \proves {\newsp{\tilde{m_2}}{Q_2 \Par \ftrigger{t}{V_2}{U_2}}}
+				\end{array}
+				$
+
+			\item	For all $\horel{\Gamma}{\Delta_1}{P_1}{\hby{\ell}}{\Delta_1'}{P_2}$ such that 
+					$\ell$ is not an output, there exist $Q_2$, $\Delta'_2$ such that 
+					$\horel{\Gamma}{\Delta_2}{Q_1}{\Hby{\hat{\ell}}}{\Delta_2'}{Q_2}$
+					and $\horel{\Gamma}{\Delta_1'}{P_2}{\ \Re \ }{\Delta_2'}{Q_2}$; and 
+
+            \item	The symmetric cases of 1 and 2.
+	\end{enumerate}
+	The largest such bisimulation is called \emph{characteristic bisimilarity} and denoted by $\hwb$.
+\end{definition}
+}
+
 DIMITRIS: HERE WE SHOULD ADD THE DEFINITION OF BISIMILARITY, ALSO INTRODUCING NOTATION/CONCEPTS OF LABELED TRANSITION SYSTEMS
 AND DETERMINISTIC TRANSITIONS ($\hby{\btau}$ and $\hby{\stau}$).
 
