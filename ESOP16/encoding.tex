@@ -125,9 +125,36 @@ Compositionality wrt restriction
 is also supported by typing and turns out to be 
 useful in our encodability results (\secref{sec:positive}).
 The name invariance criteria follows \cite{DBLP:journals/iandc/Gorla10,DBLP:conf/icalp/LanesePSS10}. 
+
+We now state a static criteria on the mapping 
+$\mapt{\cdot}: {\cal{T}}_1 \to {\cal{T}}_2$. % of our typed encodings. 
+The \emph{type preservation} criteria below ensures that type operators are preserved.
+In our setting, 
+we have five type operators: input, output, recursion (binary operators); selection and 
+branching ($n$-ary operators). 
+Observe that the source and target languages we shall consider share these (session) type operators.
+Type preservation enables us to focus on 
+mappings $\mapt{\cdot}$ in which a session type operator is always translated into itself. 
+In turn, this is key to retain the meaning of structured protocols across typed encodings.
+
+\begin{definition}[Type Preserving Encoding]
+	\label{def:tp}
+	The typed encoding 
+	$\enco{\map{\cdot}, \mapt{\cdot}}: \tyl{L}_1 \to \tyl{L}_2$ is \emph{type preserving}
+	if for every $k$-ary type operator $\mathtt{op}$ in ${\cal{T}}_1$ it holds that 
+	 $$\mapt{\mathtt{op}(T_1, \cdots, T_k)} = \mathtt{op}(\mapt{T_1}, \cdots, \mapt{T_k})$$
+	\end{definition}
+This way, e.g., 
+consider a mapping of types $\mapt{\cdot}_1$ such that 
+$\mapt{\btout{U} S}_1 = \btinp{\mapt{U}_1} \mapt{S}_1$ 
+and 
+$\mapt{\btinp{U} S}_1 = \btout{\mapt{U}_1} \mapt{S}_1$. This a mapping which exchanges
+input and output session type operators and therefore does not
+satisfy the type preservation criteria above. % in \defref{def:tp}.
+
 Next we define semantic criteria: %for typed encodings.
 
-\smallskip 
+%\smallskip 
 
 \begin{definition}[Semantic Preserving Encoding]\rm
 \label{def:ep}
@@ -142,7 +169,7 @@ if it satisfies the properties below.
 %to denote the \emph{subject} of the action.
 	
 	\begin{enumerate}[1.]
-		\item \emph{Type Preservation}:
+		\item \emph{Type Soundness}:
 	if
 	$\Gamma; \emptyset; \Delta \proves_1 P \hastype \Proc$ then 
 	$\mapt{\Gamma}; \emptyset; \mapt{\Delta} \proves_2 \map{P} \hastype \Proc$,  
@@ -186,7 +213,7 @@ ${\mapt{\Gamma}};{\mapt{\Delta''}}\proves_2 {\map{P'}}{\wb_2}
 
 \smallskip 
 
-\noi Type preservation is a distinguishing criterion in our notion of encoding: it enables us to focus on encodings which retain the communication structures denoted by session types.
+\noi Together with type preservation (\defref{def:tp}), type soundness is a distinguishing criterion in our notion of encoding: it enables us to focus on encodings which retain the communication structures denoted by session types.
 %The other semantic
 %criteria build upon analogous definitions in the untyped setting, as we explain now. 
 Operational correspondence, standardly divided into completeness and soundness, is based
@@ -216,8 +243,8 @@ Finally, following~\cite{SangiorgiD:expmpa,DBLP:conf/lics/PalamidessiSVV06,Yoshi
 we consider full abstraction as an encodability criterion: this results into 
 stronger encodability results. 
 %The completeness direction of full abstraction is dropped when we prove the negative result. 
-From the criteria in \defref{def:sep} and~\ref{def:ep}
-we have the following derived criterion: 
+%From the criteria in \defref{def:sep} and~\ref{def:ep}
+%we have the following derived criterion: 
 
 %\smallskip 
 %
@@ -270,7 +297,7 @@ We say that
 	$\enco{\map{\cdot}, \mapt{\cdot} %, \mapa{\cdot}
 	}: \tyl{L}_1 \to \tyl{L}_2$ is 
 	\begin{enumerate}[$\bullet$]
-	\item \emph{precise}, if it is both syntax and semantic preserving (cf.~\defref{def:sep} and~\ref{def:ep}).
+	\item \emph{precise}, if it is syntax, type, and semantic preserving (cf.~\defsref{def:sep}, \ref{def:tp}, and~\ref{def:ep}).
 	\item \emph{minimal}, if it is syntax preserving 
 	(cf.~\defref{def:sep}),
 	barb preserving (cf.~\defref{def:ep}-2), 
