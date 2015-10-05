@@ -7,11 +7,12 @@ We first define a typed calculus parameterised by a syntax, operational semantic
 \smallskip 
 
 \begin{definition}[Typed Calculus]\label{d:tcalculus}\rm
-A \emph{typed calculus} $\tyl{L}$ is a tuple
-          $\calc{\CAL}{\cal{T}}{\hby{\tau}}{\wb}{\proves}$
+	A \emph{typed calculus} $\tyl{L}$ is a tuple
+	$\calc{\CAL}{\cal{T}}{\hby{\tau}}{\wb}{\proves}$
 	where $\CAL$ and $\cal{T}$ are sets of processes and types, 
-respectively; and $\hby{\tau}$, $\wb$, and $\proves$ 
-	denote a transition system, a typed equivalence, and a typing system for $\CAL$, respectively. 
+	respectively; and $\hby{\tau}$, $\wb$, and $\proves$ 
+	denote a transition system, a typed equivalence,
+	and a typing system for $\CAL$, respectively. 
 \end{definition}
 
 %\smallskip 
@@ -395,15 +396,24 @@ the process allows it:
 The above rule states that an session channel environment can input a value
 if the channel is typed with an input prefix and the input value is either
 a name or a characteristic value or a trigger value. A characteristic value
+(cf.~Def.~11~in~\cite{characteristic_bis})
 is the {\em simplest} process that can inhabit a type, in this case the
 type carried by the session input prefix. A trigger value is the abstraction
 $\abs{{x}}{\binp{t}{y} (\appl{y}{{x}})}$. The above rule is used to restrict
 the input actions that can be observed from a session input prefix.
 For full details of the labelled transition system see~\cite{characteristic_bis}.
 
-Having defined a labelled transition system we can define
-characteristic bisimilarity
-
+A trigger process is defined as a process input prefixed on
+a fresh name. It then applies a value on its characteristic
+process:
+%
+\begin{eqnarray*}
+	\ftrigger{t}{V}{U} & \defeq &  \fotrigger{t}{x}{s}{\btinp{U} \tinact}{V} 	\label{eqb:4}
+\end{eqnarray*}
+%
+For the definition of the characteristic process
+see~Def.~11~in~\cite{characteristic_bis}
+We now define characteristic bisimilarity:
 \begin{definition}[Characteristic Bisimilarity]\rm
 	\label{d:fwb}
 
@@ -432,6 +442,35 @@ characteristic bisimilarity
 	The largest such bisimulation is called \emph{characteristic bisimilarity} and denoted by $\hwb$.
 \end{definition}
 }
+
+\subsubsection{Up-to techniques}
+
+\noi Processes that do not use shared names are inherently deterministic. 
+The following determinacy property will be useful 
+for proving our expressiveness results (\secref{sec:positive}).
+We require an auxiliary definition. 
+A transition $\horel{\Gamma}{\Delta}{P}{\hby{\tau}}{\Delta'}{P'}$ is said
+{\em deterministic} if it is derived using~$\ltsrule{App}$ or~$\ltsrule{Tau}$ 
+(where $\subj{\ell_1}$ and $\subj{\ell_2}$ in the premise  are dual endpoints), 
+possibly followed by uses of  $\ltsrule{Alpha}$, $\ltsrule{Res}$, $\ltsrule{Rec}$, or $\ltsrule{Par${}_L$}/\ltsrule{Par${}_R$}$.
+
+\begin{lemma}[$\tau$-Inertness]\rm
+	\label{lem:tau_inert}
+	\begin{enumerate}[1)]
+		\item
+				Let $\horel{\Gamma}{\Delta}{P}{\hby{\tau}}{\Delta'}{P'}$ be a deterministic transition,
+				with balanced $\Delta$. Then 
+				$\Gamma; \Delta \proves P \cong \Delta'\proves P'$ 
+				with $\Delta \red^\ast \Delta'$ balanced.
+
+		\item 
+				Let $P$ be an $\HOp^{-\mathsf{sh}}$ process. 
+				Assume $\Gamma; \emptyset; \Delta \proves P \hastype \Proc$. Then 
+				$P \red^\ast P'$ implies $\Gamma; \Delta \proves 
+				P \cong \Delta'\proves P'$ with $\Delta \red^\ast \Delta'$. 
+	\end{enumerate}
+\end{lemma}
+
 
 DIMITRIS: HERE WE SHOULD ADD THE DEFINITION OF BISIMILARITY, ALSO INTRODUCING NOTATION/CONCEPTS OF LABELED TRANSITION SYSTEMS
 AND DETERMINISTIC TRANSITIONS ($\hby{\btau}$ and $\hby{\stau}$).
