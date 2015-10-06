@@ -21,7 +21,7 @@
 
 Type-preserving compilations have proven important in the design of 
 functional and object-oriented languages: type information is
-used to, e.g., justify code optimizations and  reason about programs (see, e.g., \cite{tap}). 
+used to, e.g., justify code optimizations and reason about programs (see, e.g., \cite{DBLP:journals/toplas/MorrisettWCG99,DBLP:conf/pldi/ShaoA95,DBLP:journals/toplas/LeagueST02}). 
 The study of core calculi for concurrency also uses compilations (or \emph{encodings})
 between different languages: they are used, e.g., to transfer reasoning techniques 
 from one language to another, or to identify constructs which may be implemented
@@ -38,11 +38,11 @@ Given our
 type preservation requirement,
 this encoding is far from trivial: it crucially exploits  advances on session type duality for and recent
  characterizations of typed contextual equivalence.
-We develop a complete hierarchy of typed higher-order process languages, based on 
-precise encodabiltity:
+We develop a complete hierarchy of variants of \HOp based on 
+precise encodability:
 our encodings are
-type-preserving and fully abstract (up to typed
-behavioural equalities)---see \figref{fig:express}. 
+type-preserving and fully abstract, up to typed
+behavioural equalities---see \figref{fig:express}. 
 
 
 \jparagraph{Context}
@@ -68,13 +68,21 @@ $\tinact$ denote recursive and completed protocols, respectively.
 In the (first-order) $\pi$-calculus~\cite{MilnerR:calmp1}, 
 session types describe the intended interactive behavior of the names/channels in a process.
 %names/channels are endowed with session types (such as $T_1$) representing their intended interactive behavior.
-Session-based concurrency has also been casted in \emph{higher-order} process
+Session-based concurrency has also been casted in {higher-order} process
 calculi which, by combining features from the $\lambda$-calculus and the $\pi$-calculus, 
 enable the exchange of values that may contain processes~\cite{tlca07,DBLP:journals/jfp/GayV10}. 
 Besides offering a natural bridge between concurrent and functional computation, 
 higher-order calculi with sessions enable the specification of protocols involving \emph{code mobility}, 
 frequent in practice.
-In the main higher-order session language  studied here (denoted \HOp),
+The \HOp calculus is a rather rich language: it
+includes
+constructs for 
+synchronisation along shared names, 
+session communication (value passing, labelled choice) along linear names,
+recursion, 
+ (first-order) abstractions 
+ and applications.
+ That is, 
  values in communications include names but also (first-order) abstractions---functions from name identifiers to processes. 
  %(In contrast, higher-order abstractions---functions from processes to processes---are disallowed.)
  (In contrast, we rule out functions from processes to processes, i.e., higher-order abstractions.)
@@ -95,41 +103,41 @@ that abstracts a server that offers different behaviors to clients:
 
  
 
-\jparagraph{The Problem}
-%Roughly speaking, 
-  \HOp %, a higher-order process language that 
-extends Sangiorgi's higher-order $\pi$-calculus~\cite{SangiorgiD:expmpa} with session primitives.
-To be precise, %More precisely, 
-\HOp
-includes
-constructs for 
-%session establishment
-synchronisation along shared names, 
-session communication (value passing, labelled choice) along linear names,
-recursion, 
- (first-order) abstractions %(i.e., functions from name identifiers  to processes)
- and applications.
-% (denoted $\lambda x.P$ and $(\lambda x.P)a$, resp.).
-%While synchronization on shared names (useful to model session establishment) is 
-%non deterministic, session communication is deterministic and occurs on linear names.
-\HOp is therefore a rather rich language. This begs the question:
-%\begin{quote}
-is there a \emph{sub-calculus} of \HOp with equal expressivity? %hich is as expressive as the whole calculus? 
-%\end{quote}
-This question is of foundational interest, 
-for reasoning/validation techniques are more easily developed on small formalisms. 
-It also has practical ramifications, 
-as such a \emph{core calculus} could be taken as reference in 
-the design of %(functional) 
-programming languages with session types support.
-%implementations of languages with session primitives.
-Expressivity results may then help justifying useful connections 
-between foundational and practical advances on languages with concurrency and communication.
-
-%We have recently developed a behavioral theory  for \HOp~\cite{characteristic_bis}:
-%we introduced
-%\emph{characteristic bisimilarity}, a sound and complete 
-%characterization of contextual equivalence. % that enables tractable analyses.
+%\jparagraph{The Problem}
+%%Roughly speaking, 
+%  \HOp %, a higher-order process language that 
+%extends Sangiorgi's higher-order $\pi$-calculus~\cite{SangiorgiD:expmpa} with session primitives.
+%To be precise, %More precisely, 
+%\HOp
+%includes
+%constructs for 
+%%session establishment
+%synchronisation along shared names, 
+%session communication (value passing, labelled choice) along linear names,
+%recursion, 
+% (first-order) abstractions %(i.e., functions from name identifiers  to processes)
+% and applications.
+%% (denoted $\lambda x.P$ and $(\lambda x.P)a$, resp.).
+%%While synchronization on shared names (useful to model session establishment) is 
+%%non deterministic, session communication is deterministic and occurs on linear names.
+%\HOp is therefore a rather rich language. This begs the question:
+%%\begin{quote}
+%is there a \emph{sub-calculus} of \HOp with equal expressivity? %hich is as expressive as the whole calculus? 
+%%\end{quote}
+%This question is of foundational interest, 
+%for reasoning/validation techniques are more easily developed on small formalisms. 
+%It also has practical ramifications, 
+%as such a \emph{core calculus} could be taken as reference in 
+%the design of %(functional) 
+%programming languages with session types support.
+%%implementations of languages with session primitives.
+%Expressivity results may then help justifying useful connections 
+%between foundational and practical advances on languages with concurrency and communication.
+%
+%%We have recently developed a behavioral theory  for \HOp~\cite{characteristic_bis}:
+%%we introduced
+%%\emph{characteristic bisimilarity}, a sound and complete 
+%%characterization of contextual equivalence. % that enables tractable analyses.
 
 
 \jparagraph{Approach}
@@ -182,7 +190,7 @@ session concurrency.
 
 
 
-\jparagraph{Contributions}
+\jparagraph{Challenges and Contributions}
 Our main contribution is 
 an encoding of \HOp into \HO (\secref{subsec:HOpi_to_HO}).  
 Since \HO lacks 
