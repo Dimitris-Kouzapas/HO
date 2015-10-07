@@ -1,49 +1,145 @@
 \section{Negative Result}
 \label{app:neg}
 
-\begin{theorem}\rm
-	There is no encoding $\enco{\map{\cdot}, \mapt{\cdot}, \mapa{\cdot}}: \HOp \longrightarrow \HOp^{\minussh}$
-	that enjoys operational correspondence and full abstraction.
+\begin{theorem}%\myrm
+%	\label{thm:negative}
+	Let $\CAL_1, \CAL_2 \in \set{\HOp, \HO, \sessp}$.
+	There is no typed, minimal encoding from $\tyl{L}_{\CAL_1}$ into $\tyl{L}_{\CAL_2^{\minussh}}$
+%	$\enco{\map{\cdot}, \mapt{\cdot}, \mapa{\cdot}}: \sessp \longrightarrow \HOp^{\minussh}$.
+%	that enjoys: (i) homomorphism wrt parallel; (ii) barb preservation; (iii) operational completeness.
 \end{theorem}
 
 \begin{proof}
-	Let $\horel{\Gamma_1}{\Delta_1}{P_1}{\not\wb}{\Delta_2}{P_2}$
-	with $P = \breq{a}{s} \inact \Par \bacc{a}{x} P_1 \Par \bacc{a}{x} P_2$ and
-	let $\Gamma; \emptyset; \Delta \proves P \hastype \Proc$.
-	Assume also a encoding
-	$\enco{\map{\cdot}, \mapt{\cdot}, \mapa{\cdot}}: \HOp \longrightarrow \HOp^{\minussh}$
-	that enjoys
-	operational correspondence and full abstraction.
-
-	From operational correspondence we get that:
-	\begin{eqnarray*}
-		P \red P_1 \Par \bacc{a}{x} P_2 &\textrm{implies}& \map{P} \red \map{P_1 \Par \bacc{a}{x} P_2}\\
-		P \red P_2 \Par \bacc{a}{x} P_1 &\textrm{implies}& \map{P} \red \map{P_2 \Par \bacc{a}{x} P_1}
-	\end{eqnarray*}
-
-	From the fact that
-	$\horel{\Gamma_1}{\Delta_1}{P_1}{\not\wb}{\Delta_2}{P_2}$
-	we can derive that
-%
+	Assume, towards a contradiction, that such a typed encoding indeed exists. 
+	Consider the $\sessp$ process
+	%
 	\[
-		\horel{\Gamma_1'}{\Delta_1'}{P_1 \Par \bacc{a}{x} P_2}{\not\wb}{\Delta_2'}{P_2 \Par \bacc{a}{x} P_1}
+		P = \breq{a}{s} \inact \Par \bacc{a}{x} \bsel{n}{l_1} \inact \Par \bacc{a}{x} \bsel{m}{l_2} \inact \qquad \text{(with $n \neq m$)}
 	\]
-%
-	From Corollary~\ref{cor:tau_inert} we know that
-%
+	%
+	\noi such that 
+	$\Gamma; \es; \Delta \proves P \hastype \Proc$.
+	From process $P$ we have: %We then have both
+	%
+	\begin{eqnarray}
+		& & \horel{\Gamma}{\Delta}{P}{\hby{\tau}}{\Delta'}{\bsel{n}{l_1} \inact \Par \bacc{a}{x} \bsel{m}{l_2} \inact = P_1} \label{eq:nn3} \\
+		& & \horel{\Gamma}{\Delta}{P}{\hby{\tau}}{\Delta'}{\bsel{m}{l_2} \inact \Par \bacc{a}{x} \bsel{n}{l_1} \inact = P_2} \label{eq:nn4}
+	\end{eqnarray}
+	%
+	Thus, by definition of typed barb we  have:
+	%
+	\begin{eqnarray}
+		\Gamma; \Delta' \proves P_1 \barb{n} & \land & 
+		\Gamma; \Delta' \proves P_1 \nbarb{m} \label{eq:nn1} \\
+		\Gamma; \Delta' \proves P_2 \barb{m} & \land & 
+		\Gamma; \Delta' \proves P_2 \nbarb{n} \label{eq:nn2}
+	\end{eqnarray}
+	%
+	Consider now the $\HOp^{\minussh}$ process $\map{P}$.
+	% = 
+	% \map{\breq{a}{s} \inact} \Par \map{\bacc{a}{x} \bsel{n}{l_1} \inact} \Par \map{\bacc{a}{x} \bsel{m}{l_2}}$.
+	By our assumption of operational completeness 
+	(\defref{def:ep}-2(a)), 
+	from \eqref{eq:nn3} with \eqref{eq:nn4}
+	we infer that
+	there exist $\HOp^{\minussh}$ processes $S_1$ and $S_2$ such that:
+	%we have both:
+	\begin{eqnarray}
+		& & \horel{\mapt{\Gamma}}{\mapt{\Delta}}{\map{P}}{\Hby{\stau}}{\mapt{\Delta'}}{S_1 \WB \map{P_1}} \label{eq:n1} \\
+		& & \horel{\mapt{\Gamma}}{\mapt{\Delta}}{\map{P}}{\Hby{\stau}}{\mapt{\Delta'}}{S_2 \WB \map{P_2}} \label{eq:n2}
+		%\map{P} & \Hby{} &  S_1 \WB \map{P_1} \\
+		%s\map{P} & \Hby{} & S_2 \WB \map{P_2}
+	\end{eqnarray}
+	By our assumption of barb preservation, 
+	from \eqref{eq:nn1} with \eqref{eq:nn2}
+	we infer: 
+	%
+	\begin{eqnarray}
+		\mapt{\Gamma}; \mapt{\Delta'} \proves \map{P_1} \Barb{n} & \land & 
+		\mapt{\Gamma}; \mapt{\Delta'} \proves \map{P_1} \nBarb{m} \label{eq:n3} \\
+		\mapt{\Gamma}; \mapt{\Delta'} \proves \map{P_2} \Barb{m} & \land & 
+		\mapt{\Gamma}; \mapt{\Delta'} \proves \map{P_2} \nBarb{n} \label{eq:n4}
+	\end{eqnarray}
+	%
+	By definition of $\WB$, 
+	by combining~\eqref{eq:n1} with~\eqref{eq:n3}
+	and~\eqref{eq:n2} with~\eqref{eq:n4}, we infer barbs for $S_1$ and $S_2$:
+	\begin{eqnarray}
+		\mapt{\Gamma}; \mapt{\Delta'} \proves S_1 \Barb{n} & \land & 
+		\mapt{\Gamma}; \mapt{\Delta'} \proves S_1 \nBarb{m} \label{eq:n5} \\
+		\mapt{\Gamma}; \mapt{\Delta'} \proves S_2 \Barb{m} & \land & 
+		\mapt{\Gamma}; \mapt{\Delta'} \proves S_2 \nBarb{n} \label{eq:n6}
+	\end{eqnarray}
+	That is, $S_1$ and $\map{P_1}$ 
+	(resp. $S_2$ and $\map{P_2}$)
+	have the same barbs.
+	Now, by $\tau$-inertness (\propref{lem:tau_inert}), we have both 
+	\begin{eqnarray}
+		& & \horel{\mapt{\Gamma}}{\mapt{\Delta}}{S_1}{\WB}{\mapt{\Delta'}}{\map{P}} \label{eq:n7} \\
+		& & \horel{\mapt{\Gamma}}{\mapt{\Delta}}{S_2}{\WB}{\mapt{\Delta'}}{\map{P}} \label{eq:n8}
+	\end{eqnarray}
+	Combining~\eqref{eq:n7} with~\eqref{eq:n8}, by transitivity of $\WB$,
+	we have 
+	\begin{equation}
+		\horel{\mapt{\Gamma}}{\mapt{\Delta'}}{S_1}{\WB}{\mapt{\Delta'}}{S_2} \label{eq:n9}
+	\end{equation}
+	In turn, from~\eqref{eq:n9}
+	we infer that 
+	it must be the case that:
 	\begin{eqnarray*}
-		\horel{\mapt{\Gamma}}{\mapt{\Delta}}{\map{P}}{\wb}{\mapt{\Delta_1'}}{\map{P_1 \Par \bacc{a}{x} P_2}}\\
-		\horel{\mapt{\Gamma}}{\mapt{\Delta}}{\map{P}}{\wb}{\mapt{\Delta_2'}}{\map{P_2 \Par \bacc{a}{x} P_1}}
+		\mapt{\Gamma}; \mapt{\Delta'} \proves \map{P_1} \Barb{n} & \land & 
+		\mapt{\Gamma}; \mapt{\Delta'} \proves \map{P_1} \Barb{m} \label{eq:n10} \\
+		\mapt{\Gamma}; \mapt{\Delta'} \proves \map{P_2} \Barb{m} & \land & 
+		\mapt{\Gamma}; \mapt{\Delta'} \proves \map{P_2} \Barb{n} \label{eq:n11}
 	\end{eqnarray*}
-%
-	\noi thus
-	\[
-		\horel{\mapt{\Gamma}}{\mapt{\Delta_1'}}{\map{P_1 \Par \bacc{a}{x} P_2}}{\wb}{\mapt{\Delta_2'}}{\map{P_2 \Par \bacc{a}{x} P_1}}
-	\]
-%
-	From here we conclude that the full abstraction property does not hold,
-	which is a contradiction.
+	which clearly contradict \eqref{eq:n3} and \eqref{eq:n4} above.
 	\qed
-%	so there is no mapping $\map{\cdot}: \pHO \longrightarrow \spi$ that enjoys
-%	the operational correspondence and full abstraction properties.
 \end{proof}
+
+
+%\begin{theorem}\rm
+%	There is no encoding $\enco{\map{\cdot}, \mapt{\cdot}, \mapa{\cdot}}: \HOp \longrightarrow \HOp^{\minussh}$
+%	that enjoys operational correspondence and full abstraction.
+%\end{theorem}
+
+%\begin{proof}
+%	Let $\horel{\Gamma_1}{\Delta_1}{P_1}{\not\wb}{\Delta_2}{P_2}$
+%	with $P = \breq{a}{s} \inact \Par \bacc{a}{x} P_1 \Par \bacc{a}{x} P_2$ and
+%	let $\Gamma; \emptyset; \Delta \proves P \hastype \Proc$.
+%	Assume also a encoding
+%	$\enco{\map{\cdot}, \mapt{\cdot}, \mapa{\cdot}}: \HOp \longrightarrow \HOp^{\minussh}$
+%	that enjoys
+%	operational correspondence and full abstraction.
+%
+%	From operational correspondence we get that:
+%	\begin{eqnarray*}
+%		P \red P_1 \Par \bacc{a}{x} P_2 &\textrm{implies}& \map{P} \red \map{P_1 \Par \bacc{a}{x} P_2}\\
+%		P \red P_2 \Par \bacc{a}{x} P_1 &\textrm{implies}& \map{P} \red \map{P_2 \Par \bacc{a}{x} P_1}
+%	\end{eqnarray*}
+%
+%	From the fact that
+%	$\horel{\Gamma_1}{\Delta_1}{P_1}{\not\wb}{\Delta_2}{P_2}$
+%	we can derive that
+%%
+%	\[
+%		\horel{\Gamma_1'}{\Delta_1'}{P_1 \Par \bacc{a}{x} P_2}{\not\wb}{\Delta_2'}{P_2 \Par \bacc{a}{x} P_1}
+%	\]
+%%
+%	From Corollary~\ref{cor:tau_inert} we know that
+%%
+%	\begin{eqnarray*}
+%		\horel{\mapt{\Gamma}}{\mapt{\Delta}}{\map{P}}{\wb}{\mapt{\Delta_1'}}{\map{P_1 \Par \bacc{a}{x} P_2}}\\
+%		\horel{\mapt{\Gamma}}{\mapt{\Delta}}{\map{P}}{\wb}{\mapt{\Delta_2'}}{\map{P_2 \Par \bacc{a}{x} P_1}}
+%	\end{eqnarray*}
+%%
+%	\noi thus
+%	\[
+%		\horel{\mapt{\Gamma}}{\mapt{\Delta_1'}}{\map{P_1 \Par \bacc{a}{x} P_2}}{\wb}{\mapt{\Delta_2'}}{\map{P_2 \Par \bacc{a}{x} P_1}}
+%	\]
+%%
+%	From here we conclude that the full abstraction property does not hold,
+%	which is a contradiction.
+%	\qed
+%%	so there is no mapping $\map{\cdot}: \pHO \longrightarrow \spi$ that enjoys
+%%	the operational correspondence and full abstraction properties.
+%\end{proof}
