@@ -2,25 +2,13 @@
 \section{Higher-Order Session $\pi$-Calculi}
 \label{sec:calculus}
 
-\noindent
+\noindent In this section we introduce 
+the \emph{higher-order session $\pi$-calculus} (\HOp).
+We define its sub-calculus (\sessp and \HO) and extensions of it (\HOpp and \PHOp). 
+We also introduce operational semantics, type system, and 
+behavioral equivalences. 
 
-We use the the 
-\emph{Higher-Order Session $\pi$-Calculus} (\HOp)
-which is a variant of the calculus originally introduced
-in~\cite{characteristic_bis}.
-\HOp includes both name- and abstraction-passing 
-as well as recursion; it is a subcalculus of the language studied 
-in~\cite{tlca07}.
-The difference between \HOp and the calculus presented
-in~\cite{characteristic_bis} is the fact that \HOp does
-not allow higher-order value applications. We describe
-the syntax in brief.
-%Following the literature~\cite{JeffreyR05},
-%for simplicity of the presentation
-%we concentrate on the second-order call-by-value \HOp.  
-(In \secref{sec:extension} we consider extensions of 
-\HOp with higher-order abstractions 
-and polyadicity in name-passing/abstractions.)
+
 %We also introduce two subcalculi of \HOp. In particular, we define the 
 %core higher-order session
 %calculus (\HO), which 
@@ -34,16 +22,20 @@ and polyadicity in name-passing/abstractions.)
 %expressive enough to capture key features of session communication, 
 %such as delegation and recursion.
 
-\subsection{Syntax of \HOp}
+\subsection{\HOp: Syntax, Operational Semantics, Subcalculi}
 \label{subsec:syntax}
 
-\noindent
+\jparagraph{Syntax}
 The syntax of \HOp is defined in \figref{fig:syntax}.
+\HOp it is a subcalculus of the language studied 
+in~\cite{tlca07}. It is also a variant of the language that we investigated in~\cite{characteristic_bis}, 
+where higher-order value applications were considered. 
+
 
 \input{figures/syntax}
 
-\myparagraph{Values}
-Names $a,b,c, \dots$ (resp.~$s, \dual{s}, \dots$) 
+%\myparagraph{Values}
+\emph{Names} $a,b,c, \dots$ (resp.~$s, \dual{s}, \dots$) 
 range over shared (resp. session) names. 
 Names $m, n, t, \dots$ are session or shared names.
 Dual endpoints are $\dual{n}$ with
@@ -57,12 +49,14 @@ and recursive variables are denoted with $\varp{X}, \varp{Y} \dots$.
 An abstraction %(or higher-order value) 
 $\abs{x}{P}$ is a process $P$ with name parameter $x$.
 %Symbols $u, v, \dots$ range over identifiers; and  $V, W, \dots$ to denote values. 
-Values $V,W$ include 
+\emph{Values} $V,W$ include 
 identifiers $u, v, \ldots$ %(first-order values) 
 and 
 abstractions $\abs{x}{P}$ (first- and higher-order values, resp.). 
 
-\myparagraph{Terms} 
+%\myparagraph{Terms} 
+
+Terms
 include the
 $\pi$-calculus prefixes for sending and receiving values $V$.
 %Process $\bout{u}{V} P$ denotes the output of value $V$
@@ -101,19 +95,45 @@ If $\fv{P} = \emptyset$, we call $P$ {\em closed}.
 %; and closed $P$ without 
 %free session names a {\em program}. 
 
-\subsection{Subcalculi of \HOp}
-\label{subsec:subcalculi}
-\noi
-We define two subcalculi of \HOp. 
+
+
+
+%\subsection{Operational Semantics}
+%\label{subsec:semantics}
+
+
+\jparagraph{Operational Semantics}
+The \emph{operational semantics} of \HOp is defined in terms of a reduction relation, given
+ \figref{fig:reduction} (top).
+ We briefly explain the rules. 
+Rule $\orule{App}$ is the name application; 
+Rule $\orule{Pass}$ defines a shared interaction at $n$ 
+(with $\dual{n}=n$) or a session interaction;  
+Rule $\orule{Sel}$ is the standard rule for labelled choice/selection;%:
+%given an index set $I$, 
+%a process selects label $l_j$ on name $n$ over a set of
+%labels $\set{l_i}_{i \in I}$ offered by a branching 
+%on the dual endpoint $\dual{n}$;
+and other rules are standard $\pi$-calculus rules.
+Rules for \emph{structural congruence} are defined in \figref{fig:reduction} (bottom). 
+We assume the expected extension of $\scong$ to values $V$.
+We write $\red^\ast$ for a multi-step reduction.
+
+\input{figures/semantics}
+
+\jparagraph{Subcalculi}
+%\label{subsec:subcalculi}
+\noi As motivated in the introduction, 
+we define two \emph{subcalculi} of \HOp. 
 %We now define several sub-calculi of \HOp. 
 \begin{enumerate}[$\bullet$]
-	\item	The first subcalculus is the 
+	\item	The  
 		{\em core higher-order session calculus} (denoted \HO),
-		which lacks recursion and name passing; its 
+		 lacks recursion and name passing; its 
 		formal syntax is obtained from \figref{fig:syntax} by excluding 
 		constructs in \nonhosyntax{\text{grey}}.
 
-	\item	The second subcalculus is 
+	\item	The   
 		the {\em session $\pi$-calculus} 
 		(denoted $\sessp$), which 
 		lacks  the
@@ -138,24 +158,3 @@ $\CAL^{-\mathsf{sh}}$ for $\CAL$ without shared names
 (we delete $a,b$ from $n$). 
 We shall demonstrate in Section~\ref{sec:positive} that 
 $\HOp$, $\HO$, and $\sessp$ have the same expressivity.
-
-
-\subsection{Operational Semantics}
-\label{subsec:semantics}
-
-\input{figures/semantics}
-
-\noindent \figref{fig:reduction} (top) defines the operational semantics 
-of \HOp.
-Rule $\orule{App}$ is the name application; 
-Rule $\orule{Pass}$ defines a shared interaction at $n$ 
-(with $\dual{n}=n$) or a session interaction;  
-Rule $\orule{Sel}$ is the standard rule for labelled choice/selection;%:
-%given an index set $I$, 
-%a process selects label $l_j$ on name $n$ over a set of
-%labels $\set{l_i}_{i \in I}$ offered by a branching 
-%on the dual endpoint $\dual{n}$;
-and other rules are standard $\pi$-calculus rules.
-Rules for \emph{structural congruence} are defined in \figref{fig:reduction} (bottom). 
-We assume the expected extension of $\scong$ to values $V$.
-We write $\red^\ast$ for a multi-step reduction.
