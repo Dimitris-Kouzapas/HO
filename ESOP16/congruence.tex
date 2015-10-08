@@ -1,3 +1,5 @@
+% !TEX root = main.tex
+
 \subsection{Reduction-Closed, Barbed Congruence}
 \label{subsec:rc}
 
@@ -6,9 +8,9 @@ reference equivalence relation. We first define \emph{confluence}
 over session environments $\Delta$:
 
 \begin{definition}[Session Environment Confluence]
+Let $\red^\ast$ denote multi-step reduction as in \defref{def:ses_red}.
 	We denote $\Delta_1 \bistyp \Delta_2$ if there exists $\Delta$ such that
-	$\Delta_1 \red^\ast \Delta$ and $\Delta_2 \red^\ast \Delta$
-	\jpc{(here we write $\red^\ast$ for the multi-step reduction in \defref{def:ses_red})}.
+	$\Delta_1 \red^\ast \Delta$ and $\Delta_2 \red^\ast \Delta$.
 \end{definition}
 
 %\smallskip 
@@ -108,4 +110,236 @@ the hole $\hole$ in $\C$ with $P$.
 	\end{enumerate}
 	The largest such relation is denoted with $\cong$.
 \end{definition}
+
+\dk{
+\subsection{Equivalence Relations}
+
+In~\cite{characteristic_bis} we have characterised
+reduction-closed, barbed congruence for the \HOp
+with a tractable bisimularity relation called
+{\em characteristic bisimularity}. The definition
+of the characteristic bisimilarity uses a
+labelled transition system informed by session
+types. The main intuition for the labelled transition
+semantics is the fact that we observe a transition
+on a typed process only if the type environment of
+the process allows it:
+%
+\[
+	\tree {
+		P \hby{\ell} P' \qquad (\Gamma, \Delta) \hby{\ell} (\Gamma, \Delta')
+	}{
+		\Gamma; \es; \Delta \proves P \hby{\ell} \Delta' \proves P' \hastype \Delta'
+	}
+\]
+%
+\noi An example of how types allow transitions can be seen in the rule:
+%
+\[
+	\tree{
+		\dual{s} \notin \dom{\Delta} \qquad \Gamma; \Lambda'; \Delta' \proves V \hastype U
+		\qquad
+		V = m \vee  V \scong \omapchar{U} \vee V \scong \abs{{x}}{\binp{t}{y} (\appl{y}{{x}})}
+					\textrm{ with } t \textrm{ fresh} 
+	}{
+		(\Gamma; \Lambda; \Delta \cat s: \btinp{U} S) \hby{\bactinp{s}{V}} (\Gamma; \Lambda\cat\Lambda'; \Delta\cat\Delta' \cat s: S)
+	}
+\]
+
+The above rule states that an session channel environment can input a value
+if the channel is typed with an input prefix and the input value is either
+a name or a characteristic value or a trigger value. A characteristic value
+(cf.~Def.~11~in~\cite{characteristic_bis})
+is the {\em simplest} process that can inhabit a type, in this case the
+type carried by the session input prefix. A trigger value is the abstraction
+$\abs{{x}}{\binp{t}{y} (\appl{y}{{x}})}$. The above rule is used to restrict
+the input actions that can be observed from a session input prefix.
+For full details of the labelled transition system see~\cite{characteristic_bis}.
+
+We define two trigger processes:
+%
+\begin{eqnarray*}
+	\htrigger{t}{V_1}  & \defeq &  \hotrigger{t}{V} \label{eqb:0} \\
+	\ftrigger{t}{V}{U} & \defeq &  \fotrigger{t}{x}{s}{\btinp{U} \tinact}{V} 	\label{eqb:4}
+\end{eqnarray*}
+%
+
+A trigger process is defined as a process input prefixed on
+a fresh name. The first trigger process applies a value
+on the receiving (characteristic) process.
+The second trigger process applies a value
+on the (hard coded) characteristic process:
+
+We now define Higher-Order Bisimilarity and Characteristic Bisimilarity:
+
+\begin{definition}[Higher-Order Bisimilarity]\rm
+	\label{d:hbw}
+	A typed relation $\Re$ is a {\em  HO bisimulation} if 
+	for all $\horel{\Gamma}{\Delta_1}{P_1}{\ \Re \ }{\Delta_2}{Q_1}$ 
+	\begin{enumerate}[1)]
+		\item 
+				Whenever 
+				$\horel{\Gamma}{\Delta_1}{P_1}{\hby{\news{\tilde{m_1}} \bactout{n}{V_1}}}{\Delta_1'}{P_2}$, there exist 
+				$Q_2$, $V_2$, $\Delta'_2$ such that 
+				$\horel{\Gamma}{\Delta_2}{Q_1}{\Hby{\news{\tilde{m_2}} \bactout{n}{V_2}}}{\Delta_2'}{Q_2}$ and, for fresh $t$, 
+%
+				\[
+					\begin{array}{lrlll}
+						\Gamma; \Delta''_1  \proves  {\newsp{\tilde{m_1}}{P_2 \Par \htrigger{t}{V_1}}}
+						\ \Re \
+						\Delta''_2 \proves {\newsp{\tilde{m_2}}{Q_2 \Par \htrigger{t}{V_2}}}
+					\end{array}
+				\]
+
+		\item	
+				For all $\horel{\Gamma}{\Delta_1}{P_1}{\hby{\ell}}{\Delta_1'}{P_2}$ such that 
+				$\ell$ is not an output, 
+				 there exist $Q_2$, $\Delta'_2$ such that 
+				$\horel{\Gamma}{\Delta_2}{Q_1}{\Hby{\hat{\ell}}}{\Delta_2'}{Q_2}$
+				and
+				$\horel{\Gamma}{\Delta_1'}{P_2}{\ \Re \ }{\Delta_2'}{Q_2}$; and 
+
+		\item	The symmetric cases of 1 and 2.                
+	\end{enumerate}
+	The largest such bisimulation
+	is called \emph{higher-order bisimilarity} \jpc{and} denoted by $\hwb$.
+\end{definition}
+ 
+
+\noi 
+We define characteristic bisimilarity
+(cf.~Def.~14~in~\cite{characteristic_bis}):
+% is given using characteristic trigger processes. 
+
+
+\begin{definition}[Characteristic Bisimilarity]\rm
+	\label{d:fwb}
+	Characteristic bisimilarity, denoted by $\fwb$, is defined \jpc{by} replacing 
+	Clause 1) in \defref{d:hbw} with the following clause:\\[1mm]
+	Whenever 
+	$\horel{\Gamma}{\Delta_1}{P_1}{\hby{\news{\tilde{m_1}} \bactout{n}{\dk{V_1: U}}}}{\Delta_1'}{P_2}$ %with $\Gamma; \es; \Delta \proves V_1 \hastype U$,  
+	then there exist 
+	$Q_2$, $V_2$, $\Delta'_2$ such that 
+	$\horel{\Gamma}{\Delta_2}{Q_1}{\Hby{\news{\tilde{m_2}}\bactout{n}{\dk{V_2: U}}}}{\Delta_2'}{Q_2}$ %with $\Gamma; \es; \Delta' \proves V_2 \hastype U$,  
+	and, for fresh $t$, \\[1mm]
+	$\begin{array}{lrlll}
+	\!\!\Gamma; \Delta''_1  \proves  {\newsp{\tilde{m_1}}{P_2 \Par 
+	\ftrigger{t}{V_1}{U_1}}}
+	\ \!\!\Re\!\!
+	\ \Delta''_2 \proves {\newsp{\tilde{m_2}}{Q_2 \Par \ftrigger{t}{V_2}{U_2}}}
+\end{array}
+$
+\end{definition}
+
+\noi In Theorem~16~in~\cite{characteristic_bis}
+we showed that
+$\cong$, $\wbc$ and $\fwb$ coincide.
+
+
+%\begin{definition}[Characteristic Bisimilarity]\rm
+%	\label{d:fwb}
+%
+%	A typed relation $\Re$ is a {\em characteristic bisimulation} if 
+%	for all $\horel{\Gamma}{\Delta_1}{P_1}{\ \Re \ }{\Delta_2}{Q_1}$ 
+%	if whenever:
+%	\begin{enumerate}[1)]
+%		\item	$\horel{\Gamma}{\Delta_1}{P_1}{\hby{\news{\tilde{m_1}} \bactout{n}{V_1: U}}}{\Delta_1'}{P_2}$
+%				then there exist  $Q_2$, $V_2$, $\Delta'_2$ such that 
+%				$\horel{\Gamma}{\Delta_2}{Q_1}{\Hby{\news{\tilde{m_2}}\bactout{n}{V_2: U}}}{\Delta_2'}{Q_2}$
+%				and, for fresh $t$,
+%				$
+%				\begin{array}{lrlll}
+%					\Gamma; \Delta''_1 \proves {\newsp{\tilde{m_1}}{P_2 \Par  \ftrigger{t}{V_1}{U_1}}}
+%					\ \Re\ \Delta''_2 \proves {\newsp{\tilde{m_2}}{Q_2 \Par \ftrigger{t}{V_2}{U_2}}}
+%				\end{array}
+%				$
+%
+%			\item	For all $\horel{\Gamma}{\Delta_1}{P_1}{\hby{\ell}}{\Delta_1'}{P_2}$ such that 
+%					$\ell$ is not an output, there exist $Q_2$, $\Delta'_2$ such that 
+%					$\horel{\Gamma}{\Delta_2}{Q_1}{\Hby{\hat{\ell}}}{\Delta_2'}{Q_2}$
+%					and $\horel{\Gamma}{\Delta_1'}{P_2}{\ \Re \ }{\Delta_2'}{Q_2}$; and 
+%
+%			\item	The symmetric cases of 1 and 2.
+%	\end{enumerate}
+%	The largest such bisimulation is called \emph{characteristic bisimilarity} and denoted by $\fwb$.
+%\end{definition}
+
+
+\subsubsection{Up-to techniques}
+
+\noi Processes that do not use shared names are inherently deterministic. 
+The following determinacy property will be useful 
+for proving our expressiveness results (\secref{sec:positive}).
+We require an auxiliary definition.
+
+\begin{definition}[Deterministic Transition]\myrm
+\label{def:dettrans}
+	Let  $\Gamma; \es; \Delta \proves P \hastype \Proc$ be a balanced \HOp process. 
+	Transition $\horel{\Gamma}{\Delta}{P}{\hby{\tau}}{\Delta'}{P'}$ is called:
+	\begin{enumerate}[$-$]
+		\item	{\em Session transition}
+				whenever the untyped transition $P \by{\tau} P'$ 
+				is derived using  rule~$\ltsrule{Tau}$ 
+				(where $\subj{\ell_1}$ and $\subj{\ell_2}$ in the premise are dual endpoints), 
+				possibly followed by uses of
+				$\ltsrule{Alpha}$, $\ltsrule{Res}$, $\ltsrule{Rec}$, or $\ltsrule{Par${}_L$}/
+				\ltsrule{Par${}_R$}$.
+		
+		\item	{\em $\beta$-transition}
+				whenever the untyped transition $P \by{\tau} P'$
+				is derived using rule $\ltsrule{App}$,
+				possibly followed by uses of  $\ltsrule{Alpha}$, $\ltsrule{Res}$, $\ltsrule{Rec}$, or $\ltsrule{Par${}_L$}/
+				\ltsrule{Par${}_R$}$.
+	\end{enumerate}
+%
+	We write
+	$\horel{\Gamma}{\Delta}{P}{\hby{\stau}}{\Delta'}{P'}$
+	and 
+	$\horel{\Gamma}{\Delta}{P}{\hby{\btau}}{\Delta'}{P'}$
+	to denote session and $\beta$-transitions, resp. Also, 
+	 $\horel{\Gamma}{\Delta}{P}{\hby{\dtau}}{\Delta'}{P'}$ denotes
+	either a session transition or a $\beta$-transition.
+\end{definition}
+%
+%A transition $\horel{\Gamma}{\Delta}{P}{\hby{\tau}}{\Delta'}{P'}$ is said
+%{\em deterministic} if it is derived using~$\ltsrule{App}$ or~$\ltsrule{Tau}$ 
+%(where $\subj{\ell_1}$ and $\subj{\ell_2}$ in the premise  are dual endpoints), 
+%possibly followed by uses of  $\ltsrule{Alpha}$, $\ltsrule{Res}$, $\ltsrule{Rec}$, or $\ltsrule{Par${}_L$}/\ltsrule{Par${}_R$}$.
+
+\begin{lemma}[$\tau$-Inertness]\rm
+	\label{lem:tau_inert}
+	\begin{enumerate}[1)]
+		\item
+				Let $\horel{\Gamma}{\Delta}{P}{\hby{\dtau}}{\Delta'}{P'}$ be a deterministic transition,
+				with balanced $\Delta$. Then 
+				$\Gamma; \Delta \proves P \cong \Delta'\proves P'$ 
+				with $\Delta \red^\ast \Delta'$ balanced.
+
+		\item 
+				Let $P$ be an $\HOp^{-\mathsf{sh}}$ process. 
+				Assume $\Gamma; \emptyset; \Delta \proves P \hastype \Proc$. Then 
+				$P \red^\ast P'$ implies $\Gamma; \Delta \proves 
+				P \cong \Delta'\proves P'$ with $\Delta \red^\ast \Delta'$. 
+	\end{enumerate}
+\end{lemma}
+
+
+\begin{proof}
+	The proof relies on the fact that processes of the
+	form $\Gamma; \es; \Delta \proves_s \bout{s}{V} P_1 \Par \binp{k}{x} P_2$
+	cannot have any typed transition observables and the fact
+	that bisimulation is a congruence.
+	See  \appref{app:sub_tau_inert} for details.
+	The proof for Part 2 follows from Part 1.
+	\qed
+\end{proof}
+}
+
+%\noi Precise encodings offer more detailed criteria and used for positive 
+%encodability results (\secref{sec:positive}).
+%In contrast, minimal encodings contains only 
+%some of the criteria of precise encodings:    
+%this reduced notion will be used 
+%for the negative result in \secref{sec:negative}.
+
 

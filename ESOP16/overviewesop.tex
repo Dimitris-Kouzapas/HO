@@ -1,47 +1,12 @@
 % !TEX root = main.tex
 
-\jparagraph{Encoding Name-Passing into Process-Passing}
-
-Our main contribution is 
-an encoding of \HOp into \HO (\secref{subsec:HOpi_to_HO}).  
-Since \HO lacks 
-both name-passing and recursion, this encoding involves two key challenges:
-\begin{enumerate}[a.]
-\item In known (typed) 
-encodings of name-passing into process-passing~\cite{SaWabook} %are limited: % in that 
-%they come with restrictions on name usages;  
-%they 
-%work for %name-passing 
-%calculi 
-%with \emph{capability types} 
-%in which 
-only the output capability of names can be sent---a received name cannot be used in later inputs.
-This is far too limiting in \HOp, where 
- session names %denoting arbitrary protocols 
- may be passed around (\emph{delegation})
-and types describe interaction  \emph{structures}, rather than ``loose'' name capabilities. % at a given time.
-
-
-
-\item %As mentioned above, recursion % and replication)
-%can be encoded in untyped higher-order calculi using process duplication. Unfortunately, this kind of encodings 
-Known encodings of recursion in untyped higher-order calculi
-do not carry over to session typed calculi such as \HOp,
-because linear abstractions cannot be copied/duplicated. Hence, the discipline of session types  limits 
-the possibilities for representing infinite behaviors---even simple forms, such as input-guarded replication.
-\end{enumerate}
-
-
-
-
-%MOTIVATION FIRST ENCODING (). \emph{Still to highlight: recursive type required, no recursion, small example.
-
-%--- 
-\noi
-%We illustrate our approach. % to these challenges.
-Our encoding overcomes these two obstacles. 
-Concerning (a), %we illustrate the essence of 
-to encode name passing into \HO, 
+\jparagraph{A Precise Encoding of Name-Passing into Process-Passing}
+As mentioned above, 
+our encoding of \HOp into \HO (\secref{subsec:HOpi_to_HO}) should overcome two key challenges.
+First, it should enable the communication of arbitrary names, as required to represent delegation.
+Second, it should address the fact that linearity of session types limits the 
+possibilities for representing infinite behavior. 
+To encode name passing into \HO 
 %to encode name output, 
 we ``pack''
 the name to be sent into a suitable abstraction; 
@@ -71,20 +36,17 @@ Thus, following a communication on $a$, %our encoding features
 a (deterministic) reduction between  
 $s$ and $\dual{s}$ guarantees that name $b$ is properly unpacked by means of abstraction passing
 and appropriate applications.
+It is worth stressing how an output action in the source process is translated into an output action in the encoded process (and similarly for input).
+This correspondence is key to ensure the preservation of session type operators mentioned above.
 
-
-
-Concerning (b), encoding a recursive process  is \NY{also} challenging for 
-%the linearity of endpoints in $P$ must be preserved.
-%The encoding of a recursive process $\recp{X}{P}$  is delicate, for it 
-it must preserve the linearity of session endpoints. 
+To preserve session linearity, we proceed as follows.
 Given $\recp{X}{P}$, 
-we encode the recursion body $P$ as a name abstraction
+we encode the recursion body $P$ as an abstraction
 in which free names of $P$ are converted into name variables.
 %The encoding keeps track of these free names.
 The resulting higher-order value is embedded in an input-guarded 
 ``duplicator'' process~\cite{ThomsenB:plachoasgcfhop}.
-Each occurrence of the recursion variable $X$ is then encoded 
+The recursion variable $X$ is then encoded 
 in such a way that it
 simulates recursion unfolding by 
 invoking the duplicator in a by-need fashion.
@@ -94,7 +56,7 @@ is duplicated:
 one copy is used to reconstitute the original recursion body $P$ (through
 the application of the free names of $P$); 
 another copy is used to re-invoke the duplicator when needed. 
-Interestingly, for this encoding strategy to work 
+Interestingly, for this encoding to work 
 we require non-tail recursive session types; to this end, 
 we apply recent advances on the theory of duality for session types~\cite{TGC14,DBLP:journals/corr/abs-1202-2086}.
 
@@ -120,21 +82,18 @@ we apply recent advances on the theory of duality for session types~\cite{TGC14,
 %We encode recursion with non-tail recursive session types; for this 
 %we apply recent advances on the theory of session duality~\cite{TGC14,DBLP:journals/corr/abs-1202-2086}.
 
-\jparagraph{Precise Encodings}
-Before closing this section, we find it instructive to discuss the notion of encoding 
-upon which our 
-encodability results stand.
-Building upon established notions for (untyped) processes (e.g.,~\cite{DBLP:journals/iandc/Gorla10}), 
-we define a notion of \emph{precise encoding} (\secref{s:expr}) that, as motivated earlier,  
+\jparagraph{A Plausible Encoding That is Not Precise}
+As motivated earlier,
+we define a notion of \emph{precise encoding} (\secref{s:expr}) that
 requires the translation of both process and types, and 
 admits only process mappings that preserve session types
 \emph{and} are fully abstract. Thus, our encodings 
-exhibit   strong behavioral correspondences, and 
+not only exhibit   strong behavioral correspondences, but also 
  relate source and target processes with  
-proper communication structures (as described by session types).
+communication structures described by session types.
 %Moreover, the notion of encoding includes full abstraction as encodability criteria.
-We argue that these requirements make our developments more challenging.
-In particular, requiring type preservation rules out encoding strategies only plausible for untyped processes.
+These strict requirements make our developments more challenging.
+In particular, requiring type preservation rules out other plausible encoding strategies.
 To illustrate this point,
 consider the  following encoding of %$\sessp$ 
 name-passing 
@@ -148,14 +107,16 @@ into $\HO$:\footnote{This alternative  encoding was suggested by an anonymous re
 %and as a homomorphism for the other operators.
 Intuitively, 
 rather than sending a package with name $b$, 
-this encoding sends the continuation of the input. This entails  a 
+this encoding sends the continuation of the input. Observe how this mapping entails  a 
 ``role inversion'': outputs are translated into inputs, and inputs are translated into outputs. 
-Although perfectly reasonable in an  {untyped setting}, the encoding $\umap{\cdot}$  
+Although perfectly reasonable, the encoding $\umap{\cdot}$  
 %is far from desirable in a session typed setting: 
-is \emph{not type preserving}: 
-since 
-individual  prefixes represent actions in a structured communication sequence (abstracted by session types)
-the role inversion defined by $\umap{\cdot}$ would alter the meaning of session protocols in the source language.
+is \emph{not type preserving}. Consequently, it is also not \emph{precise}.
+%Type preservation is intended to preserve the overall semantics of session types:
+Since individual prefixes (input, output, branching, select) 
+represent actions in a structured communication sequence (i.e., a protocol abstracted by a session type),
+the encoding above would simply alter the meaning of the session protocol in the source language.
+
 
 
 
