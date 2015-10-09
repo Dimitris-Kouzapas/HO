@@ -1,13 +1,12 @@
 % !TEX root = main.tex
-
-\subsection{Reduction-Closed, Barbed Congruence}
-\label{subsec:rc}
-
-\noi In this sub-section we define reduction-closed, barbed congruence ($\cong$) as the
-reference equivalence relation. 
+\noi In this section we define reduction-closed, barbed congruence ($\cong$) as the
+reference equivalence relation for \HOp processes.
 Later on we will define two characterizations of $\cong$:
 \emph{higher-order} and  
 \emph{characteristic bisimilarities} (denoted $\hwb$ and $\fwb$, respectively). 
+
+\subsection{Reduction-Closed, Barbed Congruence}
+\label{subsec:rc}
 We first define \emph{confluence} over session environments $\Delta$:
 
 \begin{definition}[Session Environment Confluence]
@@ -117,14 +116,18 @@ the hole $\hole$ in $\C$ with $P$.
 {
 \subsection{Two Equivalence Relations: $\fwb$ and $\hwb$}
 
-In~\cite{characteristic_bis} we have characterised
-reduction-closed, barbed congruence for the \HOp
-with a tractable bisimularity relation called
-{\em characteristic bisimularity}. The definition
-of the characteristic bisimilarity uses a
+\jparagraph{A Typed Labelled Transition System}
+We have recently characterised
+reduction-closed, barbed congruence for \HOp
+via a tractable bisimularity relation called
+{\em characteristic bisimularity}~\cite{characteristic_bis}. 
+The definition of characteristic bisimilarity uses a
 labelled transition system informed by session
-types. The main intuition for the labelled transition
-semantics is the fact that we observe a transition
+types. 
+Transitions in this LTS are denoted 
+$\Gamma; \es; \Delta \proves P \hby{\ell} \Delta' \proves P' \hastype \Delta'$.
+The main intuition for its definition  
+is that we observe a transition
 on a typed process only if the type environment of
 the process allows it:
 %
@@ -136,7 +139,7 @@ the process allows it:
 	}
 \]
 %
-\noi An example of how types allow transitions can be seen in the rule:
+\noi An example of how types allow transitions can be seen in the rule for input:
 %
 \[
 	\tree{
@@ -148,34 +151,38 @@ the process allows it:
 		(\Gamma; \Lambda; \Delta \cat s: \btinp{U} S) \hby{\bactinp{s}{V}} (\Gamma; \Lambda\cat\Lambda'; \Delta\cat\Delta' \cat s: S)
 	}
 \]
-
-The above rule states that an session channel environment can input a value
+\noi
+This rule states that an session channel environment can input a value
 if the channel is typed with an input prefix and the input value is either
-a name or a characteristic value or a trigger value. A characteristic value
+a name $m$, a \emph{characteristic value} $\omapchar{U}$,  or a \emph{trigger value} (the abstraction
+$\abs{{x}}{\binp{t}{y} (\appl{y}{{x}})}$). 
+A characteristic value
 (cf.~Def.~11~in~\cite{characteristic_bis})
-is the {\em simplest} process that can inhabit a type, in this case the
-type carried by the session input prefix. A trigger value is the abstraction
-$\abs{{x}}{\binp{t}{y} (\appl{y}{{x}})}$. The above rule is used to restrict
+is the {simplest} process that can inhabit a type (in this case, the
+type $U$ carried by the session input prefix). The above rule is used to restrict
 the input actions that can be observed from a session input prefix.
 For full details of the labelled transition system see~\cite{characteristic_bis}.
-
-We define two trigger processes:
+Moreover, we define two \emph{trigger processes}:
 %
 \begin{eqnarray*}
-	\htrigger{t}{V_1}  & \defeq &  \hotrigger{t}{V} \label{eqb:0} \\
+	\htrigger{t}{V}  & \defeq &  \hotrigger{t}{V} \label{eqb:0} \\
 	\ftrigger{t}{V}{U} & \defeq &  \fotrigger{t}{x}{s}{\btinp{U} \tinact}{V} 	\label{eqb:4}
 \end{eqnarray*}
 %
-
-A trigger process is defined as a process input prefixed on
-a fresh name. The first trigger process applies a value
+\noi
+Trigger processes are defined as a process input prefixed on
+a fresh name $t$. The   trigger process $\htrigger{t}{V}$ above applies a value $V$
 on the receiving (characteristic) process.
-The second trigger process applies a value
-on the (hard coded) characteristic process:
+The trigger process $\ftrigger{t}{V}{U}$ applies a value
+on the (hard coded) \emph{characteristic process} $\map{\btinp{U} \tinact}^{s}$ (see~\cite{characteristic_bis} for details). 
 
-We now define Higher-Order Bisimilarity and Characteristic Bisimilarity:
+\jparagraph{Characterisations of Barbed Congruence}
+We now define \emph{higher-order} and \emph{characteristic} bisimilarity.
+Observe that higher-order bisimilarity is a new typed equality, 
+while 
+characteristic bisimilarity was introduced in~\cite{characteristic_bis} (Def.~14).
 
-\begin{definition}[Higher-Order Bisimilarity]\rm
+\begin{definition}[Higher-Order Bisimilarity]%\rm
 	\label{d:hbw}
 	A typed relation $\Re$ is a {\em  HO bisimulation} if 
 	for all $\horel{\Gamma}{\Delta_1}{P_1}{\ \Re \ }{\Delta_2}{Q_1}$ 
@@ -183,7 +190,7 @@ We now define Higher-Order Bisimilarity and Characteristic Bisimilarity:
 		\item 
 				Whenever 
 				$\horel{\Gamma}{\Delta_1}{P_1}{\hby{\news{\tilde{m_1}} \bactout{n}{V_1}}}{\Delta_1'}{P_2}$, there exist 
-				$Q_2$, $V_2$, $\Delta'_2$ such that 
+				$Q_2$, $V_2$, $\Delta'_2$ such that \\
 				$\horel{\Gamma}{\Delta_2}{Q_1}{\Hby{\news{\tilde{m_2}} \bactout{n}{V_2}}}{\Delta_2'}{Q_2}$ and, for fresh $t$, 
 %
 				\[
@@ -209,20 +216,20 @@ We now define Higher-Order Bisimilarity and Characteristic Bisimilarity:
 \end{definition}
  
 
-\noi 
-We define characteristic bisimilarity
-(cf.~Def.~14~in~\cite{characteristic_bis}):
+%\noi 
+%We define characteristic bisimilarity
+%(cf.~Def.~14~in~\cite{characteristic_bis}):
 % is given using characteristic trigger processes. 
 
 
-\begin{definition}[Characteristic Bisimilarity]\rm
+\begin{definition}[Characteristic Bisimilarity]%\rm
 	\label{d:fwb}
 	Characteristic bisimilarity, denoted by $\fwb$, is defined \jpc{by} replacing 
 	Clause 1) in \defref{d:hbw} with the following clause:\\[1mm]
 	Whenever 
 	$\horel{\Gamma}{\Delta_1}{P_1}{\hby{\news{\tilde{m_1}} \bactout{n}{\dk{V_1: U}}}}{\Delta_1'}{P_2}$ %with $\Gamma; \es; \Delta \proves V_1 \hastype U$,  
 	then there exist 
-	$Q_2$, $V_2$, $\Delta'_2$ such that 
+	$Q_2$, $V_2$, $\Delta'_2$ such that \\
 	$\horel{\Gamma}{\Delta_2}{Q_1}{\Hby{\news{\tilde{m_2}}\bactout{n}{\dk{V_2: U}}}}{\Delta_2'}{Q_2}$ %with $\Gamma; \es; \Delta' \proves V_2 \hastype U$,  
 	and, for fresh $t$, \\[1mm]
 	$\begin{array}{lrlll}
@@ -234,9 +241,9 @@ We define characteristic bisimilarity
 $
 \end{definition}
 
-\noi In Theorem~16~in~\cite{characteristic_bis}
-we showed that
-$\cong$, $\wbc$ and $\fwb$ coincide.
+\begin{theorem}[\cite{characteristic_bis}]
+Typed relations $\cong$, $\hwb$, and $\fwb$ coincide for \HOp processes.
+\end{theorem}
 
 
 %\begin{definition}[Characteristic Bisimilarity]\rm
@@ -268,12 +275,16 @@ $\cong$, $\wbc$ and $\fwb$ coincide.
 %\end{definition}
 
 
-\subsubsection{Up-to techniques}
-
-\noi Processes that do not use shared names are inherently deterministic. 
-The following determinacy property will be useful 
-for proving our expressiveness results (\secref{sec:positive}).
-We require an auxiliary definition.
+\jparagraph{Up-to techniques}
+We close this section by stating  a determinacy result for typed processes, useful in proving our expressiveness results (\secref{sec:positive}).
+In our setting, processes that do not use shared names are inherently deterministic. 
+In the sequel, we write 
+ $\horel{\Gamma}{\Delta}{P}{\hby{\tau}}{\Delta'}{P'}$ to denote an internal transition in the 
+ typed LTS.
+The auxiliary definition below allows us to distinguish two kinds of (typed) internal transitions:
+\emph{session transitions} and \emph{$\beta$-transitions} (denoted 
+$\horel{\Gamma}{\Delta}{P}{\hby{\stau}}{\Delta'}{P'}$
+and $\horel{\Gamma}{\Delta}{P}{\hby{\btau}}{\Delta'}{P'}$, respectively).
 
 \begin{definition}[Deterministic Transition]\myrm
 \label{def:dettrans}
@@ -314,13 +325,13 @@ We require an auxiliary definition.
 	\begin{enumerate}[1)]
 		\item
 				Let $\horel{\Gamma}{\Delta}{P}{\hby{\dtau}}{\Delta'}{P'}$ be a deterministic transition,
-				with balanced $\Delta$. Then 
+				with balanced $\Delta$. \\ Then 
 				$\Gamma; \Delta \proves P \cong \Delta'\proves P'$ 
 				with $\Delta \red^\ast \Delta'$ balanced.
 
 		\item 
 				Let $P$ be an $\HOp^{-\mathsf{sh}}$ process. 
-				Assume $\Gamma; \emptyset; \Delta \proves P \hastype \Proc$. Then 
+				Assume $\Gamma; \emptyset; \Delta \proves P \hastype \Proc$. \\ Then 
 				$P \red^\ast P'$ implies $\Gamma; \Delta \proves 
 				P \cong \Delta'\proves P'$ with $\Delta \red^\ast \Delta'$. 
 	\end{enumerate}
@@ -328,7 +339,7 @@ We require an auxiliary definition.
 
 
 \begin{proof}
-	The proof relies on the fact that processes of the
+	The proof uses the fact that processes of the
 	form $\Gamma; \es; \Delta \proves_s \bout{s}{V} P_1 \Par \binp{k}{x} P_2$
 	cannot have any typed transition observables and the fact
 	that bisimulation is a congruence.
