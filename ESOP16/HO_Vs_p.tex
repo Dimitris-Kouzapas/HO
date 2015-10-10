@@ -142,3 +142,172 @@ and
 	P\subst{a}{x}
 \end{array}
 \]
+
+\subsection{Labelled Transition Correspondence}
+
+In addition to preciseness we can develop one more encodability
+result for the translation of \HOp into \HO, which is
+the correspondence of the labelled transition reduction
+system. As we will show such a correspondence does not
+hold for the \HOp to \sessp translation.
+
+Consider the following mapping from labels of
+\HOp into labels for \HO:
+\[
+	\begin{array}{rclcrcl}
+		\mapa{\news{\tilde{m_1}}\bactout{n}{m}}^{1}	&\defeq&	\news{\tilde{m_1}}\bactout{n}{\abs{z}{\,\binp{z}{x} \appl{x}{m}} }
+		& &
+		\mapa{\bactinp{n}{m}}^{1}			&\defeq&	\bactinp{n}{\abs{z}{\,\binp{z}{x} \appl{x}{m}} }
+		\\
+		\mapa{\news{\tilde{m}}\bactout{n}{\abs{x}{P}}}^{1} &\defeq& \news{\tilde{m}}\bactout{n}{\abs{x}{\pmapp{P}{1}{\es}}}
+		& &
+		\mapa{\bactinp{n}{\abs{x}{P}}}^{1} &\defeq& \bactinp{n}{\abs{x}{\pmapp{P}{1}{\es}}}
+		\\
+		\mapa{\bactsel{n}{l} }^{1} &\defeq& \bactsel{n}{l} 
+		& &
+		\mapa{\bactbra{n}{l} }^{1} &\defeq& \bactbra{n}{l} 
+		\\
+		\mapa{\tau}^{1} &\defeq& \tau
+	\end{array}
+\]
+
+Then the following theorem holds:
+
+\begin{proposition}[Labelled Transition Correspondence, \HOp into \HO]
+	\label{prop:lts_corr_HOp_to_HO}
+	Let $P$ be a \HOp process.
+	If $\Gamma; \emptyset; \Delta \proves P \hastype \Proc$ then:
+%
+	\begin{enumerate}[1.]
+		\item
+			Suppose $\horel{\Gamma}{\Delta}{P}{\hby{\ell_1}}{\Delta'}{P'}$. Then we have:
+%
+			\begin{enumerate}[a)]
+				\item
+					If $\ell_1 \in \set{\news{\tilde{m}}\bactout{n}{m}, \,\news{\tilde{m}}\bactout{n}{\abs{x}Q}, \,\bactsel{s}{l}, \,\bactbra{s}{l}}$
+					then $\exists \ell_2$ s.t. \\
+					$\horel{\tmap{\Gamma}{1}}{\tmap{\Delta}{1}}{\pmapp{P}{1}{f}}{\hby{\ell_2}}{\tmap{\Delta'}{1}}{\pmapp{P'}{1}{f}}$
+					and $\ell_2 = \mapa{\ell_1}^{1}$.
+			
+				\item
+					If $\ell_1 = \bactinp{n}{\abs{y}Q}$ and
+					$P' = P_0 \subst{\abs{y}Q}{x}$
+					then $\exists \ell_2$ s.t. \\
+					$\horel{\tmap{\Gamma}{1}}{\tmap{\Delta}{1}}{\pmapp{P}{1}{f}}{\hby{\ell_2}}{\tmap{\Delta'}{1}}{\pmapp{P_0}{1}{f}\subst{\abs{y}\pmapp{Q}{1}{\emptyset}}{x}}$
+					and $\ell_2 = \mapa{\ell_1}^{1}$.
+			
+				\item
+					If $\ell_1 = \bactinp{n}{m}$
+					and 
+					$P' = P_0 \subst{m}{x}$
+					then $\exists \ell_2$, $R$ s.t. \\
+					$\horel{\tmap{\Gamma}{1}}{\tmap{\Delta}{1}}{\pmapp{P}{1}{f}}{\hby{\ell_2}}{\tmap{\Delta'}{1}}{R}$,
+					with $\ell_2 = \mapa{\ell_1}^{1}$, \\
+					and
+					$\horel{\tmap{\Gamma}{1}}{\tmap{\Delta'}{1}}{R}{\hby{\btau} \hby{\stau} \hby{\btau}}
+					{\tmap{\Delta'}{1}}{\pmapp{P_0}{1}{f}\subst{m}{x}}$.
+						
+				\item
+					If $\ell_1 = \tau$
+					and $P' \scong \newsp{\tilde{m}}{P_1 \Par P_2\subst{m}{x}}$
+					then $\exists R$ s.t. \\
+					$\horel{\tmap{\Gamma}{1}}{\tmap{\Delta}{1}}{\pmapp{P}{1}{f}}{\hby{\tau}}{\mapt{\Delta}^{1}}{\newsp{\tilde{m}}{\pmapp{P_1}{1}{f} \Par R}}$,
+					and\\ 
+					$\horel{\tmap{\Gamma}{1}}{\tmap{\Delta}{1}}{\newsp{\tilde{m}}{\pmapp{P_1}{1}{f} \Par R}}{\hby{\btau} \hby{\stau} \hby{\btau}}
+					{\mapt{\Delta}^{1}}{\newsp{\tilde{m}}{\pmapp{P_1}{1}{f} \Par \pmapp{P_2}{1}{f}\subst{m}{x}}}$.
+			
+				\item
+					If $\ell_1 = \tau$
+					and $P' \scong \newsp{\tilde{m}}{P_1 \Par P_2 \subst{\abs{y}Q}{x}}$
+					then \\
+					$\horel{\tmap{\Gamma}{1}}{\tmap{\Delta}{1}}{\pmapp{P}{1}{f}}{\hby{\tau}}
+					{\tmap{\Delta_1}{1}}{\newsp{\tilde{m}}{\pmapp{P_1}{1}{f}\Par \pmapp{P_2}{1}{f}\subst{\abs{y}\pmapp{Q}{1}{\emptyset}}{x}}}$.
+			
+				\item
+					If $\ell_1 = \tau$
+					and $P' \not\scong \newsp{\tilde{m}}{P_1 \Par P_2 \subst{m}{x}} \land P' \not\scong \newsp{\tilde{m}}{P_1 \Par P_2\subst{\abs{y}Q}{x}}$
+					then \\
+					$\horel{\tmap{\Gamma}{1}}{\tmap{\Delta}{1}}{\pmapp{P}{1}{f}}{\hby{\tau}}{\tmap{\Delta'_1}{1}}{ \pmapp{P'}{1}{f}}$.
+			\end{enumerate}
+			
+		\item	Suppose $\horel{\tmap{\Gamma}{1}}{\tmap{\Delta}{1}}{\pmapp{P}{1}{f}}{\hby{\ell_2}}{\tmap{\Delta'}{1}}{Q}$.
+			Then we have:
+%
+			\begin{enumerate}[a)]
+				\item 
+					If $\ell_2 \in
+					\set{\news{\tilde{m}}\bactout{n}{\abs{z}{\,\binp{z}{x} (\appl{x}{m})}}, \,\news{\tilde{m}} \bactout{n}{\abs{x}{R}}, \,\bactsel{s}{l}, \,\bactbra{s}{l}}$
+					then $\exists \ell_1, P'$ s.t. \\
+					$\horel{\Gamma}{\Delta}{P}{\hby{\ell_1}}{\Delta'}{P'}$, 
+					$\ell_1 = \mapa{\ell_2}^{1}$, 
+					and
+					$Q = \pmapp{P'}{1}{f}$.
+			
+				\item 
+					If $\ell_2 = \bactinp{n}{\abs{y} R}$ %(with $R \neq \binp{y}{x} \appl{x}{m}$)
+					then either:
+%
+					\begin{enumerate}[(i)]
+						\item	$\exists \ell_1, x, P', P''$ s.t. \\
+							$\horel{\Gamma}{\Delta}{P}{\hby{\ell_1}}{\Delta'}{P' \subst{\abs{y}P''}{x}}$, 
+							$\ell_1 = \mapa{\ell_2}^{1}$, $\pmapp{P''}{1}{\es} = R$, and $Q = \pmapp{P'}{1}{f}$.
+
+						\item	$R \scong \binp{y}{x} (\appl{x}{m})$ and 
+							$\exists \ell_1, z, P'$ s.t. \\
+							$\horel{\Gamma}{\Delta}{P}{\hby{\ell_1}}{\Delta'}{P' \subst{m}{z}}$, 
+							$\ell_1 = \mapa{\ell_2}^{1}$,
+							and\\
+							$\horel{\tmap{\Gamma}{1}}{\tmap{\Delta'}{1}}{Q}{\hby{\btau} \hby{\stau} \hby{\btau}}{\tmap{\Delta''}{1}}{\pmapp{P'\subst{m}{z}}{1}{f}}$
+					\end{enumerate}
+			
+				\item 
+					If $\ell_2 = \tau$ 
+					then $\Delta' = \Delta$ and 
+					either
+%
+					\begin{enumerate}[(i)]
+						\item	$\exists P'$ s.t. 
+							$\horel{\Gamma}{\Delta}{P}{\hby{\tau}}{\Delta}{P'}$,
+							and $Q = \map{P'}^{1}_f$.	
+
+						\item
+							$\exists P_1, P_2, x, m, Q'$ s.t. 
+							$\horel{\Gamma}{\Delta}{P}{\hby{\tau}}{\Delta}{\newsp{\tilde{m}}{P_1 \Par P_2\subst{m}{x}} }$, and\\
+							$\horel{\tmap{\Gamma}{1}}{\tmap{\Delta}{1}}{Q}{\hby{\btau} \hby{\stau} \hby{\btau}}{\tmap{\Delta}{1}}{\pmapp{P_1}{1}{f} \Par \pmapp{P_2\subst{m}{x}}{1}{f}}$ 
+%							$Q = \map{P_1}^{1}_f \Par Q'$, where $Q'  \Hby{} $.
+
+%						\item $\exists P_1, P_2, x, R$ s.t. 
+%						$\stytra{ \Gamma }{\tau}{ \Delta }{ P}{ \Delta}{ \news{\tilde{m}}(P_1 \Par P_2\subst{\abs{y}R}{x}) }$, and 
+%						$Q = \map{\news{\tilde{m}}(P_1 \Par P_2\subst{\abs{y}R}{x})}^{1}_f$.
+			\end{enumerate}
+		    \end{enumerate}
+		    
+%		\item   
+%			If  $\wtytra{\mapt{\Gamma}^{1}}{\ell_2}{\mapt{\Delta}^{1}}{\pmapp{P}{1}{f}}{\mapt{\Delta'}^{1}}{Q}$
+%			then $\exists \ell_1, P'$ s.t.  \\
+%			(i)~$\stytra{\Gamma}{\ell_1}{\Delta}{P}{\Delta'}{P'}$,
+%			(ii)~$\ell_2 = \mapa{\ell_1}^{1}$, 
+%			(iii)~$\wbb{\mapt{\Gamma}^{1}}{\ell}{\mapt{\Delta'}^{1}}{\pmapp{P'}{1}{f}}{\mapt{\Delta'}^{1}}{Q}$.
+	\end{enumerate}
+\end{proposition}
+
+Such an encoding does not occur for the \HOp into \sessp encoding.
+Consider the \HOp process:
+\[
+	\Gamma; \es; \Delta \proves \bout{s}{\abs{x} P} \inact \hastype \Proc \hby{\bactout{s}{\abs{x} P}} \es \proves \inact
+\]
+which is translated into \sessp process:
+\begin{eqnarray*}
+	&&\tmap{\Gamma}{2}; \es; \tmap{\Delta}{2} \proves \newsp{a}{\bout{s}{a} \inact \Par \repl \binp{a}{y} \binp{y}{x} P} \hastype \Proc\\
+	&&\hby{\bactout{s}{a}}\\
+	&&\Delta' \proves \repl \binp{a}{y} \binp{y}{x} P \hastype \Proc\\
+	&&\hby{\bactinp{a}{V}} \dots
+\end{eqnarray*}
+
+The resulting processes have a missmatch both in the typing
+environment ($\Delta' \not= \tmap{\es}{2}$
+and in the actions they can the two processes can
+subsequenctly observe. Specifically the first process
+cannot observe any actions while the second process
+can observe an infinite amount of actions.
+
