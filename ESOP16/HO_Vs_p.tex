@@ -1,39 +1,60 @@
+% !TEX root = main.tex
+
 \subsection{Discussion: Comparing Encodings}
-
-
-Let reduction on \sessp process:
+The precise encodings reported in  \secref{subsec:HOpi_to_HO} and \secref{subsec:HOp_to_sessp}
+confirm that \HO and \sessp constitute two important sources of expressiveness in \HOp.
+This naturally begs the question: which of the two sub-calculi is more tightly related to \HOp?
+In this section, we compare our two encodings by contrasting the way in which 
+\begin{enumerate}[a)]
+\item the encoding from \HOp to \HO (\secref{subsec:HOpi_to_HO}) translates processes with name passing;
+\item the encoding from \HOp to \sessp (\secref{subsec:HOp_to_sessp} translates processes with abstraction passing.
+\end{enumerate}
+Consider the \HOp processes:
 \begin{eqnarray*}
-	\bout{s}{a} \inact \Par \binp{\dual{s}}{x} (\bout{x}{s_1} \inact \Par \dots \Par \bout{x}{s_n} \inact)
-	\hby{\tau}
-	\bout{a}{s_1} \inact \Par \dots \Par \bout{a}{s_n} \inact
+P_1 & = & \bout{s}{a} \inact \Par \binp{\dual{s}}{x} (\bout{x}{s_1} \inact \Par \dots \Par \bout{x}{s_n} \inact) \\
+P_2 & = & \bout{s}{\abs{x}{P}} \inact \Par \binp{\dual{s}}{x} (\appl{x}{s_1} \Par \dots \Par \appl{x}{s_n})
 \end{eqnarray*}
-and \HO process
+\noi Observe that $P_1$ features \emph{pure} name passing (no abstraction-passing), whereas 
+$P_2$ involves \emph{pure} abstraction passing (no name passing). In both cases, 
+the intended communication on $s$ leads to $n$ usages of the communication object (name $a$ in $P_1$ and abstraction $\abs{x}{P}$ in $P_2$).
+Consider now the reduction steps from $P_1$ and $P_2$:
 \begin{eqnarray*}
-	\bout{s}{\abs{x}{P}} \inact \Par \binp{\dual{s}}{x} (\appl{x}{s_1} \Par \dots \Par \appl{x}{s_n})
-	&\hby{\tau}&
-	\appl{(\abs{x}{P})}{s_1} \Par \dots \Par \appl{(\abs{x}{P})}{s_n}\\
-	&\Hby{\tau}_{n}&
-	P \subst{s_1}{x} \Par \dots \Par P \subst{s_1}{x}
+P_1 & \hby{\tau} & \bout{a}{s_1} \inact \Par \dots \Par \bout{a}{s_n} \inact \\
+P_2 & \hby{\tau}& \appl{(\abs{x}{P})}{s_1} \Par \dots \Par \appl{(\abs{x}{P})}{s_n} \quad \underbrace{\hby{\btau} \cdots \hby{\btau}}_{n} \quad P \subst{s_1}{x} \Par \dots \Par P \subst{s_1}{x} 
 \end{eqnarray*}
 
-The two process follow the same communication pattern; they both
+%Let reduction on \sessp process:
+%\begin{eqnarray*}
+%	\bout{s}{a} \inact \Par \binp{\dual{s}}{x} (\bout{x}{s_1} \inact \Par \dots \Par \bout{x}{s_n} \inact)
+%	\hby{\tau}
+%	\bout{a}{s_1} \inact \Par \dots \Par \bout{a}{s_n} \inact
+%\end{eqnarray*}
+%and \HO process
+%\begin{eqnarray*}
+%	\bout{s}{\abs{x}{P}} \inact \Par \binp{\dual{s}}{x} (\appl{x}{s_1} \Par \dots \Par \appl{x}{s_n})
+%	&\hby{\tau}&
+%	\appl{(\abs{x}{P})}{s_1} \Par \dots \Par \appl{(\abs{x}{P})}{s_n}\\
+%	&\Hby{\tau}_{n}&
+%	P \subst{s_1}{x} \Par \dots \Par P \subst{s_1}{x}
+%\end{eqnarray*}
+\noi 
+$P_1$ and $P_2$ essentially follow the same communication pattern; they both
 reduce on a message passing action, with the
 message being substituted $n$ times on the receing side.
-
-Both processes are \HOp processes.
-If we consider the encodings \HO and \sessp, respectively
-we get:
+Both $P_1$ and $P_2$ are \HOp processes.
+If we consider the encodings of $P_1$ into \HO and of $P_2$ into \sessp,  
+we obtain:
 \[
 \begin{array}{l}
 	\bout{s}{\abs{z}{\binp{z}{y} \appl{y}{a}}} \inact \Par \binp{\dual{s}}{x} \newsp{t}{\appl{x}{t} \Par \bout{\dual{t}}{\abs{x}{(\bout{x}{\abs{z}{\binp{z}{y} \appl{y}{s_1}}} \inact \Par \dots \Par \bout{x}{\abs{z}{\binp{z}{y} \appl{y}{s_n}}} \inact)}} \inact}\\
-	\hby{\tau}\\
+	\hby{\stau}\\
 	\newsp{t}{\appl{(\abs{z}{\binp{z}{y} \appl{y}{a}})}{t} \Par \bout{\dual{t}}{\abs{x}{(\bout{x}{\abs{z}{\binp{z}{y} \appl{y}{s_1}}} \inact \Par \dots \Par \bout{x}{\abs{z}{\binp{z}{y} \appl{y}{s_n}}} \inact)}} \inact}\\
-	\hby{\tau}\\
+	\hby{\btau}\\
 	\newsp{t}{\binp{t}{y} \appl{y}{a} \Par \bout{\dual{t}}{\abs{x}{(\bout{x}{\abs{z}{\binp{z}{y} \appl{y}{s_1}}} \inact \Par \dots \Par \bout{x}{\abs{z}{\binp{z}{y} \appl{y}{s_n}}} \inact)}} \inact}\\
-	\hby{\tau}\\
+	\hby{\stau}\\
 	\appl{\abs{x}{(\bout{x}{\abs{z}{\binp{z}{y} \appl{y}{s_1}}} \inact \Par \dots \Par \bout{x}{\abs{z}{\binp{z}{y} \appl{y}{s_n}}} \inact)}}{a}
 	\\
-	\hby{\tau}
+	\hby{\btau}
 	\\
 	\bout{a}{\abs{z}{\binp{z}{y} \appl{y}{s_1}}} \inact \Par \dots \Par \bout{a}{\abs{z}{\binp{z}{y} \appl{y}{s_n}}} \inact
 \end{array}
@@ -43,15 +64,15 @@ and
 \begin{array}{l}
 	\newsp{b}{\bout{s}{b} \inact \Par \repl \binp{b}{y} \binp{y}{x} P} \Par \binp{\dual{s}}{x} (\newsp{s}{\bout{x}{s} \bout{\dual{s}}{s_1} \inact} \Par \dots \Par \newsp{s}{\bout{x}{s} \bout{\dual{s}}{s_1}\inact})
 	\\
-	\hby{\tau}
+	\hby{\stau}
 	\\
 	\newsp{b}{\repl \binp{b}{y} \binp{y}{x} P \Par \newsp{s}{\bout{b}{s} \bout{\dual{s}}{s_1} \inact} \Par \dots \Par \newsp{s}{\bout{b}{s} \bout{\dual{s}}{s_1} \inact}}
 	\\
-	\hby{\tau}
+	\hby{\stau}
 	\\
 	\newsp{b}{\repl \binp{b}{y} \binp{y}{x} P \Par \newsp{s}{\binp{s}{x} P \Par \bout{\dual{s}}{s_1} \inact} \Par \dots \Par \newsp{s}{\bout{b}{s} \bout{\dual{s}}{s_1} \inact}}
 	\\
-	\hby{\tau}
+	\hby{\stau}
 	\\
 	\newsp{b}{\repl \binp{b}{y} \binp{y}{x} P \Par P\subst{s_1}{x} \Par \dots \Par \newsp{s}{\bout{b}{s} \bout{\dual{s}}{s_1} \inact}}
 	\\
@@ -64,9 +85,12 @@ and
 \end{array}
 \]
 
+It is clear that encoding $P_1$ into \HO is more economical than 
+encoding $P_2$ into \sessp. Not only moving to a pure higher-order setting requires less reduction steps than in the first-order concurrency of \sessp; in the presence of shared names, moving to a first-order setting brings the need of setting up and handling replicated processes which will eventually lead to garbage expressions. In contrast, the mechanism present in \HO works efficiently regardless of the linear or shared properties of the name that is ``packed'' into the abstraction. 
+The use of deterministic transitions guarantees local synchronizations, arguably less expensive than point-to-point synchronizations induced by session communications.
 
-\subsection{Linear case}
-
+Still, it is instructive to move our comparison 
+to a purely linear setting, and to see what occurs. 
 In the case of linear values we have:
 
 \begin{eqnarray*}
