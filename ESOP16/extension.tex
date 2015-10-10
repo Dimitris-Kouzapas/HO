@@ -5,7 +5,22 @@ encodings of \HOpp into \HOp
 and into \PHOp. These encodings are shown to be precise. 
 We also exploit encoding composition to encode
 \PHOpp into \HO and \sessp.
- 
+We consider the following 
+typed calculi (cf.~\defref{d:tcalculus}):
+\begin{enumerate}[-]
+\item $\tyl{L}_{\HOpp}=\calc{\HOpp}{{\cal{T}}_4}{\hby{\ell}}{\hwb}{\proves}$,
+where 
+	${\cal{T}}_4$ is a set of types of $\HOpp$;  
+the typing $\proves$ is defined in 
+\figref{fig:typerulesmy} with extended rules \trule{Abs} and \trule{App}.
+
+\item 
+	$\tyl{L}_{\PHOp}=\calc{\PHOp}{{\cal{T}}_5}{\hby{\ell}}{\hwb}{\proves}$,
+where 
+	${\cal{T}}_5$ is the set of types of $\PHOp$;  
+the typing $\proves$ is defined in
+\figref{fig:typerulesmy} with polyadic types.
+\end{enumerate}
 
 %\myparagraph{Syntax, Operational Semantics and Types.}
 %\noi First, the syntax of \figref{fig:syntax} extends 
@@ -36,12 +51,6 @@ We also exploit encoding composition to encode
 %\smallskip 
 
 \jparagraph{Encoding \HOpp into \HOp} 
-Let
-	$\tyl{L}_{\HOpp}=\calc{\HOpp}{{\cal{T}}_4}{\hby{\ell}}{\hwb}{\proves}$
-where 
-	${\cal{T}}_4$ is a set of types of $\HOpp$;  
-the typing $\proves$ is defined in 
-\figref{fig:typerulesmy} with extended rules \trule{Abs} and \trule{App}. 
 The typed encoding
 $\enco{\map{\cdot}^{3}, \mapt{\cdot}^{3}}: \HOpp \to \HOp$ is defined
 in \figref{f:enc:hopip_to_hopi}.
@@ -67,7 +76,7 @@ It satisfies the following properties:
 				\item	If $\ell = \btau$ then
 					$\horel{\tmap{\Gamma}{3}}{\tmap{\Delta}{3}}{\pmap{P}{3}}{\hby{\tau}}
 					{\Delta''}{R}$ and
-					$\horel{\tmap{\Gamma}{3}}{\tmap{\Delta'}{3}}{\pmap{P'}{3}}{\hwb}{\Delta''}{R}$.
+					$\horel{\tmap{\Gamma}{3}}{\tmap{\Delta'}{3}}{\pmap{P'}{3}}{\hwb}{\Delta''}{R}$, for some $R$;
 
 				\item	If $\ell = \tau$ and $\ell \not= \btau$ then %and $\hby{\ell}$ is not a \betatran then
 					$\horel{\tmap{\Gamma}{3}}{\tmap{\Delta}{3}}{\pmap{P}{3}}{\hby{\tau}}
@@ -90,9 +99,9 @@ It satisfies the following properties:
 %%					and $\horel{\tmap{\Gamma}{3}}{\tmap{\Delta''}{3}}{Q}{\hby{\hat{\ell}}}{\tmap{\Delta'}{3}}{\pmap{P'}{3}}$.
 %
 				\item	
-					$\horel{\Gamma}{\Delta}{\Delta}{\hby{\tau}}{\Delta'}{P'}$ with $Q \scong \pmap{P'}{3}$
+					$\horel{\Gamma}{\Delta}{P}{\hby{\tau}}{\Delta'}{P'}$ with $Q \scong \pmap{P'}{3}$
 				\item 
-					$\horel{\Gamma}{\Delta}{\Delta}{\hby{\btau}}{\Delta'}{P'}$ and
+					$\horel{\Gamma}{\Delta}{P}{\hby{\btau}}{\Delta'}{P'}$ and
 					$\horel{\tmap{\Gamma}{3}}{\tmap{\Delta''}{3}}{Q}{\hby{\btau}}
 					{\tmap{\Delta''}{3}}{\pmap{P'}{3}}$.
 			\end{enumerate}
@@ -107,9 +116,14 @@ It satisfies the following properties:
 	$\horel{\Gamma}{\Delta_1}{P}{\hwb}{\Delta_2}{Q}$ if and only if $\horel{\tmap{\Gamma}{3}}{\tmap{\Delta_1}{3}}{\pmap{P}{3}}{\hwb}{\tmap{\Delta_2}{3}}{\pmap{Q}{3}}$
 \end{proposition}
 
+\input{figures/HOpp_to_HOp}
 
-Using the above propositions, and \propref{pro:composition}, 
-we derive the following theorem:
+Using the above propositions,  
+\thmsref{f:enc:hopitoho}
+and 
+\ref{f:enc:hotopi},
+and \propref{pro:composition}, 
+we derive the following: % theorem:
 
 %\smallskip 
 
@@ -122,7 +136,7 @@ we derive the following theorem:
 	are also precise. 
 \end{theorem}
 %\smallskip 
-\input{figures/HOpp_to_HOp}
+
 
 
 %\noi Embeddings of polyadic name passing into monadic name passing are
@@ -168,13 +182,7 @@ we derive the following theorem:
 
 \jparagraph{Encoding $\PHOp$ into $\HOp$}
 \label{subsec:pho}
-Let
-	$\tyl{L}_{\PHOp}=\calc{\PHOp}{{\cal{T}}_5}{\hby{\ell}}{\hwb}{\proves}$
-where 
-	${\cal{T}}_5$ is the set of types of $\PHOp$;  
-the typing $\proves$ is defined in
-\figref{fig:typerulesmy} with polyadic types. 
-We define the typed encoding
+ We define the typed encoding
 	$\enco{\map{\cdot}^{4}, \mapt{\cdot}^{4}}: \PHOp \to \HOp$ 
 in \figref{f:enc:poltomon}.
 For simplicity, we give the dyadic case (tuples of length 2);
@@ -209,11 +217,11 @@ Let $\Gamma; \es; \Delta \proves P$.
 %					{\tmap{\Delta'}{4}}{\pmap{P'}{4}}$.
 
 				\item	If $\ell = \btau$ then %either
-					$\horel{\tmap{\Gamma}{4}}{\tmap{\Delta}{4}}{\pmap{P}{4}}{\hby{\btau} \hby{\stau} \dots \hby{\stau}}
+					$\horel{\tmap{\Gamma}{4}}{\tmap{\Delta}{4}}{\pmap{P}{4}}{\hby{\btau} \hby{\stau}  \hby{\stau}}
 					{\tmap{\Delta'}{4}}{\pmap{P'}{4}}$ %with $\mapa{\ell} = \btau, \stau \dots \stau$.
 
 				\item	If $\ell = \tau$ then %and $\hby{\ell}$ is not a \betatran then
-					$\horel{\tmap{\Gamma}{4}}{\tmap{\Delta}{4}}{\pmap{P}{4}}{\hby{\tau} \dots \hby{\tau}}
+					$\horel{\tmap{\Gamma}{4}}{\tmap{\Delta}{4}}{\pmap{P}{4}}{\hby{\tau}\hby{\tau} \hby{\tau}}
 					{\tmap{\Delta'}{4}}{\pmap{P'}{4}}$ %with $\mapa{\ell}^{4} = \tau \dots \tau$.
 			\end{enumerate}
 
@@ -240,12 +248,12 @@ Let $\Gamma; \es; \Delta \proves P$.
 %
 				\item	If $\ell = \btau$ then
 					$\horel{\Gamma}{\Delta}{P}{\hby{\btau}}{\Delta'}{P'}$ and
-					$\horel{\tmap{\Gamma}{4}}{\tmap{\Delta_1}{4}}{P_1}{\hby{\stau} \dots \hby{\stau}}
+					$\horel{\tmap{\Gamma}{4}}{\tmap{\Delta_1}{4}}{P_1}{\hby{\stau} \hby{\stau}}
 					{\tmap{\Delta'}{4}}{\tmap{P'}{4}}$ %with $\mapa{\ell}^{4} = \btau, \stau \dots \stau$.
 
 				\item	If $\ell = \tau$ then
 					$\horel{\Gamma}{\Delta}{P}{\hby{\tau}}{\Delta'}{P'}$ and
-					$\horel{\tmap{\Gamma}{4}}{\tmap{\Delta_1}{4}}{P_1}{\hby{\tau} \dots \hby{\tau}}
+					$\horel{\tmap{\Gamma}{4}}{\tmap{\Delta_1}{4}}{P_1}{\hby{\tau} \hby{\tau} \hby{\tau}}
 					{\tmap{\Delta'}{4}}{\tmap{P'}{4}}$ %with $\mapa{\ell}^{4} = \tau \dots \tau$.
 			\end{enumerate}
 	\end{enumerate}
@@ -258,8 +266,13 @@ Let $\Gamma; \es; \Delta \proves P$.
 	$\horel{\Gamma}{\Delta_1}{P}{\hwb}{\Delta_2}{Q}$ if and only if $\horel{\tmap{\Gamma}{4}}{\tmap{\Delta_1}{4}}{\pmap{P}{4}}{\hwb}{\tmap{\Delta_2}{4}}{\pmap{Q}{4}}$.
 \end{proposition}
 
-Based on these propositions,we have:
-
+%Based on these propositions,we have:
+Using the above propositions,  
+\thmsref{f:enc:hopitoho}
+and 
+\ref{f:enc:hotopi},
+and \propref{pro:composition}, 
+we derive the following: 
 \begin{theorem}[Encoding of \PHOp into \HOp]
 	\label{f:enc:phopiptohopi}
 	The encoding from
