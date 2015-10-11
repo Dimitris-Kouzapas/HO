@@ -4,7 +4,10 @@
 The precise encodings reported in  \secref{subsec:HOpi_to_HO} and \secref{subsec:HOp_to_sessp}
 confirm that \HO and \sessp constitute two important sources of expressiveness in \HOp.
 This naturally begs the question: which of the two sub-calculi is more tightly related to \HOp?
-In this section, we compare our two encodings by contrasting the way in which 
+We argue that when compared to \sessp, \HO   is more economical and satisfies tighter correspondences.
+
+\jparagraph{Reduction Steps}
+A first approach is to compare our two encodings by contrasting the way in which 
 \begin{enumerate}[a)]
 \item the encoding from \HOp to \HO (\secref{subsec:HOpi_to_HO}) translates processes with name passing;
 \item the encoding from \HOp to \sessp (\secref{subsec:HOp_to_sessp} translates processes with abstraction passing.
@@ -42,48 +45,40 @@ $P_1$ and $P_2$ essentially follow the same communication pattern; they both
 reduce on a message passing action, with the
 message being substituted $n$ times on the receing side.
 Both $P_1$ and $P_2$ are \HOp processes.
-If we consider the encodings of $P_1$ into \HO and of $P_2$ into \sessp,  
+If we consider the encodings of $P_1$ into \HO   
 we obtain:
-\[
-\begin{array}{l}
-	\bout{s}{\abs{z}{\binp{z}{y} \appl{y}{a}}} \inact \Par \binp{\dual{s}}{x} \newsp{t}{\appl{x}{t} \Par \bout{\dual{t}}{\abs{x}{(\bout{x}{\abs{z}{\binp{z}{y} \appl{y}{s_1}}} \inact \Par \dots \Par \bout{x}{\abs{z}{\binp{z}{y} \appl{y}{s_n}}} \inact)}} \inact}\\
-	\hby{\stau}\\
+\begin{eqnarray*}
+\map{P_1}^{1}_f & = &  	\bout{s}{\abs{z}{\binp{z}{y} \appl{y}{a}}} \inact \Par \\
+& & \qquad \qquad \binp{\dual{s}}{x} \newsp{t}{\appl{x}{t} \Par \bout{\dual{t}}{\abs{x}{(\bout{x}{\abs{z}{\binp{z}{y} \appl{y}{s_1}}} \inact \Par \dots \Par \bout{x}{\abs{z}{\binp{z}{y} \appl{y}{s_n}}} \inact)}} \inact}\\
+	& \hby{\stau}& 
 	\newsp{t}{\appl{(\abs{z}{\binp{z}{y} \appl{y}{a}})}{t} \Par \bout{\dual{t}}{\abs{x}{(\bout{x}{\abs{z}{\binp{z}{y} \appl{y}{s_1}}} \inact \Par \dots \Par \bout{x}{\abs{z}{\binp{z}{y} \appl{y}{s_n}}} \inact)}} \inact}\\
-	\hby{\btau}\\
+	& \hby{\btau} & 
 	\newsp{t}{\binp{t}{y} \appl{y}{a} \Par \bout{\dual{t}}{\abs{x}{(\bout{x}{\abs{z}{\binp{z}{y} \appl{y}{s_1}}} \inact \Par \dots \Par \bout{x}{\abs{z}{\binp{z}{y} \appl{y}{s_n}}} \inact)}} \inact}\\
-	\hby{\stau}\\
+	& \hby{\stau} & 
 	\appl{\abs{x}{(\bout{x}{\abs{z}{\binp{z}{y} \appl{y}{s_1}}} \inact \Par \dots \Par \bout{x}{\abs{z}{\binp{z}{y} \appl{y}{s_n}}} \inact)}}{a}
 	\\
-	\hby{\btau}
-	\\
+	& \hby{\btau} & 
 	\bout{a}{\abs{z}{\binp{z}{y} \appl{y}{s_1}}} \inact \Par \dots \Par \bout{a}{\abs{z}{\binp{z}{y} \appl{y}{s_n}}} \inact
-\end{array}
-\]
-and 
-\[
-\begin{array}{l}
-	\newsp{b}{\bout{s}{b} \inact \Par \repl \binp{b}{y} \binp{y}{x} P} \Par \binp{\dual{s}}{x} (\newsp{s}{\bout{x}{s} \bout{\dual{s}}{s_1} \inact} \Par \dots \Par \newsp{s}{\bout{x}{s} \bout{\dual{s}}{s_1}\inact})
+\end{eqnarray*}
+Now, we encode $P_2$ into \sessp:
+\begin{eqnarray*}
+\pmap{P_2}{2} & = & 	\newsp{b}{\bout{s}{b} \inact \Par \repl \binp{b}{y} \binp{y}{x} P} \Par \\
+& & \qquad \qquad \binp{\dual{s}}{x} (\newsp{s}{\bout{x}{s} \bout{\dual{s}}{s_1} \inact} \Par \dots \Par \newsp{s}{\bout{x}{s} \bout{\dual{s}}{s_n}\inact})
 	\\
-	\hby{\stau}
+	& \hby{\stau} & 
+	\newsp{b}{\repl \binp{b}{y} \binp{y}{x} P \Par \newsp{s}{\bout{b}{s} \bout{\dual{s}}{s_1} \inact} \Par \dots \Par \newsp{s}{\bout{b}{s} \bout{\dual{s}}{s_n} \inact}}
 	\\
-	\newsp{b}{\repl \binp{b}{y} \binp{y}{x} P \Par \newsp{s}{\bout{b}{s} \bout{\dual{s}}{s_1} \inact} \Par \dots \Par \newsp{s}{\bout{b}{s} \bout{\dual{s}}{s_1} \inact}}
+	& \hby{\stau} & 
+	\newsp{b}{\repl \binp{b}{y} \binp{y}{x} P \Par \newsp{s}{\binp{s}{x} P \Par \bout{\dual{s}}{s_1} \inact} \Par \dots \Par \newsp{s}{\bout{b}{s} \bout{\dual{s}}{s_n} \inact}}
 	\\
-	\hby{\stau}
+	& \hby{\stau} & 
+	\newsp{b}{\repl \binp{b}{y} \binp{y}{x} P \Par P\subst{s_1}{x} \Par \dots \Par \newsp{s}{\bout{b}{s} \bout{\dual{s}}{s_n} \inact}}
 	\\
-	\newsp{b}{\repl \binp{b}{y} \binp{y}{x} P \Par \newsp{s}{\binp{s}{x} P \Par \bout{\dual{s}}{s_1} \inact} \Par \dots \Par \newsp{s}{\bout{b}{s} \bout{\dual{s}}{s_1} \inact}}
-	\\
-	\hby{\stau}
-	\\
-	\newsp{b}{\repl \binp{b}{y} \binp{y}{x} P \Par P\subst{s_1}{x} \Par \dots \Par \newsp{s}{\bout{b}{s} \bout{\dual{s}}{s_1} \inact}}
-	\\
-	\Hby{}_{2*(n - 1)}
-	\\
+	& \Hby{}_{2*(n - 1)} & 
 	\newsp{b}{\repl \binp{b}{y} \binp{y}{x} P \Par P\subst{s_1}{x} \Par \dots \Par P\subst{s_n}{x}}
-	
 %	\red
 %	\appl{V}{s_1} \Par \dots \Par \appl{V}{s_n}
-\end{array}
-\]
+\end{eqnarray*}
 
 It is clear that encoding $P_1$ into \HO is more economical than 
 encoding $P_2$ into \sessp. Not only moving to a pure higher-order setting requires less reduction steps than in the first-order concurrency of \sessp; in the presence of shared names, moving to a first-order setting brings the need of setting up and handling replicated processes which will eventually lead to garbage expressions. In contrast, the mechanism present in \HO works efficiently regardless of the linear or shared properties of the name that is ``packed'' into the abstraction. 
@@ -94,56 +89,49 @@ to a purely linear setting, and to see what occurs.
 In the case of linear values we have:
 
 \begin{eqnarray*}
-	\bout{s'}{s} \inact \Par \binp{\dual{s'}}{x} \bout{x}{a} \inact
+	Q_1 & = & \bout{s'}{s} \inact \Par \binp{\dual{s'}}{x} \bout{x}{a} \inact
 	\hby{\tau}
-	\bout{s}{a} \inact
-\end{eqnarray*}
-and \HO process
-\begin{eqnarray*}
-	\bout{s}{\abs{x}{P}} \inact \Par \binp{\dual{s}}{x} \appl{x}{a}
-	&\hby{\tau}&
-	\appl{(\abs{x}{P})}{a}\\
-	&\hby{\tau}&
+	\bout{s}{a} \inact \\
+	Q_2 & = & \bout{s}{\abs{x}{P}} \inact \Par \binp{\dual{s}}{x} \appl{x}{a}
+	\hby{\tau}
+	\appl{(\abs{x}{P})}{a}
+	\hby{\tau}
 	P \subst{a}{x}
 \end{eqnarray*}
-
-If we consider the encodings \HO and \sessp, respectively
-we get:
+$Q_1$ is a \sessp process; $Q_2$ is an \HO processs.
+If we consider their encodings into \HO and \sessp, respectively,
+we obtain:
 \[
 \begin{array}{l}
-	\bout{s'}{\abs{z}{\binp{z}{y} \appl{y}{s}}} \inact \Par \binp{\dual{s'}}{x} \newsp{t}{\appl{x}{t} \Par \bout{\dual{t}}{\abs{x}{\bout{x}{\abs{z}{\binp{z}{y} \appl{y}{a}}} \inact}} \inact}\\
-	\hby{\tau}\\
+	\map{Q_1}_f^{1} = \bout{s'}{\abs{z}{\binp{z}{y} \appl{y}{s}}} \inact \Par \binp{\dual{s'}}{x} \newsp{t}{\appl{x}{t} \Par \bout{\dual{t}}{\abs{x}{\bout{x}{\abs{z}{\binp{z}{y} \appl{y}{a}}} \inact}} \inact}\\
+	\hby{\stau}\\
 	\newsp{t}{\appl{(\abs{z}{\binp{z}{y} \appl{y}{s}})}{t} \Par \bout{\dual{t}}{\abs{x}{\bout{x}{\abs{z}{\binp{z}{y} \appl{y}{a}}} \inact)}} \inact}\\
-	\hby{\tau}\\
+	\hby{\btau}\\
 	\newsp{t}{\binp{t}{y} \appl{y}{s} \Par \bout{\dual{t}}{\abs{x}{\bout{x}{\abs{z}{\binp{z}{y} \appl{y}{a}}} \inact}} \inact}\\
-	\hby{\tau}\\
+	\hby{\stau}\\
 	\appl{\abs{x}{\bout{x}{\abs{z}{\binp{z}{y} \appl{y}{a}}} \inact}}{s}
 	\\
-	\hby{\tau}
+	\hby{\btau}
 	\\
 	\bout{s}{\abs{z}{\binp{z}{y} \appl{y}{a}}} \inact
 \end{array}
 \]
 and 
-\[
-\begin{array}{l}
-	\newsp{t}{\bout{s}{t} \inact \Par \binp{\dual{t}}{y} \binp{y}{x} P} \Par \binp{\dual{s}}{x} \newsp{s}{\bout{x}{s} \bout{\dual{s}}{a} \inact}
+\begin{eqnarray*}
+	\pmap{Q_2}{2} & = & \newsp{t}{\bout{s}{t} \inact \Par \binp{\dual{t}}{y} \binp{y}{x} P} \Par \binp{\dual{s}}{x} \newsp{s}{\bout{x}{s} \bout{\dual{s}}{a} \inact}
 	\\
-	\hby{\tau}
-	\\
+	& \hby{\stau} & 
 	\newsp{t}{\binp{\dual{t}}{y} \binp{y}{x} P \Par \newsp{s}{\bout{t}{s} \bout{\dual{s}}{a} \inact}}
 	\\
-	\hby{\tau}
-	\\
+	& \hby{\stau} & 
 	\newsp{s}{\binp{s}{x} P \Par \bout{\dual{s}}{a} \inact}
 	\\
-	\hby{\tau}
-	\\
+	& \hby{\stau} & 
 	P\subst{a}{x}
-\end{array}
-\]
+\end{eqnarray*}
 
-\subsection{Labelled Transition Correspondence}
+
+\jparagraph{Labelled Transition Correspondence}
 
 In addition to preciseness we can develop one more encodability
 result for the translation of \HOp into \HO, which is
