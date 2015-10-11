@@ -118,10 +118,10 @@ the hole $\hole$ in $\C$ with $P$.
 \subsection{Two Equivalence Relations: $\fwb$ and $\hwb$}\label{ss:equiv}
 
 \jparagraph{A Typed Labelled Transition System}
-We have characterised
+In~\cite{characteristic_bis} we have characterised
 reduction-closed, barbed congruence for \HOp
 via a typed relation called
-{\em characteristic bisimilarity}~\cite{characteristic_bis}. 
+{\em characteristic bisimilarity}.
 %The definition of characteristic bisimilarity 
 Its definition 
 uses a \emph{typed}
@@ -131,8 +131,7 @@ Transitions in this LTS are denoted
 $\Gamma; \es; \Delta \proves P \hby{\ell} \Delta' \proves P' \hastype \Delta'$.
 The main intuition %for its definition  
 is that the transitions 
-of a typed process
- should be enabled by its associated typing environment:
+of a typed process should be enabled by its associated typing environment:
 %
 \[
 	\tree {
@@ -160,16 +159,16 @@ if the channel is typed with an input prefix and the input value is either
 a name $m$, a \emph{characteristic value} $\omapchar{U}$,  or a \emph{trigger value} (the abstraction
 $\abs{{x}}{\binp{t}{y} (\appl{y}{{x}})}$). 
 A characteristic value
-(cf.~Def.~11~in~\cite{characteristic_bis})
 is the {simplest} process that  inhabits a type (in this case, the
 type $U$ carried by the session input prefix). The above rule is used to limit
 the input actions that can be observed from a session input prefix.
-For full details of the labelled transition system see~\cite{characteristic_bis}.
+For full details of the labelled transition system and the characteristic process definition
+see \appref{app:behavioural} and~\cite{characteristic_bis}.
 Moreover, we define two \emph{trigger processes}:
 %
 \begin{eqnarray*}
 	\htrigger{t}{V}  & \defeq &  \hotrigger{t}{V} \label{eqb:0} \\
-	\ftrigger{t}{V}{U} & \defeq &  \fotrigger{t}{x}{s}{\btinp{U} \tinact}{V} 	\label{eqb:4}
+	\ftrigger{t}{V}{U} & \defeq &  \fotrigger{t}{x}{s}{\btinp{U} \tinact}{V} 	%\label{eqb:4}
 \end{eqnarray*}
 %
 \noi
@@ -230,10 +229,10 @@ characteristic bisimilarity was introduced in~\cite{characteristic_bis} (Def.~14
 	Characteristic bisimilarity, denoted by $\fwb$, is defined \jpc{by} replacing 
 	Clause 1) in \defref{d:hbw} with the following clause:\\[1mm]
 	Whenever 
-	$\horel{\Gamma}{\Delta_1}{P_1}{\hby{\news{\tilde{m_1}} \bactout{n}{\dk{V_1: U}}}}{\Delta_1'}{P_2}$ %with $\Gamma; \es; \Delta \proves V_1 \hastype U$,  
+	$\horel{\Gamma}{\Delta_1}{P_1}{\hby{\news{\tilde{m_1}} \bactout{n}{V_1: U}}}{\Delta_1'}{P_2}$ %with $\Gamma; \es; \Delta \proves V_1 \hastype U$,  
 	then there exist 
 	$Q_2$, $V_2$, $\Delta'_2$ such that \\
-	$\horel{\Gamma}{\Delta_2}{Q_1}{\Hby{\news{\tilde{m_2}}\bactout{n}{\dk{V_2: U}}}}{\Delta_2'}{Q_2}$ %with $\Gamma; \es; \Delta' \proves V_2 \hastype U$,  
+	$\horel{\Gamma}{\Delta_2}{Q_1}{\Hby{\news{\tilde{m_2}}\bactout{n}{V_2: U}}}{\Delta_2'}{Q_2}$ %with $\Gamma; \es; \Delta' \proves V_2 \hastype U$,  
 	and, for fresh $t$, \\[1mm]
 	$\begin{array}{lrlll}
 	\!\!\Gamma; \Delta''_1  \proves  {\newsp{\tilde{m_1}}{P_2 \Par 
@@ -245,9 +244,39 @@ $
 \end{definition}
 
 \begin{theorem}[\cite{KouzapasPY15}]
-Typed relations $\cong$, $\hwb$, and $\fwb$ coincide for \HOp processes.
+	Typed relations $\cong$, $\hwb$, and $\fwb$ coincide for \HOp processes.
 \end{theorem}
 
+
+\begin{remark}[Comparison between $\hwb$ and $\fwb$]
+	The difference between higher order bisimilarity
+	lies in the definition of the process trigger.
+	\begin{enumerate}
+		\item
+				Higher order bisimilarity trigger:
+				\[
+					\htrigger{t}{V}  \defeq  \hotrigger{t}{V}
+				\]
+				allows for the application of bound variable $x$,
+				making $\hwb$ not defined in the \sessp sub-calculus
+				of \HOp, but defined inside the \HO sub-calculus. 
+
+		\item	Characteristic bisimilarity trigger:
+				\[
+					\ftrigger{t}{V}{U} \defeq  \fotrigger{t}{x}{s}{\btinp{U} \tinact}{V}
+				\]
+				solves the problem in (1) by not using $x$ in the continuation
+				of fresh name input. This allows to input arbitrary, first- or
+				higher-order input on bound variable $x$.
+
+		\item	One may argue that trigger $\htrigger{t}{V}$ is
+				more efficient than $\ftrigger{t}{V}{U}$ because
+				of the fact that $\ftrigger{t}{V}{U}$ inputs a garbage
+				value that is not subsequently used.
+				This adds to the efficientcy of the \HO subcalculus
+				over the $\sessp$ subcalculus of \HOp.
+	\end{enumerate}
+\end{remark}
 
 %\begin{definition}[Characteristic Bisimilarity]\rm
 %	\label{d:fwb}
@@ -288,7 +317,7 @@ The auxiliary definition below allows us to distinguish two kinds of  internal t
 $\horel{\Gamma}{\Delta}{P}{\hby{\stau}}{\Delta'}{P'}$
 and $\horel{\Gamma}{\Delta}{P}{\hby{\btau}}{\Delta'}{P'}$, respectively).
 
-\begin{definition}[Deterministic Transition]\myrm
+\begin{definition}[Deterministic Transition]
 \label{def:dettrans}
 	Let  $\Gamma; \es; \Delta \proves P \hastype \Proc$ be a balanced \HOp process. 
 	Transition $\horel{\Gamma}{\Delta}{P}{\hby{\tau}}{\Delta'}{P'}$ is called:
@@ -349,7 +378,74 @@ and $\horel{\Gamma}{\Delta}{P}{\hby{\btau}}{\Delta'}{P'}$, respectively).
 	The proof for Part 2 follows from Part 1.
 	\qed
 \end{proof}
-}
+
+
+
+
+\begin{lemma}[Up-to Deterministic Transition]%\myrm
+	\label{lem:up_to_deterministic_transition}
+	Let $\horel{\Gamma}{\Delta_1}{P_1}{\ \Re\ }{\Delta_2}{Q_1}$ such
+	that if whenever:
+%
+	\begin{enumerate}
+		\item	$\forall \news{\tilde{m_1}} \bactout{n}{V_1}$ such that
+			$
+				\horel{\Gamma}{\Delta_1}{P_1}{\hby{\news{\tilde{m_1}} \bactout{n}{V_1}}}{\Delta_3}{P_3}
+			$
+			implies that $\exists Q_2, V_2$ such that
+			$
+				\horel{\Gamma}{\Delta_2}{Q_1}{\Hby{\news{\tilde{m_2}} \bactout{n}{V_2}}}{\Delta_2'}{Q_2}
+			$
+			and
+			$
+				\horel{\Gamma}{\Delta_3}{P_3}{\Hby{\dtau}}{\Delta_1'}{P_2}
+			$
+			and for fresh $t$:
+			$
+				\horel{\Gamma}{\Delta_1''}{\newsp{\tilde{m_1}}{P_2 \Par \htrigger{t}{V_1}}}
+				{\ \Re\ }
+				{\Delta_2''}{}{\newsp{\tilde{m_2}}{Q_2 \Par \htrigger{t}{V_2}}}
+%				\mhorel{\Gamma}{\Delta_1''}{\newsp{\tilde{m_1}}{P_2 \Par \hotrigger{t}{x}{s}{V_1}}}
+%				{\ \Re\ }
+%				{\Delta_2''}{}{\newsp{\tilde{m_2}}{Q_2 \Par \hotrigger{t}{x}{s}{V_2}}}
+			$
+%
+		\item	$\forall \ell \not= \news{\tilde{m}} \bactout{n}{V}$ such that
+			$
+				\horel{\Gamma}{\Delta_1}{P_1}{\hby{\ell}}{\Delta_3}{P_3}
+			$
+			implies that $\exists Q_2$ such that 
+			$
+				\horel{\Gamma}{\Delta_1}{Q_1}{\hat{\Hby{\ell}}}{\Delta_2'}{Q_2}
+			$
+			and
+			$
+				\horel{\Gamma}{\Delta_3}{P_3}{\Hby{\dtau}}{\Delta_1'}{P_2}
+			$
+			and
+			$\horel{\Gamma}{\Delta_1'}{P_2}{\ \Re\ }{\Delta_2'}{Q_2}$
+
+		\item	The symmetric cases of 1 and 2.
+	\end{enumerate}
+	Then $\Re\ \subseteq\ \wb$.
+\end{lemma}
+
+
+\begin{proof}
+	The proof is easy by considering the closure
+	\[
+		\Re^{\Hby{\dtau}} = \set{ \horel{\Gamma}{\Delta_1'}{P_2}{,}{\Delta_2'}{Q_1} \setbar \horel{\Gamma}{\Delta_1}{P_1}{\ \Re\ }{\Delta_2'}{Q_1},
+		\horel{\Gamma}{\Delta_1}{P_1}{\Hby{\dtau}}{\Delta_1'}{P_2} }
+	\]
+	We verify that $\Re^{\Hby{\dtau}}$ is a bisimulation with
+	the use of \propref{lem:tau_inert}.
+	\qed
+\end{proof}
+
+
+
+
+
 
 %\noi Precise encodings offer more detailed criteria and used for positive 
 %encodability results (\secref{sec:positive}).
