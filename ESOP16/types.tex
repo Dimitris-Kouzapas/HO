@@ -17,7 +17,7 @@ Our system distills the key features of~\cite{tlca07,MostrousY15} and so it is s
 
 %\subsection{Types}
 %\label{subsec:types}
-\jparagraph{Types.}
+%\jparagraph{Types.}
 The syntax of types of \HOp follows. We write $\Proc$ to denote the process type.
 \[
 	\begin{array}{rcl}
@@ -89,8 +89,8 @@ incorporating the fixed point construction
 
 %\subsection{Typing System of \HOp}
 %\label{subsec:typing}
-\jparagraph{Typing Environments and Judgements}
-We consider three kinds of environments, denoted $\Gamma$, $\Lambda$, and $\Delta$:
+%\jparagraph{Typing Environments / Judgements}
+We consider environments denoted $\Gamma$, $\Lambda$, and $\Delta$:
 \[
 	\begin{array}{l}
 		\Lambda \bnfis  \emptyset \bnfbar \Lambda \cat \AT{x}{\lhot{C}}
@@ -132,13 +132,15 @@ We are interested in \emph{balanced} session environments:
 \end{definition}
 
 Given the above intuitions for environments, 
-the typing judgements for values $V$ and processes $P$ are self-explanatory:
+the typing judgements for values $V$ and processes $P$ are self-explanatory.
+They are denoted 
+$\Gamma; \Lambda; \Delta \proves V \hastype U$ and $\Gamma; \Lambda; \Delta \proves P \hastype \Proc$.
 %
-\begin{center}
-	\begin{tabular}{c}
-		$\Gamma; \Lambda; \Delta \proves V \hastype U \qquad \qquad \qquad \qquad \Gamma; \Lambda; \Delta \proves P \hastype \Proc$
-	\end{tabular}
-\end{center}
+%\begin{center}
+%	\begin{tabular}{c}
+%		$\Gamma; \Lambda; \Delta \proves V \hastype U \qquad \qquad \qquad \qquad \Gamma; \Lambda; \Delta \proves P \hastype \Proc$
+%	\end{tabular}
+%\end{center}
 %%
 %\noi The first judgement states that under environments $\Gamma; \Lambda; \Delta$ value $V$
 %has type $U$, whereas the second judgement states that under
@@ -147,51 +149,52 @@ the typing judgements for values $V$ and processes $P$ are self-explanatory:
 %\smallskip
 
 \input{figures/type_system_selected}
-\jparagraph{Typing Rules} 
-Selected rules for the typing system are given in \figref{fig:typerulesmys}; 
+%\jparagraph{Typing Rules} 
+
+Selected typing rules are given in \figref{fig:typerulesmys}; 
 see \appref{app:typrules} for a full account.
 %Types for session names/variables $u$ and
 %directly derived from the linear part of the typing
 %environment, i.e.~type maps $\Delta$ and $\Lambda$.
 %Rules $\trule{Sess, Sh, LVar}$ are name and variable introduction rules. 
 The shared type $\shot{C}$ %for shared higher order values $V$
-is derived using rule $\trule{Prom}$ only  
+is derived using rule \textsc{(Prom)} only  
 if the value has a linear type with an empty linear
 environment.
-Rule~$\trule{EProm}$ allows us to freely use a linear
+Rule~\textsc{(EProm)} allows us to freely use a linear
 type variable as shared.
 %
-Abstraction values are typed with rule~$\trule{Abs}$.
+Abstraction values are typed with rule~\textsc{(Abs)}.
 %The key type for an abstraction is the type for
 %the bound variables of the abstraction, i.e.~for
 %bound variable type $C$ the abstraction
 %has type $\lhot{C}$.
 Application typing
-is governed by rule $\trule{App}$: we expect
+is governed by rule~\textsc{(Abs)}: we expect
 the type $C$ of an application name $u$ 
 to match the type $\lhot{C}$ or $\shot{C}$
 of the application variable $x$.
 %
 %A process prefixed with a session send operator $\bout{k}{V} P$
 %is typed using rule $\trule{Send}$.
-In rule $\trule{Send}$, 
+In rule~\textsc{(Send)}, 
 the type $U$ of a send value $V$ should appear as a prefix
 on the session type $\btout{U} S$ of $u$.
-Rule $\trule{Rcv}$ is its dual.  
+Rule~\textsc{(Rcv)} is its dual.  
 %defined the typing for the 
 %reception of values $\binp{u}{V} P$.
 %the type $U$ of a receive value should 
 %appear as a prefix on the session type $\btinp{U} S$ of $u$.
 We use a similar approach with session prefixes
 to type interaction between shared names as defined 
-in rules $\trule{Req}$ and $\trule{Acc}$,
+in rules~\textsc{(Req)} and~\textsc{(Acc)},
 where the type of the sent/received object 
-($S$ and $L$, respectively) should
+($S$ and $L$, resp.) should
 match the type of the sent/received subject
-($\chtype{S}$ and $\chtype{L}$, respectively).
+($\chtype{S}$ and $\chtype{L}$, resp.).
 
 
-\begin{definition}[Reduction of Session Environments]%\rm
+\begin{definition}%[Reduction of Session Environments]%\rm
 	\label{def:ses_red}
 	We define the relation $\red$ on session environments as:
 	\begin{eqnarray*}
@@ -219,8 +222,8 @@ match the type of the sent/received subject
 %\smallskip
 
 %The following result %Theorem 7.3 in M\&Y
-\noi We state the type soundness result for \HOp; it implies 
-the type soundness of the sub-calculi \HO, \sessp, and $\CAL^{-\mathsf{sh}}$. 
+\noi We state  type soundness for \HOp; it implies 
+type soundness for \HO, \sessp, and $\CAL^{-\mathsf{sh}}$. 
 
 %\smallskip
 
