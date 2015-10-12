@@ -1,23 +1,26 @@
 % !TEX root = main.tex
-\noi This section studies %two extensions of \HOp: 
-(i)~the encoding of \HOpp into \HOp
-%with higher-order applications/abstractions 
-%and 
-(ii)~the encoding of \PHOp
-,i.e.~ polyadic \HOp, into \HOp.
-We also show that using encoding composition we can encode
+\subsection{Precise Encodings of $\HOpp$ and $\PHOp$ into $\HOp$}
+\noi We formalize  %two extensions of \HOp: 
+encodings of \HOpp into \HOp
+and into \PHOp. These encodings are shown to be precise. 
+We also exploit encoding composition to encode
 \PHOpp into \HO and \sessp.
-%with polyadicity.
-%In both cases, we detail required modifications in the syntax
-%and types, and
-%describe further encodability results.
-%These extensions are denoted \HOpp and \PHOp, respectively. 
- 
-\subsection{Encoding  $\HOpp$ into $\HOp$}
-\label{subsec:hop}
-\noi 
-The calculus \HOpp 
-extends \HOp with higher-order abstractions and applications.
+We consider the following 
+typed calculi (cf.~\defref{d:tcalculus}):
+\begin{enumerate}[-]
+\item $\tyl{L}_{\HOpp}=\calc{\HOpp}{{\cal{T}}_4}{\hby{\ell}}{\hwb}{\proves}$,
+where 
+	${\cal{T}}_4$ is a set of types of $\HOpp$;  
+the typing $\proves$ is defined in 
+\figref{fig:typerulesmy} with extended rules \trule{Abs} and \trule{App}.
+
+\item 
+	$\tyl{L}_{\PHOp}=\calc{\PHOp}{{\cal{T}}_5}{\hby{\ell}}{\hwb}{\proves}$,
+where 
+	${\cal{T}}_5$ is the set of types of $\PHOp$;  
+the typing $\proves$ is defined in
+\figref{fig:typerulesmy} with polyadic types.
+\end{enumerate}
 
 %\myparagraph{Syntax, Operational Semantics and Types.}
 %\noi First, the syntax of \figref{fig:syntax} extends 
@@ -47,19 +50,80 @@ extends \HOp with higher-order abstractions and applications.
 %We can then use the same definitions for $\cong$, $\wbc$, $\hwb$ and $\fwb$. 
 %\smallskip 
 
-\myparagraph{Encoding \HOpp into \HOp.} 
-Let
-	$\tyl{L}_{\HOpp}=\calc{\HOpp}{{\cal{T}}_4}{\hby{\ell}}{\wb_H}{\proves}$
-where 
-	${\cal{T}}_4$ is a set of types of $\HOpp$;  
-the typing $\proves$ is defined in 
-\figref{fig:typerulesmy} with extended rules \trule{Abs} and \trule{App}. 
-We define 
-the typed encoding
-$\enco{\map{\cdot}^{3}, \mapt{\cdot}^{3}}: \HOpp \to \HOp$
+\jparagraph{Encoding \HOpp into \HOp} 
+The typed encoding
+$\enco{\map{\cdot}^{3}, \mapt{\cdot}^{3}}: \HOpp \to \HOp$ is defined
 in \figref{f:enc:hopip_to_hopi}.
-By \propref{pro:composition}, 
-we derive the following theorem. 
+It satisfies the following properties:
+
+%HERE WE NEED TO ADD AN EXCERPT OF \propref{app:prop:op_corr_HOpp_to_HOp}, BUT WE NEED TO FIX MACROS FIRST.
+
+\begin{proposition}[Operational Correspondence: From \HOpp to \HOp - Excerpt] %\myrm
+	%\label{app:prop:op_corr_HOpp_to_HOp}
+	Let $P$ be an \HOpp process such that $\Gamma; \es; \Delta \proves P$.
+	\begin{enumerate}[1.]
+		\item	Completeness: 
+			$\horel{\Gamma}{\Delta}{P}{\hby{\ell}}{\Delta'}{P'}$ implies
+			\begin{enumerate}[a)]
+%				\item	If $\ell \in \set{\news{\tilde{m}} \bactout{n}{\abs{x}{Q}}, \bactinp{n}{\abs{x}{Q}}}$ then
+%%					$\exists l' $ such that
+%					$\horel{\tmap{\Gamma}{3}}{\tmap{\Delta}{3}}{\pmap{P}{3}}{\hby{\ell'}}
+%					{\tmap{\Delta'}{3}}{\pmap{P'}{3}}$ with $\mapa{\ell}^{3} = \ell'$.
+%				\item	If $\ell \notin \set{\news{\tilde{m}} \bactout{n}{\abs{x}{Q}}, \bactinp{n}{\abs{x}{Q}}, \tau}$ then
+%					$\horel{\tmap{\Gamma}{3}}{\tmap{\Delta}{3}}{\pmap{P}{3}}{\hby{\ell}}
+%					{\tmap{\Delta'}{3}}{\pmap{P'}{3}}$.
+%
+				\item	If $\ell = \btau$ then
+					$\horel{\tmap{\Gamma}{3}}{\tmap{\Delta}{3}}{\pmap{P}{3}}{\hby{\tau}}
+					{\Delta''}{R}$ and
+					$\horel{\tmap{\Gamma}{3}}{\tmap{\Delta'}{3}}{\pmap{P'}{3}}{\hwb}{\Delta''}{R}$, for some $R$;
+
+				\item	If $\ell = \tau$ and $\ell \not= \btau$ then %and $\hby{\ell}$ is not a \betatran then
+					$\horel{\tmap{\Gamma}{3}}{\tmap{\Delta}{3}}{\pmap{P}{3}}{\hby{\tau}}
+					{\tmap{\Delta'}{3}}{\pmap{P'}{3}}$.
+			\end{enumerate}
+
+		\item Soundness: $\horel{\tmap{\Gamma}{3}}{\tmap{\Delta}{3}}{\pmap{P}{3}}{\hby{\tau}}
+			{\tmap{\Delta''}{3}}{Q}$ implies either 
+%
+			\begin{enumerate}[a)]
+%				\item	If $\ell \in \set{\news{\tilde{m}} \bactout{n}{\abs{x}{Q}}, \bactinp{n}{\abs{x}{Q}}, \tau}$
+%					then
+%					$\horel{\Gamma}{\Delta}{P}{\hby{\ell'}}{\Delta'}{P'}$
+%%					and $\horel{\tmap{\Gamma}{3}}{\tmap{\Delta''}{3}}{Q}{\hby{\hat{\ell}}}{\tmap{\Delta'}{3}}{\pmap{P'}{3}}$
+%					with $\mapa{\ell'}^{3} = \ell$ and $Q \scong \pmap{P'}{3}$.
+%
+%				\item	If $\ell \notin \set{\news{\tilde{m}} \bactout{n}{\abs{x}{R}}, \bactinp{n}{\abs{x}{R}}, \tau}$
+%					then
+%					$\horel{\Gamma}{\Delta}{P}{\hby{\ell}}{\Delta'}{P'}$ and $Q \scong \pmap{P'}{3}$.
+%%					and $\horel{\tmap{\Gamma}{3}}{\tmap{\Delta''}{3}}{Q}{\hby{\hat{\ell}}}{\tmap{\Delta'}{3}}{\pmap{P'}{3}}$.
+%
+				\item	
+					$\horel{\Gamma}{\Delta}{P}{\hby{\tau}}{\Delta'}{P'}$ with $Q \scong \pmap{P'}{3}$
+				\item 
+					$\horel{\Gamma}{\Delta}{P}{\hby{\btau}}{\Delta'}{P'}$ and
+					$\horel{\tmap{\Gamma}{3}}{\tmap{\Delta''}{3}}{Q}{\hby{\btau}}
+					{\tmap{\Delta''}{3}}{\pmap{P'}{3}}$.
+			\end{enumerate}
+	\end{enumerate}
+\end{proposition}
+
+\begin{proposition}[Full Abstraction. From \HOpp to \HOp]%\myrm
+	%\label{app:prop:fulla_HOpp_to_HOp}
+	Let $P, Q$ be \HOpp processes with $\Gamma; \es; \Delta_1 \proves P \hastype \Proc$ and 
+	$\Gamma; \es; \Delta_2 \proves Q \hastype \Proc$. \\
+	Then 
+	$\horel{\Gamma}{\Delta_1}{P}{\hwb}{\Delta_2}{Q}$ if and only if $\horel{\tmap{\Gamma}{3}}{\tmap{\Delta_1}{3}}{\pmap{P}{3}}{\hwb}{\tmap{\Delta_2}{3}}{\pmap{Q}{3}}$
+\end{proposition}
+
+\input{figures/HOpp_to_HOp}
+
+Using the above propositions,  
+\thmsref{f:enc:hopitoho}
+and 
+\ref{f:enc:hotopi},
+and \propref{pro:composition}, 
+we derive the following: % theorem:
 
 %\smallskip 
 
@@ -72,15 +136,14 @@ we derive the following theorem.
 	are also precise. 
 \end{theorem}
 %\smallskip 
-\input{figures/HOpp_to_HOp}
 
-\subsection{Encoding Polyadic $\HOp$ into $\HOp$}
-\label{subsec:pho}
+
+
 %\noi Embeddings of polyadic name passing into monadic name passing are
 %well-studied. % in the literature. 
 %Using a linear typing, precise
 %encodings (including full abstraction) can be obtained~\cite{Yoshida96}.
-Here we summarise how $\PHOp$ can be encoded into $\HOp$. 
+%Here we summarise how $\PHOp$ can be encoded into $\HOp$. 
 %The syntax of 
 %$\HOp$ is extended %from \HOp by including 
 %with
@@ -117,20 +180,100 @@ Here we summarise how $\PHOp$ can be encoded into $\HOp$.
 %for some
 %$P_1, P_2, \ldots, P_m$.
 
-Let
-	$\tyl{L}_{\PHOp}=\calc{\PHOp}{{\cal{T}}_5}{\hby{\ell}}{\wb_H}{\proves}$
-where 
-	${\cal{T}}_5$ is a set of types of $\HOpp$;  
-the typing $\proves$ is defined in
-\figref{fig:typerulesmy} with polyadic types. 
-We define the typed encoding
+\jparagraph{Encoding $\PHOp$ into $\HOp$}
+\label{subsec:pho}
+ We define the typed encoding
 	$\enco{\map{\cdot}^{4}, \mapt{\cdot}^{4}}: \PHOp \to \HOp$ 
 in \figref{f:enc:poltomon}.
-We give the dyadic case (tuples of length 2), for simplicity;
+For simplicity, we give the dyadic case (tuples of length 2);
 the general case is as expected.
-Then we have:
+Then encoding of $\PHOp$  satisfies the following property:
 
-\begin{theorem}[Encoding of \pHOp into \HOp]
+%HERE WE NEED TO ADD AN EXCERPT OF \propref{app:prop:op_corr_pHOp_to_HOp}, BUT WE NEED TO FIX MACROS FIRST.
+
+\begin{proposition}[Operational Correspondence: From \PHOp to \HOp - Excerpt]\myrm
+	%\label{app:prop:op_corr_pHOp_to_HOp}
+Let $\Gamma; \es; \Delta \proves P$.
+	\begin{enumerate}[1.]
+		\item	Completeness: 
+			$\horel{\Gamma}{\Delta}{P}{\hby{\ell}}{\Delta'}{P'}$ implies
+%
+			\begin{enumerate}[a)]
+%				\item	If $\ell = \news{\tilde{m}'} \bactout{n}{\tilde{m}}$ then
+%					$\horel{\tmap{\Gamma}{4}}{\tmap{\Delta}{4}}{\pmap{P}{4}}{\hby{\ell_1} \dots \hby{\ell_n}}{\tmap{\Delta'}{4}}{\pmap{P}{4}}$
+%					with $\mapa{\ell}^{4} = \ell_1 \dots \ell_n$.
+%
+%				\item	If $\ell = \bactinp{n}{\tilde{m}}$ then
+%					$\horel{\tmap{\Gamma}{4}}{\tmap{\Delta}{4}}{\pmap{P}{4}}{\hby{\ell_1} \dots \hby{\ell_n}}{\tmap{\Delta'}{4}}{\pmap{P}{4}}$
+%					with $\mapa{\ell}^{4} = \ell_1 \dots \ell_n$.
+%
+%				\item	If $\ell \in \set{\news{\tilde{m}} \bactout{n}{\abs{\tilde{x}}{R}}, \bactinp{n}{\abs{\tilde{x}}{R}}}$ then
+%%					$\exists l' $ such that
+%					$\horel{\tmap{\Gamma}{4}}{\tmap{\Delta}{4}}{\pmap{P}{4}}{\hby{\ell'}}
+%					{\tmap{\Delta'}{4}}{\pmap{P'}{4}}$ with $\mapa{\ell}^{4} = \ell'$.
+%
+%				\item	If $\ell \in \set{\bactsel{n}{l}, \bactbra{n}{l}}$ then
+%					$\horel{\tmap{\Gamma}{4}}{\tmap{\Delta}{4}}{\pmap{P}{4}}{\hby{\ell}}
+%					{\tmap{\Delta'}{4}}{\pmap{P'}{4}}$.
+
+				\item	If $\ell = \btau$ then %either
+					$\horel{\tmap{\Gamma}{4}}{\tmap{\Delta}{4}}{\pmap{P}{4}}{\hby{\btau} \hby{\stau}  \hby{\stau}}
+					{\tmap{\Delta'}{4}}{\pmap{P'}{4}}$ %with $\mapa{\ell} = \btau, \stau \dots \stau$.
+
+				\item	If $\ell = \tau$ then %and $\hby{\ell}$ is not a \betatran then
+					$\horel{\tmap{\Gamma}{4}}{\tmap{\Delta}{4}}{\pmap{P}{4}}{\hby{\tau}\hby{\tau} \hby{\tau}}
+					{\tmap{\Delta'}{4}}{\pmap{P'}{4}}$ %with $\mapa{\ell}^{4} = \tau \dots \tau$.
+			\end{enumerate}
+
+		\item	%Let $\Gamma; \es; \Delta \proves P$.
+		Soundness: 
+			$\horel{\tmap{\Gamma}{4}}{\tmap{\Delta}{4}}{\pmap{P}{4}}{\hby{\ell}}
+			{\tmap{\Delta_1}{4}}{P_1}$ implies
+%
+			\begin{enumerate}[a)]
+%				\item	If $\ell \in \set{\bactinp{n}{m}, \bactout{n}{m}, \news{m} \bactout{n}{m}}$ then
+%					$\horel{\Gamma}{\Delta}{P}{\hby{\ell}}{\Delta'}{P'}$ and\\
+%					$\horel{\tmap{\Gamma}{4}}{\tmap{\Delta_1}{4}}{P_1}{\hby{\ell_2} \dots \hby{\ell_n}}
+%					{\tmap{\Delta'}{4}}{\tmap{P'}{4}}$ with $\mapa{\ell}^{4} = \ell_1 \dots \ell_n$.
+%
+%				\item	If $\ell \in \set{\news{\tilde{m}} \bactout{n}{\abs{x}{R}}, \bactinp{n}{\abs{x}{R}}}$
+%					then
+%					$\horel{\Gamma}{\Delta}{P}{\hby{\ell'}}{\Delta'}{P'}$
+%					with $\mapa{\ell'}^{4} = \ell$ and $P_1 \scong \pmap{P'}{4}$.
+%
+%				\item	If $\ell \in \set{\bactsel{n}{l}, \bactbra{n}{l}}$
+%					then
+%					$\horel{\Gamma}{\Delta}{P}{\hby{\ell}}{\Delta'}{P'}$ and $P_1 \scong \pmap{P'}{4}$.
+%%					and $\horel{\tmap{\Gamma}{3}}{\tmap{\Delta''}{3}}{Q}{\hby{\hat{\ell}}}{\tmap{\Delta'}{3}}{\pmap{P'}{3}}$.
+%
+				\item	If $\ell = \btau$ then
+					$\horel{\Gamma}{\Delta}{P}{\hby{\btau}}{\Delta'}{P'}$ and
+					$\horel{\tmap{\Gamma}{4}}{\tmap{\Delta_1}{4}}{P_1}{\hby{\stau} \hby{\stau}}
+					{\tmap{\Delta'}{4}}{\tmap{P'}{4}}$ %with $\mapa{\ell}^{4} = \btau, \stau \dots \stau$.
+
+				\item	If $\ell = \tau$ then
+					$\horel{\Gamma}{\Delta}{P}{\hby{\tau}}{\Delta'}{P'}$ and
+					$\horel{\tmap{\Gamma}{4}}{\tmap{\Delta_1}{4}}{P_1}{\hby{\tau} \hby{\tau} \hby{\tau}}
+					{\tmap{\Delta'}{4}}{\tmap{P'}{4}}$ %with $\mapa{\ell}^{4} = \tau \dots \tau$.
+			\end{enumerate}
+	\end{enumerate}
+\end{proposition}
+
+\begin{proposition}[Full Abstraction: From \PHOp to \HOp]%\myrm
+	%\label{app:prop:fulla_pHOp_to_HOp}
+	Let $P, Q$ be \PHOp process with $\Gamma; \es; \Delta_1 \proves P \hastype \Proc$ and 
+	$\Gamma; \es; \Delta_2 \proves Q \hastype \Proc$. Then we have: \\
+	$\horel{\Gamma}{\Delta_1}{P}{\hwb}{\Delta_2}{Q}$ if and only if $\horel{\tmap{\Gamma}{4}}{\tmap{\Delta_1}{4}}{\pmap{P}{4}}{\hwb}{\tmap{\Delta_2}{4}}{\pmap{Q}{4}}$.
+\end{proposition}
+
+%Based on these propositions,we have:
+Using the above propositions,  
+\thmsref{f:enc:hopitoho}
+and 
+\ref{f:enc:hotopi},
+and \propref{pro:composition}, 
+we derive the following: 
+\begin{theorem}[Encoding of \PHOp into \HOp]
 	\label{f:enc:phopiptohopi}
 	The encoding from
 		$\tyl{L}_{\PHOp}$ into $\tyl{L}_{\HOp}$ (cf. \figref{f:enc:poltomon})
@@ -141,10 +284,9 @@ Then we have:
 	and $\tyl{L}_{\sessp}$ 
 	are also precise. 
 \end{theorem}
-
 By combining Thms.~\ref{f:enc:hopiptohopi} and~\ref{f:enc:phopiptohopi},
-we can easily extend the preciseness to 
-$\PHOpp$, the super-calculus of $\HOpp$ and $\PHOp$.
+we can extend preciseness to the super-calculus
+$\PHOpp$.
 % (denoted by   in Fig.~\ref{fig:express}) 
 
 

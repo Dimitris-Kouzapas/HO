@@ -1,10 +1,30 @@
 % !TEX root = main.tex
-\noi This section presents two encodability results:
-(1)~The higher-order name-passing communication with recursion (\HOp) into 
-the higher-order communication without name-passing nor 
-recursion (\HO) (\secref{subsec:HOpi_to_HO}); and 
-(2)~\HOp into the first-order name-passing communication
+\noi We present two encodability results:
+(1)~higher-order communication with both name-passing and recursion (\HOp) into 
+higher-order communication without name-passing nor recursion (\HO) (\secref{subsec:HOpi_to_HO}); and 
+(2)~\HOp into the first-order calculus with name-passing  
 with recursion (\sessp) (\secref{subsec:HOp_to_sessp}).
+We consider the following typed calculi (cf.~\defref{d:tcalculus}):
+\begin{enumerate}[-]
+	\item
+	$\tyl{L}_{\HOp}=\calc{\HOp}{{\cal{T}}_1}{\hby{\tau}}{\hwb}{\proves}$,
+	\item
+	$\tyl{L}_{\HO}=\calc{\HO}{{\cal{T}}_2}{\hby{\tau}}{\hwb}{\proves}$,
+	\item
+	$\tyl{L}_{\sessp}=\calc{\sessp}{{\cal{T}}_3}{\hby{\tau}}{\fwb}{\proves}$ 
+\end{enumerate}
+%
+where: 
+${\cal{T}}_1$, ${\cal{T}}_2$, 
+and ${\cal{T}}_3$
+are sets of types of $\HOp$, $\HO$, and $\sessp$, respectively. 
+The typing $\proves$ is defined in \figref{fig:typerulesmy}.
+The LTSs follow the intuitions given in \secref{ss:equiv}.
+%are as in \defref{def:rlts}, 
+Moreover, 
+$\hwb$ is as in \defref{d:hbw}, and 
+$\fwb$ is as in \defref{d:fwb}.
+
 
 \begin{comment}
 \dk{
@@ -160,8 +180,7 @@ and $\Delta = \{n_i:S_i\}_{1\leq i\leq m}$.
 \noi Note that $\Delta$ in $\varp{X}:\Delta$ is mapped to a non-tail
 recursive session type with variable $z_X$ (see recursion mappings in \figref{f:enc:hopi_to_ho}).
 Non-tail
-recursive session types \jpc{have been} studied in
-\cite{DBLP:journals/corr/abs-1202-2086,TGC14};
+recursive session types \jpc{have been} studied in~\cite{DBLP:journals/corr/abs-1202-2086,TGC14};
 \jpc{to our knowledge,}
 this is the first application in the
 context of higher-order session types.
@@ -231,15 +250,13 @@ We illustrate the encoding by means of an example.
 
 \input{encoding_example}
 
-We now move on to describe the properties of the encoding. 
+We now describe the properties of the encoding. 
 First, we state operational correspondence with respect to reductions; 
 the full statement (and proof) can be found in~\cite{KouzapasPY15}.
 
 \begin{proposition}[\HOp into \HO: Operational Correspondence - Excerpt]%\myrm
 	\label{prop:op_corr_HOp_to_HO}
-	Let $P$ be a \HOp process such that $\Gamma; \emptyset; \Delta \proves P \hastype \Proc$.
-	
-%
+	Let $P$ be an \HOp process such that $\Gamma; \emptyset; \Delta \proves P \hastype \Proc$.
 	\begin{enumerate}[1.]
 		\item Completeness: 
 			Suppose $\horel{\Gamma}{\Delta}{P}{\hby{\tau}}{\Delta'}{P'}$. Then we have:
@@ -250,7 +267,7 @@ the full statement (and proof) can be found in~\cite{KouzapasPY15}.
 					then $\exists R$ s.t. \\
 					$\horel{\tmap{\Gamma}{1}}{\tmap{\Delta}{1}}{\pmapp{P}{1}{f}}{\hby{\tau}}{\mapt{\Delta}^{1}}{\newsp{\tilde{m}}{\pmapp{P_1}{1}{f} \Par R}}$,
 					and\\ 
-					$\horel{\tmap{\Gamma}{1}}{\tmap{\Delta}{1}}{\newsp{\tilde{m}}{\pmapp{P_1}{1}{f} \Par R}}{\hby{\btau} \hby{\stau} \hby{\btau}}
+					$\horel{\tmap{\Gamma}{1}}{\tmap{\Delta}{1}}{\newsp{\tilde{m}}{\pmapp{P_1}{1}{f} \Par R}}{\hby{\stau} \hby{\btau} \hby{\btau}}
 					{\mapt{\Delta}^{1}}{\newsp{\tilde{m}}{\pmapp{P_1}{1}{f} \Par \pmapp{P_2}{1}{f}\subst{m}{x}}}$.
 			
 				\item
@@ -269,7 +286,7 @@ the full statement (and proof) can be found in~\cite{KouzapasPY15}.
 			Then $\Delta' = \Delta$ and 
 					either
 %
-					\begin{enumerate}[(a)]
+					\begin{enumerate}[a)]
 						\item	$\exists P'$ s.t. 
 							$\horel{\Gamma}{\Delta}{P}{\hby{\tau}}{\Delta}{P'}$,
 							and $Q = \map{P'}^{1}_f$.	
@@ -277,7 +294,7 @@ the full statement (and proof) can be found in~\cite{KouzapasPY15}.
 						\item
 							$\exists P_1, P_2, x, m, Q'$ s.t. 
 							$\horel{\Gamma}{\Delta}{P}{\hby{\tau}}{\Delta}{\newsp{\tilde{m}}{P_1 \Par P_2\subst{m}{x}} }$, and\\
-							$\horel{\tmap{\Gamma}{1}}{\tmap{\Delta}{1}}{Q}{\hby{\btau} \hby{\stau} \hby{\btau}}{\tmap{\Delta}{1}}{\pmapp{P_1}{1}{f} \Par \pmapp{P_2\subst{m}{x}}{1}{f}}$ 
+							$\horel{\tmap{\Gamma}{1}}{\tmap{\Delta}{1}}{Q}{\hby{\stau} \hby{\btau} \hby{\btau}}{\tmap{\Delta}{1}}{\pmapp{P_1}{1}{f} \Par \pmapp{P_2\subst{m}{x}}{1}{f}}$ 
 %							$Q = \map{P_1}^{1}_f \Par Q'$, where $Q'  \Hby{} $.
 
 %						\item $\exists P_1, P_2, x, R$ s.t. 
@@ -296,11 +313,10 @@ the full statement (and proof) can be found in~\cite{KouzapasPY15}.
 \end{proposition}
 
 \noi Observe how we can explicitly distinguish the role of finite, deterministic reductions 
-(denoted $\hby{\btau}$) 
-in both soundness and completeness statements.
+(\defref{def:dettrans}) in both soundness and completeness statements.
 
 Using operational correspondence, we can show \emph{full abstraction}:
-\begin{proposition}[Full Abstraction, \HOp into \HO]%\myrm
+\begin{proposition}[\HOp into \HO: Full Abstraction]%\myrm
 	\label{prop:fulla_HOp_to_HO}
 	Let $P_1, Q_1$ be \HOp processes. \\
 	$\horel{\Gamma}{\Delta_1}{P_1}{\hwb}{\Delta_2}{Q_1}$
@@ -308,7 +324,8 @@ Using operational correspondence, we can show \emph{full abstraction}:
 	$\horel{\tmap{\Gamma}{1}}{\tmap{\Delta_1}{1}}{\pmapp{P_1}{1}{f}}{\hwb}{\tmap{\Delta_2}{1}}{\pmapp{Q_1}{1}{f}}$.
 \end{proposition}
 
-Based on these propositions, we may state the main result of this section. See~\cite{KouzapasPY15} for details. 
+%Based on these propositions, w
+We may state the main result of this section. See~\cite{KouzapasPY15} for details. 
 
 \begin{theorem}[Precise Encoding of \HOp into \HO]
 \label{f:enc:hopitoho}
@@ -380,17 +397,12 @@ $\enco{\map{\cdot}^{2}, \mapt{\cdot}^{2} %, \mapa{\cdot}^{2}
 in \figref{f:enc:ho_to_sessp}. 
 \end{definition}
 
-\smallskip 
-\noi 
-Notice that $\mapa{\bactinp{n}{\abs{ x}{P}} }^2$ involves a fresh
-trigger name (linear or shared), 
-which denotes the location of $\pmap{P}{2}$. 
-%(a $\sessp$ process).
-Observe also how $\pmap{\appl{(\abs{x}{P})}{u}}{2}$ naturally induces a name substitution.
-\smallskip 
-
+%\smallskip 
 \input{figures/HOp_to_pi}
-
+\noi 
+%Notice that $\mapa{\bactinp{n}{\abs{ x}{P}} }^2$ involves a fresh trigger name (linear or shared),  which denotes the location of $\pmap{P}{2}$. 
+%(a $\sessp$ process).
+Observe how $\pmap{\appl{(\abs{x}{P})}{u}}{2}$ naturally induces a name substitution.
 We describe key properties of this encoding. First, operational correspondence:
 
 \begin{proposition}[\HOp into \sessp: Operational Correspondence - Excerpt]%\myrm
@@ -398,48 +410,52 @@ We describe key properties of this encoding. First, operational correspondence:
 	Let $P$ be an  $\HOp$ process such that  $\Gamma; \emptyset; \Delta \proves P \hastype \Proc$.
 	
 \begin{enumerate}[1.]
-\item Suppose $\horel{\Gamma}{\Delta}{P}{\hby{\tau}}{\Delta'}{P'}$. Then either:
+\item Completeness: Suppose $\horel{\Gamma}{\Delta}{P}{\hby{\ell}}{\Delta'}{P'}$. Then either:
 				\begin{enumerate}[a)]
-					\item	$\exists R$ such that
-						\[
-						\mhorel{\tmap{\Gamma}{2}}{\tmap{\Delta}{2}}{\pmap{P}{2}}
+				\item If $\ell = \tau$ then either
+				\begin{enumerate}[-]
+					\item	 %such that
+						$
+						\horel{\tmap{\Gamma}{2}}{\tmap{\Delta}{2}}{\pmap{P}{2}}
 						{\hby{\tau}}
 						{\tmap{\Delta'}{2}}{}{\newsp{\tilde{m}}{\pmap{P_1}{2} \Par \newsp{a}
 						{\pmap{P_2}{2}\subst{a}{x} \Par \repl{} \binp{a}{y} \binp{y}{x} \pmap{Q}{2}}}}
-						\]
+						$, for some  $P_1, P_2, Q$;
 
-					\item	$\exists R$ such that
-						\[
-						\mhorel{\tmap{\Gamma}{2}}{\tmap{\Delta}{2}}{\pmap{P}{2}}
+					\item	%$\exists R$ such that
+						$
+						\horel{\tmap{\Gamma}{2}}{\tmap{\Delta}{2}}{\pmap{P}{2}}
 						{\hby{\tau}}
 						{\tmap{\Delta'}{2}}{}{\newsp{\tilde{m}}{\pmap{P_1}{2} \Par \newsp{s}
 						{\pmap{P_2}{2}\subst{\dual{s}}{x} \Par \binp{s}{y} \binp{y}{x} \pmap{Q}{2}}}}
-						\]
+						$, for some  $P_1, P_2, Q$;
 
 					\item	%$\ell_1 = \btau$ and
-						$\tmap{\Gamma}{2};\, \tmap{\Delta}{2} \proves \pmap{P}{2}
-						\hby{\tau}
-						\tmap{\Gamma}{2};\, \tmap{\Delta'}{2} \proves \pmap{P'}{2}$
+						$\horel{\tmap{\Gamma}{2}}{\tmap{\Delta}{2}}{\pmap{P}{2}}
+						{\hby{\tau}}
+						{\tmap{\Delta'}{2}}{}{{\pmap{P'}{2} }}
+						$
 
-					\item	%$\ell_1 = \btau$ and
-						$\tmap{\Gamma}{2};\, \tmap{\Delta}{2} \proves \pmap{P}{2}
-						\hby{\stau}
-						\tmap{\Gamma}{2};\, \tmap{\Delta'}{2} \proves \pmap{P'}{2}$
 				\end{enumerate}
-
+				\item 	If $\ell = \btau$ then 
+						$\horel{\tmap{\Gamma}{2}}{\tmap{\Delta}{2}}{\pmap{P}{2}}
+						{\hby{\stau}}
+						{\tmap{\Delta'}{2}}{}{{\pmap{P'}{2} }}
+						$.
+				\end{enumerate}
 		
 		%%%%%%% SOUNDNESSS
 		\item Suppose 
 		$\stytra{\mapt{\Gamma}^{2}}{\tau}{\mapt{\Delta}^{2}}{\map{P}^{2}}{\mapt{\Delta'}^{2}}{R}$.  \\
 		Then $\exists P'$ such that
 					$P \hby{\tau} P'$
-					and $\horel{\mapt{\Gamma}^{2}}{\mapt{\Delta'}^{2}}{\map{P'}^{2}}{\wb}{\mapt{\Delta'}^{2}}{R}$.
+					and $\horel{\mapt{\Gamma}^{2}}{\mapt{\Delta'}^{2}}{\map{P'}^{2}}{\hwb}{\mapt{\Delta'}^{2}}{R}$.
 	\end{enumerate}
 \end{proposition}
 
 We can show full abstraction:
 
-\begin{proposition}[Full Abstraction, From \HOp to \sessp]\myrm
+\begin{proposition}[\HOp to \sessp: Full Abstraction]%\myrm
 	\label{prop:fulla_HOp_to_p}
 	Let $P_1, Q_1$ be \HOp processes.
 	$\horel{\Gamma}{\Delta_1}{P_1}{\hwb}{\Delta_2}{Q_1}$
@@ -500,6 +516,4 @@ is precise.
 %%See~\cite{KouzapasPY15} for details.
 %\end{remark}
 
-
-\subsection{Discussion: \HO as an alternative to session $\pi$}
 

@@ -1,0 +1,345 @@
+% !TEX root = main.tex
+
+\subsection{Discussion: Comparing Encodings}
+The precise encodings reported in  \secref{subsec:HOpi_to_HO} and \secref{subsec:HOp_to_sessp}
+confirm that \HO and \sessp constitute two important sources of expressiveness in \HOp.
+This naturally begs the question: which of the two sub-calculi is more tightly related to \HOp?
+We argue that when compared to \sessp, \HO   is more economical and satisfies tighter correspondences.
+
+\jparagraph{Reduction Steps}
+A first approach is to compare our two encodings by contrasting the way in which 
+\begin{enumerate}[a)]
+\item the encoding from \HOp to \HO (\secref{subsec:HOpi_to_HO}) translates processes with name passing;
+\item the encoding from \HOp to \sessp (\secref{subsec:HOp_to_sessp} translates processes with abstraction passing.
+\end{enumerate}
+Consider the \HOp processes:
+\begin{eqnarray*}
+P_1 & = & \bout{s}{a} \inact \Par \binp{\dual{s}}{x} (\bout{x}{s_1} \inact \Par \dots \Par \bout{x}{s_n} \inact) \\
+P_2 & = & \bout{s}{\abs{x}{P}} \inact \Par \binp{\dual{s}}{x} (\appl{x}{s_1} \Par \dots \Par \appl{x}{s_n})
+\end{eqnarray*}
+\noi Observe that $P_1$ features \emph{pure} name passing (no abstraction-passing), whereas 
+$P_2$ involves \emph{pure} abstraction passing (no name passing). In both cases, 
+the intended communication on $s$ leads to $n$ usages of the communication object (name $a$ in $P_1$ and abstraction $\abs{x}{P}$ in $P_2$).
+Consider now the reduction steps from $P_1$ and $P_2$:
+\begin{eqnarray*}
+P_1 & \hby{\tau} & \bout{a}{s_1} \inact \Par \dots \Par \bout{a}{s_n} \inact \\
+P_2 & \hby{\tau}& \appl{(\abs{x}{P})}{s_1} \Par \dots \Par \appl{(\abs{x}{P})}{s_n} \quad \underbrace{\hby{\btau} \cdots \hby{\btau}}_{n} \quad P \subst{s_1}{x} \Par \dots \Par P \subst{s_1}{x} 
+\end{eqnarray*}
+
+%Let reduction on \sessp process:
+%\begin{eqnarray*}
+%	\bout{s}{a} \inact \Par \binp{\dual{s}}{x} (\bout{x}{s_1} \inact \Par \dots \Par \bout{x}{s_n} \inact)
+%	\hby{\tau}
+%	\bout{a}{s_1} \inact \Par \dots \Par \bout{a}{s_n} \inact
+%\end{eqnarray*}
+%and \HO process
+%\begin{eqnarray*}
+%	\bout{s}{\abs{x}{P}} \inact \Par \binp{\dual{s}}{x} (\appl{x}{s_1} \Par \dots \Par \appl{x}{s_n})
+%	&\hby{\tau}&
+%	\appl{(\abs{x}{P})}{s_1} \Par \dots \Par \appl{(\abs{x}{P})}{s_n}\\
+%	&\Hby{\tau}_{n}&
+%	P \subst{s_1}{x} \Par \dots \Par P \subst{s_1}{x}
+%\end{eqnarray*}
+\noi 
+$P_1$ and $P_2$ follow the same communication pattern; they both
+reduce on a message passing action, with the
+message being substituted $n$ times on the receing side.
+Both $P_1$ and $P_2$ are \HOp processes.
+If we consider the encodings of $P_1$ into \HO   
+we obtain:
+\begin{eqnarray*}
+\map{P_1}^{1}_f & = &  	\bout{s}{\abs{z}{\binp{z}{y} \appl{y}{a}}} \inact \Par \\
+& & \qquad \quad \binp{\dual{s}}{x} \newsp{t}{\appl{x}{t} \Par \bout{\dual{t}}{\abs{x}{(\bout{x}{\abs{z}{\binp{z}{y} \appl{y}{s_1}}} \inact \Par \dots \Par \bout{x}{\abs{z}{\binp{z}{y} \appl{y}{s_n}}} \inact)}} \inact}\\
+	& \hby{\stau}& 
+	\newsp{t}{\appl{(\abs{z}{\binp{z}{y} \appl{y}{a}})}{t} \Par \bout{\dual{t}}{\abs{x}{(\bout{x}{\abs{z}{\binp{z}{y} \appl{y}{s_1}}} \inact \Par \dots \Par \bout{x}{\abs{z}{\binp{z}{y} \appl{y}{s_n}}} \inact)}} \inact}\\
+	& \hby{\btau} & 
+	\newsp{t}{\binp{t}{y} \appl{y}{a} \Par \bout{\dual{t}}{\abs{x}{(\bout{x}{\abs{z}{\binp{z}{y} \appl{y}{s_1}}} \inact \Par \dots \Par \bout{x}{\abs{z}{\binp{z}{y} \appl{y}{s_n}}} \inact)}} \inact}\\
+	& \hby{\stau} & 
+	\appl{\abs{x}{(\bout{x}{\abs{z}{\binp{z}{y} \appl{y}{s_1}}} \inact \Par \dots \Par \bout{x}{\abs{z}{\binp{z}{y} \appl{y}{s_n}}} \inact)}}{a}
+	\\
+	& \hby{\btau} & 
+	\bout{a}{\abs{z}{\binp{z}{y} \appl{y}{s_1}}} \inact \Par \dots \Par \bout{a}{\abs{z}{\binp{z}{y} \appl{y}{s_n}}} \inact
+\end{eqnarray*}
+Now, we encode $P_2$ into \sessp:
+\begin{eqnarray*}
+\pmap{P_2}{2} & = & 	\newsp{b}{\bout{s}{b} \inact \Par \repl \binp{b}{y} \binp{y}{x} P} \Par \\
+& & \qquad \qquad \binp{\dual{s}}{x} (\newsp{s}{\bout{x}{s} \bout{\dual{s}}{s_1} \inact} \Par \dots \Par \newsp{s}{\bout{x}{s} \bout{\dual{s}}{s_n}\inact})
+	\\
+	& \hby{\stau} & 
+	\newsp{b}{\repl \binp{b}{y} \binp{y}{x} P \Par \newsp{s}{\bout{b}{s} \bout{\dual{s}}{s_1} \inact} \Par \dots \Par \newsp{s}{\bout{b}{s} \bout{\dual{s}}{s_n} \inact}}
+	\\
+	& \hby{\stau} & 
+	\newsp{b}{\repl \binp{b}{y} \binp{y}{x} P \Par \newsp{s}{\binp{s}{x} P \Par \bout{\dual{s}}{s_1} \inact} \Par \dots \Par \newsp{s}{\bout{b}{s} \bout{\dual{s}}{s_n} \inact}}
+	\\
+	& \hby{\stau} & 
+	\newsp{b}{\repl \binp{b}{y} \binp{y}{x} P \Par P\subst{s_1}{x} \Par \dots \Par \newsp{s}{\bout{b}{s} \bout{\dual{s}}{s_n} \inact}}
+	\\
+	& \Hby{}_{2*(n - 1)} & 
+	\newsp{b}{\repl \binp{b}{y} \binp{y}{x} P \Par P\subst{s_1}{x} \Par \dots \Par P\subst{s_n}{x}}
+%	\red
+%	\appl{V}{s_1} \Par \dots \Par \appl{V}{s_n}
+\end{eqnarray*}
+\noi 
+It is clear that encoding $P_1$ into \HO is more economical than 
+encoding $P_2$ into \sessp. Not only moving to a pure higher-order setting requires less reduction steps than in the first-order concurrency of \sessp; in the presence of shared names, moving to a first-order setting brings the need of setting up and handling replicated processes which will eventually lead to garbage processes. In contrast, the mechanism present in \HO works efficiently regardless of the linear or shared properties of the name that is ``packed'' into the abstraction. 
+The use of deterministic transitions guarantees local synchronizations, which are arguably less expensive than point-to-point, session synchronizations.
+
+It is instructive to move our comparison 
+to a purely linear setting, and to see what occurs. 
+In the case of linear values we have:
+\begin{eqnarray*}
+	Q_1 & = & \bout{s'}{s} \inact \Par \binp{\dual{s'}}{x} \bout{x}{a} \inact
+	\hby{\tau}
+	\bout{s}{a} \inact \\
+	Q_2 & = & \bout{s}{\abs{x}{P}} \inact \Par \binp{\dual{s}}{x} \appl{x}{a}
+	\hby{\tau}
+	\appl{(\abs{x}{P})}{a}
+	\hby{\tau}
+	P \subst{a}{x}
+\end{eqnarray*}
+$Q_1$ is a \sessp process; $Q_2$ is an \HO processs.
+If we consider their encodings into \HO and \sessp, respectively,
+we obtain:
+\begin{eqnarray*}
+	\map{Q_1}_f^{1} & = & \bout{s'}{\abs{z}{\binp{z}{y} \appl{y}{s}}} \inact \Par \binp{\dual{s'}}{x} \newsp{t}{\appl{x}{t} \Par \bout{\dual{t}}{\abs{x}{\bout{x}{\abs{z}{\binp{z}{y} \appl{y}{a}}} \inact}} \inact}\\
+	& \hby{\stau} & 
+	\newsp{t}{\appl{(\abs{z}{\binp{z}{y} \appl{y}{s}})}{t} \Par \bout{\dual{t}}{\abs{x}{\bout{x}{\abs{z}{\binp{z}{y} \appl{y}{a}}} \inact)}} \inact}\\
+	& \hby{\btau} & 
+	\newsp{t}{\binp{t}{y} \appl{y}{s} \Par \bout{\dual{t}}{\abs{x}{\bout{x}{\abs{z}{\binp{z}{y} \appl{y}{a}}} \inact}} \inact}\\
+	& \hby{\stau} & 
+	\appl{\abs{x}{\bout{x}{\abs{z}{\binp{z}{y} \appl{y}{a}}} \inact}}{s}
+	~~\hby{\btau}~~
+	\bout{s}{\abs{z}{\binp{z}{y} \appl{y}{a}}} \inact \\
+%\end{eqnarray*}
+%\begin{eqnarray*}
+	\pmap{Q_2}{2} & = & \newsp{t}{\bout{s}{t} \inact \Par \binp{\dual{t}}{y} \binp{y}{x} P} \Par \binp{\dual{s}}{x} \newsp{s}{\bout{x}{s} \bout{\dual{s}}{a} \inact}
+	\\
+	& \hby{\stau} & 
+	\newsp{t}{\binp{\dual{t}}{y} \binp{y}{x} P \Par \newsp{s}{\bout{t}{s} \bout{\dual{s}}{a} \inact}}
+	\\
+	& \hby{\stau} & 
+	\newsp{s}{\binp{s}{x} P \Par \bout{\dual{s}}{a} \inact}
+	~~
+	\hby{\stau} ~~
+	P\subst{a}{x}
+\end{eqnarray*}
+\noi In this case, the encoding into \sessp is more efficient: it induces less reduction steps.
+Therefore considering a fragment of \HOp without shared communications (linearity only)
+has consequences in terms of reduction steps. Notice that we prove that linear communications do 
+not suffice to encode shared communications (\secref{ss:negative}).
+
+\jparagraph{Labelled Transition Correspondence}
+
+In addition to preciseness we can develop one more encodability
+result for the translation of \HOp into \HO, which is
+the correspondence of the labelled transition reduction
+system. As we will show such a correspondence does not
+hold for the \HOp to \sessp translation.
+
+To formally establish the difference between $\map{\cdot}_f^1$ and $\pmap{\cdot}{2}$,
+we introduce an extra encodability criteria: a form of operational correspondence 
+for \emph{visible actions}. We shall write $\ell_1, \ell_2, \ldots$ to denote visible 
+actions (different from $\tau$). Also, we shall consider LTS 
+with both visible and observable actions, denoted $\hby{}_1$ and $\hby{}_2$.
+As actions from different calculi are different, we also consider a mapping 
+on action labels, denoted $\mapa{\cdot}$.
+
+\begin{definition}[Labelled Correspondence / Tight Encodings]%\rm
+\label{def:lopco}
+       Consider typed calculi $\tyl{L}_1$ and  $\tyl{L}_2$, defined as 
+        $\tyl{L}_1=\calc{\CAL_1}{{\cal{T}}_1}{\hby{\dk{\ell_1}}_1}{\wb_1}{\proves_1}$
+       and $\tyl{L}_2=\calc{\CAL_2}{{\cal{T}}_2}{\hby{\dk{\ell_2}}_2}{\wb_2}{\proves_2}$.
+%       ($i=1,2$) be typed calculi. 
+The encoding $\enco{\map{\cdot}, \mapt{\cdot}}: \tyl{L}_1 \to \tyl{L}_2$ satisfies
+\emph{labelled operational correspondence}
+if it satisfies:
+	\begin{enumerate}[1.]
+			\item
+					If		$\stytraargi{\Gamma}{\ell_1}{\Delta}{P}{\Delta'}{P'}{1}{1}$
+					then	$\exists Q$, $\Delta''$, $\ell_2$ s.t. 
+							(i)~$\wtytraargi{\mapt{\Gamma}}{\ell_2}{\mapt{\Delta}}{\map{P}}{\mapt{\Delta''}}{Q}{2}{2}$;  \\
+							(ii)~$\ell_2 = \mapa{\ell_1}$; 
+							(iii)~${\mapt{\Gamma}};{\mapt{\Delta''}}\proves_2 {Q}{\wb_2}{\mapt{\Delta'}}\proves_2 {\map{P'}}$.
+				
+			\item
+					If		$\wtytraargi{\mapt{\Gamma}}{\ell_2}{\mapt{\Delta}}{\map{P}}{\mapt{\Delta'}}{Q}{2}{2}$
+					then	$\exists P'$, $\Delta''$, $\ell_1$ s.t. 
+							(i)~$\stytraargi{\Gamma}{\ell_1}{\Delta}{P}{\Delta''}{P'}{1}{1}$;
+							(ii)~$\ell_2 = \mapa{\ell_1}$;
+							(iii)~${\mapt{\Gamma}};{\mapt{\Delta''}}\proves_2 {\map{P'}}{\wb_2}{\mapt{\Delta'}}\proves_2 {Q}$.
+	\end{enumerate}
+A \emph{tight encoding} is a typed 
+encoding 
+which is precise (\defref{def:goodenc}) and that also satisfies 
+labelled operational correspondence as above.
+\end{definition}
+
+\begin{proposition}\label{p:tight}
+While the encoding of \HOp into \HO (\defref{d:enc:hopitoho}) is tight, the encoding of \HOp into \sessp (\defref{d:enc:hopitopi}) is not tight.
+\end{proposition}
+
+\noi We substantiate the above claim by showing that the encoding $\map{\cdot}^1_f$ enjoys 
+labelled operational correspondence, whereas $\pmap{\cdot}{2}$ does not. 
+Consider the following mapping from labels of
+\HOp into labels for \HO:
+\[
+	\begin{array}{rclcrcl}
+		\mapa{\news{\tilde{m_1}}\bactout{n}{m}}^{1}	&\defeq&	\news{\tilde{m_1}}\bactout{n}{\abs{z}{\,\binp{z}{x} \appl{x}{m}} }
+		& &
+		\mapa{\bactinp{n}{m}}^{1}			&\defeq&	\bactinp{n}{\abs{z}{\,\binp{z}{x} \appl{x}{m}} }
+		\\
+		\mapa{\news{\tilde{m}}\bactout{n}{\abs{x}{P}}}^{1} &\defeq& \news{\tilde{m}}\bactout{n}{\abs{x}{\pmapp{P}{1}{\es}}}
+		& &
+		\mapa{\bactinp{n}{\abs{x}{P}}}^{1} &\defeq& \bactinp{n}{\abs{x}{\pmapp{P}{1}{\es}}}
+		\\
+		\mapa{\bactsel{n}{l} }^{1} &\defeq& \bactsel{n}{l} 
+		& &
+		\mapa{\bactbra{n}{l} }^{1} &\defeq& \bactbra{n}{l} 
+%		\\
+%		\mapa{\tau}^{1} &\defeq& \tau
+	\end{array}
+\]
+
+
+
+Then the following result, a complement of \propref{prop:op_corr_HOp_to_HO}, holds:
+
+\begin{proposition}[Labelled Transition Correspondence, \HOp into \HO]
+	\label{prop:lts_corr_HOp_to_HO}
+	Let $P$ be a \HOp process.
+	If $\Gamma; \emptyset; \Delta \proves P \hastype \Proc$ then:
+%
+	\begin{enumerate}[1.]
+		\item
+			Suppose $\horel{\Gamma}{\Delta}{P}{\hby{\ell_1}}{\Delta'}{P'}$. Then we have:
+%
+			\begin{enumerate}[a)]
+				\item
+					If $\ell_1 \in \set{\news{\tilde{m}}\bactout{n}{m}, \,\news{\tilde{m}}\bactout{n}{\abs{x}Q}, \,\bactsel{s}{l}, \,\bactbra{s}{l}}$
+					then $\exists \ell_2$ s.t. \\
+					$\horel{\tmap{\Gamma}{1}}{\tmap{\Delta}{1}}{\pmapp{P}{1}{f}}{\hby{\ell_2}}{\tmap{\Delta'}{1}}{\pmapp{P'}{1}{f}}$
+					and $\ell_2 = \mapa{\ell_1}^{1}$.
+			
+				\item
+					If $\ell_1 = \bactinp{n}{\abs{y}Q}$ and
+					$P' = P_0 \subst{\abs{y}Q}{x}$
+					then $\exists \ell_2$ s.t. \\
+					$\horel{\tmap{\Gamma}{1}}{\tmap{\Delta}{1}}{\pmapp{P}{1}{f}}{\hby{\ell_2}}{\tmap{\Delta'}{1}}{\pmapp{P_0}{1}{f}\subst{\abs{y}\pmapp{Q}{1}{\emptyset}}{x}}$
+					and $\ell_2 = \mapa{\ell_1}^{1}$.
+			
+				\item
+					If $\ell_1 = \bactinp{n}{m}$
+					and 
+					$P' = P_0 \subst{m}{x}$
+					then $\exists \ell_2$, $R$ s.t. \\
+					$\horel{\tmap{\Gamma}{1}}{\tmap{\Delta}{1}}{\pmapp{P}{1}{f}}{\hby{\ell_2}}{\tmap{\Delta'}{1}}{R}$,
+					with $\ell_2 = \mapa{\ell_1}^{1}$, \\
+					and
+					$\horel{\tmap{\Gamma}{1}}{\tmap{\Delta'}{1}}{R}{\hby{\stau} \hby{\btau} \hby{\btau}}
+					{\tmap{\Delta'}{1}}{\pmapp{P_0}{1}{f}\subst{m}{x}}$.
+						
+%				\item
+%					If $\ell_1 = \tau$
+%					and $P' \scong \newsp{\tilde{m}}{P_1 \Par P_2\subst{m}{x}}$
+%					then $\exists R$ s.t. \\
+%					$\horel{\tmap{\Gamma}{1}}{\tmap{\Delta}{1}}{\pmapp{P}{1}{f}}{\hby{\tau}}{\mapt{\Delta}^{1}}{\newsp{\tilde{m}}{\pmapp{P_1}{1}{f} \Par R}}$,
+%					and\\ 
+%					$\horel{\tmap{\Gamma}{1}}{\tmap{\Delta}{1}}{\newsp{\tilde{m}}{\pmapp{P_1}{1}{f} \Par R}}{\hby{\btau} \hby{\stau} \hby{\btau}}
+%					{\mapt{\Delta}^{1}}{\newsp{\tilde{m}}{\pmapp{P_1}{1}{f} \Par \pmapp{P_2}{1}{f}\subst{m}{x}}}$.
+%			
+%				\item
+%					If $\ell_1 = \tau$
+%					and $P' \scong \newsp{\tilde{m}}{P_1 \Par P_2 \subst{\abs{y}Q}{x}}$
+%					then \\
+%					$\horel{\tmap{\Gamma}{1}}{\tmap{\Delta}{1}}{\pmapp{P}{1}{f}}{\hby{\tau}}
+%					{\tmap{\Delta_1}{1}}{\newsp{\tilde{m}}{\pmapp{P_1}{1}{f}\Par \pmapp{P_2}{1}{f}\subst{\abs{y}\pmapp{Q}{1}{\emptyset}}{x}}}$.
+%			
+%				\item
+%					If $\ell_1 = \tau$
+%					and $P' \not\scong \newsp{\tilde{m}}{P_1 \Par P_2 \subst{m}{x}} \land P' \not\scong \newsp{\tilde{m}}{P_1 \Par P_2\subst{\abs{y}Q}{x}}$
+%					then \\
+%					$\horel{\tmap{\Gamma}{1}}{\tmap{\Delta}{1}}{\pmapp{P}{1}{f}}{\hby{\tau}}{\tmap{\Delta'_1}{1}}{ \pmapp{P'}{1}{f}}$.
+			\end{enumerate}
+			
+		\item	Suppose $\horel{\tmap{\Gamma}{1}}{\tmap{\Delta}{1}}{\pmapp{P}{1}{f}}{\hby{\ell_2}}{\tmap{\Delta'}{1}}{Q}$.
+			Then we have:
+%
+			\begin{enumerate}[a)]
+				\item 
+					If $\ell_2 \in
+					\set{\news{\tilde{m}}\bactout{n}{\abs{z}{\,\binp{z}{x} (\appl{x}{m})}}, \,\news{\tilde{m}} \bactout{n}{\abs{x}{R}}, \,\bactsel{s}{l}, \,\bactbra{s}{l}}$
+					then $\exists \ell_1, P'$ s.t. \\
+					$\horel{\Gamma}{\Delta}{P}{\hby{\ell_1}}{\Delta'}{P'}$, 
+					$\ell_1 = \mapa{\ell_2}^{1}$, 
+					and
+					$Q = \pmapp{P'}{1}{f}$.
+			
+				\item 
+					If $\ell_2 = \bactinp{n}{\abs{y} R}$ %(with $R \neq \binp{y}{x} \appl{x}{m}$)
+					then either:
+%
+					\begin{enumerate}[(i)]
+						\item	$\exists \ell_1, x, P', P''$ s.t. \\
+							$\horel{\Gamma}{\Delta}{P}{\hby{\ell_1}}{\Delta'}{P' \subst{\abs{y}P''}{x}}$, 
+							$\ell_1 = \mapa{\ell_2}^{1}$, $\pmapp{P''}{1}{\es} = R$, and $Q = \pmapp{P'}{1}{f}$.
+
+						\item	$R \scong \binp{y}{x} (\appl{x}{m})$ and 
+							$\exists \ell_1, z, P'$ s.t. \\
+							$\horel{\Gamma}{\Delta}{P}{\hby{\ell_1}}{\Delta'}{P' \subst{m}{z}}$, 
+							$\ell_1 = \mapa{\ell_2}^{1}$,
+							and\\
+							$\horel{\tmap{\Gamma}{1}}{\tmap{\Delta'}{1}}{Q}{\hby{\btau} \hby{\stau} \hby{\btau}}{\tmap{\Delta''}{1}}{\pmapp{P'\subst{m}{z}}{1}{f}}$
+					\end{enumerate}
+			
+%				\item 
+%					If $\ell_2 = \tau$ 
+%					then $\Delta' = \Delta$ and 
+%					either
+%%
+%					\begin{enumerate}[(i)]
+%						\item	$\exists P'$ s.t. 
+%							$\horel{\Gamma}{\Delta}{P}{\hby{\tau}}{\Delta}{P'}$,
+%							and $Q = \map{P'}^{1}_f$.	
+%
+%						\item
+%							$\exists P_1, P_2, x, m, Q'$ s.t. 
+%							$\horel{\Gamma}{\Delta}{P}{\hby{\tau}}{\Delta}{\newsp{\tilde{m}}{P_1 \Par P_2\subst{m}{x}} }$, and\\
+%							$\horel{\tmap{\Gamma}{1}}{\tmap{\Delta}{1}}{Q}{\hby{\btau} \hby{\stau} \hby{\btau}}{\tmap{\Delta}{1}}{\pmapp{P_1}{1}{f} \Par \pmapp{P_2\subst{m}{x}}{1}{f}}$ 
+%%							$Q = \map{P_1}^{1}_f \Par Q'$, where $Q'  \Hby{} $.
+%
+%%						\item $\exists P_1, P_2, x, R$ s.t. 
+%%						$\stytra{ \Gamma }{\tau}{ \Delta }{ P}{ \Delta}{ \news{\tilde{m}}(P_1 \Par P_2\subst{\abs{y}R}{x}) }$, and 
+%%						$Q = \map{\news{\tilde{m}}(P_1 \Par P_2\subst{\abs{y}R}{x})}^{1}_f$.
+%			\end{enumerate}
+		    \end{enumerate}
+		    
+%		\item   
+%			If  $\wtytra{\mapt{\Gamma}^{1}}{\ell_2}{\mapt{\Delta}^{1}}{\pmapp{P}{1}{f}}{\mapt{\Delta'}^{1}}{Q}$
+%			then $\exists \ell_1, P'$ s.t.  \\
+%			(i)~$\stytra{\Gamma}{\ell_1}{\Delta}{P}{\Delta'}{P'}$,
+%			(ii)~$\ell_2 = \mapa{\ell_1}^{1}$, 
+%			(iii)~$\wbb{\mapt{\Gamma}^{1}}{\ell}{\mapt{\Delta'}^{1}}{\pmapp{P'}{1}{f}}{\mapt{\Delta'}^{1}}{Q}$.
+	\end{enumerate}
+\end{proposition}
+
+The analog of \propref{prop:lts_corr_HOp_to_HO} does not hold for the encoding of \HOp into \sessp.
+Consider the \HOp process:
+\[
+	\Gamma; \es; \Delta \proves \bout{s}{\abs{x}{P}} \inact \hastype \Proc \hby{\bactout{s}{\abs{x} P}} \es \proves \inact
+\]
+with $\abs{x}{P}$ being a linear value.
+We translated into \sessp process:
+\begin{eqnarray*}
+	&&\tmap{\Gamma}{2}; \es; \tmap{\Delta}{2} \proves \newsp{a}{\bout{s}{a} \inact \Par \binp{a}{y} \binp{y}{x} P} \hastype \Proc\\
+	&&\hby{\bactout{s}{a}}\\
+	&&\Delta' \proves \binp{a}{y} \binp{y}{x} P \hastype \Proc\\
+	&&\hby{\bactinp{a}{V}} \dots
+\end{eqnarray*}
+
+The resulting processes have a missmatch both in the typing
+environment ($\Delta' \not= \tmap{\es}{2}$
+and in the actions they can the two processes can
+subsequenctly observe. Specifically the first process
+cannot observe any actions while the second process
+can observe actions on the encoding of the linear value $\abs{x}{P}$.
+
