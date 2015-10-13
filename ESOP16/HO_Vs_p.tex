@@ -4,19 +4,26 @@
 The precise encodings reported in  \secref{subsec:HOpi_to_HO} and \secref{subsec:HOp_to_sessp}
 confirm that \HO and \sessp constitute two important sources of expressiveness in \HOp.
 This naturally begs the question: which of the two sub-calculi is more tightly related to \HOp?
-We argue that when compared to \sessp, \HO   is more economical and satisfies tighter correspondences.
+We empirically and formally argue that when compared to \sessp, \HO   is more economical and satisfies tighter correspondences.
 
 \jparagraph{Reduction Steps}
-A first approach is to compare our two encodings by contrasting the way in which 
-\begin{enumerate}[a)]
-\item the encoding from \HOp to \HO (\secref{subsec:HOpi_to_HO}) translates processes with name passing;
-\item the encoding from \HOp to \sessp (\secref{subsec:HOp_to_sessp} translates processes with abstraction passing.
-\end{enumerate}
+We first compare our two encodings by contrasting the way in which 
+%\begin{enumerate}[a)]
+%\item 
+(a)~the encoding from \HOp to \HO (\secref{subsec:HOpi_to_HO}) translates processes with name passing;
+%\item 
+(b)~the encoding from \HOp to \sessp (\secref{subsec:HOp_to_sessp} translates processes with abstraction passing.
+%\end{enumerate}
 Consider the \HOp processes:
-\begin{eqnarray*}
-P_1 & = & \bout{s}{a} \inact \Par \binp{\dual{s}}{x} (\bout{x}{s_1} \inact \Par \dots \Par \bout{x}{s_n} \inact) \\
-P_2 & = & \bout{s}{\abs{x}{P}} \inact \Par \binp{\dual{s}}{x} (\appl{x}{s_1} \Par \dots \Par \appl{x}{s_n})
-\end{eqnarray*}
+$$
+P_1  =  \bout{s}{a} \inact \Par \binp{\dual{s}}{x} (\bout{x}{s_1} \inact \Par \dots \Par \bout{x}{s_n} \inact) \qquad
+P_2  =  \bout{s}{\abs{x}{P}} \inact \Par \binp{\dual{s}}{x} (\appl{x}{s_1} \Par \dots \Par \appl{x}{s_n})
+$$
+
+%\begin{eqnarray*}
+%P_1 & = & \bout{s}{a} \inact \Par \binp{\dual{s}}{x} (\bout{x}{s_1} \inact \Par \dots \Par \bout{x}{s_n} \inact) \\
+%P_2 & = & \bout{s}{\abs{x}{P}} \inact \Par \binp{\dual{s}}{x} (\appl{x}{s_1} \Par \dots \Par \appl{x}{s_n})
+%\end{eqnarray*}
 \noi Observe that $P_1$ features \emph{pure} name passing (no abstraction-passing), whereas 
 $P_2$ involves \emph{pure} abstraction passing (no name passing). In both cases, 
 the intended communication on $s$ leads to $n$ usages of the communication object (name $a$ in $P_1$ and abstraction $\abs{x}{P}$ in $P_2$).
@@ -49,15 +56,15 @@ If we consider the encodings of $P_1$ into \HO
 we obtain:
 \begin{eqnarray*}
 \map{P_1}^{1}_f & = &  	\bout{s}{\abs{z}{\binp{z}{y} \appl{y}{a}}} \inact \Par \\
-& & \qquad \quad \binp{\dual{s}}{x} \newsp{t}{\appl{x}{t} \Par \bout{\dual{t}}{\abs{x}{(\bout{x}{\abs{z}{\binp{z}{y} \appl{y}{s_1}}} \inact \Par \dots \Par \bout{x}{\abs{z}{\binp{z}{y} \appl{y}{s_n}}} \inact)}} \inact}\\
-	& \hby{\stau}& 
-	\newsp{t}{\appl{(\abs{z}{\binp{z}{y} \appl{y}{a}})}{t} \Par \bout{\dual{t}}{\abs{x}{(\bout{x}{\abs{z}{\binp{z}{y} \appl{y}{s_1}}} \inact \Par \dots \Par \bout{x}{\abs{z}{\binp{z}{y} \appl{y}{s_n}}} \inact)}} \inact}\\
-	& \hby{\btau} & 
+& & \quad \quad \binp{\dual{s}}{x} \newsp{t}{\appl{x}{t} \Par \bout{\dual{t}}{\abs{x}{(\bout{x}{\abs{z}{\binp{z}{y} \appl{y}{s_1}}} \inact \Par \dots \Par \bout{x}{\abs{z}{\binp{z}{y} \appl{y}{s_n}}} \inact)}} \inact}\\
+	& \hby{\stau} \hby{\btau} & 
+%	\newsp{t}{\appl{(\abs{z}{\binp{z}{y} \appl{y}{a}})}{t} \Par \bout{\dual{t}}{\abs{x}{(\bout{x}{\abs{z}{\binp{z}{y} \appl{y}{s_1}}} \inact \Par \dots \Par \bout{x}{\abs{z}{\binp{z}{y} \appl{y}{s_n}}} \inact)}} \inact}\\
+%	& \hby{\btau} & 
 	\newsp{t}{\binp{t}{y} \appl{y}{a} \Par \bout{\dual{t}}{\abs{x}{(\bout{x}{\abs{z}{\binp{z}{y} \appl{y}{s_1}}} \inact \Par \dots \Par \bout{x}{\abs{z}{\binp{z}{y} \appl{y}{s_n}}} \inact)}} \inact}\\
-	& \hby{\stau} & 
-	\appl{\abs{x}{(\bout{x}{\abs{z}{\binp{z}{y} \appl{y}{s_1}}} \inact \Par \dots \Par \bout{x}{\abs{z}{\binp{z}{y} \appl{y}{s_n}}} \inact)}}{a}
-	\\
-	& \hby{\btau} & 
+	& \hby{\stau}\hby{\btau}  & 
+%	\appl{\abs{x}{(\bout{x}{\abs{z}{\binp{z}{y} \appl{y}{s_1}}} \inact \Par \dots \Par \bout{x}{\abs{z}{\binp{z}{y} \appl{y}{s_n}}} \inact)}}{a}
+%	\\
+%	& \hby{\btau} & 
 	\bout{a}{\abs{z}{\binp{z}{y} \appl{y}{s_1}}} \inact \Par \dots \Par \bout{a}{\abs{z}{\binp{z}{y} \appl{y}{s_n}}} \inact
 \end{eqnarray*}
 Now, we encode $P_2$ into \sessp:
@@ -65,13 +72,13 @@ Now, we encode $P_2$ into \sessp:
 \pmap{P_2}{2} & = & 	\newsp{b}{\bout{s}{b} \inact \Par \repl \binp{b}{y} \binp{y}{x} P} \Par \\
 & & \qquad \qquad \binp{\dual{s}}{x} (\newsp{s}{\bout{x}{s} \bout{\dual{s}}{s_1} \inact} \Par \dots \Par \newsp{s}{\bout{x}{s} \bout{\dual{s}}{s_n}\inact})
 	\\
-	& \hby{\stau} & 
-	\newsp{b}{\repl \binp{b}{y} \binp{y}{x} P \Par \newsp{s}{\bout{b}{s} \bout{\dual{s}}{s_1} \inact} \Par \dots \Par \newsp{s}{\bout{b}{s} \bout{\dual{s}}{s_n} \inact}}
-	\\
-	& \hby{\stau} & 
-	\newsp{b}{\repl \binp{b}{y} \binp{y}{x} P \Par \newsp{s}{\binp{s}{x} P \Par \bout{\dual{s}}{s_1} \inact} \Par \dots \Par \newsp{s}{\bout{b}{s} \bout{\dual{s}}{s_n} \inact}}
-	\\
-	& \hby{\stau} & 
+%	& \hby{\stau} & 
+%	\newsp{b}{\repl \binp{b}{y} \binp{y}{x} P \Par \newsp{s}{\bout{b}{s} \bout{\dual{s}}{s_1} \inact} \Par \dots \Par \newsp{s}{\bout{b}{s} \bout{\dual{s}}{s_n} \inact}}
+%	\\
+	& \hby{\stau}  \hby{\stau} \hby{\stau} & 
+%	\newsp{b}{\repl \binp{b}{y} \binp{y}{x} P \Par \newsp{s}{\binp{s}{x} P \Par \bout{\dual{s}}{s_1} \inact} \Par \dots \Par \newsp{s}{\bout{b}{s} \bout{\dual{s}}{s_n} \inact}}
+%	\\
+%	& \hby{\stau} & 
 	\newsp{b}{\repl \binp{b}{y} \binp{y}{x} P \Par P\subst{s_1}{x} \Par \dots \Par \newsp{s}{\bout{b}{s} \bout{\dual{s}}{s_n} \inact}}
 	\\
 	& \Hby{}_{2*(n - 1)} & 
@@ -88,12 +95,12 @@ It is instructive to move our comparison
 to a purely linear setting, and to see what occurs. 
 In the case of linear values we have:
 \begin{eqnarray*}
-	Q_1 & = & \bout{s'}{s} \inact \Par \binp{\dual{s'}}{x} \bout{x}{a} \inact
+	Q_1  =  \bout{s'}{s} \inact \Par \binp{\dual{s'}}{x} \bout{x}{a} \inact
 	\hby{\tau}
-	\bout{s}{a} \inact \\
-	Q_2 & = & \bout{s}{\abs{x}{P}} \inact \Par \binp{\dual{s}}{x} \appl{x}{a}
+	\bout{s}{a} \inact \qquad
+	Q_2  =  \bout{s}{\abs{x}{P}} \inact \Par \binp{\dual{s}}{x} \appl{x}{a}
 	\hby{\tau}
-	\appl{(\abs{x}{P})}{a}
+%	\appl{(\abs{x}{P})}{a}
 	\hby{\tau}
 	P \subst{a}{x}
 \end{eqnarray*}
@@ -102,9 +109,9 @@ If we consider their encodings into \HO and \sessp, respectively,
 we obtain:
 \begin{eqnarray*}
 	\map{Q_1}_f^{1} & = & \bout{s'}{\abs{z}{\binp{z}{y} \appl{y}{s}}} \inact \Par \binp{\dual{s'}}{x} \newsp{t}{\appl{x}{t} \Par \bout{\dual{t}}{\abs{x}{\bout{x}{\abs{z}{\binp{z}{y} \appl{y}{a}}} \inact}} \inact}\\
-	& \hby{\stau} & 
-	\newsp{t}{\appl{(\abs{z}{\binp{z}{y} \appl{y}{s}})}{t} \Par \bout{\dual{t}}{\abs{x}{\bout{x}{\abs{z}{\binp{z}{y} \appl{y}{a}}} \inact)}} \inact}\\
-	& \hby{\btau} & 
+	& \hby{\stau} \hby{\btau}& 
+%	\newsp{t}{\appl{(\abs{z}{\binp{z}{y} \appl{y}{s}})}{t} \Par \bout{\dual{t}}{\abs{x}{\bout{x}{\abs{z}{\binp{z}{y} \appl{y}{a}}} \inact)}} \inact}\\
+%	& \hby{\btau} & 
 	\newsp{t}{\binp{t}{y} \appl{y}{s} \Par \bout{\dual{t}}{\abs{x}{\bout{x}{\abs{z}{\binp{z}{y} \appl{y}{a}}} \inact}} \inact}\\
 	& \hby{\stau} & 
 	\appl{\abs{x}{\bout{x}{\abs{z}{\binp{z}{y} \appl{y}{a}}} \inact}}{s}
@@ -114,10 +121,10 @@ we obtain:
 %\begin{eqnarray*}
 	\pmap{Q_2}{2} & = & \newsp{t}{\bout{s}{t} \inact \Par \binp{\dual{t}}{y} \binp{y}{x} P} \Par \binp{\dual{s}}{x} \newsp{s}{\bout{x}{s} \bout{\dual{s}}{a} \inact}
 	\\
-	& \hby{\stau} & 
-	\newsp{t}{\binp{\dual{t}}{y} \binp{y}{x} P \Par \newsp{s}{\bout{t}{s} \bout{\dual{s}}{a} \inact}}
-	\\
-	& \hby{\stau} & 
+	& \hby{\stau} \hby{\stau} & 
+%	\newsp{t}{\binp{\dual{t}}{y} \binp{y}{x} P \Par \newsp{s}{\bout{t}{s} \bout{\dual{s}}{a} \inact}}
+%	\\
+%	& \hby{\stau} & 
 	\newsp{s}{\binp{s}{x} P \Par \bout{\dual{s}}{a} \inact}
 	~~
 	\hby{\stau} ~~
@@ -136,15 +143,15 @@ the correspondence of the labelled transition reduction
 system. As we will show such a correspondence does not
 hold for the \HOp to \sessp translation.
 
-To formally establish the difference between $\map{\cdot}_f^1$ and $\pmap{\cdot}{2}$,
+To establish the difference between $\map{\cdot}_f^1$ and $\pmap{\cdot}{2}$,
 we introduce an extra encodability criteria: a form of operational correspondence 
 for \emph{visible actions}. 
-We shall write $\ell_1, \ell_2, \ldots$ to denote visible 
-actions (different from $\tau$)
+We shall write $\ell_1, \ell_2, \ldots$ to denote  
+actions different from $\tau$
 and  $\hby{\ell}$ to denote a LTS.
 %with both visible and observable actions, denoted. % and $\hby{}_2$.
-As actions from different calculi may be different, we also consider a mapping 
-on action labels, denoted $\mapa{\cdot}$.
+As actions from different calculi may be different, we also consider a mapping $\mapa{\cdot}$
+on action labels. 
 
 \begin{definition}[Labelled Correspondence / Tight Encodings]%\rm
 \label{def:lopco}
@@ -176,9 +183,9 @@ which is precise (\defref{def:goodenc}) and that also satisfies
 labelled operational correspondence as above.
 \end{definition}
 
-\begin{proposition}\label{p:tight}
+\begin{theorem}\label{t:tight}
 While the encoding of \HOp into \HO (\defref{d:enc:hopitoho}) is tight, the encoding of \HOp into \sessp (\defref{d:enc:hopitopi}) is not tight.
-\end{proposition}
+\end{theorem}
 
 \noi We substantiate the above claim by showing that the encoding $\map{\cdot}^1_f$ enjoys 
 labelled operational correspondence, whereas $\pmap{\cdot}{2}$ does not. 
@@ -233,9 +240,9 @@ Then the following result, a complement of \propref{prop:op_corr_HOp_to_HO}, hol
 					If $\ell_1 = \bactinp{n}{m}$
 					and 
 					$P' = P_0 \subst{m}{x}$
-					then $\exists \ell_2$, $R$ s.t. \\
-					$\horel{\tmap{\Gamma}{1}}{\tmap{\Delta}{1}}{\pmapp{P}{1}{f}}{\hby{\ell_2}}{\tmap{\Delta'}{1}}{R}$,
-					with $\ell_2 = \mapa{\ell_1}^{1}$, \\
+					then $\exists \ell_2$, $R$ s.t. 
+					$\horel{\tmap{\Gamma}{1}}{\tmap{\Delta}{1}}{\pmapp{P}{1}{f}}{\hby{\ell_2}}{\tmap{\Delta'}{1}}{R}$, \\
+					with $\ell_2 = \mapa{\ell_1}^{1}$, 
 					and
 					$\horel{\tmap{\Gamma}{1}}{\tmap{\Delta'}{1}}{R}{\hby{\stau} \hby{\btau} \hby{\btau}}
 					{\tmap{\Delta'}{1}}{\pmapp{P_0}{1}{f}\subst{m}{x}}$.
@@ -286,10 +293,10 @@ Then the following result, a complement of \propref{prop:op_corr_HOp_to_HO}, hol
 							$\ell_1 = \mapa{\ell_2}^{1}$, $\pmapp{P''}{1}{\es} = R$, and $Q = \pmapp{P'}{1}{f}$.
 
 						\item	$R \scong \binp{y}{x} (\appl{x}{m})$ and 
-							$\exists \ell_1, z, P'$ s.t. \\
-							$\horel{\Gamma}{\Delta}{P}{\hby{\ell_1}}{\Delta'}{P' \subst{m}{z}}$, 
+							$\exists \ell_1, z, P'$ s.t. 
+							$\horel{\Gamma}{\Delta}{P}{\hby{\ell_1}}{\Delta'}{P' \subst{m}{z}}$, \\
 							$\ell_1 = \mapa{\ell_2}^{1}$,
-							and\\
+							and 
 							$\horel{\tmap{\Gamma}{1}}{\tmap{\Delta'}{1}}{Q}{\hby{\stau} \hby{\btau} \hby{\btau}}{\tmap{\Delta''}{1}}{\pmapp{P'\subst{m}{z}}{1}{f}}$
 					\end{enumerate}
 			

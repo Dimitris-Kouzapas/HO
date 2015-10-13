@@ -44,7 +44,8 @@ with respect to types.
 \begin{definition}[Barbs]\rm
 	Let $P$ be a closed process. We define:
 	\begin{enumerate}
-		\item	$P \barb{n}$ if $P \scong \newsp{\tilde{m}}{\bout{n}{V} P_2 \Par P_3}, n \notin \tilde{m}$. %; $P \Barb{n}$ if $P \red^* \barb{n}$.
+		\item	
+		$P \barb{n}$ if $P \scong \newsp{\tilde{m}}{\bout{n}{V} P_2 \Par P_3}, n \notin \tilde{m}$. %; $P \Barb{n}$ if $P \red^* \barb{n}$.
 
 		\item	$\Gamma; \Delta \proves P \barb{n}$ if
 			$\Gamma; \emptyset; \Delta \proves P \hastype \Proc$ with $P \barb{n}$ and $\dual{n} \notin \dom{\Delta}$.
@@ -133,13 +134,17 @@ The main intuition %for its definition
 is that the transitions 
 of a typed process should be enabled by its associated typing environment:
 %
-\[
-	\tree {
-		P \hby{\ell} P' \qquad (\Gamma, \Delta) \hby{\ell} (\Gamma, \Delta')
-	}{
-		\Gamma; \es; \Delta \proves P \hby{\ell} \Delta' \proves P' \hastype \Delta'
-	}
-\]
+%\[
+%	\tree {
+%		P \hby{\ell} P' \qquad (\Gamma, \Delta) \hby{\ell} (\Gamma, \Delta')
+%	}{
+%		\Gamma; \es; \Delta \proves P \hby{\ell} \Delta' \proves P' \hastype \Delta'
+%	}
+%\]
+$$
+\text{if } P \hby{\ell} P' \text{ and } (\Gamma, \Delta) \hby{\ell} (\Gamma, \Delta') \text{ then }
+\Gamma; \es; \Delta \proves P \hby{\ell} \Delta' \proves P' \hastype \Delta'
+$$
 %
 \noi As an example of how types enable transitions, consider the rule for input:
 %
@@ -159,7 +164,7 @@ if the channel is typed with an input prefix and the input value is either
 a name $m$, a \emph{characteristic value} $\omapchar{U}$,  or a \emph{trigger value} (the abstraction
 $\abs{{x}}{\binp{t}{y} (\appl{y}{{x}})}$). 
 A characteristic value
-is the {simplest} process that  inhabits a type (here the
+is the {simplest} process that  inhabits a type (here, the
 type $U$ carried by the session input prefix). The above rule is used to limit
 the input actions that can be observed from a session input prefix.
 For details of the labelled transition system and the characteristic process definition
@@ -172,12 +177,14 @@ Moreover, we define a \emph{(first-order) trigger process}:
 \end{eqnarray}
 %
 \noi
-Trigger processes are defined as a process input prefixed on
-a fresh name $t$. 
+The trigger process $\ftrigger{t}{V}{U}$ is 
+is defined as a process input prefixed on
+a fresh name $t$: it
 %The   trigger process $\htrigger{t}{V}$ above applies a value $V$
 %on the receiving (characteristic) process.
-The trigger process $\ftrigger{t}{V}{U}$ applies a value
-on the (hard coded) \emph{characteristic process} $\map{\btinp{U} \tinact}^{s}$ (see~\cite{characteristic_bis} for details). 
+applies a value
+on the %(hard coded) 
+\emph{characteristic process} $\map{\btinp{U} \tinact}^{s}$ (see~\cite{characteristic_bis} for details). 
 
 \jparagraph{Characterisations of Barbed Congruence}
 We now define \emph{characteristic} and \emph{higher-order} bisimilarity.
@@ -256,7 +263,7 @@ We may then define:
 \end{definition}
 
 We state the following important result, which attests the significance of $\hwb$:
-\begin{theorem}
+\begin{theorem}\label{t:coincide}
 	Typed relations $\cong$, $\hwb$, and $\fwb$ coincide for \HOp processes.
 \end{theorem}
 \begin{proof}
@@ -270,7 +277,7 @@ for details. \qed
 	lies in the definition of the process trigger.
 	\begin{enumerate}[(a)]
 		\item
-				The higher-order bisimilarity trigger \eqref{eq:hot}
+				The higher-order bisimilarity \eqref{eq:hot}
 %				\[
 %					\htrigger{t}{V}  \defeq  \hotrigger{t}{V}
 %				\]
@@ -368,33 +375,35 @@ and $\horel{\Gamma}{\Delta}{P}{\hby{\btau}}{\Delta'}{P'}$, respectively).
 %(where $\subj{\ell_1}$ and $\subj{\ell_2}$ in the premise  are dual endpoints), 
 %possibly followed by uses of  $\ltsrule{Alpha}$, $\ltsrule{Res}$, $\ltsrule{Rec}$, or $\ltsrule{Par${}_L$}/\ltsrule{Par${}_R$}$.
 
+We have the following determinacy properties; see  \appref{app:sub_tau_inert} for details.
+
 \begin{lemma}[$\tau$-Inertness]\rm
 	\label{lem:tau_inert}
-	\begin{enumerate}[1)]
-		\item
+	(1)
+%	\begin{enumerate}[1)]
+%		\item
 				Let $\horel{\Gamma}{\Delta}{P}{\hby{\dtau}}{\Delta'}{P'}$ be a deterministic transition,
-				with balanced $\Delta$. \\ Then 
+				with balanced $\Delta$. Then 
 				$\Gamma; \Delta \proves P \cong \Delta'\proves P'$ 
 				with $\Delta \red^\ast \Delta'$ balanced.
-
-		\item 
-				Let $P$ be an $\HOp^{-\mathsf{sh}}$ process. 
-				Assume $\Gamma; \emptyset; \Delta \proves P \hastype \Proc$. \\ Then 
+%		\item 
+				(2) Let $P$ be an $\HOp^{-\mathsf{sh}}$ process. 
+				Assume $\Gamma; \emptyset; \Delta \proves P \hastype \Proc$. Then 
 				$P \red^\ast P'$ implies $\Gamma; \Delta \proves 
 				P \cong \Delta'\proves P'$ with $\Delta \red^\ast \Delta'$. 
-	\end{enumerate}
+%	\end{enumerate}
 \end{lemma}
 
 
-\begin{proof}
-	The proof uses the fact that processes of the
-	form $\Gamma; \es; \Delta \proves_s \bout{s}{V} P_1 \Par \binp{k}{x} P_2$
-	cannot have any typed transition observables and the fact
-	that bisimulation is a congruence.
-	See  \appref{app:sub_tau_inert} for details.
-	The proof for Part 2 follows from Part 1.
-	\qed
-\end{proof}
+%\begin{proof}
+%	The proof uses the fact that processes of the
+%	form $\Gamma; \es; \Delta \proves_s \bout{s}{V} P_1 \Par \binp{k}{x} P_2$
+%	cannot have any typed transition observables and the fact
+%	that bisimulation is a congruence.
+%	See  \appref{app:sub_tau_inert} for details.
+%	The proof for Part 2 follows from Part 1.
+%	\qed
+%\end{proof}
 
 Using the above determinacy properties, we can state the following up-to technique.
 We write $\Hby{\dtau}$ to denote a (possibly empty) sequence of deterministic steps 
@@ -406,7 +415,7 @@ $\hby{\dtau}$.
 	Let $\horel{\Gamma}{\Delta_1}{P_1}{\ \Re\ }{\Delta_2}{Q_1}$ such
 	that if whenever:
 %
-	\begin{enumerate}
+	\begin{enumerate}[1.]
 		\item	$\forall \news{\tilde{m_1}} \bactout{n}{V_1}$ such that
 			$
 				\horel{\Gamma}{\Delta_1}{P_1}{\hby{\news{\tilde{m_1}} \bactout{n}{V_1}}}{\Delta_3}{P_3}
@@ -419,7 +428,7 @@ $\hby{\dtau}$.
 			$
 				\horel{\Gamma}{\Delta_3}{P_3}{\Hby{\dtau}}{\Delta_1'}{P_2}
 			$
-			and for fresh $t$:
+			and for fresh $t$:\\
 			$
 				\horel{\Gamma}{\Delta_1''}{\newsp{\tilde{m_1}}{P_2 \Par \htrigger{t}{V_1}}}
 				{\ \Re\ }
@@ -427,13 +436,13 @@ $\hby{\dtau}$.
 %				\mhorel{\Gamma}{\Delta_1''}{\newsp{\tilde{m_1}}{P_2 \Par \hotrigger{t}{x}{s}{V_1}}}
 %				{\ \Re\ }
 %				{\Delta_2''}{}{\newsp{\tilde{m_2}}{Q_2 \Par \hotrigger{t}{x}{s}{V_2}}}
-			$
+			$.
 %
 		\item	$\forall \ell \not= \news{\tilde{m}} \bactout{n}{V}$ such that
 			$
 				\horel{\Gamma}{\Delta_1}{P_1}{\hby{\ell}}{\Delta_3}{P_3}
 			$
-			implies that $\exists Q_2$ such that 
+			implies that $\exists Q_2$  \\ such that 
 			$
 				\horel{\Gamma}{\Delta_1}{Q_1}{\hat{\Hby{\ell}}}{\Delta_2'}{Q_2}
 			$
@@ -442,11 +451,11 @@ $\hby{\dtau}$.
 				\horel{\Gamma}{\Delta_3}{P_3}{\Hby{\dtau}}{\Delta_1'}{P_2}
 			$
 			and
-			$\horel{\Gamma}{\Delta_1'}{P_2}{\ \Re\ }{\Delta_2'}{Q_2}$
+			$\horel{\Gamma}{\Delta_1'}{P_2}{\ \Re\ }{\Delta_2'}{Q_2}$.
 
 		\item	The symmetric cases of 1 and 2.
 	\end{enumerate}
-	Then $\Re\ \subseteq\ \wb$.
+	Then $\Re\ \subseteq\ \hwb$.
 \end{lemma}
 
 
