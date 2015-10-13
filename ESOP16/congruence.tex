@@ -1,14 +1,19 @@
 % !TEX root = main.tex
-\noi In this section we define reduction-closed, barbed congruence ($\cong$) as the
+\noi We first define reduction-closed, barbed congruence ($\cong$, \defref{def:rc}) as the
 reference equivalence relation for \HOp processes.
-Later on we will define two characterizations of $\cong$:
-\emph{higher-order} and  
-\emph{characteristic bisimilarities} (denoted $\hwb$ and $\fwb$, respectively). 
-Here we focus on collecting intuitions; omitted details are in the Appendix and in~\cite{KouzapasPY15}.
+We then define two characterizations of $\cong$:
+\emph{characteristic} and
+\emph{higher-order bisimilarities}   
+ (denoted $\fwb$ and $\hwb$, cf. \defsref{d:fwb} and \ref{d:hbw}). 
+%Here we focus on collecting intuitions; omitted details are in the Appendix and in~\cite{KouzapasPY15}.
 
 \subsection{Reduction-Closed, Barbed Congruence}
 \label{subsec:rc}
-We first define \emph{confluence} over session environments $\Delta$:
+%We first define \emph{confluence} over session environments $\Delta$:
+
+We consider \emph{typed relations} that relate only closed terms whose
+session environments %and the two session environments
+are balanced  and confluent:
 
 \begin{definition}[Session Environment Confluence]
 Let $\red^\ast$ denote multi-step reduction as in \defref{def:ses_red}.
@@ -17,8 +22,9 @@ Let $\red^\ast$ denote multi-step reduction as in \defref{def:ses_red}.
 \end{definition}
 
 %\smallskip 
-\noi Reduction-closed, barbed congruence is defined over typed
-processes:
+%\noi Reduction-closed, barbed congruence is defined over typed
+%processes:
+
 
 \begin{definition}[Typed Relation]
 	We say that
@@ -33,18 +39,21 @@ processes:
 
 %\smallskip 
 
-\noi Observe that typed relations relate only closed terms whose
-session environments %and the two session environments
-are balanced  and confluent.
-Next we define  {\em barbs}~\cite{MiSa92}
-with respect to types. 
+%\noi Next we define  {\em barbs}with respect to types. 
 
+A \emph{barb} $\barb{n}$ is an observable on an output prefix with subject $n$~\cite{MiSa92}.
+A \emph{weak barb} $\Barb{n}$ is a barb after a number of reduction steps.
+Typed barbs $\barb{n}$ (resp.\ $\Barb{n}$)
+occur on typed processes $\Gamma; \emptyset; \Delta \proves P \hastype \Proc$.
+When $n$ is a session name we require that its dual endpoint $\dual{n}$ is not present
+in the session environment $\Delta$:
 %\smallskip 
 
 \begin{definition}[Barbs]\rm
 	Let $P$ be a closed process. We define:
 	\begin{enumerate}
-		\item	$P \barb{n}$ if $P \scong \newsp{\tilde{m}}{\bout{n}{V} P_2 \Par P_3}, n \notin \tilde{m}$. %; $P \Barb{n}$ if $P \red^* \barb{n}$.
+		\item	
+		$P \barb{n}$ if $P \scong \newsp{\tilde{m}}{\bout{n}{V} P_2 \Par P_3}, n \notin \tilde{m}$. %; $P \Barb{n}$ if $P \red^* \barb{n}$.
 
 		\item	$\Gamma; \Delta \proves P \barb{n}$ if
 			$\Gamma; \emptyset; \Delta \proves P \hastype \Proc$ with $P \barb{n}$ and $\dual{n} \notin \dom{\Delta}$.
@@ -56,12 +65,7 @@ with respect to types.
 
 %\smallskip 
 
-\noi A barb $\barb{n}$ is an observable on an output prefix with subject $n$.
-Similarly a weak barb $\Barb{n}$ is a barb after a number of reduction steps.
-Typed barbs $\barb{n}$ (resp.\ $\Barb{n}$)
-occur on typed processes $\Gamma; \emptyset; \Delta \proves P \hastype \Proc$.
-When $n$ is a session name we require that its dual endpoint $\dual{n}$ is not present
-in the session environment $\Delta$.
+\noi 
 
 To define a congruence relation, we introduce the family $\C$ of contexts:
 
@@ -133,13 +137,17 @@ The main intuition %for its definition
 is that the transitions 
 of a typed process should be enabled by its associated typing environment:
 %
-\[
-	\tree {
-		P \hby{\ell} P' \qquad (\Gamma, \Delta) \hby{\ell} (\Gamma, \Delta')
-	}{
-		\Gamma; \es; \Delta \proves P \hby{\ell} \Delta' \proves P' \hastype \Delta'
-	}
-\]
+%\[
+%	\tree {
+%		P \hby{\ell} P' \qquad (\Gamma, \Delta) \hby{\ell} (\Gamma, \Delta')
+%	}{
+%		\Gamma; \es; \Delta \proves P \hby{\ell} \Delta' \proves P' \hastype \Delta'
+%	}
+%\]
+$$
+\text{if } P \hby{\ell} P' \text{ and } (\Gamma, \Delta) \hby{\ell} (\Gamma, \Delta') \text{ then }
+\Gamma; \es; \Delta \proves P \hby{\ell} \Delta' \proves P' \hastype \Delta'
+$$
 %
 \noi As an example of how types enable transitions, consider the rule for input:
 %
@@ -159,7 +167,7 @@ if the channel is typed with an input prefix and the input value is either
 a name $m$, a \emph{characteristic value} $\omapchar{U}$,  or a \emph{trigger value} (the abstraction
 $\abs{{x}}{\binp{t}{y} (\appl{y}{{x}})}$). 
 A characteristic value
-is the {simplest} process that  inhabits a type (here the
+is the {simplest} process that  inhabits a type (here, the
 type $U$ carried by the session input prefix). The above rule is used to limit
 the input actions that can be observed from a session input prefix.
 For details of the labelled transition system and the characteristic process definition
@@ -172,15 +180,17 @@ Moreover, we define a \emph{(first-order) trigger process}:
 \end{eqnarray}
 %
 \noi
-Trigger processes are defined as a process input prefixed on
-a fresh name $t$. 
+The trigger process $\ftrigger{t}{V}{U}$ is 
+is defined as a process input prefixed on
+a fresh name $t$: it
 %The   trigger process $\htrigger{t}{V}$ above applies a value $V$
 %on the receiving (characteristic) process.
-The trigger process $\ftrigger{t}{V}{U}$ applies a value
-on the (hard coded) \emph{characteristic process} $\map{\btinp{U} \tinact}^{s}$ (see~\cite{characteristic_bis} for details). 
+applies a value
+on the %(hard coded) 
+\emph{characteristic process} $\map{\btinp{U} \tinact}^{s}$ (see~\cite{characteristic_bis} for details). 
 
-\jparagraph{Characterisations of Barbed Congruence}
-We now define \emph{characteristic} and \emph{higher-order} bisimilarity.
+\jparagraph{Characterisations of $\cong$}
+We now define \emph{characteristic} and \emph{higher-order} bisimilarities.
 Observe that higher-order bisimilarity is a new typed equality, 
 while 
 characteristic bisimilarity was introduced in~\cite{characteristic_bis} (Def.~14).
@@ -233,7 +243,7 @@ with \emph{higher-order triggers}:
 	\htrigger{t}{V}  & \defeq &  \hotrigger{t}{V} \label{eq:hot} 
 %	\ftrigger{t}{V}{U} & \defeq &  \fotrigger{t}{x}{s}{\btinp{U} \tinact}{V} 	\label{eq:fot}
 \end{eqnarray}
-We may then define:
+%We may then define:
 \begin{definition}[Higher-Order Bisimilarity]%\rm
 	\label{d:hbw}
 	Higher-order bisimilarity, denoted by $\hwb$, is defined \jpc{by} replacing 
@@ -256,7 +266,7 @@ We may then define:
 \end{definition}
 
 We state the following important result, which attests the significance of $\hwb$:
-\begin{theorem}
+\begin{theorem}\label{t:coincide}
 	Typed relations $\cong$, $\hwb$, and $\fwb$ coincide for \HOp processes.
 \end{theorem}
 \begin{proof}
@@ -266,33 +276,42 @@ for details. \qed
 \end{proof}
 
 \begin{remark}[Comparison between $\hwb$ and $\fwb$]
-	The difference between higher order bisimilarity
-	lies in the definition of the process trigger.
-	\begin{enumerate}[(a)]
-		\item
-				The higher-order bisimilarity trigger \eqref{eq:hot}
-%				\[
-%					\htrigger{t}{V}  \defeq  \hotrigger{t}{V}
-%				\]
-				allows for the application of bound variable $x$,
-				making $\hwb$ not defined in the \sessp sub-calculus
-				of \HOp, but defined inside the \HO sub-calculus. 
-
-		\item	The Characteristic bisimilarity trigger \eqref{eq:fot} 
-%				\[
-%					\ftrigger{t}{V}{U} \defeq  \fotrigger{t}{x}{s}{\btinp{U} \tinact}{V}
-%				\]
-				solves the problem in (a) by not using $x$ in the continuation
-				of fresh name input. This allows to input characteristic, first- or
-				higher-order value on bound variable $x$.
-
-
-		\item	Higher-order trigger lifts the need of observing
-				types on the lts and including them in bisimulation
-				closures. Higher-order bisimilarity adds to
-				the simplicity and elegance of the \HO subcalculus
-				over the \sessp subcalculus of \HOp.
-	\end{enumerate}
+The key difference between $\hwb$ and $\fwb$ is in the trigger process considered. 
+Because of the application in \eqref{eq:hot}, $\hwb$ 
+%is only defined for processes in \HO; it 
+cannot be used to reason about processes in \sessp. In contrast, $\fwb$ is more general:
+it can uniformly input characteristic, first- or higher-order values.
+This convenience comes at a price: the definition of \eqref{eq:fot} requires information on the 
+type of $V$; in contrast, the higher-order trigger \eqref{eq:hot} is more generic and simple,
+as it works independently of the given type.
+%
+%	The difference between higher order bisimilarity
+%	lies in the definition of the process trigger.
+%	\begin{enumerate}[(a)]
+%		\item
+%				The higher-order bisimilarity \eqref{eq:hot}
+%%				\[
+%%					\htrigger{t}{V}  \defeq  \hotrigger{t}{V}
+%%				\]
+%				allows for the application of bound variable $x$,
+%				making $\hwb$ not defined in the \sessp sub-calculus
+%				of \HOp, but defined inside the \HO sub-calculus. 
+%
+%		\item	The Characteristic bisimilarity trigger \eqref{eq:fot} 
+%%				\[
+%%					\ftrigger{t}{V}{U} \defeq  \fotrigger{t}{x}{s}{\btinp{U} \tinact}{V}
+%%				\]
+%				solves the problem in (a) by not using $x$ in the continuation
+%				of fresh name input. This allows to input characteristic, first- or
+%				higher-order value on bound variable $x$.
+%
+%
+%		\item	Higher-order trigger lifts the need of observing
+%				types on the lts and including them in bisimulation
+%				closures. Higher-order bisimilarity adds to
+%				the simplicity and elegance of the \HO subcalculus
+%				over the \sessp subcalculus of \HOp.
+%	\end{enumerate}
 \end{remark}
 
 %\begin{definition}[Characteristic Bisimilarity]\rm
@@ -325,76 +344,94 @@ for details. \qed
 
 
 \jparagraph{An up-to technique}
-We close this section by stating  a determinacy result for typed processes, useful in proving our expressiveness results (\secref{sec:positive}).
+We   state  an up-to technique for typed processes, based on determinacy properties; it will be useful to prove our expressiveness results (\secref{sec:positive}).
 In our setting, processes that do not use shared names are inherently deterministic. 
 In the sequel, we write 
  $\horel{\Gamma}{\Delta}{P}{\hby{\tau}}{\Delta'}{P'}$ to denote an internal (typed) transition.
-The auxiliary definition below allows us to distinguish two kinds of  internal transitions:
-\emph{session transitions} and \emph{$\beta$-transitions} (denoted 
-$\horel{\Gamma}{\Delta}{P}{\hby{\stau}}{\Delta'}{P'}$
-and $\horel{\Gamma}{\Delta}{P}{\hby{\btau}}{\Delta'}{P'}$, respectively).
-
-\begin{definition}[Deterministic Transition]
-\label{def:dettrans}
-	Let  $\Gamma; \es; \Delta \proves P \hastype \Proc$ be a balanced \HOp process. 
-	Transition $\horel{\Gamma}{\Delta}{P}{\hby{\tau}}{\Delta'}{P'}$ is called:
-	\begin{enumerate}[$-$]
-		\item	{\em Session transition}
-				whenever the untyped transition $P \by{\tau} P'$ 
-				is derived using  rule~$\ltsrule{Tau}$ 
-				(where $\subj{\ell_1}$ and $\subj{\ell_2}$ in the premise are dual endpoints), 
-				possibly followed by uses of
-				$\ltsrule{Alpha}$, $\ltsrule{Res}$, $\ltsrule{Rec}$, or $\ltsrule{Par${}_L$}/
-				\ltsrule{Par${}_R$}$.
-		
-		\item	{\em $\beta$-transition}
-				whenever the untyped transition $P \by{\tau} P'$
-				is derived using rule $\ltsrule{App}$,
-				possibly followed by uses of  $\ltsrule{Alpha}$, $\ltsrule{Res}$, $\ltsrule{Rec}$, or $\ltsrule{Par${}_L$}/
-				\ltsrule{Par${}_R$}$.
-	\end{enumerate}
-%
-	We write
-	$\horel{\Gamma}{\Delta}{P}{\hby{\stau}}{\Delta'}{P'}$
-	and 
-	$\horel{\Gamma}{\Delta}{P}{\hby{\btau}}{\Delta'}{P'}$
-	to denote session and $\beta$-transitions, resp. Also, 
-	 $\horel{\Gamma}{\Delta}{P}{\hby{\dtau}}{\Delta'}{P'}$ denotes
+ 
+ \begin{notation}[Deterministic Transitions]
+ \label{not:dettrans}
+We shall distinguish two kinds of  internal transitions:
+\emph{session transitions}, denoted 
+$\horel{\Gamma}{\Delta}{P}{\hby{\stau}}{\Delta'}{P'}$,
+and 
+\emph{$\beta$-transitions}, denoted $\horel{\Gamma}{\Delta}{P}{\hby{\btau}}{\Delta'}{P'}$.
+Intuitively, $\hby{\stau}$  results from a session communication (i.e., synchronization between
+two dual endpoints); 
+  $\hby{\btau}$ results from an application. 
+ We write  $\horel{\Gamma}{\Delta}{P}{\hby{\dtau}}{\Delta'}{P'}$ to denote
 	either a session transition or a $\beta$-transition.
-\end{definition}
+	Formal definitions for $\hby{\btau}$  and $\hby{\stau}$ rely on an LTS for \HOp; see~\cite{KouzapasPY15} for details.
+ \end{notation}
+ 
+%The auxiliary definition below allows us to distinguish two kinds of  internal transitions:
+%\emph{session transitions} and \emph{$\beta$-transitions} (denoted 
+%$\horel{\Gamma}{\Delta}{P}{\hby{\stau}}{\Delta'}{P'}$
+%and $\horel{\Gamma}{\Delta}{P}{\hby{\btau}}{\Delta'}{P'}$, respectively).
+%
+%\begin{definition}[Deterministic Transition]
+%\label{def:dettrans}
+%	Let  $\Gamma; \es; \Delta \proves P \hastype \Proc$ be a balanced \HOp process. 
+%	Transition $\horel{\Gamma}{\Delta}{P}{\hby{\tau}}{\Delta'}{P'}$ is called:
+%	\begin{enumerate}[$-$]
+%		\item	{\em Session transition}
+%				whenever the untyped transition $P \by{\tau} P'$ 
+%				is derived using  rule~$\ltsrule{Tau}$ 
+%				(where $\subj{\ell_1}$ and $\subj{\ell_2}$ in the premise are dual endpoints), 
+%				possibly followed by uses of
+%				$\ltsrule{Alpha}$, $\ltsrule{Res}$, $\ltsrule{Rec}$, or $\ltsrule{Par${}_L$}/
+%				\ltsrule{Par${}_R$}$.
+%		
+%		\item	{\em $\beta$-transition}
+%				whenever the untyped transition $P \by{\tau} P'$
+%				is derived using rule $\ltsrule{App}$,
+%				possibly followed by uses of  $\ltsrule{Alpha}$, $\ltsrule{Res}$, $\ltsrule{Rec}$, or $\ltsrule{Par${}_L$}/
+%				\ltsrule{Par${}_R$}$.
+%	\end{enumerate}
+%%
+%	We write
+%	$\horel{\Gamma}{\Delta}{P}{\hby{\stau}}{\Delta'}{P'}$
+%	and 
+%	$\horel{\Gamma}{\Delta}{P}{\hby{\btau}}{\Delta'}{P'}$
+%	to denote session and $\beta$-transitions, resp. Also, 
+%	 $\horel{\Gamma}{\Delta}{P}{\hby{\dtau}}{\Delta'}{P'}$ denotes
+%	either a session transition or a $\beta$-transition.
+%\end{definition}
 %
 %A transition $\horel{\Gamma}{\Delta}{P}{\hby{\tau}}{\Delta'}{P'}$ is said
 %{\em deterministic} if it is derived using~$\ltsrule{App}$ or~$\ltsrule{Tau}$ 
 %(where $\subj{\ell_1}$ and $\subj{\ell_2}$ in the premise  are dual endpoints), 
 %possibly followed by uses of  $\ltsrule{Alpha}$, $\ltsrule{Res}$, $\ltsrule{Rec}$, or $\ltsrule{Par${}_L$}/\ltsrule{Par${}_R$}$.
 
+We have the following determinacy properties; see  \appref{app:sub_tau_inert} for details.
+
 \begin{lemma}[$\tau$-Inertness]\rm
 	\label{lem:tau_inert}
-	\begin{enumerate}[1)]
-		\item
+	(1)
+%	\begin{enumerate}[1)]
+%		\item
 				Let $\horel{\Gamma}{\Delta}{P}{\hby{\dtau}}{\Delta'}{P'}$ be a deterministic transition,
-				with balanced $\Delta$. \\ Then 
+				with balanced $\Delta$. Then 
 				$\Gamma; \Delta \proves P \cong \Delta'\proves P'$ 
 				with $\Delta \red^\ast \Delta'$ balanced.
-
-		\item 
-				Let $P$ be an $\HOp^{-\mathsf{sh}}$ process. 
-				Assume $\Gamma; \emptyset; \Delta \proves P \hastype \Proc$. \\ Then 
+%		\item 
+				(2) Let $P$ be an $\HOp^{-\mathsf{sh}}$ process. 
+				Assume $\Gamma; \emptyset; \Delta \proves P \hastype \Proc$. Then 
 				$P \red^\ast P'$ implies $\Gamma; \Delta \proves 
 				P \cong \Delta'\proves P'$ with $\Delta \red^\ast \Delta'$. 
-	\end{enumerate}
+%	\end{enumerate}
 \end{lemma}
 
 
-\begin{proof}
-	The proof uses the fact that processes of the
-	form $\Gamma; \es; \Delta \proves_s \bout{s}{V} P_1 \Par \binp{k}{x} P_2$
-	cannot have any typed transition observables and the fact
-	that bisimulation is a congruence.
-	See  \appref{app:sub_tau_inert} for details.
-	The proof for Part 2 follows from Part 1.
-	\qed
-\end{proof}
+%\begin{proof}
+%	The proof uses the fact that processes of the
+%	form $\Gamma; \es; \Delta \proves_s \bout{s}{V} P_1 \Par \binp{k}{x} P_2$
+%	cannot have any typed transition observables and the fact
+%	that bisimulation is a congruence.
+%	See  \appref{app:sub_tau_inert} for details.
+%	The proof for Part 2 follows from Part 1.
+%	\qed
+%\end{proof}
 
 Using the above determinacy properties, we can state the following up-to technique.
 We write $\Hby{\dtau}$ to denote a (possibly empty) sequence of deterministic steps 
@@ -406,7 +443,7 @@ $\hby{\dtau}$.
 	Let $\horel{\Gamma}{\Delta_1}{P_1}{\ \Re\ }{\Delta_2}{Q_1}$ such
 	that if whenever:
 %
-	\begin{enumerate}
+	\begin{enumerate}[1.]
 		\item	$\forall \news{\tilde{m_1}} \bactout{n}{V_1}$ such that
 			$
 				\horel{\Gamma}{\Delta_1}{P_1}{\hby{\news{\tilde{m_1}} \bactout{n}{V_1}}}{\Delta_3}{P_3}
@@ -419,7 +456,7 @@ $\hby{\dtau}$.
 			$
 				\horel{\Gamma}{\Delta_3}{P_3}{\Hby{\dtau}}{\Delta_1'}{P_2}
 			$
-			and for fresh $t$:
+			and for fresh $t$:\\
 			$
 				\horel{\Gamma}{\Delta_1''}{\newsp{\tilde{m_1}}{P_2 \Par \htrigger{t}{V_1}}}
 				{\ \Re\ }
@@ -427,13 +464,13 @@ $\hby{\dtau}$.
 %				\mhorel{\Gamma}{\Delta_1''}{\newsp{\tilde{m_1}}{P_2 \Par \hotrigger{t}{x}{s}{V_1}}}
 %				{\ \Re\ }
 %				{\Delta_2''}{}{\newsp{\tilde{m_2}}{Q_2 \Par \hotrigger{t}{x}{s}{V_2}}}
-			$
+			$.
 %
 		\item	$\forall \ell \not= \news{\tilde{m}} \bactout{n}{V}$ such that
 			$
 				\horel{\Gamma}{\Delta_1}{P_1}{\hby{\ell}}{\Delta_3}{P_3}
 			$
-			implies that $\exists Q_2$ such that 
+			implies that $\exists Q_2$  \\ such that 
 			$
 				\horel{\Gamma}{\Delta_1}{Q_1}{\hat{\Hby{\ell}}}{\Delta_2'}{Q_2}
 			$
@@ -442,11 +479,11 @@ $\hby{\dtau}$.
 				\horel{\Gamma}{\Delta_3}{P_3}{\Hby{\dtau}}{\Delta_1'}{P_2}
 			$
 			and
-			$\horel{\Gamma}{\Delta_1'}{P_2}{\ \Re\ }{\Delta_2'}{Q_2}$
+			$\horel{\Gamma}{\Delta_1'}{P_2}{\ \Re\ }{\Delta_2'}{Q_2}$.
 
 		\item	The symmetric cases of 1 and 2.
 	\end{enumerate}
-	Then $\Re\ \subseteq\ \wb$.
+	Then $\Re\ \subseteq\ \hwb$.
 \end{lemma}
 
 

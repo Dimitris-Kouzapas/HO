@@ -5,15 +5,19 @@ higher-order communication without name-passing nor recursion (\HO) (\secref{sub
 (2)~\HOp into the first-order calculus with name-passing  
 with recursion (\sessp) (\secref{subsec:HOp_to_sessp}).
 We consider the following typed calculi (cf.~\defref{d:tcalculus}):
-\begin{enumerate}[-]
-	\item
-	$\tyl{L}_{\HOp}=\calc{\HOp}{{\cal{T}}_1}{\hby{\tau}}{\hwb}{\proves}$,
-	\item
-	$\tyl{L}_{\HO}=\calc{\HO}{{\cal{T}}_2}{\hby{\tau}}{\hwb}{\proves}$,
-	\item
-	$\tyl{L}_{\sessp}=\calc{\sessp}{{\cal{T}}_3}{\hby{\tau}}{\fwb}{\proves}$ 
-\end{enumerate}
-%
+%\begin{enumerate}[-]
+%	\item
+%	$\tyl{L}_{\HOp}=\calc{\HOp}{{\cal{T}}_1}{\hby{\tau}}{\hwb}{\proves}$,
+%	\item
+%	$\tyl{L}_{\HO}=\calc{\HO}{{\cal{T}}_2}{\hby{\tau}}{\hwb}{\proves}$,
+%	\item
+%	$\tyl{L}_{\sessp}=\calc{\sessp}{{\cal{T}}_3}{\hby{\tau}}{\fwb}{\proves}$ 
+%\end{enumerate}
+	$$\tyl{L}_{\HOp}=\calc{\HOp}{{\cal{T}}_1}{\hby{\tau}}{\hwb}{\proves}
+	\quad
+	\tyl{L}_{\HO}=\calc{\HO}{{\cal{T}}_2}{\hby{\tau}}{\hwb}{\proves}
+	\quad
+	\tyl{L}_{\sessp}=\calc{\sessp}{{\cal{T}}_3}{\hby{\tau}}{\fwb}{\proves}$$
 where: 
 ${\cal{T}}_1$, ${\cal{T}}_2$, 
 and ${\cal{T}}_3$
@@ -72,7 +76,8 @@ The mapping on types gives an insight on the behaviour of processes.
 \noi We show that $\HO$ is expressive enough to
 represent the full
  \HOp-calculus.
-The main challenge is to encode (1) name passing 
+ As explained in \secref{sec:overview}, 
+the main challenge is to encode (1) name passing 
 and (2) recursion, 
 for which 
 we only use  abstraction passing. For (1), we pass  
@@ -120,11 +125,11 @@ To this end, we require two auxiliary definitions.
 \smallskip 
 
 \noi This way, given an \HO
- process $P$ (with $\fn{P} = m_1, \cdots, m_k$),
- we are interested in its associated abstraction, 
-defined as
+ process $P$ (with $\fn{P} = \{m_1, \cdots, m_k\}$),
+ we are interested in the abstraction
+%defined as
 $\abs{x_1\cdots x_n}{\auxmapp{P}{{}}{\emptyset} }$, where $\vmap{m_j} = x_j$, for all $j \in \{1, \ldots, k\}$. 
-In the following we make this intuition precise.
+%In the following we make this intuition precise.
 
 %This transformation from processes into abstractions can be reverted by
 %using abstraction and application with an appropriate sequence of session names:
@@ -137,9 +142,9 @@ In the following we make this intuition precise.
 %%	$\appl{X}{\smap{\fn{P}}} \subst{(\vmap{\fn{P}}) \map{P}^{\emptyset}}{X} \scong P$
 %\end{proposition}
 
-\input{figures/HOp_to_HO}
 
-\smallskip 
+
+%\smallskip 
 
 \begin{definition}[Typed Encoding of \HOp into \HO]
 \label{d:enc:hopitoho}
@@ -171,12 +176,13 @@ shared environments $\Gamma$ homomorphically with:
 	\end{array}
 \]
 with
-$S^* = \trec{t}{\btinp{\shot{(S_1,\ldots,S_m,\vart{t})}} \tinact}$
+ $\Delta = \{n_i:S_i\}_{1\leq i\leq m}$ and
+$S^* = \trec{t}{\btinp{\shot{(S_1,\ldots,S_m,\vart{t})}} \tinact}$.
 %and $\Delta = \{n_1:S_1, \ldots, n_m:S_m\}$. 
-and $\Delta = \{n_i:S_i\}_{1\leq i\leq m}$. 
 \end{definition}
 
-\smallskip 
+\input{figures/HOp_to_HO}
+
 \noi Note that $\Delta$ in $\varp{X}:\Delta$ is mapped to a non-tail
 recursive session type with variable $z_X$ (see recursion mappings in \figref{f:enc:hopi_to_ho}).
 Non-tail
@@ -187,13 +193,15 @@ context of higher-order session types.
 %which carries type variable as the last argument.  
 For simplicity of the presentation, %we use the polyadic name abstraction and passing.
 we use name abstractions with polyadicity.
-A precise encoding of polyadicity into \HO is given in~\secref{subsec:pho}.
+A precise encoding of polyadicity into \HO is given in~\secref{sec:extension}.
 
 We explain the mapping in \figref{f:enc:hopi_to_ho}, focusing 
-on {\em name passing} ($\pmapp{\bout{u}{w} P}{1}{f}$, $\pmapp{\binp{u}{x} P}{1}{f}$),  and  
-{\em recursion} ($\pmapp{\recp{X}{P}}{1}{f}$ and $\pmapp{\rvar{X}}{1}{f}$). 
+on {\em name passing} ($\pmapp{\bout{u}{w} P}{1}{f}$ and $\pmapp{\binp{u}{x} P}{1}{f}$),  and  
+{\em recursion} ($\pmapp{\recp{X}{P}}{1}{f}$ and $\pmapp{\rvar{X}}{1}{f}$):
 
-\myparagraph{Name passing.}
+\begin{description}
+%\myparagraph{Name passing.}
+\item[Name passing]
 A name $w$ is   passed as an input-guarded abstraction;
 the abstraction receives a higher-order
 value and continues with the application of $w$ over
@@ -210,10 +218,10 @@ the dual endpoint $\dual{s}$ to send the continuation $P$ as the abstraction
 $\abs{x}{P}$. 
 \NY{Then} name substitution is achieved via name application.
 
-\myparagraph{Recursion.}
-The encoding of a recursive process $\recp{X}{P}$  is delicate, for it 
-must preserve the linearity of session endpoints. To this end, we
-\NY{first record a mapping from recursive variable $X$ to process variable $z_X$.
+%\myparagraph{Recursion.}
+\item[Recursion]
+The encoding of a recursive process $\recp{X}{P}$ must preserve the linearity of session endpoints. We
+first record a mapping from recursive variable $X$ to process variable $z_X$.
 Then, we encode the recursion body $P$ as a name abstraction
 in which free names of $P$ are converted into name variables, using \defref{d:auxmap}.
 (Notice that $P$ is first encoded into \HO and then transformed using mapping
@@ -232,7 +240,7 @@ the application of $\fn{P}$); another copy is used to re-invoke
 the duplicator when needed. % to simulate recursion unfolding.
 %An example of this typed encoding is detailed in~\cite{KouzapasPY15}.
 We illustrate the encoding by means of an example.
-}
+\end{description}
 %The idea follows 
 %a classical recursion encoding \cite{ThomsenB:plachoasgcfhop}.  
 %A mapping of process $P$ is parallel composed, 
@@ -313,7 +321,7 @@ the full statement (and proof) can be found in~\cite{KouzapasPY15}.
 \end{proposition}
 
 \noi Observe how we can explicitly distinguish the role of finite, deterministic reductions 
-(\defref{def:dettrans}) in both soundness and completeness statements.
+(\notref{not:dettrans}) in both soundness and completeness statements.
 
 Using operational correspondence, we can show \emph{full abstraction}:
 \begin{proposition}[\HOp into \HO: Full Abstraction]%\myrm
@@ -339,9 +347,9 @@ is precise.
 \noi 
 We now discuss the encodability of  $\HO$ into $\sessp$. % where
 %:
-We closely follow the encoding  by 
-Sangiorgi~\cite{San92,SaWabook}, but casted in the setting of session-typed communications. 
-Intuitively, such an encoding  represents the exchange of a process with the exchange of a freshly generated \emph{trigger name}. 
+We closely follow Sangiorgi's encoding~\cite{San92,SaWabook}, but casted in the setting of session-typed communications. 
+%Intuitively, such an encoding  represents 
+The exchange of a process is represented in~\cite{San92,SaWabook} with the exchange of a fresh \emph{trigger name}. 
 Trigger names may then be used to activate copies of the process, which becomes a persistent resource represented by an input-guarded replication.
 %Consider the following (naive) adaptation of \cite{San92,SaWabook} 
 %in which session names are used are triggers and 
@@ -371,11 +379,11 @@ Trigger names may then be used to activate copies of the process, which becomes 
 %%
 %The above process is untypable since processes $(\bout{x}{s_1} \inact$ and $\bout{x}{s_2} \inact)$
 %cannot be put in parallel because they do not have disjoint session environments.
-On the other hand, session names are linear resources and cannot be replicated.
+In the presence of linear session names (which cannot be replicated),
 %The correct 
-Our
+our
 approach %would be to 
-then uses replicated names
+ uses replicated names
 as triggers for shared resources and non-replicated names
 for linear resources.
 %as triggers instead of session names, when dealing with shared abstractions. 
@@ -412,7 +420,7 @@ We describe key properties of this encoding. First, operational correspondence:
 \begin{enumerate}[1.]
 \item Completeness: Suppose $\horel{\Gamma}{\Delta}{P}{\hby{\ell}}{\Delta'}{P'}$. Then either:
 				\begin{enumerate}[a)]
-				\item If $\ell = \tau$ then either
+				\item If $\ell = \tau$ then one of the following holds:
 				\begin{enumerate}[-]
 					\item	 %such that
 						$
