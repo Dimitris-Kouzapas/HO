@@ -7,7 +7,7 @@ This naturally begs the question: which of the two sub-calculi is more tightly r
 We empirically and formally argue that when compared to \sessp, \HO   is more economical and satisfies tighter correspondences.
 
 \jparagraph{Reduction Steps}
-We first compare our two encodings by contrasting the way in which 
+We first contrast the way in which 
 %\begin{enumerate}[a)]
 %\item 
 (a)~the encoding from \HOp to \HO (\secref{subsec:HOpi_to_HO}) translates processes with name passing;
@@ -30,7 +30,11 @@ the intended communication on $s$ leads to $n$ usages of the communication objec
 Consider now the reduction steps from $P_1$ and $P_2$:
 \begin{eqnarray*}
 P_1 & \hby{\tau} & \bout{a}{s_1} \inact \Par \dots \Par \bout{a}{s_n} \inact \\
-P_2 & \hby{\tau}& \appl{(\abs{x}{P})}{s_1} \Par \dots \Par \appl{(\abs{x}{P})}{s_n} \quad \underbrace{\hby{\btau} \cdots \hby{\btau}}_{n} \quad P \subst{s_1}{x} \Par \dots \Par P \subst{s_1}{x} 
+P_2 & \hby{\tau}& \appl{(\abs{x}{P})}{s_1} \Par \dots \Par \appl{(\abs{x}{P})}{s_n} \quad 
+%\underbrace{\hby{\btau} \cdots \hby{\btau}}_{n} 
+%\hby{}}^{n}
+\stackrel{\btau}{\longmapsto^n}
+\quad P \subst{s_1}{x} \Par \dots \Par P \subst{s_1}{x} 
 \end{eqnarray*}
 
 %Let reduction on \sessp process:
@@ -48,11 +52,11 @@ P_2 & \hby{\tau}& \appl{(\abs{x}{P})}{s_1} \Par \dots \Par \appl{(\abs{x}{P})}{s
 %	P \subst{s_1}{x} \Par \dots \Par P \subst{s_1}{x}
 %\end{eqnarray*}
 \noi 
-$P_1$ and $P_2$ follow the same communication pattern; they both
-reduce on a message passing action, with the
-message being substituted $n$ times on the receing side.
-Both $P_1$ and $P_2$ are \HOp processes.
-If we consider the encodings of $P_1$ into \HO   
+%$P_1$ and $P_2$ follow the same communication pattern; they both
+%reduce on a message passing action, with the
+%message being substituted $n$ times on the receing side.
+%Both $P_1$ and $P_2$ are \HOp processes.
+By considering the encoding of $P_1$ into \HO   
 we obtain:
 \begin{eqnarray*}
 \map{P_1}^{1}_f & = &  	\bout{s}{\abs{z}{\binp{z}{y} \appl{y}{a}}} \inact \Par \\
@@ -91,9 +95,10 @@ It is clear that encoding $P_1$ into \HO is more economical than
 encoding $P_2$ into \sessp. Not only moving to a pure higher-order setting requires less reduction steps than in the first-order concurrency of \sessp; in the presence of shared names, moving to a first-order setting brings the need of setting up and handling replicated processes which will eventually lead to garbage processes. In contrast, the mechanism present in \HO works efficiently regardless of the linear or shared properties of the name that is ``packed'' into the abstraction. 
 The use of deterministic transitions guarantees local synchronizations, which are arguably less expensive than point-to-point, session synchronizations.
 
-It is instructive to move our comparison 
-to a purely linear setting, and to see what occurs. 
-In the case of linear values we have:
+It is useful to move our comparison 
+to a purely linear setting. % and to see what occurs. 
+Consider processes:
+%In the case of linear values we have:
 \begin{eqnarray*}
 	Q_1  =  \bout{s'}{s} \inact \Par \binp{\dual{s'}}{x} \bout{x}{a} \inact
 	\hby{\tau}
@@ -130,20 +135,19 @@ we obtain:
 	\hby{\stau} ~~
 	P\subst{a}{x}
 \end{eqnarray*}
-\noi In this case, the encoding into \sessp is more efficient: it induces less reduction steps.
+\noi In this case, the encoding $\pmap{\cdot}{2}$ is more efficient: it induces less reduction steps.
 Therefore considering a fragment of \HOp without shared communications (linearity only)
 has consequences in terms of reduction steps. Notice that we prove that linear communications do 
 not suffice to encode shared communications (\secref{ss:negative}).
 
 \jparagraph{Labelled Transition Correspondence}
-
-In addition to preciseness we can develop one more encodability
-result for the translation of \HOp into \HO, which is
-the correspondence of the labelled transition reduction
-system. As we will show such a correspondence does not
-hold for the \HOp to \sessp translation.
-
-To establish the difference between $\map{\cdot}_f^1$ and $\pmap{\cdot}{2}$,
+%In addition to preciseness we can develop one more encodability
+%result for the translation of \HOp into \HO, which is
+%the correspondence of the labelled transition reduction
+%system. As we will show such a correspondence does not
+%hold for the \HOp to \sessp translation.
+We now establish difference between $\map{\cdot}_f^1$ and $\pmap{\cdot}{2}$ from a formal standpoint.
+To this end, 
 we introduce an extra encodability criteria: a form of operational correspondence 
 for \emph{visible actions}. 
 We shall write $\ell_1, \ell_2, \ldots$ to denote  
@@ -183,14 +187,15 @@ which is precise (\defref{def:goodenc}) and that also satisfies
 labelled operational correspondence as above.
 \end{definition}
 
+We have the following result, which attests that 
+\HOp and \HO are more tightly related than \HOp and \sessp:
 \begin{theorem}\label{t:tight}
 While the encoding of \HOp into \HO (\defref{d:enc:hopitoho}) is tight, the encoding of \HOp into \sessp (\defref{d:enc:hopitopi}) is not tight.
 \end{theorem}
 
 \noi We substantiate the above claim by showing that the encoding $\map{\cdot}^1_f$ enjoys 
 labelled operational correspondence, whereas $\pmap{\cdot}{2}$ does not. 
-Consider the following mapping from labels of
-\HOp into labels for \HO:
+Consider the following mapping:
 \[
 	\begin{array}{rclcrcl}
 		\mapa{\news{\tilde{m_1}}\bactout{n}{m}}^{1}	&\defeq&	\news{\tilde{m_1}}\bactout{n}{\abs{z}{\,\binp{z}{x} \appl{x}{m}} }
@@ -334,7 +339,7 @@ Then the following result, a complement of \propref{prop:op_corr_HOp_to_HO}, hol
 The analog of \propref{prop:lts_corr_HOp_to_HO} does not hold for the encoding of \HOp into \sessp.
 Consider the \HOp process:
 \[
-	\Gamma; \es; \Delta \proves \bout{s}{\abs{x}{P}} \inact \hastype \Proc \hby{\bactout{s}{\abs{x} P}} \es \proves \inact
+	\Gamma; \es; \Delta \proves \bout{s}{\abs{x}{P}} \inact \hastype \Proc \hby{\bactout{s}{\abs{x} P}} \es \proves \inact \not \hby{}
 \]
 with $\abs{x}{P}$ being a linear value.
 We translated into \sessp process:
@@ -350,10 +355,10 @@ We translated into \sessp process:
 %	&&\hby{\bactinp{a}{V}} \dots
 %\end{eqnarray*}
 
-The resulting processes have a mismatch both in the typing
-environment ($\Delta' \not= \tmap{\es}{2}$
-and in the actions they can the two processes can
-subsequently observe. Specifically the first process
-cannot observe any actions while the second process
-can observe actions on the encoding of the linear value $\abs{x}{P}$.
+\noi The resulting processes have a mismatch both in the typing
+environment ($\Delta' \not= \tmap{\es}{2}$)
+and in the actions that they can %the two processes can
+subsequently observe: the first process
+cannot perform any action, while the second process
+can performs actions of the encoding of $\abs{x}{P}$.
 

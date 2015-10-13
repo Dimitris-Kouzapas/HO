@@ -1,14 +1,19 @@
 % !TEX root = main.tex
-\noi In this section we define reduction-closed, barbed congruence ($\cong$) as the
+\noi We first define reduction-closed, barbed congruence ($\cong$, \defref{def:rc}) as the
 reference equivalence relation for \HOp processes.
-Later on we will define two characterizations of $\cong$:
-\emph{higher-order} and  
-\emph{characteristic bisimilarities} (denoted $\hwb$ and $\fwb$, respectively). 
-Here we focus on collecting intuitions; omitted details are in the Appendix and in~\cite{KouzapasPY15}.
+We then define two characterizations of $\cong$:
+\emph{characteristic} and
+\emph{higher-order bisimilarities}   
+ (denoted $\fwb$ and $\hwb$, cf. \defsref{d:fwb} and \ref{d:hbw}). 
+%Here we focus on collecting intuitions; omitted details are in the Appendix and in~\cite{KouzapasPY15}.
 
 \subsection{Reduction-Closed, Barbed Congruence}
 \label{subsec:rc}
-We first define \emph{confluence} over session environments $\Delta$:
+%We first define \emph{confluence} over session environments $\Delta$:
+
+We consider \emph{typed relations} that relate only closed terms whose
+session environments %and the two session environments
+are balanced  and confluent:
 
 \begin{definition}[Session Environment Confluence]
 Let $\red^\ast$ denote multi-step reduction as in \defref{def:ses_red}.
@@ -17,8 +22,9 @@ Let $\red^\ast$ denote multi-step reduction as in \defref{def:ses_red}.
 \end{definition}
 
 %\smallskip 
-\noi Reduction-closed, barbed congruence is defined over typed
-processes:
+%\noi Reduction-closed, barbed congruence is defined over typed
+%processes:
+
 
 \begin{definition}[Typed Relation]
 	We say that
@@ -33,12 +39,14 @@ processes:
 
 %\smallskip 
 
-\noi Observe that typed relations relate only closed terms whose
-session environments %and the two session environments
-are balanced  and confluent.
-Next we define  {\em barbs}~\cite{MiSa92}
-with respect to types. 
+%\noi Next we define  {\em barbs}with respect to types. 
 
+A \emph{barb} $\barb{n}$ is an observable on an output prefix with subject $n$~\cite{MiSa92}.
+A \emph{weak barb} $\Barb{n}$ is a barb after a number of reduction steps.
+Typed barbs $\barb{n}$ (resp.\ $\Barb{n}$)
+occur on typed processes $\Gamma; \emptyset; \Delta \proves P \hastype \Proc$.
+When $n$ is a session name we require that its dual endpoint $\dual{n}$ is not present
+in the session environment $\Delta$:
 %\smallskip 
 
 \begin{definition}[Barbs]\rm
@@ -57,12 +65,7 @@ with respect to types.
 
 %\smallskip 
 
-\noi A barb $\barb{n}$ is an observable on an output prefix with subject $n$.
-Similarly a weak barb $\Barb{n}$ is a barb after a number of reduction steps.
-Typed barbs $\barb{n}$ (resp.\ $\Barb{n}$)
-occur on typed processes $\Gamma; \emptyset; \Delta \proves P \hastype \Proc$.
-When $n$ is a session name we require that its dual endpoint $\dual{n}$ is not present
-in the session environment $\Delta$.
+\noi 
 
 To define a congruence relation, we introduce the family $\C$ of contexts:
 
@@ -186,8 +189,8 @@ applies a value
 on the %(hard coded) 
 \emph{characteristic process} $\map{\btinp{U} \tinact}^{s}$ (see~\cite{characteristic_bis} for details). 
 
-\jparagraph{Characterisations of Barbed Congruence}
-We now define \emph{characteristic} and \emph{higher-order} bisimilarity.
+\jparagraph{Characterisations of $\cong$}
+We now define \emph{characteristic} and \emph{higher-order} bisimilarities.
 Observe that higher-order bisimilarity is a new typed equality, 
 while 
 characteristic bisimilarity was introduced in~\cite{characteristic_bis} (Def.~14).
@@ -240,7 +243,7 @@ with \emph{higher-order triggers}:
 	\htrigger{t}{V}  & \defeq &  \hotrigger{t}{V} \label{eq:hot} 
 %	\ftrigger{t}{V}{U} & \defeq &  \fotrigger{t}{x}{s}{\btinp{U} \tinact}{V} 	\label{eq:fot}
 \end{eqnarray}
-We may then define:
+%We may then define:
 \begin{definition}[Higher-Order Bisimilarity]%\rm
 	\label{d:hbw}
 	Higher-order bisimilarity, denoted by $\hwb$, is defined \jpc{by} replacing 
@@ -273,33 +276,41 @@ for details. \qed
 \end{proof}
 
 \begin{remark}[Comparison between $\hwb$ and $\fwb$]
-	The difference between higher order bisimilarity
-	lies in the definition of the process trigger.
-	\begin{enumerate}[(a)]
-		\item
-				The higher-order bisimilarity \eqref{eq:hot}
-%				\[
-%					\htrigger{t}{V}  \defeq  \hotrigger{t}{V}
-%				\]
-				allows for the application of bound variable $x$,
-				making $\hwb$ not defined in the \sessp sub-calculus
-				of \HOp, but defined inside the \HO sub-calculus. 
-
-		\item	The Characteristic bisimilarity trigger \eqref{eq:fot} 
-%				\[
-%					\ftrigger{t}{V}{U} \defeq  \fotrigger{t}{x}{s}{\btinp{U} \tinact}{V}
-%				\]
-				solves the problem in (a) by not using $x$ in the continuation
-				of fresh name input. This allows to input characteristic, first- or
-				higher-order value on bound variable $x$.
-
-
-		\item	Higher-order trigger lifts the need of observing
-				types on the lts and including them in bisimulation
-				closures. Higher-order bisimilarity adds to
-				the simplicity and elegance of the \HO subcalculus
-				over the \sessp subcalculus of \HOp.
-	\end{enumerate}
+The key difference between $\hwb$ and $\fwb$ is in the trigger process considered. 
+Because of the application in \eqref{eq:hot}, $\hwb$ is only defined for processes 
+in \HO; it cannot be used for reasoning about processes in \sessp. In contrast, $\fwb$ is more general:
+it can uniformly input characteristic, first- or higher-order values.
+This convenience comes at a price: the definition of \eqref{eq:fot} requires information on the 
+type of $V$; in contrast, the higher-order trigger \eqref{eq:hot} is more generic and simple,
+as it works independently of the expected type.
+%
+%	The difference between higher order bisimilarity
+%	lies in the definition of the process trigger.
+%	\begin{enumerate}[(a)]
+%		\item
+%				The higher-order bisimilarity \eqref{eq:hot}
+%%				\[
+%%					\htrigger{t}{V}  \defeq  \hotrigger{t}{V}
+%%				\]
+%				allows for the application of bound variable $x$,
+%				making $\hwb$ not defined in the \sessp sub-calculus
+%				of \HOp, but defined inside the \HO sub-calculus. 
+%
+%		\item	The Characteristic bisimilarity trigger \eqref{eq:fot} 
+%%				\[
+%%					\ftrigger{t}{V}{U} \defeq  \fotrigger{t}{x}{s}{\btinp{U} \tinact}{V}
+%%				\]
+%				solves the problem in (a) by not using $x$ in the continuation
+%				of fresh name input. This allows to input characteristic, first- or
+%				higher-order value on bound variable $x$.
+%
+%
+%		\item	Higher-order trigger lifts the need of observing
+%				types on the lts and including them in bisimulation
+%				closures. Higher-order bisimilarity adds to
+%				the simplicity and elegance of the \HO subcalculus
+%				over the \sessp subcalculus of \HOp.
+%	\end{enumerate}
 \end{remark}
 
 %\begin{definition}[Characteristic Bisimilarity]\rm
@@ -332,7 +343,7 @@ for details. \qed
 
 
 \jparagraph{An up-to technique}
-We close this section by stating  a determinacy result for typed processes, useful in proving our expressiveness results (\secref{sec:positive}).
+We   state  an up-to technique for typed processes, based on determinacy properties; it will be useful to prove our expressiveness results (\secref{sec:positive}).
 In our setting, processes that do not use shared names are inherently deterministic. 
 In the sequel, we write 
  $\horel{\Gamma}{\Delta}{P}{\hby{\tau}}{\Delta'}{P'}$ to denote an internal (typed) transition.

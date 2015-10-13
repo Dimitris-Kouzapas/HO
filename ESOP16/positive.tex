@@ -76,7 +76,8 @@ The mapping on types gives an insight on the behaviour of processes.
 \noi We show that $\HO$ is expressive enough to
 represent the full
  \HOp-calculus.
-The main challenge is to encode (1) name passing 
+ As explained in \secref{sec:overview}, 
+the main challenge is to encode (1) name passing 
 and (2) recursion, 
 for which 
 we only use  abstraction passing. For (1), we pass  
@@ -124,11 +125,11 @@ To this end, we require two auxiliary definitions.
 \smallskip 
 
 \noi This way, given an \HO
- process $P$ (with $\fn{P} = m_1, \cdots, m_k$),
- we are interested in its associated abstraction, 
-defined as
+ process $P$ (with $\fn{P} = \{m_1, \cdots, m_k\}$),
+ we are interested in the abstraction
+%defined as
 $\abs{x_1\cdots x_n}{\auxmapp{P}{{}}{\emptyset} }$, where $\vmap{m_j} = x_j$, for all $j \in \{1, \ldots, k\}$. 
-In the following we make this intuition precise.
+%In the following we make this intuition precise.
 
 %This transformation from processes into abstractions can be reverted by
 %using abstraction and application with an appropriate sequence of session names:
@@ -141,9 +142,9 @@ In the following we make this intuition precise.
 %%	$\appl{X}{\smap{\fn{P}}} \subst{(\vmap{\fn{P}}) \map{P}^{\emptyset}}{X} \scong P$
 %\end{proposition}
 
-\input{figures/HOp_to_HO}
 
-\smallskip 
+
+%\smallskip 
 
 \begin{definition}[Typed Encoding of \HOp into \HO]
 \label{d:enc:hopitoho}
@@ -175,12 +176,13 @@ shared environments $\Gamma$ homomorphically with:
 	\end{array}
 \]
 with
-$S^* = \trec{t}{\btinp{\shot{(S_1,\ldots,S_m,\vart{t})}} \tinact}$
+ $\Delta = \{n_i:S_i\}_{1\leq i\leq m}$ and
+$S^* = \trec{t}{\btinp{\shot{(S_1,\ldots,S_m,\vart{t})}} \tinact}$.
 %and $\Delta = \{n_1:S_1, \ldots, n_m:S_m\}$. 
-and $\Delta = \{n_i:S_i\}_{1\leq i\leq m}$. 
 \end{definition}
 
-\smallskip 
+\input{figures/HOp_to_HO}
+
 \noi Note that $\Delta$ in $\varp{X}:\Delta$ is mapped to a non-tail
 recursive session type with variable $z_X$ (see recursion mappings in \figref{f:enc:hopi_to_ho}).
 Non-tail
@@ -215,8 +217,7 @@ $\abs{x}{P}$.
 \NY{Then} name substitution is achieved via name application.
 
 \myparagraph{Recursion.}
-The encoding of a recursive process $\recp{X}{P}$  is delicate, for it 
-must preserve the linearity of session endpoints. To this end, we
+The encoding of a recursive process $\recp{X}{P}$ must preserve the linearity of session endpoints. We
 \NY{first record a mapping from recursive variable $X$ to process variable $z_X$.
 Then, we encode the recursion body $P$ as a name abstraction
 in which free names of $P$ are converted into name variables, using \defref{d:auxmap}.
@@ -344,7 +345,8 @@ is precise.
 We now discuss the encodability of  $\HO$ into $\sessp$. % where
 %:
 We closely follow Sangiorgi's encoding~\cite{San92,SaWabook}, but casted in the setting of session-typed communications. 
-Intuitively, such an encoding  represents the exchange of a process with the exchange of a fresh \emph{trigger name}. 
+%Intuitively, such an encoding  represents 
+The exchange of a process is represented in~\cite{San92,SaWabook} with the exchange of a fresh \emph{trigger name}. 
 Trigger names may then be used to activate copies of the process, which becomes a persistent resource represented by an input-guarded replication.
 %Consider the following (naive) adaptation of \cite{San92,SaWabook} 
 %in which session names are used are triggers and 
