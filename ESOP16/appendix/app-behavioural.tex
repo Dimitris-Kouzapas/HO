@@ -1,7 +1,10 @@
+% !TEX root = ../main.tex
+
+
 \section{Behavioural Semantics}
 \label{app:behavioural}
 
-% !TEX root = main.tex
+ 
 \noi We present the theory of Labelled Transition Semantics
 as presented in~\cite[Sec.~4]{characteristic_bis}.
 
@@ -226,7 +229,8 @@ select and branch.
 Rule $\eltsrule{Tau}$ defines
 internal transitions: 
 it keeps the session environment unchanged or 
-reduces it (\defref{d:wtenvred}).
+reduces it %(\defref{d:wtenvred}).
+(\defref{def:ses_red}).
 
 %%%%%%%%%%%%%%%%%%%% Environment LTS Figure %%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{figure}[t]
@@ -721,25 +725,26 @@ several lemmas:
 
 \noi
 We now proceed to state and proof these lemmas, together with some auxiliary results.
+\end{comment}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%  WB = WBF
+%  WB = FBW
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
 \begin{lemma}\rm
 	\label{lem:wb_eq_wbf}
-	$\wb = \wbf$.
+	$\hwb = \fwb$.
 \end{lemma}
 
 \begin{proof}
-	\noi We only prove the direction $\wb \subseteq \wbf$. The
-	direction $\wbf \subseteq \wb$ is similar.
+	\noi We only prove the direction $\hwb \subseteq \fwb$. The
+	direction $\fwb \subseteq \hwb$ is similar.
 
 	\noi Consider
 %
 	\[
-		\Re = \set{\horel{\Gamma}{\Delta_1}{P}{\ ,\ }{\Delta_2}{Q} \setbar \horel{\Gamma}{\Delta_1}{P}{\wb}{\Delta_2}{Q}}
+		\Re = \set{\horel{\Gamma}{\Delta_1}{P}{\ ,\ }{\Delta_2}{Q} \setbar \horel{\Gamma}{\Delta_1}{P}{\hwb}{\Delta_2}{Q}}
 	\]
 %
 	We show that $\Re$ is a characteristic bisimulation.
@@ -762,15 +767,15 @@ We now proceed to state and proof these lemmas, together with some auxiliary res
 %
 	and for fresh $t$:
 	\[
-		\mhorel{\Gamma}{\Delta_1'}{\newsp{\tilde{m_1}}{P' \Par \hotrigger{t}{x}{s}{V_1}}}
-		{\wb}
-		{\Delta_2}{}{\newsp{\tilde{m_2}}{Q' \Par \hotrigger{t}{x}{s}{V_2}}}
+		\mhorel{\Gamma}{\Delta_1'}{\newsp{\tilde{m_1}}{P' \Par \hotrigger{t}{V_1}}}
+		{\hwb}
+		{\Delta_2}{}{\newsp{\tilde{m_2}}{Q' \Par \hotrigger{t}{V_2}}}
 	\]
 %
 	From the last typed pair we can derive that for $\Gamma; \es; \Delta \proves V_1 \hastype U$:
 %
 	\[
-		\mhorel{\Gamma}{\Delta_1'}{\newsp{\tilde{m_1}}{P' \Par \hotrigger{t}{x}{s}{V_1}}}
+		\mhorel{\Gamma}{\Delta_1'}{\newsp{\tilde{m_1}}{P' \Par \hotrigger{t}{V_1}}}
 		{\hby{\bactinp{t}{\map{\btinp{U} \tinact}^{x}}}}
 		{\Delta_1''}{}{\newsp{\tilde{m_1}}{P' \Par \newsp{s}{\map{\btinp{U} \tinact}^{s} \Par \bout{\dual{s}}{V_1} \inact}}}
 	\]
@@ -778,7 +783,7 @@ We now proceed to state and proof these lemmas, together with some auxiliary res
 	\noi implies
 %
 	\[
-		\mhorel{\Gamma}{\Delta_2'}{\newsp{\tilde{m_2}}{Q' \Par \hotrigger{t}{x}{s}{V_2}}}
+		\mhorel{\Gamma}{\Delta_2'}{\newsp{\tilde{m_2}}{Q' \Par \hotrigger{t}{V_2}}}
 		{\hby{\bactinp{t}{\map{\btinp{U} \tinact}^{x}}}}
 		{\Delta_2''}{}{\newsp{\tilde{m_2}}{Q' \Par \newsp{s}{\map{\btinp{U} \tinact}^{s} \Par \bout{\dual{s}}{V_2} \inact}}}
 	\]
@@ -790,7 +795,7 @@ We now proceed to state and proof these lemmas, together with some auxiliary res
 %
 	\[
 		\mhorel{\Gamma}{\Delta_1'}{\newsp{\tilde{m_1}}{P' \Par \fotrigger{t}{x}{s}{\btinp{U} \tinact}{V_1}}}
-		{\wb}
+		{\hwb}
 		{\Delta_2}{}{\newsp{\tilde{m_2}}{Q' \Par \fotrigger{t}{x}{s}{\btinp{U} \tinact}{V_2}}}
 	\]
 %
@@ -808,17 +813,18 @@ We now proceed to state and proof these lemmas, together with some auxiliary res
 		{\Delta_2''}{}{\newsp{\tilde{m_2}}{Q' \Par \newsp{s}{\map{\btinp{U} \tinact}^{s} \Par \bout{\dual{s}}{V_2} \inact}}}
 	\]
 %
-	\noi which coincides with the transitions for $\wb$.
+	\noi which coincides with the transitions for $\hwb$.
 
 	\noi - The rest of the cases are trivial.
 
-	\noi The direction $\wbf \subseteq \wb$ is very similar to the
-	direction $\wb \subseteq \wbf$: it requires a case analysis
+	\noi The direction $\fwb \subseteq \hwb$ is very similar to the
+	direction $\hwb \subseteq \fwb$: it requires a case analysis
 	on the transition label $\ell$. Again the non-trivial case is
 	$\ell = \news{\tilde{m_1}} \bactout{n}{V_1}$.
 	\qed
 \end{proof}
 
+\begin{comment}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %  LINEAR SUBSTITUTION
@@ -2202,5 +2208,102 @@ We prove Part 1 of \propref{lem:tau_inert}.
 %	$P \wbc P'$ because $P \wbc P''$ and $P'' \wbc P'$.
 	\qed
 \end{proof}
+
+
+
+\begin{lemma}[Up-to Deterministic Transition]%\myrm
+	Let $\horel{\Gamma}{\Delta_1}{P_1}{\ \Re\ }{\Delta_2}{Q_1}$ such
+	that if whenever:
+%
+	\begin{enumerate}[1.]
+		\item	$\forall \news{\tilde{m_1}} \bactout{n}{V_1}$ such that
+			$
+				\horel{\Gamma}{\Delta_1}{P_1}{\hby{\news{\tilde{m_1}} \bactout{n}{V_1}}}{\Delta_3}{P_3}
+			$
+			implies that $\exists Q_2, V_2$ such that
+			$
+				\horel{\Gamma}{\Delta_2}{Q_1}{\Hby{\news{\tilde{m_2}} \bactout{n}{V_2}}}{\Delta_2'}{Q_2}
+			$
+			and
+			$
+				\horel{\Gamma}{\Delta_3}{P_3}{\Hby{\dtau}}{\Delta_1'}{P_2}
+			$
+			and for fresh $t$:\\
+			$
+				\horel{\Gamma}{\Delta_1''}{\newsp{\tilde{m_1}}{P_2 \Par \htrigger{t}{V_1}}}
+				{\ \Re\ }
+				{\Delta_2''}{}{\newsp{\tilde{m_2}}{Q_2 \Par \htrigger{t}{V_2}}}
+%				\mhorel{\Gamma}{\Delta_1''}{\newsp{\tilde{m_1}}{P_2 \Par \hotrigger{t}{x}{s}{V_1}}}
+%				{\ \Re\ }
+%				{\Delta_2''}{}{\newsp{\tilde{m_2}}{Q_2 \Par \hotrigger{t}{x}{s}{V_2}}}
+			$.
+%
+		\item	$\forall \ell \not= \news{\tilde{m}} \bactout{n}{V}$ such that
+			$
+				\horel{\Gamma}{\Delta_1}{P_1}{\hby{\ell}}{\Delta_3}{P_3}
+			$
+			implies that $\exists Q_2$  \\ such that 
+			$
+				\horel{\Gamma}{\Delta_1}{Q_1}{\hat{\Hby{\ell}}}{\Delta_2'}{Q_2}
+			$
+			and
+			$
+				\horel{\Gamma}{\Delta_3}{P_3}{\Hby{\dtau}}{\Delta_1'}{P_2}
+			$
+			and
+			$\horel{\Gamma}{\Delta_1'}{P_2}{\ \Re\ }{\Delta_2'}{Q_2}$.
+
+		\item	The symmetric cases of 1 and 2.
+	\end{enumerate}
+	Then $\Re\ \subseteq\ \hwb$.
+\end{lemma}
+
+
+\begin{proof}
+	The proof is easy by considering the closure
+	\[
+		\Re^{\Hby{\dtau}} = \set{ \horel{\Gamma}{\Delta_1'}{P_2}{,}{\Delta_2'}{Q_1} \setbar \horel{\Gamma}{\Delta_1}{P_1}{\ \Re\ }{\Delta_2'}{Q_1},
+		\horel{\Gamma}{\Delta_1}{P_1}{\Hby{\dtau}}{\Delta_1'}{P_2} }
+	\]
+	We verify that $\Re^{\Hby{\dtau}}$ is a bisimulation with
+	the use of \propref{lem:tau_inert}.
+	\qed
+\end{proof}
+
+%\begin{example}[Up-to Deterministic Transition]
+%	Typed processes:
+%	\begin{eqnarray*}
+%		\Gamma; \es; \Delta, s': \tinact \proves P &=& \binp{n}{z_1} \newsp{s}{\binp{s}{x} \appl{(\abs{y}{\bout{n}{z_1} \inact})}{m} \Par \bout{\dual{s}}{s'} \inact} \hastype \Proc
+%		\\
+%		\Gamma; \es; \Delta \proves Q &=& \binp{n}{z_1} \binp{n}{z_2} \inact \hastype \Proc
+%	\end{eqnarray*}
+%	are bisimilar up-to deterministic transition because
+%	we can observe:
+%	\begin{eqnarray*}
+%		\Gamma; \Delta, s': \tinact \proves P &\hby{\bactinp{n}{m_1}}& \Delta', s: \tinact \proves \newsp{s}{\binp{s}{x} \appl{(\abs{y}{\bout{n}{z_2} \inact})}{m} \Par \bout{\dual{s}}{s'} \inact} \Hby{\dtau} \Delta' \proves \binp{n}{z_2} \inact
+%		\\
+%		\text{and}
+%		\\
+%		\Gamma; \es; \Delta \proves Q &\hby{\bactinp{n}{m_1}}& \Delta' \proves \binp{n}{z_2} \inact
+%	\end{eqnarray*}
+
+
+%	Relation 
+%	\[
+%		\Re = \set{(\Gamma; \Delta, s': \tinact \proves P , \Delta \proves Q), (\Gamma; \Delta' \proves \binp{n}{z_2}, \Delta' \proves  \binp{n}{z_2})}
+%	\]
+%	is bisimulation up-to deterministic transition because
+%	\begin{eqnarray*}
+%		\Gamma; \Delta, s': \tinact \proves P &\hby{\bactinp{n}{s_1}}& \Delta', s: \tinact \proves \newsp{s}{\binp{s}{x} \appl{(\abs{y}{\bout{n}{y} \inact})}{s_1} \Par \bout{\dual{s}}{s'} \inact}
+%		\\
+%		\text{implies}&
+%		\\
+%		\Gamma; \es; \Delta \proves Q &\hby{\bactinp{n}{x}}& \Delta' \proves \binp{n}{z_2} \inact
+%		\\
+%		\text{and}&
+%		\\
+%		\Delta', s: \tinact \proves \newsp{s}{\binp{s}{x} \appl{(\abs{y}{\bout{n}{y} \inact})}{s_1} \Par \bout{\dual{s}}{s'} \inact}  \in \Re
+%	\end{eqnarray*}
+%\end{example}
 
 
