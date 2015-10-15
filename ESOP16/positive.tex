@@ -76,37 +76,39 @@ The mapping on types gives an insight on the behaviour of processes.
 \noi We show that $\HO$ is expressive enough to
 represent the full
  \HOp-calculus.
- As explained in \secref{sec:overview}, 
-the main challenge is to encode (1) name passing 
+The main challenges are to encode (1) name passing 
 and (2) recursion, 
 for which 
-we only use  abstraction passing. For (1), we pass  
+we only use  abstraction passing. 
+ As explained in \secref{sec:overview}, for (1), we pass  
 an % simple 
 abstraction which enables to use the name upon application. 
 For (2), we 
-copy a process upon reception; the case of linear abstraction passing
+copy a process upon reception; passing around linear abstractions
 %presents a limitation 
 is \NY{delicate} 
 because 
-linear abstractions cannot be copied.
+they cannot be copied.
 To handle linearity, we define 
 %a preliminary tool which is a mapping from
-a mapping from processes with free names to processes without free
-names (but with free variables instead).
+a mapping 
+$\auxmapp{\cdot}{{}}{\sigma}$.
+from processes with free names to processes without free
+names (but with free variables instead):
 %from processes \jpc{with free names} to processes without free names (but with free variables) (\defref{d:auxmap}). 
-To this end, we require two auxiliary definitions.
+%We require two auxiliary definitions.
 
-\smallskip 
+%\smallskip 
 
-\begin{definition}\rm 
-\label{def:hop_to_ho}
-	Let $\vmap{\cdot}: 2^{\mathcal{N}} \longrightarrow \mathcal{V}^\omega$
-	be a map of sequences of lexicographically ordered names to sequences of variables, defined
-	inductively as: 
-	$\vmap{\epsilon} = \epsilon$ and $\vmap{n \cat \tilde{m}} = x_n \cat \vmap{\tilde{m}}$. 
-\end{definition}
-
-\smallskip 
+%\begin{definition}\rm 
+%%\label{def:hop_to_ho}
+%	Let $\vmap{\cdot}: 2^{\mathcal{N}} \longrightarrow \mathcal{V}^\omega$
+%	be a map of sequences of lexicographically ordered names to sequences of variables, defined
+%	inductively as: 
+%	$\vmap{\epsilon} = \epsilon$ and $\vmap{n \cat \tilde{m}} = x_n \cat \vmap{\tilde{m}}$. 
+%\end{definition}
+%
+%\smallskip 
 
 %\noi The following auxiliary mapping transforms processes
 %with free names into abstractions and it is
@@ -114,18 +116,24 @@ To this end, we require two auxiliary definitions.
 %
 %\smallskip 
 
+
+
+
 \begin{definition}[Auxiliary Mapping] \label{d:trabs}\label{d:auxmap}
-	Let $\sigma$ be a set of session names.
+	Let $\vmap{\cdot}: 2^{\mathcal{N}} \longrightarrow \mathcal{V}^\omega$
+	denote a map of sequences of lexicographically ordered names to sequences of variables, defined
+	inductively 
+	as: 
+	$\vmap{\epsilon} = \epsilon$ and $\vmap{n \cat \tilde{m}} = x_n \cat \vmap{\tilde{m}}$. 
+	Also, let $\sigma$ be a set of session names.
 	\figref{f:auxmap} defines an auxiliary mapping
 	$\auxmapp{\cdot}{{}}{\sigma}: \HO \to \HO$.
 \end{definition}
-
-%
 \input{figures/aux_map}
-\smallskip 
+%
 
 \noi This way, given an \HO
- process $P$ (with $\fn{P} = \{m_1, \cdots, m_k\}$),
+ process $P$ (with free session names given by $\fn{P} = \{m_1, \cdots, m_k\}$),
  we are interested in the abstraction
 %defined as
 $\abs{x_1\cdots x_n}{\auxmapp{P}{{}}{\emptyset} }$, where $\vmap{m_j} = x_j$, for all $j \in \{1, \ldots, k\}$. 
@@ -186,8 +194,8 @@ $S^* = \trec{t}{\btinp{\shot{(S_1,\ldots,S_m,\vart{t})}} \tinact}$.
 \noi Note that $\Delta$ in $\varp{X}:\Delta$ is mapped to a non-tail
 recursive session type with variable $z_X$ (see recursion mappings in \figref{f:enc:hopi_to_ho}).
 Non-tail
-recursive session types \jpc{have been} studied in~\cite{DBLP:journals/corr/abs-1202-2086,TGC14};
-\jpc{to our knowledge,}
+recursive session types {have been} studied in~\cite{DBLP:journals/corr/abs-1202-2086,TGC14};
+{to our knowledge,}
 this is the first application in the
 context of higher-order session types.
 %which carries type variable as the last argument.  
@@ -195,63 +203,43 @@ For simplicity of the presentation, %we use the polyadic name abstraction and pa
 we use name abstractions with polyadicity.
 A precise encoding of polyadicity into \HO is given in~\secref{sec:extension}.
 
-We explain the mapping in \figref{f:enc:hopi_to_ho}, focusing 
-on {\em name passing} ($\pmapp{\bout{u}{w} P}{1}{f}$ and $\pmapp{\binp{u}{x} P}{1}{f}$),  and  
-{\em recursion} ($\pmapp{\recp{X}{P}}{1}{f}$ and $\pmapp{\rvar{X}}{1}{f}$):
-
-\begin{description}
-%\myparagraph{Name passing.}
-\item[Name passing]
-A name $w$ is   passed as an input-guarded abstraction;
-the abstraction receives a higher-order
-value and continues with the application of $w$ over
-the received higher-order value.
-%A name $m$ is being passed as an input
-%guarded abstraction. 
-%The input prefix receives an abstraction and
-%continues with the application of $n$ over the received abstraction.
-On the receiver side ($\binp{u}{x} P$)
+\jp{Key elements in 
+\figref{f:enc:hopi_to_ho} are encodings of 
+{\em name passing} ($\pmapp{\bout{u}{w} P}{1}{f}$ and $\pmapp{\binp{u}{x} P}{1}{f}$)  and  
+{\em recursion} ($\pmapp{\recp{X}{P}}{1}{f}$ and $\pmapp{\rvar{X}}{1}{f}$).
+As already motivated in \secref{sec:overview}, % we encode passing of name $w$  
+a name $w$ is passed as an input-guarded abstraction;
+on the receiver side,
 the encoding realises a mechanism that i) receives
-the input guarded abstraction, then ii) applies it on a fresh  endpoint $s$, 
-and iii)~uses
-the dual endpoint $\dual{s}$ to send the continuation $P$ as the abstraction
-$\abs{x}{P}$. 
-\NY{Then} name substitution is achieved via name application.
-
-%\myparagraph{Recursion.}
-\item[Recursion]
-The encoding of a recursive process $\recp{X}{P}$ must preserve the linearity of session endpoints. We
+the abstraction; ii) applies to it a fresh  endpoint $s$;
+iii)~uses the dual endpoint $\dual{s}$ to send the continuation $P$ as an abstraction.
+%$\abs{x}{P}$. 
+Thus, name substitution is achieved via name application.
+As for recursion, to encode $\recp{X}{P}$ we
 first record a mapping from recursive variable $X$ to process variable $z_X$.
-Then, we encode the recursion body $P$ as a name abstraction
-in which free names of $P$ are converted into name variables, using \defref{d:auxmap}.
+Then, using 
+$\auxmapp{\cdot}{{}}{\sigma}$ in 
+\defref{d:auxmap}, we encode the recursion body $P$ as a name abstraction
+in which free names of $P$ are converted into name variables.
 (Notice that $P$ is first encoded into \HO and then transformed using mapping
 $\auxmapp{\cdot}{{}}{\sigma}$.)
 Subsequently, this higher-order value is embedded in an input-guarded 
-``duplicator'' process~\cite{ThomsenB:plachoasgcfhop}. Finally, we define the encoding of $X$ 
+``duplicator'' process. We encode $X$ 
 in such a way that it
 simulates recursion unfolding by 
 invoking the duplicator in a by-need fashion.
-That is, upon reception, the \HO abstraction which encodes  the 
-recursion body $P$
+That is, upon reception, the \HO abstraction encoding  
+%recursion body 
+$P$
 %containing $\auxmapp{P}{{}}{\sigma}$ 
 is duplicated: 
 one copy is used to reconstitute the original recursion body $P$ (through
 the application of $\fn{P}$); another copy is used to re-invoke
 the duplicator when needed. % to simulate recursion unfolding.
 %An example of this typed encoding is detailed in~\cite{KouzapasPY15}.
-We illustrate the encoding by means of an example.
-\end{description}
-%The idea follows 
-%a classical recursion encoding \cite{ThomsenB:plachoasgcfhop}.  
-%A mapping of process $P$ is parallel composed, 
-%and also being passed as an input
-%guarded abstraction, parameterised also by a sequence of trigger names $\tilde{n}$. 
-%We record a mapping from $z_X$ (which is a fresh variable of $X$) 
-%to $\tilde{n}$, so that 
-%when the abstraction is substituted to $z_\rvar{X}$ 
-%(which occurs in the mapping of $P\subst{z_X}{X}$), 
-%the correct $\tilde{n}$ is applied. In this way, we can 
-%send and receive an abstraction which holds $P$, repeatedly. 
+We illustrate the encoding by means of an example.}
+%\end{description}
+
 
  
 
@@ -332,6 +320,13 @@ Using operational correspondence, we can show \emph{full abstraction}:
 	$\horel{\tmap{\Gamma}{1}}{\tmap{\Delta_1}{1}}{\pmapp{P_1}{1}{f}}{\hwb}{\tmap{\Delta_2}{1}}{\pmapp{Q_1}{1}{f}}$.
 \end{proposition}
 
+\jp{\noi Directly from \figref{f:enc:hopi_to_ho} we may state:
+\begin{proposition}[\HOp into \HO: Type Preservation]
+The encoding from $\tyl{L}_{\HOp}$ into $\tyl{L}_{\HO}$ (cf.~\defref{d:enc:hopitoho})
+is type preserving.
+\end{proposition}}
+
+
 %Based on these propositions, w
 We may state the main result of this section. See~\cite{KouzapasPY15} for details. 
 
@@ -347,9 +342,9 @@ is precise.
 \noi 
 We now discuss the encodability of  $\HO$ into $\sessp$. % where
 %:
-We closely follow Sangiorgi's encoding~\cite{San92,SaWabook}, but casted in the setting of session-typed communications. 
+We closely follow Sangiorgi's encoding~\cite{San92,SaWabook}, which represents 
 %Intuitively, such an encoding  represents 
-The exchange of a process is represented in~\cite{San92,SaWabook} with the exchange of a fresh \emph{trigger name}. 
+the exchange of a process with the exchange of a fresh \emph{trigger name}. 
 Trigger names may then be used to activate copies of the process, which becomes a persistent resource represented by an input-guarded replication.
 %Consider the following (naive) adaptation of \cite{San92,SaWabook} 
 %in which session names are used are triggers and 
@@ -379,6 +374,7 @@ Trigger names may then be used to activate copies of the process, which becomes 
 %%
 %The above process is untypable since processes $(\bout{x}{s_1} \inact$ and $\bout{x}{s_2} \inact)$
 %cannot be put in parallel because they do not have disjoint session environments.
+We cast this strategy in the setting of session-typed communications. 
 In the presence of linear session names (which cannot be replicated),
 %The correct 
 our
@@ -388,7 +384,7 @@ as triggers for shared resources and non-replicated names
 for linear resources.
 %as triggers instead of session names, when dealing with shared abstractions. 
 
-\smallskip 
+%\smallskip 
 
 \begin{definition}[Typed Encoding of \HOp into \sessp]
 \label{d:enc:hopitopi}
@@ -461,7 +457,7 @@ We describe key properties of this encoding. First, operational correspondence:
 	\end{enumerate}
 \end{proposition}
 
-We can show full abstraction and preciseness:
+We can show full abstraction, type preservation, and preciseness:
 
 \begin{proposition}[\HOp to \sessp: Full Abstraction]%\myrm
 	\label{prop:fulla_HOp_to_p}
@@ -471,7 +467,12 @@ We can show full abstraction and preciseness:
 	$\horel{\tmap{\Gamma}{2}}{\tmap{\Delta_1}{2}}{\pmap{P_1}{2}}{\fwb}{\tmap{\Delta_2}{2}}{\pmap{Q_1}{2}}$.
 \end{proposition}
 
-%We can state:
+\jp{\noi 
+\begin{proposition}[\HOp into \sessp: Type Preservation]
+The encoding from $\tyl{L}_{\HOp}$ into $\tyl{L}_{\sessp}$ (cf.~\defref{d:enc:hopitopi})
+is type preserving.
+\end{proposition}}
+
 
 \begin{theorem}[Precise Encoding of \HOp into \sessp]
 \label{f:enc:hotopi}
