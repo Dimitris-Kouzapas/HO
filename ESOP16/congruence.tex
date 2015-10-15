@@ -7,7 +7,7 @@ We then define two characterizations of $\cong$:
  (denoted $\fwb$ and $\hwb$, cf. \defsref{d:fwb} and \ref{d:hbw}). 
 %Here we focus on collecting intuitions; omitted details are in the Appendix and in~\cite{KouzapasPY15}.
 
-\subsection{Reduction-Closed, Barbed Congruence}
+\subsection{Reduction-Closed, Barbed Congruence ($\cong$)}
 \label{subsec:rc}
 %We first define \emph{confluence} over session environments $\Delta$:
 
@@ -42,7 +42,7 @@ Let $\red^\ast$ denote multi-step reduction as in \defref{def:ses_red}.
 %\noi Next we define  {\em barbs}with respect to types. 
 
 A \emph{barb} $\barb{n}$ is an observable on an output prefix with subject $n$~\cite{MiSa92}.
-A \emph{weak barb} $\Barb{n}$ is a barb after a number of reduction steps.
+A \emph{weak barb} $\Barb{n}$ is a barb after zero or more reduction steps.
 Typed barbs $\barb{n}$ (resp.\ $\Barb{n}$)
 occur on typed processes $\Gamma; \emptyset; \Delta \proves P \hastype \Proc$.
 When $n$ is a session name we require that its dual endpoint $\dual{n}$ is not present
@@ -133,6 +133,8 @@ labelled transition system (LTS) informed by session
 types. 
 Transitions in this LTS are denoted 
 $\Gamma; \es; \Delta \proves P \hby{\ell} \Delta' \proves P' \hastype \Delta'$.
+(Weak transitions, defined as expected, are denoted 
+$\Gamma; \es; \Delta \proves P \Hby{\ell} \Delta' \proves P' \hastype \Delta'$.)
 The main intuition %for its definition  
 is that the transitions 
 of a typed process should be enabled by its associated typing environment:
@@ -168,7 +170,7 @@ a name $m$, a \emph{characteristic value} $\omapchar{U}$,  or a \emph{trigger va
 $\abs{{x}}{\binp{t}{y} (\appl{y}{{x}})}$). 
 A characteristic value
 is the {simplest} process that  inhabits a type (here, the
-type $U$ carried by the session input prefix). The above rule is used to limit
+type $U$ carried by the input prefix). The above rule is used to limit
 the input actions that can be observed from a session input prefix.
 For details of the labelled transition system and the characteristic process definition
 see \appref{app:behavioural} and~\cite{characteristic_bis}.
@@ -227,7 +229,7 @@ characteristic bisimilarity was introduced in~\cite{characteristic_bis} (Def.~14
 		\item	The symmetric cases of 1 and 2.                
 	\end{enumerate}
 	The largest such bisimulation
-	is called \emph{characteristic bisimilarity} \jpc{and} denoted by $\fwb$.
+	is called \emph{characteristic bisimilarity} {and} denoted by $\fwb$.
 \end{definition}
  
 
@@ -239,15 +241,15 @@ characteristic bisimilarity was introduced in~\cite{characteristic_bis} (Def.~14
 Interestingly, for reasoning about \HO processes we can exploit a simpler technique: \emph{higher-order bisimilarity}.
 We replace triggers as in \eqref{eq:fot}
 with \emph{higher-order triggers}:
-\begin{eqnarray}
+\jp{\begin{eqnarray}
 	\htrigger{t}{V}  & \defeq &  \hotrigger{t}{V} \label{eq:hot} 
 %	\ftrigger{t}{V}{U} & \defeq &  \fotrigger{t}{x}{s}{\btinp{U} \tinact}{V} 	\label{eq:fot}
-\end{eqnarray}
-%We may then define:
+\end{eqnarray}}
+We may then define:
 \begin{definition}[Higher-Order Bisimilarity]%\rm
 	\label{d:hbw}
 	Higher-order bisimilarity, denoted by $\hwb$, is defined {by} replacing 
-	Clause 1) in \defref{d:fwb} with the following clause:\\[1mm]
+	Clause (1) in \defref{d:fwb} with the following clause:\\[1mm]
 	Whenever 
 	$\horel{\Gamma}{\Delta_1}{P_1}{\hby{\news{\tilde{m_1}} \bactout{n}{V_1}}}{\Delta_1'}{P_2}$ %with $\Gamma; \es; \Delta \proves V_1 \hastype U$,  
 	then there exist 
@@ -259,7 +261,7 @@ with \emph{higher-order triggers}:
 	\begin{array}{lrlll}
 		\!\!\Gamma; \Delta''_1  \proves  {\newsp{\tilde{m_1}}{P_2 \Par 
 		\htrigger{t}{V_1}}}
-		\ \!\!\Re\!\!\ \Delta''_2
+		\ \Re\ \Delta''_2
 		\proves {\newsp{\tilde{m_2}}{Q_2 \Par \htrigger{t}{V_2}}}
 	\end{array}
 	$
@@ -344,10 +346,9 @@ as it works independently of the given type.
 
 
 \jparagraph{An up-to technique}
-We   state  an up-to technique for typed processes, based on determinacy properties; it will be useful to prove our expressiveness results (\secref{sec:positive}).
-In our setting, processes that do not use shared names are inherently deterministic. 
-In the sequel, we write 
- $\horel{\Gamma}{\Delta}{P}{\hby{\tau}}{\Delta'}{P'}$ to denote an internal (typed) transition.
+In our setting, processes that do not use shared names are deterministic. 
+The following up-to technique, based on determinacy properties, will be useful in proofs (\secref{sec:positive}).
+Recall that $\horel{\Gamma}{\Delta}{P}{\hby{\tau}}{\Delta'}{P'}$ denotes an internal (typed) transition.
  
  \begin{notation}[Deterministic Transitions]
  \label{not:dettrans}
