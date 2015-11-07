@@ -11,9 +11,9 @@ see \appref{app:types} for a full description.
 
 \smallskip 
 
-%\subsection{Types}
+\subsection{Types}
 %\label{subsec:types}
-\myparagraph{Types.}
+%\myparagraph{Types.}
 The syntax of types of \HOp is given below:
 \[
 	\begin{array}{cc}
@@ -76,18 +76,72 @@ Type $\tinact$ is the termination type.
 %Following \cite{TGC14},
 We write $S_1 \dualof S_2$ if 
 $S_1$ is the \emph{dual} of $S_2$.   
-See the Appendix (\defref{def:dual}) for a definition; 
-intuitively, 
+Intuitively, 
 duality
 converts $!$ into $?$ and $\oplus$ into $\&$ (and viceversa). 
-%incorporating also the fixed point construction.
-%(see in the Appendix). 
+More formally, we have the following definitions for 
+\emph{type equivalence} and \emph{duality}:
 
-\smallskip 
+\begin{definition}[Type Equivalence]
+\label{def:iso}
+Let $\mathsf{ST}$ a set of closed session types. 
+Two types $S$ and $S'$ are said to be {\em isomorphic} if a pair $(S,S')$ is 
+in the largest fixed point of the monotone function
+$F:\mathcal{P}(\mathsf{ST}\times \mathsf{ST}) \to 
+\mathcal{P}(\mathsf{ST}\times \mathsf{ST})$ defined by: \\
+%\hspace{-0.5cm}
+\begin{tabular}{rcl}
+$F(\Re)$ &$\!\!=\!\!$&	$\set{(\tinact, \tinact)}$\\
+         &$\!\!\cup\!\!$&	$\set{(\btout{U_1} S_1, \btout{U_2} S_2)
+\bnfbar (S_1, S_2),(U_1, U_2)\in \Re}$\\ 
+       &$\!\!\cup\!\!$&	$\set{(\btinp{U_1} S_1, \btinp{U_2} S_2)
+\bnfbar(S_1, S_2),(U_1, U_2)\in \Re}$\\ 
+	&$\!\!\cup\!\!$&	$\set{(\btbra{l_i: S_i}_{i \in I} \,,\, \btbra{l_i: S_i'}_{i \in I}) \bnfbar \forall i\in I. (S_i, S_i')\in \Re}$\\
+	&$\!\!\cup\!\!$&	$\set{(\btsel{l_i: S_i}_{i \in I}\,,\, \btsel{l_i: S_i'}_{i \in I}) \bnfbar \forall i\in I. (S_i, S_i')\in \Re}$\\
+	&$\!\!\cup\!\!$&	$\set{(\trec{t}{S}, S')
+\bnfbar (S\subst{\trec{t}{S}}{\vart{t}},S')\in \Re}$\\
+	&$\!\!\cup\!\!$&	$\set{(S,\trec{t}{S'})
+\bnfbar (S,S'\subst{\trec{t}{S'}}{\vart{t}})\in \Re}$
+\end{tabular}
+	
+\noindent
+Standard arguments ensure that $F$ is monotone, thus the greatest fixed point
+of $F$ exists. We write $S_1 \sim S_2$ if  $(S_1,S_2)\in \Re$. 
+\end{definition}
 
-%\subsection{Typing System of \HOp}
+
+\begin{definition}[Duality]
+\label{def:dual}
+Let $\mathsf{ST}$ a set of closed session types. 
+Two types $S$ and $S'$ are said to be {\em dual} if a pair $(S,S')$ is 
+in the largest fixed point of the monotone function
+$F:\mathcal{P}(\mathsf{ST}\times \mathsf{ST}) \to 
+\mathcal{P}(\mathsf{ST}\times \mathsf{ST})$ defined by:\\ %[1mm]
+\begin{tabular}{rcl}
+$F(\Re)$ &$\!\!=\!\!$&	$\set{(\tinact, \tinact)}$\\
+         &$\!\!\cup\!\!$&	$\set{(\btout{U_1} S_1, \btinp{U_2} S_2)
+\bnfbar(S_1, S_2)\in \Re, \  U_1 \sim U_2 }$\\ 
+       &$\!\!\cup\!\!$&	$\set{(\btinp{U_1} S_1, \btout{U_2} S_2)
+\bnfbar(S_1, S_2)\in \Re, \ U_1 \sim U_2}$\\ 
+	&$\!\!\cup\!\!$&	$\set{(\btsel{l_i: S_i}_{i \in I} \,,\, \btbra{l_i: S_i'}_{i \in I}) \bnfbar \forall i\in I. (S_i, S_i')\in \Re}$\\
+	&$\!\!\cup\!\!$&	$\set{(\btbra{l_i: S_i}_{i \in I}\,,\, \btsel{l_i: S_i'}_{i \in I}) \bnfbar \forall i\in I. (S_i, S_i')\in \Re}$\\
+	&$\!\!\cup\!\!$&	$\set{(\trec{t}{S}, S')
+\bnfbar (S\subst{\trec{t}{S}}{\vart{t}},S')\in \Re}$\\
+	&$\!\!\cup\!\!$&	$\set{(S,\trec{t}{S'})
+\bnfbar (S,S'\subst{\trec{t}{S'}}{\vart{t}})\in \Re}$\\[1mm]
+\end{tabular}
+
+\noindent
+%where $U_1 \sim U_2$ means $U_1$ is type equivalent to $U_2$ \cite{yoshida.vasconcelos:language-primitives}.
+Standard arguments ensure that $F$ is monotone, thus the greatest fixed point
+of $F$ exists. We write $S_1 \dualof S_2$ if  $(S_1,S_2)\in \Re$. 
+\end{definition}
+
+5\smallskip 
+
 %\label{subsec:typing}
-\myparagraph{Typing Environments and Judgements.}
+\subsection{Typing Environments and Judgements}
+%\myparagraph{Typing Environments and Judgements.}
 \noi Typing \emph{environments} are defined below:
 %\[
 \begin{eqnarray*}
@@ -150,6 +204,7 @@ relies on two auxiliary notions on session environments:
 \end{definition}
 
 \noi We rely on a typing system that is similar to the one developed in~\cite{tlca07,MostrousY15}. 
+TO ADD: TYPING RULES AND EXPLANATIONS.
 We state the type soundness result for \HOp processes;
 see \appref{app:types} for details of the associated proofs.
 
@@ -168,8 +223,11 @@ see \appref{app:types} for details of the associated proofs.
 \begin{example}[Hotel Booking Revisited]\label{exam:type}
 We give types to the client
 processes of~\exref{exam:proc}.
-Assume $S = \btout{\Quote} \btbra{\accept: \tinact, \reject: \tinact}$ and
-$U = \btout{\rtype} \btinp{\Quote} \btsel{\accept: \btout{\creditc} \tinact, \reject: \tinact }$.
+Assume 
+\begin{eqnarray*}
+S & = & \btout{\Quote} \btbra{\accept: \tinact, \reject: \tinact} \\
+U & = & \btout{\rtype} \btinp{\Quote} \btsel{\accept: \btout{\creditc} \tinact, \reject: \tinact }
+\end{eqnarray*}
 The type for $\abs{x}{P}$ is $\es; \es; y: S \proves \abs{x}{P} \hastype \lhot{U}$
 and the type for $\Client_1$ is
 $~~
