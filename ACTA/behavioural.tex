@@ -753,9 +753,11 @@ We define characteristic processes/values:
 \begin{proposition}[Characteristic Processes/Values Inhabit Their Types]
 	\begin{enumerate}
 		\item	
-		Let $S$ be a session type. Then $\Gamma; \es; \Delta \cat s: S \proves \mapchar{S}{s} \hastype \Proc$.
+				Let $S$ be a session type.
+				Then $\Gamma; \es; \Delta \cat s: S \proves \mapchar{S}{s} \hastype \Proc$.
 		\item	
-		Also, let $\chtype{U}$ be a first-order (channel) type. Then $\Gamma \cat a: \chtype{U}; \es; \Delta \proves \mapchar{\chtype{U}}{a} \hastype \Proc$.
+				Also, let $\chtype{U}$ be a first-order (channel) type.
+				Then $\Gamma \cat a: \chtype{U}; \es; \Delta \proves \mapchar{\chtype{U}}{a} \hastype \Proc$.
 	\end{enumerate}
 \end{proposition}
 
@@ -921,50 +923,29 @@ trigger or characteristic values or names:
 	%restricted environment transition relation using the
 	%following rule %using the environment transition relation defined in 
 	using the input rules in \figref{fig:envLTS}:
-	\[ \!\!\!
-	\begin{array}{l}
-%			\eltsrule{RRcv}&\tree {
-%	\begin{array}{c}
-%	(\Gamma_1; \Lambda_1; \Delta_1) \by{\bactinp{n}{V}} (\Gamma_2; \Lambda_2; \Delta_2)
-%	\\
-%				\begin{array}{lll}
-%					V = m \vee V  \scong
-%					\abs{{x}}{\binp{t}{y} (\appl{y}{{x}})}
-%					\vee  V \scong \omapchar{U}%\abs{{x}}{\map{U}^{{x}}}
-%					\textrm{ with } t \textrm{ fresh} 
-%				\end{array}
-%				\end{array}
-%			}{
-%				(\Gamma_1; \Lambda_1; \Delta_1) \hby{\bactinp{n}{V}} (\Gamma_2; \Lambda_2; \Delta_2)
-%			}
-			
-						\eltsrule{RRcv}\,\tree {
-	%\begin{array}{c}
-	(\Gamma_1; \Lambda_1; \Delta_1) \by{\bactinp{n}{V}} (\Gamma_2; \Lambda_2; \Delta_2)
-	\quad
-					V = m 
-					\vee  V \scong \omapchar{U}%\abs{{x}}{\map{U}^{{x}}}
-										\vee V  \scong \abs{{x}}{\binp{t}{y} (\appl{y}{{x}})}
-					\textrm{ {\small with $t$ fresh}} 
-				%\end{array}
-			}{
-				(\Gamma_1; \Lambda_1; \Delta_1) \hby{\bactinp{n}{V}} (\Gamma_2; \Lambda_2; \Delta_2)
-			}
-			
-			
-	\end{array}
-	\]
+	\begin{mathpar}
+		\inferrule[\eltsrule{RRcv}]{
+			(\Gamma_1; \Lambda_1; \Delta_1) \by{\bactinp{n}{V}} (\Gamma_2; \Lambda_2; \Delta_2)
+			\and
+			V = m 
+			\vee  V \scong \omapchar{U}%\abs{{x}}{\map{U}^{{x}}}
+			\vee V  \scong \abs{{x}}{\binp{t}{y} (\appl{y}{{x}})}
+			\textrm{ {\small with $t$ fresh}} 
+		}{
+			(\Gamma_1; \Lambda_1; \Delta_1) \hby{\bactinp{n}{V}} (\Gamma_2; \Lambda_2; \Delta_2)
+		}
+	\end{mathpar}
 	\noi Rule $\eltsrule{RRcv}$ is defined on top
 	of rules $\eltsrule{SRv}$ and $\eltsrule{ShRv}$
 	in \figref{fig:envLTS}.
 %	uses the environment transition
 %	$(\Gamma, \Lambda_1, \Delta_1) \hby{\ell} (\Gamma, \Lambda_2, \Delta_2)$
 %	in \figref{fig:envLTS}. 
-\dk{	We  use the non-receiving rules in \figref{fig:envLTS}
+We  use the non-receiving rules in \figref{fig:envLTS}
 	together with rule $\eltsrule{RRcv}$
 	to define 
 	$\horel{\Gamma}{\Delta_1}{P_1}{\hby{\ell}}{\Delta_2}{P_2}$
-	as in \defref{d:tlts}.}
+	as in \defref{d:tlts}.
 %	by replacing $\by{\ell}$ by $\hby{\ell}$ in \defref{d:tlts}. 
 \end{definition}
 
@@ -980,104 +961,182 @@ when the type of $V$ is~$U$.
 %and characteristic values ($\lambda x.\map{U}^{{x}}$) are required 
 %to define the following two bisimulations. 
 
-\smallskip 
-
-\paragraph{Characteristic Bisimulations.} We define 
-%\emph{higher-order} and
-\emph{characteristic
-bisimulations}, 
-%two tractable bisimulations for $\HO$ and $\HOp$.
-a tractable bisimulation for $\HOp$.
-As 
-%explained in %\secref{sec:overview},
-%the Introduction,
-hinted at above, 
-%the two bisimulations 
-%characteristic bisimulations
-their definition
-uses trigger processes (cf.~\eqref{eq:4}):
+\paragraph{Characterisation of contextual bisimilarity.}
+We define \emph{higher-order Bisimularity} and 
+\emph{characteristic bisimilarity} which are
+two tractable bisimilarity relations of $\HOp$.
+As explained in \secref{sec:overview},
+the two bisimulations 
+use trigger processes (cf.~\eqref{eq:4}):
 %the key difference between them is in the trigger processes they use:
 \begin{eqnarray*}
-%\htrigger{t}{V_1}  & \defeq &  \hotrigger{t}{V} \label{eqb:0} \\
-	\ftrigger{t}{V}{U} & \defeq &  \fotrigger{t}{x}{s}{\btinp{U} \tinact}{V} 	\label{eqb:4}
+	\htrigger{t}{V_1}	& \defeq &	\hotrigger{t}{x}{s}{V}						\label{eqb:0} \\
+	\ftrigger{t}{V}{U}	& \defeq &	\fotrigger{t}{x}{s}{\btinp{U} \tinact}{V}	\label{eqb:4}
 \end{eqnarray*}
-%\noi
-%Notice that while 
-%in~\eqref{eqb:0} there is a higher-order input on $t$, 
-%in~\eqref{eqb:4} variable $x$ does not play any role.
+\noi
+Notice that while 
+in~\eqref{eqb:0} there is a higher-order input on $t$, 
+in~\eqref{eqb:4} variable $x$ does not play any role.
 % \dk{The two bisimulations differ on the fact that
 %they use the different 
 %trigger processes: $\htrigger{t}{V}$ and $\ftrigger{t}{V}{U}$.}
 
-%\begin{definition}[Higher-Order Bisimilarity]\rm
-%	\label{d:hbw}
-%A typed relation $\Re$ is a {\em  HO bisimulation} if 
-%for all $\horel{\Gamma}{\Delta_1}{P_1}{\ \Re \ }{\Delta_2}{Q_1}$ 
-%\begin{enumerate}[1)]
-%\item 
-%Whenever 
-%$\horel{\Gamma}{\Delta_1}{P_1}{\hby{\news{\widetilde{m_1}} \bactout{n}{V_1}}}{\Delta_1'}{P_2}$, there exist 
-%$Q_2$, $V_2$, $\Delta'_2$ such that 
-%$\horel{\Gamma}{\Delta_2}{Q_1}{\Hby{\news{\widetilde{m_2}} \bactout{n}{V_2}}}{\Delta_2'}{Q_2}$ and, for fresh $t$, 
-%\[
-%\begin{array}{lrlll}
-%\Gamma; \Delta''_1  \proves  {\newsp{\widetilde{m_1}}{P_2 \Par 
-%\htrigger{t}{V_1}}}
-%\ \Re 
-%\ \Delta''_2 \proves {\newsp{\widetilde{m_2}}{Q_2 \Par \htrigger{t}{V_2}}}
-%\end{array}
-%\]
-%		\item	
-%For all $\horel{\Gamma}{\Delta_1}{P_1}{\hby{\ell}}{\Delta_1'}{P_2}$ such that 
-%$\ell$ is not an output, 
-% there exist $Q_2$, $\Delta'_2$ such that 
-%$\horel{\Gamma}{\Delta_2}{Q_1}{\Hby{\hat{\ell}}}{\Delta_2'}{Q_2}$
-%			and
-%			$\horel{\Gamma}{\Delta_1'}{P_2}{\ \Re \ }{\Delta_2'}{Q_2}$; and 
+\begin{definition}[Higher-Order Bisimilarity]
+	\label{d:hbw}
+	A typed relation $\Re$ is a {\em  HO bisimulation} if 
+	for all $\horel{\Gamma}{\Delta_1}{P_1}{\ \Re \ }{\Delta_2}{Q_1}$ 
 %
-%                      \item	The symmetric cases of 1 and 2.                
-%	\end{enumerate}
-%	The largest such bisimulation
-%	is called \emph{higher-order bisimilarity} \jpc{and} denoted by $\hwb$.
-%\end{definition}
+	\begin{enumerate}[1)]
+		\item 
+				Whenever 
+				$\horel{\Gamma}{\Delta_1}{P_1}{\hby{\news{\widetilde{m_1}} \bactout{n}{V_1}}}{\Delta_1'}{P_2}$, there exist 
+				$Q_2$, $V_2$, $\Delta'_2$ such that 
+				$\horel{\Gamma}{\Delta_2}{Q_1}{\Hby{\news{\widetilde{m_2}} \bactout{n}{V_2}}}{\Delta_2'}{Q_2}$ and, for fresh $t$, 
+				\[
+					\begin{array}{lrlll}
+						\Gamma; \Delta''_1  \proves  {\newsp{\widetilde{m_1}}{P_2 \Par \htrigger{t}{V_1}}}
+						\ \Re\ 
+						\Delta''_2 \proves {\newsp{\widetilde{m_2}}{Q_2 \Par \htrigger{t}{V_2}}}
+					\end{array}
+				\]
+		\item	
+				For all $\horel{\Gamma}{\Delta_1}{P_1}{\hby{\ell}}{\Delta_1'}{P_2}$ such that 
+				$\ell$ is not an output, 
+				there exist $Q_2$, $\Delta'_2$ such that 
+				$\horel{\Gamma}{\Delta_2}{Q_1}{\Hby{\hat{\ell}}}{\Delta_2'}{Q_2}$
+				and
+				$\horel{\Gamma}{\Delta_1'}{P_2}{\ \Re \ }{\Delta_2'}{Q_2}$; and 
+
+		\item	The symmetric cases of 1 and 2.                
+	\end{enumerate}
+%
+	The largest such bisimulation is called \emph{higher-order bisimilarity} and is denoted by $\hwb$.
+\end{definition}
 
  
 %We define characteristic bisimilarity:
 % is given using characteristic trigger processes. 
 
-\begin{definition}[Characteristic Bisimilarity]\rm
-	\label{d:fwb}
-A typed relation $\Re$ is a {\em  characteristic bisimulation} if 
-for all $\horel{\Gamma}{\Delta_1}{P_1}{\ \Re \ }{\Delta_2}{Q_1}$, 
-\begin{enumerate}[1)]
-\item 
-	Whenever 
-	$\horel{\Gamma}{\Delta_1}{P_1}{\hby{\news{\widetilde{m_1}} \bactout{n}{\dk{V_1: U}}}}{\Delta_1'}{P_2}$ %with $\Gamma; \es; \Delta \proves V_1 \hastype U$,  
-	then there exist 
-	$Q_2$, $V_2$, $\Delta'_2$ such that 
-	$\horel{\Gamma}{\Delta_2}{Q_1}{\Hby{\news{\widetilde{m_2}}\bactout{n}{\dk{V_2: U}}}}{\Delta_2'}{Q_2}$ %with $\Gamma; \es; \Delta' \proves V_2 \hastype U$,  
-	and, for fresh $t$, \\ 
-	$%\begin{array}{lrlll}
-	\Gamma; \Delta''_1  \proves  {\newsp{\widetilde{m_1}}{P_2 \Par 
-	\ftrigger{t}{V_1}{U_1}}}
-	  \,\Re\,
-	 \Delta''_2 \proves {\newsp{\widetilde{m_2}}{Q_2 \Par \ftrigger{t}{V_2}{U_2}}}
-%\end{array}
-$
-		
-\item	
-For all $\horel{\Gamma}{\Delta_1}{P_1}{\hby{\ell}}{\Delta_1'}{P_2}$ such that 
-$\ell$ is not an output, 
- there exist $Q_2$, $\Delta'_2$ such that 
-$\horel{\Gamma}{\Delta_2}{Q_1}{\Hby{\hat{\ell}}}{\Delta_2'}{Q_2}$
-			and
-			$\horel{\Gamma}{\Delta_1'}{P_2}{\ \Re \ }{\Delta_2'}{Q_2}$; and 
+\begin{definition}[Characteristic Bisimilarity]
+\label{d:fwb}
+	A typed relation $\Re$ is a {\em  characteristic bisimulation} if 
+	for all $\horel{\Gamma}{\Delta_1}{P_1}{\ \Re \ }{\Delta_2}{Q_1}$, 
+%
+	\begin{enumerate}[1)]
+		\item 
+				Whenever 
+				$\horel{\Gamma}{\Delta_1}{P_1}{\hby{\news{\widetilde{m_1}} \bactout{n}{\dk{V_1: U}}}}{\Delta_1'}{P_2}$ 
+				then there exist 
+				$Q_2$, $V_2$, $\Delta'_2$ such that 
+				$\horel{\Gamma}{\Delta_2}{Q_1}{\Hby{\news{\widetilde{m_2}}\bactout{n}{\dk{V_2: U}}}}{\Delta_2'}{Q_2}$
+				and, for fresh $t$,
+%
+				\[
+					\Gamma; \Delta''_1  \proves  {\newsp{\widetilde{m_1}}{P_2 \Par \ftrigger{t}{V_1}{U_1}}}
+	 				\ \Re\ 
+					\Delta''_2 \proves {\newsp{\widetilde{m_2}}{Q_2 \Par \ftrigger{t}{V_2}{U_2}}}
+				\]
 
-                      \item	The symmetric cases of 1 and 2.                
+		\item	
+				For all $\horel{\Gamma}{\Delta_1}{P_1}{\hby{\ell}}{\Delta_1'}{P_2}$ such that 
+				$\ell$ is not an output, there exist $Q_2$, $\Delta'_2$ such that 
+				$\horel{\Gamma}{\Delta_2}{Q_1}{\Hby{\hat{\ell}}}{\Delta_2'}{Q_2}$
+				and
+				$\horel{\Gamma}{\Delta_1'}{P_2}{\ \Re \ }{\Delta_2'}{Q_2}$; and 
+
+		\item	The symmetric cases of 1 and 2.                
 	\end{enumerate}
-	The largest such bisimulation
-	is called \emph{characteristic bisimilarity} \jpc{and} denoted by $\fwb$.
+%
+	The largest such bisimulation is called \emph{characteristic bisimilarity} and is denoted by $\fwb$.
 \end{definition}
+
+\begin{lemma}
+	\label{lem:wb_eq_wbf}
+	$\fwb\ =\ \hwb$
+\end{lemma}
+
+\begin{proof}[Sketch]
+	We show that
+	trigger processes,
+	$\fotrigger{t}{s}{x}{\btinp{U} \tinact}{V}$
+	and
+	$\hotrigger{t}{s}{x}{V}$,
+	exhibit similar behaviour.
+	The full proof is found in \lemref{app:lem:wb_eq_wbf}
+	in \appref{app:beh}.
+	\qed
+\end{proof}
+
+\begin{lemma}
+	\label{lem:wb_is_wbc}
+	$\hwb\ \subseteq\ \wb$
+\end{lemma}
+
+\begin{proof}[Sketch]
+	\qed
+\end{proof}
+
+\begin{lemma}
+	\label{lem:wbc_is_cong}
+	$\wb \subseteq \cong$
+\end{lemma}
+
+\begin{proof}[Sketch]
+	We show that $\wb$ satisfies the defining
+	properties of $\cong$.
+	It is easy to show that $\wb$ is reduction-closed
+	and barb preserving. The challenging part is
+	to show that $\wb$ is a congruence; we construct
+	a congruence closure and we show that it is a
+	context bisimulation. The full proof is found in
+	\lemref{app:lem:wbc_is_cong} in \appref{app:beh}.
+	\qed
+\end{proof}
+
+\begin{lemma}
+	\label{lem:cong_is_wb}
+	$\cong \subseteq \hwb$
+\end{lemma}
+
+\begin{proof}[Sketch]
+	We prove the above result by exploiting
+	a set of test processes defined in \defref{app:def:definibility}.
+	These test processes allow for checking the interaction
+	of reduction-closed barb congruence processes
+	so to associate them with labelled transition semantics
+	and check for the defining properties of $\hwb$.
+	The full details can be found in \lemref{app:lem:cong_is_wb} in \appref{app:beh}.
+	\qed
+\end{proof}
+
+\begin{theorem}[Coincidence]\rm
+%	\label{the:coincidence}
+%$\cong$, $\wbc$, $\hwb$ and $\fwb$ coincide in $\CAL\in \{\HOp, \HO\}$
+%and 
+%$\cong$, $\wbc$ and $\fwb$ coincide in $\CAL\in \{\HOp, \HO, \sessp\}$. 
+	\label{the:coincidence}
+	$\cong$, $\wbc$, $\hwb$ and $\fwb$ coincide in $\HOp$. 
+\end{theorem}
+
+\begin{proof}
+	The proof is a direct consequence from
+	\lemref{lem:wb_eq_wbf}, \lemref{lem:wb_is_wbc},\lemref{lem:wbc_is_cong}, and
+	\lemref{lem:cong_is_wb}.
+	\qed
+\end{proof}
+
+%\begin{proof}[Sketch]
+%	We use \emph{higher-order bisimilarity} ($\hwb$, see \defref{def:bisim}), 
+%	an auxiliary equivalence that is defined as $\fwb$ but by
+%	using  trigger processes with higher-order communication (cf.~\eqref{equ:2}).
+%	We first show that $\fwb$ and $\hwb$ coincide by using~\propref{lem:tau_inert}; 
+%	then, we show that $\hwb$ coincides with $\wbc$ and $\cong$. 
+%	A key result is a  substitution lemma which simplifies reasoning 
+%	for $\hwb$ by exploiting characteristic processes/values.
+%	See \appref{app:beh} and~\cite{KouzapasPY15} for full details.
+%\end{proof}
+
+
 
 %\smallskip 
 
@@ -1109,131 +1168,171 @@ $\beta$-reductions are deterministic.
 \label{def:dettrans}
 	Let  $\Gamma; \es; \Delta \proves P \hastype \Proc$ be a balanced \HOp process. 
 	Transition $\horel{\Gamma}{\Delta}{P}{\hby{\tau}}{\Delta'}{P'}$ is called
-%\vspace{-2mm}
-%	\begin{enumerate}[$-$]
-%		\item 
-		{\em session transition} whenever the   transition $P \by{\tau} P'$ 
-		is derived using 
-			rule~$\ltsrule{Tau}$ 
-		(where $\subj{\ell_1}$ and $\subj{\ell_2}$ in the premise 
-		are dual endpoints), 
-		possibly followed by uses of  $\ltsrule{Alpha}$, $\ltsrule{Res}$, $\ltsrule{Rec}$, or $\ltsrule{Par${}_L$}/
-		\ltsrule{Par${}_R$}$.
-		
-		%\item
-		Transition $\horel{\Gamma}{\Delta}{P}{\hby{\tau}}{\Delta'}{P'}$ is called
-			{\em \betatran}	whenever the   transition $P \by{\tau} P'$
-			is derived using rule $\ltsrule{App}$,
-			possibly followed by uses of  $\ltsrule{Alpha}$, $\ltsrule{Res}$, $\ltsrule{Rec}$, or $\ltsrule{Par${}_L$}/
-		\ltsrule{Par${}_R$}$. \\
-%	\end{enumerate}
 %
-%We write
-%$\horel{\Gamma}{\Delta}{P}{\hby{\stau}}{\Delta'}{P'}$
-%and 
-%$\horel{\Gamma}{\Delta}{P}{\hby{\btau}}{\Delta'}{P'}$
-%to denote session and $\beta$-transitions, resp. Also, 
-	 $\horel{\Gamma}{\Delta}{P}{\hby{\dtau}}{\Delta'}{P'}$ denotes
-	either a session transition or a \betatran.
+	\begin{enumerate}[$-$]
+		\item 
+				a {\em session transition} whenever the   transition $P \by{\tau} P'$ 
+				is derived using rule~$\ltsrule{Tau}$ 
+				(where $\subj{\ell_1}$ and $\subj{\ell_2}$ in the premise are dual endpoints), 
+				possibly followed by uses of  $\ltsrule{Alpha}$, $\ltsrule{Res}$, $\ltsrule{Rec}$, or $\ltsrule{Par${}_L$}/
+				\ltsrule{Par${}_R$}$.
+
+				We write $\horel{\Gamma}{\Delta}{P}{\hby{\stau}}{\Delta'}{P'}$ to denote a session transition.
+		
+		\item
+%				Transition $\horel{\Gamma}{\Delta}{P}{\hby{\tau}}{\Delta'}{P'}$ is called
+				a {\em \betatran} whenever the transition $P \by{\tau} P'$
+				is derived using rule $\ltsrule{App}$,
+				possibly followed by uses of  $\ltsrule{Alpha}$, $\ltsrule{Res}$, $\ltsrule{Rec}$, or $\ltsrule{Par${}_L$}/
+				\ltsrule{Par${}_R$}$.
+
+				We write $\horel{\Gamma}{\Delta}{P}{\hby{\btau}}{\Delta'}{P'}$ to denote a $\beta$-transition.
+
+		\item	Also, $\horel{\Gamma}{\Delta}{P}{\hby{\dtau}}{\Delta'}{P'}$ denotes
+				either a session transition or a \betatran.
+	\end{enumerate}
+%
+We write $\Hby{\dtau}$ to denote a (possibly empty) sequence of deterministic steps $\hby{\dtau}$.
 \end{definition}
-%Deterministic transitions imply the $\tau$-inertness property, which
-%is a property that ensures behavioural invariance on deterministic
-%transitions.
+
+Deterministic transitions imply the $\tau$-inertness property, which
+is a property that ensures behavioural invariance on deterministic
+transitions.
 
 \begin{proposition}[$\tau$-inertness]\myrm
 	\label{lem:tau_inert}
-Let  $\Gamma; \es; \Delta \proves P \hastype \Proc$ be a balanced \HOp process.
+	Let  $\Gamma; \es; \Delta \proves P \hastype \Proc$ be a balanced \HOp process.
 	Then
 %	\begin{enumerate}[1.]
-%\item	
-$\horel{\Gamma}{\Delta}{P}{\hby{\dtau}}{\Delta'}{P'}$ implies
-			$\horel{\Gamma}{\Delta}{P}{\fwb}{\Delta'}{P'}$.
+%		\item	
+	$\horel{\Gamma}{\Delta}{P}{\hby{\dtau}}{\Delta'}{P'}$ implies
+	$\horel{\Gamma}{\Delta}{P}{\fwb}{\Delta'}{P'}$.
 %		\item	$\horel{\Gamma}{\Delta}{P}{\Hby{\dtau}}{\Delta'}{P'}$ implies
 %			$\horel{\Gamma}{\Delta}{P}{\wb}{\Delta'}{P'}$.
 %	\end{enumerate}
 \end{proposition}
+%
 \noi 
 See App.~\ref{app:sub_tau_inert} for the proofs. 
 Our main theorem follows: %typed bisimilarities collapse for \HOp processes. 
 it allows us to use $\fwb$ as a tractable reasoning %is the most tractable 
 technique for higher-order processes with sessions.
 
+Using the above determinacy properties, we can state the following up-to technique.
+We write $\Hby{\dtau}$ to denote a (possibly empty) sequence of deterministic steps 
+$\hby{\dtau}$.
+
+
+\begin{lemma}[Up-to Deterministic Transition]
+	\label{lem:up_to_deterministic_transition}
+	Let $\horel{\Gamma}{\Delta_1}{P_1}{\ \Re\ }{\Delta_2}{Q_1}$ such
+	that if whenever:
+%
+	\begin{enumerate}[1.]
+		\item	$\forall \news{\tilde{m_1}} \bactout{n}{V_1}$ such that
+			$
+				\horel{\Gamma}{\Delta_1}{P_1}{\hby{\news{\tilde{m_1}} \bactout{n}{V_1}}}{\Delta_3}{P_3}
+			$
+			implies that $\exists Q_2, V_2$ such that
+			$
+				\horel{\Gamma}{\Delta_2}{Q_1}{\Hby{\news{\tilde{m_2}} \bactout{n}{V_2}}}{\Delta_2'}{Q_2}
+			$
+			and
+			$
+				\horel{\Gamma}{\Delta_3}{P_3}{\Hby{\dtau}}{\Delta_1'}{P_2}
+			$
+			and for fresh $t$:\\
+			\[
+				\horel{\Gamma}{\Delta_1''}{\newsp{\tilde{m_1}}{P_2 \Par \htrigger{t}{V_1}}}
+				{\ \Re\ }
+				{\Delta_2''}{}{\newsp{\tilde{m_2}}{Q_2 \Par \htrigger{t}{V_2}}}
+%				\mhorel{\Gamma}{\Delta_1''}{\newsp{\tilde{m_1}}{P_2 \Par \hotrigger{t}{x}{s}{V_1}}}
+%				{\ \Re\ }
+%				{\Delta_2''}{}{\newsp{\tilde{m_2}}{Q_2 \Par \hotrigger{t}{x}{s}{V_2}}}
+			\]
+%
+		\item	$\forall \ell \not= \news{\tilde{m}} \bactout{n}{V}$ such that
+			$
+				\horel{\Gamma}{\Delta_1}{P_1}{\hby{\ell}}{\Delta_3}{P_3}
+			$
+			implies that $\exists Q_2$  \\ such that 
+			$
+				\horel{\Gamma}{\Delta_1}{Q_1}{\hat{\Hby{\ell}}}{\Delta_2'}{Q_2}
+			$
+			and
+			$
+				\horel{\Gamma}{\Delta_3}{P_3}{\Hby{\dtau}}{\Delta_1'}{P_2}
+			$
+			and
+			$\horel{\Gamma}{\Delta_1'}{P_2}{\ \Re\ }{\Delta_2'}{Q_2}$.
+
+		\item	The symmetric cases of 1 and 2.
+	\end{enumerate}
+	Then $\Re\ \subseteq\ \hwb$.
+\end{lemma}
+
 %\smallskip 
 
-\begin{theorem}[Coincidence]\rm
-%	\label{the:coincidence}
-%$\cong$, $\wbc$, $\hwb$ and $\fwb$ coincide in $\CAL\in \{\HOp, \HO\}$
-%and 
-%$\cong$, $\wbc$ and $\fwb$ coincide in $\CAL\in \{\HOp, \HO, \sessp\}$. 
-	\label{the:coincidence}
-$\cong$, $\wbc$,  and $\fwb$ coincide in $\HOp$. 
-\vspace{-1mm}
-\end{theorem}
-\begin{proof}[Sketch]
-We use 
-\emph{higher-order bisimilarity} ($\hwb$, see \defref{def:bisim}), 
-an auxiliary equivalence that
-is defined as $\fwb$ but by
-using  trigger processes with higher-order communication (cf.~\eqref{equ:2}).
-We first show that $\fwb$ and $\hwb$ coincide by using~\propref{lem:tau_inert}; 
-then, we show that $\hwb$ coincides with $\wbc$ and $\cong$. 
-A key result is a  substitution lemma which simplifies reasoning 
-for $\hwb$
-by exploiting characteristic processes/values.
-See
-\appref{app:beh}
-and~\cite{KouzapasPY15} for full details.
-\end{proof}
-Now we prove 
-that  processes 
+\subsection{Running Example (\exref{exam:proc})}
+
+Now we prove that  processes 
 $\Client_1$ and $\Client_2$ 
 in Example \ref{exam:proc}
 are behaviourally equivalent.
 
 \begin{proposition}\label{p:examp}
 	Let
-	$S = \btout{\rtype} \btinp{\Quote} \btsel{\accept: \btout{\creditc} \tinact, \reject: \tinact}$ and 
-$\Delta = s_1: \btout{\lhot{S}} \tinact \cat s_2: \btout{\lhot{S}} \tinact$. 
-Then
-	$ \horel
-	{\es}{\Delta}{\Client_1}
+	\begin{eqnarray*}
+		S &=& \btout{\rtype} \btinp{\Quote} \btsel{\accept: \btout{\creditc} \tinact, \reject: \tinact}\\
+		\Delta &=& s_1: \btout{\lhot{S}} \tinact \cat s_2: \btout{\lhot{S}} \tinact
+	\end{eqnarray*}
+	Then
+	$\horel{\es}{\Delta}{\Client_1}
 	{\wbf}
-	{\Delta}{\Client_2}$. %and $\Client_1$, $\Client_2$ in Example \ref{exam:proc}. 
-\vspace{-2mm}
+	{\Delta}{\Client_2}$, where $\Client_1$, $\Client_2$ are defined in \exref{exam:proc}. 
 \end{proposition}
+
 \begin{proof}[Sketch]
 	\noi We show a bisimulation closure by following transitions on each $\Client$.
 	%We show the initial higher order transitions.
 	See \appref{hotel_closure} for details.
 	First, the characteristic process is given as:
 	$\mapchar{\btinp{\lhot{S}} \tinact}{s} = \binp{s}{x} (\appl{x}{k})$.
-We show that the clients can simulate each other on
-the first two output transitions, that also generate the trigger
-processes:
+	We show that the clients can simulate each other on
+	the first two output transitions, that also generate the trigger
+	processes:
 %
 \[
 	\begin{array}{lll}
-&	\es; \es; \Delta \proves \Client_1
-	&
-		\by{\bactout{s_1}{\abs{x}{P_{xy} \subst{h_1}{y}}}}
-		\by{\bactout{s_2}{\abs{x}{P_{xy} \subst{h_2}{y}}}}
-		\\
-&		\es; \es; k_1: S \cat k_2: S \proves
+		&	\es; \es; \Delta \proves \Client_1
 		&
-		\newsp{h_1, h_2}{\binp{\dual{h_1}}{x} \binp{\dual{h_2}}{y}\\
-&		& \If\ x \leq y\ \Then (\bsel{\dual{h_1}}{\accept} \bsel{\dual{h_2}}{\reject} \inact
-		\Else \bsel{\dual{h_1}}{\reject} \bsel{\dual{h_2}}{\accept} \inact)\\
-&		& \Par \ftrigger{t_1}{\abs{x}{P_{xy} \subst{h_1}{y}}}{\lhot{S}} \Par \ftrigger{t_2}{\abs{x}{P_{xy} \subst{h_2}{y}}}{\lhot{S}}}
+			\by{\bactout{s_1}{\abs{x}{P_{xy} \subst{h_1}{y}}}}
+			\qquad
+			\by{\bactout{s_2}{\abs{x}{P_{xy} \subst{h_2}{y}}}}
+		\\
+		&	\es; \es; k_1: S \cat k_2: S \proves
+		&
+			\newsp{h_1, h_2}{\binp{\dual{h_1}}{x} \binp{\dual{h_2}}{y}
+		\\
+		&
+		&	\If\ x \leq y\ \Then (\bsel{\dual{h_1}}{\accept} \bsel{\dual{h_2}}{\reject} \inact
+			\Else \bsel{\dual{h_1}}{\reject} \bsel{\dual{h_2}}{\accept} \inact)
+		\\
+		&
+		&	\Par \ftrigger{t_1}{\abs{x}{P_{xy} \subst{h_1}{y}}}{\lhot{S}} \Par \ftrigger{t_2}{\abs{x}{P_{xy} \subst{h_2}{y}}}{\lhot{S}}}
 %		& \Par \binp{t_1}{x} \newsp{s}{\binp{s}{x} \appl{x}{k_1} \Par \bout{\dual{s}}{\abs{x}{P \subst{h_1}{y}}} \inact }\\
 %		& \Par \binp{t_2}{x} \newsp{s}{\mapchar{\btinp{\lhot{S}}}{s} \Par \bout{\dual{s}}{\abs{x}{P \subst{h_2}{y}}} \inact }}
-		\\[1mm]
-\mbox{and} &
-		\es; \es; \Delta \proves \Client_2
-		&\by{\bactout{s_1}{\abs{x}{Q_1 \subst{h}{y}}}}
-		\by{\bactout{s_2}{\abs{x}{Q_2 \subst{\dual{h}}{y}}}}
+		\\[2mm]
+		& \mbox{and}
+		\\[2mm]
+		&	\es; \es; \Delta \proves \Client_2
+		&
+			\by{\bactout{s_1}{\abs{x}{Q_1 \subst{h}{y}}}}
+			\qquad
+			\by{\bactout{s_2}{\abs{x}{Q_2 \subst{\dual{h}}{y}}}}
 		\\
-&		\es; \es; k_1: S \cat k_2: S \proves & \newsp{h}{
-		\ftrigger{t_1}{\abs{x}{Q_1 \subst{h}{y}}}{\lhot{S}} \Par \ftrigger{t_2}{\abs{x}{Q_2 \subst{\dual{h}}{y}}}{\lhot{S}}}
+		&	\es; \es; k_1: S \cat k_2: S \proves & \newsp{h}{
+			\ftrigger{t_1}{\abs{x}{Q_1 \subst{h}{y}}}{\lhot{S}} \Par \ftrigger{t_2}{\abs{x}{Q_2 \subst{\dual{h}}{y}}}{\lhot{S}}}
 %		\binp{t_1}{x} \newsp{s}{\binp{s}{x} \appl{x}{k_1} \Par \bout{\dual{s}}{\abs{x}{P_1 \subst{h}{y}}} \inact }\\
 %		&\Par \binp{t_2}{x} \newsp{s}{\binp{s}{x} \appl{x}{k_2} \Par \bout{\dual{s}}{\abs{x}{P_2 \subst{\dual{h}}{y}}} \inact }}
 	\end{array}
