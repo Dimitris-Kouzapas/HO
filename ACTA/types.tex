@@ -2,14 +2,13 @@
 \noi %Here we define 
 We define a session typing system for \HOp and state its main properties. 
 Our system distills the key features of~\cite{tlca07,MostrousY15}.
-We give selected definitions; 
-see \appref{app:types} for a full description. 
+%We give selected definitions;  see \appref{app:types} for a full description. 
 
 %thus it is simpler.
 %Our system is simpler than that in~\cite{tlca07,MostrousY15}, thus distilling the key
 %features of higher-order sessions. %communications. %in a session-typed setting.
 
-\smallskip 
+%\smallskip 
 
 \subsection{Types}
 %\label{subsec:types}
@@ -137,7 +136,7 @@ Standard arguments ensure that $F$ is monotone, thus the greatest fixed point
 of $F$ exists. We write $S_1 \dualof S_2$ if  $(S_1,S_2)\in \Re$. 
 \end{definition}
 
-5\smallskip 
+%\smallskip 
 
 %\label{subsec:typing}
 \subsection{Typing Environments and Judgements}
@@ -203,10 +202,254 @@ relies on two auxiliary notions on session environments:
 \end{enumerate}
 \end{definition}
 
+\begin{figure}[h!]
+\[
+	\begin{array}{lc}
+		\trule{Sess}& \hspace{0cm}\Gamma; \emptyset; \set{u:S} \proves u \hastype S 
+		\quad  
+		\trule{Sh}~~\Gamma \cat u : U; \emptyset; \emptyset \proves u \hastype U
+		%\\[4mm]
+		\quad
+		\trule{LVar}~~ \Gamma; \set{x: \lhot{U}}; \emptyset \proves x \hastype \lhot{U}
+		\\[4mm]
+
+		\trule{Prom}&\hspace{-0.5cm} \tree{
+			\Gamma; \emptyset; \emptyset \proves V \hastype 
+                         \lhot{U}
+		}{
+			\Gamma; \emptyset; \emptyset \proves V \hastype 
+                         \shot{U}
+		} 
+		\qquad
+		\trule{EProm}\tree{
+		\Gamma; \Lambda \cat x : \lhot{U}; \Delta \proves P \hastype \Proc
+		}{
+			\Gamma \cat x:\shot{U}; \Lambda; \Delta \proves P \hastype \Proc
+		}
+		\\[6mm]
+
+		\trule{Abs}&\hspace{-0.5cm} \tree{
+			\Gamma; \Lambda; \Delta_1 \proves P \hastype \Proc
+			\quad
+			\Gamma; \es; \Delta_2 \proves x \hastype U
+		}{
+			\Gamma\backslash x; \Lambda; \Delta_1 \backslash \Delta_2 \proves \abs{{x}}{P} \hastype \lhot{{U}}
+		}
+		\\[6mm]
+
+		\trule{App}&\hspace{-0.5cm} \tree{
+			\begin{array}{c}
+				U = \lhot{U'} \lor \shot{U'}
+				\quad
+				\Gamma; \Lambda; \Delta_1 \proves V \hastype U
+				\quad
+				\Gamma; \es; \Delta_2 \proves W \hastype U'
+			\end{array}
+		}{
+			\Gamma; \Lambda; \Delta_1 \cat \Delta_2 \proves \appl{V}{W} \hastype \Proc
+		} 
+		\\[6mm]
+
+
+		\trule{Send}& \hspace{-0.5cm}\tree{
+			\Gamma; \Lambda_1; \Delta_1 \proves P \hastype \Proc
+			\quad
+			\Gamma; \Lambda_2; \Delta_2 \proves V \hastype U
+			\quad
+			u:S \in \Delta_1 \cat \Delta_2
+		}{
+			\Gamma; \Lambda_1 \cat \Lambda_2; ((\Delta_1 \cat \Delta_2) \setminus u:S) \cat u:\btout{U} S \proves \bout{u}{V} P \hastype \Proc
+		}
+		\\[6mm]
+
+		\trule{Rcv}&\hspace{-0.5cm} \tree{
+		\Gamma; \Lambda_1; \Delta_1 \cat u: S \proves P \hastype \Proc
+			\quad
+			\Gamma; \Lambda_2; \Delta_2 \proves {x} \hastype {U}
+		}{
+			\Gamma \backslash x; \Lambda_1\cat \Lambda_2; \Delta_1\backslash \Delta_2 \cat u: \btinp{U} S \vdash \binp{u}{{x}} P \hastype \Proc
+		}
+\\[6mm]
+
+		\trule{Req}& \hspace{-0.5cm}\tree{
+			\begin{array}{c}
+				\Gamma; \es; \es \proves u \hastype U_1
+				\quad
+				\Gamma; \Lambda; \Delta_1 \proves P \hastype \Proc
+				\quad
+				\Gamma; \es; \Delta_2 \proves V \hastype U_2
+				\\
+				(U_1 = \chtype{S} 
+                                \land %\Leftrightarrow 
+                                U_2 = S)
+				\lor
+				 (U_1 = \chtype{L} 
+                                \land %\Leftrightarrow 
+                                %\Leftrightarrow 
+                                 U_2 = L)
+			\end{array}
+		}{
+			\Gamma; \Lambda; \Delta_1 \cat \Delta_2 \proves \bout{u}{V} P \hastype \Proc
+		}
+		\\[6mm]
+
+
+		\trule{Acc}&\hspace{-0.5cm} \tree{
+			\begin{array}{c}
+			\Gamma; \emptyset; \emptyset \proves u \hastype 
+U_1 
+		\quad
+		\Gamma; \Lambda_1; \Delta_1 \proves P \hastype \Proc
+		\quad
+		\Gamma; \Lambda_2; \Delta_2 \proves x \hastype U_2\\
+				(U_1 = \chtype{S} 
+                                \land %\Leftrightarrow 
+                                U_2 = S)
+				\lor
+				 (U_1 = \chtype{L} 
+                                \land %\Leftrightarrow 
+                                %\Leftrightarrow 
+                                 U_2 = L)
+               \end{array}
+		}{
+			\Gamma\backslash x; \Lambda_1 \backslash \Lambda_2; \Delta_1 \backslash \Delta_2 \proves \binp{u}{x} P \hastype \Proc
+		}
+		\\[6mm]
+
+
+
+		\trule{Bra}& \hspace{-0.5cm}\tree{
+			 \forall i \in I \quad \Gamma; \Lambda; \Delta \cat u:S_i \proves P_i \hastype \Proc
+		}{
+			\Gamma; \Lambda; \Delta \cat u: \btbra{l_i:S_i}_{i \in I} \proves \bbra{u}{l_i:P_i}_{i \in I}\hastype \Proc
+		}
+\\[6mm]
+	 	\trule{Sel}& \hspace{-0.5cm}\tree{
+			\Gamma; \Lambda; \Delta \cat u: S_j  \proves P \hastype \Proc \quad j \in I
+
+		}{
+			\Gamma; \Lambda; \Delta \cat u:\btsel{l_i:S_i}_{i \in I} \proves \bsel{u}{l_j} P \hastype \Proc
+		}
+		\\[6mm]
+
+
+
+		\trule{ResS}&\hspace{-0.5cm} \tree{
+			\Gamma; \Lambda; \Delta \cat s:S_1 \cat \dual{s}: S_2 \proves P \hastype \Proc \quad S_1 \dualof S_2
+		}{
+			\Gamma; \Lambda; \Delta \proves \news{s} P \hastype \Proc
+		}
+		\\[6mm]
+		\trule{Res}&\hspace{-0.5cm}\tree{
+			\Gamma\cat a:\chtype{S} ; \Lambda; \Delta \proves P \hastype \Proc
+		}{
+			\Gamma; \Lambda; \Delta \proves \news{a} P \hastype \Proc}
+			\qquad 
+
+		\trule{Par} \tree{
+			\Gamma; \Lambda_{i}; \Delta_{i} \proves P_{i} \hastype \Proc \quad i=1,2
+		}{
+			\Gamma; \Lambda_{1} \cat \Lambda_2; \Delta_{1} \cat \Delta_2 \proves P_1 \Par P_2 \hastype \Proc
+		}
+\\[6mm]
+		\trule{End}& \hspace{-0.5cm}\tree{
+			\Gamma; \Lambda; \Delta  \proves P \hastype T \quad u \not\in \dom{\Gamma, \Lambda,\Delta}
+		}{
+			\Gamma; \Lambda; \Delta \cat u: \tinact  \proves P \hastype \Proc
+		}
+\qquad 
+	 	\trule{Rec} \tree{
+			\Gamma \cat \rvar{X}: \Delta; \emptyset; \Delta  \proves P \hastype \Proc
+		}{
+			\Gamma ; \emptyset; \Delta  \proves \recp{X}{P} \hastype \Proc
+		}
+		\\[6mm]
+\trule{RVar}& \Gamma \cat \rvar{X}: \Delta; \emptyset; \Delta  \proves \rvar{X} \hastype \Proc
+\qquad 
+		\trule{Nil}~~\Gamma; \emptyset; \emptyset \proves \inact \hastype \Proc
+	\end{array}
+\]
+\caption{Typing Rules for $\HOp$.\label{fig:typerulesmy}}
+\Hline
+\end{figure}
+
 \noi We rely on a typing system that is similar to the one developed in~\cite{tlca07,MostrousY15}. 
-TO ADD: TYPING RULES AND EXPLANATIONS.
-We state the type soundness result for \HOp processes;
-see \appref{app:types} for details of the associated proofs.
+The typing system is defined in \figref{fig:typerulesmy}.
+%Types for session names/variables $u$ and
+%directly derived from the linear part of the typing
+%environment, i.e.~type maps $\Delta$ and $\Lambda$.
+Rules $\trule{Sess, Sh, LVar}$ are name and variable introduction rules. 
+The type $\shot{U}$ %for shared higher order values $V$
+is derived using rule $\trule{Prom}$, where we require
+a value with linear type to be typed without a linear
+environment to be typed as a shared type.
+Rule $\trule{EProm}$ allows to freely use a linear
+type variable as shared.
+
+Abstraction values are typed with rule $\trule{Abs}$.
+The key type for an abstraction is the type for
+the bound variable of the abstraction, e.g., for
+bound variable with type $C$ the corresponding abstraction has type $\lhot{C}$.
+The dual of abstraction typing is application typing,
+governed by rule $\trule{App}$: we expect
+the type $U$ of an application value $W$ 
+to match the type $\lhot{U}$ or $\shot{U}$
+of the application variable $x$.
+
+%A process prefixed with a session send operator $\bout{k}{V} P$
+%is typed using rule $\trule{Send}$.
+In $\trule{Send}$, 
+the type $U$ of a send value $V$ should appear as a prefix
+on the session type $\btout{U} S$ of $u$.
+$\trule{Rcv}$ is its dual.  
+%defined the typing for the 
+%reception of values $\binp{u}{V} P$.
+%the type $U$ of a receive value should 
+%appear as a prefix on the session type $\btinp{U} S$ of $u$.
+We use a similar approach with session prefixes
+to type interaction between shared names as defined 
+in rules $\trule{Req}$ and $\trule{Acc}$,
+where the type of the sent/received object 
+($S$ and $L$, respectively) should
+match the type of the sent/received subject
+($\chtype{S}$ and $\chtype{L}$, respectively).
+Rules for selection and branching, 
+$\trule{Sel}$ and $\trule{Bra}$, are standard: 
+both
+rules prefix the session type with the selection
+type $\btsel{l_i: S_i}_{i \in I}$ and
+$\btbra{l_i:S_i}_{i \in I}$, respectively.
+
+A
+shared name creation $a$ creates and restricts
+$a$ in environment $\Gamma$ as defined in 
+rule \trule{Res}. 
+Creation of a session name $s$
+creates and restricts two endpoints with dual types 
+%and restricts
+%them by removing them from the session environment
+%$\Delta$ as defined 
+in rule \trule{ResS}. 
+Rule \trule{Par}, 
+combines the environments
+$\Lambda$ and $\Delta$ of
+the parallel components of a parallel process.
+%to create a type for the entire parallel process.
+The disjointness of environments $\Lambda$ and $\Delta$
+is implied. Rule \trule{End} adds 
+the names with type $\tinact$ in $\Delta$.  
+The recursion requires that the body process 
+matches the type of the recursive
+variable as in rule \trule{Rec}.
+The recursive variable is typed
+directly from the shared environment $\Gamma$ as
+in rule \trule{RVar}.
+The inactive process $\inact$ is typed with no
+linear environments as in \trule{Nil}. 
+
+
+We state the type soundness result for \HOp processes.
+
 
 %\smallskip
 
@@ -218,7 +461,9 @@ see \appref{app:types} for details of the associated proofs.
 			and $\Delta = \Delta'$ or $\Delta \red \Delta'$
 			with $\Delta'$ balanced. 
 \end{theorem}
-
+\begin{proof}
+See \appref{app:types} for details. \qed % of the associated proofs.
+\end{proof}
 
 \begin{example}[Hotel Booking Revisited]\label{exam:type}
 We give types to the client
