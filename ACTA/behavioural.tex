@@ -1,30 +1,26 @@
 % !TEX root = main.tex
 
-\noi We develop a theory for observational equivalence over
+\noi
+We develop a theory for observational equivalence over
 session typed \HOp processes that follows the principles
 laid in our previous works~\cite{KYHH2015,KY2015}.
-We introduce 
-%three different bisimulations 
+We introduce \emph{higher-order bisimulation} (\defref{d:hwb})
+and
 \emph{characteristic bisimulation} (\defref{d:fwb})
-and prove
-\jpc{that}
-%all of them coincide 
-it coincides
-with reduction-closed,
+and prove that
+they coincide with reduction-closed,
 barbed congruence (\thmref{the:coincidence}).
 
 We begin by defining an (early) labelled transition system (LTS) on
 untyped processes~(\S\,\ref{ss:lts}). 
-Then, using the \emph{environmental} transition semantics (\S\,\ref{ss:elts}), 
+Then, using the \emph{environmental} transition semantics (\secref{ss:elts}), 
 we define a typed LTS to formalise 
 how a typed process interacts with a typed observer. 
 
-\subsection{Labelled Transition System for Processes}\label{ss:lts}
-%\paragraph{Labels.}
-%\noi 
-%process in its environment. 
+\subsection{Labelled Transition System for Processes}
+\label{ss:lts}
 
-Interaction is defined on action labels $\ell$:
+We define the interaction of processes with their evnviorment using action labels $\ell$:
 %
 \begin{center}
 	\begin{tabular}{l}
@@ -58,24 +54,18 @@ sets of free/bound names in $\ell$, resp.
 Given $\ell \neq \tau$, we write $\subj{\ell}$
 to denote the \emph{subject} of $\ell$.
 
-\emph{Dual actions} %, defined below, 
+\emph{Dual actions}
 occur on subjects that are dual between them and carry the same
 object; thus, output is dual to input and 
 selection is dual to branching.
 Formally, duality \jpc{on actions}
 is the symmetric relation $\asymp$ that satisfies:
+%
 \[
 	\bactsel{n}{l} \asymp \bactbra{\dual{n}}{l}
 	\qquad \qquad 
 	\news{\widetilde{m}} \bactout{n}{V} \asymp \bactinp{\dual{n}}{V}
 \]
-%
-%\begin{tabular}{c}
-%	$\bactsel{n}{l} \asymp \bactbra{\dual{n}}{l}
-%	\qquad \qquad \qquad
-%	\news{\widetilde{m}} \bactout{n}{V} \asymp \bactinp{\dual{n}}{V}$s
-%
-%\end{tabular}
 
 %%%%%%%%%%%%%%%%%%%% LTS Figure %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{figure}
@@ -160,8 +150,8 @@ is the symmetric relation $\asymp$ that satisfies:
 
 %%%%%%%%%%%%%%%%%%%% End LTS Figure %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %\paragraph{LTS over Untyped Processes.}
-The %labelled transition system (LTS) 
-LTS
+The labelled transition system
+%(LTS) LTS
 over \emph{untyped processes}
 is given in
 \figref{fig:untyped_LTS}. 
@@ -176,7 +166,6 @@ actions in rules $\ltsrule{Sel}$ and $\ltsrule{Bra}$, resp.
 Rule $\ltsrule{Res}$ closes the LTS under restriction 
 if the restricted name does not occur free in the
 observable action. 
-%If a restricted name occurs free,  
 If a restricted name occurs free in
 the carried value of an output action,
 the process performs scope opening (rule~$\ltsrule{New}$).  
@@ -184,14 +173,9 @@ Rule~$\ltsrule{Rec}$ handles recursion unfolding.
 Rule~$\ltsrule{Tau}$ 
 states that two parallel processes which perform
 dual actions can synchronise by an internal transition.
-%states that if two parallel processes can perform
-%dual actions then the two actions can synchronise by 
-%an internal transition. 
 Rules $\ltsrule{Par${}_L$}$/$\ltsrule{Par${}_R$}$ 
 and $\ltsrule{Alpha}$ close the LTS
 under parallel composition and $\alpha$-renaming. 
-%provided that the observable
-%action does not share any bound names with the parallel processes.
 
 \subsection{Environmental Labelled Transition System}
 \label{ss:elts}
@@ -209,28 +193,24 @@ in \cite{KYHH2015,KY2015}
 to higher-order sessions. 
 Notice that due to weakening %of shared environments 
 we have 
-\[
+$
 	(\Gamma', \Lambda_1, \Delta_1) \hby{\ell} (\Gamma', \Lambda_2, \Delta_2)
-\]
+$
 if
-\[
+$
 	(\Gamma, \Lambda_1, \Delta_1) \hby{\ell} (\Gamma', \Lambda_2, \Delta_2)
-\]
+$
 %
 \paragraph{Input Actions} 
 are defined by 
 rules~$\eltsrule{SRv}$ and $\eltsrule{ShRv}$.
-%describe the input action
 In rule~$\eltsrule{SRv}$
-%($n$ session or shared channel respectively $\bactinp{n}{V}$). 
 the type of value $V$
 and the type of the object associated to the session type on $s$ 
 should coincide. 
-%Moreover, 
 The resulting type tuple must contain the environments 
 associated to $V$. 
-The %condition $\dual{s} \notin \dom{\Delta}$
-%rule requires that 
+The
 dual endpoint $\dual{s}$ cannot be
 present in the session environment: if it were present
 the only possible communication would be the interaction
@@ -257,12 +237,13 @@ resulting type tuple. The prefix of session $s$ is consumed
 by the action.
 Rule $\eltsrule{ShSnd}$ is for output actions on shared names:
 the name must be typed with $\chtype{U}$; conditions on $V$ are identical to those
-% the requirements 
 on rule~$\eltsrule{SSnd}$.
-%\NY{Given a $V$ of type $U$, we sometimes annotate the output action 
-%$\news{\widetilde{m}} \bactout{n}{V}$
-%%with the type of $V$ 
-%as $\news{\widetilde{m}} \bactout{n}{\AT{V}{U}}$.}
+%\NY{
+Given a $V$ of type $U$, we sometimes annotate the output action 
+$\news{\widetilde{m}} \bactout{n}{V}$
+with the type of $V$ 
+as $\news{\widetilde{m}} \bactout{n}{\AT{V}{U}}$.
+%}
 
 \paragraph{Other Actions}
 Rules $\eltsrule{Sel}$ and $\eltsrule{Bra}$ describe actions for
@@ -313,17 +294,19 @@ reduces it (\defref{d:wtenvred}).
 	}
 	\and
 	\inferrule[\eltsrule{SSnd}]{
-		\Gamma \cat \Gamma'; \Lambda'; \Delta' \proves V \hastype U
-		\and
-		\Gamma'; \es; \Delta_j \proves m_j  \hastype U_j
-		\and
-		\dual{s} \notin \dom{\Delta}
-		\and
-		\Delta'\backslash \cup_j \Delta_j \subseteq (\Delta \cat s: S)
-		\and
-		\Gamma'; \es; \Delta_j' \proves \dual{m}_j  \hastype U_j'
-		\and
-		\Lambda' \subseteq \Lambda
+		\begin{array}{l}
+			\Gamma \cat \Gamma'; \Lambda'; \Delta' \proves V \hastype U
+			\and
+			\Gamma'; \es; \Delta_j \proves m_j  \hastype U_j
+			\and
+			\dual{s} \notin \dom{\Delta}
+			\\
+			\Delta'\backslash \cup_j \Delta_j \subseteq (\Delta \cat s: S)
+			\and
+			\Gamma'; \es; \Delta_j' \proves \dual{m}_j  \hastype U_j'
+			\and
+			\Lambda' \subseteq \Lambda
+		\end{array}
 	}{
 		(\Gamma; \Lambda; \Delta \cat s: \btout{U} S)
 		\by{\news{\widetilde{m}} \bactout{s}{V}}
@@ -331,17 +314,19 @@ reduces it (\defref{d:wtenvred}).
 	}
 	\and
 	\inferrule[\eltsrule{ShSnd}]{
-		\Gamma \cat \Gamma' ; \Lambda'; \Delta' \proves V \hastype U
-		\and
-		\Gamma'; \es; \Delta_j \proves m_j \hastype U_j
-		\and
-		\Gamma ; \es ; \es \proves a \hastype \chtype{U}
-		\and
-		\Delta'\backslash \cup_j \Delta_j \subseteq \Delta
-		\and
-		\Gamma'; \es; \Delta_j' \proves \dual{m}_j\hastype U_j'
-		\and
-		\Lambda' \subseteq \Lambda
+		\begin{array}{l}
+			\Gamma \cat \Gamma' ; \Lambda'; \Delta' \proves V \hastype U
+			\and
+			\Gamma'; \es; \Delta_j \proves m_j \hastype U_j
+			\and
+			\Gamma ; \es ; \es \proves a \hastype \chtype{U}
+			\\
+			\Delta'\backslash \cup_j \Delta_j \subseteq \Delta
+			\and
+			\Gamma'; \es; \Delta_j' \proves \dual{m}_j\hastype U_j'
+			\and
+			\Lambda' \subseteq \Lambda
+		\end{array}
 	}{
 		(\Gamma ; \Lambda; \Delta) \by{\news{\widetilde{m}}
 		\bactout{a}{V}}
@@ -376,23 +361,23 @@ reduces it (\defref{d:wtenvred}).
 %%%%%%%%%%%%%%%%%%%% End Environment LTS Figure %%%%%%%%%%%%%%%%%%%%%%
 
 \begin{example}
-	Consider environmenttuple
-	\[
+	Consider environment tuple
+	$
 		(\Gamma; \es; s: \btout{\lhot{\btout{S} \tinact}} \tinact \cat s': S)
-	\]
+	$
 	and typed value
 	\[
 		\Gamma; \es; s': S \cat m: \btinp{\tinact} \tinact \proves V \, \hastype \, \lhot{\btout{\tinact} \tinact}
 	\]
 	\noi with
-	\[
+	$
 		V= \abs{x} \bout{x}{s'} \binp{m}{z} \inact
-	\]
+	$.
 %
 	\noi Let 
-	\[
+	$
 		\Delta'_1=\set{\overline{m}: \btout{\tinact} \tinact}
-	\]
+	$
 	and $U=\btout{\lhot{\btout{S} \tinact}} \tinact$.
 	Then by $\eltsrule{SSnd}$, we can derive:
 %
@@ -402,7 +387,7 @@ reduces it (\defref{d:wtenvred}).
 \end{example}
 
 \noi
-Our typed LTS  combines
+The typed LTS  combines
 the LTSs in \figref{fig:untyped_LTS}
 and \figref{fig:envLTS}. 
 
@@ -431,18 +416,10 @@ and \figref{fig:envLTS}.
 %($i=1,2$)
 	\end{enumerate}
 %
-	We extend to $\By{}$ 
-%(resp.\ $\Hby{}$) and  
-	and $\By{\hat{\ell}}$ 
-%(resp.\ $\Hby{\hat{\ell}}$) 
+	We extend to $\By{}$ and $\By{\hat{\ell}}$ 
 	where we write  $\By{}$ for the reflexive and transitive closure of $\by{}$,
 	$\By{\ell}$ for the transitions $\By{}\by{\ell}\By{}$, and $\By{\hat{\ell}}$
 	for $\By{\ell}$ if $\ell\not = \tau$ otherwise $\By{}$. 
-%We extend to $\By{}$ 
-%(resp.\ $\Hby{}$) and  and 
-%$\By{\hat{\ell}}$ 
-%(resp.\ $\Hby{\hat{\ell}}$) 
-%in the standard way.
 \end{definition}
 
 \subsection{Reduction-Closed, Barbed Congruence ($\cong$)}
@@ -456,7 +433,7 @@ over session environments $\Delta$:
 	are confluent, denoted $\Delta_1 \bistyp \Delta_2$,
 	if there exists $\Delta$ such that
 	i)~$\Delta_1 \red^\ast \Delta$ and ii~$\Delta_2 \red^\ast \Delta$
-	\jpc{(here we write $\red^\ast$ for the multi-step reduction in \defref{d:wtenvred})}.
+	(here we write $\red^\ast$ for the multi-step reduction in \defref{d:wtenvred}).
 \end{definition}
 
 \begin{definition}[Typed Relation]
@@ -485,21 +462,9 @@ over session environments $\Delta$:
 \end{definition}
 
 \noi Typed relations relate only closed terms whose
-session environments %and the two session environments
-are balanced  and confluent.
+session environments are balanced  and confluent.
 Next we define  {\em barbs}~\cite{MiSa92}
 with respect to types. 
-
-%\begin{definition}[Barbs]\rm
-%Let $P$ be a closed process. We define:
-%\begin{enumerate}
-%		\item	(a) $P \barb{n}$ if $P \scong \newsp{\widetilde{m}}{\bout{n}{V} P_2 \Par P_3}, n \notin \widetilde{m}$; %; $P \Barb{n}$ if $P \red^* \barb{n}$. and $\Gamma; \Delta \proves P \barb{n}$ if
-%(b)			$\Gamma; \emptyset; \Delta \proves P \hastype \Proc$ with $P \barb{n}$ and $\dual{n} \notin \dom{\Delta}$
-%\item  
-%	$\Gamma; \Delta \proves P \Barb{n}$ if $P \red^* P'$ and
-%			$\Gamma; \Delta' \proves P' \barb{n}$.			
-%	\end{enumerate}
-%\end{definition}
 
 \begin{definition}[Barbs]\rm
 	Let $P$ be a closed process. We write
@@ -525,11 +490,10 @@ a weak barb $\Barb{n}$ is a barb after a number of reduction steps.
 Typed barbs $\barb{n}$ (resp.\ $\Barb{n}$)
 occur on typed processes $\Gamma; \emptyset; \Delta \proves P \hastype \Proc$.
 When $n$ is a session name we require that its dual endpoint $\dual{n}$ is not
-%present
-in %the session environment 
-$\Delta$.
+present in the session environment $\Delta$.
 
 To define a congruence relation, we introduce the family $\C$ of contexts:
+
 \begin{definition}[Context]
 	Context $\C$ is defined over the syntax:
 %
@@ -542,7 +506,6 @@ To define a congruence relation, we introduce the family $\C$ of contexts:
 	Notation $\context{\C}{P}$ denotes the result of substituting 
 	the hole $\hole$ in $\C$ with process $P$.
 \end{definition}
-
 
 \noi The first behavioural relation we define is reduction-closed, barbed congruence \cite{HondaKYoshida95}. 
 
@@ -558,16 +521,17 @@ To define a congruence relation, we introduce the family $\C$ of contexts:
 		\item
 				\begin{enumerate}
 					\item	If $P_1 \red P_1'$ then there exist $P_2', \Delta_2'$ such that $P_2 \red^* P_2'$ and\\
-							$\horel{\Gamma}{\Delta_1'}{P_1'}{\ \Re\ }{\Delta_2'}{P_2'}$;%		and its symmetric case;
+							$\horel{\Gamma}{\Delta_1'}{P_1'}{\ \Re\ }{\Delta_2'}{P_2'}$;
 					\item	and the symmetric case;
 				\end{enumerate}
 		\item
 				\begin{enumerate}
-					\item	If $\Gamma;\Delta_1 \proves P_1 \barb{n}$ then $\Gamma;\Delta_2 \proves P_2 \Barb{n}$;% and its symmetric case;
+					\item	If $\Gamma;\Delta_1 \proves P_1 \barb{n}$ then $\Gamma;\Delta_2 \proves P_2 \Barb{n}$;
 					\item	and the symmetric case;
 				\end{enumerate}
 
-		\item	For all $\C$, there exist $\Delta_1'',\Delta_2''$: $\horel{\Gamma}{\Delta_1''}{\context{\C}{P_1}}{\ \Re\ }{\Delta_2''}{\context{\C}{P_2}}$; 
+		\item	For all $\C$, there exist $\Delta_1'',\Delta_2''$:
+				$\horel{\Gamma}{\Delta_1''}{\context{\C}{P_1}}{\ \Re\ }{\Delta_2''}{\context{\C}{P_2}}$; 
 	\end{enumerate}
 %
 	The largest such relation is denoted with $\cong$.
@@ -578,9 +542,7 @@ To define a congruence relation, we introduce the family $\C$ of contexts:
 
 \noi 
 Following Sangiorgi~\cite{San96H}, 
-%The first bisimulation that 
-we now define 
-the standard (weak) context bisimilarity. 
+we now define the standard (weak) context bisimilarity. 
 %
 \begin{definition}[Context Bisimilarity]\rm
 	\label{def:wbc}
@@ -628,13 +590,15 @@ the standard (weak) context bisimilarity.
 	The largest such bisimulation is called \emph{context bisimilarity} and is denoted by $\wbc$.
 \end{definition}
 
-\noi As hinted at in %\secref{subsec:intro:bisimulation}, 
-%\secref{sec:overview},
+\noi As hinted at in
+%\secref{subsec:intro:bisimulation}, %\secref{sec:overview},
 the Introduction,
 in the general case,
 context bisimilarity 
-is hard to compute. Below we introduce 
-\emph{characteristic bisimulations}, which are meant to be a \emph{tractable} proof technique over session typed  processes with higher-order communication.
+is hard to compute.
+Below we introduce \emph{higher-order bisimulation} and \emph{characteristic bisimulation},
+which are meant to offer a \emph{tractable} proof technique over session typed
+processes with higher-order communication.
 %$\hwb$ and  $\fwb$.
 %due to: (1) the universal
 %quantification over contexts in the output case;
@@ -643,8 +607,9 @@ is hard to compute. Below we introduce
 %infinitely many different processes can match
 %the session type of an input prefix).
 
-\subsection{%Higher-Order  and  
-Characteristic  Bisimilarity ($\fwb$)}\label{ss:hwb}
+\subsection{Higher-Order ($\hwb$) and  Characteristic  Bisimilarity ($\fwb$)}
+\label{ss:hwb}
+
 \noi 
 We formalise the ideas given in % \secref{sec:overview}.
 the introduction.
@@ -653,12 +618,6 @@ We define characteristic processes/values:
 
 \begin{definition}[Characteristic Process and Values]\rm
 \label{def:char}
-%	Let names $\widetilde{k}$ and type $\widetilde{C}$; then we define a {\em characteristic process}:
-%	$\map{\widetilde{C}}^{\widetilde{k}}$:
-%	\[
-%		\map{C_1, \cdots, C_n}^{k_1 \cdots k_n} = \map{C_1}^{k_1} \Par \dots \Par \map{C_n}^{k_n}		
-%	\]
-%	with 
 	Let $u$ and $U$ be a name and a type, respectively.
 	\figref{fig:char} defines the {\em characteristic process} 
 	$\mapchar{U}{u}$ and the {\em characteristic value} $\omapchar{U}$.
@@ -726,30 +685,16 @@ We define characteristic processes/values:
 	\end{array}
 	\]
 %
-\caption{Characteristic Processes \jpc{(top)} and Values \jpc{(bottom)}.\label{fig:char}}
+\caption{Characteristic Processes (top) and Characteristic Values (bottom).\label{fig:char}}
 %
 \end{figure}
 
 %%%%%%%%%%%%%%%%%%%%%%%% End Characteristic Process Figure %%%%%%%%%%%%%%%%%%%%%
 
-%\noi Characteristic processes are inhabitants of their associated type:
 
-%\begin{proposition}[Characteristic Processes]\rm
-%\label{pro:characteristic}
-%\begin{enumerate}
-%\item $\Gamma; \emptyset; \Delta \cat u:S \proves \mapchar{S}{u} \hastype \Proc$; and $\Gamma \cat u:\chtype{S}; \emptyset; \Delta \proves \mapchar{\chtype{S}}{u} \hastype \Proc$; and 
-%\item  	If $\Gamma; \emptyset; \Delta \proves \mapchar{C}{u} \hastype \Proc$
-%	then
-%	$\Gamma; \es; \Delta \proves u \hastype C$.
-%\end{enumerate}
-%\end{proposition}
-%%\begin{IEEEproof}
-%%	By induction on $\mapchar{S}{u}$, $\mapchar{\chtype{S}}{u}$
-%%and $\mapchar{C}{u}$. 
-%%\end{IEEEproof}
+\noi We can verify that characteristic processes/values  
+do inhabit their associated type.
 
-%\noi We can verify that characteristic processes/values  
-%do inhabit their associated type. %; the proof is by induction on types. 
 \begin{proposition}[Characteristic Processes/Values Inhabit Their Types]
 	\begin{enumerate}
 		\item	
@@ -760,6 +705,12 @@ We define characteristic processes/values:
 				Then $\Gamma \cat a: \chtype{U}; \es; \Delta \proves \mapchar{\chtype{U}}{a} \hastype \Proc$.
 	\end{enumerate}
 \end{proposition}
+
+\begin{proof}[Sketch]
+	By induction on the definition of $\mapchar{S}{u}$
+	and $\mapchar{U}{u}$. 
+	\qed
+\end{proof}
 
 The following example motivates the refined 
 LTS explained in %\secref{sec:overview}.
@@ -800,104 +751,106 @@ the introduction.
 		\label{equ:6}
 	\end{eqnarray}
 %
-%We can show that 
-where
-$\Gamma; \es; \Delta \cat s: \btinp{\shot{(\btinp{C} \tinact)}} \tinact \proves P_i \hastype \Proc$ ($i \in \{1,2\}$).
-If $P_1$ and $P_2$ input and substitute over $x$
-the characteristic value $\dk{\omapchar{\shot{(\btinp{C} \tinact)}} =} \abs{x}{\binp{x}{y} \inact}$, 
-then they evolve into:%(\ref{eq:5}) and (\ref{eq:6}) in become:
-\[
-	\Gamma; \es; \Delta \proves \binp{s_1}{y} \inact \Par \binp{s_2}{y} \inact \hastype \Proc
-\]
-\noi therefore becoming 
-context bisimilar.
-%after the input of $\abs{x}{\binp{x}{y}} \inact$.
-However, the processes in (\ref{equ:6}) 
-are clearly {\em not} context bisimilar: many input actions
-may be used to distinguish them.
-For example, if 
-$P_1$ and $P_2$ input 
-$\abs{x} \newsp{s}{\bout{a}{s} \binp{x}{y} \inact}$ with
-$\Gamma; \es; \Delta \proves s \hastype \tinact$,
-then their derivatives are not bisimilar. 
-
-Observing only the characteristic value 
-results in an under-discriminating bisimulation.
-However, if a trigger value
-$\abs{{x}}{\binp{t}{y} (\appl{y}{{x}})}$ 
-is received on $s$, 
- we can distinguish $P_1$, $P_2$ 
-%processes 
-in~\eqref{equ:6}:  
+	where
 %
-\begin{eqnarray*}
+	\[
+		\Gamma; \es; \Delta \cat s: \btinp{\shot{(\btinp{C} \tinact)}} \tinact \proves P_i \hastype \Proc \qquad (i \in \set{1,2})
+	\]
+%
+	If $P_1$ and $P_2$ input 
+	the characteristic value $\omapchar{\shot{(\btinp{C} \tinact)}} = \abs{x}{\binp{x}{y} \inact}$, 
+	and substitute over $x$ then they evolve into:
+%
+	\[
+		\Gamma; \es; \Delta \proves \binp{s_1}{y} \inact \Par \binp{s_2}{y} \inact \hastype \Proc
+	\]
+	\noi therefore becoming context bisimilar.
+	However, the processes in (\ref{equ:6}) 
+	are clearly {\em not} context bisimilar: many input actions
+	may be used to distinguish them.
+	For example, if  $P_1$ and $P_2$ input 
+	$\abs{x} \newsp{s}{\bout{a}{s} \binp{x}{y} \inact}$ with
+	$\Gamma; \es; \Delta \proves s \hastype \tinact$,
+	then their derivatives are not bisimilar. 
+
+	Observing only the characteristic value 
+	results in an under-discriminating bisimulation.
+	However, if a trigger value
+	$\abs{{x}}{\binp{t}{y} (\appl{y}{{x}})}$ 
+	is received on $s$, 
+	we can distinguish $P_1$, $P_2$ in~\eqref{equ:6}:  
+	%
+	\begin{eqnarray*}
+%		\Gamma; \es; \Delta &\proves& 
+		P_1 &\By{\bactinp{s}{\abs{{x}}{\binp{t}{y} (\appl{y}{{x}})}}}& \binp{t}{x} (\appl{x}{s_1}) \Par \binp{t}{x} (\appl{x}{s_2})
+%		\hastype \Proc
+		\qquad \mbox{and}\\
 %	\Gamma; \es; \Delta &\proves& 
-	P_1 &\By{\bactinp{s}{\abs{{x}}{\binp{t}{y} (\appl{y}{{x}})}}}& \binp{t}{x} (\appl{x}{s_1}) \Par \binp{t}{x} (\appl{x}{s_2})
-%\hastype \Proc
-	\qquad \mbox{and}\\
-%	\Gamma; \es; \Delta &\proves& 
-	P_2 &\By{\bactinp{s}{\abs{{x}}{\binp{t}{y} (\appl{y}{{x}})}}}& \binp{t}{x} (\appl{x}{s_1}) \Par \binp{s_2}{y} \inact 
-%\hastype \Proc
+		P_2 &\By{\bactinp{s}{\abs{{x}}{\binp{t}{y} (\appl{y}{{x}})}}}& \binp{t}{x} (\appl{x}{s_1}) \Par \binp{s_2}{y} \inact 
+%	\hastype \Proc
 %	\qquad \textrm{($\ell = $)}
-\end{eqnarray*}
-\normalsize
+	\end{eqnarray*}
+%
+%\normalsize
 %\noi resulting two distinct processes.  
 %
 %\noi where 
 %$\ell = s?\ENCan{\abs{{x}}{\binp{t}{y} (\appl{y}{{x}})}}$.
-One question is whether the trigger value is enough
-to distinguish two processes (hence no need of 
-characteristic values). % as the input. 
-This is not the case: the trigger value
-alone also results in an under-discriminating bisimulation relation.
-In fact, the  trigger value can be observed on any input prefix
-of {\em any type}. For example, consider processes
+	One question is whether the trigger value is enough
+	to distinguish two processes (hence no need of characteristic values). % as the input. 
+	This is not the case: the trigger value
+	alone also results in an under-discriminating bisimulation relation.
+	In fact, the  trigger value can be observed on any input prefix
+	of {\em any type}. For example, consider processes
 %
-\begin{eqnarray}
-%	\Gamma; \es; \Delta \proves 
-	\newsp{s}{\binp{n}{x} (\appl{x}{s}) \Par \bout{\dual{s}}{\abs{x} R_1} \inact} 
-%\hastype \Proc
-	\qquad \mbox{and} \qquad
-%	\Gamma; \es; \Delta \proves 
-	\newsp{s}{\binp{n}{x} (\appl{x}{s}) \Par \bout{\dual{s}}{\abs{x} R_2} \inact} 
-%\hastype \Proc
-\label{equ:7}\label{equ:8}
-\end{eqnarray}
+	\begin{eqnarray}
+%		\Gamma; \es; \Delta \proves 
+		\newsp{s}{\binp{n}{x} (\appl{x}{s}) \Par \bout{\dual{s}}{\abs{x} R_1} \inact} 
+%		\hastype \Proc
+		\qquad \mbox{and} \qquad
+%		\Gamma; \es; \Delta \proves 
+		\newsp{s}{\binp{n}{x} (\appl{x}{s}) \Par \bout{\dual{s}}{\abs{x} R_2} \inact} 
+%		\hastype \Proc
+		\label{equ:7}\label{equ:8}
+	\end{eqnarray}
 %
-\noi If these processes %in \eqref{equ:7}/\eqref{equ:8}
-input the trigger value, we obtain: % they evolved to 
-\begin{eqnarray*}
-%\Gamma; \es; \Delta \proves 
-	\newsp{s}{\binp{t}{x} (\appl{x}{s}) \Par \bout{\dual{s}}{\abs{x} R_1} \inact} 
-%\hastype \Proc
-	\qquad \mbox{ and } \qquad
-%      \\
-%\Gamma; \es; \Delta \proves 
-	\newsp{s}{\binp{t}{x} (\appl{x}{s}) \Par \bout{\dual{s}}{\abs{x} R_2} \inact}
-%\hastype \Proc
-\end{eqnarray*}
+	\noi If these processes %in \eqref{equ:7}/\eqref{equ:8}
+	input the trigger value, we obtain: % they evolved to 
+%
+	\begin{eqnarray*}
+%		\Gamma; \es; \Delta \proves 
+		\newsp{s}{\binp{t}{x} (\appl{x}{s}) \Par \bout{\dual{s}}{\abs{x} R_1} \inact} 
+%		\hastype \Proc
+		\qquad \mbox{ and } \qquad
+%		\\
+%		\Gamma; \es; \Delta \proves 
+		\newsp{s}{\binp{t}{x} (\appl{x}{s}) \Par \bout{\dual{s}}{\abs{x} R_2} \inact}
+%		\hastype \Proc
+	\end{eqnarray*}
 
-\noi thus we can easily derive a bisimulation closure if we 
-assume a bisimulation definition that allows only trigger value input.
+	\noi thus we can easily derive a bisimulation closure if we 
+	assume a bisimulation definition that allows only trigger value input.
 %
-%\noi It is easy to obtain a closure if allow only the
-%trigger value as the input value. 
-But if processes in \eqref{equ:7}
-input the characteristic value $\abs{z}{\binp{z}{x} (\appl{x}{m})}$,  
-then they would become, under appropriate $\Gamma$ and $\Delta$:
+%	\noi It is easy to obtain a closure if allow only the
+%	trigger value as the input value. 
+	But if processes in \eqref{equ:7}
+	input the characteristic value $\abs{z}{\binp{z}{x} (\appl{x}{m})}$,  
+	then they would become, under appropriate $\Gamma$ and $\Delta$:
 %
-\begin{eqnarray*}
-	\Gamma; \es; \Delta \proves \newsp{s}{\binp{s}{x} (\appl{x}{m}) \Par \bout{\dual{s}}{\abs{x} R_i} \inact}\ \wbc\ \Delta \proves R_i \subst{m}{x}
-\qquad (i=1,2)
+	\begin{eqnarray*}
+		\Gamma; \es; \Delta \proves \newsp{s}{\binp{s}{x} (\appl{x}{m}) \Par \bout{\dual{s}}{\abs{x} R_i} \inact}\ \wbc\ \Delta \proves R_i \subst{m}{x}
+	\qquad (i=1,2)
 %	\\
 %	\Gamma; \es; \Delta \proves \newsp{s}{\binp{s}{x} (\appl{x}{m}) \Par \bout{\dual{s}}{\abs{x} Q} \inact} \wbc \Delta \proves Q \subst{m}{x}
-\end{eqnarray*}
-\noi which are not bisimilar if $R_1 \subst{m}{x} \not\wbc R_2 \subst{m}{x}$.
-%\qed
-%In conclusion, these examples explain a need of both 
-%trigger and characteristic values 
-%as an input observation in the input transition relation (\eltsrule{RRcv})
-%which will be defined in Definition~\ref{def:rlts}.  
+	\end{eqnarray*}
+%
+	\noi which are not bisimilar if $R_1 \subst{m}{x} \not\wbc R_2 \subst{m}{x}$.
+	%\qed
+	In conclusion, these examples explain a need of both 
+	trigger and characteristic values 
+	as an input observation in the input transition relation (\eltsrule{RRcv})
+	which will be defined in Definition~\ref{def:rlts}.
+	\qed
 \end{example}
 
 %\noi We define the \emph{refined} typed LTS. 
@@ -982,7 +935,7 @@ in~\eqref{eqb:4} variable $x$ does not play any role.
 %trigger processes: $\htrigger{t}{V}$ and $\ftrigger{t}{V}{U}$.}
 
 \begin{definition}[Higher-Order Bisimilarity]
-	\label{d:hbw}
+	\label{d:hwb}
 	A typed relation $\Re$ is a {\em  HO bisimulation} if 
 	for all $\horel{\Gamma}{\Delta_1}{P_1}{\ \Re \ }{\Delta_2}{Q_1}$ 
 %
