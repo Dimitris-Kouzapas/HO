@@ -550,17 +550,18 @@ we now define the standard (weak) context bisimilarity.
 	for all $\horel{\Gamma}{\Delta_1}{P_1}{\ \Re \ }{\Delta_2}{Q_1}$,
 %
 	\begin{enumerate}[1)] 
-		\item Whenever 
-			$\horel{\Gamma}{\Delta_1}{P_1}{\by{\news{\widetilde{m_1}} \bactout{n}{V_1}}}{\Delta_1'}{P_2}$,
-			there exist $Q_2$, $V_2$, $\Delta'_2$
-			such that $\horel{\Gamma}{\Delta_2}{Q_1}{\By{\news{\widetilde{m_2}} \bactout{n}{V_2}}}{\Delta_2'}{Q_2}$ and 
-			for all $R$ with $\fv{R}=x$:
+		\item
+				Whenever 
+				$\horel{\Gamma}{\Delta_1}{P_1}{\by{\news{\widetilde{m_1}} \bactout{n}{V_1}}}{\Delta_1'}{P_2}$,
+				there exist $Q_2$, $V_2$, $\Delta'_2$
+				such that $\horel{\Gamma}{\Delta_2}{Q_1}{\By{\news{\widetilde{m_2}} \bactout{n}{V_2}}}{\Delta_2'}{Q_2}$ and 
+				for all $R$ with $\fv{R}=x$:
 %
-\[
-			\horel{\Gamma}{\Delta_1''}{\newsp{\widetilde{m_1}}{P_2 \Par R\subst{V_1}{x}}}
-			{\ \Re\ }
-			{\Delta_2''}{\newsp{\widetilde{m_2}}{Q_2 \Par R\subst{V_2}{x}}};
-\]  
+			\[
+				\horel{\Gamma}{\Delta_1''}{\newsp{\widetilde{m_1}}{P_2 \Par R\subst{V_1}{x}}}
+				{\ \Re\ }
+				{\Delta_2''}{\newsp{\widetilde{m_2}}{Q_2 \Par R\subst{V_2}{x}}};
+			\]
 %\item	$\forall \news{\widetilde{m_1}'} \bactout{n}{\widetilde{m_1}}$ such that
 %			\[
 %				\horel{\Gamma}{\Delta_1}{P_1}{\by{\news{\widetilde{m_1}'} \bactout{n}{\widetilde{m_1}}}}{\Delta_1'}{P_2}
@@ -1012,17 +1013,17 @@ $\beta$-reductions are deterministic.
 \begin{definition}[Deterministic Transition]\myrm
 \label{def:dettrans}
 	Let  $\Gamma; \es; \Delta \proves P \hastype \Proc$ be a balanced \HOp process. 
-	Transition $\horel{\Gamma}{\Delta}{P}{\hby{\tau}}{\Delta'}{P'}$ is called
+	Transition $\horel{\Gamma}{\Delta}{P}{\hby{\tau}}{\Delta'}{P'}$ is called:
 %
 	\begin{enumerate}[$-$]
 		\item 
-				a {\em session transition} whenever the   transition $P \by{\tau} P'$ 
+				a {\em \sesstran} whenever the   transition $P \by{\tau} P'$ 
 				is derived using rule~$\ltsrule{Tau}$ 
 				(where $\subj{\ell_1}$ and $\subj{\ell_2}$ in the premise are dual endpoints), 
 				possibly followed by uses of  $\ltsrule{Alpha}$, $\ltsrule{Res}$, $\ltsrule{Rec}$, or $\ltsrule{Par${}_L$}/
 				\ltsrule{Par${}_R$}$.
 
-				We write $\horel{\Gamma}{\Delta}{P}{\hby{\stau}}{\Delta'}{P'}$ to denote a session transition.
+				We write $\horel{\Gamma}{\Delta}{P}{\hby{\stau}}{\Delta'}{P'}$ to denote a \sesstran.
 		
 		\item
 %				Transition $\horel{\Gamma}{\Delta}{P}{\hby{\tau}}{\Delta'}{P'}$ is called
@@ -1034,7 +1035,7 @@ $\beta$-reductions are deterministic.
 				We write $\horel{\Gamma}{\Delta}{P}{\hby{\btau}}{\Delta'}{P'}$ to denote a $\beta$-transition.
 
 		\item	Also, $\horel{\Gamma}{\Delta}{P}{\hby{\dtau}}{\Delta'}{P'}$ denotes
-				either a session transition or a \betatran.
+				either a \sesstran or a \betatran.
 	\end{enumerate}
 %
 We write $\Hby{\dtau}$ to denote a (possibly empty) sequence of deterministic steps $\hby{\dtau}$.
@@ -1057,16 +1058,17 @@ transitions.
 %	\end{enumerate}
 \end{proposition}
 %
-\noi 
-See App.~\ref{app:sub_tau_inert} for the proofs. 
-Our main theorem follows: %typed bisimilarities collapse for \HOp processes. 
-it allows us to use $\fwb$ as a tractable reasoning %is the most tractable 
-technique for higher-order processes with sessions.
+\begin{proof}[Sketch]
+	The proof requires a case analysis on the structure of
+	\betatran and session-transition.
+	See \appref{app:sub_tau_inert} for the full details of the proof.
+	\qed
+\end{proof}
+
 
 Using the above determinacy properties, we can state the following up-to technique.
 We write $\Hby{\dtau}$ to denote a (possibly empty) sequence of deterministic steps 
 $\hby{\dtau}$.
-
 
 \begin{lemma}[Up-to Deterministic Transition]
 	\label{lem:up_to_deterministic_transition}
@@ -1116,8 +1118,28 @@ $\hby{\dtau}$.
 	Then $\Re\ \subseteq\ \hwb$.
 \end{lemma}
 
+\begin{proof}[Sketch]
+	The proof is easy by considering the closure
+	\[
+		\Re^{\Hby{\dtau}} = \set{ \horel{\Gamma}{\Delta_1'}{P_2}{,}{\Delta_2'}{Q_1} \setbar \horel{\Gamma}{\Delta_1}{P_1}{\ \Re\ }{\Delta_2'}{Q_1},
+		\horel{\Gamma}{\Delta_1}{P_1}{\Hby{\dtau}}{\Delta_1'}{P_2} }
+	\]
+	We verify that $\Re^{\Hby{\dtau}}$ is a bisimulation with
+	the use of \propref{lem:tau_inert}.
+	\qed
+\end{proof}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%  Characterisation of rc bp congruence
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \subsection{Characterisation of Higher-order and Characteristic Bisimilarities}
+
+This section proves the main result; %typed bisimilarities collapse for \HOp processes. 
+it allows us to use $\hwb$ and $\fwb$ as tractable reasoning %is the most tractable 
+techniques for higher-order processes with sessions.
+
 
 \begin{lemma}
 	\label{lem:wb_eq_wbf}
@@ -1127,9 +1149,9 @@ $\hby{\dtau}$.
 \begin{proof}[Sketch]
 	The key point is to show that
 	trigger processes,
-	$\fotrigger{t}{x}{s}{\btinp{U} \tinact}{V}$
+	$\ftrigger{t}{V}{U}$
 	and
-	$\hotrigger{t}{x}{s}{V}$,
+	$\htrigger{t}{V}$,
 	exhibit similar behaviour:
 %
 	\begin{eqnarray*}
@@ -1142,7 +1164,7 @@ $\hby{\dtau}$.
 	Using the above information we can show that the closures of
 	$\hwb$ and $\fwb$ coincide.
 	The full proof is found in \lemref{app:lem:wb_eq_wbf}
-	in \appref{app:beh}.
+	in \appref{app:sub_coinc}.
 	\qed
 \end{proof}
 
@@ -1201,12 +1223,13 @@ they are equivalent under any higher-order substitution.
 
 \begin{proof}[Sketch]
 	The proof considers first a substitution of the linear
-	case (see \lemref{app:lem:subst_equiv} in \appref{app:beh});
-	It proves the result by constructing a closure on the above
-	properties and proving that it is a higher-order bisimulation.
+	case (see \lemref{app:lem:subst_equiv} in \appref{app:sub_coinc});
+	The result is proved by constructing a closure on the above
+	substitution properties and proving that it is a
+	higher-order bisimulation, up-to \betatran.
 %	by using an up-to determinate technique; 
 	The full proof is found in
-	\lemref{app:lem:proc_subst} in \appref{app:beh}.
+	\lemref{app:lem:proc_subst} in \appref{app:sub_coinc}.
 	\qed
 \end{proof}
 
@@ -1217,6 +1240,38 @@ they are equivalent under any higher-order substitution.
 \end{lemma}
 
 \begin{proof}[Sketch]
+	The proof relies on \lemref{lem:proc_subst} to prove the that:
+	\begin{enumerate}
+		\item	whenever two processes are higher-order bisimilar
+				under the input of
+				a characteristic value and a trigger value
+				then they are higher-order bisimilar under the
+				input of any value $\abs{x}{R}$, which is the
+				requirement for context bisimilarity.
+
+		\item	the input requirement is then further used
+				to prove that the output clause for $\hwb$
+				implies the output clause of $\wbc$,
+				i.e.~the output clause requirement for $\hwb$:
+				\[
+					\begin{array}{lrlll}
+						\Gamma; \Delta''_1  \proves  {\newsp{\widetilde{m_1}}{P_2 \Par \htrigger{t}{V_1}}}
+						\ \Re\ 
+						\Delta''_2 \proves {\newsp{\widetilde{m_2}}{Q_2 \Par \htrigger{t}{V_2}}}
+					\end{array}
+				\]
+			%
+				implies the output clause requirement for $\wbc$ that,
+				for all $R$ with $\fv{R}=x$:
+				\[
+					\horel{\Gamma}{\Delta_1''}{\newsp{\widetilde{m_1}}{P_2 \Par R\subst{V_1}{x}}}
+					{\ \Re\ }
+					{\Delta_2''}{\newsp{\widetilde{m_2}}{Q_2 \Par R\subst{V_2}{x}}};
+				\]
+	\end{enumerate}
+%
+	The full proof is found in
+	\lemref{app:lem:wb_is_wbc} in \appref{app:sub_coinc}.
 	\qed
 \end{proof}
 
@@ -1249,7 +1304,7 @@ they are equivalent under any higher-order substitution.
 	It remains to show that $\mathcal{S}$ is a context bisimulation
 	by doing a case analysis on the transitions of the pairs in $\mathcal{S}$.
 	The full proof is found in
-	\lemref{app:lem:wbc_is_cong} in \appref{app:beh}.
+	\lemref{app:lem:wbc_is_cong} in \appref{app:sub_coinc}.
 	\qed
 \end{proof}
 
@@ -1277,7 +1332,7 @@ they are equivalent under any higher-order substitution.
 	the defining properties of context bisimulation
 	to show that
 	$\Gamma; \Delta \proves P\ \wbc\ \Delta' \proves Q$,.
-	The full details can be found in \lemref{app:lem:cong_is_wb} in \appref{app:beh}.
+	The full details can be found in \lemref{app:lem:cong_is_wb} in \appref{app:sub_coinc}.
 	\qed
 \end{proof}
 
@@ -1305,7 +1360,7 @@ they are equivalent under any higher-order substitution.
 %	then, we show that $\hwb$ coincides with $\wbc$ and $\cong$. 
 %	A key result is a  substitution lemma which simplifies reasoning 
 %	for $\hwb$ by exploiting characteristic processes/values.
-%	See \appref{app:beh} and~\cite{KouzapasPY15} for full details.
+%	See \appref{app:sub_coinc} and~\cite{KouzapasPY15} for full details.
 %\end{proof}
 
 
