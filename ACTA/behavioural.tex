@@ -1003,6 +1003,122 @@ in~\eqref{eqb:4} variable $x$ does not play any role.
 	The largest such bisimulation is called \emph{characteristic bisimilarity} and is denoted by $\fwb$.
 \end{definition}
 
+
+\subsection{Determinstic Transitions and Up-to Techniques}
+
+\noi Internal transitions associated to session interactions or  
+$\beta$-reductions are deterministic.  
+		
+\begin{definition}[Deterministic Transition]\myrm
+\label{def:dettrans}
+	Let  $\Gamma; \es; \Delta \proves P \hastype \Proc$ be a balanced \HOp process. 
+	Transition $\horel{\Gamma}{\Delta}{P}{\hby{\tau}}{\Delta'}{P'}$ is called
+%
+	\begin{enumerate}[$-$]
+		\item 
+				a {\em session transition} whenever the   transition $P \by{\tau} P'$ 
+				is derived using rule~$\ltsrule{Tau}$ 
+				(where $\subj{\ell_1}$ and $\subj{\ell_2}$ in the premise are dual endpoints), 
+				possibly followed by uses of  $\ltsrule{Alpha}$, $\ltsrule{Res}$, $\ltsrule{Rec}$, or $\ltsrule{Par${}_L$}/
+				\ltsrule{Par${}_R$}$.
+
+				We write $\horel{\Gamma}{\Delta}{P}{\hby{\stau}}{\Delta'}{P'}$ to denote a session transition.
+		
+		\item
+%				Transition $\horel{\Gamma}{\Delta}{P}{\hby{\tau}}{\Delta'}{P'}$ is called
+				a {\em \betatran} whenever the transition $P \by{\tau} P'$
+				is derived using rule $\ltsrule{App}$,
+				possibly followed by uses of  $\ltsrule{Alpha}$, $\ltsrule{Res}$, $\ltsrule{Rec}$, or $\ltsrule{Par${}_L$}/
+				\ltsrule{Par${}_R$}$.
+
+				We write $\horel{\Gamma}{\Delta}{P}{\hby{\btau}}{\Delta'}{P'}$ to denote a $\beta$-transition.
+
+		\item	Also, $\horel{\Gamma}{\Delta}{P}{\hby{\dtau}}{\Delta'}{P'}$ denotes
+				either a session transition or a \betatran.
+	\end{enumerate}
+%
+We write $\Hby{\dtau}$ to denote a (possibly empty) sequence of deterministic steps $\hby{\dtau}$.
+\end{definition}
+
+Deterministic transitions imply the $\tau$-inertness property, which
+is a property that ensures behavioural invariance on deterministic
+transitions.
+
+\begin{proposition}[$\tau$-inertness]\myrm
+	\label{lem:tau_inert}
+	Let  $\Gamma; \es; \Delta \proves P \hastype \Proc$ be a balanced \HOp process.
+	Then
+%	\begin{enumerate}[1.]
+%		\item	
+	$\horel{\Gamma}{\Delta}{P}{\hby{\dtau}}{\Delta'}{P'}$ implies
+	$\horel{\Gamma}{\Delta}{P}{\fwb}{\Delta'}{P'}$.
+%		\item	$\horel{\Gamma}{\Delta}{P}{\Hby{\dtau}}{\Delta'}{P'}$ implies
+%			$\horel{\Gamma}{\Delta}{P}{\wb}{\Delta'}{P'}$.
+%	\end{enumerate}
+\end{proposition}
+%
+\noi 
+See App.~\ref{app:sub_tau_inert} for the proofs. 
+Our main theorem follows: %typed bisimilarities collapse for \HOp processes. 
+it allows us to use $\fwb$ as a tractable reasoning %is the most tractable 
+technique for higher-order processes with sessions.
+
+Using the above determinacy properties, we can state the following up-to technique.
+We write $\Hby{\dtau}$ to denote a (possibly empty) sequence of deterministic steps 
+$\hby{\dtau}$.
+
+
+\begin{lemma}[Up-to Deterministic Transition]
+	\label{lem:up_to_deterministic_transition}
+	Let $\horel{\Gamma}{\Delta_1}{P_1}{\ \Re\ }{\Delta_2}{Q_1}$ such
+	that if whenever:
+%
+	\begin{enumerate}[1.]
+		\item	$\forall \news{\tilde{m_1}} \bactout{n}{V_1}$ such that
+			$
+				\horel{\Gamma}{\Delta_1}{P_1}{\hby{\news{\tilde{m_1}} \bactout{n}{V_1}}}{\Delta_3}{P_3}
+			$
+			implies that $\exists Q_2, V_2$ such that
+			$
+				\horel{\Gamma}{\Delta_2}{Q_1}{\Hby{\news{\tilde{m_2}} \bactout{n}{V_2}}}{\Delta_2'}{Q_2}
+			$
+			and
+			$
+				\horel{\Gamma}{\Delta_3}{P_3}{\Hby{\dtau}}{\Delta_1'}{P_2}
+			$
+			and for fresh $t$:\\
+			\[
+				\horel{\Gamma}{\Delta_1''}{\newsp{\tilde{m_1}}{P_2 \Par \htrigger{t}{V_1}}}
+				{\ \Re\ }
+				{\Delta_2''}{}{\newsp{\tilde{m_2}}{Q_2 \Par \htrigger{t}{V_2}}}
+%				\mhorel{\Gamma}{\Delta_1''}{\newsp{\tilde{m_1}}{P_2 \Par \hotrigger{t}{x}{s}{V_1}}}
+%				{\ \Re\ }
+%				{\Delta_2''}{}{\newsp{\tilde{m_2}}{Q_2 \Par \hotrigger{t}{x}{s}{V_2}}}
+			\]
+%
+		\item	$\forall \ell \not= \news{\tilde{m}} \bactout{n}{V}$ such that
+			$
+				\horel{\Gamma}{\Delta_1}{P_1}{\hby{\ell}}{\Delta_3}{P_3}
+			$
+			implies that $\exists Q_2$  \\ such that 
+			$
+				\horel{\Gamma}{\Delta_1}{Q_1}{\hat{\Hby{\ell}}}{\Delta_2'}{Q_2}
+			$
+			and
+			$
+				\horel{\Gamma}{\Delta_3}{P_3}{\Hby{\dtau}}{\Delta_1'}{P_2}
+			$
+			and
+			$\horel{\Gamma}{\Delta_1'}{P_2}{\ \Re\ }{\Delta_2'}{Q_2}$.
+
+		\item	The symmetric cases of 1 and 2.
+	\end{enumerate}
+	Then $\Re\ \subseteq\ \hwb$.
+\end{lemma}
+
+
+\subsection{Characterisation of Higher-order and Characteristic Bisimilarities}
+
 \begin{lemma}
 	\label{lem:wb_eq_wbf}
 	$\fwb\ =\ \hwb$
@@ -1030,30 +1146,70 @@ in~\eqref{eqb:4} variable $x$ does not play any role.
 	\qed
 \end{proof}
 
-\begin{lemma}[Linear Process Substitution]\rm
-	\label{lem:subst_equiv}
+%\begin{lemma}[Linear Process Substitution]
+%	\label{lem:subst_equiv}
+%	If 
+%%
+%	\begin{enumerate}
+%		\item	$\fpv{P_2} = \fpv{Q_2} = \set{x}$.
+%		\item	$\Gamma; x: U; \Delta_1''' \proves P_2 \hastype \Proc$ and $\Gamma; x: U; \Delta_2''' \proves Q_2 \hastype \Proc$.
+%		\item	$\horel{\Gamma}{\Delta_1'}{\newsp{\widetilde{m_1}}{P_1 \Par P_2 \subst{\auxtr{t}}{x}}}
+%			{\wb}
+%			{\Delta_2'}{\newsp{\widetilde{m_2}}{Q_1 \Par Q_2 \subst{\auxtr{t}}{x}}}$, 
+%			for some fresh $t$.
+%
+%		\item	$\horel{\Gamma}{\Delta_1''}{\newsp{\widetilde{m_1}}{P_1 \Par P_2 \subst{\omapchar{U}}{x}}}
+%			{\wb}{\Delta_2''}{\newsp{\widetilde{m_2}}{Q_1 \Par Q_2 \subst{\omapchar{U}}{x}}}$,
+%			for some $U$.
+%	\end{enumerate}
+%%
+%	then $\forall R$ such that $\fv{R} = \widetilde{x}$
+%\[
+%	\horel{\Gamma}{\Delta_1}{\newsp{\widetilde{m_1}}{P_1 \Par P_2 \subst{\abs{\widetilde{x}}{R}}{x}}}
+%	{\wb}
+%	{\Delta_2}{\newsp{\widetilde{m_2}}{Q_1 \Par Q_2 \subst{\abs{\widetilde{x}}{R}}{x}}}
+%\]
+%\end{lemma}
+%
+%\begin{proof}[Sketch]
+%	\qed
+%\end{proof}
+
+The next lemma is crucial for the characterisation of
+higher-order and characteristic bisimilarities.
+It states that if two processes are equivalent under the
+trigger value and the characteristic value substitution then
+they are equivalent under any higher-order substitution.
+
+\begin{lemma}[Process Substitution]
+	\label{lem:proc_subst}
 	If 
 %
 	\begin{enumerate}
-		\item	$\fpv{P_2} = \fpv{Q_2} = \set{x}$.
-		\item	$\Gamma; x: U; \Delta_1''' \proves P_2 \hastype \Proc$ and $\Gamma; x: U; \Delta_2''' \proves Q_2 \hastype \Proc$.
-		\item	$\horel{\Gamma}{\Delta_1'}{\newsp{\widetilde{m_1}}{P_1 \Par P_2 \subst{\auxtr{t}}{x}}}
-			{\wb}
-			{\Delta_2'}{\newsp{\widetilde{m_2}}{Q_1 \Par Q_2 \subst{\auxtr{t}}{x}}}$, 
+		\item	$\horel{\Gamma}{\Delta_1'}{P \subst{\auxtr{t}}{x}}{\wb}{\Delta_2}{Q \subst{\auxtr{t}}{x}}$
 			for some fresh $t$.
 
-		\item	$\horel{\Gamma}{\Delta_1''}{\newsp{\widetilde{m_1}}{P_1 \Par P_2 \subst{\omapchar{U}}{x}}}
-			{\wb}{\Delta_2''}{\newsp{\widetilde{m_2}}{Q_1 \Par Q_2 \subst{\omapchar{U}}{x}}}$,
+		\item	$\horel{\Gamma}{\Delta_1''}{P \subst{\omapchar{U}}{x}}{\wb}{\Delta_2''}{Q \subst{\omapchar{U}}{x}}$
 			for some $U$.
 	\end{enumerate}
 %
 	then $\forall R$ such that $\fv{R} = \widetilde{x}$
-\[
-	\horel{\Gamma}{\Delta_1}{\newsp{\widetilde{m_1}}{P_1 \Par P_2 \subst{\abs{\widetilde{x}}{R}}{x}}}
-	{\wb}
-	{\Delta_2}{\newsp{\widetilde{m_2}}{Q_1 \Par Q_2 \subst{\abs{\widetilde{x}}{R}}{x}}}
-\]
+	\[
+		\horel{\Gamma}{\Delta_1}{P \subst{\abs{\widetilde{x}}{R}}{x}}{\wb}{\Delta_2}{Q \subst{\abs{\widetilde{x}}{R}}{x}}
+	\]
 \end{lemma}
+
+\begin{proof}[Sketch]
+	The proof considers first a substitution of the linear
+	case (see \lemref{app:lem:subst_equiv} in \appref{app:beh});
+	It proves the result by constructing a closure on the above
+	properties and proving that it is a higher-order bisimulation.
+%	by using an up-to determinate technique; 
+	The full proof is found in
+	\lemref{app:lem:proc_subst} in \appref{app:beh}.
+	\qed
+\end{proof}
+
 
 \begin{lemma}
 	\label{lem:wb_is_wbc}
@@ -1175,118 +1331,6 @@ in~\eqref{eqb:4} variable $x$ does not play any role.
 %$
 %\end{definition}
 %
-%\smallskip 
-
-\noi Internal transitions associated to session interactions or  
-$\beta$-reductions are deterministic.  
-		
-\begin{definition}[Deterministic Transition]\myrm
-\label{def:dettrans}
-	Let  $\Gamma; \es; \Delta \proves P \hastype \Proc$ be a balanced \HOp process. 
-	Transition $\horel{\Gamma}{\Delta}{P}{\hby{\tau}}{\Delta'}{P'}$ is called
-%
-	\begin{enumerate}[$-$]
-		\item 
-				a {\em session transition} whenever the   transition $P \by{\tau} P'$ 
-				is derived using rule~$\ltsrule{Tau}$ 
-				(where $\subj{\ell_1}$ and $\subj{\ell_2}$ in the premise are dual endpoints), 
-				possibly followed by uses of  $\ltsrule{Alpha}$, $\ltsrule{Res}$, $\ltsrule{Rec}$, or $\ltsrule{Par${}_L$}/
-				\ltsrule{Par${}_R$}$.
-
-				We write $\horel{\Gamma}{\Delta}{P}{\hby{\stau}}{\Delta'}{P'}$ to denote a session transition.
-		
-		\item
-%				Transition $\horel{\Gamma}{\Delta}{P}{\hby{\tau}}{\Delta'}{P'}$ is called
-				a {\em \betatran} whenever the transition $P \by{\tau} P'$
-				is derived using rule $\ltsrule{App}$,
-				possibly followed by uses of  $\ltsrule{Alpha}$, $\ltsrule{Res}$, $\ltsrule{Rec}$, or $\ltsrule{Par${}_L$}/
-				\ltsrule{Par${}_R$}$.
-
-				We write $\horel{\Gamma}{\Delta}{P}{\hby{\btau}}{\Delta'}{P'}$ to denote a $\beta$-transition.
-
-		\item	Also, $\horel{\Gamma}{\Delta}{P}{\hby{\dtau}}{\Delta'}{P'}$ denotes
-				either a session transition or a \betatran.
-	\end{enumerate}
-%
-We write $\Hby{\dtau}$ to denote a (possibly empty) sequence of deterministic steps $\hby{\dtau}$.
-\end{definition}
-
-Deterministic transitions imply the $\tau$-inertness property, which
-is a property that ensures behavioural invariance on deterministic
-transitions.
-
-\begin{proposition}[$\tau$-inertness]\myrm
-	\label{lem:tau_inert}
-	Let  $\Gamma; \es; \Delta \proves P \hastype \Proc$ be a balanced \HOp process.
-	Then
-%	\begin{enumerate}[1.]
-%		\item	
-	$\horel{\Gamma}{\Delta}{P}{\hby{\dtau}}{\Delta'}{P'}$ implies
-	$\horel{\Gamma}{\Delta}{P}{\fwb}{\Delta'}{P'}$.
-%		\item	$\horel{\Gamma}{\Delta}{P}{\Hby{\dtau}}{\Delta'}{P'}$ implies
-%			$\horel{\Gamma}{\Delta}{P}{\wb}{\Delta'}{P'}$.
-%	\end{enumerate}
-\end{proposition}
-%
-\noi 
-See App.~\ref{app:sub_tau_inert} for the proofs. 
-Our main theorem follows: %typed bisimilarities collapse for \HOp processes. 
-it allows us to use $\fwb$ as a tractable reasoning %is the most tractable 
-technique for higher-order processes with sessions.
-
-Using the above determinacy properties, we can state the following up-to technique.
-We write $\Hby{\dtau}$ to denote a (possibly empty) sequence of deterministic steps 
-$\hby{\dtau}$.
-
-
-\begin{lemma}[Up-to Deterministic Transition]
-	\label{lem:up_to_deterministic_transition}
-	Let $\horel{\Gamma}{\Delta_1}{P_1}{\ \Re\ }{\Delta_2}{Q_1}$ such
-	that if whenever:
-%
-	\begin{enumerate}[1.]
-		\item	$\forall \news{\tilde{m_1}} \bactout{n}{V_1}$ such that
-			$
-				\horel{\Gamma}{\Delta_1}{P_1}{\hby{\news{\tilde{m_1}} \bactout{n}{V_1}}}{\Delta_3}{P_3}
-			$
-			implies that $\exists Q_2, V_2$ such that
-			$
-				\horel{\Gamma}{\Delta_2}{Q_1}{\Hby{\news{\tilde{m_2}} \bactout{n}{V_2}}}{\Delta_2'}{Q_2}
-			$
-			and
-			$
-				\horel{\Gamma}{\Delta_3}{P_3}{\Hby{\dtau}}{\Delta_1'}{P_2}
-			$
-			and for fresh $t$:\\
-			\[
-				\horel{\Gamma}{\Delta_1''}{\newsp{\tilde{m_1}}{P_2 \Par \htrigger{t}{V_1}}}
-				{\ \Re\ }
-				{\Delta_2''}{}{\newsp{\tilde{m_2}}{Q_2 \Par \htrigger{t}{V_2}}}
-%				\mhorel{\Gamma}{\Delta_1''}{\newsp{\tilde{m_1}}{P_2 \Par \hotrigger{t}{x}{s}{V_1}}}
-%				{\ \Re\ }
-%				{\Delta_2''}{}{\newsp{\tilde{m_2}}{Q_2 \Par \hotrigger{t}{x}{s}{V_2}}}
-			\]
-%
-		\item	$\forall \ell \not= \news{\tilde{m}} \bactout{n}{V}$ such that
-			$
-				\horel{\Gamma}{\Delta_1}{P_1}{\hby{\ell}}{\Delta_3}{P_3}
-			$
-			implies that $\exists Q_2$  \\ such that 
-			$
-				\horel{\Gamma}{\Delta_1}{Q_1}{\hat{\Hby{\ell}}}{\Delta_2'}{Q_2}
-			$
-			and
-			$
-				\horel{\Gamma}{\Delta_3}{P_3}{\Hby{\dtau}}{\Delta_1'}{P_2}
-			$
-			and
-			$\horel{\Gamma}{\Delta_1'}{P_2}{\ \Re\ }{\Delta_2'}{Q_2}$.
-
-		\item	The symmetric cases of 1 and 2.
-	\end{enumerate}
-	Then $\Re\ \subseteq\ \hwb$.
-\end{lemma}
-
 %\smallskip 
 
 \subsection{Running Example (\exref{exam:proc})}
