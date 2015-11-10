@@ -1011,21 +1011,49 @@ in~\eqref{eqb:4} variable $x$ does not play any role.
 \begin{proof}[Sketch]
 	The key point is to show that
 	trigger processes,
-	$\fotrigger{t}{s}{x}{\btinp{U} \tinact}{V}$
+	$\fotrigger{t}{x}{s}{\btinp{U} \tinact}{V}$
 	and
-	$\hotrigger{t}{s}{x}{V}$,
+	$\hotrigger{t}{x}{s}{V}$,
 	exhibit similar behaviour:
 %
 	\begin{eqnarray*}
-		\fotrigger{t}{s}{x}{\btinp{U} \tinact}{V} &\hby{\bactinp{t}{s'}}& \newsp{s}{ \binp{s}{y} \mapchar{U}{y}  \Par \bout{s}{V} \inact}%\\
-%		\hotrigger{t}{s}{x}{V} &\hby{\bactinp{t}{\mapchar{U}{x}}}& \newsp{s}{\binp{s}{}}
+		\fotrigger{t}{x}{s}{\btinp{U} \tinact}{V} &\hby{\bactinp{t}{s'}}& \newsp{s}{ \binp{s}{y} \mapchar{U}{y}  \Par \bout{\dual{s}}{V} \inact}
+		\\
+		\hotrigger{t}{x}{s}{V} &\hby{\bactinp{t}{\omapchar{\btinp{U} \tinact}}}& \newsp{s}{ \appl{(\abs{x}{\binp{x}{y} \mapchar{U}{y}})}{s}  \Par \bout{\dual{s}}{V} \inact}\\
+		&\by{\tau}& \newsp{s}{ \binp{s}{y} \mapchar{U}{y}  \Par \bout{\dual{s}}{V} \inact}
 	\end{eqnarray*}
-	
-
+%
+	Using the above information we can show that the closures of
+	$\hwb$ and $\fwb$ coincide.
 	The full proof is found in \lemref{app:lem:wb_eq_wbf}
 	in \appref{app:beh}.
 	\qed
 \end{proof}
+
+\begin{lemma}[Linear Process Substitution]\rm
+	\label{lem:subst_equiv}
+	If 
+%
+	\begin{enumerate}
+		\item	$\fpv{P_2} = \fpv{Q_2} = \set{x}$.
+		\item	$\Gamma; x: U; \Delta_1''' \proves P_2 \hastype \Proc$ and $\Gamma; x: U; \Delta_2''' \proves Q_2 \hastype \Proc$.
+		\item	$\horel{\Gamma}{\Delta_1'}{\newsp{\widetilde{m_1}}{P_1 \Par P_2 \subst{\auxtr{t}}{x}}}
+			{\wb}
+			{\Delta_2'}{\newsp{\widetilde{m_2}}{Q_1 \Par Q_2 \subst{\auxtr{t}}{x}}}$, 
+			for some fresh $t$.
+
+		\item	$\horel{\Gamma}{\Delta_1''}{\newsp{\widetilde{m_1}}{P_1 \Par P_2 \subst{\omapchar{U}}{x}}}
+			{\wb}{\Delta_2''}{\newsp{\widetilde{m_2}}{Q_1 \Par Q_2 \subst{\omapchar{U}}{x}}}$,
+			for some $U$.
+	\end{enumerate}
+%
+	then $\forall R$ such that $\fv{R} = \widetilde{x}$
+\[
+	\horel{\Gamma}{\Delta_1}{\newsp{\widetilde{m_1}}{P_1 \Par P_2 \subst{\abs{\widetilde{x}}{R}}{x}}}
+	{\wb}
+	{\Delta_2}{\newsp{\widetilde{m_2}}{Q_1 \Par Q_2 \subst{\abs{\widetilde{x}}{R}}{x}}}
+\]
+\end{lemma}
 
 \begin{lemma}
 	\label{lem:wb_is_wbc}
@@ -1042,13 +1070,29 @@ in~\eqref{eqb:4} variable $x$ does not play any role.
 \end{lemma}
 
 \begin{proof}[Sketch]
-	We show that $\wb$ satisfies the defining
+	We show that $\wbc$ satisfies the defining
 	properties of $\cong$.
-	It is easy to show that $\wb$ is reduction-closed
+	It is easy to show that $\wbc$ is reduction-closed
 	and barb preserving. The challenging part is
-	to show that $\wb$ is a congruence; we construct
-	a congruence closure and we show that it is a
-	context bisimulation. The full proof is found in
+	to show that $\wbc$ is a congruence; the most challenging
+	case is parallel congruence.
+	To show parallel congruence we construct
+	a parallel congruence closure:
+%
+	\begin{eqnarray*}
+		\mathcal{S} &=&	\set{
+				(\Gamma; \emptyset; \Delta_1 \cat \Delta_3 \proves \newsp{\widetilde{n_1}}{P_1 \Par R} %\hastype \Proc
+				\ ,\ 
+				\Gamma; \emptyset; \Delta_2 \cat \Delta_3 \proves \newsp{\widetilde{n_2}}{P_2 \Par R})
+				\setbar \\
+		& &		\quad \horel{\Gamma}{\Delta_1}{P_1}{\wbc}{\Delta_2}{P_2} \quad \mbox{and} \quad
+				\forall R \mbox{ such that }\Gamma; \emptyset; \Delta_3 \proves R \hastype \Proc\\
+		& &}
+	\end{eqnarray*}
+%
+	It remains to show that $\mathcal{S}$ is a context bisimulation
+	by doing a case analysis on the transitions of the pairs in $\mathcal{S}$.
+	The full proof is found in
 	\lemref{app:lem:wbc_is_cong} in \appref{app:beh}.
 	\qed
 \end{proof}
@@ -1058,13 +1102,25 @@ in~\eqref{eqb:4} variable $x$ does not play any role.
 	$\cong \subseteq \hwb$
 \end{lemma}
 
-\begin{proof}[Sketch]
+\begin{proof}[Sketch]	
 	We prove the above result by exploiting
-	a set of test processes defined in \defref{app:def:definibility}.
-	These test processes allow for checking the interaction
-	of reduction-closed barb congruence processes
-	so to associate them with labelled transition semantics
-	and check for the defining properties of $\hwb$.
+	a set of test processes
+	$\Gamma; \emptyset; \Delta_2 \proves T\lrangle{\ell, \suc} \hastype \Proc$
+	with the property:
+	\[
+		P \Par T \red P' \Par \bout{\suc}{\dual{m}} \inact
+		\quad \mbox{if} \quad
+		\Gamma; \Delta \proves P \hby{\ell} \Gamma; \Delta' \proves P'
+	\]
+%	defined in \defref{app:def:definibility}.
+	The test process can be used to check the
+	labelled transition interactions of
+	reduction-closed barb congruence processes,
+	$\Gamma; \Delta \proves P\ \cong\ \Delta' \proves Q$,
+	and associate them with 
+	the defining properties of context bisimulation
+	to show that
+	$\Gamma; \Delta \proves P\ \wbc\ \Delta' \proves Q$,.
 	The full details can be found in \lemref{app:lem:cong_is_wb} in \appref{app:beh}.
 	\qed
 \end{proof}
