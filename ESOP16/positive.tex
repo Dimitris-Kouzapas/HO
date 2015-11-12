@@ -1,10 +1,12 @@
 % !TEX root = main.tex
 \noi We present two encodability results:
-(1)~higher-order communication with both name-passing and recursion (\HOp) into 
+(1)~higher-order communication with name-passing and recursion (\HOp) into 
 higher-order communication without name-passing nor recursion (\HO) (\secref{subsec:HOpi_to_HO}); and 
 (2)~\HOp into the first-order calculus with name-passing  
 with recursion (\sessp) (\secref{subsec:HOp_to_sessp}).
-We consider the following typed calculi (cf.~\defref{d:tcalculus}):
+In \secref{ss:compare} we compare these two encodings. 
+Also, in \secref{ss:negative} we state our impossibility result for shared/linear names.
+We consider the typed calculi (cf.~\defref{d:tcalculus}):
 %\begin{enumerate}[-]
 %	\item
 %	$\tyl{L}_{\HOp}=\calc{\HOp}{{\cal{T}}_1}{\hby{\tau}}{\hwb}{\proves}$,
@@ -156,7 +158,7 @@ $\abs{x_1\cdots x_n}{\auxmapp{P}{{}}{\emptyset} }$, where $\vmap{m_j} = x_j$, fo
 
 \begin{definition}[Typed Encoding of \HOp into \HO]
 \label{d:enc:hopitoho}
-Let $f$ be a function from process variables to sequences of name variables.
+Let $f$ be a map from process variables to sequences of name variables.
 %
 %Let $\tyl{L}_{\HOp}=\calc{\HOp}{{\cal{T}}_1}{\hby{\ell}}{\wb_H}{\proves}$
 %and 
@@ -167,9 +169,9 @@ Let $f$ be a function from process variables to sequences of name variables.
 %the typing $\proves$ is defined in 
 %\figref{fig:typerulesmy} 
 %and $\hwb$ is defined in \defref{d:hbw}. 
-We define the typed encoding 
+The typed encoding 
 $\enco{\map{\cdot}^{1}_f, \mapt{\cdot}^{1} %, \mapa{\cdot}^{1}
-}: \tyl{L}_{\HOp} \to \tyl{L}_{\HO}$ in 
+}: \tyl{L}_{\HOp} \to \tyl{L}_{\HO}$ is defined in 
 \figref{f:enc:hopi_to_ho}. 
 We assume that the mapping $\mapt{\cdot}^{1}$ on types is extended to 
 session environments $\Delta$
@@ -247,7 +249,13 @@ We illustrate the encoding by means of an example.}
 \input{encoding_example}
 
 We now describe the properties of the encoding. 
-First, we state operational correspondence with respect to reductions; 
+\jp{Directly from \figref{f:enc:hopi_to_ho} we may state:
+\begin{proposition}[\HOp into \HO: Type Preservation]
+The encoding from $\tyl{L}_{\HOp}$ into $\tyl{L}_{\HO}$ (cf.~\defref{d:enc:hopitoho})
+is type preserving.
+\end{proposition}}
+
+Now, we state operational correspondence with respect to reductions; 
 the full statement (and proof) can be found in~\cite{KouzapasPY15}.
 
 \begin{proposition}[\HOp into \HO: Operational Correspondence - Excerpt]%\myrm
@@ -320,11 +328,7 @@ Using operational correspondence, we can show \emph{full abstraction}:
 	$\horel{\tmap{\Gamma}{1}}{\tmap{\Delta_1}{1}}{\pmapp{P_1}{1}{f}}{\hwb}{\tmap{\Delta_2}{1}}{\pmapp{Q_1}{1}{f}}$.
 \end{proposition}
 
-\jp{\noi Directly from \figref{f:enc:hopi_to_ho} we may state:
-\begin{proposition}[\HOp into \HO: Type Preservation]
-The encoding from $\tyl{L}_{\HOp}$ into $\tyl{L}_{\HO}$ (cf.~\defref{d:enc:hopitoho})
-is type preserving.
-\end{proposition}}
+
 
 
 %Based on these propositions, w
@@ -381,7 +385,7 @@ our
 approach %would be to 
  uses replicated names
 as triggers for shared resources and non-replicated names
-for linear resources.
+for linear resources (cf. $\pmap{\bout{u}{\abs{x}{Q}} P}{2}$).
 %as triggers instead of session names, when dealing with shared abstractions. 
 
 %\smallskip 
@@ -394,10 +398,11 @@ for linear resources.
 %and the equivalence $\fwb$ is defined in \defref{d:fwb}.
 %${\cal{T}}_3$ is a set of types of $\sessp$.  
 %%
-We define the typed encoding 
+The typed encoding 
 $\enco{\map{\cdot}^{2}, \mapt{\cdot}^{2} %, \mapa{\cdot}^{2}
 }: \tyl{L}_{\HOp} \to \tyl{L}_{\sessp}$  
 %We define the mappings $\map{\cdot}^{2}$, $\mapt{\cdot}^{2}$, $\mapa{\cdot}^{2}$
+is defined
 in \figref{f:enc:ho_to_sessp}. 
 \end{definition}
 
@@ -407,7 +412,13 @@ in \figref{f:enc:ho_to_sessp}.
 %Notice that $\mapa{\bactinp{n}{\abs{ x}{P}} }^2$ involves a fresh trigger name (linear or shared),  which denotes the location of $\pmap{P}{2}$. 
 %(a $\sessp$ process).
 Observe how $\pmap{\appl{(\abs{x}{P})}{u}}{2}$ naturally induces a name substitution.
-We describe key properties of this encoding. First, operational correspondence:
+We describe key properties of this encoding. First, type preservation and operational correspondence:
+
+\jp{\noi 
+\begin{proposition}[\HOp into \sessp: Type Preservation]
+The encoding from $\tyl{L}_{\HOp}$ into $\tyl{L}_{\sessp}$ (cf.~\defref{d:enc:hopitopi})
+is type preserving.
+\end{proposition}}
 
 \begin{proposition}[\HOp into \sessp: Operational Correspondence - Excerpt]%\myrm
 	\label{prop:op_corr_HOp_to_p}
@@ -467,11 +478,7 @@ We can show full abstraction, type preservation, and preciseness:
 	$\horel{\tmap{\Gamma}{2}}{\tmap{\Delta_1}{2}}{\pmap{P_1}{2}}{\fwb}{\tmap{\Delta_2}{2}}{\pmap{Q_1}{2}}$.
 \end{proposition}
 
-\jp{\noi 
-\begin{proposition}[\HOp into \sessp: Type Preservation]
-The encoding from $\tyl{L}_{\HOp}$ into $\tyl{L}_{\sessp}$ (cf.~\defref{d:enc:hopitopi})
-is type preserving.
-\end{proposition}}
+
 
 
 \begin{theorem}[Precise Encoding of \HOp into \sessp]

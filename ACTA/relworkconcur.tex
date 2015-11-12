@@ -1,44 +1,45 @@
 % !TEX root = main.tex
 
-%\myparagraph{Session Typed Processes.}
-%The works~\cite{DemangeonH11,Dardha:2012:STR:2370776.2370794} 
-%study encodings of binary session calculi into a linearly typed $\pi$-calculus. 
-%While~\cite{DemangeonH11}~gives a precise encoding of \sessp into a linear calculus 
-%(an extension of \cite{BHY}),  
-%the work~\cite{Dardha:2012:STR:2370776.2370794} 
-%gives operational correspondence (without full abstraction, cf.~\defref{def:sep}-4)
-%for the first- and higher-order 
-%$\pi$-calculi into \cite{LinearPi}. 
-%They investigate embeddability of two different typing systems;
-%by the result of \cite{DemangeonH11}, 
-%\HOpp is encodable  into the linearly typed $\pi$-calculi.     
-%
-%The syntax of $\HOp$ is a subset of that in~\cite{tlca07,MostrousY15}.
-%The work~\cite{tlca07} develops a full higher-order session calculus
-%with process abstractions and applications; it admits the type 
-%$U=U_1 \rightarrow U_2 \dots U_n \rightarrow \Proc$ and its linear type 
-%$U^1$
-%which corresponds to $\shot{\tilde{U}}$ and $\lhot{\tilde{U}}$ in 
-%a super-calculus of $\HOpp$ and $\PHOp$. 
-%%in~\cite{MostrousY15} in the asynchronous setting.
-%%The session type
-%%system considered is influenced by the type systems for $\lambda$-calculi and
-%%uses type syntax of the form $U_1 \rightarrow U_2 \dots U_n \rightarrow \Proc$
-%%for shared values and $(U_1 \rightarrow U_2 \dots U_n \rightarrow \Proc)^{1}$
-%%for linear values.
-%%Such a type is expressed in $\HOpp$
-%%terms using the type $\shot{U}$ (respectively, $\lhot{U}$)
-%%with $U$ being a nested higher-order type; and 
-%%the $\HOp$ uses only types of the form
-%%$\shot{C}$ and $\lhot{C}$ with $C$ being a first-order channel type.
-%Our results show that
-%the calculus in~\cite{tlca07} is not only expressed but 
-%also reasoned in 
-%$\HO$ (with limited form of arrow types, $\shot{C}$ and $\lhot{C}$), via precise encodings. \dk{None of the above works proposes tractable 
-%bisimulations for higher-order processes.}  
-%
-%\myparagraph{Typed Behavioural Equivalences.}
-\NY{Our work follows 
+ Since types can limit
+contexts (environments) where processes can interact, typed equivalences
+usually offer {\em coarser} semantics than untyped equivalences.
+Pierce and Sangiorgi~\cite{PiSa96b} demonstrated that IO-subtyping can equate 
+the optimal encoding of the $\lambda$-calculus by Milner which was not 
+in the untyped polyadic $\pi$-calculus \cite{MilnerR:funp}. 
+After~\cite{PiSa96b}, many works on typed $\pi$-calculi 
+have investigated correctness of encodings of known concurrent and
+sequential calculi in order to examine semantic
+effects of proposed typing systems. 
+
+A  type discipline closely related
+to session types is a family of linear typing systems. Kobayashi, Pierce, and Turner~\cite{LinearPi} first proposed a linearly typed reduction-closed, barbed congruence and 
+reasoned a tail-call optimisation of higher-order functions which are
+encoded 
+as processes. 
+Yoshida~\cite{Yoshida96} 
+used a bisimulation of graph-based types to prove the full abstraction
+of encodings of the polyadic synchronous $\pi$-calculus into the
+monadic synchronous $\pi$-calculus. 
+Later typed equivalences of a
+family of linear and affine calculi \cite{BHY,DBLP:journals/iandc/YoshidaBH04,BergerHY05} 
+were used to encode 
+PCF \cite{Plotkin1977223,Milner19771}, the simply typed $\lambda$-calculi with sums and products, and System F \cite{GirardJY:protyp}
+fully abstractly (a fully abstract encoding of the $\lambda$-calculi 
+was an open problem in \cite{MilnerR:funp}).  
+Yoshida, Honda, and Berger~\cite{YHB02} proposed a new bisimilarity
+method associated with linear type structure and strong
+normalisation. It presented applications to reason secrecy in
+programming languages. A subsequent work~\cite{HY02} adapted these results
+to a practical direction, proposing new typing
+systems for secure higher-order and multi-threaded programming 
+languages. 
+In these works, typed properties, linearity and liveness, 
+play a fundamental role in the analysis. In general, linear types 
+are suitable to encode ``sequentiality'' in the sense of 
+\cite{HylandJME:fulapi,AbramskyS:fulap}.
+
+ 
+ {Our work follows 
 the 
 %principles for
 %session type 
@@ -54,14 +55,12 @@ differentiates from
 the work in~\cite{KYHH2015} and \cite{KY2015}, which 
 considers  (first-order)
 binary and multiparty session types, respectively.
-The work \cite{DBLP:journals/iandc/PerezCPT14} studies typed equivalences
+P\'{e}rez et al~\cite{DBLP:journals/iandc/PerezCPT14} studied typed equivalences
 for a 
 theory of binary sessions based on linear logic,
 without shared names.}
 %Determinacy properties (confluence, $\tau$-inertness) are proven.
-Our results have important consequences in the relative expressivity
-of higher-order sessions; see the  
-technical report~\cite{KouzapasPY15} for further applications.
+
 
 
 %The theory for higher-order session type quivalences is more challenging than
@@ -107,6 +106,18 @@ the LTS in~\cite{JeffreyR05}
 observes first-order triggered values instead of
 higher-order values, offering a more direct characterisation of contextual equivalence
 and lifting the restriction to finite types.
+\emph{Environmental bisimulations}~\cite{DBLP:conf/lics/SangiorgiKS07} 
+%which 
+%Sangiorgi et al.~\cite{DBLP:conf/lics/SangiorgiKS07}, 
+use a higher-order LTS 
+to define a bisimulation that stores the observer's knowledge; hence, observed actions are based on this knowledge
+at any given time. This approach is enhanced in~\cite{DBLP:journals/cl/KoutavasH12}
+with a mapping from constants to higher-order values. This 
+allows to observe first-order values instead
+of higher-order values. It differs from~\cite{San96H,JeffreyR05} in that 
+the mapping between higher- and first-order values is no longer implicit.
+
+\paragraph{Comparison with respect to~\cite{JeffreyR05}.} 
 We briefly contrast 
 the approach in~\cite{JeffreyR05} and ours based on 
 %\dk{higher-order ($\hwb$) and} 
@@ -155,13 +166,17 @@ we use session types: a characteristic value inhabiting a type enables the simpl
 %we use session type information to obtain the simplest value that 
 %enables interaction with the environment.
 \end{enumerate}
-\noi 
-We have compared our approach to that in~\cite{JeffreyR05} 
+%\noi 
+We compare our approach to that in~\cite{JeffreyR05} 
 using a representative example.
-We considered the transitions and resulting processes involved in checking bisimilarity of process 
-$\bout{n}{\abs{x}{\appl{x}(\abs{y}{\bout{y}{m}} \inact)}} \inact$
-with itself.
-This comparison, detailed in \appref{app:jandr}, reveals that our approach 
+%We considered the transitions and resulting processes involved in checking bisimilarity of process 
+%$\bout{n}{\abs{x}{\appl{x}(\abs{y}{\bout{y}{m}} \inact)}} \inact$
+%with itself.
+
+\input{example}
+
+The previous comparison %, detailed in \appref{app:jandr}, 
+reveals that our approach 
 %based on %even if both techniques require the same number of transitions, 
 %a refined LTS and characteristic bisimilarity 
 requires less visible transitions and replicated processes. 
@@ -169,16 +184,7 @@ Therefore, linearity information does simplify analyses,
 as it enables simpler witnesses in  coinductive proofs.
 
 
-\emph{Environmental bisimulations}~\cite{DBLP:conf/lics/SangiorgiKS07} 
-%which 
-%Sangiorgi et al.~\cite{DBLP:conf/lics/SangiorgiKS07}, 
-use a higher-order LTS 
-to define a bisimulation that stores the observer's knowledge; hence, observed actions are based on this knowledge
-at any given time. This approach is enhanced in~\cite{DBLP:journals/cl/KoutavasH12}
-with a mapping from constants to higher-order values. This 
-allows to observe first-order values instead
-of higher-order values. It differs from~\cite{San96H,JeffreyR05} in that 
-the mapping between higher- and first-order values is no longer implicit.
+
 
 
 %There are similarities and differences between of the characteristic bisimulation
