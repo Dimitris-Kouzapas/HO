@@ -1153,7 +1153,7 @@ they are equivalent under any higher-order substitution.
 			for some fresh $t$.
 
 		\item	$\horel{\Gamma}{\Delta_1''}{P \subst{\omapchar{U}}{x}}{\wb}{\Delta_2''}{Q \subst{\omapchar{U}}{x}}$
-			for some $U$.
+				for some $U$.
 	\end{enumerate}
 %
 	then $\forall R$ such that $\fv{R} = \widetilde{x}$
@@ -1259,20 +1259,39 @@ they are equivalent under any higher-order substitution.
 	with the property:
 %
 	\[
-		P \Par T \red P' \Par \bout{\suc}{\dual{m}} \inact
-		\quad \mbox{if} \quad
+		\Gamma; \Delta_1 \proves P \Par T \red \Delta_2 \proves P' \Par \bout{\suc}{\dual{m}} \inact \barb{\suc}
+		\quad \mbox{iff} \quad
 		\Gamma; \Delta \proves P \hby{\ell} \Gamma; \Delta' \proves P'
 	\]
 %
+	for a fresh name $\suc$.
 	(see \defref{app:def:definibility} for the proper definition).
 	The test process can be used to check the
-	labelled transition interactions of
-	reduction-closed barb congruence processes,
-	$\Gamma; \Delta \proves P\ \cong\ \Delta' \proves Q$,
-	and associate them with 
-	the defining properties of context bisimulation
-	to show that
-	$\Gamma; \Delta \proves P\ \wbc\ \Delta' \proves Q$,.
+	typed labelled transition interactions of two
+	processes that are related by reduction-closed,
+	barbed congruence:
+	\[
+		\Gamma; \Delta_1 \proves P\ \cong\ \Delta_2 \proves Q
+	\]
+	implies from congruence of $\cong$:
+	\begin{eqnarray*}
+		\Gamma; \Delta_3 \proves P \Par T\lrangle{\ell, \suc}\ \cong\ \Delta_4 \proves Q \Par T\lrangle{\ell, \suc}
+%		\label{prsk:1}
+	\end{eqnarray*}
+	which implies from reduction-closeness of $\cong$ and the definition of $T\lrangle{\ell, \suc}$:
+	\begin{eqnarray}
+		\Gamma; \Delta_3' \proves P' \Par \bout{\suc}{\dual{m}} \inact\ \cong\ \Delta_4' \proves Q' \Par \bout{\suc}{\dual{m}} \inact
+		\label{prsk:2}
+	\end{eqnarray}
+	which in turn means that whenever $\Gamma; \Delta_1 \proves P \hastype \Proc$ can
+	perform an action $\hby{\ell}$ then we can derive that $\Gamma; \Delta_2 \proves Q \hastype \Proc$
+	can also perform action $\Hby{\ell}$ because of the result in \eqref{prsk:2}. With further
+	reasoning on \eqref{prsk:2} we can deduce that
+	$\Gamma; \Delta_1' \proves P'\ \cong\ \Delta_2' \proves Q'$.
+	This concludes the requirements of the $\wbc$ bisimulation closure:
+	\[
+		\Gamma; \Delta \proves P\ \hwb\ \Delta' \proves Q
+	\]
 	The full details can be found in \lemref{app:lem:cong_is_wb} in \appref{app:sub_coinc}.
 	\qed
 \end{proof}
