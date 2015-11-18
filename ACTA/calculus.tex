@@ -128,6 +128,7 @@ Values $V,W$ include
 identifiers $u, v, \ldots$ %(first-order values) 
 and 
 abstractions $\abs{x}{P}$ (first- and higher-order values, resp.). 
+
 {Terms} 
 include $\pi$-calculus constructs for sending/receiving values $V$.
 Process $\bout{u}{V} P$ denotes the output of   $V$
@@ -154,12 +155,13 @@ among processes with pairwise distinct labels;
 Constructs for 
 inaction $\inact$,  parallel composition $P_1 \Par P_2$, and 
 name restriction $\news{n} P$ are standard.
+
 Session name restriction $\news{s} P$ simultaneously binds endpoints $s$ and $\dual{s}$ in $P$.
 %A well-formed process relies on assumptions for
 %guarded recursive processes.
 We use $\fv{P}$ and $\fn{P}$ to denote a set of free 
 %\jpc{recursion}
-variables and names; 
+variables and names in $P$; 
 and assume $V$ in $\bout{u}{V}{P}$ does not include free recursive 
 variables $\rvar{X}$. 
 If $\fv{P} = \emptyset$, we call $P$ {\em closed}.
@@ -307,7 +309,7 @@ The \emph{first implementation} is  as follows:
 		\\ %[3mm]
 		 \Client_1 \!\!\!\!\! & \defeq  &  \!\!\! \newsp{h_1, h_2}{\bout{s_1}{\abs{x}{P_{xy} \subst{h_1}{y}}} \bout{s_2}{\abs{x}{P_{xy} \subst{h_2}{y}}} \inact \Par  \\
 		& & 
-		\!\!\! \binp{\dual{h_1}}{x} \binp{\dual{h_2}}{y}  \If x \leq y\   \Then\\
+		\qquad \qquad\binp{\dual{h_1}}{x} \binp{\dual{h_2}}{y}  \If x \leq y\   \Then\\
 		& & \qquad\qquad \qquad \qquad (\bsel{\dual{h_1}}{\accept} \bsel{\dual{h_2}}{\reject} \inact \ \Else \ \bsel{\dual{h_1}}{\reject} \bsel{\dual{h_2}}{\accept} \inact )
 		}
 	\end{eqnarray*}
