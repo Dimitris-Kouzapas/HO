@@ -378,7 +378,7 @@ reduces it (\defref{d:wtenvred}).
 	Then by $\eltsrule{SSnd}$, we can derive:
 %
 	\[
-		(\Gamma; \es; s: \btout{\lhot{\btout{S} \tinact}} \tinact \cat s': S) \by{\news{m} \bactout{s}{V}} (\Gamma; \es; s: \tinact)
+		(\Gamma; \es; s: \btout{\lhot{\btout{S} \tinact}} \tinact \cat s': S) \by{\news{m} \bactout{s}{V}} (\Gamma; \es; s: \tinact \cat \dual{m}: \btout{\tinact} \tinact)
 	\]
 	\qed
 \end{example}
@@ -466,20 +466,21 @@ with respect to types.
 		\item
 				\begin{enumerate}
 					\item	$P \barb{n}$ if $P \scong \newsp{\tilde{m}}{\bout{n}{V} P_2 \Par P_3}$, with $n \notin \tilde{m}$.
-					\item	Also: $P \Barb{n}$ if $P \red^* \barb{n}$.
+					\item	$P \barb{n}$ if $P \scong \newsp{\tilde{m}}{\bsel{n}{l} P_2 \Par P_3}$, with $n \notin \tilde{m}$.
+					\item	We write $P \Barb{n}$ if $P \red^* \barb{n}$.
 				\end{enumerate}
 
 		\item	Similarly, we write
 				\begin{enumerate}
 					\item	$\Gamma; \emptyset; \Delta \proves P \barb{n}$ if
 							$\Gamma; \emptyset; \Delta \proves P \hastype \Proc$ with $P \barb{n}$ and $\dual{n} \notin \Delta$.
-					\item	Also: $\Gamma; \emptyset; \Delta \proves P \Barb{n}$ if $P \red^* P'$ and
+					\item	We write $\Gamma; \emptyset; \Delta \proves P \Barb{n}$ if $P \red^* P'$ and
 							$\Gamma; \emptyset; \Delta' \proves P' \barb{n}$.
 				\end{enumerate}
 	\end{enumerate}
 \end{definition}
 
-\noi A barb $\barb{n}$ is an observable on an output prefix with subject $n$;
+\noi A barb $\barb{n}$ is an observable on an output (resp. select) prefix with subject $n$;
 a weak barb $\Barb{n}$ is a barb after zero or more reduction steps.
 Typed barbs $\barb{n}$ (resp.\ $\Barb{n}$)
 are observed  on typed processes $\Gamma; \emptyset; \Delta \proves P \hastype \Proc$.
@@ -805,7 +806,7 @@ LTS explained in \secref{sec:overview}.
 		\label{equ:6}
 	\end{eqnarray}
 %
-	where
+	where $\Delta = s_1: \btinp{C} \tinact \cat s_2: \btinp{C} \tinact$ and:
 %
 	\[
 		\Gamma; \es; \Delta \cat s: \btinp{\shot{(\btinp{C} \tinact)}} \tinact \proves P_i \hastype \Proc \qquad (i \in \set{1,2})
@@ -818,20 +819,30 @@ LTS explained in \secref{sec:overview}.
 	\[
 		\Gamma; \es; \Delta \proves \binp{s_1}{y} \inact \Par \binp{s_2}{y} \inact \hastype \Proc
 	\]
+%
 	\noi therefore becoming context bisimilar.
 	However, the processes in (\ref{equ:6}) 
 	are clearly {\em not} context bisimilar: many input actions
 	may be used to distinguish them.
-	For example, if  $P_1$ and $P_2$ input 
-	$\abs{x} \newsp{s}{\bout{a}{s} \binp{x}{y} \inact}$ with
-	$\Gamma; \es; \Delta \proves s \hastype \tinact$,
+	For example, if  $P_1$ and $P_2$ input
+%
+	$\abs{x} \newsp{s'}{\bout{a}{s'} \binp{x}{y} \inact}$
+%
+	with
+%
+	$\Gamma; \es; \es \proves a \hastype \chtype{\tinact}$,
+%
 	then their derivatives are not bisimilar:
-	\begin{eqnarray*}
-		P_1 &\by{\bactinp{s}{\abs{x} \newsp{s}{\bout{a}{s} \binp{x}{y} \inact}}} \red \red&  \newsp{s}{\bout{a}{s} \binp{s_1}{y} \inact} \Par \newsp{s}{\bout{a}{s} \binp{s_2}{y} \inact}
-		\\
-		P_2 &\by{\bactinp{s}{\abs{x} \newsp{s}{\bout{a}{s} \binp{x}{y} \inact}}} \red &   \newsp{s}{\bout{a}{s} \binp{s_1}{y} \inact} \Par \binp{s_2}{y} \inact
-	\end{eqnarray*}
-
+%
+\[
+	\begin{array}{rcll}
+		\Gamma; \es; \Delta &\proves& P_1 \by{\bactinp{s}{\abs{x} \newsp{s'}{\bout{a}{s'} \binp{x}{y} \inact}}} \red \red\\
+		\Delta &\proves& \newsp{s'}{\bout{a}{s'} \binp{s_1}{y} \inact} \Par \newsp{s'}{\bout{a}{s'} \binp{s_2}{y} \inact}
+		\\[4mm]
+		\Gamma; \es; \Delta &\proves& P_2 \by{\bactinp{s}{\abs{x} \newsp{s'}{\bout{a}{s'} \binp{x}{y} \inact}}} \red\\
+		\Delta &\proves& \newsp{s'}{\bout{a}{s'} \binp{s_1}{y} \inact} \Par \binp{s_2}{y} \inact
+	\end{array}
+\]
 
 	Observing only the characteristic value 
 	results in an under-discriminating bisimulation.
@@ -841,12 +852,12 @@ LTS explained in \secref{sec:overview}.
 	we can distinguish $P_1$, $P_2$ in~\eqref{equ:6}:  
 	%
 	\begin{eqnarray*}
-%		\Gamma; \es; \Delta &\proves& 
-		P_1 &\By{\bactinp{s}{\abs{{x}}{\binp{t}{y} (\appl{y}{{x}})}}}& \binp{t}{x} (\appl{x}{s_1}) \Par \binp{t}{x} (\appl{x}{s_2})
+		\Gamma; \es; \Delta \proves
+		P_1 &\By{\bactinp{s}{\abs{{x}}{\binp{t}{y} (\appl{y}{{x}})}}}& \Delta \proves \binp{t}{x} (\appl{x}{s_1}) \Par \binp{t}{x} (\appl{x}{s_2})
 %		\hastype \Proc
 		\qquad \mbox{and}\\
-%		\Gamma; \es; \Delta &\proves& 
-		P_2 &\By{\bactinp{s}{\abs{{x}}{\binp{t}{y} (\appl{y}{{x}})}}}& \binp{t}{x} (\appl{x}{s_1}) \Par \binp{s_2}{y} \inact 
+		\Gamma; \es; \Delta \proves
+		P_2 &\By{\bactinp{s}{\abs{{x}}{\binp{t}{y} (\appl{y}{{x}})}}}& \Delta \proves \binp{t}{x} (\appl{x}{s_1}) \Par \binp{s_2}{y} \inact 
 %		\hastype \Proc
 	\end{eqnarray*}
 %
@@ -1112,9 +1123,9 @@ ensures behavioural invariance on deterministic transitions.
 	\begin{enumerate}
 		\item	
 				$\horel{\Gamma}{\Delta}{P}{\hby{\dtau}}{\Delta'}{P'}$ implies
-				$\horel{\Gamma}{\Delta}{P}{\wb}{\Delta'}{P'}$.
+				$\horel{\Gamma}{\Delta}{P}{\hwb}{\Delta'}{P'}$.
 		\item	$\horel{\Gamma}{\Delta}{P}{\Hby{\dtau}}{\Delta'}{P'}$ implies
-				$\horel{\Gamma}{\Delta}{P}{\wb}{\Delta'}{P'}$.
+				$\horel{\Gamma}{\Delta}{P}{\hwb}{\Delta'}{P'}$.
 	\end{enumerate}
 \end{proposition}
 %
@@ -1268,16 +1279,16 @@ they are equivalent under any higher-order substitution.
 	If 
 %
 	\begin{enumerate}
-		\item	$\horel{\Gamma}{\Delta_1'}{P \subst{\auxtr{t}}{x}}{\wb}{\Delta_2}{Q \subst{\auxtr{t}}{x}}$
+		\item	$\horel{\Gamma}{\Delta_1'}{P \subst{\auxtr{t}}{x}}{\hwb}{\Delta_2}{Q \subst{\auxtr{t}}{x}}$
 			for some fresh $t$.
 
-		\item	$\horel{\Gamma}{\Delta_1''}{P \subst{\omapchar{U}}{x}}{\wb}{\Delta_2''}{Q \subst{\omapchar{U}}{x}}$
+		\item	$\horel{\Gamma}{\Delta_1''}{P \subst{\omapchar{U}}{x}}{\hwb}{\Delta_2''}{Q \subst{\omapchar{U}}{x}}$
 				for some $U$.
 	\end{enumerate}
 %
 	then $\forall R$ such that $\fv{R} = \widetilde{x}$
 	\[
-		\horel{\Gamma}{\Delta_1}{P \subst{\abs{\widetilde{x}}{R}}{x}}{\wb}{\Delta_2}{Q \subst{\abs{\widetilde{x}}{R}}{x}}
+		\horel{\Gamma}{\Delta_1}{P \subst{\abs{\widetilde{x}}{R}}{x}}{\hwb}{\Delta_2}{Q \subst{\abs{\widetilde{x}}{R}}{x}}
 	\]
 \end{lemma}
 
@@ -1433,10 +1444,10 @@ We can finally state our main result:
 
 \begin{proof}
 	The proof is a direct consequence from our previous results:
-	\lemref{lem:wb_eq_wbf} (which proves $\wb\ =\ \wbf$), 
-	\lemref{lem:wb_is_wbc} (which proves $\wb\ \subseteq\ \wbc$),
+	\lemref{lem:wb_eq_wbf} (which proves $\hwb\ =\ \fwb$), 
+	\lemref{lem:wb_is_wbc} (which proves $\hwb\ \subseteq\ \wbc$),
 	\lemref{lem:wbc_is_cong} (which proves $\wbc\ \subseteq\ \cong$), and	
-	\lemref{lem:cong_is_wb} (which proves $\cong\ \subseteq\ \wb$).
+	\lemref{lem:cong_is_wb} (which proves $\cong\ \subseteq\ \hwb$).
 %
 %\begin{enumerate}[$-$]
 %		\item	\lemref{lem:wb_eq_wbf} proves $\wb\ =\ \wbf$.
@@ -1444,7 +1455,7 @@ We can finally state our main result:
 %		\item	\lemref{lem:wb_is_wbc} proves $\wb\ \subseteq\ \wbc$.
 %		\item \lemref{lem:wbc_is_cong} proves $\wbc\ \subseteq\ \cong$.
 %		\end{enumerate}
-Indeed, we may conclude $$\cong\ \subseteq\ \wb\ =\ \wbf\ \subseteq\ \wbc\ \subseteq\ \cong$$
+Indeed, we may conclude $$\cong\ \subseteq\ \hwb\ =\ \fwb\ \subseteq\ \wbc\ \subseteq\ \cong$$
 	\qed
 \end{proof}
  
@@ -1462,7 +1473,7 @@ in \exref{exam:proc} are behaviourally equivalent.
 	\end{eqnarray*}
 	Then
 	$\horel{\es}{\Delta}{\Client_1}
-	{\wbf}
+	{\fwb}
 	{\Delta}{\Client_2}$, where $\Client_1$, $\Client_2$ are defined in \exref{exam:proc}. 
 \end{proposition}
 
