@@ -712,6 +712,19 @@ to prove process substitution (\lemref{app:lem:proc_subst}).
 Intuitively, we can subsequently apply linear process substitution
 to achieve process substitution.
 
+We first need to show that any process has a normal form
+\begin{lemma}[Normal Form]
+	For every process $P$, exists (possibly empty) $\tilde{m}$
+	and (possibly inactive) $P_1, P_2$ such that
+	$P \scong \newsp{\tilde{m}}{P_1 \Par P_2}$
+\end{lemma}
+
+\begin{proof}[Sketch]
+	The proof is a simple induction on the structure
+	of $P$ that uses structural congruence to show that
+	$P \scong \newsp{\tilde{m}}{P_1 \Par P_2}$.
+\end{proof}
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %	Process Substitution
@@ -902,107 +915,110 @@ to achieve process substitution.
 		\label{lem:wb_is_wbc1}
 	\end{eqnarray}
 %
-	\noi - Case: $\ell \notin \set{ \news{\widetilde{m_1}} \bactout{n}{\abs{\widetilde{x}}{P}},  \news{\widetilde{m_1}'} \bactout{n}{\widetilde{m_1}}, \bactinp{n}{\abs{\widetilde{x}}{P}} }$
+	\begin{enumerate}
+		\item
+				$\ell \notin \set{ \news{\widetilde{m_1}} \bactout{n}{\abs{\widetilde{x}}{P}},  \news{\widetilde{m_1}'} \bactout{n}{\widetilde{m_1}}, \bactinp{n}{\abs{\widetilde{x}}{P}} }$
 
-	\noi For the latter $\ell$ and transition in \eqref{lem:wb_is_wbc1} we conclude that:	
-%
-	\[
-		\horel{\Gamma}{\Delta_2}{Q_1}{\Hby{\ell}}{\Delta_2'}{Q_2}
-	\]
-%
-	\noi and
-%
-	\[
-		\horel{\Gamma}{\Delta_1'}{P_2}{\hwb}{\Delta_2'}{Q_2}
-	\]
-%
-	The above premise and conclusion coincides with defining cases for $\ell$ in $\wbc$.
+				\noi For the latter $\ell$ and transition in \eqref{lem:wb_is_wbc1} we conclude that:	
+			%
+				\[
+					\horel{\Gamma}{\Delta_2}{Q_1}{\Hby{\ell}}{\Delta_2'}{Q_2}
+				\]
+			%
+				\noi and
+			%
+				\[
+					\horel{\Gamma}{\Delta_1'}{P_2}{\hwb}{\Delta_2'}{Q_2}
+				\]
+			%
+				The above premise and conclusion coincides with defining cases for $\ell$ in $\wbc$.
 
-	\noi - Case: $\ell = \bactinp{n}{\abs{\widetilde{x}}{P}}$
+		\item	$\ell = \bactinp{n}{\abs{\widetilde{x}}{P}}$
 
-	\noi Transition in \eqref{lem:wb_is_wbc1} concludes:
-%
-\[
-	\begin{array}{l}
-		\horel{\Gamma}{\Delta_1}{P_1}{\hby{\bactinp{n}{\abs{\widetilde{x}}{\mapchar{U}{\widetilde{x}}}}}}{\Delta_1'}{P_2 \subst{\abs{\widetilde{x}}{\mapchar{U}{\widetilde{x}}}}{x}}\\
-		\horel{\Gamma}{\Delta_1}{P_1}{\hby{\bactinp{n}{\auxtr{t}}}}{\Delta_1''}{P_2 \subst{\auxtr{t}}{x}}
-	\end{array}
-\]
-%
-	\noi The last two transitions imply:
-%
-\[
-	\begin{array}{l}
-		\horel{\Gamma}{\Delta_2}{Q_1}{\Hby{\bactinp{n}{\abs{\widetilde{x}}{\mapchar{U}{\widetilde{x}}}}}}{\Delta_2'}{Q_2 \subst{\abs{\widetilde{x}}{\mapchar{U}{\widetilde{x}}}}{x}}\\
-		\horel{\Gamma}{\Delta_2}{Q_1}{\Hby{\bactinp{n}{\auxtr{t}}}}{\Delta_2''}{Q_2 \subst{\auxtr{t}}{x}}
-	\end{array}
-\]
-%
-	\noi and
-%
-\[
-	\begin{array}{l}
-		\horel{\Gamma}{\Delta_1'}{P_2 \subst{\abs{\widetilde{x}}{\mapchar{U}{\widetilde{x}}}}{x}}{\hwb}{\Delta_2'}{Q_2 \subst{\abs{\widetilde{x}}{\mapchar{U}{\widetilde{x}}}}{x}}\\
-		\horel{\Gamma}{\Delta_1''}{P_2 \subst{\auxtr{t}}{x}}{\hwb}{\Delta_2''}{Q_2 \subst{\auxtr{t}}{x}}
-	\end{array}
-\]
-%
-	\noi To conclude from (\lemref{app:lem:proc_subst}) that
-	$\forall R$ with $\fv{R} = \widetilde{x}$
-%
-\[
-	\horel{\Gamma}{\Delta_1'}{P_2 \subst{\abs{\widetilde{x}}{R}}{x}}{\hwb}{\Delta_2'}{Q_2 \subst{\abs{\widetilde{x}}{R}}{x}}
-\]
-%
-	\noi as required.
+				\noi Transition in \eqref{lem:wb_is_wbc1} concludes:
+			%
+				\[
+					\begin{array}{l}
+						\horel{\Gamma}{\Delta_1}{P_1}{\hby{\bactinp{n}{\abs{\widetilde{x}}{\mapchar{U}{\widetilde{x}}}}}}{\Delta_1'}{P_2 \subst{\abs{\widetilde{x}}{\mapchar{U}{\widetilde{x}}}}{x}}\\
+						\horel{\Gamma}{\Delta_1}{P_1}{\hby{\bactinp{n}{\auxtr{t}}}}{\Delta_1''}{P_2 \subst{\auxtr{t}}{x}}
+					\end{array}
+				\]
+			%
+				\noi The last two transitions imply:
+			%
+			\[
+				\begin{array}{l}
+					\horel{\Gamma}{\Delta_2}{Q_1}{\Hby{\bactinp{n}{\abs{\widetilde{x}}{\mapchar{U}{\widetilde{x}}}}}}{\Delta_2'}{Q_2 \subst{\abs{\widetilde{x}}{\mapchar{U}{\widetilde{x}}}}{x}}\\
+					\horel{\Gamma}{\Delta_2}{Q_1}{\Hby{\bactinp{n}{\auxtr{t}}}}{\Delta_2''}{Q_2 \subst{\auxtr{t}}{x}}
+				\end{array}
+			\]
+			%
+				\noi and
+			%
+			\[
+				\begin{array}{l}
+					\horel{\Gamma}{\Delta_1'}{P_2 \subst{\abs{\widetilde{x}}{\mapchar{U}{\widetilde{x}}}}{x}}{\hwb}{\Delta_2'}{Q_2 \subst{\abs{\widetilde{x}}{\mapchar{U}{\widetilde{x}}}}{x}}\\
+					\horel{\Gamma}{\Delta_1''}{P_2 \subst{\auxtr{t}}{x}}{\hwb}{\Delta_2''}{Q_2 \subst{\auxtr{t}}{x}}
+				\end{array}
+			\]
+			%
+				\noi To conclude from (\lemref{app:lem:proc_subst}) that
+				$\forall R$ with $\fv{R} = \widetilde{x}$
+			%
+			\[
+				\horel{\Gamma}{\Delta_1'}{P_2 \subst{\abs{\widetilde{x}}{R}}{x}}{\hwb}{\Delta_2'}{Q_2 \subst{\abs{\widetilde{x}}{R}}{x}}
+			\]
+			%
+				\noi as required.
 
-	\noi - Case: $\ell = \news{\widetilde{m_1}} \bactout{n}{\abs{\widetilde{x}}{P}}$
+		\item	$\ell = \news{\widetilde{m_1}} \bactout{n}{\abs{\widetilde{x}}{P}}$
 
-	\noi From transition \eqref{lem:wb_is_wbc1} we conclude:
-%
-\[
-	\horel{\Gamma}{\Delta_2}{Q_1}{\Hby{\news{\widetilde{m_2}} \bactout{n}{\abs{\widetilde{x}}{Q}}}}{\Delta_2'}{Q_2}
-\]
-%
-	\noi and for fresh $t$
-%
-\[
-	\mhorel	{\Gamma}{\Delta_1'}{\newsp{\widetilde{m_1}}{P_2 \Par \binp{t}{x} \newsp{s}{\appl{x}{s} \Par \bout{\dual{s}}{\abs{\widetilde{x}}{P}} \inact}}}
-		{\hwb}
-		{\Delta_2'}{}{\newsp{\widetilde{m_2}}{Q_2 \Par \binp{t}{x} \newsp{s}{\appl{x}{s} \Par \bout{\dual{s}}{\abs{\widetilde{x}}{Q}} \inact}}}
-\]
-%
-	\noi From the  previous case we can conclude that $\forall R$ with $\fpv{R} = \set{x}$:
-%
-\[
-	\begin{array}{rl}
-		\Gamma; \es; &\Delta_1' \proves \newsp{\widetilde{m_1}}{P_2 \Par \binp{t}{x} \newsp{s}{\appl{x}{s} \Par \bout{\dual{s}}{\abs{\widetilde{x}}{P}} \inact}} \\
-		\by{\bactinp{t}{\abs{z}{\binp{z}{x} R}}}& \newsp{\widetilde{m_1}}{P_2 \Par \newsp{s}{\binp{s}{x} R \Par \bout{\dual{s}}{\abs{\widetilde{x}}{P}} \inact}}\\
-		\by{\tau} \quad &\Delta_1'' \proves \newsp{\widetilde{m_1}}{P_2 \Par  R \subst{\abs{\widetilde{x}}{P}}{x}}
-	\end{array}
-\]
-%
-	\noi and
-%
-\[
-	\begin{array}{rl}
-		\Gamma; \es; &\Delta_2' \proves \newsp{\widetilde{m_2}}{Q_2 \Par \binp{t}{x} \newsp{s}{\appl{x}{s} \Par \bout{\dual{s}}{\abs{\widetilde{x}}{Q}} \inact}} \\
-		\by{\bactinp{t}{\abs{z}{\binp{z}{x} R}}} &\newsp{\widetilde{m_2}}{Q_2 \Par \newsp{s}{\binp{s}{x} R \Par \bout{\dual{s}}{\abs{\widetilde{x}}{Q}} \inact}}\\
-		\by{\tau} &\Delta_2'' \proves \newsp{\widetilde{m_2}}{Q_2 \Par  R \subst{\abs{\widetilde{x}}{Q}}{x}}
-	\end{array}
-\]
-%
-	\noi and furthermore it is easy to see that $\forall R$ with $\fpv{R} = \set{x}$:
-%
-\[
-	\horel{\Gamma}{\Delta_1''}{\newsp{\widetilde{m_1}}{P_2 \Par  R \subst{\abs{\widetilde{x}}{P}}{x}}}{\hwb}{\Delta_2}{\newsp{\widetilde{m_2}}{Q_2 \Par R \subst{\abs{\widetilde{x}}{Q}}{x}}}
-\]
-%
-	\noi as required by the definition of $\wbc$.
+				\noi From transition \eqref{lem:wb_is_wbc1} we conclude:
+			%
+			\[
+				\horel{\Gamma}{\Delta_2}{Q_1}{\Hby{\news{\widetilde{m_2}} \bactout{n}{\abs{\widetilde{x}}{Q}}}}{\Delta_2'}{Q_2}
+			\]
+			%
+				\noi and for fresh $t$
+			%
+			\[
+				\mhorel	{\Gamma}{\Delta_1'}{\newsp{\widetilde{m_1}}{P_2 \Par \binp{t}{x} \newsp{s}{\appl{x}{s} \Par \bout{\dual{s}}{\abs{\widetilde{x}}{P}} \inact}}}
+					{\hwb}
+					{\Delta_2'}{}{\newsp{\widetilde{m_2}}{Q_2 \Par \binp{t}{x} \newsp{s}{\appl{x}{s} \Par \bout{\dual{s}}{\abs{\widetilde{x}}{Q}} \inact}}}
+			\]
+			%
+				\noi From the  second case of this proof we can conclude that $\forall R$ with $\fpv{R} = \set{x}$:
+			%
+			\[
+				\begin{array}{rl}
+					\Gamma; \es; &\Delta_1' \proves \newsp{\widetilde{m_1}}{P_2 \Par \binp{t}{x} \newsp{s}{\appl{x}{s} \Par \bout{\dual{s}}{\abs{\widetilde{x}}{P}} \inact}} \\
+					\by{\bactinp{t}{\abs{z}{\binp{z}{x} R}}}& \newsp{\widetilde{m_1}}{P_2 \Par \newsp{s}{\binp{s}{x} R \Par \bout{\dual{s}}{\abs{\widetilde{x}}{P}} \inact}}\\
+					\by{\tau} \quad &\Delta_1'' \proves \newsp{\widetilde{m_1}}{P_2 \Par  R \subst{\abs{\widetilde{x}}{P}}{x}}
+				\end{array}
+			\]
+			%
+				\noi and
+			%
+			\[
+				\begin{array}{rl}
+					\Gamma; \es; &\Delta_2' \proves \newsp{\widetilde{m_2}}{Q_2 \Par \binp{t}{x} \newsp{s}{\appl{x}{s} \Par \bout{\dual{s}}{\abs{\widetilde{x}}{Q}} \inact}} \\
+					\by{\bactinp{t}{\abs{z}{\binp{z}{x} R}}} &\newsp{\widetilde{m_2}}{Q_2 \Par \newsp{s}{\binp{s}{x} R \Par \bout{\dual{s}}{\abs{\widetilde{x}}{Q}} \inact}}\\
+					\by{\tau} &\Delta_2'' \proves \newsp{\widetilde{m_2}}{Q_2 \Par  R \subst{\abs{\widetilde{x}}{Q}}{x}}
+				\end{array}
+			\]
+			%
+				\noi and furthermore it is easy to see that $\forall R$ with $\fpv{R} = \set{x}$:
+			%
+			\[
+				\horel{\Gamma}{\Delta_1''}{\newsp{\widetilde{m_1}}{P_2 \Par  R \subst{\abs{\widetilde{x}}{P}}{x}}}{\hwb}{\Delta_2}{\newsp{\widetilde{m_2}}{Q_2 \Par R \subst{\abs{\widetilde{x}}{Q}}{x}}}
+			\]
+			%
+				\noi as required by the definition of $\wbc$.
 
-	\noi - Case: $\ell = \news{\widetilde{m_1}'} \bactout{n}{\widetilde{m_1}}$
+		\item	$\ell = \news{\widetilde{m_1}'} \bactout{n}{\widetilde{m_1}}$
 
-	The last case shares a similar argumentation with the previous case.
+				The last case shares a similar argumentation with the previous case.
+	\end{enumerate}
 	\qed
 \end{proof}
 
