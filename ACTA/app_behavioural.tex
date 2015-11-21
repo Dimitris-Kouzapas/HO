@@ -1,3 +1,5 @@
+% !TEX root = main.tex
+
 %\section{Behavioural Semantics}
 
 We present the proofs for 
@@ -123,6 +125,9 @@ for shorthand notations.
 %	$\horel{\Gamma}{\Delta}{P}{\wb}{\Delta'}{P'}$.
 %\end{proposition}
 
+\jp{This proof seems to be by induction on deterministic transition; but then the analysis is on the structure of processes,
+which is confusing. In general: I would have done this proof by coinduction, constructing a closure containing $(P, P')$.}
+
 \begin{proof}
 	\noi 
 	We prove Part 1 --- the proof for Part 2 is straightforward from Part 1.
@@ -130,8 +135,8 @@ for shorthand notations.
 	which coincides the reduction $\red$.
 
 	\noi Basic step:
-
-	\noi - Case: $P = \appl{(\abs{x}{P})}{n}$:
+	\begin{itemize}
+	\item Case: $P = \appl{(\abs{x}{P})}{n}$:
 %
 	\[
 		\horel{\Gamma}{\Delta}{\appl{(\abs{x}{P})}{n}}{\hby{\btau}}{\Delta'}{P \subst{n}{x}}
@@ -139,7 +144,7 @@ for shorthand notations.
 %
 	\noi Bisimulation requirements hold since, there is no other transition to observe than ${\hby{\btau}}$.
 
-	\noi - Case: $P = \bout{s}{V} P_1 \Par \binp{\dual{s}}{x} P_2$:
+	\item Case: $P = \bout{s}{V} P_1 \Par \binp{\dual{s}}{x} P_2$:
 %
 	\[
 		\horel{\Gamma}{\Delta}{\bout{s}{V} P_1 \Par \binp{\dual{s}}{x} P_2}{\hby{\stau}}{\Delta'}{P_1 \Par P_2}
@@ -153,17 +158,18 @@ for shorthand notations.
 
 	\noi It is easy to conclude then that $\horel{\Gamma}{\Delta}{P}{\hwb}{\Delta'}{P'}$.
 
-	\noi - Case: $P = \bsel{s}{l} P_1 \Par \bbra{\dual{s}}{l_i: P_i}_{i \in I}$
+	\item Case: $P = \bsel{s}{l} P_1 \Par \bbra{\dual{s}}{l_i: P_i}_{i \in I}$
 
 	\noi Similar arguments as the previous case.
-
+	\end{itemize}
+	
 	\noi Induction hypothesis:
 
 	\noi If $P_1 \red P_2$ then $\horel{\Gamma_1}{\Delta_1}{P_1}{\hwb}{\Delta_2}{P_2}$.
-
 	\noi Induction Step:
+	\begin{itemize}
 
-	\noi - Case: $P = \news{s} P_1$
+	\item Case: $P = \news{s} P_1$
 %
 	\[
 		\horel{\Gamma}{\Delta}{\news{s}{P_1}}{\hby{\stau}}{\Delta'}{\news{s} P_2}
@@ -172,7 +178,7 @@ for shorthand notations.
 	\noi From the induction hypothesis and the fact that bisimulation is a congruence
 	we get that $\horel{\Gamma}{\Delta}{P}{\hwb}{\Delta'}{P'}$.
 
-	\noi - Case: $P = P_1 \Par P_3$
+	\item  Case: $P = P_1 \Par P_3$
 %
 	\[
 		\horel{\Gamma}{\Delta}{P_1 \Par P_3}{\hby{\stau}}{\Delta'}{P_2 \Par P_3}
@@ -181,11 +187,12 @@ for shorthand notations.
 	\noi From the induction hypothesis and the fact that bisimulation is a congruence
 	we get that $\horel{\Gamma}{\Delta}{P}{\hwb}{\Delta'}{P'}$.
 
-	\noi - Case: $P \scong P_1$
+	\item   Case: $P \scong P_1$
 
 	From the induction hypothesis and the fact that bisimulation is a congruence
 	and structural congruence preserves $\hwb$
 	we get that $\horel{\Gamma}{\Delta}{P}{\hwb}{\Delta'}{P'}$.
+	\end{itemize}
 %	The proof for part two is an induction on the length of $\red^*$.
 %	The basic step is trivial and the inductive step
 %	deploys part 1 of this lemma and the fact that bisimulation is
@@ -287,6 +294,66 @@ We now proceed to state and proof these lemmas, together with some auxiliary res
 	$\hwb = \fwb$.
 \end{lemma}
 
+\jp{The level of clarity/formality in the current proof does not convince me. I wrote an alternative version.
+
+\begin{proof}[Alternative]
+We only prove the direction $\hwb \subseteq \fwb$; 
+the	direction $\fwb \subseteq \hwb$ is similar.
+We show that the typed relation:
+	\[
+		\Re = \set{(P,Q) \setbar \horel{\Gamma}{\Delta_1}{P}{\hwb}{\Delta_2}{Q}}
+	\]
+\end{proof}
+is a characteristic bisimulation. 
+Observe that  $\hwb$ and $\fwb$ differ 
+only in the output clause (cf. \defref{d:hwb} and \defref{d:fwb}).
+We therefore focus our analysis in output actions. 
+
+Suppose $(P, Q) \in \Re$ and 
+$\horel{\Gamma}{\Delta_1}{P}{\hby{\news{\widetilde{m_1}} \bactout{n}{V_1}}}{\Delta_1'}{P'}$.
+Then, by definition of $\hwb$, there exist $Q, V_2$ such that 
+$\horel{\Gamma}{\Delta_2}{Q}{\Hby{\news{\widetilde{m_2}} \bactout{n}{V_2}}}{\Delta_2'}{Q'}$
+and, for a fresh $t$:
+\begin{equation*}
+		\horel{\Gamma}{\Delta_1'}{\newsp{\widetilde{m_1}}{P' \Par \htrigger{t}{V_1}}}
+		{~\Re~}
+		{\Delta_2}{}{\newsp{\widetilde{m_2}}{Q' \Par \htrigger{t}{V_2} }}
+\end{equation*}
+which, by expanding the definition of higher-order trigger,  can be equivalently written as
+\begin{equation}
+		\horel{\Gamma}{\Delta_1'}{\newsp{\widetilde{m_1}}{P' \Par \hotrigger{t}{x}{s}{V_1}}}
+		{~\Re~}
+		{\Delta_2}{}{\newsp{\widetilde{m_2}}{Q' \Par \hotrigger{t}{x}{s}{V_2} }}
+		\label{eq:altc1}
+\end{equation}
+We show that \eqref{eq:altc1} implies the existence of a pair in $\Re$ that corresponds to the shape 
+induced by the output clause of characteristic bisimilarity. 
+Suppose the following input action from 
+$\newsp{\widetilde{m_1}}{P' \Par \hotrigger{t}{x}{s}{V_1}}$:
+
+	\[
+		\mhorel{\Gamma}{\Delta_1'}{\newsp{\widetilde{m_1}}{P' \Par \hotrigger{t}{x}{s}{V_1}}}
+		{\hby{\bactinp{t}{\map{\btinp{U} \tinact}^{x}}}}
+		{\Delta_1''}{}{\newsp{\widetilde{m_1}}{P' \Par \newsp{s}{\map{\btinp{U} \tinact}^{s} \Par \bout{\dual{s}}{V_1} \inact}}}
+	\]
+
+By definition of $\hwb$, we know that process 
+$\newsp{\widetilde{m_2}}{Q' \Par \hotrigger{t}{x}{s}{V_2} }$ can match this action:
+	\[
+		\mhorel{\Gamma}{\Delta_2'}{\newsp{\widetilde{m_2}}{Q' \Par \hotrigger{t}{x}{s}{V_2}}}
+		{\Hby{\bactinp{t}{\map{\btinp{U} \tinact}^{x}}}}
+		{\Delta_2''}{}{\newsp{\widetilde{m_2}}{Q' \Par \newsp{s}{\map{\btinp{U} \tinact}^{s} \Par \bout{\dual{s}}{V_2} \inact}}}
+	\]
+with 
+	\[
+		\mhorel{\Gamma}{\Delta_1''}{\newsp{\widetilde{m_1}}{P' \Par \newsp{s}{\map{\btinp{U} \tinact}^{s} \Par \bout{\dual{s}}{V_1} \inact}}}
+		{~\Re~}
+		{\Delta_2''}{}{\newsp{\widetilde{m_2}}{Q'' \Par \newsp{s}{\map{\btinp{U} \tinact}^{s} \Par \bout{\dual{s}}{V_2} \inact}}}
+	\]
+which is precisely the shape required by $\fwb$ after an output action---cf. \defref{d:fwb} and \eqref{eqb:4} in Page \pageref{eqb:4}.
+Therefore, $\Re$ is a characteristic bisimulation and we are done.
+\qed
+}
 \begin{proof}
 	\noi We only prove the direction $\hwb \subseteq \fwb$. The
 	direction $\fwb \subseteq \hwb$ is similar.
@@ -393,13 +460,37 @@ the key result for proving the soundness of the bisimulation.
 
 %We also use one of the equalities in the substitution lemmas. 
 %However all results hold for other equivalences. 
+\jp{Below I slightly modified the statement and added some structure (enumerate).
+Some remaining issues:
+
+The statement should have some quantification on $P_1, Q_1$, I guess.
+
+The abstraction still mentions $\widetilde{x}$, it is better to have $\widetilde{z}$.
+
+
+The closure contains pairs of processes, not judgments: no need to mention $\Gamma$, $\Delta_1, \Delta_2$ in the 
+LHS of the definition of $\Re$. 
+
+I don't understand what is process 
+$\newsp{\widetilde{m_1}}{P_1 \subst{\abs{\widetilde{x}}{R}}{x} \Par P_2\subst{\abs{\widetilde{x}}{R}}{x} }$
+right before the case analysis. Do you mean
+$\newsp{\widetilde{m_1}}{P_1\Par P_2\subst{\abs{\widetilde{x}}{R}}{x} }$
+(without the substitution in $P_1$?) Is $x$ free also in $P_1$?
+
+The rationale for the case analysis is not clear: why the two cases 
+$P_2 = \appl{x}{\widetilde{n}}$ and $P_2 \not= \appl{x}{\widetilde{n}}$
+are the only relevant cases? Where do you get the information to narrow down the options??
+
+We need to mention what $C_1$ and $C_2$ are in the first case.
+
+}
 
 \begin{lemma}[Linear Process Substitution]
 	\label{app:lem:subst_equiv}
+	Let $P_2$ and $Q_2$ be processes, with $\fpv{P_2} = \fpv{Q_2} = \set{x}$.
 	If 
 %
 	\begin{enumerate}
-		\item	$\fpv{P_2} = \fpv{Q_2} = \set{x}$.
 		\item	$\Gamma; x: U; \Delta_1''' \proves P_2 \hastype \Proc$ and $\Gamma; x: U; \Delta_2''' \proves Q_2 \hastype \Proc$.
 		\item	$\horel{\Gamma}{\Delta_1'}{\newsp{\widetilde{m_1}}{P_1 \Par P_2 \subst{\auxtr{t}}{x}}}
 			{\hwb}
@@ -445,8 +536,8 @@ the key result for proving the soundness of the bisimulation.
 	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	%          Case
 	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-	\noi - Case: $P_2 \not= \appl{x}{\widetilde{n}}$ for some $\widetilde{n}$.
+\begin{enumerate}
+	\item Case: $P_2 \not= \appl{x}{\widetilde{n}}$ for some $\widetilde{n}$.
 %
 	\begin{eqnarray*}
 		&&	\horel{\Gamma}{\Delta_1}
@@ -510,7 +601,7 @@ the key result for proving the soundness of the bisimulation.
 	%          Case
 	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-	\noi - Case: $P_2 = \appl{x}{\widetilde{n}}$ for some $\widetilde{n}$.
+	\item Case: $P_2 = \appl{x}{\widetilde{n}}$ for some $\widetilde{n}$.
 
 %	\noi We do a case analysis on action $\ell$.
 %	\noi - Subcase: $\ell \not= \tau$.
@@ -615,6 +706,7 @@ the key result for proving the soundness of the bisimulation.
 		{\hby{\btau}\ \Re\ \stackrel{\btau}{\longleftarrow}}
 		{\Delta_2'}{\newsp{\widetilde{m_2}'}{Q_1' \Par R \subst{\widetilde{m}}{\widetilde{x}}}}
 	\end{eqnarray*}
+	\end{enumerate}
 %
 %	\noi the latter substitution can be rewritten as
 %
@@ -712,6 +804,8 @@ to prove process substitution (\lemref{app:lem:proc_subst}).
 Intuitively, we can subsequently apply linear process substitution
 to achieve process substitution.
 
+\jp{The following is so "loose" that I don't understand how can it help...}
+
 We first need to show that any process has a normal form
 \begin{lemma}[Normal Form]
 	For every process $P$, exists (possibly empty) $\tilde{m}$
@@ -730,9 +824,11 @@ We first need to show that any process has a normal form
 %	Process Substitution
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+\jp{Some of the issues above apply verbatim also to this statement/proof.}
+
 \begin{lemma}[Process Substitution]
 	\label{app:lem:proc_subst}
-	If 
+	Let $P$ and $Q$ be processes. If 
 %
 	\begin{enumerate}
 		\item	$\horel{\Gamma}{\Delta_1'}{P \subst{\auxtr{t}}{x}}{\hwb}{\Delta_2}{Q \subst{\auxtr{t}}{x}}$
@@ -783,7 +879,8 @@ We first need to show that any process has a normal form
 %
 	\noi We show that $\Re$ is a bisimulation up to \betatran (\lemref{app:lem:tau_inert}).
 
-	\noi - Case: $P_2 \not= \appl{x}{\widetilde{n}}$ for some $\widetilde{n}$.
+	\begin{enumerate} 
+	\item Case: $P_2 \not= \appl{x}{\widetilde{n}}$ for some $\widetilde{n}$.
 %
 	\nhorel	{\Gamma}{\Delta_1}{\newsp{\widetilde{m_1}}{P_1 \subst{\abs{\widetilde{x}}{R}}{x} \Par P_2 \subst{\abs{\widetilde{x}}{R}}{x}}}
 		{\hby{\ell_1}}
@@ -792,7 +889,7 @@ We first need to show that any process has a normal form
 %
 	\noi The case is similar to the first case of \lemref{app:lem:subst_equiv}.
 
-	\noi - Case: $P_2 = \appl{x}{\widetilde{n}}$ for some $\widetilde{n}$.
+	\noi \item Case: $P_2 = \appl{x}{\widetilde{n}}$ for some $\widetilde{n}$.
 %
 \[
 	\mhorel	{\Gamma}{\Delta_1}{\newsp{\widetilde{m_1}}{P_1 \subst{\abs{\widetilde{x}}{R}}{x} \Par \appl{x}{\widetilde{n}} \subst{\abs{\widetilde{x}}{R}}{x}}}
@@ -891,6 +988,7 @@ We first need to show that any process has a normal form
 	\noi as required.
 %	\noi From here we apply \lemref{app:lem:subst_equiv} for each substituting instance of
 %	abstraction $\abs{\widetilde{x}}{R}$ to complete the proof.
+\end{enumerate}
 	\qed
 \end{proof}
 
@@ -898,6 +996,7 @@ We first need to show that any process has a normal form
 %  WB IS WBC
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+\jp{Below we should be consistent and describe an $\Re$ that we use as closure.}
 \begin{lemma}
 	\label{app:lem:wb_is_wbc}
 	$\hwb\ \subseteq\ \wbc$.
@@ -915,6 +1014,7 @@ We first need to show that any process has a normal form
 		\label{lem:wb_is_wbc1}
 	\end{eqnarray}
 %
+We distinguish four cases: $\ell$ is not an output action; $\ell$ is a higher-order output without name extrusion; $\ell$ is a higher-order output with name extrusion; $\ell$ is a first-order output.
 	\begin{enumerate}
 		\item
 				$\ell \notin \set{ \news{\widetilde{m_1}} \bactout{n}{\abs{\widetilde{x}}{P}},  \news{\widetilde{m_1}'} \bactout{n}{\widetilde{m_1}}, \bactinp{n}{\abs{\widetilde{x}}{P}} }$
@@ -1034,14 +1134,14 @@ We first need to show that any process has a normal form
 
 
 \begin{proof}
-	\noi We prove that $\wbc$ satisfies the defining properties of $\cong$. Let
+	\noi We prove that $\wbc$ satisfies the three defining properties of $\cong$:
+	reduction closure, barb preservation, congruence (cf. \defref{def:rc}).
 %
-	\[
-		\horel{\Gamma}{\Delta_1}{P_1}{\wbc}{\Delta_2}{P_2}
-	\]
-%
-	{\bf Reduction Closed:}
-%
+
+\noi	{\bf Reduction Closed:}
+	Let
+		$\horel{\Gamma}{\Delta_1}{P_1}{\wbc}{\Delta_2}{P_2}$. The reduction
+
 	\[
 		\horel{\Gamma}{\Delta_1}{P_1}{\by{}}{\Delta_1'}{P_1'}
 	\]
@@ -1110,7 +1210,7 @@ We first need to show that any process has a normal form
 	\]
 	\noi We need to show that the above congruence is a bisimulation.
 	To show that $\mathcal{S}$ is a bisimulation we do a case analysis on the structure
-	of the $\by{\ell}$ transition.
+	of the $\by{\ell}$ transition. There are three main cases.
 
 
 	\begin{enumerate}
@@ -1468,6 +1568,8 @@ We prove the result $\cong \subseteq \hwb$ following
 the technique developed in~\cite{Hennessy07} and
 refined for session types in~\cite{KYHH2015,KY2015}.
 
+\jp{Below I slightly modify the structure of items.}
+
 \begin{definition}[Definibility]\myrm
 	\label{app:def:definibility}
 	Let $\Gamma; \emptyset; \Delta_1 \proves P \hastype \Proc$.
@@ -1493,12 +1595,12 @@ refined for session types in~\cite{KYHH2015,KY2015}.
 
 				\item
 						If $P \Par T\lrangle{\ell, \suc} \red Q$ with			
-						$\Gamma; \emptyset; \Delta \proves Q \barb{\suc}$ then 
+						$\Gamma; \emptyset; \Delta \proves Q \barb{\suc}$ then \\
 						$\horel{\Gamma}{\Delta_1}{P}{\By{\ell}}{\Delta_1'}{P'}$
 						and $Q \scong P' \Par \bout{\suc}{\dual{n}} \inact$.
 			\end{enumerate}
 %
- 		\item	$\ell = \news{\widetilde{m}}\bactout{n}{V}$
+ 		\item Let	$\ell = \news{\widetilde{m}}\bactout{n}{V}$
 
 			\begin{enumerate}[i.]
 				\item	If $\horel{\Gamma}{\Delta_1}{P}{\by{\news{\widetilde{m}}\bactout{n}{V}}}{\Delta_1'}{P'}$,
@@ -1506,18 +1608,20 @@ refined for session types in~\cite{KYHH2015,KY2015}.
 						and $\widetilde{m}' \subseteq \widetilde{m}$
 						then:
 %
-						\begin{eqnarray*}
-							& & P \Par T\lrangle{\news{\widetilde{m}}\bactout{n}{V}, \suc} \red
-							\newsp{\widetilde{m}}{P' \Par \hotrigger{t}{x}{s}{V} \Par \bout{\suc}{\dual{n}, \widetilde{m}'} \inact}\\
-							& & \Gamma; \emptyset; \Delta_1' \cat \Delta_2' \proves
-							\newsp{\widetilde{m}}{P' \Par \hotrigger{t}{x}{s}{V} \Par  \bout{\suc}{\dual{n}, \widetilde{m}'} \inact} \hastype \Proc\\
-						\end{eqnarray*}
+						\begin{itemize}
+							\item $P \Par T\lrangle{\news{\widetilde{m}}\bactout{n}{V}, \suc} \red
+							\newsp{\widetilde{m}}{P' \Par \hotrigger{t}{x}{s}{V} \Par \bout{\suc}{\dual{n}, \widetilde{m}'} \inact}$
+							\item $\Gamma; \emptyset; \Delta_1' \cat \Delta_2' \proves
+							\newsp{\widetilde{m}}{P' \Par \hotrigger{t}{x}{s}{V} \Par  \bout{\suc}{\dual{n}, \widetilde{m}'} \inact} \hastype \Proc$
+						\end{itemize}
 
 				\item	If $P \Par T\lrangle{\news{\widetilde{m}}\bactout{n}{V}, \suc} \red Q$
-						with $\Gamma; \emptyset; \Delta \proves Q \barb{\suc}$ then
-						$\horel{\Gamma}{\Delta_1}{P}{\By{\news{\widetilde{m}}\bactout{n}{V}}}{\Delta_1'}{P'}$
-						and $Q \scong \newsp{\widetilde{m}}{P' \Par \hotrigger{t}{x}{s}{V} \Par \bout{\suc}{\dual{n}, \widetilde{m}'} \inact}$
+						with $\Gamma; \emptyset; \Delta \proves Q \barb{\suc}$ then 
+						\begin{itemize}
+							\item $\horel{\Gamma}{\Delta_1}{P}{\By{\news{\widetilde{m}}\bactout{n}{V}}}{\Delta_1'}{P'}$
+						\item $Q \scong \newsp{\widetilde{m}}{P' \Par \hotrigger{t}{x}{s}{V} \Par \bout{\suc}{\dual{n}, \widetilde{m}'} \inact}$ \\
 						with $t$ fresh and $\widetilde{m}' \subseteq \widetilde{m}$.
+						\end{itemize}
 			\end{enumerate}
 	\end{enumerate}	
 %
@@ -1555,6 +1659,8 @@ We first show that every visible action $\ell$ is {\em definable}.
 	\noi it is straightforward to verify that $\forall \ell$, $\ell$ is definable.
 	\qed
 \end{proof}
+
+\jp{Here again I think that the closure should not mention environments in the  LHS.}
 
 \begin{lemma}[Extrusion]\rm
 	\label{lem:extrusion}
@@ -1594,8 +1700,8 @@ We first show that every visible action $\ell$ is {\em definable}.
 	\noi {\bf Barb Preserving:}
 
 	\noi Let $\Gamma; \es; \Delta_1 \proves P \barb{s}$. We analyse two cases.
-
-	\noi - Case: $s \not= n$.
+    \begin{itemize}
+	\item Case: $s \not= n$.
 
 	\noi $\Gamma; \es; \Delta_1 \proves P \barb{s}$
 	implies
@@ -1609,7 +1715,7 @@ We first show that every visible action $\ell$ is {\em definable}.
 	implies from the freshness of $\suc$ that
 	$\Gamma; \es; \Delta_2 \proves Q \Barb{s}$ as required.
 
-	\noi - Case: $s = n$ and $\Gamma; \es; \Delta_1 \proves P \barb{n}$
+	\item Case: $s = n$ and $\Gamma; \es; \Delta_1 \proves P \barb{n}$
 
 	\noi We compose with $\binp{\dual{\suc}}{x, \widetilde{y}} T\lrangle{\ell, \suc'}$ with $\subj{\ell} = x$ to get
 %
@@ -1633,7 +1739,8 @@ We first show that every visible action $\ell$ is {\em definable}.
 %
 	\noi The last reduction implies that
 	$\Gamma; \es; \Delta_2 \proves Q \Barb{n}$ as required.
-
+    \end{itemize}
+    
 	\noi {\bf Congruence:}
 	The key case of congruence is parallel composition.
 	We define relation $\mathcal{C}$ as
@@ -1647,8 +1754,8 @@ We first show that every visible action $\ell$ is {\em definable}.
 	\noi We show that $\mathcal{C}$ is a congruence.
 
 	\noi We distinguish two cases:
-
-	\noi - Case: $\dual{n}, \widetilde{m_1}'', \widetilde{m_2}'' \notin \fn{R}$	
+        \begin{itemize}
+	\item Case: $\dual{n}, \widetilde{m_1}'', \widetilde{m_2}'' \notin \fn{R}$	
 
 	\noi From the definition of $\mathcal{C}$ we can deduce that $\forall R$:
 %
@@ -1657,7 +1764,7 @@ We first show that every visible action $\ell$ is {\em definable}.
 	\]
 	\noi The conclusion is then trivial.
 
-	\noi - Case: $\widetilde{s} = \set{\dual{n}, \widetilde{m_1}''} \cap \set{\dual{n}, \widetilde{m_2}''} \in \fn{R}$
+	\item Case: $\widetilde{s} = \set{\dual{n}, \widetilde{m_1}''} \cap \set{\dual{n}, \widetilde{m_2}''} \in \fn{R}$
 
 	\noi From the definition of $\mathcal{C}$ we can deduce that $\forall R^{y_1}$ such that $R = R^{y_1}\subst{\widetilde{s}}{\widetilde{y_1}}$
 	and $\suc'$ fresh and $\set{\widetilde{y}} = \set{\widetilde{y_1}} \cup \set{\widetilde{y_2}}$:
@@ -1675,9 +1782,16 @@ We first show that every visible action $\ell$ is {\em definable}.
 	\]
 %
 	\noi The conclusion then follows.
+	    \end{itemize}
 	\qed
 \end{proof}
 
+
+\jp{I would write the appropriate closure. Why do we distinguish three sub-cases (why are they important)?
+Also, it seems that we consider three cases...
+
+At some point we use $\Red$, I think this is a typo.
+}
 
 \begin{lemma}\rm
 	\label{app:lem:cong_is_wb}
