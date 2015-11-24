@@ -125,8 +125,8 @@ for shorthand notations.
 %	$\horel{\Gamma}{\Delta}{P}{\wb}{\Delta'}{P'}$.
 %\end{proposition}
 
-\jp{This proof seems to be by induction on deterministic transition; but then the analysis is on the structure of processes,
-which is confusing. In general: I would have done this proof by coinduction, constructing a closure containing $(P, P')$.}
+%\jp{This proof seems to be by induction on deterministic transition; but then the analysis is on the structure of processes,
+%which is confusing. In general: I would have done this proof by coinduction, constructing a closure containing $(P, P')$.}
 
 \begin{proof}
 	\noi 
@@ -135,64 +135,69 @@ which is confusing. In general: I would have done this proof by coinduction, con
 	which coincides the reduction $\red$.
 
 	\noi Basic step:
-	\begin{itemize}
-	\item Case: $P = \appl{(\abs{x}{P})}{n}$:
-%
-	\[
-		\horel{\Gamma}{\Delta}{\appl{(\abs{x}{P})}{n}}{\hby{\btau}}{\Delta'}{P \subst{n}{x}}
-	\]
-%
-	\noi Bisimulation requirements hold since, there is no other transition to observe than ${\hby{\btau}}$.
+	\begin{enumerate}
+		\item %Case: $P = \appl{(\abs{x}{P})}{n}$:
+	%
+		\[
+			\horel{\Gamma}{\Delta}{\appl{(\abs{x}{P})}{n}}{\hby{\btau}}{\Delta'}{P \subst{n}{x}}
+		\]
+	%
+		\noi Bisimulation requirements hold since, there is no other transition to observe than ${\hby{\btau}}$.
 
-	\item Case: $P = \bout{s}{V} P_1 \Par \binp{\dual{s}}{x} P_2$:
-%
-	\[
-		\horel{\Gamma}{\Delta}{\bout{s}{V} P_1 \Par \binp{\dual{s}}{x} P_2}{\hby{\stau}}{\Delta'}{P_1 \Par P_2}
-	\]
-%
-	\noi The proof follows from the fact that we can only observe a $\tau$
-	action on typed process
-	$\Gamma; \emptyset; \Delta \proves P \hastype \Proc$.
-	Actions $\bactout{s}{V}$ and $\bactinp{\dual{s}}{V}$
-	are forbidden by the LTS for typed environments.
+		\item %Case: $P = \bout{s}{V} P_1 \Par \binp{\dual{s}}{x} P_2$:
+	%
+		\[
+			\horel{\Gamma}{\Delta}{\bout{s}{V} P_1 \Par \binp{\dual{s}}{x} P_2}{\hby{\stau}}{\Delta'}{P_1 \Par P_2}
+		\]
+	%
+		\noi The proof follows from the fact that we can only observe a $\tau$
+		action on typed process
+		$\Gamma; \emptyset; \Delta \proves P \hastype \Proc$.
+		Actions $\bactout{s}{V}$ and $\bactinp{\dual{s}}{V}$
+		are forbidden by the LTS for typed environments.
 
-	\noi It is easy to conclude then that $\horel{\Gamma}{\Delta}{P}{\hwb}{\Delta'}{P'}$.
+		\noi It is easy to conclude then that $\horel{\Gamma}{\Delta}{P}{\hwb}{\Delta'}{P'}$.
 
-	\item Case: $P = \bsel{s}{l} P_1 \Par \bbra{\dual{s}}{l_i: P_i}_{i \in I}$
+		\item %Case:
+			\[
+				\horel{\Gamma}{\Delta}{\bsel{s}{l_k} P \Par \bbra{\dual{s}}{l_i: P_i}_{i \in I}}{\hby{\stau}}{\Delta'}{P \Par P_k}
+			\]
 
-	\noi Similar arguments as the previous case.
-	\end{itemize}
+		\noi Similar arguments as the previous case.
+	\end{enumerate}
 	
 	\noi Induction hypothesis:
 
 	\noi If $P_1 \red P_2$ then $\horel{\Gamma_1}{\Delta_1}{P_1}{\hwb}{\Delta_2}{P_2}$.
 	\noi Induction Step:
-	\begin{itemize}
+	\begin{enumerate}
+		\item %Case: $P = \news{s} P_1$
+	%
+		\[
+			\horel{\Gamma}{\Delta}{\news{s}{P_1}}{\hby{\stau}}{\Delta'}{\news{s} P_2}
+		\]
+	%
+		\noi From the induction hypothesis and the fact that bisimulation is a congruence
+		we get that $\horel{\Gamma}{\Delta}{P}{\hwb}{\Delta'}{P'}$.
 
-	\item Case: $P = \news{s} P_1$
-%
-	\[
-		\horel{\Gamma}{\Delta}{\news{s}{P_1}}{\hby{\stau}}{\Delta'}{\news{s} P_2}
-	\]
-%
-	\noi From the induction hypothesis and the fact that bisimulation is a congruence
-	we get that $\horel{\Gamma}{\Delta}{P}{\hwb}{\Delta'}{P'}$.
+		\item  %Case: $P = P_1 \Par P_3$
+	%
+		\[
+			\horel{\Gamma}{\Delta}{P_1 \Par P_3}{\hby{\stau}}{\Delta'}{P_2 \Par P_3}
+		\]
+	%
+		\noi From the induction hypothesis and the fact that bisimulation is a congruence
+		we get that $\horel{\Gamma}{\Delta}{P}{\hwb}{\Delta'}{P'}$.
 
-	\item  Case: $P = P_1 \Par P_3$
+		\item   %Case:
+			\[
+				P \scong P_1 \text{ and }\horel{\Gamma}{\Delta}{P_1}{\hby{\stau}}{\Delta'}{P'}
+			\]
 %
-	\[
-		\horel{\Gamma}{\Delta}{P_1 \Par P_3}{\hby{\stau}}{\Delta'}{P_2 \Par P_3}
-	\]
-%
-	\noi From the induction hypothesis and the fact that bisimulation is a congruence
-	we get that $\horel{\Gamma}{\Delta}{P}{\hwb}{\Delta'}{P'}$.
-
-	\item   Case: $P \scong P_1$
-
-	From the induction hypothesis and the fact that bisimulation is a congruence
-	and structural congruence preserves $\hwb$
-	we get that $\horel{\Gamma}{\Delta}{P}{\hwb}{\Delta'}{P'}$.
-	\end{itemize}
+		From the induction hypothesis and the fact that bisimulation is a congruence
+		and structural congruence preserves $\hwb$
+		we get that $\horel{\Gamma}{\Delta}{P}{\hwb}{\Delta'}{P'}$.
+	\end{enumerate}
 %	The proof for part two is an induction on the length of $\red^*$.
 %	The basic step is trivial and the inductive step
 %	deploys part 1 of this lemma and the fact that bisimulation is
