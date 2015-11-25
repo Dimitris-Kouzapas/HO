@@ -9,7 +9,7 @@ Key notions are \emph{triggered} and \emph{characteristic processes/values}.
 Below, we 
 write $\binp{s}{x}{P}$ 
 for an input on %(linear) 
-endpoint $s$, 
+\emph{endpoint} $s$, 
 and $\bout{\dual{s}}{V} Q$
 for an output of value $V$ 
 on endpoint $\dual{s}$ (the \emph{dual} of~$s$).
@@ -41,14 +41,21 @@ Suppose $P \,\Re\, Q$, for some context bisimulation~$\Re$. We have:
 		and, \\ \emph{\textbf{for all} $R$}  with $\fv{R}=x$, 
 		$\newsp{\widetilde{m_1}}{P' \Par R\subst{V}{x}} \,\Re\, \newsp{\widetilde{m_2}}{Q' \Par R\subst{W}{x}}$.
 \end{enumerate}
+Intuitively, 
+in the above clause process $R$ stands for any possible \emph{context} to which the emitted value
+($V$ and $W$) is supposed to go. 
+As explained in~\cite{San96H}, considering 
+all possible contexts $R$ is key to achieve an adequate distinguishing power.
+
 The \emph{second issue} is due to inputs: it  
 %appears in input clauses, and 
 follows from 
 the fact that we work with an \emph{early}
 labelled transition system (LTS). Thus, %a higher-order 
 an input prefix may observe
-finitely many different values.
-To alleviate this burden,
+infinitely many different values.
+
+To alleviate these issues,
 %induced by 
 %universal quantification,
 in %our notion of
@@ -56,7 +63,7 @@ in %our notion of
 bisimilarity} ($\fwb$)
 we take two (related) steps: 
 \begin{enumerate}[(a)]
-	\item We replace $(\star)$ with a clause involving a \emph{more tractable} process closure; and 
+	\item We replace $(\star)$ with a clause involving a process closure \emph{more tractable} than $R\subst{V}{x}$; and 
 	\item We refine  inputs % transitions 
 	to avoid observing infinitely many actions on the same input prefix.
 \end{enumerate}
@@ -128,33 +135,36 @@ is context bisimilar to the process
 %\end{equation}
 %\noi 
 In fact,
-we do have $P \wbc R\subst{V}{x}$, 
-since 
-application and dual endpoint reduction
+we do have $P \wbc R\subst{V}{x}$:
+\begin{eqnarray*}%\label{equ:1}
+	P & \red &  \newsp{s}{\appl{\binp{s}{x}{R}} \Par \bout{\dual{s}}{V} \inact} \\
+	 & \red &  R\subst{V}{x} \Par \inact
+\end{eqnarray*}
+where it is worth noticing that 
+application and endpoint reduction
 %($s$ and $\dual{s}$) 
 are deterministic.  
 
 Now let us
-consider process $T_{V}$ below, where $t$ is a fresh name.  
-%\begin{equation}\label{equ:0}
-%\end{equation}
-%We call $\abs{z}{\binp{z}{x} R}$ a {\bf\em trigger value}. 
-If $T_{V}$ inputs value $\abs{z}{\binp{z}{x} R}$ then
-we can simulate the closure of $P$:
+consider process $T_{V}$ below, where $t$ is a fresh name:
 \begin{equation}\label{equ:2}
 %\hotrigger{t}{V_1} 
-T_{V} = \hotrigger{t}{x}{s}{V} \quad\mbox{and}\quad 
+T_{V} = \hotrigger{t}{x}{s}{V} 
+\end{equation}
+If $T_{V}$ inputs value $\abs{z}{\binp{z}{x} R}$ then
+we can simulate the closure of $P$:
+\begin{equation*}\label{equ:2a}
 T_{V}
 \by{\bactinp{t}{\abs{z}{\binp{z}{x} R}}} P 
 \wbc 
 R\subst{V}{x}
-\end{equation}
+\end{equation*}
 Processes such as $T_{V}$ 
 offer a value at a fresh name; this class of 
 {\bf\em trigger processes} 
 already suggests a tractable formulation of 
 bisimilarity without the demanding 
-%output 
+output 
 clause $(\star)$. 
 %However, 
 %Trigger p
@@ -179,20 +189,23 @@ of a type,
 %The characteristic process of a session type $S$ is the process inhabiting $S$. 
 the 
 simplest term inhabiting that type (\defref{def:char}).
-This way, for instance, let $S = \btinp{\shot{S_1}} \btout{S_2} \tinact$
-be a session type: first
-input an abstraction, %from values $S_1$ to processes, 
-then output a value of type $S_2$.
-Then, process $\binp{u}{x} (\bout{u}{s_2} \inact \Par \appl{x}{s_1})$
-is a characteristic process for $S$ 
-\jpc{along $u$.}
 %Thus, characteristic processes follow the communication structures decreed by session types.
+
+This way, for instance, let $S = \btinp{\shot{S_1}} \btout{S_2} \tinact$
+be the session type that first
+inputs an abstraction, %from values $S_1$ to processes, 
+and then outputs a value of type $S_2$.
+Then, process $\binp{u}{x} (\bout{u}{s_2} \inact \Par \appl{x}{s_1})$
+is a \emph{characteristic process} for $S$ 
+\jpc{along $u$.}
+
+
 Given a session type $S$, we write $\mapchar{S}{u} $
 for its characteristic process along   $u$
 (cf.~\defref{def:char}).
 Also, %Similarly, 
-given value type $U$, then
-$\omapchar{U}$ denotes its characteristic value.
+given value type $U$ (i.e., a type for channels or abstractions), then
+$\omapchar{U}$ denotes its \emph{characteristic value}.
 As we explain now, we use 
 %the %characteristic %Precisely, we exploit  the
 % characteristic value %$\lambda x.\mapchar{U}{x}$. %$\lambda x.\mapchar{U}{x}$. 
@@ -207,7 +220,7 @@ called the {\bf\em trigger value}.
 This is necessary: it turns out
 that a characteristic value 
 alone as the observable input 
-is not enough to define a sound bisimulation (cf. \exref{ex:motivation}).
+is not enough to define a sound bisimulation (cf. \exref{ex:motivation}, page \pageref{ex:motivation}).
 Intuitively, the trigger value is used
 to observe/simulate application processes.
 %to {\em count} the number of free higher-order variables inside 
@@ -219,7 +232,7 @@ the transition rule for input actions (cf. \defref{def:rlts}).
 Roughly, the 
 refined
 rule 
-is:
+for  \jpc{(higher-order)} input admits only names, trigger values, and characteristic values:
 %\[
 %\tree {
 %	P \by{\bactinp{n}{V}} P' \quad 
@@ -240,13 +253,13 @@ P' \hby{\bactinp{n}{V}} P'~~
 $$
 for some fresh $t$.
 Note the distinction between standard and refined transitions: $\by{\bactinp{n}{V}}$ vs. $\hby{\bactinp{n}{V}}$.
-Our refined  rule for \jpc{(higher-order)} input admits only names, trigger values, and characteristic values.
+%Our refined  rule for \jpc{(higher-order)} input admits only names, trigger values, and characteristic values.
 Using this rule, we define an alternative, refined  LTS on typed processes: 
 we use it to define
 %both higher-order ($\hwb$) and 
 characteristic  bisimulation 
 %(Defs.~\ref{d:hbw} and~\ref{d:fwb}),
-($\fwb$, Def.~\ref{d:fwb}),
+($\fwb$, \defref{d:fwb}),
 in which the demanding clause~$(\star)$ is replaced with 
 a more tractable output clause based on 
 %trigger processes \jpc{(cf.~\eqref{equ:2})}  and 

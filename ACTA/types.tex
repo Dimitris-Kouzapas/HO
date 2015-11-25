@@ -146,9 +146,9 @@ of $F$ exists. We write $S_1 \dualof S_2$ if  $(S_1,S_2)\in \Re$.
 \begin{eqnarray*}
 	\Gamma  & \bnfis  &\emptyset \bnfbar \Gamma \cat \varp{x}: \shot{U} \bnfbar \Gamma \cat u: \chtype{S} \bnfbar \Gamma \cat u: \chtype{L} 
         \bnfbar \Gamma \cat \rvar{X}: \Delta \\
-	\Lambda &\bnfis & \emptyset \bnfbar \Lambda \cat \AT{x}{\lhot{U}}
-	\qquad\qquad
-	\Delta  \bnfis  \emptyset \bnfbar \Delta \cat \AT{u}{S}
+	\Lambda &\bnfis & \emptyset \bnfbar \Lambda \cat \AT{x}{\lhot{U}} \\
+	%\qquad\qquad
+	\Delta   &\bnfis &  \emptyset \bnfbar \Delta \cat \AT{u}{S}
 \end{eqnarray*}
 %]
 \noi 
@@ -176,9 +176,9 @@ and processes $P$:
 	$$\Gamma; \Lambda; \Delta \proves V \hastype U \qquad \qquad \qquad \qquad \qquad \Gamma; \Lambda; \Delta \proves P \hastype \Proc$$
 %\end{tabular}
 %\end{center}
-\noi The first judgement
+While the judgement on the left
 says that under environments $\Gamma; \Lambda; \Delta$ value $V$
-has type $U$; the second judgement says that under
+has type $U$; the  judgement on the right says that under
 environments $\Gamma; \Lambda; \Delta$ process $P$ has the process type~$\Proc$.
 The type soundness result for \HOp (Thm.~\ref{t:sr})
 relies on two auxiliary notions on session environments: 
@@ -191,7 +191,7 @@ relies on two auxiliary notions on session environments:
 \begin{definition}[Session Environments: Balanced/Reduction]\label{d:wtenvred}%\rm
 	Let $\Delta$ be a session environment.
 	\begin{enumerate}[$\bullet$]
-	\item A session environment $\Delta$ is {\em balanced} if whenever
+	\item  $\Delta$ is {\em balanced} if whenever
 	$s: S_1, \dual{s}: S_2 \in \Delta$ then $S_1 \dualof S_2$.
 	\item We define the reduction relation $\red$ on session environments as: %\\ %[-2mm]
 \begin{eqnarray*}
@@ -202,42 +202,42 @@ relies on two auxiliary notions on session environments:
 \end{enumerate}
 \end{definition}
 
-\begin{figure}[h!]
-\[
-	\begin{array}{lc}
-		\trule{Sess}& \hspace{0cm}\Gamma; \emptyset; \set{u:S} \proves u \hastype S 
-		\quad  
-		\trule{Sh}~~\Gamma \cat u : U; \emptyset; \emptyset \proves u \hastype U
-		%\\[4mm]
-		\quad
-		\trule{LVar}~~ \Gamma; \set{x: \lhot{U}}; \emptyset \proves x \hastype \lhot{U}
-		\\[4mm]
-
-		\trule{Prom}&\hspace{-0.5cm} \tree{
+\begin{figure}[t!]
+	\begin{mathpar}
+		\inferrule[\trule{Sess}]{
+		}{
+			\appl{(\abs{x}{P})}{V} \by{\tau} P \subst{V}{x}
+		}
+		\and
+		\inferrule[\trule{Sh}]{
+		}{\Gamma \cat u : U; \emptyset; \emptyset \proves u \hastype U}
+		\and
+		\inferrule[\trule{LVar}]{ }
+		{\Gamma; \set{x: \lhot{U}}; \emptyset \proves x \hastype \lhot{U}}
+		\and
+		\inferrule[\trule{Prom}]{
 			\Gamma; \emptyset; \emptyset \proves V \hastype 
                          \lhot{U}
 		}{
 			\Gamma; \emptyset; \emptyset \proves V \hastype 
                          \shot{U}
 		} 
-		\qquad
-		\trule{EProm}\tree{
+		\and
+		\inferrule[\trule{EProm}]{
 		\Gamma; \Lambda \cat x : \lhot{U}; \Delta \proves P \hastype \Proc
 		}{
 			\Gamma \cat x:\shot{U}; \Lambda; \Delta \proves P \hastype \Proc
 		}
-		\\[6mm]
-
-		\trule{Abs}&\hspace{-0.5cm} \tree{
+		\and
+		\inferrule[\trule{Abs}]{
 			\Gamma; \Lambda; \Delta_1 \proves P \hastype \Proc
 			\quad
 			\Gamma; \es; \Delta_2 \proves x \hastype U
 		}{
 			\Gamma\backslash x; \Lambda; \Delta_1 \backslash \Delta_2 \proves \abs{{x}}{P} \hastype \lhot{{U}}
 		}
-		\\[6mm]
-
-		\trule{App}&\hspace{-0.5cm} \tree{
+		\and
+		\inferrule[\trule{App}]{
 			\begin{array}{c}
 				U = \lhot{U'} \lor \shot{U'}
 				\quad
@@ -248,10 +248,8 @@ relies on two auxiliary notions on session environments:
 		}{
 			\Gamma; \Lambda; \Delta_1 \cat \Delta_2 \proves \appl{V}{W} \hastype \Proc
 		} 
-		\\[6mm]
-
-
-		\trule{Send}& \hspace{-0.5cm}\tree{
+		\and
+		\inferrule[\trule{Send}]{
 			\Gamma; \Lambda_1; \Delta_1 \proves P \hastype \Proc
 			\quad
 			\Gamma; \Lambda_2; \Delta_2 \proves V \hastype U
@@ -260,23 +258,20 @@ relies on two auxiliary notions on session environments:
 		}{
 			\Gamma; \Lambda_1 \cat \Lambda_2; ((\Delta_1 \cat \Delta_2) \setminus u:S) \cat u:\btout{U} S \proves \bout{u}{V} P \hastype \Proc
 		}
-		\\[6mm]
-
-		\trule{Rcv}&\hspace{-0.5cm} \tree{
+		\and
+				\inferrule[\trule{Rcv}]{
 		\Gamma; \Lambda_1; \Delta_1 \cat u: S \proves P \hastype \Proc
 			\quad
 			\Gamma; \Lambda_2; \Delta_2 \proves {x} \hastype {U}
 		}{
 			\Gamma \backslash x; \Lambda_1\cat \Lambda_2; \Delta_1\backslash \Delta_2 \cat u: \btinp{U} S \vdash \binp{u}{{x}} P \hastype \Proc
 		}
-\\[6mm]
-
-		\trule{Req}& \hspace{-0.5cm}\tree{
+\and \inferrule[\trule{Req}]{
 			\begin{array}{c}
 				\Gamma; \es; \es \proves u \hastype U_1
-				\quad
+				\qquad
 				\Gamma; \Lambda; \Delta_1 \proves P \hastype \Proc
-				\quad
+				\qquad
 				\Gamma; \es; \Delta_2 \proves V \hastype U_2
 				\\
 				(U_1 = \chtype{S} 
@@ -291,17 +286,16 @@ relies on two auxiliary notions on session environments:
 		}{
 			\Gamma; \Lambda; \Delta_1 \cat \Delta_2 \proves \bout{u}{V} P \hastype \Proc
 		}
-		\\[6mm]
-
-
-		\trule{Acc}&\hspace{-0.5cm} \tree{
+\and
+		\inferrule[\trule{Acc}]{
 			\begin{array}{c}
 			\Gamma; \emptyset; \emptyset \proves u \hastype 
 U_1 
-		\quad
+		\qquad
 		\Gamma; \Lambda_1; \Delta_1 \proves P \hastype \Proc
-		\quad
-		\Gamma; \Lambda_2; \Delta_2 \proves x \hastype U_2\\
+		\qquad
+		\Gamma; \Lambda_2; \Delta_2 \proves x \hastype U_2
+		\\
 				(U_1 = \chtype{S} 
                                 \land %\Leftrightarrow 
                                 U_2 = S)
@@ -314,64 +308,227 @@ U_1
 		}{
 			\Gamma\backslash x; \Lambda_1 \backslash \Lambda_2; \Delta_1 \backslash \Delta_2 \proves \binp{u}{x} P \hastype \Proc
 		}
-		\\[6mm]
-
-
-
-		\trule{Bra}& \hspace{-0.5cm}\tree{
+		\and
+\inferrule[\trule{Bra}]{
 			 \forall i \in I \quad \Gamma; \Lambda; \Delta \cat u:S_i \proves P_i \hastype \Proc
 		}{
 			\Gamma; \Lambda; \Delta \cat u: \btbra{l_i:S_i}_{i \in I} \proves \bbra{u}{l_i:P_i}_{i \in I}\hastype \Proc
 		}
-\\[6mm]
-	 	\trule{Sel}& \hspace{-0.5cm}\tree{
+\and
+	 	\inferrule[\trule{Sel}]{
+		%a
 			\Gamma; \Lambda; \Delta \cat u: S_j  \proves P \hastype \Proc \quad j \in I
-
 		}{
 			\Gamma; \Lambda; \Delta \cat u:\btsel{l_i:S_i}_{i \in I} \proves \bsel{u}{l_j} P \hastype \Proc
 		}
-		\\[6mm]
-
-
-
-		\trule{ResS}&\hspace{-0.5cm} \tree{
-			\Gamma; \Lambda; \Delta \cat s:S_1 \cat \dual{s}: S_2 \proves P \hastype \Proc \quad S_1 \dualof S_2
+		\and
+		\inferrule[\trule{ResS}]{
+			\Gamma; \Lambda; \Delta \cat s:S_1 \cat \dual{s}: S_2 \proves P \hastype \Proc \qquad S_1 \dualof S_2
 		}{
 			\Gamma; \Lambda; \Delta \proves \news{s} P \hastype \Proc
 		}
-		\\[6mm]
-		\trule{Res}&\hspace{-0.5cm}\tree{
+		\and
+		\inferrule[\trule{Res}]{
 			\Gamma\cat a:\chtype{S} ; \Lambda; \Delta \proves P \hastype \Proc
 		}{
 			\Gamma; \Lambda; \Delta \proves \news{a} P \hastype \Proc}
-			\qquad 
-
-		\trule{Par} \tree{
-			\Gamma; \Lambda_{i}; \Delta_{i} \proves P_{i} \hastype \Proc \quad i=1,2
+		\and
+		\inferrule[\trule{Par}]{
+			\Gamma; \Lambda_{i}; \Delta_{i} \proves P_{i} \hastype \Proc \qquad i=1,2
 		}{
 			\Gamma; \Lambda_{1} \cat \Lambda_2; \Delta_{1} \cat \Delta_2 \proves P_1 \Par P_2 \hastype \Proc
 		}
-\\[6mm]
-		\trule{End}& \hspace{-0.5cm}\tree{
+				\and
+				\inferrule[\trule{End}]{
 			\Gamma; \Lambda; \Delta  \proves P \hastype T \quad u \not\in \dom{\Gamma, \Lambda,\Delta}
 		}{
 			\Gamma; \Lambda; \Delta \cat u: \tinact  \proves P \hastype \Proc
 		}
-\qquad 
-	 	\trule{Rec} \tree{
+\and 
+	 	\inferrule[\trule{Rec}]{
 			\Gamma \cat \rvar{X}: \Delta; \emptyset; \Delta  \proves P \hastype \Proc
 		}{
 			\Gamma ; \emptyset; \Delta  \proves \recp{X}{P} \hastype \Proc
 		}
-		\\[6mm]
-\trule{RVar}& \Gamma \cat \rvar{X}: \Delta; \emptyset; \Delta  \proves \rvar{X} \hastype \Proc
-\qquad 
-		\trule{Nil}~~\Gamma; \emptyset; \emptyset \proves \inact \hastype \Proc
-	\end{array}
-\]
+		\and
+	\inferrule[\trule{RVar}]{ }{\Gamma \cat \rvar{X}: \Delta; \emptyset; \Delta  \proves \rvar{X} \hastype \Proc
+} 
+\and
+		\inferrule[\trule{Nil}]{ }{\Gamma; \emptyset; \emptyset \proves \inact \hastype \Proc}
+\end{mathpar}
 \caption{Typing Rules for $\HOp$.\label{fig:typerulesmy}}
-\Hline
 \end{figure}
+		
+%\begin{figure}[t!]
+%\[
+%	\begin{array}{lc}
+%		\trule{Sess}& \hspace{0cm}\Gamma; \emptyset; \set{u:S} \proves u \hastype S 
+%		\quad  
+%		\trule{Sh}~~\Gamma \cat u : U; \emptyset; \emptyset \proves u \hastype U
+%		%\\[4mm]
+%		\quad
+%		\trule{LVar}~~ \Gamma; \set{x: \lhot{U}}; \emptyset \proves x \hastype \lhot{U}
+%		\\[4mm]
+%
+%		\trule{Prom}&\hspace{-0.5cm} \tree{
+%			\Gamma; \emptyset; \emptyset \proves V \hastype 
+%                         \lhot{U}
+%		}{
+%			\Gamma; \emptyset; \emptyset \proves V \hastype 
+%                         \shot{U}
+%		} 
+%		\qquad
+%		\trule{EProm}\tree{
+%		\Gamma; \Lambda \cat x : \lhot{U}; \Delta \proves P \hastype \Proc
+%		}{
+%			\Gamma \cat x:\shot{U}; \Lambda; \Delta \proves P \hastype \Proc
+%		}
+%		\\[6mm]
+%
+%		\trule{Abs}&\hspace{-0.5cm} \tree{
+%			\Gamma; \Lambda; \Delta_1 \proves P \hastype \Proc
+%			\quad
+%			\Gamma; \es; \Delta_2 \proves x \hastype U
+%		}{
+%			\Gamma\backslash x; \Lambda; \Delta_1 \backslash \Delta_2 \proves \abs{{x}}{P} \hastype \lhot{{U}}
+%		}
+%		\\[6mm]
+%
+%		\trule{App}&\hspace{-0.5cm} \tree{
+%			\begin{array}{c}
+%				U = \lhot{U'} \lor \shot{U'}
+%				\quad
+%				\Gamma; \Lambda; \Delta_1 \proves V \hastype U
+%				\quad
+%				\Gamma; \es; \Delta_2 \proves W \hastype U'
+%			\end{array}
+%		}{
+%			\Gamma; \Lambda; \Delta_1 \cat \Delta_2 \proves \appl{V}{W} \hastype \Proc
+%		} 
+%		\\[6mm]
+%
+%
+%		\trule{Send}& \hspace{-0.5cm}\tree{
+%			\Gamma; \Lambda_1; \Delta_1 \proves P \hastype \Proc
+%			\quad
+%			\Gamma; \Lambda_2; \Delta_2 \proves V \hastype U
+%			\quad
+%			u:S \in \Delta_1 \cat \Delta_2
+%		}{
+%			\Gamma; \Lambda_1 \cat \Lambda_2; ((\Delta_1 \cat \Delta_2) \setminus u:S) \cat u:\btout{U} S \proves \bout{u}{V} P \hastype \Proc
+%		}
+%		\\[6mm]
+%
+%		\trule{Rcv}&\hspace{-0.5cm} \tree{
+%		\Gamma; \Lambda_1; \Delta_1 \cat u: S \proves P \hastype \Proc
+%			\quad
+%			\Gamma; \Lambda_2; \Delta_2 \proves {x} \hastype {U}
+%		}{
+%			\Gamma \backslash x; \Lambda_1\cat \Lambda_2; \Delta_1\backslash \Delta_2 \cat u: \btinp{U} S \vdash \binp{u}{{x}} P \hastype \Proc
+%		}
+%\\[6mm]
+%
+%		\trule{Req}& \hspace{-0.5cm}\tree{
+%			\begin{array}{c}
+%				\Gamma; \es; \es \proves u \hastype U_1
+%				\quad
+%				\Gamma; \Lambda; \Delta_1 \proves P \hastype \Proc
+%				\quad
+%				\Gamma; \es; \Delta_2 \proves V \hastype U_2
+%				\\
+%				(U_1 = \chtype{S} 
+%                                \land %\Leftrightarrow 
+%                                U_2 = S)
+%				\lor
+%				 (U_1 = \chtype{L} 
+%                                \land %\Leftrightarrow 
+%                                %\Leftrightarrow 
+%                                 U_2 = L)
+%			\end{array}
+%		}{
+%			\Gamma; \Lambda; \Delta_1 \cat \Delta_2 \proves \bout{u}{V} P \hastype \Proc
+%		}
+%		\\[6mm]
+%
+%
+%		\trule{Acc}&\hspace{-0.5cm} \tree{
+%			\begin{array}{c}
+%			\Gamma; \emptyset; \emptyset \proves u \hastype 
+%U_1 
+%		\quad
+%		\Gamma; \Lambda_1; \Delta_1 \proves P \hastype \Proc
+%		\quad
+%		\Gamma; \Lambda_2; \Delta_2 \proves x \hastype U_2\\
+%				(U_1 = \chtype{S} 
+%                                \land %\Leftrightarrow 
+%                                U_2 = S)
+%				\lor
+%				 (U_1 = \chtype{L} 
+%                                \land %\Leftrightarrow 
+%                                %\Leftrightarrow 
+%                                 U_2 = L)
+%               \end{array}
+%		}{
+%			\Gamma\backslash x; \Lambda_1 \backslash \Lambda_2; \Delta_1 \backslash \Delta_2 \proves \binp{u}{x} P \hastype \Proc
+%		}
+%		\\[6mm]
+%
+%
+%
+%		\trule{Bra}& \hspace{-0.5cm}\tree{
+%			 \forall i \in I \quad \Gamma; \Lambda; \Delta \cat u:S_i \proves P_i \hastype \Proc
+%		}{
+%			\Gamma; \Lambda; \Delta \cat u: \btbra{l_i:S_i}_{i \in I} \proves \bbra{u}{l_i:P_i}_{i \in I}\hastype \Proc
+%		}
+%\\[6mm]
+%	 	\trule{Sel}& \hspace{-0.5cm}\tree{
+%			\Gamma; \Lambda; \Delta \cat u: S_j  \proves P \hastype \Proc \quad j \in I
+%
+%		}{
+%			\Gamma; \Lambda; \Delta \cat u:\btsel{l_i:S_i}_{i \in I} \proves \bsel{u}{l_j} P \hastype \Proc
+%		}
+%		\\[6mm]
+%
+%
+%
+%		\trule{ResS}&\hspace{-0.5cm} \tree{
+%			\Gamma; \Lambda; \Delta \cat s:S_1 \cat \dual{s}: S_2 \proves P \hastype \Proc \quad S_1 \dualof S_2
+%		}{
+%			\Gamma; \Lambda; \Delta \proves \news{s} P \hastype \Proc
+%		}
+%		\\[6mm]
+%		\trule{Res}&\hspace{-0.5cm}\tree{
+%			\Gamma\cat a:\chtype{S} ; \Lambda; \Delta \proves P \hastype \Proc
+%		}{
+%			\Gamma; \Lambda; \Delta \proves \news{a} P \hastype \Proc}
+%			\qquad 
+%
+%		\trule{Par} \tree{
+%			\Gamma; \Lambda_{i}; \Delta_{i} \proves P_{i} \hastype \Proc \quad i=1,2
+%		}{
+%			\Gamma; \Lambda_{1} \cat \Lambda_2; \Delta_{1} \cat \Delta_2 \proves P_1 \Par P_2 \hastype \Proc
+%		}
+%\\[6mm]
+%		\trule{End}& \hspace{-0.5cm}\tree{
+%			\Gamma; \Lambda; \Delta  \proves P \hastype T \quad u \not\in \dom{\Gamma, \Lambda,\Delta}
+%		}{
+%			\Gamma; \Lambda; \Delta \cat u: \tinact  \proves P \hastype \Proc
+%		}
+%\qquad 
+%	 	\trule{Rec} \tree{
+%			\Gamma \cat \rvar{X}: \Delta; \emptyset; \Delta  \proves P \hastype \Proc
+%		}{
+%			\Gamma ; \emptyset; \Delta  \proves \recp{X}{P} \hastype \Proc
+%		}
+%		\\[6mm]
+%\trule{RVar}& \Gamma \cat \rvar{X}: \Delta; \emptyset; \Delta  \proves \rvar{X} \hastype \Proc
+%\qquad 
+%		\trule{Nil}~~\Gamma; \emptyset; \emptyset \proves \inact \hastype \Proc
+%	\end{array}
+%\]
+%%\caption{Typing Rules for $\HOp$.\label{fig:typerulesmy}}
+%\Hline
+%\end{figure}
 
 \noi We rely on a typing system that is similar to the one developed in~\cite{tlca07,MostrousY15}. 
 The typing system is defined in \figref{fig:typerulesmy}.
