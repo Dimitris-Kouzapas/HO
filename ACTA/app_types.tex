@@ -1,9 +1,10 @@
 %In this appendix 
 We 
-%first 
-%%formally define \emph{type equivalence} and \emph{duality}. Then, we  
+first 
+formally define \emph{type equivalence}. % and \emph{duality}. Then, we  
 %present and describe our typing rules, given in~\figref{fig:typerulesmy}.
 %Finally, we 
+Then we 
 give details of the proof of Theorem~\ref{t:sr} (page~\pageref{t:sr}).
 %\smallskip
 %\subsection{Type Equivalence and Duality}
@@ -68,6 +69,36 @@ give details of the proof of Theorem~\ref{t:sr} (page~\pageref{t:sr}).
 %\input{type_system}
 %\subsection{Proof of Theorem~\ref{t:sr}}
 %We state type soundness of our system.
+
+\subsection{Type Equivalence}
+\begin{definition}[Type Equivalence]
+\label{def:iso}
+Let $\mathsf{ST}$ a set of closed session types. 
+Two types $S$ and $S'$ are said to be {\em isomorphic} if a pair $(S,S')$ is 
+in the largest fixed point of the monotone function
+$F:\mathcal{P}(\mathsf{ST}\times \mathsf{ST}) \to 
+\mathcal{P}(\mathsf{ST}\times \mathsf{ST})$ defined by: \\
+%\hspace{-0.5cm}
+\begin{tabular}{rcl}
+$F(\Re)$ &$\!\!=\!\!$&	$\set{(\tinact, \tinact)}$\\
+         &$\!\!\cup\!\!$&	$\set{(\btout{U_1} S_1, \btout{U_2} S_2)
+\bnfbar (S_1, S_2),(U_1, U_2)\in \Re}$\\ 
+       &$\!\!\cup\!\!$&	$\set{(\btinp{U_1} S_1, \btinp{U_2} S_2)
+\bnfbar(S_1, S_2),(U_1, U_2)\in \Re}$\\ 
+	&$\!\!\cup\!\!$&	$\set{(\btbra{l_i: S_i}_{i \in I} \,,\, \btbra{l_i: S_i'}_{i \in I}) \bnfbar \forall i\in I. (S_i, S_i')\in \Re}$\\
+	&$\!\!\cup\!\!$&	$\set{(\btsel{l_i: S_i}_{i \in I}\,,\, \btsel{l_i: S_i'}_{i \in I}) \bnfbar \forall i\in I. (S_i, S_i')\in \Re}$\\
+	&$\!\!\cup\!\!$&	$\set{(\trec{t}{S}, S')
+\bnfbar (S\subst{\trec{t}{S}}{\vart{t}},S')\in \Re}$\\
+	&$\!\!\cup\!\!$&	$\set{(S,\trec{t}{S'})
+\bnfbar (S,S'\subst{\trec{t}{S'}}{\vart{t}})\in \Re}$
+\end{tabular}
+
+Standard arguments ensure that $F$ is monotone, thus the greatest fixed point
+of $F$ exists. We write $S_1 \sim S_2$ if  $(S_1,S_2)\in \Re$. 
+\end{definition}
+
+
+\subsection{Proof of Theorem~\ref{t:sr} (Type Soundness)}
 As our typed process framework is closely related to that considered
 by Mostrous and Yoshida~\cite{MostrousY15}, the proof of type soundness requires notions
 and properties which are specific instances of those already shown in~\cite{MostrousY15}.
