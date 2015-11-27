@@ -130,8 +130,8 @@ for shorthand notations.
 
 \begin{proof}
 	\noi 
-	We prove Part 1 --- the proof for Part 2 is straightforward from Part 1.
-	The proof is done by induction on the structure of $\by{\tau}$
+	We prove Part 1 --- the proof for Part 2 follows straightforwardly.
+	The proof is by induction on the structure of $\by{\tau}$
 	which coincides the reduction $\red$.
 
 	\noi Basic step:
@@ -362,19 +362,22 @@ We now proceed to state and proof these lemmas, together with some auxiliary res
 \begin{proof}
 	\noi We only prove the direction $\hwb \subseteq \fwb$. The
 	direction $\fwb \subseteq \hwb$ is similar.
-Consider:
+Consider the typed relation (for readability, we omit type information):
 %
 	\[
-		\Re = \set{\horel{\Gamma}{\Delta_1}{P}{\ ,\ }{\Delta_2}{Q} \setbar \horel{\Gamma}{\Delta_1}{P}{\hwb}{\Delta_2}{Q}}
+		\Re = \set{%\horel{\Gamma}{\Delta_1}{P}{\ ,\ }{\Delta_2}{Q} 
+		(P, Q) 
+		\setbar \horel{\Gamma}{\Delta_1}{P}{\hwb}{\Delta_2}{Q}}
 	\]
 %
 	We show that $\Re$ is a characteristic bisimulation.
-	The proof does a case analysis on the transition label $\ell$.
+	Suppose $\horel{\Gamma}{\Delta_1}{P}{\hby{ \ell}}{\Delta_1'}{P'}
+					\label{lem:wb_eq_wbf1}
+			$.
+				The proof does a case analysis on the transition label $\ell$.
 
 	\begin{enumerate}
-		\item	$\ell = \news{\widetilde{m_1}} \bactout{n}{V_1}$ is the non-trivial case.
-
-				\noi If
+		\item	$\ell = \news{\widetilde{m_1}} \bactout{n}{V_1}$ is the non-trivial case. If
 			%
 				\begin{eqnarray}
 					\horel{\Gamma}{\Delta_1}{P}{\hby{\news{\widetilde{m_1}} \bactout{n}{V_1}}}{\Delta_1'}{P'}
@@ -423,8 +426,8 @@ Consider:
 					\label{lem:wb_eq_wbf3}
 				\end{eqnarray}
 			%
-				\noi Result \eqref{lem:wb_eq_wbf3} can be shown, by showing that the processes in \eqref{lem:wb_eq_wbf3}
-				are higher order bisimilar. We can show that by observing an input action on the fresh name $t$ on
+				\noi Result \eqref{lem:wb_eq_wbf3} is by showing that the processes % in \eqref{lem:wb_eq_wbf3}
+				are higher-order bisimilar. We can show that by observing an input action on the fresh name $t$ on
 				both processes:
 
 				\noi The freshness of $t$ implies that
@@ -447,12 +450,12 @@ Consider:
 			%			from where we can conclude that 
 		
 
-		\item	The rest of the cases are trivial.
+		\item	The other cases are trivial.
 	\end{enumerate}
 
 	\noi The direction $\fwb \subseteq \hwb$ is very similar to the
 	direction $\hwb \subseteq \fwb$: it requires a case analysis
-	on the transition label $\ell$. Again the non-trivial case is
+	on the transition label $\ell$. Again, the non-trivial case is
 	$\ell = \news{\widetilde{m_1}} \bactout{n}{V_1}$.
 	\qed
 \end{proof}
@@ -834,18 +837,19 @@ to achieve process substitution.
 
 %\jp{The following is so "loose" that I don't understand how can it help...}
 
-We first need to show that any process has a normal form
+We first need to show that any process has a normal form:
 \begin{lemma}[Normal Form]
 	\label{app:lem:nomral_form}
 	For every process $P$, there exist (possibly empty) $\tilde{m}$
 	and (possibly inactive) $P_1, P_2$ such that
-	$P \scong \newsp{\tilde{m}}{P_1 \Par P_2}$
+	$P \scong \newsp{\tilde{m}}{P_1 \Par P_2}$.
 \end{lemma}
 
 \begin{proof}[Sketch]
 	The proof is a simple induction on the structure
 	of $P$ that uses structural congruence to show that
-	$P \scong \newsp{\tilde{m}}{P_1 \Par P_2}$.
+	$P \scong \newsp{\tilde{m}}{P_1 \Par P_2}$. 
+\qed
 \end{proof}
 
 
@@ -860,10 +864,10 @@ We first need to show that any process has a normal form
 	Let $P$ and $Q$ be processes. If 
 %
 	\begin{enumerate}
-		\item	$\horel{\Gamma}{\Delta_1'}{P \subst{\auxtr{t}}{x}}{\hwb}{\Delta_2'}{Q \subst{\auxtr{t}}{x}}$
+		\item	$\horel{\Gamma}{\Delta_1'}{P \subst{\auxtr{t}}{x}}{\hwb}{\Delta_2'}{Q \subst{\auxtr{t}}{x}}$,
 				for some fresh $t$.
 
-		\item	$\horel{\Gamma}{\Delta_1''}{P \subst{\omapchar{U}}{x}}{\hwb}{\Delta_2''}{Q \subst{\omapchar{U}}{x}}$
+		\item	$\horel{\Gamma}{\Delta_1''}{P \subst{\omapchar{U}}{x}}{\hwb}{\Delta_2''}{Q \subst{\omapchar{U}}{x}}$,
 				for some $U$.
 	\end{enumerate}
 %
@@ -875,7 +879,7 @@ We first need to show that any process has a normal form
 
 
 \begin{proof}
-	\noi We define a closure $\Re$ using the normal form (\lemref{app:lem:nomral_form}) of $P$ and $Q$
+	\noi We define a closure $\Re$ using the normal form (\lemref{app:lem:nomral_form}) of $P$ and $Q$:
 
 	\[
 		\begin{array}{rcll}
@@ -1045,7 +1049,7 @@ We first need to show that any process has a normal form
 \end{lemma}
 
 \begin{proof}
-	Let typed relation (we ommit typing judgements from the definition)
+	Let $\Re$ be the typed relation (for readability, we omit typing judgements from the definition):
 	\[
 		\Re = \set{(P_1, Q_1) \setbar \horel{\Gamma}{\Delta_1}{P_1}{\hwb}{\Delta_2}{Q_1}}
 	\]
@@ -1061,7 +1065,7 @@ We distinguish four cases: $\ell$ is not an output or an input action; $\ell$ is
 $\ell$ is an higher-order output; $\ell$ is a first-order output.
 	\begin{enumerate}
 		\item
-				$\ell \notin \set{ \news{\widetilde{m_1}} \bactout{n}{\abs{\widetilde{x}}{P}},  \news{\widetilde{m_1}'} \bactout{n}{\widetilde{m_1}}, \bactinp{n}{\abs{\widetilde{x}}{P}} }$
+				Case $\ell \notin \set{ \news{\widetilde{m_1}} \bactout{n}{\abs{\widetilde{x}}{P}},  \news{\widetilde{m_1}'} \bactout{n}{\widetilde{m_1}}, \bactinp{n}{\abs{\widetilde{x}}{P}} }$:
 
 				\noi For the latter $\ell$ and transition in \eqref{lem:wb_is_wbc1} we conclude that:	
 			%
@@ -1077,7 +1081,7 @@ $\ell$ is an higher-order output; $\ell$ is a first-order output.
 			%
 				The above premise and conclusion coincides with defining cases for $\ell$ in $\wbc$.
 
-		\item	$\ell = \bactinp{n}{\abs{\widetilde{x}}{P}}$
+		\item	Case $\ell = \bactinp{n}{\abs{\widetilde{x}}{P}}$:
 
 				\noi Transition in \eqref{lem:wb_is_wbc1} concludes:
 			%
@@ -1115,7 +1119,7 @@ $\ell$ is an higher-order output; $\ell$ is a first-order output.
 			%
 				\noi as required.
 
-		\item	$\ell = \news{\widetilde{m_1}} \bactout{n}{\abs{\widetilde{x}}{P}}$
+		\item	Case $\ell = \news{\widetilde{m_1}} \bactout{n}{\abs{\widetilde{x}}{P}}$:
 
 				\noi From transition \eqref{lem:wb_is_wbc1} we conclude:
 			%
@@ -1159,9 +1163,9 @@ $\ell$ is an higher-order output; $\ell$ is a first-order output.
 			%
 				\noi as required by the definition of $\wbc$.
 
-		\item	$\ell = \news{\widetilde{m_1}'} \bactout{n}{\widetilde{m_1}}$
+		\item	Case $\ell = \news{\widetilde{m_1}'} \bactout{n}{\widetilde{m_1}}$: 
 
-				The last case shares a similar argumentation with the previous case.
+				This case shares a similar argumentation with the previous case.
 	\end{enumerate}
 	\qed
 \end{proof}
@@ -1198,9 +1202,9 @@ $\ell$ is an higher-order output; $\ell$ is a first-order output.
 		\horel{\Gamma}{\Delta_1}{P_1'}{\wbc}{\Delta_2'}{P_2'}
 	\end{eqnarray*}
 %
-	\noi Same argument hold for the symmetric case, thus $\wbc$ is reduction closed.
+	\noi Same arguments hold for the symmetric case, thus $\wbc$ is reduction closed.
 
-	\noi {\bf Barb Preservation:}
+	\noi {\bf Barb Preservation:} We have that
 %
 	\begin{eqnarray*}
 		\Gamma; \emptyset; \Delta_1 \proves P_1 \barb{n}
@@ -1227,7 +1231,7 @@ $\ell$ is an higher-order output; $\ell$ is a first-order output.
 		\horel{\Gamma}{\Delta_2}{P_2}{\By{\news{m_2} \bactout{n}{V_2}}}{\Delta_2'}{P_2'}\\
 	\end{eqnarray*}
 %
-	\noi From the last result we get that
+	\noi From the last result we obtain
 %
 	\begin{eqnarray*}
 		\Gamma; \emptyset; \Delta_2 \proves P_2 \Barb{n}
@@ -1252,8 +1256,10 @@ $\ell$ is an higher-order output; $\ell$ is a first-order output.
 		& &}
 	\end{array}
 	\]
-	\noi We need to show that the above congruence is a bisimulation.
-	To show that $\mathcal{S}$ is a bisimulation we do a case analysis on the structure
+	\noi We need to show that 
+	%the above congruence is a bisimulation.
+	%To show that 
+	$\mathcal{S}$ is a bisimulation:  we do a case analysis on the structure
 	of the $\by{\ell}$ transition. There are three main cases.
 
 
@@ -1262,7 +1268,7 @@ $\ell$ is an higher-order output; $\ell$ is a first-order output.
 	% Case 1
 	%%%%%%%%%%%%%%%
 
-		\item 
+		\item Suppose
 				%
 				\[
 					\horel{\Gamma}{\Delta_1 \cat \Delta_3}{\newsp{\widetilde{n_1}}{P_1 \Par R}}
@@ -1273,14 +1279,14 @@ $\ell$ is an higher-order output; $\ell$ is a first-order output.
 				\noi The case is divided into three subcases:
 
 				\begin{enumerate}[i.]
-					\item	$\ell \notin \set{\news{\widetilde{m}} \bactout{n}{\abs{\widetilde{x}}{Q}}, \news{\widetilde{mm_1}} \bactout{n}{\widetilde{m_1}}}$
+					\item Sub-case	$\ell \notin \set{\news{\widetilde{m}} \bactout{n}{\abs{\widetilde{x}}{Q}}, \news{\widetilde{mm_1}} \bactout{n}{\widetilde{m_1}}}$:
+					
 							\noi From the definition of typed transition we get:
 					%
 							\[
 								\horel{\Gamma}{\Delta_1}{P_1}{\by{\ell}}{\Delta_1'}{P_1'}
 							\]
 							\noi which implies that
-					%
 							\begin{eqnarray}
 								\horel{\Gamma}{\Delta_1}{P_2}{\By{\ell}}{\Delta_2'}{P_2'}
 								\label{lem:wbc_is_cong1}\\
@@ -1303,7 +1309,7 @@ $\ell$ is an higher-order output; $\ell$ is a first-order output.
 								{\Delta_2' \cat \Delta_3}{\newsp{\widetilde{n_2}'}{P_2' \Par R}}
 							\]
 
-					\item	$\ell = \news{\widetilde{m_1}} \bactout{n}{\abs{\widetilde{x}}{Q_1}}$
+					\item	Sub-case $\ell = \news{\widetilde{m_1}} \bactout{n}{\abs{\widetilde{x}}{Q_1}}$:
 
 							\noi From the definition of typed transition we get
 							\[
@@ -1340,7 +1346,7 @@ $\ell$ is an higher-order output; $\ell$ is a first-order output.
 							\]
 					%
 
-					\item	$\ell = \news{\widetilde{mm_1}} \bactout{n}{\widetilde{m_1}}$
+					\item	Sub-case $\ell = \news{\widetilde{mm_1}} \bactout{n}{\widetilde{m_1}}$:
 
 							\noi From the definition of typed transition we get that
 							\[
@@ -1382,7 +1388,7 @@ $\ell$ is an higher-order output; $\ell$ is a first-order output.
 	% Case 2
 	%%%%%%%%%%%%%%%
 
-		\item
+		\item Suppose
 			%
 				\[
 					\horel{\Gamma}{\Delta_1 \cat \Delta_3}{\newsp{\widetilde{m_1}}{P_1 \Par R}}
@@ -1393,9 +1399,7 @@ $\ell$ is an higher-order output; $\ell$ is a first-order output.
 
 				\begin{enumerate}[i.]
 			%
-					\item
-
-							$\ell \notin \set{\news{\widetilde{m}} \bactout{n}{\abs{\widetilde{x}}{Q}}, \news{\widetilde{mm_1}} \bactout{n}{\widetilde{m_1}}}$
+					\item Sub-case 	$\ell \notin \set{\news{\widetilde{m}} \bactout{n}{\abs{\widetilde{x}}{Q}}, \news{\widetilde{mm_1}} \bactout{n}{\widetilde{m_1}}}$:
 
 							\noi From the LTS we get that:
 							\[
@@ -1417,7 +1421,7 @@ $\ell$ is an higher-order output; $\ell$ is a first-order output.
 							\]
 							\noi as required.
 
-				\item	$\ell = \news{\widetilde{m_1}} \bactout{n}{\abs{\widetilde{x}}{Q}}$
+				\item	Sub-case $\ell = \news{\widetilde{m_1}} \bactout{n}{\abs{\widetilde{x}}{Q}}$:
 
 						\noi From the LTS we get that:
 						\begin{eqnarray}
@@ -1443,7 +1447,7 @@ $\ell$ is an higher-order output; $\ell$ is a first-order output.
 						\]
 						\noi as required.
 
-				\item	$\ell = \news{\widetilde{mm}} \bactout{n}{\widetilde{m}}$
+				\item	Sub-case $\ell = \news{\widetilde{mm}} \bactout{n}{\widetilde{m}}$:
 
 					\noi From the typed LTS we get that:
 					\begin{eqnarray}
@@ -1472,7 +1476,7 @@ $\ell$ is an higher-order output; $\ell$ is a first-order output.
 	% Case 3
 	%%%%%%%%%%%%%%%
 
-	\item
+	\item For the last case, suppose:
 			\[
 				\horel{\Gamma}{\Delta_1 \cat \Delta_3}{\newsp{\widetilde{m_1}}{P_1 \Par R}}
 				{\by{\tau}}
@@ -1714,7 +1718,7 @@ We first show that every visible action $\ell$ is {\em definable}.
 	\]
 	then
 	\[
-		\horel{\Gamma}{\Delta_1}{P}{\cong}{\Delta_2}{Q}
+		\horel{\Gamma}{\Delta_1}{P}{\cong}{\Delta_2}{Q}.
 	\]
 \end{lemma}
 
@@ -1795,9 +1799,7 @@ We first show that every visible action $\ell$ is {\em definable}.
 		& &	\horel{\Gamma}{\Delta_1'}{\newsp{\widetilde{m_1}'}{P \Par \bout{\suc}{\dual{n}, \widetilde{m_1}''} \inact}}{\cong}{\Delta_2'}{\newsp{\widetilde{m_2}'}{Q \Par \bout{\suc}{\dual{n}, \widetilde{m_2}''} \inact}}}
 	\end{eqnarray*}
 %
-	\noi We show that $\mathcal{C}$ is a congruence.
-
-	\noi We distinguish two cases:
+	\noi We show that $\mathcal{C}$ is a congruence. We distinguish two cases:
         \begin{itemize}
 	\item Case: $\dual{n}, \widetilde{m_1}'', \widetilde{m_2}'' \notin \fn{R}$	
 
@@ -1837,7 +1839,7 @@ We first show that every visible action $\ell$ is {\em definable}.
 \end{lemma}
 
 \begin{proof}
-	\noi Let typed relation (we ommit the typing information in the definition):
+	\noi Let $\Re$ be the typed relation (we omit the typing information in the definition):
 	\[
 		\Re = \set{(P_1, P_2) \setbar \horel{\Gamma}{\Delta_1}{P_1}{\cong}{\Delta_2}{P_2}}
 	\]
@@ -1847,12 +1849,12 @@ We first show that every visible action $\ell$ is {\em definable}.
 	\[
 		\horel{\Gamma}{\Delta_1}{P_1}{\by{\ell}}{\Delta_1'}{P_1'}
 	\]
-	We distinguish a case for the $\tau$ transition and a case for
+	We distinguish two cases: one for the $\tau$ transition and one case for
 	the visible transitions $\ell$.
 
 %% Case tau
 \begin{enumerate}
-	\item
+	\item Suppose 
 			\[
 				\horel{\Gamma}{\Delta_1}{P_1}{\by{\tau}}{\Delta_1'}{P_1'}
 			\]
@@ -1866,7 +1868,7 @@ We first show that every visible action $\ell$ is {\em definable}.
 			\]
 
 %% Case ell
-	\item
+	\item Suppose
 		%
 			\begin{eqnarray}
 				\horel{\Gamma}{\Delta_1}{P_1}{\by{\ell}}{\Delta_1'}{P_1'}
@@ -1884,7 +1886,7 @@ We first show that every visible action $\ell$ is {\em definable}.
 
 			\begin{enumerate}[i.]
 			%% Subcase i
-				\item	$\ell \in \set{\bactinp{n}{\widetilde{m}}, \bactinp{n}{\abs{\widetilde{x}}{Q}}, \bactsel{n}{l}, \bactbra{n}{l}}$
+				\item	Sub-case $\ell \in \set{\bactinp{n}{\widetilde{m}}, \bactinp{n}{\abs{\widetilde{x}}{Q}}, \bactsel{n}{l}, \bactbra{n}{l}}$:
 
 						\noi By reducing~(\ref{lem:cong_is_wb1}), we obtain
 					%
@@ -1920,7 +1922,7 @@ We first show that every visible action $\ell$ is {\em definable}.
 						\noi as required.
 
 			%% Subcase ii
-				\item	$\ell = \news{\widetilde{m_1}} \bactout{n}{\abs{\widetilde{x}}{Q_1}}$
+				\item	Sub-case $\ell = \news{\widetilde{m_1}} \bactout{n}{\abs{\widetilde{x}}{Q_1}}$:
 
 						\noi Note that $T\lrangle{\news{\widetilde{m_1}} \bactout{n}{(\widetilde{x}) Q_1}, \suc} = T\lrangle{\news{\widetilde{m_2}} \bactout{n}{\abs{\widetilde{x}}{Q_2}}, \suc}$
 
@@ -1978,7 +1980,7 @@ We first show that every visible action $\ell$ is {\em definable}.
 						\]
 						\noi as required.
 
-				\item	$\ell = \news{\widetilde{s}} \bactout{n}{\widetilde{m}}$
+				\item	Sub-case $\ell = \news{\widetilde{s}} \bactout{n}{\widetilde{m}}$:
 
 						\noi Follows similar arguments as the previous case.
 			\end{enumerate}
