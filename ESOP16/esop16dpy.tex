@@ -2082,7 +2082,56 @@ We illustrate the encoding by means of an example.}
  
 
 
-\input{encoding_example}
+%\input{encoding_example}
+\begin{example}[The Encoding 
+$\pmapp{\cdot}{1}{f}$ At Work]
+Let $P = \recp{X}{\bout{a}{m} \varp{X}}$ be an \HOp process.
+Its associated encoding into \HO is as follows---we note that initially $f = \emptyset$.
+\begin{eqnarray*}
+	\pmapp{P}{1}{f} &=&
+	\newsp{s_1}{ \binp{s_1}{x} \pmapp{\bout{a}{m} \varp{X}}{1}{{f'}} \Par \bout{\dual{s_1}}{ \abs{(x_a, x_m, z)} \binp{z}{x} \auxmapp{\pmapp{\bout{a}{m} \varp{X}}{1}{{f'}}}{{}}{\es} } \inact} \\
+%	&&\bout{\dual{s_1}}{ \abs{(x_a, x_m, z)} \binp{z}{x} \auxmapp{\pmapp{\bout{a}{m} \varp{X}}{1}{{\varp{X} \rightarrow x_ax_m}}}{{}}{\es} } \inact}
+%\end{eqnarray*}
+%\begin{eqnarray*}	
+\pmapp{\bout{a}{m} \varp{X}}{1}{{ f'}} &=&
+	\bout{a}{\abs{z}{\binp{z}{x} (\appl{x}{m})}} \pmapp{\varp{X}}{1}{{f'}}
+	\\
+	&=& \bout{a}{\abs{z}{\binp{z}{x} (\appl{x}{m})}} \newsp{s_2}{\appl{x}{(a,m, s_2)}  \Par \bout{\dual{s_2}}{\abs{(x_a, x_m, z)}{\appl{x}{(x_a, x_m, z)}}} \inact} \\
+	\auxmapp{\pmapp{\bout{a}{m} \varp{X}}{1}{{f'}}}{{}}{\es}
+	  & = & \auxmapp{\bout{a}{\abs{z}{\binp{z}{x} (\appl{x}{m})}} \newsp{s_2}{\appl{x}{(a,m, s_2)}  \Par \bout{\dual{s_2}}{\abs{(x_a, x_m, z)}{\appl{x}{(x_a, x_m, z)}}} \inact}}{{}}{\es}
+	\\
+	 & = & \bout{x_a}{\abs{z}{\binp{z}{x} (\appl{x}{x_m})}} \auxmapp{\newsp{s_2}{\appl{x}{(a,m, s_2)}  \Par \bout{\dual{s_2}}{\abs{(x_a, x_m, z)}{\appl{x}{(x_a, x_m, z)}}} \inact}}{{}}{\es}
+	\\
+	& = & \bout{x_a}{\abs{z}{\binp{z}{x} (\appl{x}{x_m})}} \newsp{s_2}{\appl{x}{(x_a,x_m, s_2)}  \Par \bout{\dual{s_2}}{\abs{(x_a, x_m, z)}{\appl{x}{(x_a, x_m, z)}}} \inact}
+\end{eqnarray*}
+where $f' = \varp{X} \rightarrow x_ax_m$.
+That is, by writing $V$ to denote the process
+$$
+\abs{(x_a, x_m, z)} \binp{z}{x} \bout{x_a}{\abs{z}{\binp{z}{x} (\appl{x}{x_m})}} \newsp{s_2}{\appl{x}{(x_a,x_m, s_2)}  \Par \bout{\dual{s_2}}{\abs{(x_a, x_m, z)}{\appl{x}{(x_a, x_m, z)}}} \inact}
+$$
+we would have that $P = \recp{X}{\bout{a}{m} \varp{X}}$ is mapped into the \HO process
+$$
+\newsp{s_1}{\binp{s_1}{x}  \bout{a}{\abs{z}{\binp{z}{x} (\appl{x}{m})}} \newsp{s_2}{\appl{x}{(a,m, s_2)}  \Par \bout{\dual{s_2}}{\abs{(x_a, x_m, z)}{\appl{x}{(x_a, x_m, z)}}} \inact}\Par \bout{\dual{s_1}}{V} \inact}
+$$
+We illustrate the behaviour of the encoded process:
+\begin{eqnarray*}
+\pmapp{P}{1}{f} & \scong & \newsp{s_1}{\bout{\dual{s_1}}{V} \inact \Par \binp{s_1}{x} \bout{a}{\abs{z}{\binp{z}{x} (\appl{x}{m})}} \newsp{s_2}{\bout{\dual{s_2}}{\abs{(x_a, x_m, z)}{\appl{x}{(x_a, x_m, z)}}} \inact}  \\
+& & \qquad \Par \appl{x}{(a,m, s_2)}} \\
+& \by{\tau} & \bout{a}{\abs{z}{\binp{z}{x} (\appl{x}{m})}} \newsp{s_2}{\bout{\dual{s_2}}{V} \inact \Par \binp{s_2}{x} \bout{a}{\abs{z}{\binp{z}{x} (\appl{x}{m})}} \\
+& & \qquad \qquad \quad \qquad \qquad \qquad \newsp{s_3}{\bout{\dual{s_3}}{\abs{(x_a, x_m, z)}{\appl{x}{(x_a, x_m, z)}}} \inact} \Par \appl{x}{(a,m, s_3)}} \\
+& \scong_{\alpha} & \bout{a}{\abs{z}{\binp{z}{x} (\appl{x}{m})}} \newsp{s_1}{\bout{\dual{s_1}}{V} \inact \Par \binp{s_1}{x} \bout{a}{\abs{z}{\binp{z}{x} (\appl{x}{m})}} \\
+& & \qquad \qquad \qquad \qquad \quad \qquad \newsp{s_2}{\bout{\dual{s_2}}{\abs{(x_a, x_m, z)}{\appl{x}{(x_a, x_m, z)}}} \inact} \Par \appl{x}{(a,m, s_2)}} \\
+& \scong & 
+		\bout{a}{\abs{z}{\binp{z}{x} (\appl{x}{m})}} \pmapp{\recp{X}{\bout{a}{m} \varp{X}}}{1}{f} \by{\ell} 
+		\pmapp{\recp{X}{\bout{a}{m} \varp{X}}}{1}{f}
+%& \by{\lambda} & 
+%		\pmapp{\recp{X}{\bout{a}{m} \varp{X}}}{1}{f}
+\end{eqnarray*}
+where $\ell = \bactout{a}{\abs{z}{\binp{z}{x} (\appl{x}{m})}}$ is an output action.
+For type preservation/soundness see~\cite{KouzapasPY15}.
+%\qed
+\end{example}
+
 
 We now describe the properties of the encoding. 
 \jp{Directly from \figref{f:enc:hopi_to_ho} we may state:
