@@ -381,7 +381,7 @@ into \HOp
 \secref{sec:relwork} collects concluding remarks and reviews related works.
 %\secref{sec:concl} concludes.
 %The paper is self-contained. 
-{Omitted definitions and  proofs are in %the Appendix and 
+{Omitted definitions and  proofs are  %in the Appendix and 
 in~\cite{KouzapasPY15}.} 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1118,8 +1118,10 @@ $$
 %
 \[
 	\tree{
-		\dual{s} \notin \dom{\Delta} \qquad \Gamma; \Lambda'; \Delta' \proves V \hastype U
-		\qquad
+		\dual{s} \notin \dom{\Delta} 
+		\quad~~ 
+		\Gamma; \Lambda'; \Delta' \proves V \hastype U
+		\quad~~
 		V = m \vee  V \scong \omapchar{U} \vee V \scong \abs{{x}}{\binp{t}{y} (\appl{y}{{x}})}
 					\textrm{ with } t \textrm{ fresh} 
 	}{
@@ -1163,7 +1165,7 @@ characteristic bisimilarity was introduced in~\cite{characteristic_bis} (Def.~14
 
 \begin{definition}[Characteristic Bisimilarity]%\rm
 	\label{d:fwb}
-	A typed relation $\Re$ is a {\em  characteristic bisimulation} if 
+	A typed relation $\Re$ is called a {\em  characteristic bisimulation} if 
 	for all $\horel{\Gamma}{\Delta_1}{P_1}{\ \Re \ }{\Delta_2}{Q_1}$ 
 	\begin{enumerate}[1)]
 		\item 
@@ -1317,7 +1319,7 @@ Recall that $\horel{\Gamma}{\Delta}{P}{\hby{\tau}}{\Delta'}{P'}$ denotes an inte
  
  \begin{notation}[Deterministic Transitions]
  \label{not:dettrans}
-We shall distinguish two kinds of  internal transitions:
+We distinguish two kinds of  internal transitions:
 \emph{session transitions}, denoted 
 $\horel{\Gamma}{\Delta}{P}{\hby{\stau}}{\Delta'}{P'}$,
 and 
@@ -1840,7 +1842,7 @@ We say that
 \label{sec:positive}
 %\input{positive}
  We present two encodability results:
-(1)~higher-order communication with name-passing and recursion (\HOp) into 
+(1)~higher-order communication with recursion and name-passing   (\HOp) into 
 higher-order communication without name-passing nor recursion (\HO) (\secref{subsec:HOpi_to_HO}); and 
 (2)~\HOp into the first-order calculus with name-passing  
 with recursion (\sessp) (\secref{subsec:HOp_to_sessp}).
@@ -1976,11 +1978,11 @@ names (but with free variables instead):
 \input{figures/aux_map}
 %
 
-\noi This way, given an \HO
- process $P$ (with free session names given by $\fn{P} = \{m_1, \cdots, m_k\}$),
+Thus, given an \HOp
+ process $P$ with $\fn{P} = \{m_1, \cdots, m_k\}$,
  we are interested in the abstraction
 %defined as
-$\abs{x_1\cdots x_n}{\auxmapp{P}{{}}{\emptyset} }$, where $\vmap{m_j} = x_j$, for all $j \in \{1, \ldots, k\}$. 
+$\abs{x_1\cdots x_k}{\auxmapp{P}{{}}{\emptyset} }$, where $\vmap{m_j} = x_j$, for all $j \in \{1, \ldots, k\}$. 
 %In the following we make this intuition precise.
 
 %This transformation from processes into abstractions can be reverted by
@@ -2013,15 +2015,15 @@ Let $f$ be a map from process variables to sequences of name variables.
 %and $\hwb$ is defined in \defref{d:hbw}. 
 The typed encoding 
 $\enco{\map{\cdot}^{1}_f, \mapt{\cdot}^{1} %, \mapa{\cdot}^{1}
-}: \tyl{L}_{\HOp} \to \tyl{L}_{\HO}$ is defined in 
+}: \tyl{L}_{\HOp} \to \tyl{L}_{\HO}$ is given in 
 \figref{f:enc:hopi_to_ho}. 
-We assume that the mapping $\mapt{\cdot}^{1}$ on types is extended to 
-session environments $\Delta$
+Mapping $\mapt{\cdot}^{1}$ on types homomorphically extends to 
+environments $\Delta$
 and
-shared environments $\Gamma$ homomorphically with: 
-$$
-\tmap{\Gamma \cat \varp{X}:\Delta}{1}  =  \tmap{\Gamma}{1} \cat z_X:\shot{(S_1,\ldots,S_m,S^*)}
-$$
+$\Gamma$, with
+$
+\tmap{\Gamma \cat \varp{X}:\Delta_1}{1}  =  \tmap{\Gamma}{1} \cat z_X:\shot{(S_1,\ldots,S_m,S^*)}
+$
 %\[
 %	\begin{array}{l}
 %%	    \mapt{\Delta \cat s: S}^{1} & =  & \mapt{\Delta}^{1} \cat s:\mapt{S}^{1} & \\
@@ -2030,9 +2032,9 @@ $$
 %		\tmap{\Gamma \cat \varp{X}:\Delta}{1}  =  \tmap{\Gamma}{1} \cat z_X:\shot{(S_1,\ldots,S_m,S^*)} \ 
 %	\end{array}
 %\]
-with
- $\Delta = \{n_i:S_i\}_{1\leq i\leq m}$ and
-$S^* = \trec{t}{\btinp{\shot{(S_1,\ldots,S_m,\vart{t})}} \tinact}$.
+where  
+$S^*$ is defined as $\trec{t}{\btinp{\shot{(S_1,\ldots,S_m,\vart{t})}} \tinact}$
+provided that $\Delta_1 = \{n_i:S_i\}_{1\leq i\leq m}$.
 %and $\Delta = \{n_1:S_1, \ldots, n_m:S_m\}$. 
 \end{definition}
 
@@ -2095,7 +2097,7 @@ We illustrate the encoding by means of an example.}
 \begin{example}[The Encoding 
 $\pmapp{\cdot}{1}{f}$ At Work]
 Let $P = \recp{X}{\bout{a}{m} \varp{X}}$ be an \HOp process.
-Its associated encoding into \HO is as follows---we note that initially $f = \emptyset$.
+Its encoding into \HO is given next; notice that $f = \emptyset$ and $f' = \varp{X} \rightarrow x_ax_m$.
 \begin{eqnarray*}
 	\pmapp{P}{1}{f} &=&
 	\newsp{s_1}{ \binp{s_1}{x} \pmapp{\bout{a}{m} \varp{X}}{1}{{f'}} \Par \bout{\dual{s_1}}{ \abs{(x_a, x_m, z)} \binp{z}{x} \auxmapp{\pmapp{\bout{a}{m} \varp{X}}{1}{{f'}}}{{}}{\es} } \inact} \\
@@ -2115,28 +2117,30 @@ Its associated encoding into \HO is as follows---we note that initially $f = \em
 %	 \bout{x_a}{\abs{z}{\binp{z}{x} (\appl{x}{x_m})}} \auxmapp{\newsp{s_2}{\appl{x}{(a,m, s_2)}  \Par \bout{\dual{s_2}}{\abs{(x_a, x_m, z)}{\appl{x}{(x_a, x_m, z)}}} \inact}}{{}}{\es}
 %	\\
 %	& = & 
-	\bout{x_a}{\abs{z}{\binp{z}{x} (\appl{x}{x_m})}} \newsp{s_2}{\appl{x}{(x_a,x_m, s_2)}  \Par \bout{\dual{s_2}}{\abs{(x_a, x_m, z)}{\appl{x}{(x_a, x_m, z)}}} \inact}
+	\bout{x_a}{\abs{z}{\binp{z}{x} (\appl{x}{x_m})}} \newsp{s_2}{\appl{x}{(x_a,x_m, s_2)}  \Par \\
+	& & \qquad \qquad \qquad \qquad \qquad \qquad \qquad \bout{\dual{s_2}}{\abs{(x_a, x_m, z)}{\appl{x}{(x_a, x_m, z)}}} \inact}
 \end{eqnarray*}
-where $f' = \varp{X} \rightarrow x_ax_m$.
 That is, by writing $V$ to denote the process
 $$
-\abs{(x_a, x_m, z)} \binp{z}{x} \bout{x_a}{\abs{z}{\binp{z}{x} (\appl{x}{x_m})}} \newsp{s_2}{\appl{x}{(x_a,x_m, s_2)}  \Par \bout{\dual{s_2}}{\abs{(x_a, x_m, z)}{\appl{x}{(x_a, x_m, z)}}} \inact}
+\abs{(x_a, x_m, z)} \binp{z}{x} \bout{x_a}{\abs{z}{\binp{z}{x} (\appl{x}{x_m})}} \newsp{s_2}{\appl{x}{(x_a,x_m, s_2)}  \!\Par\! \bout{\dual{s_2}}{\abs{(x_a, x_m, z)}{\appl{x}{(x_a, x_m, z)}}} \inact}
 $$
-we would have that $P = \recp{X}{\bout{a}{m} \varp{X}}$ is mapped into the \HO process
-$$
-\newsp{s_1}{\binp{s_1}{x}  \bout{a}{\abs{z}{\binp{z}{x} (\appl{x}{m})}} \newsp{s_2}{\appl{x}{(a,m, s_2)}  \Par \bout{\dual{s_2}}{\abs{(x_a, x_m, z)}{\appl{x}{(x_a, x_m, z)}}} \inact}\Par \bout{\dual{s_1}}{V} \inact}
-$$
-Next we illustrate the behaviour of the encoded process; $\ell$ stands for $\bactout{a}{\abs{z}{\binp{z}{x} (\appl{x}{m})}}$.
+we would have %that $P = \recp{X}{\bout{a}{m} \varp{X}}$ is mapped into the \HO process
 \begin{eqnarray*}
-\pmapp{P}{1}{f} & \scong & \newsp{s_1}{\bout{\dual{s_1}}{V} \inact \Par \binp{s_1}{x} \bout{a}{\abs{z}{\binp{z}{x} (\appl{x}{m})}} \newsp{s_2}{\bout{\dual{s_2}}{\abs{(x_a, x_m, z)}{\appl{x}{(x_a, x_m, z)}}} \inact}  \\
-& & \qquad \Par \appl{x}{(a,m, s_2)}} \\
+\pmapp{P}{1}{f} & = & \newsp{s_1}{\binp{s_1}{x}  \bout{a}{\abs{z}{\binp{z}{x} (\appl{x}{m})}} \newsp{s_2}{\appl{x}{(a,m, s_2)}  \Par \\
+& & \qquad \qquad \qquad \bout{\dual{s_2}}{\abs{(x_a, x_m, z)}{\appl{x}{(x_a, x_m, z)}}} \inact}\Par \bout{\dual{s_1}}{V} \inact}
+\end{eqnarray*}
+Next we illustrate the behaviour of $\pmapp{P}{1}{f}$; below $\ell$ stands for $\bactout{a}{\abs{z}{\binp{z}{x} (\appl{x}{m})}}$.
+\begin{eqnarray*}
+\pmapp{P}{1}{f} & \scong & \newsp{s_1}{\bout{\dual{s_1}}{V} \inact \Par \binp{s_1}{x} \bout{a}{\abs{z}{\binp{z}{x} (\appl{x}{m})}} \newsp{s_2}{\bout{\dual{s_2}}{\abs{(x_a, x_m, z)}{\\
+& & \qquad \qquad \qquad \qquad \quad \quad  \appl{x}{(x_a, x_m, z)}}} \inact} 
+\Par \appl{x}{(a,m, s_2)}} \\
 & \by{\tau} & \bout{a}{\abs{z}{\binp{z}{x} (\appl{x}{m})}} \newsp{s_2}{\bout{\dual{s_2}}{V} \inact \Par \binp{s_2}{x} \bout{a}{\abs{z}{\binp{z}{x} (\appl{x}{m})}} \\
-& & \qquad \qquad \quad \qquad \qquad \qquad \newsp{s_3}{\bout{\dual{s_3}}{\abs{(x_a, x_m, z)}{\appl{x}{(x_a, x_m, z)}}} \inact} \Par \appl{x}{(a,m, s_3)}} \\
+& & \qquad \qquad \quad \qquad \qquad \quad \newsp{s_3}{\bout{\dual{s_3}}{\abs{(x_a, x_m, z)}{\appl{x}{(x_a, x_m, z)}}} \inact} \Par \appl{x}{(a,m, s_3)}} \\
 & \scong_{\alpha} & \bout{a}{\abs{z}{\binp{z}{x} (\appl{x}{m})}} \newsp{s_1}{\bout{\dual{s_1}}{V} \inact \Par \binp{s_1}{x} \bout{a}{\abs{z}{\binp{z}{x} (\appl{x}{m})}} \\
-& & \qquad \qquad \qquad \qquad \quad \qquad \newsp{s_2}{\bout{\dual{s_2}}{\abs{(x_a, x_m, z)}{\appl{x}{(x_a, x_m, z)}}} \inact} \Par \appl{x}{(a,m, s_2)}} \\
+& & \qquad \qquad \qquad \qquad \quad \quad \newsp{s_2}{\bout{\dual{s_2}}{\abs{(x_a, x_m, z)}{\appl{x}{(x_a, x_m, z)}}} \inact} \Par \appl{x}{(a,m, s_2)}} \\
 & \scong & 
 		\bout{a}{\abs{z}{\binp{z}{x} (\appl{x}{m})}} \pmapp{\recp{X}{\bout{a}{m} \varp{X}}}{1}{f} \by{\ell} 
-		\pmapp{\recp{X}{\bout{a}{m} \varp{X}}}{1}{f}
+		\pmapp{\recp{X}{\bout{a}{m} \varp{X}}}{1}{f}.
 %& \by{\lambda} & 
 %		\pmapp{\recp{X}{\bout{a}{m} \varp{X}}}{1}{f}
 \end{eqnarray*}
@@ -2325,15 +2329,15 @@ is type preserving.
 	
 \begin{enumerate}[1.]
 \item Completeness: Suppose $\horel{\Gamma}{\Delta}{P}{\hby{\ell}}{\Delta'}{P'}$. Then either:
-				\begin{enumerate}[a)]
+				\begin{enumerate}[a.]
 				\item If $\ell = \tau$ then one of the following holds:
 				\begin{enumerate}[-]
 					\item	 %such that
 						$
 						\horel{\tmap{\Gamma}{2}}{\tmap{\Delta}{2}}{\pmap{P}{2}}
-						{\hby{\tau}}
-						{\tmap{\Delta'}{2}}{}{\newsp{\tilde{m}}{\pmap{P_1}{2} \Par \newsp{a}
-						{\pmap{P_2}{2}\subst{a}{x} \Par \repl{} \binp{a}{y} \binp{y}{x} \pmap{Q}{2}}}}
+						{\hby{\tau}} \\
+						{\tmap{\Delta'}{2}}{}{\newsp{\tilde{m}}{\pmap{P_1}{2} \!\Par\! \newsp{a}
+						{\pmap{P_2}{2}\subst{a}{x} \!\Par\!\! \repl{} \binp{a}{y} \binp{y}{x} \pmap{Q}{2}}}}
 						$, for some  $P_1, P_2, Q$;
 
 					\item	%$\exists R$ such that
@@ -2341,7 +2345,7 @@ is type preserving.
 						\horel{\tmap{\Gamma}{2}}{\tmap{\Delta}{2}}{\pmap{P}{2}}
 						{\hby{\tau}}
 						{\tmap{\Delta'}{2}}{}{\newsp{\tilde{m}}{\pmap{P_1}{2} \Par \newsp{s}
-						{\pmap{P_2}{2}\subst{\dual{s}}{x} \Par \binp{s}{y} \binp{y}{x} \pmap{Q}{2}}}}
+						{\pmap{P_2}{2}\subst{\dual{s}}{x} \!\Par\! \binp{s}{y} \binp{y}{x} \pmap{Q}{2}}}}
 						$, for some  $P_1, P_2, Q$;
 
 					\item	%$\ell_1 = \btau$ and
@@ -2495,7 +2499,7 @@ By considering the encoding of $P_1$ into \HO
 we obtain:
 \begin{eqnarray*}
 \map{P_1}^{1}_f & = &  	\bout{s}{\abs{z}{\binp{z}{y} \appl{y}{a}}} \inact \Par \\
-& & \quad \quad \binp{\dual{s}}{x} \newsp{t}{\appl{x}{t} \Par \bout{\dual{t}}{\abs{x}{(\bout{x}{\abs{z}{\binp{z}{y} \appl{y}{s_1}}} \inact \Par \dots \Par \bout{x}{\abs{z}{\binp{z}{y} \appl{y}{s_n}}} \inact)}} \inact}\\
+& & \quad  \binp{\dual{s}}{x} \newsp{t}{\appl{x}{t} \Par \bout{\dual{t}}{\abs{x}{(\bout{x}{\abs{z}{\binp{z}{y} \appl{y}{s_1}}} \inact \Par \dots \Par \bout{x}{\abs{z}{\binp{z}{y} \appl{y}{s_n}}} \inact)}} \inact}\\
 	& \hby{\stau} \hby{\btau} & 
 %	\newsp{t}{\appl{(\abs{z}{\binp{z}{y} \appl{y}{a}})}{t} \Par \bout{\dual{t}}{\abs{x}{(\bout{x}{\abs{z}{\binp{z}{y} \appl{y}{s_1}}} \inact \Par \dots \Par \bout{x}{\abs{z}{\binp{z}{y} \appl{y}{s_n}}} \inact)}} \inact}\\
 %	& \hby{\btau} & 
@@ -2537,7 +2541,7 @@ Consider processes:
 \begin{eqnarray*}
 	Q_1  =  \bout{s'}{s} \inact \Par \binp{\dual{s'}}{x} \bout{x}{a} \inact
 	\hby{\tau}
-	\bout{s}{a} \inact \qquad
+	\bout{s}{a} \inact \quad~~
 	Q_2  =  \bout{s}{\abs{x}{P}} \inact \Par \binp{\dual{s}}{x} \appl{x}{a}
 	\hby{\tau}
 %	\appl{(\abs{x}{P})}{a}
@@ -2938,9 +2942,9 @@ from  \figref{fig:syntax} by extending
 $\appl{V}{u}$ to $\appl{V}{W}$, where  $W$ is a higher-order value. 
 As for the reduction semantics, we keep the rules in \figref{fig:reduction}, except for 
  $\orule{App}$ which is replaced by 
-\[
+$$
 	\appl{(\abs{x}{P})}{V} \red P \subst{V}{x}
-\]
+$$
 The syntax of types is modified as follows: %changes to include: 
 $
 		L \bnfis \shot{U} \bnfbar \lhot{U}.
@@ -3315,7 +3319,7 @@ Types not only delineate and enable encodings; they
 inform the techniques required to reason about such encodings.
 Our results cover a wide spectrum of features intrinsic to higher-order concurrency:
 pure process-passing (with first- and higher-order abstractions), pure name-passing, polyadicity, 
-linear/shared communication (see \figref{fig:express}). 
+linear/shared communication (see~\figref{fig:express}). 
 Remarkably, the discipline embodied by 
 session types turns out to be fundamental to show that all these languages are equally expressive, up to 
  strong behavioural correspondences. Indeed, although our encodings may be exploited in an untyped setting,
@@ -3479,7 +3483,7 @@ do not address communication disciplined by
 
 
 Within session types, the works~\cite{DemangeonH11,Dardha:2012:STR:2370776.2370794} 
-study encodings of binary session calculi into a linearly typed $\pi$-calculus. 
+encode binary sessions into a linearly typed $\pi$-calculus. 
 While~\cite{DemangeonH11}~gives an encoding of \sessp into a linear calculus 
 (an extension of \cite{BHY}),  
 the work~\cite{Dardha:2012:STR:2370776.2370794} 
@@ -3490,7 +3494,7 @@ $\pi$-calculi into \cite{LinearPi}.
 By the result of \cite{DemangeonH11}, 
 \HOpp is encodable  into the linearly typed $\pi$-calculi.     
 The syntax of $\HOp$ is a subset of that in~\cite{tlca07,MostrousY15}.
-The work~\cite{tlca07} develops a full higher-order session calculus
+The work~\cite{tlca07} develops a higher-order session calculus
 with process abstractions and applications; it admits the type 
 $U=U_1 \rightarrow U_2 \dots U_n \rightarrow \Proc$ and its linear type 
 $U^1$
@@ -3511,18 +3515,18 @@ Our results show that
 the calculus in~\cite{tlca07} is not only expressed but 
 also reasoned in 
 $\HO$ (with limited form of arrow types, $\shot{C}$ and $\lhot{C}$), via precise encodings. 
-\newj{Recently the work \cite{OY2016} studies the two encodings,  
-from PCF with effect system into session-typed $\pi$-calculus 
-and its reverse. The reversed encoding is used to implement 
-the session channel passing into Concurrent Haskell. 
-As a future work, we plan to use the core calculi 
-studied in this paper to implement the higher-order communication 
-efficiently into Concurrent Haskell without losing its expressiveness.}
+\newj{Recently, the work \cite{OY2016} studies two encodings:
+from PCF with an effect system into a session-typed $\pi$-calculus, 
+and its reverse. The reverse encoding is used to implement session channel passing into Concurrent Haskell. 
+In future work we plan to use the core calculi 
+studied in this paper 
+to implement higher-order communication efficiently into Concurrent Haskell without losing its expressiveness.
+}
 
 \paragraph{Acknowledgments}
 We benefited from feedback from the users of the Moca mailing list, in particular Greg Meredith and Xu Xian.
 We are grateful to the anonymous reviewers for their useful remarks and suggestions.
-This work has been partially sponsored by the The Doctoral Prize Fellowship, EPSRC EP/K011715/1, EPSRC EP/K034413/1, and EPSRC EP/L00058X/1, EU project FP7-612985 UpScale, and EU COST Action IC1201 BETTY. P\'{e}rez is also affiliated to the NOVA Laboratory for Computer Science and Informatics (NOVA LINCS), Universidade Nova de Lisboa, Portugal.
+This work has been partially sponsored by the Doctoral Prize Fellowship, EPSRC EP/K011715/1, EPSRC EP/K034413/1, and EPSRC EP/L00058X/1, EU project FP7-612985 UpScale, and EU COST Action IC1201 BETTY. P\'{e}rez is also affiliated to the NOVA Laboratory for Computer Science and Informatics (NOVA LINCS), Universidade Nova de Lisboa, Portugal.
  
 %\newpage
 
