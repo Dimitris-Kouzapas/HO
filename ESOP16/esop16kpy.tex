@@ -437,12 +437,12 @@ Also, an output action in the source process is translated into an output action
 This is key to ensure the preservation of session type operators mentioned above (cf. \defref{def:tp}).
 
 \newj{As hinted at above, 
-a challenge in devising an 
- encoding of $\recp{X}{P}$ is how to 
+a challenge in 
+ encoding $\recp{X}{P}$ is how to 
 preserve linearity  of session names.
 Intuitively, we encode the recursion body $P$ as an abstraction 
 $\abs{\tilde{x}}{\auxmapp{P}{{}}{\sigma}}$
-in which each session name of $P$ is converted into a name variable in $\tilde{x}$.
+in which each session name of $P$ is converted into a name variable in $\tilde{x}$, using mapping $\sigma$.
 Since  
 $\abs{\tilde{x}}{\auxmapp{P}{{}}{\sigma}}$
 does not mention (linear) session names,
@@ -506,14 +506,14 @@ this exploits recent advances on the theory of duality for session types~\cite{T
 
 \paragraph{A Plausible Encoding That is Not Precise}
 Our notion of \emph{precise encoding} (\defref{def:goodenc}) 
-requires the translation of both process and types, and 
+requires the translation of both process and types; it  
 admits only process mappings that preserve session types
 \emph{and} are fully abstract. Thus, our encodings 
 not only exhibit  strong behavioural correspondences, but also 
  relate source and target processes with  
 communication structures described by session types.
 %Moreover, the notion of encoding includes full abstraction as encodability criteria.
-These strict requirements make our developments far from trivial.
+These requirements are demanding and make our developments far from trivial.
 In particular, requiring type preservation may rule out other plausible encoding strategies.
 To illustrate this point,
 consider the  following encoding of %$\sessp$ 
@@ -572,7 +572,7 @@ are discussed in \secref{sec:extension}.
 %expressive enough to capture key features of session communication, 
 %such as delegation and recursion.
 
-\subsection{\HOp: Syntax, Operational Semantics, Subcalculi}
+\subsection{\HOp: Syntax, Operational Semantics, and Subcalculi}
 \label{subsec:syntax}
 
 \paragraph{Syntax}
@@ -622,7 +622,7 @@ is the application
 which substitutes name $u$ on the abstraction~$V$. 
 Typing  ensures that $V$ is not a name.
 Processes $\bsel{u}{l} P$ and $\bbra{u}{l_i: P_i}_{i \in I}$ are the
-standard session processes for selecting and branching.
+usual session processes for selecting and branching.
 %Prefix $\bsel{u}{l} P$ selects label $l$ on name $u$ and then behaves as $P$.
 %Given $i \in I$ 
 %Process $\bbra{u}{l_i: P_i}_{i \in I}$ offers a choice on labels $l_i$ with
@@ -675,18 +675,18 @@ We write $\red^\ast$ for a multi-step reduction.
 %\label{subsec:subcalculi}
 %\noi 
 As motivated in the introduction, 
-we define two \emph{subcalculi} of \HOp. 
+we define two \emph{subcalculi} of \HOp: 
 %We now define several sub-calculi of \HOp. 
 \begin{enumerate}[$\bullet$]
 	\item	The  
-		{\em core higher-order session calculus} (denoted \HO),
+		{\em core higher-order session calculus}, denoted \HO,
 		 lacks recursion and name passing; its 
 		formal syntax is obtained from \figref{fig:syntax} by excluding 
 		constructs in \nonhosyntax{\text{grey}}.
 
 	\item	The   
-		 {\em session $\pi$-calculus} 
-		(denoted $\sessp$), which 
+		 {\em session $\pi$-calculus}, 
+		denoted $\sessp$, 
 		lacks  
 		higher-order constructs
 		(i.e., abstraction passing and application), but includes recursion.
@@ -705,10 +705,12 @@ we define two \emph{subcalculi} of \HOp.
 \end{enumerate}
 %
 Let $\CAL \in \{\HOp, \HO, \sessp\}$. We write 
-$\CAL^{-\mathsf{sh}}$ for $\CAL$ without shared names
-(we delete $a,b$ from $n$). 
-We shall demonstrate in \secref{sec:positive} that 
-$\HOp$, $\HO$, and $\sessp$ have the same expressivity.
+$\CAL^{-\mathsf{sh}}$ to denote the calculus $\CAL$ without shared names:
+we delete $a,b$ from $n$. 
+In \secref{sec:positive}
+we shall demonstrate that 
+$\HOp$, $\HO$, and $\sessp$ have the same expressivity,
+and that $\CAL$ is strictly more expressive than $\CAL^{-\mathsf{sh}}$.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -797,7 +799,7 @@ from name type $C$.
 Intuitively, session type duality is  obtained by 
 dualising $!$ by $?$, $?$ by $!$, $\oplus$ by $\&$, and $\&$ by $\oplus$,  
 including the fixed point construction.
-More formally, we use the \emph{co-inductive} definition of duality given in \cite{TGC14}.}
+We use the \emph{co-inductive} definition of duality given in \cite{TGC14}.}
 %(see \defref{def:dual} in the Appendix). 
 
 %\smallskip 
@@ -808,23 +810,24 @@ More formally, we use the \emph{co-inductive} definition of duality given in \ci
 We consider environments denoted $\Gamma$, $\Lambda$, and $\Delta$:
 \[
 	\begin{array}{l}
-		\Lambda \bnfis  \emptyset \bnfbar \Lambda \cat \AT{x}{\lhot{C}}
-		\qquad\qquad \Delta  \ \bnfis  \ \emptyset \bnfbar \Delta \cat \AT{u}{S}
-		\\
 		\Gamma  \bnfis  \emptyset \bnfbar \Gamma \cat \varp{x}: \shot{C} \bnfbar \Gamma \cat u: \chtype{S} \bnfbar \Gamma \cat u: \chtype{L} 
 		\bnfbar \Gamma \cat \rvar{X}: \Delta
+\\
+		\Lambda \bnfis  \emptyset \bnfbar \Lambda \cat \AT{x}{\lhot{C}}
+		 \\
+		\Delta   \bnfis   \emptyset \bnfbar \Delta \cat \AT{u}{S}
 	\end{array}
 \]
 %Environment 
 $\Gamma$ maps variables and shared names to value types, and recursive 
-variables to session environments;  
+variables to session environments (see below);  
 it admits weakening, contraction, and exchange principles.
-$\Lambda$ is a mapping from variables to 
+$\Lambda$ maps variables to 
 %the
 linear
 %functional 
 higher-order
-types; and $\Delta$ is a mapping from 
+types;   $\Delta$  maps   
 session names to session types. 
 Both $\Lambda$ and $\Delta$
 %behave linearly: they 
@@ -833,7 +836,7 @@ only subject to exchange.
 We require that the domains of $\Gamma,
 \Lambda$ and $\Delta$ are pairwise distinct. 
 $\Delta_1\cdot \Delta_2$ denotes the disjoint union of $\Delta_1$ and $\Delta_2$.  
-We are interested in \emph{balanced} session environments: 
+We focus on \emph{balanced} session environments: 
 %that contain dual endpoints typed with dual types.
 %The following definition ensures two session endpoints 
 %are dual each other. 
@@ -979,7 +982,7 @@ We then define two characterizations of $\cong$:
 \label{subsec:rc}
 %We first define \emph{confluence} over session environments $\Delta$:
 
-We consider \emph{typed relations} that relate  closed terms whose
+We consider \emph{typed relations} $\Re$ that relate  closed terms whose
 session environments %and the two session environments
 are balanced  and confluent:
 
@@ -1017,9 +1020,9 @@ When $n$ is a session name we require that its dual endpoint $\dual{n}$ is not p
 in the session environment $\Delta$:
 %\smallskip 
 
-\begin{definition}[Barbs]\rm
+\begin{definition}[Barbs]%\rm
 	Let $P$ be a closed process. We define:
-	\begin{enumerate}
+	\begin{enumerate}[1.]
 		\item	
 		$P \barb{n}$ if $P \scong \newsp{\tilde{m}}{\bout{n}{V} P_2 \Par P_3}, n \notin \tilde{m}$. %; $P \Barb{n}$ if $P \red^* \barb{n}$.
 
@@ -1066,7 +1069,7 @@ We define reduction-closed, barbed congruence \cite{HondaKYoshida95}.
 	Typed relation
 	$\horel{\Gamma}{\Delta_1}{P}{\ \Re\ }{\Delta_2}{Q}$
 	is a {\em reduction-closed, barbed congruence} whenever:
-	\begin{enumerate}[1)]
+	\begin{enumerate}[1.]
 		\item	If $P \red P'$ then there exist $Q', \Delta_1'$,  $\Delta_2'$ such that $Q \red^* Q'$ and
 			$\horel{\Gamma}{\Delta_1'}{P'}{\ \Re\ }{\Delta_2'}{Q'}$; 
 			%and its symmetric case;
@@ -1174,7 +1177,7 @@ characteristic bisimilarity was introduced in~\cite{characteristic_bis} (Def.~14
 	\label{d:fwb}
 	A typed relation $\Re$ is called a {\em  characteristic bisimulation} if 
 	for all $\horel{\Gamma}{\Delta_1}{P_1}{\ \Re \ }{\Delta_2}{Q_1}$ 
-	\begin{enumerate}[1)]
+	\begin{enumerate}[1.]
 		\item 
 				Whenever 
 				$\horel{\Gamma}{\Delta_1}{P_1}{\hby{\news{\tilde{m_1}} \bactout{n}{V_1: U}}}{\Delta_1'}{P_2}$,
@@ -1378,10 +1381,10 @@ two dual endpoints);
 %(where $\subj{\ell_1}$ and $\subj{\ell_2}$ in the premise  are dual endpoints), 
 %possibly followed by uses of  $\ltsrule{Alpha}$, $\ltsrule{Res}$, $\ltsrule{Rec}$, or $\ltsrule{Par${}_L$}/\ltsrule{Par${}_R$}$.
 
-We have the following determinacy properties; 
+We have the following determinacy property;
 %see  \appref{app:sub_tau_inert} 
-see~\cite{KouzapasPY15}
-for details.
+see~\cite{KouzapasPY15} for details. 
+
 
 \begin{lemma}[$\tau$-Inertness]%\rm
 	\label{lem:tau_inert}
@@ -1411,9 +1414,13 @@ for details.
 %	\qed
 %\end{proof}
 
-Using the above determinacy properties, we can state the following up-to technique.
+\newj{We use 
+\lemref{lem:tau_inert}
+to prove \thmref{t:negative}, the negative result stated in
+\secref{ss:negative}.
+This property also enables us to define the following up-to technique, which is used in full abstraction proofs.
 We write $\Hby{\dtau}$ to denote a (possibly empty) sequence of deterministic steps 
-$\hby{\dtau}$.
+$\hby{\dtau}$.}
 
 
 \begin{lemma}[Up-to Deterministic Transition]%\myrm
@@ -1529,7 +1536,7 @@ $\hby{\dtau}$.
 \section{Encodability Criteria for Typed Encodings}
 \label{s:expr}
 %\input{encoding}
-Here we define the formal notion of \emph{encoding} by 
+We now define the formal notion of \emph{encoding} by 
 extending to a typed setting existing criteria for untyped processes (as in, e.g.,
 \cite{Nestmann00,Palamidessi03,DBLP:conf/lics/PalamidessiSVV06,DBLP:journals/iandc/Gorla10,DBLP:conf/icalp/LanesePSS10,DBLP:journals/tcs/FuL10,DBLP:journals/corr/abs-1208-2750,DBLP:conf/esop/PetersNG13}). 
 We first define a typed calculus parameterised by a syntax, operational semantics, and typing.
