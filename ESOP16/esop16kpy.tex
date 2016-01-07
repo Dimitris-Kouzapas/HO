@@ -74,7 +74,7 @@ more precisely and efficiently than the first-order
 session $\pi$-calculus (\sessp).
 Overall, under session types, 
 $\HOp$, $\HO$, and $\sessp$ 
-are equally expressive; but 
+are equally expressive; \newjb{however},  
 $\HOp$ and $\HO$ are more tightly related than 
 $\HOp$ and $\sessp$.
 \end{abstract}
@@ -404,7 +404,7 @@ possibilities for representing infinite behaviour.
 To encode name passing into \HO 
 %to encode name output, 
 we ``pack''
-the name to be sent into a suitable abstraction; 
+the name to be sent into an abstraction; 
 upon reception, the receiver ``unpacks'' this object following a precise protocol on a fresh  session:
 %More precisely, our encoding \jpc{of name passing} in \HO is given as:
 \begin{center}
@@ -432,17 +432,23 @@ a (deterministic) reduction between
 $s$ and $\dual{s}$ guarantees that $b$ is properly unpacked by means of abstraction passing
 and appropriate applications.
 Notice that 
-\HO requires two extra reduction steps to mimic a name communication step in \HOp.
+%\HO 
+\newjb{the above encoding}
+requires %two 
+\newjb{three}
+extra reduction steps to mimic a name communication step in \HOp.
 Also, an output action in the source process is translated into an output action in the encoded process (and similarly for input).
 This is key to ensure the preservation of session type operators mentioned above (cf. \defref{def:tp}).
 
 \newj{As hinted at above, 
 a challenge in 
- encoding $\recp{X}{P}$ is how to 
-preserve linearity  of session names.
+ encoding $\recp{X}{P}$ is  
+preserving linearity  of session names.
 Intuitively, we encode the recursion body $P$ as an abstraction 
 $\abs{\tilde{x}}{\auxmapp{P}{{}}{\sigma}}$
-in which each session name of $P$ is converted into a name variable in $\tilde{x}$, using mapping $\sigma$.
+in which each session name of $P$ (included in 
+set $\sigma$)
+is converted into a name variable in $\tilde{x}$.
 Since  
 $\abs{\tilde{x}}{\auxmapp{P}{{}}{\sigma}}$
 does not mention (linear) session names,
@@ -510,13 +516,13 @@ requires the translation of both process and types; it
 admits only process mappings that preserve session types
 \emph{and} are fully abstract. Thus, our encodings 
 not only exhibit  strong behavioural correspondences, but also 
- relate source and target processes with  
+ relate source and target processes with consistent 
 communication structures described by session types.
 %Moreover, the notion of encoding includes full abstraction as encodability criteria.
 These requirements are demanding and make our developments far from trivial.
 In particular, requiring type preservation may rule out other plausible encoding strategies.
 To illustrate this point,
-consider the  following encoding of %$\sessp$ 
+consider the  following \newjb{alternative} encoding of %$\sessp$ 
 name-passing 
 into $\HO$:\footnote{This alternative  encoding was suggested by an anonymous reviewer of a previous version of this paper.} %defined as
 \begin{center}
@@ -538,7 +544,7 @@ is \emph{not type preserving}. Consequently, it is also not \emph{precise}.
 %Type preservation is intended to preserve the overall semantics of session types:
 Since individual prefixes (input, output, branching, select) 
 represent actions in a structured communication sequence (i.e., a protocol abstracted by a session type),
-the encoding above would simply alter the meaning of the session protocol in the source language.
+the encoding~$\umap{\cdot}$ would simply alter the meaning of the session protocol in the source language.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -555,7 +561,8 @@ syntax, operational semantics, and
 its sub-calculi (\sessp and \HO).
 A type system and behavioural equivalences are introduced in 
 \secref{sec:types} and \secref{sec:bt}. 
-Extensions of \HOp %(\HOpp and \PHOp) 
+Extensions of \HOp 
+with higher-order abstractions and polyadicity (noted \HOpp and \PHOp, respectively) 
 are discussed in \secref{sec:extension}.
 
 
@@ -579,7 +586,7 @@ are discussed in \secref{sec:extension}.
 The syntax of \HOp is defined in \figref{fig:syntax}.
 \HOp it is a subcalculus of the language studied 
 in~\cite{tlca07}. It is also a variant of the language that we investigated in~\cite{characteristic_bis}, 
-where higher-order value applications were considered. 
+which includes higher-order value applications. 
 
 
 \input{figures/syntax}
@@ -606,14 +613,16 @@ abstractions $\abs{x}{P}$ (first- and higher-order values, resp.).
 
 %\myparagraph{Terms} 
 
-Terms
-include $\pi$-calculus prefixes for sending and receiving values $V$.
+Process terms $P, Q, \ldots$ 
+include usual %$\pi$-calculus 
+prefixes for sending/receiving values $V$.
 %Process $\bout{u}{V} P$ denotes the output of value $V$
 %over name $u$, with continuation $P$;
 %process $\binp{u}{x} P$ denotes the input prefix on name $u$ of a value
 %that 
 %will substitute variable $x$ in continuation $P$. 
-Recursion   $\recp{X}{P}$ binds the recursive variable $\varp{X}$ in process $P$.
+Processes $\bsel{u}{l} P$ and $\bbra{u}{l_i: P_i}_{i \in I}$ are the
+usual session processes for selecting and branching~\cite{honda.vasconcelos.kubo:language-primitives}.
 Process 
 %ny
 %$\appl{x}{u}$ 
@@ -621,8 +630,7 @@ $\appl{V}{u}$
 is the application
 which substitutes name $u$ on the abstraction~$V$. 
 Typing  ensures that $V$ is not a name.
-Processes $\bsel{u}{l} P$ and $\bbra{u}{l_i: P_i}_{i \in I}$ are the
-usual session processes for selecting and branching.
+Recursion   $\recp{X}{P}$ binds the recursive variable $\varp{X}$ in   $P$.
 %Prefix $\bsel{u}{l} P$ selects label $l$ on name $u$ and then behaves as $P$.
 %Given $i \in I$ 
 %Process $\bbra{u}{l_i: P_i}_{i \in I}$ offers a choice on labels $l_i$ with
@@ -655,7 +663,7 @@ The \emph{operational semantics} of \HOp is defined in terms of a reduction rela
 denoted $\red$ and 
 given in 
  \figref{fig:reduction} (top).
- We briefly explain the rules. 
+ We briefly describe the rules. 
 Rule $\orule{App}$ defines  name application.
 Rule $\orule{Pass}$ defines a shared interaction at $n$ 
 (with $\dual{n}=n$) or a session interaction.
@@ -665,7 +673,8 @@ Rule $\orule{Sel}$ is the standard rule for labelled choice/selection.%:
 %labels $\set{l_i}_{i \in I}$ offered by a branching 
 %on the dual endpoint $\dual{n}$;
 Other rules are standard $\pi$-calculus rules.
-Reduction is closed under \emph{structural congruence} as defined in \figref{fig:reduction} (bottom). 
+Reduction is closed under \emph{structural congruence}, 
+noted $\scong$ (cf. \figref{fig:reduction}, bottom). 
 We assume the expected extension of $\scong$ to values $V$.
 We write $\red^\ast$ for a multi-step reduction.
 
@@ -684,12 +693,14 @@ we define two \emph{subcalculi} of \HOp:
 		formal syntax is obtained from \figref{fig:syntax} by excluding 
 		constructs in \nonhosyntax{\text{grey}}.
 
-	\item	The   
+	\item	\newjb{The   
 		 {\em session $\pi$-calculus}, 
 		denoted $\sessp$, 
 		lacks  
-		higher-order constructs
-		(i.e., abstraction passing and application), but includes recursion.
+		higher-order communication but includes recursion;
+		its 
+		formal syntax is obtained from \figref{fig:syntax} by excluding 
+		constructs in \nonpisyntax{\text{boxes}}}.
 
 %	\item	The third sub-calculus, denoted \haskp, represents cloud Haskell:
 %		\[
@@ -739,13 +750,13 @@ The syntax of types of \HOp follows. We write $\Proc$ to denote the process type
 \[
 	\begin{array}{rcl}
 %		\text{(value)} &
-		U & \bnfis &	\nonhosyntax{C} \bnfbar L
+		U & \bnfis &	\nonhosyntax{C} \bnfbar \nonpisyntax{L}
 %		\\[1mm]  % \bnfbar \Proc
-		\qquad \qquad
+		\qquad \quad
 %		\text{(name)} 
-		C  \bnfis		S \bnfbar \chtype{S} \bnfbar \chtype{L}
+		C  \bnfis		S \bnfbar \chtype{S} \bnfbar \nonpisyntax{\chtype{L}}
 %		\\[1mm]
-		\qquad \qquad
+		\qquad \quad
 %		\text{(abstr)}
 		L \bnfis		\shot{C} \bnfbar \lhot{C}
 		\\[1mm]
@@ -789,8 +800,8 @@ Shared channel types are denoted $\chtype{S}$ and $\chtype{L}$.
 %%$\btinp{U} S$ can contain free type variables, which is crucial
 %%to encode $\HOp$ into $\HO$.
 %Type $\tinact$ is the termination type. 
-Types of \HO exclude $\nonhosyntax{C}$ from 
-value types of \HOp; the types of \sessp exclude $L$. 
+\newjb{Types of \HO exclude $\nonhosyntax{C}$ from 
+value types $U$; the types of \sessp exclude $\nonpisyntax{L}$ and $\nonpisyntax{\chtype{L}}$.}
 From each $\CAL \in \{\HOp, \HO, \pi \}$, $\CAL^{-\mathsf{sh}}$ 
 excludes shared name types ($\chtype{S}$ and $\chtype{L}$), 
 from name type $C$.
@@ -807,7 +818,9 @@ We use the \emph{co-inductive} definition of duality given in \cite{TGC14}.}
 %\subsection{Typing System of \HOp}
 %\label{subsec:typing}
 %\paragraph{Typing Environments / Judgements}
-We consider \emph{environments} denoted $\Gamma$, $\Lambda$, and $\Delta$:
+We consider 
+\newjb{shared, linear, and session}
+\emph{environments}, denoted $\Gamma$, $\Lambda$, and $\Delta$, \newjb{resp.}:
 \[
 	\begin{array}{l}
 		\Gamma  \bnfis  \emptyset \bnfbar \Gamma \cat \varp{x}: \shot{C} \bnfbar \Gamma \cat u: \chtype{S} \bnfbar \Gamma \cat u: \chtype{L} 
@@ -820,7 +833,7 @@ We consider \emph{environments} denoted $\Gamma$, $\Lambda$, and $\Delta$:
 \]
 %Environment 
 $\Gamma$ maps variables and shared names to value types, and recursive 
-variables to session environments (see below);  
+variables to session environments; % (see below);  
 it admits weakening, contraction, and exchange principles.
 $\Lambda$ maps variables to 
 %the
@@ -833,9 +846,9 @@ Both $\Lambda$ and $\Delta$
 %behave linearly: they 
 are
 only subject to exchange.  
-We require that the domains of $\Gamma,
-\Lambda$ and $\Delta$ are pairwise distinct. 
-$\Delta_1\cdot \Delta_2$ denotes the disjoint union of $\Delta_1$ and $\Delta_2$.  
+Domains of $\Gamma,
+\Lambda$ and $\Delta$ are assumed pairwise distinct. 
+$\Delta_1\cdot \Delta_2$ is the disjoint union of $\Delta_1$ and $\Delta_2$.  
 We focus on \emph{balanced} session environments: 
 %that contain dual endpoints typed with dual types.
 %The following definition ensures two session endpoints 
@@ -869,7 +882,8 @@ $\Gamma; \Lambda; \Delta \proves V \hastype U$ and $\Gamma; \Lambda; \Delta \pro
 \input{figures/type_system_selected}
 %\paragraph{Typing Rules} 
 
-Selected typing rules are given in \figref{fig:typerulesmys}; 
+\figref{fig:typerulesmys} gives
+selected typing rules; 
 %see \appref{app:typrules} 
 see \cite{KouzapasPY15} for a full account.
 %Types for session names/variables $u$ and
@@ -891,23 +905,19 @@ Abstraction values are typed with rule~\textsc{(Abs)}.
 Application typing
 is governed by rule~\textsc{(App)}: we expect
 the type $C$ of an application name $u$ 
-to match the type $\lhot{C}$ or $\shot{C}$
-of the application variable $x$.
+to match the type of the application variable $x$ (i.e., $\lhot{C}$ or $\shot{C}$).
 %
 %A process prefixed with a session send operator $\bout{k}{V} P$
 %is typed using rule $\trule{Send}$.
 In rule~\textsc{(Send)}, 
-the type $U$ of a send value $V$ should appear as a prefix
-on the session type $\btout{U} S$ of $u$.
+the type $U$ of value $V$ should appear as a prefix in the session type $\btout{U} S$ of $u$.
 Rule~\textsc{(Rcv)} is its dual.  
 %defined the typing for the 
 %reception of values $\binp{u}{V} P$.
 %the type $U$ of a receive value should 
 %appear as a prefix on the session type $\btinp{U} S$ of $u$.
-We use a similar approach with session prefixes
-to type interaction between shared names as defined 
-in rules~\textsc{(Req)} and~\textsc{(Acc)},
-where the type of the sent/received object 
+Rules~\textsc{(Req)} and~\textsc{(Acc)} type interaction along shared names;
+the type of the sent/received object 
 ($S$ and $L$, resp.) should
 match the type of the sent/received subject
 ($\chtype{S}$ and $\chtype{L}$, resp.).
@@ -972,7 +982,7 @@ type soundness for \HO, \sessp, and $\CAL^{-\mathsf{sh}}$.
 
 We first define reduction-closed, barbed congruence ($\cong$, \defref{def:rc}) as the
 reference equivalence relation for \HOp processes.
-We then define two characterizations of $\cong$:
+We then define two characterisations of $\cong$:
 \emph{characteristic} and
 \emph{higher-order bisimilarities}   
  (denoted $\fwb$ and $\hwb$, cf. \defsref{d:fwb} and \ref{d:hbw}). 
@@ -984,7 +994,7 @@ We then define two characterizations of $\cong$:
 
 We consider \emph{typed relations} $\Re$ that relate  closed terms whose
 session environments %and the two session environments
-are balanced  and confluent:
+are balanced  and \emph{confluent}:
 
 \begin{definition}[Session Environment Confluence]
 Let $\red^\ast$ denote multi-step reduction as in \defref{def:ses_red}.
@@ -999,13 +1009,13 @@ Let $\red^\ast$ denote multi-step reduction as in \defref{def:ses_red}.
 
 \begin{definition}[Typed Relation]
 	We say that
-	$\Gamma; \emptyset; \Delta_1 \proves P_1 \hastype \Proc\ \Re \ \Gamma; \emptyset; \Delta_2 \proves P_2 \hastype \Proc$
+	$\Gamma; \emptyset; \Delta_1 \proves P \hastype \Proc\ \Re \ \Gamma; \emptyset; \Delta_2 \proves Q \hastype \Proc$
 	is a {\em typed relation} whenever
-	$P_1$ and $P_2$ are closed;
+	$P$ and $Q$ are closed;
 	$\Delta_1$ and $\Delta_2$ are balanced; and 
 	$\Delta_1 \bistyp \Delta_2$.
-	We write $\horel{\Gamma}{\Delta_1}{P_1}{\ \Re \ }{\Delta_2}{P_2}$
-	for the typed relation $\Gamma; \emptyset; \Delta_1 \proves P_1 \hastype \Proc\ \Re \ \Gamma; \emptyset; \Delta_2 \proves P_2 \hastype \Proc$.
+	We write $\horel{\Gamma}{\Delta_1}{P}{\ \Re \ }{\Delta_2}{Q}$
+	for the typed relation $\Gamma; \emptyset; \Delta_1 \proves P \hastype \Proc\ \Re \ \Gamma; \emptyset; \Delta_2 \proves Q \hastype \Proc$.
 \end{definition}
 
 %\smallskip 
@@ -1042,16 +1052,20 @@ To define a congruence relation, we introduce the family $\C$ of contexts:
 
 \begin{definition}[Context]
 	A context $\C$ is defined as:
-
-	\begin{tabular}{rcl}
-		$\C$ & $\bnfis$ & $\hole \bnfbar \bout{u}{V} \C \bnfbar \binp{u}{x} \C \bnfbar \bout{u}{\lambda x.\C} P \bnfbar \news{n} \C
-		\bnfbar (\lambda x.\C)u \bnfbar \recp{X}{\C}$ 
+\begin{eqnarray*}
+		\C & \bnfis &  \hole \bnfbar \bout{u}{V} \C \bnfbar \binp{u}{x} \C \bnfbar \bout{u}{\lambda x.\C} P \bnfbar \news{n} \C
+		\bnfbar (\lambda x.\C)u \bnfbar \recp{X}{\C}  
 		\\
-		&$\bnfbar$& $\C \Par P \bnfbar P \Par \C
-		\bnfbar \bsel{u}{l} \C \bnfbar \bbra{u}{l_1:P_1,\cdots,l_i:\C,\cdots,l_n:P_n}$
-	\end{tabular}
+		& \bnfbar &  \C \Par P \bnfbar P \Par \C \bnfbar \bsel{u}{l} \C \bnfbar \bbra{u}{l_1:P_1,\cdots,l_i:\C,\cdots,l_n:P_n} 
+	\end{eqnarray*}
+	%	\begin{tabular}{rcl}
+%		$\C$ & $\bnfis$ & $\hole \bnfbar \bout{u}{V} \C \bnfbar \binp{u}{x} \C \bnfbar \bout{u}{\lambda x.\C} P \bnfbar \news{n} \C
+%		\bnfbar (\lambda x.\C)u \bnfbar \recp{X}{\C}$ 
+%		\\
+%		&$\bnfbar$& $\C \Par P \bnfbar P \Par \C
+%		\bnfbar \bsel{u}{l} \C \bnfbar \bbra{u}{l_1:P_1,\cdots,l_i:\C,\cdots,l_n:P_n}$
+%	\end{tabular}
 %\smallskip 
-
 %\noi 
 Notation $\context{\C}{P}$ replaces 
 the hole $\hole$ in $\C$ with $P$.
@@ -1103,13 +1117,20 @@ Its definition
 uses a \emph{typed}
 labelled transition system (LTS) informed by session
 types. 
-Transitions in this LTS are denoted 
-$\Gamma; \es; \Delta \proves P \hby{\ell} \Delta' \proves P'$.
-(Weak transitions, defined as expected, are denoted 
-$\Gamma; \es; \Delta \proves P \Hby{\ell} \Delta' \proves P'$.)
-The main intuition %for its definition  
-is that the transitions 
-of a typed process should be enabled by its associated typing environment:
+\newjb{Given a label $\ell$ (a visible action or $\tau$),
+we write $\Gamma; \es; \Delta \proves P \hby{\ell} \Delta' \proves P'$ to denote 
+(strong) transitions. % in this LTS. 
+Weak transitions are as expected: we write $\Hby{}$ for the reflexive,
+transitive closure of $\hby{\tau}$,
+$\Hby{\ell}$ for %transitions
+$\Hby{}\hby{\ell}\Hby{}$, and 
+$\Hby{\hat{\ell}}$ for $\Hby{\ell}$ if
+$\ell\not = \tau$ and $\Hby{}$ otherwise.
+%We thus write $\Gamma; \es; \Delta \proves P \Hby{\hat{\ell}} \Delta' \proves P'$.
+}
+%The main intuition %for its definition  
+Intuitively, the transitions 
+of a typed process should be enabled by its associated typing: % environment:
 %
 %\[
 %	\tree {
@@ -1139,15 +1160,15 @@ As an example of how types enable transitions, consider the rule for input:
 	}
 \]
 %\noi
-This rule states that a session channel environment can input a value
-if the channel is typed with an input prefix and the input value is either
+This rule states that a session environment can input a value
+if such a value is typed with an input prefix and is either
 a name $m$, a \emph{characteristic value} $\omapchar{U}$,  or a \emph{trigger value} (the abstraction
 $\abs{{x}}{\binp{t}{y} (\appl{y}{{x}})}$). 
 A characteristic value
 is the {simplest} process that  inhabits a type (here, the
 type $U$ carried by the input prefix). The above rule is used to limit
 the input actions that can be observed from a session input prefix.
-For details of the labelled transition system and the characteristic process definition
+For more details on the typed LTS and the characteristic process definition
 see% \appref{app:behavioural} and
 ~\cite{characteristic_bis}.
 Moreover, we define a \emph{(first-order) trigger process}:
@@ -1167,11 +1188,10 @@ applies a value
 on the %(hard coded) 
 \emph{characteristic process} $\map{\btinp{U} \tinact}^{s}$ (see~\cite{characteristic_bis} for details). 
 
-\paragraph{Characterisations of $\cong$.}
-We now define \emph{characteristic} and \emph{higher-order} bisimilarities.
-Observe that higher-order bisimilarity is a new typed equality, 
-while 
-characteristic bisimilarity was introduced in~\cite{characteristic_bis} (Def.~14).
+\paragraph{Characterising $\cong$.}
+We define \emph{characteristic} and \emph{higher-order} bisimilarities.
+While higher-order bisimilarity is a new equality, 
+characteristic bisimilarity was introduced in~\cite{characteristic_bis}. % (Def.~14).
 
 \begin{definition}[Characteristic Bisimilarity]%\rm
 	\label{d:fwb}
@@ -1187,11 +1207,11 @@ characteristic bisimilarity was introduced in~\cite{characteristic_bis} (Def.~14
 				$\horel{\Gamma}{\Delta_2}{Q_1}{\Hby{\news{\tilde{m_2}} \bactout{n}{V_2: U}}}{\Delta_2'}{Q_2}$ and, for fresh $t$, 
 %
 				\[
-					\begin{array}{lrlll}
+				%	\begin{array}{lrlll}
 						\Gamma; \Delta''_1  \proves  {\newsp{\tilde{m_1}}{P_2 \Par \ftrigger{t}{V_1}{U_1}}}
 						\ \Re \
 						\Delta''_2 \proves {\newsp{\tilde{m_2}}{Q_2 \Par \ftrigger{t}{V_2}{U_2}}}
-					\end{array}
+				%	\end{array}
 				\]
 
 		\item	
@@ -1326,23 +1346,23 @@ as it works independently of the given type.
 
 
 \paragraph{An up-to technique.}
-In our setting, processes that do not use shared names are deterministic. 
-The following up-to technique, based on determinacy properties, will be useful in proofs (\secref{sec:positive}).
+Processes that do not use shared names are deterministic. 
+The following up-to technique, based on determinacy properties, will be useful in proofs~(\secref{sec:positive}).
 Recall that $\horel{\Gamma}{\Delta}{P}{\hby{\tau}}{\Delta'}{P'}$ denotes an internal (typed) transition.
  
  \begin{notation}[Deterministic Transitions]
  \label{not:dettrans}
-We distinguish two kinds of  internal transitions:
-\emph{session transitions}, denoted 
+We distinguish two kinds of  $\tau$-transitions:
+\emph{session transitions}, noted 
 $\horel{\Gamma}{\Delta}{P}{\hby{\stau}}{\Delta'}{P'}$,
 and 
-\emph{$\beta$-transitions}, denoted $\horel{\Gamma}{\Delta}{P}{\hby{\btau}}{\Delta'}{P'}$.
+\emph{$\beta$-transitions}, noted $\horel{\Gamma}{\Delta}{P}{\hby{\btau}}{\Delta'}{P'}$.
 Intuitively, $\hby{\stau}$  results from a session communication (i.e., synchronization between
-two dual endpoints); 
+two dual endpoints), while 
   $\hby{\btau}$ results from an application. 
  We write  $\horel{\Gamma}{\Delta}{P}{\hby{\dtau}}{\Delta'}{P'}$ to denote
-	either a session transition or a $\beta$-transition.
-	Formal definitions for $\hby{\btau}$  and $\hby{\stau}$ rely on an LTS for \HOp; see~\cite{KouzapasPY15} for details.
+	 a session transition or a $\beta$-transition.
+	See~\cite{KouzapasPY15} for definitions of $\hby{\btau}$  and $\hby{\stau}$. % rely on an LTS for \HOp;  for details.
  \end{notation}
  
 %The auxiliary definition below allows us to distinguish two kinds of  internal transitions:
@@ -1421,7 +1441,7 @@ see~\cite{KouzapasPY15} for details.
 \lemref{lem:tau_inert}
 to prove \thmref{t:negative}, the negative result stated in
 \secref{ss:negative}.
-This property also enables us to define the following up-to technique, which is used in full abstraction proofs.
+This property also enables us to define the following up-to technique, useful in full abstraction proofs.
 We write $\Hby{\dtau}$ to denote a (possibly empty) sequence of deterministic steps 
 $\hby{\dtau}$.}
 
@@ -1539,11 +1559,13 @@ $\hby{\dtau}$.}
 \section{Criteria for Typed Encodings}
 \label{s:expr}
 %\input{encoding}
-We now define the formal notion of \emph{encoding} by 
+We define the formal notion of \emph{encoding} by 
 extending to a typed setting existing criteria for untyped processes (as in, e.g.,
 \cite{Nestmann00,Palamidessi03,DBLP:conf/lics/PalamidessiSVV06,DBLP:journals/iandc/Gorla10,DBLP:conf/icalp/LanesePSS10,DBLP:journals/tcs/FuL10,DBLP:journals/corr/abs-1208-2750,DBLP:conf/esop/PetersNG13}). 
 We first define a typed calculus parameterised by a syntax, operational semantics, and typing.
-Based on this definition, later on we define concrete instances of (higher-order) typed calculi.
+Based on this definition, in  
+\secref{sec:positive} and \secref{sec:extension}
+we define concrete instances of (higher-order) typed calculi.
 
 %\smallskip 
 
@@ -1585,7 +1607,7 @@ Based on this definition, later on we define concrete instances of (higher-order
 %\noi 
 As we explain later, we write $\hby{\tau}$ to denote an operational semantics defined in terms of
 $\tau$-transitions (to characterise reductions).
-Our notion of encoding considers mappings on processes 
+Our notion of encoding considers mappings on both processes 
 and types; these are denoted $\map{\cdot}$ and $\mapt{\cdot}$, respectively: %, and transition labels: 
 
 \begin{definition}[Typed Encoding]%\rm
@@ -1760,14 +1782,16 @@ Together with type preservation (\defref{def:tp}), type soundness is a distingui
 % it enables us to focus on encodings which retain the communication structures denoted by session types.
 %The other semantic
 %criteria build upon analogous definitions in the untyped setting, as we explain now. 
-\newj{Barb preservation, related to success sensitiveness in~\cite{DBLP:journals/iandc/Gorla10}, is convenient in our developments as all considered calculi have the same notion of barb.}
-Operational correspondence, standardly divided into completeness and soundness, is based
+\newj{Barb preservation, related to success sensitiveness 
+%(as defined in~\cite{DBLP:journals/iandc/Gorla10}), 
+in~\cite{DBLP:journals/iandc/Gorla10}, is convenient in our developments as all considered calculi have the same notion of barb.}
+Operational correspondence, standardly divided into completeness and soundness, is also based
 %in the formulation given i
-on~\cite{DBLP:journals/iandc/Gorla10,DBLP:conf/icalp/LanesePSS10};
+on~\cite{DBLP:journals/iandc/Gorla10};
 it relies on 
 %the typed LTS of \defref{def:rlts}, 
 %labelled transitions rather than on 
-$\tau$-labeled transitions (reductions).
+$\tau$-transitions (reductions).
 Completeness ensures that a step of the source process is mimicked
 by a step of its associated encoding; soundness is its converse.
 %Soundness ensures that the source process is mimicked 
@@ -1784,7 +1808,7 @@ for our encodings
  are tailored to the specifics of each encoding, and so they
  are actually stronger than the criteria given above
  {(see \propsref{prop:op_corr_HOp_to_HO}, \ref{prop:op_corr_HOp_to_p}, \ref{prop:op_corr_HOpp_to_HOp}, \ref{prop:op_corr_pHOp_to_HOp}
- and ~\cite{KouzapasPY15} for details).}
+ and~\cite{KouzapasPY15} for details).}
 Finally, following~\cite{SangiorgiD:expmpa,DBLP:conf/lics/PalamidessiSVV06,Yoshida96},
 we consider full abstraction as an encodability criterion: this leads to 
 stronger encodability results. 
@@ -1821,6 +1845,7 @@ While we state strong positive encodability results % in \secref{sec:positive},
 in terms of {\em precise} encodings,
 to prove the non-encodability result in \secref{ss:negative}, 
 we appeal to the weaker {\em minimal} encodings.  
+%Building upon precise encodings in \defref{def:lopco} we define \emph{tight} encodings.
 
 \begin{definition}[Typed Encodings: Precise and Minimal]%\rm
 \label{def:goodenc}
@@ -1875,7 +1900,8 @@ The following property will come in handy in \secref{sec:extension}:
 \section{Expressiveness Results}
 \label{sec:positive}
 %\input{positive}
- We first present two encodability results:
+ We first present two %encodability results:
+ precise encodings: 
 (1)~higher-order communication with recursion and name-passing   (\HOp) into 
 higher-order communication without name-passing nor recursion (\HO) (\secref{subsec:HOpi_to_HO}); and 
 (2)~\HOp into the first-order calculus with name-passing  
@@ -2102,7 +2128,8 @@ A precise encoding of polyadicity into \HO is given in~\secref{sec:extension}.
 As motivated in \secref{sec:overview}, % we encode passing of name $w$  
 a name $w$ is passed as an input-guarded abstraction;
 on the receiver side,
-the encoding realises a mechanism that i) receives
+the encoding %realises a mechanism that 
+i) receives
 the abstraction; ii) applies to it a fresh  endpoint $s$;
 iii)~uses the dual endpoint $\dual{s}$ to send the continuation $P$ as an abstraction.
 %$\abs{x}{P}$. 
@@ -2177,12 +2204,12 @@ Next we illustrate the behaviour of $\pmapp{P}{1}{f}$; below $\ell$ stands for $
 \pmapp{P}{1}{f} & \scong & \newsp{s_1}{\bout{\dual{s_1}}{V} \inact \Par \binp{s_1}{x} \bout{a}{\abs{z}{\binp{z}{x} (\appl{x}{m})}} \newsp{s_2}{\bout{\dual{s_2}}{\abs{(x_a, x_m, z)}{\\
 & & \qquad \qquad \qquad \qquad \quad \quad  \appl{x}{(x_a, x_m, z)}}} \inact} 
 \Par \appl{x}{(a,m, s_2)}} \\
-& \by{\tau} & \bout{a}{\abs{z}{\binp{z}{x} (\appl{x}{m})}} \newsp{s_2}{\bout{\dual{s_2}}{V} \inact \Par \binp{s_2}{x} \bout{a}{\abs{z}{\binp{z}{x} (\appl{x}{m})}} \\
+& \hby{\tau} & \bout{a}{\abs{z}{\binp{z}{x} (\appl{x}{m})}} \newsp{s_2}{\bout{\dual{s_2}}{V} \inact \Par \binp{s_2}{x} \bout{a}{\abs{z}{\binp{z}{x} (\appl{x}{m})}} \\
 & & \qquad \qquad \quad \qquad \qquad \quad \newsp{s_3}{\bout{\dual{s_3}}{\abs{(x_a, x_m, z)}{\appl{x}{(x_a, x_m, z)}}} \inact} \Par \appl{x}{(a,m, s_3)}} \\
 & \scong_{\alpha} & \bout{a}{\abs{z}{\binp{z}{x} (\appl{x}{m})}} \newsp{s_1}{\bout{\dual{s_1}}{V} \inact \Par \binp{s_1}{x} \bout{a}{\abs{z}{\binp{z}{x} (\appl{x}{m})}} \\
 & & \qquad \qquad \qquad \qquad \quad \quad \newsp{s_2}{\bout{\dual{s_2}}{\abs{(x_a, x_m, z)}{\appl{x}{(x_a, x_m, z)}}} \inact} \Par \appl{x}{(a,m, s_2)}} \\
 & \scong & 
-		\bout{a}{\abs{z}{\binp{z}{x} (\appl{x}{m})}} \pmapp{\recp{X}{\bout{a}{m} \varp{X}}}{1}{f} \by{\ell} 
+		\bout{a}{\abs{z}{\binp{z}{x} (\appl{x}{m})}} \pmapp{\recp{X}{\bout{a}{m} \varp{X}}}{1}{f} \hby{\ell} 
 		\pmapp{\recp{X}{\bout{a}{m} \varp{X}}}{1}{f}.
 %& \by{\lambda} & 
 %		\pmapp{\recp{X}{\bout{a}{m} \varp{X}}}{1}{f}
@@ -2636,7 +2663,7 @@ We now formally establish differences between $\map{\cdot}_f^1$ and $\pmap{\cdot
 To this end, 
 we introduce an extra encodability criterion: a form of operational correspondence 
 for \emph{visible actions}. 
-We shall write $\ell_1, \ell_2, \ldots$ to denote  
+Below we write $\ell_1, \ell_2$ to denote  
 actions different from $\tau$
 and  $\hby{\ell}$ to denote an LTS.
 %with both visible and observable actions, denoted. % and $\hby{}_2$.
@@ -2673,8 +2700,8 @@ which is precise (\defref{def:goodenc}) and that also satisfies
 labelled operational correspondence as above.
 \end{definition}
 
-The following result attests that 
-\HOp and \HO are more tightly related than \HOp and~\sessp:
+We may formally state that 
+\HOp and \HO are more closely related than \HOp and~\sessp:
 \begin{theorem}[\HO Tightly Encodes \HOp]\label{t:tight}
 While the encoding of \HOp into \HO (\defref{d:enc:hopitoho}) is tight, the encoding of \HOp into \sessp (\defref{d:enc:hopitopi}) is not tight.
 \end{theorem}
