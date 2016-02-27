@@ -73,15 +73,17 @@ Type $\tinact$ is the termination type.
 %from name type $C$.
 
 %Following \cite{TGC14},
+\newc{We rely on notions of \emph{duality} and \emph{equivalence} for types.}
+Let us write $S_1 \sim S_2$
+to denote that $S_1$ and $S_2$ are \emph{type-equivalent} (see 
+\defref{def:iso} in the Appendix).
+\newc{This notion extends to value types as expected; we write $U_1 \sim U_2$ to denote that $U_1$ and $U_2$ are type-equivalent.}
 We write $S_1 \dualof S_2$ if 
 $S_1$ is the \emph{dual} of $S_2$.   
 Intuitively, 
 duality
 converts $!$ into $?$ and $\oplus$ into $\&$ (and vice-versa).
-More formally, let us write $S_1 \sim S_2$
-to denote that $U_1$ and $U_2$ are \emph{type-equivalent} (see 
-\defref{def:iso}).
-Following \cite{TGC14},
+More formally, following~\cite{TGC14},
 %for a co-inductive definition of duality.
 %More formally, we 
 we have a co-inductive definition for 
@@ -213,7 +215,7 @@ relies on two auxiliary notions on session environments:
 	\begin{mathpar}
 		\inferrule[\trule{Sess}]{
 		}{
-			\appl{(\abs{x}{P})}{V} \by{\tau} P \subst{V}{x}
+			\Gamma; \emptyset; \{u:S\} \proves u \hastype S
 		}
 		\and
 		\inferrule[\trule{Sh}]{
@@ -347,7 +349,7 @@ U_1
 		}
 				\and
 				\inferrule[\trule{End}]{
-			\Gamma; \Lambda; \Delta  \proves P \hastype T \quad u \not\in \dom{\Gamma, \Lambda,\Delta}
+			\Gamma; \Lambda; \Delta  \proves P \hastype \Proc \quad u \not\in \dom{\Gamma, \Lambda,\Delta}
 		}{
 			\Gamma; \Lambda; \Delta \cat u: \tinact  \proves P \hastype \Proc
 		}
@@ -542,43 +544,45 @@ The typing system is defined in \figref{fig:typerulesmy}.
 %Types for session names/variables $u$ and
 %directly derived from the linear part of the typing
 %environment, i.e.~type maps $\Delta$ and $\Lambda$.
-Rules $\trule{Sess, Sh, LVar}$ are name and variable introduction rules. 
-The type $\shot{U}$ %for shared higher order values $V$
-is derived using rule $\trule{Prom}$, where we require
-a value with linear type to be typed without a linear
-environment to be typed as a shared type.
-Rule $\trule{EProm}$ allows to freely use a linear
+Rules \trule{\textsc{Sess}}, \trule{\textsc{Sh}}, \trule{\textsc{LVar}} are name and variable introduction rules. 
+%The type $\shot{U}$ %for shared higher order values $V$
+%is derived using 
+Rule $\trule{\textsc{Prom}}$
+\newc{allows a value with a linear type $\lhot{U}$
+to be used as $\shot{U}$ if its linear environment is empty.}
+%where we require a value with linear type to be typed without a linear environment to be typed as a shared type.
+Rule $\trule{\textsc{EProm}}$ allows to freely use a linear
 type variable as shared.
 
-Abstraction values are typed with rule $\trule{Abs}$.
+Abstraction values are typed with Rule $\trule{\textsc{Abs}}$.
 The key type for an abstraction is the type for
 the bound variable of the abstraction, e.g., for
 bound variable with type $C$ the corresponding abstraction has type $\lhot{C}$.
 The dual of abstraction typing is application typing,
-governed by rule $\trule{App}$: we expect
+governed by Rule $\trule{\textsc{App}}$: we expect
 the type $U$ of an application value $W$ 
 to match the type $\lhot{U}$ or $\shot{U}$
 of the application variable $x$.
 
 %A process prefixed with a session send operator $\bout{k}{V} P$
 %is typed using rule $\trule{Send}$.
-In $\trule{Send}$, 
+In Rule $\trule{\textsc{Send}}$, 
 the type $U$ of a send value $V$ should appear as a prefix
 on the session type $\btout{U} S$ of $u$.
-$\trule{Rcv}$ is its dual.  
+Rule $\trule{\textsc{Rcv}}$ is its dual.  
 %defined the typing for the 
 %reception of values $\binp{u}{V} P$.
 %the type $U$ of a receive value should 
 %appear as a prefix on the session type $\btinp{U} S$ of $u$.
 We use a similar approach with session prefixes
 to type interaction between shared names as defined 
-in rules $\trule{Req}$ and $\trule{Acc}$,
+in Rules $\trule{\textsc{Req}}$ and $\trule{\textsc{Acc}}$,
 where the type of the sent/received object 
 ($S$ and $L$, respectively) should
 match the type of the sent/received subject
 ($\chtype{S}$ and $\chtype{L}$, respectively).
-Rules for selection and branching, 
-$\trule{Sel}$ and $\trule{Bra}$, are standard: 
+Rules 
+$\trule{\textsc{Sel}}$ and $\trule{\textsc{Bra}}$ for selection and branching are standard: 
 both
 rules prefix the session type with the selection
 type $\btsel{l_i: S_i}_{i \in I}$ and
@@ -587,29 +591,28 @@ $\btbra{l_i:S_i}_{i \in I}$, respectively.
 A
 shared name creation $a$ creates and restricts
 $a$ in environment $\Gamma$ as defined in 
-rule \trule{Res}. 
+Rule \trule{\textsc{Res}}. 
 Creation of a session name $s$
 creates and restricts two endpoints with dual types 
 %and restricts
 %them by removing them from the session environment
 %$\Delta$ as defined 
-in rule \trule{ResS}. 
-Rule \trule{Par}, 
+in Rule \trule{\textsc{ResS}}. 
+Rule \trule{\textsc{Par}}, 
 combines the environments
 $\Lambda$ and $\Delta$ of
 the parallel components of a parallel process.
 %to create a type for the entire parallel process.
 The disjointness of environments $\Lambda$ and $\Delta$
-is implied. Rule \trule{End} adds 
-the names with type $\tinact$ in $\Delta$.  
+is implied. Rule \trule{\textsc{End}} adds 
+a name with type $\tinact$ in $\Delta$.  
 The recursion requires that the body process 
 matches the type of the recursive
-variable as in rule \trule{Rec}.
+variable as in Rule \trule{\textsc{Rec}}.
 The recursive variable is typed
 directly from the shared environment $\Gamma$ as
-in rule \trule{RVar}.
-The inactive process $\inact$ is typed with no
-linear environments as in \trule{Nil}. 
+in Rule~\trule{\textsc{RVar}}.
+The inactive process $\inact$ is typed with no linear environments as in Rule \trule{\textsc{Nil}}. 
 
 
 We state the type soundness result for \HOp processes.
@@ -637,7 +640,7 @@ Assume
 S & = & \btout{\Quote} \btbra{\accept: \tinact, \reject: \tinact} \\
 U & = & \btout{\rtype} \btinp{\Quote} \btsel{\accept: \btout{\creditc} \tinact, \reject: \tinact }
 \end{eqnarray*}
-While the type for $\abs{x}{P}$ is $\es; \es; y: S \proves \abs{x}{P} \hastype \lhot{U}$,
+While the type for $\abs{x}{P_{xy}}$ is $\es; \es; y: S \proves \abs{x}{P} \hastype \lhot{U}$,
 the type for $\Client_1$ is
 $~~
 	\es; \es; s_1: \btout{\lhot{U}} \tinact \cat s_2: \btout{\lhot{U}} \tinact \proves \Client_1 \hastype \Proc
