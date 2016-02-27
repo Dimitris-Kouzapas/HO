@@ -95,9 +95,9 @@ $\subj{\news{\widetilde{m}} \bactout{n}{V}} =
 			\bsel{s}{l}{P} \by{\bactsel{s}{l}} P
 		}
 		\and
-		\inferrule[\ltsrule{Bra}]{
+		\inferrule[\ltsrule{Bra}]{j\in I
 		}{
-			\bbra{s}{l_i:P_i}_{i \in I} \by{\bactbra{s}{l_j}} P_j \ (j\in I)
+			\bbra{s}{l_i:P_i}_{i \in I} \by{\bactbra{s}{l_j}} P_j 
 		}
 		\and
 		\inferrule[\ltsrule{Alpha}]{
@@ -195,7 +195,7 @@ under parallel composition and $\alpha$-renaming.
 
 \subsection{Environmental Labelled Transition System}
 \label{ss:elts}
-We define a typed LTS which results by coupling the untyped LTS given before with a labelled transition relation 
+Our typed LTS is obtained by coupling the untyped LTS given before with a labelled transition relation 
 on typing environments. Such a relation, given in \figref{fig:envLTS}, 
 is defined on triples of environments by 
 extending the LTSs
@@ -379,7 +379,7 @@ reduces it (\defref{d:wtenvred}).
 %		\Delta'_1=\set{\overline{m}: \btout{\tinact} \tinact}
 %	$
 %	and $U=\btout{\lhot{\btout{S} \tinact}} \tinact$.
-	Then by $\eltsrule{SSnd}$, we can derive:
+	Then by Rule $\eltsrule{SSnd}$, we can derive:
 %
 	\[
 		(\Gamma; \es; s: \btout{\lhot{\btout{S} \tinact}} \tinact \cat s': S) \by{\news{m} \bactout{s}{V}} (\Gamma; \es; s: \tinact \cat \dual{m}: \btout{\tinact} \tinact)
@@ -498,7 +498,7 @@ To define a congruence relation, we introduce the family $\C$ of contexts:
 	Context $\C$ is defined over the syntax:
 %
 	\begin{eqnarray*}
-		\C & ::= & \hole \bnfbar \bout{u}{V} \C \bnfbar \binp{u}{x} \C \bnfbar \bout{u}{\lambda x.\C} P \bnfbar \news{n} \C
+		\C & ::= & \hole \bnfbar \bout{u}{V} \C \bnfbar \binp{u}{x} \C \bnfbar \bout{u}{\lambda x.\C} P \bnfbar \news{n} \C \bnfbar
 		(\lambda x.\C)u \bnfbar \recp{X}{\C}\\ 
 		& \bnfbar & \C \Par P \bnfbar P \Par \C \bnfbar \bsel{u}{l} \C \bnfbar \bbra{u}{l_1:P_1,\cdots,l_i:\C,\cdots,l_n:P_n}
 	\end{eqnarray*}
@@ -520,7 +520,7 @@ To define a congruence relation, we introduce the family $\C$ of contexts:
 	\begin{enumerate}[1)]
 		\item
 				\begin{enumerate}
-					\item	If $P \red P'$ then there exist $Q', \Delta_2'$ such that $Q \red^* Q'$ and\\
+					\item	If $P \red P'$ then there exist $\Delta_1', Q', \Delta_2'$ such that $Q \red^* Q'$ and\\
 							$\horel{\Gamma}{\Delta_1'}{P'}{\ \Re\ }{\Delta_2'}{Q'}$;
 					\item	and the symmetric case;
 				\end{enumerate}
@@ -531,7 +531,7 @@ To define a congruence relation, we introduce the family $\C$ of contexts:
 				\end{enumerate}
 
 		\item	For all $\C$, there exist $\Delta_1'',\Delta_2''$ such that
-				$\horel{\Gamma}{\Delta_1''}{\context{\C}{P}}{\ \Re\ }{\Delta_2''}{\context{\C}{Q}}$; 
+				$\horel{\Gamma}{\Delta_1''}{\context{\C}{P}}{\ \Re\ }{\Delta_2''}{\context{\C}{Q}}$.
 	\end{enumerate}
 	The largest such relation is denoted with $\cong$.
 \end{definition}
@@ -553,7 +553,7 @@ we now define the standard (weak) context bisimilarity.
 				$\horel{\Gamma}{\Delta_1}{P_1}{\by{\news{\widetilde{m_1}} \bactout{n}{V_1}}}{\Delta_1'}{P_2}$,
 				there exist $Q_2$, $V_2$, $\Delta'_2$
 				such that $\horel{\Gamma}{\Delta_2}{Q_1}{\By{\news{\widetilde{m_2}} \bactout{n}{V_2}}}{\Delta_2'}{Q_2}$ and 
-				for all $R$ with $\fv{R}=x$:
+				for all $R$ with $\fv{R}=\{x\}$:
 %
 			\[
 				\horel{\Gamma}{\Delta_1''}{\newsp{\widetilde{m_1}}{P_2 \Par R\subst{V_1}{x}}}
@@ -765,7 +765,7 @@ do inhabit their associated type.
 				Then $\Gamma \cat a: U; \es; \Delta \proves \mapchar{U}{a} \hastype \Proc$.
 
 		\item	Let $U$ be a type.
-				Then $\Gamma; \es; \Delta \proves \omapchar{U} \hastype U$
+				Then $\Gamma; \es; \Delta \proves \omapchar{U} \hastype U$.
 	\end{enumerate}
 \end{proposition}
 
@@ -981,7 +981,7 @@ when the type of $V$ is~$U$.
 \subsection{Higher-Order ($\hwb$) and  Characteristic  Bisimilarity ($\fwb$)}
 \label{ss:hwb}
 
-We define \emph{higher-order bisimularity} and 
+We define \emph{higher-order bisimilarity} and 
 \emph{characteristic bisimilarity} which are
 two tractable bisimilarity relations on $\HOp$ processes.
 As explained in \secref{sec:overview},
@@ -1411,7 +1411,7 @@ More precisely, given a fresh name $\suc$, and for each visible action $\ell$, w
 	\]
 %
 	See \defref{app:def:definibility} (\mypageref{app:def:definibility}) for the formal definition.
-	The test process can therefore be used to check the
+	The test processes can therefore be used to check the
 	typed labelled transition interactions of two
 	processes that are related by reduction-closed,
 	barbed congruence. Indeed, we have that 

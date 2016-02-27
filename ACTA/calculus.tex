@@ -54,7 +54,7 @@ in~\cite{tlca07}, where tractable bisimilarities are not addressed.
 	\begin{figure}
 	\[
 		\begin{array}{rcl}
-			\multicolumn{3}{c}{n \bnfis a,b  \bnfbar s, \dual{s} \qquad \quad
+			\multicolumn{3}{c}{n, m \bnfis a,b  \bnfbar s, \dual{s} \qquad \quad
 			u,w \bnfis n \bnfbar x,y,z \qquad \quad
 			V,W  \bnfis u \bnfbar \abs{x}{P}} 
 			\\[2mm]
@@ -107,22 +107,28 @@ in~\cite{tlca07}, where tractable bisimilarities are not addressed.
 
 \subsection{Syntax} 
 The syntax of \HOp is defined in \figref{fig:redsem} (upper part).
-We use $a,b,c, \dots$ (resp.~$s, \dual{s}, \dots$) 
-to range over shared (resp. session) names. 
-We use $m, n, t, \dots$ for session or shared names. 
+We use $a,b,c, \dots$ 
+to range over shared names
+and $s, \dual{s}, \dots$
+to range over 
+session names. 
+We use $n, m, t, \dots$ for session or shared names. 
+Intuitively, session names
+represent deterministic communication \emph{endpoints}, 
+ while shared names represent non-deterministic points. 
 We define the dual operation over names $n$ as $\dual{n}$ with
 $\dual{\dual{s}} = s$ and $\dual{a} = a$.
-Intuitively, names $s$ and $\dual{s}$ are dual (two) \emph{endpoints} while 
-shared names represent non-deterministic points. 
-Variables are denoted with $x, y, z, \dots$, 
+This way, e.g., session names $s$ and $\dual{s}$ are two dual endpoints.
+Name variables are denoted with $x, y, z, \dots$, 
 and recursive variables are denoted with $\varp{X}, \varp{Y} \dots$.
-An abstraction %(or higher-order value) 
-$\abs{x}{P}$ is a process $P$ with name parameter $x$.
 %Symbols $u, v, \dots$ range over identifiers; and  $V, W, \dots$ to denote values. 
 Values $V,W$ include 
-identifiers $u, v, \ldots$ %(first-order values) 
+name identifiers $u, v, \ldots$ (first-order values) 
 and 
-abstractions $\abs{x}{P}$ (first- and higher-order values, resp.). 
+abstractions $\abs{x}{P}$ (higher-order values),
+where $P$ is a process $P$ and $x$ is a name parameter.
+
+ 
 
 {Terms} 
 include $\pi$-calculus constructs for sending/receiving values $V$.
@@ -154,10 +160,10 @@ name restriction $\news{n} P$ are standard.
 Session name restriction $\news{s} P$ simultaneously binds endpoints $s$ and $\dual{s}$ in $P$.
 %A well-formed process relies on assumptions for
 %guarded recursive processes.
-We use $\fv{P}$ and $\fn{P}$ to denote a set of free 
+We use $\fv{P}$ and $\fn{P}$ to denote the sets of free 
 %\jpc{recursion}
-variables and names in $P$; 
-and assume $V$ in $\bout{u}{V}{P}$ does not include free recursive 
+variables and names in $P$, respectively.
+We assume that $V$ in $\bout{u}{V}{P}$ does not include free recursive 
 variables $\rvar{X}$. 
 If $\fv{P} = \emptyset$, we call $P$ {\em closed}.
 %; and closed $P$ without 
@@ -258,13 +264,15 @@ of \HOp, given as
 a reduction relation that relies 
 on 
 a \emph{structural congruence} $\scong$. %, in the standard way. % are defined in \figref{fig:reduction} (bottom). 
+\newc{It includes a congruence that ensures the consistent renaming of bound names, 
+denoted $\scong_\alpha$.}
 \jpc{We assume the expected extension of $\scong$ to values $V$.}
 Reduction is denoted $\red$; some intuitions on the rules in \figref{fig:redsem} %(lower part) 
 follow.
 Rule~$\orule{App}$ is a value application; 
-rule~$\orule{Pass}$ defines a shared interaction at $n$ 
+Rule~$\orule{Pass}$ defines a shared interaction at $n$ 
 (\jpc{with} $\dual{n}=n$) or a session interaction;  
-rule~$\orule{Sel}$ is the standard rule for labelled choice/selection:
+Rule~$\orule{Sel}$ is the standard rule for labelled choice/selection:
 given an index set $I$, 
 a process selects label $l_j$ on name $n$ over a set of
 labels $\set{l_i}_{i \in I}$ offered by a branching 
