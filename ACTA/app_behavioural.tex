@@ -154,7 +154,14 @@ for shorthand notations.
 		action on typed process
 		$\Gamma; \emptyset; \Delta \proves P \hastype \Proc$.
 		Actions $\bactout{s}{V}$ and $\bactinp{\dual{s}}{V}$
-		are forbidden by the LTS for typed environments.
+		are forbidden by the LTS for typed environments;
+		\dk{this is because
+		$s: \btout{U} S_1 \cat \dual{s}: \btinp{U} S_2 \in \Delta$ and
+		rule \eltsrule{SSnd} (resp., \eltsrule{SRv}) cannot be applied
+		in order to observe action $(\Gamma; \es; \Delta) \by{\bactout{s}{V}} (\Gamma; \es; \Delta')$
+		(resp., action $(\Gamma; \es; \Delta) \by{\bactinp{\dual{s}}{V}} (\Gamma; \es; \Delta'')$)
+		because of the requirement $\dual{s} \notin \dom{\Delta}$ (resp., $s \notin \dom{\Delta}$).
+		}
 
 		\noi It is easy to conclude then that $\horel{\Gamma}{\Delta}{P}{\hwb}{\Delta'}{P'}$.
 
@@ -194,7 +201,7 @@ for shorthand notations.
 				P \scong P_1 \text{ and }\horel{\Gamma}{\Delta}{P_1}{\hby{\stau}}{\Delta'}{P'}
 			\]
 %
-		From the induction hypothesis and the fact that bisimulation is a congruence
+		From the induction hypothesis and the fact that bisimulation is a congruence \dk{(\thmref{the:coincidence})}
 		and structural congruence preserves $\hwb$
 		we get that $\horel{\Gamma}{\Delta}{P}{\hwb}{\Delta'}{P'}$.
 	\end{enumerate}
@@ -426,7 +433,7 @@ Consider the typed relation (for readability, we omit type information):
 					\label{lem:wb_eq_wbf3}
 				\end{eqnarray}
 			%
-				\noi Result \eqref{lem:wb_eq_wbf3} is by showing that the processes % in \eqref{lem:wb_eq_wbf3}
+				\noi To show result \eqref{lem:wb_eq_wbf3} we need to prove that the processes % in \eqref{lem:wb_eq_wbf3}
 				are higher-order bisimilar. We can show that by observing an input action on the fresh name $t$ on
 				both processes:
 
@@ -502,7 +509,7 @@ the key result for proving the soundness of the bisimulation.
 \begin{lemma}[Linear Process Substitution]
 	\label{app:lem:subst_equiv}
 	Let $P_2$ and $Q_2$ be processes, with $\fpv{P_2} = \fpv{Q_2} = \set{x}$.
-	If 
+	If \dk{there exist $\Gamma, x: U, \Delta_1''', \Delta_2'''$ such that}
 %
 	\begin{enumerate}
 		\item	$\Gamma; x: U; \Delta_1''' \proves P_2 \hastype \Proc$ and $\Gamma; x: U; \Delta_2''' \proves Q_2 \hastype \Proc$.
@@ -514,8 +521,8 @@ the key result for proving the soundness of the bisimulation.
 					for some fresh $t$.
 
 			\item	$\horel{\Gamma}{\Delta_1''}{\newsp{\widetilde{m_1}}{P_1 \Par P_2 \subst{\omapchar{U}}{x}}}
-					{\hwb}{\Delta_2''}{\newsp{\widetilde{m_2}}{Q_1 \Par Q_2 \subst{\omapchar{U}}{x}}}$,
-					for some $U$.
+					{\hwb}{\Delta_2''}{\newsp{\widetilde{m_2}}{Q_1 \Par Q_2 \subst{\omapchar{U}}{x}}}$.
+%					for some $U$.
 		\end{enumerate}
 	\end{enumerate}
 %
@@ -1111,10 +1118,10 @@ $\ell$ is an higher-order output; $\ell$ is a first-order output.
 			\]
 			%
 				\noi To conclude from (\lemref{app:lem:proc_subst}) that
-				$\forall R$ with $\fv{R} = \widetilde{x}$
+				$\forall P$ with $\fv{P} = \widetilde{x}$
 			%
 			\[
-				\horel{\Gamma}{\Delta_1'}{P_2 \subst{\abs{\widetilde{x}}{R}}{x}}{\hwb}{\Delta_2'}{Q_2 \subst{\abs{\widetilde{x}}{R}}{x}}
+				\horel{\Gamma}{\Delta_1'}{P_2 \subst{\abs{\widetilde{x}}{P}}{x}}{\hwb}{\Delta_2'}{Q_2 \subst{\abs{\widetilde{x}}{P}}{x}}
 			\]
 			%
 				\noi as required.
@@ -1570,7 +1577,7 @@ $\ell$ is an higher-order output; $\ell$ is a first-order output.
 							\label{lem:wbc_is_cong24}\\
 							& & \horel{\Gamma}{\Delta_1 \cup \Delta_3}{\newsp{\widetilde{m_1}}{P_1 \Par R}}
 							{\by{}}
-							{\Delta_1' \cup \Delta_3'}{\newsp{\widetilde{m_1}''}{P_1' \Par R' \subst{s_1}{x}}}
+							{\Delta_1' \cup \Delta_3'}{\newsp{\widetilde{m_1}''}{P_1' \Par R' \subst{m_1}{x}}}
 							\nonumber \\
 							& & \horel{\Gamma}{\Delta_2}{P_2}
 							{\By{\news{\widetilde{mm_2}} \bactout{n}{\widetilde{m_2}}}}
