@@ -366,6 +366,273 @@ We now proceed to state and prove these lemmas, together with some auxiliary res
 %Therefore, $\Re$ is a characteristic bisimulation and we are done.
 %\qed
 %}
+
+\begin{proof}
+	\noi
+	We split the proof into the direction
+	$\hwb \subseteq \fwb$ and the direction
+	$\fwb \subseteq \hwb$.
+
+	\begin{enumerate}
+		\item	Direction $\hwb \subseteq \fwb$.
+
+				\noi Consider the typed relation (for readability, we omit type information):
+		%
+				\[
+					\Re = \set{
+								%\horel{\Gamma}{\Delta_1}{P}{\ ,\ }{\Delta_2}{Q} 
+								(P, Q) 
+								\setbar
+								\horel{\Gamma}{\Delta_1}{P}{\hwb}{\Delta_2}{Q}}
+				\]
+		%
+				We show that $\Re$ is a characteristic bisimulation.
+				Suppose
+				$
+						\horel{\Gamma}{\Delta_1}{P}{\hby{ \ell}}{\Delta_1'}{P'}
+		%				\label{lem:wb_eq_wbf1}
+				$.
+				The proof does a case analysis on the transition label $\ell$.
+				\begin{itemize}
+					\item	Case $\ell = \news{\widetilde{m_1}} \bactout{n}{V_1}$ is the non-trivial case.
+
+							\noi From the definition of $\Re$ we have that if:
+						%
+							\begin{eqnarray}
+								\horel{\Gamma}{\Delta_1}{P}{\hby{\news{\widetilde{m_1}} \bactout{n}{V_1}}}{\Delta_1''}{P'}
+								\label{lem:wb_eq_wbf1}
+							\end{eqnarray}
+							then $\exists Q, V_2$ such that:
+						%
+							\begin{eqnarray}
+								\horel{\Gamma}{\Delta_2}{Q}{\Hby{\news{\widetilde{m_2}} \bactout{n}{V_2}}}{\Delta_2''}{Q'}
+								\label{lem:wb_eq_wbf2}
+							\end{eqnarray}
+						%
+							and for fresh $t$:
+								\nhorel{\Gamma}{\Delta_1'}{\newsp{\widetilde{m_1}}{P' \Par \hotrigger{t}{x}{s}{V_1}}}
+								{\hwb}
+								{\Delta_2'}{\newsp{\widetilde{m_2}}{Q' \Par \hotrigger{t}{x}{s}{V_2} }}
+								{lem:wb_eq_wbf3}
+						%
+							\noi 
+							To show that $\Re$ is a characteristic bisimulation
+							after the fact that transition~\eqref{lem:wb_eq_wbf1} implies transition~\eqref{lem:wb_eq_wbf2},
+							we need to show that for fresh $t$:
+						%
+							\begin{eqnarray}
+								\mhorel{\Gamma}{\Delta_3}{\newsp{\widetilde{m_1}}{P' \Par \fotrigger{t}{x}{s}{\btinp{U} \tinact}{V_1}}}
+								{\Re}
+								{\Delta_4}{}{\newsp{\widetilde{m_2}}{Q' \Par \fotrigger{t}{x}{s}{\btinp{U} \tinact}{V_2}}}
+								\label{lem:wb_eq_wbf4}
+							\end{eqnarray}
+						%
+							\noi
+							From the higher-order bisimulation pair in \eqref{lem:wb_eq_wbf3} we can
+							conclude that if:
+							\[
+								\mhorel{\Gamma}{\Delta_1'}{\newsp{\widetilde{m_1}}{P' \Par \hotrigger{t}{x}{s}{V_1}}}
+								{\hby{\bactinp{t}{\map{\btinp{U} \tinact}^{x}}}}
+								{\Delta_3'}{}{\newsp{\widetilde{m_1}}{P' \Par \newsp{s}{\map{\btinp{U} \tinact}^{s} \Par \bout{\dual{s}}{V_1} \inact}}}
+							\]
+						%
+							then there exists $Q''$ such that:
+							\begin{eqnarray}
+								\begin{array}{crll}
+									& \Gamma; \es; \Delta_2' & \proves &		
+									\newsp{\widetilde{m_2}}{Q' \Par \hotrigger{t}{x}{s}{V_2}}
+									\\
+									\Hby{} &&&
+									\newsp{\widetilde{m_2}}{Q_2 \Par \fotrigger{t}{x}{s}{V_2}}
+									\\
+									{\hby{\bactinp{t}{\map{\btinp{U} \tinact}^{x}}}}& & &
+									\newsp{\widetilde{m_2}}{Q_2 \Par \newsp{s}{\map{\btinp{U} \tinact}^{s} \Par \bout{\dual{s}}{V_2} \inact}}
+									\\
+									\Hby{} & \Delta_4' & \proves & Q''
+								\end{array}
+								\label{lem:wb_eq_wbf_5}
+							\end{eqnarray}
+						%
+							and
+								\[
+									\horel{\Gamma}
+									{\Delta_3'}{\newsp{\widetilde{m_1}}{P' \Par \newsp{s}{\map{\btinp{U} \tinact}^{s} \Par \bout{\dual{s}}{V_1} \inact}}}
+									{\hwb}
+									{\Delta_4'}{Q''}
+								\]
+							which implies from the definition of $\Re$:
+							\begin{eqnarray}
+								\horel{\Gamma}
+								{\Delta_3'}{\newsp{\widetilde{m_1}}{P' \Par \newsp{s}{\map{\btinp{U} \tinact}^{s} \Par \bout{\dual{s}}{V_1} \inact}}}
+								{\ \Re\ }
+								{\Delta_4'}{Q''}
+								\label{lem:wb_eq_wbf6}
+							\end{eqnarray}
+						%
+							From the pair in \eqref{lem:wb_eq_wbf4}, we get:
+							\[
+								\mhorel{\Gamma}{\Delta_3}{\newsp{\widetilde{m_1}}{P' \Par \fotrigger{t}{x}{s}{\btinp{U} \tinact}{V_1}}}
+								{\hby{\bactinp{t}{m'}}}
+								{\Delta_3'}{}{\newsp{\widetilde{m_1}}{P' \Par \newsp{s}{\map{\btinp{U} \tinact}^{s} \Par \bout{\dual{s}}{V_1} \inact}}}
+							\]
+						%
+							The freshness of $t$ allows us to mimic the transitions
+							in \eqref{lem:wb_eq_wbf_5} to get:
+							\[
+								\begin{array}{crll}
+									& \Gamma; \es; \Delta_4 & \proves &		
+									\newsp{\widetilde{m_2}}{Q' \Par \fotrigger{t}{x}{s}{\btinp{U} \tinact}{V_2}}
+									\\
+									\Hby{} &&&
+									\newsp{\widetilde{m_2}}{Q_2 \Par \fotrigger{t}{x}{s}{\btinp{U} \tinact}{V_2}}
+									\\
+									\hby{\bactinp{t}{m'}}& & &
+									\newsp{\widetilde{m_2}}{Q_2 \Par \newsp{s}{\map{\btinp{U} \tinact}^{s} \Par \bout{\dual{s}}{V_2} \inact}}
+									\\
+									\Hby{} & \Delta_4' & \proves & Q''
+								\end{array}
+							\]
+						%
+						This last implication together with the result in \eqref{lem:wb_eq_wbf6}
+						concludes the proof of the case.
+
+					\item	The other cases are trivial.
+				\end{itemize}
+
+		\item	Direction $\fwb \subseteq \hwb$.
+				\noi Consider the typed relation (for readability, we omit type information):
+		%
+				\[
+					\Re = \set{
+								%\horel{\Gamma}{\Delta_1}{P}{\ ,\ }{\Delta_2}{Q} 
+								(P, Q) 
+								\setbar
+								\horel{\Gamma}{\Delta_1}{P}{\fwb}{\Delta_2}{Q}}
+				\]
+		%
+				We show that $\Re$ is a higher-order bisimulation.
+				Suppose
+				$
+						\horel{\Gamma}{\Delta_1}{P}{\hby{ \ell}}{\Delta_1'}{P'}
+		%				\label{lem:wb_eq_wbf1}
+				$.
+				The proof does a case analysis on the transition label $\ell$.
+				\begin{itemize}
+					\item	Case $\ell = \news{\widetilde{m_1}} \bactout{n}{V_1}$ is the non-trivial case.
+
+							\noi From the definition of $\Re$ we have that if:
+						%
+							\begin{eqnarray}
+								\horel{\Gamma}{\Delta_1}{P}{\hby{\news{\widetilde{m_1}} \bactout{n}{V_1}}}{\Delta_1''}{P'}
+								\label{lem:fwb_sub_hbf1}
+							\end{eqnarray}
+							then $\exists Q, V_2$ such that:
+						%
+							\begin{eqnarray}
+								\horel{\Gamma}{\Delta_2}{Q}{\Hby{\news{\widetilde{m_2}} \bactout{n}{V_2}}}{\Delta_2''}{Q'}
+								\label{lem:fwb_sub_hbf2}
+							\end{eqnarray}
+						%
+							and for fresh $t$:
+								\nhorel{\Gamma}{\Delta_1'}{\newsp{\widetilde{m_1}}{P' \Par \fotrigger{t}{x}{s}{\btinp{U} \tinact}{V_1}}}
+								{\hwb}
+								{\Delta_2'}{\newsp{\widetilde{m_2}}{Q' \Par \fotrigger{t}{x}{s}{\btinp{U} \tinact}{V_2} }}
+								{lem:fwb_sub_hbf3}
+						%
+							\noi 
+							To show that $\Re$ is a higher-order bisimulation
+							after the fact that transition~\eqref{lem:fwb_sub_hbf1} implies transition~\eqref{lem:fwb_sub_hbf2},
+							we need to show that for fresh $t$:
+						%
+							\begin{eqnarray}
+								\mhorel{\Gamma}{\Delta_3}{\newsp{\widetilde{m_1}}{P' \Par \hotrigger{t}{x}{s}{V_1}}}
+								{\Re}
+								{\Delta_4}{}{\newsp{\widetilde{m_2}}{Q' \Par \hotrigger{t}{x}{s}{V_2}}}
+								\label{lem:fwb_sub_hbf4}
+							\end{eqnarray}
+						%
+							\noi
+							From the characteristic bisimulation pair in \eqref{lem:fwb_sub_hbf3}
+							and fresh $m'$ we can conclude that:
+							\[
+								\mhorel{\Gamma}{\Delta_1'}{\newsp{\widetilde{m_1}}{P' \Par \fotrigger{t}{x}{s}{\btinp{U} \tinact}{V_1}}}
+%								{\hby{\bactinp{t}{\map{\btinp{U} \tinact}^{x}}}}
+								{\hby{\bactinp{t}{m'}}}
+								{\Delta_3'}{}{\newsp{\widetilde{m_1}}{P' \Par \newsp{s}{\map{\btinp{U} \tinact}^{s} \Par \bout{\dual{s}}{V_1} \inact}}}
+							\]
+						%
+							then there exists $Q''$ such that:
+							\begin{eqnarray}
+								\begin{array}{crll}
+									& \Gamma; \es; \Delta_2' & \proves &		
+									\newsp{\widetilde{m_2}}{Q' \Par \fotrigger{t}{x}{s}{\btinp{U} \tinact}{V_2}}
+									\\
+									\Hby{} &&&
+									\newsp{\widetilde{m_2}}{Q_2 \Par \fotrigger{t}{x}{s}{\btinp{U} \tinact}{V_2}}
+									\\
+%									{\hby{\bactinp{t}{\map{\btinp{U} \tinact}^{x}}}}
+									{\hby{\bactinp{t}{m'}}}& & &
+									\newsp{\widetilde{m_2}}{Q_2 \Par \newsp{s}{\map{\btinp{U} \tinact}^{s} \Par \bout{\dual{s}}{V_2} \inact}}
+									\\
+									\Hby{} & \Delta_4' & \proves & Q''
+								\end{array}
+								\label{lem:fwb_sub_hbf5}
+							\end{eqnarray}
+						%
+							and
+								\[
+									\horel{\Gamma}
+									{\Delta_3'}{\newsp{\widetilde{m_1}}{P' \Par \newsp{s}{\map{\btinp{U} \tinact}^{s} \Par \bout{\dual{s}}{V_1} \inact}}}
+									{\fwb}
+									{\Delta_4'}{Q''}
+								\]
+							which implies from the definition of $\Re$:
+							\begin{eqnarray}
+								\horel{\Gamma}
+								{\Delta_3'}{\newsp{\widetilde{m_1}}{P' \Par \newsp{s}{\map{\btinp{U} \tinact}^{s} \Par \bout{\dual{s}}{V_1} \inact}}}
+								{\ \Re\ }
+								{\Delta_4'}{Q''}
+								\label{lem:fwb_sub_hbf6}
+							\end{eqnarray}
+						%
+							From the pair in \eqref{lem:fwb_sub_hbf4}, we get:
+							\[
+								\mhorel{\Gamma}{\Delta_3}{\newsp{\widetilde{m_1}}{P' \Par \hotrigger{t}{x}{s}{V_1}}}
+								{\hby{\bactinp{t}{\map{\btinp{U} \tinact}^{x}}}}
+								{\Delta_3'}{}{\newsp{\widetilde{m_1}}{P' \Par \newsp{s}{\map{\btinp{U} \tinact}^{s} \Par \bout{\dual{s}}{V_1} \inact}}}
+							\]
+						%
+							The freshness of $t$ allows us to mimic the transitions
+							in \eqref{lem:fwb_sub_hbf5} to get:
+							\[
+								\begin{array}{crll}
+									& \Gamma; \es; \Delta_4 & \proves &		
+									\newsp{\widetilde{m_2}}{Q' \Par \hotrigger{t}{x}{s}{V_2}}
+									\\
+									\Hby{} &&&
+									\newsp{\widetilde{m_2}}{Q_2 \Par \hotrigger{t}{x}{s}{V_2}}
+									\\
+									{\hby{\bactinp{t}{\map{\btinp{U} \tinact}^{x}}}}& & &
+									\newsp{\widetilde{m_2}}{Q_2 \Par \newsp{s}{\map{\btinp{U} \tinact}^{s} \Par \bout{\dual{s}}{V_2} \inact}}
+									\\
+									\Hby{} & \Delta_4' & \proves & Q''
+								\end{array}
+							\]
+						%
+						This last implication together with the result in \eqref{lem:fwb_sub_hbf6}
+						concludes the proof of the case.
+
+					\item	The other cases are trivial.
+				\end{itemize}
+
+
+
+	\end{enumerate}
+	\qed
+\end{proof}
+
+
+\begin{comment}
 \begin{proof}
 	\noi We only prove the direction $\hwb \subseteq \fwb$. The
 	direction $\fwb \subseteq \hwb$ is similar.
@@ -466,6 +733,7 @@ Consider the typed relation (for readability, we omit type information):
 	$\ell = \news{\widetilde{m_1}} \bactout{n}{V_1}$.
 	\qed
 \end{proof}
+\end{comment}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
