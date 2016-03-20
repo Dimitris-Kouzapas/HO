@@ -296,6 +296,19 @@ several lemmas:
 We now proceed to state and prove these lemmas, together with some auxiliary results.
 %\thmref{app:thm:coincidence} (Page~\pageref{app:thm:coincidence}) summarises the coincidence result.
 
+\begin{lemma}
+	\label{app:lem_fresh_name}
+	if $\Gamma; \es; \Delta_1 \proves P_1 \Par R \hwb P_2 \Par R$, $t$
+	fresh and $x \notin \fn{R}$ then
+	$\Gamma; \es; \Delta_1 \proves P_1 \Par \btinp{t}{x} R \hwb P_2 \Par \binp{t}{x} R$.
+\end{lemma}
+
+\begin{proof}
+	\dk{proofs}
+	\qed
+\end{proof}
+
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %  HWB = FWB
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -2132,11 +2145,12 @@ We first show that every visible action $\ell$ is definable.
 
 \begin{lemma}[Extrusion]\rm
 	\label{lem:extrusion}
+	Let $m_1 \subseteq m_1'$ and $m_2 \subseteq m_2'$. 
 	If 
 	\[
-		\horel{\Gamma}{\Delta_1'}{\newsp{\widetilde{m_1}'}{P \Par \bout{\suc}{\dual{n}, \widetilde{m_1}''} \inact}}{\cong}{\Delta_2}{\newsp{\widetilde{m_2}'}{Q \Par \bout{\suc}{\dual{n}, \widetilde{m_2}''} \inact}}
+		\horel{\Gamma}{\Delta_1'}{\newsp{\widetilde{m_1}}{P \Par \bout{\suc}{\dual{n}, \widetilde{m_1}'} \inact}}{\cong}{\Delta_2}{\newsp{\widetilde{m_2}}{Q \Par \bout{\suc}{\dual{n}, \widetilde{m_2}'} \inact}}
 	\]
-	then
+	then $\exists \Delta_1, \Delta_2$ such that
 	\[
 		\horel{\Gamma}{\Delta_1}{P}{\cong}{\Delta_2}{Q}.
 	\]
@@ -2148,110 +2162,191 @@ We first show that every visible action $\ell$ is definable.
 	\begin{eqnarray*}
 		\mathcal{S}	&=&
 					\set{(\Gamma; \es; \Delta_1 \proves P \hastype \Proc\ ,\ \Gamma; \es; \Delta_2 \proves Q \hastype \Proc) \setbar \\
-				& &	\horel{\Gamma}{\Delta_1'}{\newsp{\widetilde{m_1}'}{P \Par \bout{\suc}{\dual{n}, \widetilde{m_1}''} \inact}}
-					{\cong}{\Delta_2}{\newsp{\widetilde{m_2}'}{Q \Par \bout{\suc}{\dual{n}, \widetilde{m_2}''} \inact}} \\
+				& &	\horel{\Gamma}{\Delta_1'}{\newsp{\widetilde{m_1}}{P \Par \bout{\suc}{\dual{n}, \widetilde{m_1}'} \inact}}
+					{\cong}{\Delta_2}{\newsp{\widetilde{m_2}}{Q \Par \bout{\suc}{\dual{n}, \widetilde{m_2}'} \inact}} \\
 		&&}
 	\end{eqnarray*}
 %
 	\noi We show that $\mathcal{S}$ is a reduction-closed, barbed congruence.
 
-	\noi {\bf Reduction-closed:}
 
-	\noi $P \red P'$
-	implies
-	$\newsp{\widetilde{m_1}'}{P \Par \bout{\suc}{\dual{n}, \widetilde{m_1}''} \inact} \red \newsp{\widetilde{m_1}'}{P' \Par \bout{\suc}{\dual{n}, \widetilde{m_1}''} \inact}$
-	implies from the freshness of $\suc$
-	$\newsp{\widetilde{m_1}'}{P \Par \bout{\suc}{\dual{n}, \widetilde{m_1}''} \inact} \red^{*} \newsp{\widetilde{m_1}'}{Q' \Par \bout{\suc}{\dual{n}, \widetilde{m_2}''} \inact}$.
-	which implies
-	$Q \red^{*} Q'$ as required.
+	\begin{itemize}
+		\item	{\bf Reduction-closed:}
 
-	\noi {\bf Barb Preserving:}
+				$P \red P'$
+				implies
+				\[
+					\newsp{\widetilde{m_1}}{P \Par \bout{\suc}{\dual{n}, \widetilde{m_1}'} \inact}
+					\red
+					\newsp{\widetilde{m_1}}{P' \Par \bout{\suc}{\dual{n}, \widetilde{m_1}'} \inact}
+				\]
+				which implies from the freshness of $\suc$
+				\[
+					\newsp{\widetilde{m_1}}{P \Par \bout{\suc}{\dual{n}, \widetilde{m_1}'} \inact}
+					\red^{*}
+					\newsp{\widetilde{m_1}}{Q' \Par \bout{\suc}{\dual{n}, \widetilde{m_2}'} \inact}
+				\]
+				which in turn implies
+				$Q \red^{*} Q'$ as required.
 
-	\noi Let $\Gamma; \es; \Delta_1 \proves P \barb{s}$. We analyse two cases.
-    \begin{itemize}
-	\item Case: $s \not= n$.
+	\item	{\bf Barb Preserving:}
 
-	\noi $\Gamma; \es; \Delta_1 \proves P \barb{s}$
-	implies
-%
-	\[
-		\Gamma; \es; \Delta_1' \proves \newsp{\widetilde{m_1}'}{P \Par \bout{\suc}{\dual{n}, \widetilde{m_1}''} \inact} \barb{s}
-	\]
-%
-	\noi implies
-	$\Gamma; \es; \Delta_2' \proves \newsp{\widetilde{m_2}'}{Q \Par \bout{\suc}{\dual{n}, \widetilde{m_2}''} \inact} \Barb{s}$
-	implies from the freshness of $\suc$ that
-	$\Gamma; \es; \Delta_2 \proves Q \Barb{s}$ as required.
+			Let $\Gamma; \es; \Delta_1 \proves P \barb{m}$. We analyse three cases.
+			%
+		    \begin{itemize}
+				\item	Case: $m \not= s$ ($m$ is not a session name)
 
-	\item Case: $s = n$ and $\Gamma; \es; \Delta_1 \proves P \barb{n}$
+						$\Gamma; \es; \Delta_1 \proves P \barb{m}$
+						implies
+					%
+						\[
+							\Gamma; \es; \Delta_1' \proves
+							\newsp{\widetilde{m_1}}{P \Par \bout{\suc}{\dual{n}, \widetilde{m_1}'} \inact}
+							\barb{m}
+						\]
+					%
+						which implies
+						\[
+							\Gamma; \es; \Delta_2' \proves
+							\newsp{\widetilde{m_2}}{Q \Par \bout{\suc}{\dual{n}, \widetilde{m_2}'} \inact}
+							\Barb{m}
+						\]
+						which implies from the freshness of $\suc$ that
+						$\Gamma; \es; \Delta_2 \proves Q \Barb{m}$ as required.
 
-	\noi We compose with $\binp{\dual{\suc}}{x, \widetilde{y}} T\lrangle{\ell, \suc'}$ with $\subj{\ell} = x$ to get
-%
-	\[
-		\Gamma; \es; \Delta_1' \proves \newsp{\widetilde{m_1}'}{P \Par \bout{\suc}{\dual{n}, \widetilde{m_1}''} \inact} \Par \binp{\dual{\suc}}{x, \widetilde{y}} T\lrangle{\ell, \suc'}
-	\]
-%
-	\noi Which implies from the fact that $\Gamma; \es; \Delta_1 \proves P \barb{n}$ that
-%
-	\[
-		\newsp{\widetilde{m_1}'}{P \Par \bout{\suc}{\dual{n}, \widetilde{m_1}''} \inact} \Par \binp{\dual{\suc}}{x, \widetilde{y}} T\lrangle{\ell, \suc'} \red^{*} 
-		\newsp{\widetilde{m_1}'}{P' \Par \bout{\suc'}{\dual{n}, \widetilde{m_1}''} \inact}
-	\]
-%
-	\noi and furthermore
-%
-	\[
-		\newsp{\widetilde{m_2}'}{Q \Par \bout{\suc}{\dual{n}, \widetilde{m_2}''} \inact} \Par \binp{\dual{\suc}}{x, \widetilde{y}} T\lrangle{\ell, \suc'} \red^{*} 
-		\newsp{\widetilde{m_2}'}{Q' \Par \bout{\suc'}{\dual{n}, \widetilde{m_2}''} \inact}
-	\]
-%
-	\noi The last reduction implies that
-	$\Gamma; \es; \Delta_2 \proves Q \Barb{n}$ as required.
-    \end{itemize}
+				\item	Case: $m = s$ ($m$ is a session name) and $m \not= n$.
+						Similar proof as the previous case.
+
+				\item	Case: $m = s$ ($m$ is a session name) and $m = n$ and
+						$\Gamma; \es; \Delta_1 \proves P \barb{n}$
+						
+						The fact that $n$ is a session 
+						implies that $n, \dual{n} \in \dom{\Delta_1'}$
+						which implies from the definition
+						of barbs (\defref{def:barbs}) that:
+						%
+						\[
+							\Gamma; \es; \Delta_1' \proves
+							\newsp{\widetilde{m_1}}{P \Par \bout{\suc}{\dual{n}, \widetilde{m_1}'} \inact}
+							\not\barb{n}
+						\]
+						%
+						This is because both endpoints of the session $n$
+						are present in $\Delta_1'$.
+
+
+						We compose $\Gamma; \es; \Delta_1 \proves P \hastype \Proc$ with
+						$\binp{\dual{\suc}}{x, \widetilde{y}} T\lrangle{\ell, \suc'}$ with $\subj{\ell} = x$ to get
+						%
+						\[
+							\Gamma; \es; \Delta_1' \proves
+							\newsp{\widetilde{m_1}}{P \Par \bout{\suc}{\dual{n}, \widetilde{m_1}'} \inact} \Par
+							\binp{\dual{\suc}}{x, \widetilde{y}} T\lrangle{\ell, \suc'}
+						\]
+						%
+						The definition of definibility and the fact that $\Gamma; \es; \Delta_1 \proves P \barb{n}$ that
+						%
+						\[
+							\newsp{\widetilde{m_1}}{P \Par \bout{\suc}{\dual{n}, \widetilde{m_1}'} \inact} \Par
+							\binp{\dual{\suc}}{x, \widetilde{y}} T\lrangle{\ell, \suc'}
+							\red^{*} 
+							\newsp{\widetilde{m_1}}{P' \Par \bout{\suc'}{\dual{n}, \widetilde{m_1}'} \inact}
+						\]
+						%
+						\noi and furthermore
+						%
+						\[
+							\newsp{\widetilde{m_2}}{Q \Par \bout{\suc}{\dual{n}, \widetilde{m_2}'} \inact} \Par
+							\binp{\dual{\suc}}{x, \widetilde{y}} T\lrangle{\ell, \suc'}
+							\red^{*} 
+							\newsp{\widetilde{m_2}}{Q' \Par \bout{\suc'}{\dual{n}, \widetilde{m_2}'} \inact}
+						\]
+						%
+						\noi The last reduction implies that
+						$\Gamma; \es; \Delta_2 \proves Q \Barb{n}$ as required.
+				\end{itemize}
     
-	\noi {\bf Congruence:}
-	The key case of congruence is parallel composition.
-	The other cases are easier due to the fact that we are
-	working with closed process terms.
-	We define relation $\mathcal{C}$ as
-%
-	\begin{eqnarray*}
-		\mathcal{C} &=&	\set{ \Gamma; \es; \Delta_1 \cat \Delta_3 \proves P \Par R \hastype \Proc,  \Gamma; \es; \Delta_2 \cat \Delta_3 \proves Q \Par R \hastype \Proc \setbar \\
-		& &	\forall R,\\
-		& &	\horel{\Gamma}{\Delta_1'}{\newsp{\widetilde{m_1}'}{P \Par \bout{\suc}{\dual{n}, \widetilde{m_1}''} \inact}}{\cong}{\Delta_2'}{\newsp{\widetilde{m_2}'}{Q \Par \bout{\suc}{\dual{n}, \widetilde{m_2}''} \inact}}}
-	\end{eqnarray*}
-%
-	\noi We show that $\mathcal{C}$ is a congruence with respect to parallel composition.
-	We distinguish two cases:
-        \begin{itemize}
-	\item Case: $\dual{n}, \widetilde{m_1}'', \widetilde{m_2}'' \notin \fn{R}$	
+		\item	{\bf Congruence:}
 
-	\noi From the definition of $\mathcal{C}$ we can deduce that $\forall R$:
-%
-	\[
-		\horel{\Gamma}{\Delta_1''}{\newsp{\widetilde{m_1}'}{P \Par \bout{\suc}{\dual{n}, \widetilde{m_1}''} \inact} \Par R}{\cong}{\Delta_2''}{\newsp{\widetilde{m_2}'}{Q \Par \bout{\suc}{\dual{n}, \widetilde{m_2}''} \inact} \Par R}
-	\]
-	\noi The conclusion is then trivial.
+				The key case of congruence is parallel composition.
+				The other cases are easier due to the fact that we are
+				working with closed process terms (i.e.~input congruence is straightforward
+				in closed process terms).
+				We define relation $\mathcal{C}$ as
+				%
+				\begin{eqnarray*}
+					\mathcal{C} &=&
+					\set{	(\Gamma; \es; \Delta_1 \cat \Delta_3 \proves P \Par R \hastype \Proc,
+							\Gamma; \es; \Delta_2 \cat \Delta_3 \proves Q \Par R \hastype \Proc) \setbar
+					\\
+					& &	\forall R \textrm{ such that } \exists \Delta_3, \Gamma;\es; \Delta_3 \proves R \hastype \Proc \land\\
+					& &	\horel{\Gamma}{\Delta_1'}{\newsp{\widetilde{m_1}}{P \Par \bout{\suc}{\dual{n}, \widetilde{m_1}'} \inact}}
+						{\cong}
+						{\Delta_2'}{\newsp{\widetilde{m_2}}{Q \Par \bout{\suc}{\dual{n}, \widetilde{m_2}'} \inact}}}
+				\end{eqnarray*}
+		%
+				We show that $\mathcal{C}$ is a congruence with respect to parallel composition.
+				We distinguish two cases:
+				\begin{itemize}
+					\item	Case: $\dual{n}, \widetilde{m_1}, \widetilde{m_2} \notin \fn{R}$
 
-	\item Case: $\widetilde{s} = \set{\dual{n}, \widetilde{m_1}''} \cap \set{\dual{n}, \widetilde{m_2}''} \in \fn{R}$
+							From the contextual definition of $\cong$ we can deduce that
+							$\forall \Gamma; \es; \Delta_3 \proves R \hastype \Proc$:
+							%
+							\[
+								\horel{\Gamma}{\Delta_1' \cat \Delta_3}{\newsp{\widetilde{m_1}}{P \Par \bout{\suc}{\dual{n}, \widetilde{m_1}'} \inact} \Par R}
+								{\cong}
+								{\Delta_2' \cat \Delta_3}{\newsp{\widetilde{m_2}}{Q \Par \bout{\suc}{\dual{n}, \widetilde{m_2}'} \inact} \Par R}
+							\]
+							%
+							Because of the requirement
+							$\dual{n}, \widetilde{m_1}', \widetilde{m_2}' \notin \fn{R}$
+							the above is up to structural congruence with
+							\[
+								\horel{\Gamma}{\Delta_1' \cat \Delta_3}{\newsp{\widetilde{m_1}}{P \Par \bout{\suc}{\dual{n}, \widetilde{m_1}'} \inact \Par R}}
+								{\cong}
+								{\Delta_2' \cat \Delta_3}{\newsp{\widetilde{m_2}}{Q \Par \bout{\suc}{\dual{n}, \widetilde{m_2}'} \inact \Par R}}
+							\]
+							From the definition of $\mathcal{C}$ the conclusion is trivial.
 
-	\noi From the definition of $\mathcal{C}$ we can deduce that $\forall R^{y_1}$ such that $R = R^{y_1}\subst{\widetilde{s}}{\widetilde{y_1}}$
-	and $\suc'$ fresh and $\set{\widetilde{y}} = \set{\widetilde{y_1}} \cup \set{\widetilde{y_2}}$:
-%
-	\[
-		\mhorel{\Gamma}{\Delta_1''}{\newsp{\widetilde{m_1}'}{P \Par \bout{\suc}{\dual{n}, \widetilde{m_1}''} \inact} \Par \binp{\dual{\suc}}{\widetilde{y}} (R^{y_1} \Par \bout{\suc'}{\widetilde{y_2}} \inact)}
-		{\cong}
-		{\Delta_2''}{}{\newsp{\widetilde{m_2}'}{Q \Par \bout{\suc}{\dual{n}, \widetilde{m_2}''} \inact} \Par \binp{\dual{\suc}}{\widetilde{y}} (R^{y_1} \Par \bout{\suc'}{\widetilde{y_2}} \inact)}
-	\]
-%
-	\noi Applying reduction closeness to the above pair we get:
-%
-	\[
-		\horel{\Gamma}{\Delta_1''}{\newsp{\widetilde{m_1}'}{P \Par R \Par \bout{\suc'}{\widetilde{s_2}} \inact}}{\cong}{\Delta_2''}{\newsp{\widetilde{m_2}'}{Q \Par R \Par \bout{\suc'}{\widetilde{s_2}} \inact}}
-	\]
-%
-	\noi The conclusion then follows.
+					\item	Case: $\widetilde{s} = \set{\dual{n}, \widetilde{m_1}} \cap \set{\dual{n}, \widetilde{m_2}} \in \fn{R}$.
+
+							Let $R^{\widetilde{y}}$ such that $R = R^{y}\subst{\widetilde{s}}{\widetilde{\widetilde{y}}}$.
+
+
+							From the contextual definition of $\cong$ we can deduce that for fresh $\suc'$
+							$\forall \Gamma; \es; \Delta_3' \proves \binp{\dual{\suc}}{\widetilde{y}} (R^{\widetilde{y}} \Par \bout{\suc'}{\widetilde{y}} \inact) \hastype \Proc$:
+							%
+							\[
+								\mhorel{\Gamma}
+								{\Delta_1''}
+									{\newsp{\widetilde{m_1}}{P \Par \bout{\suc}{\dual{n}, \widetilde{m_1}'} \inact}
+									\Par \binp{\dual{\suc}}{\widetilde{y}} (R^{y} \Par \bout{\suc'}{\widetilde{y}} \inact)}
+								{\cong}
+								{\Delta_2''}{}
+									{\newsp{\widetilde{m_2}}{Q \Par \bout{\suc}{\dual{n}, \widetilde{m_2}'} \inact}
+									\Par \binp{\dual{\suc}}{\widetilde{y}} (R^{y} \Par \bout{\suc'}{\widetilde{y}} \inact)}
+							\]
+
+%							From the definition of $\mathcal{C}$
+%							we can deduce that $\forall R^{y_1}$ such that $R = R^{y_1}\subst{\widetilde{s}}{\widetilde{y_1}}$
+%							and $\suc'$ fresh and $\set{\widetilde{y}} = \set{\widetilde{y_1}} \cup \set{\widetilde{y_2}}$:
+							%
+%							\[
+%								\mhorel{\Gamma}{\Delta_1''}{\newsp{\widetilde{m_1}'}{P \Par \bout{\suc}{\dual{n}, \widetilde{m_1}''} \inact} \Par \binp{\dual{\suc}}{\widetilde{y}} (R^{y_1} \Par \bout{\suc'}{\widetilde{y_2}} \inact)}
+%								{\cong}
+%								{\Delta_2''}{}{\newsp{\widetilde{m_2}'}{Q \Par \bout{\suc}{\dual{n}, \widetilde{m_2}''} \inact} \Par \binp{\dual{\suc}}{\widetilde{y}} (R^{y_1} \Par \bout{\suc'}{\widetilde{y_2}} \inact)}
+%							\]
+							%
+							\noi Applying reduction closeness to the above pair we get:
+							%
+							\[
+								\horel{\Gamma}{\Delta_1''}{\newsp{\widetilde{m_1}}{P \Par R \Par \bout{\suc'}{\dual{n}, \widetilde{m_1}'} \inact}}{\cong}{\Delta_2''}{\newsp{\widetilde{m_2}}{Q \Par R \Par \bout{\suc'}{\dual{n}, \widetilde{m_2}'} \inact}}
+							\]
+						%
+						\noi The conclusion then follows from the definition of $\mathcal{C}$.
 	    \end{itemize}
+	\end{itemize}
 	\qed
 \end{proof}
 
