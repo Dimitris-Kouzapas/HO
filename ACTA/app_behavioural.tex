@@ -296,29 +296,45 @@ several lemmas:
 We now proceed to state and prove these lemmas, together with some auxiliary results.
 %\thmref{app:thm:coincidence} (Page~\pageref{app:thm:coincidence}) summarises the coincidence result.
 
-%\begin{lemma}
-%	\label{app:lem_fresh_name}
-%	if $\Gamma; \es; \Delta_1 \proves P_1 \Par R \hwb \Delta_2 \proves P_2 \Par R$, $t$
-%	fresh and $x \notin \fn{R}$ then
-%	$\Gamma; \es; \Delta_1' \proves P_1 \Par \binp{t}{x} R \hwb \Delta_2' \proves P_2 \Par \binp{t}{x} R$.
-%\end{lemma}
-%
-%\begin{proof}
-%	The proof distinguishes two cases.
-%	\begin{itemize}
-%		\item	$\Gamma; \es; \Delta_1 \proves P_1 \Par \binp{t}{x} R \hby{\ell_1} \Delta_1'' \proves P_1' \Par \binp{t}{x} R$.
-%
-%				Then by labelled transition rule \dk{put smth}
-%				$\Gamma; \es; \Delta_3 \proves P_1 \hby{\ell_1} \Delta_3' \proves P_1'$
-%				which implies
-%				$\Gamma; \es; \Delta_1 \proves P_1 \Par R \hby{\ell_1} \Delta_1''' \proves P_1' \Par R$
-%				which implies
-%				$\Gamma; \es; \Delta_2 \proves P_2 \Par R \Hby{\ell_1} \Delta_1''' \proves P_2' \Par R'$
-%	\end{itemize}
-%	\dk{proofs}
-%	\qed
-%\end{proof}
+\begin{lemma}
+	\label{app:lem_trigger_equiv}
+	Let $t$ be a fresh name and
+	$\Gamma; \es; \Delta_{V_i} \proves V_i \hastype U, i \in \set{1, 2}$.
 
+	\begin{itemize}
+		\item
+				If
+				\[
+					\mhorel{\Gamma}{\Delta_1}{\newsp{\widetilde{m_1}}{P' \Par \hotrigger{t}{x}{s}{V_1}}}
+					{\hwb}
+					{\Delta_2}{}{\newsp{\widetilde{m_2}}{Q' \Par \hotrigger{t}{x}{s}{V_2} }}
+				\]
+				then
+				\[
+					\mhorel{\Gamma}{\Delta_1'}{\newsp{\widetilde{m_1}}{P' \Par \fotrigger{t}{x}{s}{\btinp{U} \tinact}{V_1}}}
+					{\hwb}
+					{\Delta_2'}{}{\newsp{\widetilde{m_2}}{Q' \Par \fotrigger{t}{x}{s}{\btinp{U} \tinact}{V_2}}}
+				\]
+
+		\item	If
+				\[
+					\mhorel{\Gamma}{\Delta_1}{\newsp{\widetilde{m_1}}{P' \Par \fotrigger{t}{x}{s}{\btinp{U} \tinact}{V_1}}}
+					{\fwb}
+					{\Delta_2}{}{\newsp{\widetilde{m_2}}{Q' \Par \fotrigger{t}{x}{s}{\btinp{U} \tinact}{V_2} }}
+				\]
+				then
+				\[
+					\mhorel{\Gamma}{\Delta_1'}{\newsp{\widetilde{m_1}}{P' \Par \hotrigger{t}{x}{s}{V_1}}}
+					{\fwb}
+					{\Delta_2'}{}{\newsp{\widetilde{m_2}}{Q' \Par \hotrigger{t}{x}{s}{V_2}}}
+				\]
+	\end{itemize}
+\end{lemma}
+
+\begin{proof}
+	\dk{put proof}
+	\qed
+\end{proof}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %  HWB = FWB
@@ -451,6 +467,8 @@ We now proceed to state and prove these lemmas, together with some auxiliary res
 								\label{lem:wb_eq_wbf4}
 							\end{eqnarray}
 						%
+							\noi \dk{which follows from \eqref{lem:wb_eq_wbf3} and Part 1 of \lemref{app:lem_trigger_equiv}.}
+
 							\noi
 							From the higher-order bisimulation pair in \eqref{lem:wb_eq_wbf3} we can
 							conclude that if:
@@ -575,6 +593,8 @@ We now proceed to state and prove these lemmas, together with some auxiliary res
 								\label{lem:fwb_sub_hbf4}
 							\end{eqnarray}
 						%
+							\noi \dk{which follows from \eqref{lem:fwb_sub_hbf3} and Part 2 of \lemref{app:lem_trigger_equiv}.}
+
 							\noi
 							From the characteristic bisimulation pair in \eqref{lem:fwb_sub_hbf3}
 							and fresh $m'$ we can conclude that:
