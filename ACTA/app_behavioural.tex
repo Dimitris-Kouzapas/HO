@@ -69,43 +69,10 @@ for shorthand notations.
 \subsection{Deterministic Transitions}
 \label{app:sub_tau_inert}
 
-%We now define internal deterministic transitions as those associated to session synchronizations or to 
-%$\beta$-reductions: 
-		
-%\begin{definition}[Deterministic Transition]\myrm
-%\label{def:dettrans}
-%	Let  $\Gamma; \es; \Delta \proves P \hastype \Proc$ be a balanced \HOp process. 
-%	Transition $\horel{\Gamma}{\Delta}{P}{\hby{\tau}}{\Delta'}{P'}$ is called:
-%	\begin{enumerate}[$-$]
-%		\item {\em \sesstran} whenever the untyped transition $P \by{\tau} P'$ 
-%		is derived using 
-%			rule~$\ltsrule{Tau}$ 
-%		(where $\subj{\ell_1}$ and $\subj{\ell_2}$ in the premise 
-%		are dual endpoints), 
-%		possibly followed by uses of  $\ltsrule{Alpha}$, $\ltsrule{Res}$, $\ltsrule{Rec}$, or $\ltsrule{Par${}_L$}/
-%		\ltsrule{Par${}_R$}$.
-		
-%		\item	{\em \betatran}	whenever the untyped transition $P \by{\tau} P'$
-%			is derived using rule $\ltsrule{App}$,
-%			possibly followed by uses of  $\ltsrule{Alpha}$, $\ltsrule{Res}$, $\ltsrule{Rec}$, or $\ltsrule{Par${}_L$}/
-%		\ltsrule{Par${}_R$}$.
-%	\end{enumerate}
-%%
-%Below we write
-%$\horel{\Gamma}{\Delta}{P}{\hby{\stau}}{\Delta'}{P'}$
-%and 
-%$\horel{\Gamma}{\Delta}{P}{\hby{\btau}}{\Delta'}{P'}$
-%to denote session and $\beta$-transitions, resp. 
-%We also denote $\Hby{\dtau}$ for one or more deterministic transitions. 
-%Also, 
-%	 $\horel{\Gamma}{\Delta}{P}{\hby{\dtau}}{\Delta'}{P'}$ denotes
-%	either a \sesstran or a \betatran.
-%\end{definition}
 
-%Deterministic transitions imply the $\tau$-inertness property, which
-%is a property that ensures behavioural invariance on deterministic
-%transitions.
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%    TAU - INNERTNESS
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{proposition}[$\tau$-inertness]
 	\label{app:lem:tau_inert}
@@ -118,12 +85,6 @@ for shorthand notations.
 			$\horel{\Gamma}{\Delta}{P}{\hwb}{\Delta'}{P'}$.
 	\end{enumerate}
 \end{proposition}
-
-%\begin{proposition}[$\tau$-inertness]\rm
-%	Let balanced \HOp process $\Gamma; \es; \Delta \proves P \hastype \Proc$.
-%	$\horel{\Gamma}{\Delta}{P}{\hby{\dtau}}{\Delta'}{P'}$ implies
-%	$\horel{\Gamma}{\Delta}{P}{\wb}{\Delta'}{P'}$.
-%\end{proposition}
 
 %\jp{This proof seems to be by induction on deterministic transition; but then the analysis is on the structure of processes,
 %which is confusing. In general: I would have done this proof by coinduction, constructing a closure containing $(P, P')$.}
@@ -275,6 +236,11 @@ for shorthand notations.
 %	\qed
 %\end{proof}
 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%          COINCIDENCE
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 \subsection{Proof of \thmref{the:coincidence}}
 \label{app:sub_coinc}
 
@@ -296,116 +262,210 @@ several lemmas:
 We now proceed to state and prove these lemmas, together with some auxiliary results.
 %\thmref{app:thm:coincidence} (Page~\pageref{app:thm:coincidence}) summarises the coincidence result.
 
-\begin{lemma}
-	\label{app:lem_trigger_equiv}
-	Let $t$ be a fresh name and
-	$\Gamma; \es; \Delta_{V_i} \proves V_i \hastype U, i \in \set{1, 2}$.
+The next lemma states a form of equivalence between the characteristic
+and higher order trigger processes.
 
+\begin{lemma}[Trigger Process Equivalence]
+	\label{lem:trigger_equiv}
+	Let $t$ fresh.
 	\begin{itemize}
-		\item
-				If
+		\item	If
 				\[
-					\mhorel{\Gamma}{\Delta_1}{\newsp{\widetilde{m_1}}{P' \Par \hotrigger{t}{x}{s}{V_1}}}
+					\mhorel{\Gamma}{\Delta_1}{\newsp{\widetilde{m_1}}{P \Par \hotrigger{t}{x}{s}{V_1}}}
 					{\hwb}
-					{\Delta_2}{}{\newsp{\widetilde{m_2}}{Q' \Par \hotrigger{t}{x}{s}{V_2} }}
+					{\Delta_2}{}{\newsp{\widetilde{m_2}}{Q \Par \hotrigger{t}{x}{s}{V_2} }}
 				\]
-				then
+				then for $\Delta_1', \Delta_2'$
 				\[
-					\mhorel{\Gamma}{\Delta_1'}{\newsp{\widetilde{m_1}}{P' \Par \fotrigger{t}{x}{s}{\btinp{U} \tinact}{V_1}}}
+					\mhorel{\Gamma}{\Delta_1'}{\newsp{\widetilde{m_1}}{P \Par \fotrigger{t}{x}{s}{\btinp{U} \tinact}{V_1}}}
 					{\hwb}
-					{\Delta_2'}{}{\newsp{\widetilde{m_2}}{Q' \Par \fotrigger{t}{x}{s}{\btinp{U} \tinact}{V_2}}}
+					{\Delta_2'}{}{\newsp{\widetilde{m_2}}{Q \Par \fotrigger{t}{x}{s}{\btinp{U} \tinact}{V_2}}}
 				\]
 
 		\item	If
 				\[
-					\mhorel{\Gamma}{\Delta_1}{\newsp{\widetilde{m_1}}{P' \Par \fotrigger{t}{x}{s}{\btinp{U} \tinact}{V_1}}}
+					\mhorel{\Gamma}{\Delta_1}{\newsp{\widetilde{m_1}}{P \Par \fotrigger{t}{x}{s}{\btinp{U} \tinact}{V_1}}}
 					{\fwb}
-					{\Delta_2}{}{\newsp{\widetilde{m_2}}{Q' \Par \fotrigger{t}{x}{s}{\btinp{U} \tinact}{V_2} }}
+					{\Delta_2}{}{\newsp{\widetilde{m_2}}{Q \Par \fotrigger{t}{x}{s}{\btinp{U} \tinact}{V_2}}}
 				\]
-				then
+				then for $\Delta_1', \Delta_2'$
 				\[
-					\mhorel{\Gamma}{\Delta_1'}{\newsp{\widetilde{m_1}}{P' \Par \hotrigger{t}{x}{s}{V_1}}}
+					\mhorel{\Gamma}{\Delta_1'}{\newsp{\widetilde{m_1}}{P \Par \hotrigger{t}{x}{s}{V_1}}}
 					{\fwb}
-					{\Delta_2'}{}{\newsp{\widetilde{m_2}}{Q' \Par \hotrigger{t}{x}{s}{V_2}}}
+					{\Delta_2'}{}{\newsp{\widetilde{m_2}}{Q \Par \hotrigger{t}{x}{s}{V_2} }}
 				\]
 	\end{itemize}
 \end{lemma}
 
 \begin{proof}
-	\dk{put proof}
+	We present the proof for Part 2. Part 1 follows a subset of similar cases.
+
+	\noi Consider the typed relation (for readability, we omit type information):
+	\begin{eqnarray*}
+		\Re	&=&		\set{	(\newsp{\widetilde{m_1}}{P \Par \hotrigger{t}{x}{s}{V_1}},
+							Q \Par \hotrigger{t}{x}{s}{V_2})
+					\setbar\\
+			&&			\mhorel{\Gamma}{\Delta_1'}{\newsp{\widetilde{m_1}}{P \Par \fotrigger{t}{x}{s}{\btinp{U} \tinact}{V_1}}}
+						{\fwb}
+						{\Delta_2'}{}{\newsp{\widetilde{m_2}}{Q \Par \fotrigger{t}{x}{s}{\btinp{U} \tinact}{V_2}}}
+			\\
+			&&		}
+	\end{eqnarray*}
+	%
+	We show that $\Re \subseteq \fwb$. We analyse three cases
+	\begin{itemize}
+		\item	Case
+			%
+			\[
+				\mhorel{\Gamma}{\Delta_1'}{\newsp{\widetilde{m_1}}{P \Par \hotrigger{t}{x}{s}{V_1}}}
+				{\hby{\ell_1}}
+				{\Delta_3}{}{\newsp{\widetilde{m_1}'}{P' \Par \hotrigger{t}{x}{s}{V_1}}}
+			\]
+			%
+				then following the requirements of $\Re$ and the freshness of $t$
+				we can conclude that there exists $\Delta_1''$ such that
+			%
+			\[
+				\mhorel{\Gamma}{\Delta_1}{\newsp{\widetilde{m_1}}{P \Par \fotrigger{t}{x}{s}{\btinp{U} \tinact}{V_1}}}
+				{\hby{\ell_1}}
+				{\Delta_1''}{}{\newsp{\widetilde{m_1}'}{P' \Par \fotrigger{t}{x}{s}{\btinp{U} \tinact}{V_1}}}
+			\]
+			%
+				implies from the characteristic bisimilarity requirement of $\Re$ and
+				the freshness of $t$ that $\exists Q', \Delta_2''$ such that
+			%
+				\nhorel{\Gamma}{\Delta_2}{\newsp{\widetilde{m_2}}{Q \Par \fotrigger{t}{x}{s}{\btinp{U} \tinact}{V_2}}}
+				{\Hby{\ell_2}}
+				{\Delta_2''}{\newsp{\widetilde{m_2}'}{Q' \Par \fotrigger{t}{x}{s}{\btinp{U} \tinact}{V_2}}}
+				{proof:trig_equiv0}
+			%
+				and
+				\nhorel{\Gamma}{\Delta_1'''}{\newsp{\widetilde{m_1}''}{P' \Par \fotrigger{t}{x}{s}{\btinp{U} \tinact}{V_1} \Par C_1}}
+				{\fwb}
+				{\Delta_2'''}{\newsp{\widetilde{m_2}''}{Q' \Par \fotrigger{t}{x}{s}{\btinp{U} \tinact}{V_2} \Par C_2}}
+				{proof:trig_equiv1}
+			%
+				with $C_1$ (resp., $C_2$) being the characteristic trigger process
+				in the cases where $\ell_1 = \news{\widetilde{m}} \bactout{n}{V_1'}$ (resp., $\ell_2 = \news{\widetilde{m}'} \bactout{n}{V_2'}$)
+				and $C_1 = C_2 = \inact$ otherwise.
+			%
+				From \eqref{proof:trig_equiv0} we can conclude that $\exists \Delta_4$ such that
+			\[
+				\mhorel{\Gamma}{\Delta_2'}{\newsp{\widetilde{m_1}}{Q \Par \hotrigger{t}{x}{s}{V_2}}}
+				{\Hby{\ell_2}}
+				{\Delta_4}{}{\newsp{\widetilde{m_2}'}{Q' \Par \hotrigger{t}{x}{s}{V_2}}}
+			\]
+			%
+				Equation \eqref{proof:trig_equiv1} then concludes that
+			\[
+				\mhorel{\Gamma}{\Delta_3'}{\newsp{\widetilde{m_1}'''}{P' \Par \hotrigger{t}{x}{s}{V_1} \Par C_1}}
+				{\Re}
+				{\Delta_4'}{}{\newsp{\widetilde{m_2}'''}{Q' \Par \hotrigger{t}{x}{s}{V_2} \Par C_2}}
+			\]
+			%
+				as required.
+
+		\item	Case
+			\[
+				\mhorel{\Gamma}{\Delta_1'}{\newsp{\widetilde{m_1}}{P \Par \hotrigger{t}{x}{s}{V_1}}}
+				{\hby{\bactinp{t}{\map{\btinp{U} \tinact}^{x}}}}
+				{\Delta_3}{}{\newsp{\widetilde{m_1}}{P \Par \newsp{s}{\map{\btinp{U} \tinact}^{s} \Par \bout{\dual{s}}{V_1} \inact}}}
+			\]
+			%
+				Following requirements of $\Re$ and the freshness of $t$
+				we can conclude that there exists $\Delta_1''$ such that
+			%
+			\[
+				\mhorel{\Gamma}{\Delta_1}{\newsp{\widetilde{m_1}}{P \Par \fotrigger{t}{x}{s}{\btinp{U} \tinact}{V_1}}}
+				{\hby{\bactinp{t}{m}}}
+				{\Delta_1''}{}{\newsp{\widetilde{m_1}}{P \Par \newsp{s}{\map{\btinp{U} \tinact}^{s} \Par \bout{\dual{s}}{V_1} \inact}}}
+			\]
+			%
+				implies from the higher order bisimilarity requirement of the premise and
+				the freshness of $t$ that $\exists Q', \Delta_2''$ such that
+			%
+				\begin{eqnarray}
+					\begin{array}{crll}
+						& \Gamma; \es; \Delta_2 & \proves &		
+						\newsp{\widetilde{m_2}}{Q \Par \fotrigger{t}{x}{s}{\btinp{U} \tinact}{V_2}}
+						\\
+						\Hby{} &&&
+						\newsp{\widetilde{m_2}}{Q_2 \Par \fotrigger{t}{x}{s}{\btinp{U} \tinact}{V_2}}
+						\\
+						{\hby{\bactinp{t}{m}}}& & &
+						\newsp{\widetilde{m_2}}{Q_2 \Par \newsp{s}{\map{\btinp{U} \tinact}^{s} \Par \bout{\dual{s}}{V_2} \inact}}
+						\\
+						\Hby{} & \Delta_2'' & \proves & Q'
+					\end{array}
+					\label{proof:trig_equiv2}
+				\end{eqnarray}
+			%
+				and
+			%
+				\nhorel{\Gamma}{\Delta_1''}{\newsp{\widetilde{m_1}}{P \Par \newsp{s}{\map{\btinp{U} \tinact}^{s} \Par \bout{\dual{s}}{V_1} \inact}}}
+				{\fwb}
+				{\Delta_2''}{\newsp{\widetilde{m_2}}{Q'}}
+				{proof:trig_equiv3}
+			%
+				The freshness of $t$ allows us to mimic the transitions
+				in \eqref{proof:trig_equiv2} to get that for $\Delta_4$
+			%
+				\begin{eqnarray*}
+					\begin{array}{crll}
+						& \Gamma; \es; \Delta_2' & \proves &		
+						\newsp{\widetilde{m_2}}{Q \Par \hotrigger{t}{x}{s}{V_2}}
+						\\
+						\Hby{} &&&
+						\newsp{\widetilde{m_2}}{Q_2 \Par \hotrigger{t}{x}{s}{V_2}}
+						\\
+						{\hby{\bactinp{t}{\map{\btinp{U} \tinact}^{x}}}}& & &
+						\newsp{\widetilde{m_2}}{Q_2 \Par \newsp{s}{\map{\btinp{U} \tinact}^{s} \Par \bout{\dual{s}}{V_2} \inact}}
+						\\
+						\Hby{} & \Delta_4 & \proves & Q'
+					\end{array}
+				\end{eqnarray*}
+			%
+				The conclusion is immediate from \eqref{proof:trig_equiv3}.
+
+		\item	Case
+			\[
+				\mhorel{\Gamma}{\Delta_1'}{\newsp{\widetilde{m_1}}{P \Par \hotrigger{t}{x}{s}{V_1}}}
+				{\hby{\bactinp{t}{ \abs{x}{\binp{t'}{y}{\appl{y}{x}}  }}}}
+				{\Delta_3'}{}{\newsp{\widetilde{m_1}}{P \Par \newsp{s}{  \appl{(\abs{x}{\binp{t'}{y}{\appl{y}{x}})}{s}  \Par \bout{\dual{s}}{V_1} \inact }}}}
+			\]
+			We show that there $\exists, \Delta_4, \newsp{\widetilde{m_1}}{Q \Par \hotrigger{t'}{x}{s}{V_1}}$ such that
+			\[
+				\mhorel{\Gamma}{\Delta_2'}{\newsp{\widetilde{m_1}}{Q \Par \hotrigger{t}{x}{s}{V_1}}}
+				{\Hby{\bactinp{t}{ \abs{x}{\binp{t'}{y}{\appl{y}{x}}  }}}}
+				{\Delta_4}{}{\newsp{\widetilde{m_1}}{Q \Par \hotrigger{t'}{x}{s}{V_1}}}
+			\]
+			and
+			\[
+				\mhorel{\Gamma}{\Delta_3'}{\newsp{\widetilde{m_1}}{P \Par \newsp{s}{  \appl{(\abs{x}{\binp{t'}{y}{\appl{y}{x}})}{s}  \Par \bout{\dual{s}}{V_1} \inact }}}}
+				{\Hby{\tau_d}}
+				{\Delta_3}{}{\newsp{\widetilde{m_1}}{P \Par \hotrigger{t'}{x}{s}{V_1}}}
+			\]
+			The result
+			\[
+				\mhorel{\Gamma}{\Delta_3}{\newsp{\widetilde{m_1}}{P \Par \hotrigger{t'}{x}{s}{V_1}}}
+				{\Re}
+				{\Delta_4}{}{\newsp{\widetilde{m_1}}{Q \Par \hotrigger{t'}{x}{s}{V_1}}}
+			\]
+			is immediate from the definition of $\Re$.
+
+	\end{itemize}
 	\qed
 \end{proof}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%  HWB = FWB
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%    Higher Weak Bisimilarity = Characteristic Weak Bisimilarity  (\hwb = \fwb)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
 \begin{lemma}
 	\label{app:lem:wb_eq_wbf}
 	$\hwb = \fwb$.
 \end{lemma}
-
-%\jp{The level of clarity/formality in the current proof does not convince me. I wrote an alternative version.
-%
-%\begin{proof}[Alternative]
-%We only prove the direction $\hwb \subseteq \fwb$; 
-%the	direction $\fwb \subseteq \hwb$ is similar.
-%We show that the typed relation:
-%	\[
-%		\Re = \set{(P,Q) \setbar \horel{\Gamma}{\Delta_1}{P}{\hwb}{\Delta_2}{Q}}
-%	\]
-%\end{proof}
-%is a characteristic bisimulation. 
-%Observe that  $\hwb$ and $\fwb$ differ 
-%only in the output clause (cf. \defref{d:hwb} and \defref{d:fwb}).
-%We therefore focus our analysis in output actions. 
-%
-%Suppose $(P, Q) \in \Re$ and 
-%$\horel{\Gamma}{\Delta_1}{P}{\hby{\news{\widetilde{m_1}} \bactout{n}{V_1}}}{\Delta_1'}{P'}$.
-%Then, by definition of $\hwb$, there exist $Q, V_2$ such that 
-%$\horel{\Gamma}{\Delta_2}{Q}{\Hby{\news{\widetilde{m_2}} \bactout{n}{V_2}}}{\Delta_2'}{Q'}$
-%and, for a fresh $t$:
-%\begin{equation*}
-%		\horel{\Gamma}{\Delta_1'}{\newsp{\widetilde{m_1}}{P' \Par \htrigger{t}{V_1}}}
-%		{~\Re~}
-%		{\Delta_2}{}{\newsp{\widetilde{m_2}}{Q' \Par \htrigger{t}{V_2} }}
-%\end{equation*}
-%which, by expanding the definition of higher-order trigger,  can be equivalently written as
-%\begin{equation}
-%		\horel{\Gamma}{\Delta_1'}{\newsp{\widetilde{m_1}}{P' \Par \hotrigger{t}{x}{s}{V_1}}}
-%		{~\Re~}
-%		{\Delta_2}{}{\newsp{\widetilde{m_2}}{Q' \Par \hotrigger{t}{x}{s}{V_2} }}
-%		\label{eq:altc1}
-%\end{equation}
-%We show that \eqref{eq:altc1} implies the existence of a pair in $\Re$ that corresponds to the shape 
-%induced by the output clause of characteristic bisimilarity. 
-%Suppose the following input action from 
-%$\newsp{\widetilde{m_1}}{P' \Par \hotrigger{t}{x}{s}{V_1}}$:
-%
-%	\[
-%		\mhorel{\Gamma}{\Delta_1'}{\newsp{\widetilde{m_1}}{P' \Par \hotrigger{t}{x}{s}{V_1}}}
-%		{\hby{\bactinp{t}{\map{\btinp{U} \tinact}^{x}}}}
-%		{\Delta_1''}{}{\newsp{\widetilde{m_1}}{P' \Par \newsp{s}{\map{\btinp{U} \tinact}^{s} \Par \bout{\dual{s}}{V_1} \inact}}}
-%	\]
-%
-%By definition of $\hwb$, we know that process 
-%$\newsp{\widetilde{m_2}}{Q' \Par \hotrigger{t}{x}{s}{V_2} }$ can match this action:
-%	\[
-%		\mhorel{\Gamma}{\Delta_2'}{\newsp{\widetilde{m_2}}{Q' \Par \hotrigger{t}{x}{s}{V_2}}}
-%		{\Hby{\bactinp{t}{\map{\btinp{U} \tinact}^{x}}}}
-%		{\Delta_2''}{}{\newsp{\widetilde{m_2}}{Q' \Par \newsp{s}{\map{\btinp{U} \tinact}^{s} \Par \bout{\dual{s}}{V_2} \inact}}}
-%	\]
-%with 
-%	\[
-%		\mhorel{\Gamma}{\Delta_1''}{\newsp{\widetilde{m_1}}{P' \Par \newsp{s}{\map{\btinp{U} \tinact}^{s} \Par \bout{\dual{s}}{V_1} \inact}}}
-%		{~\Re~}
-%		{\Delta_2''}{}{\newsp{\widetilde{m_2}}{Q'' \Par \newsp{s}{\map{\btinp{U} \tinact}^{s} \Par \bout{\dual{s}}{V_2} \inact}}}
-%	\]
-%which is precisely the shape required by $\fwb$ after an output action---cf. \defref{d:fwb} and \eqref{eqb:4} in Page \pageref{eqb:4}.
-%Therefore, $\Re$ is a characteristic bisimulation and we are done.
-%\qed
-%}
 
 \begin{proof}
 	\noi
@@ -467,76 +527,8 @@ We now proceed to state and prove these lemmas, together with some auxiliary res
 								\label{lem:wb_eq_wbf4}
 							\end{eqnarray}
 						%
-							\noi \dk{which follows from \eqref{lem:wb_eq_wbf3} and Part 1 of \lemref{app:lem_trigger_equiv}.}
-
-							\noi
-							From the higher-order bisimulation pair in \eqref{lem:wb_eq_wbf3} we can
-							conclude that if:
-							\[
-								\mhorel{\Gamma}{\Delta_1'}{\newsp{\widetilde{m_1}}{P' \Par \hotrigger{t}{x}{s}{V_1}}}
-								{\hby{\bactinp{t}{\map{\btinp{U} \tinact}^{x}}}}
-								{\Delta_3'}{}{\newsp{\widetilde{m_1}}{P' \Par \newsp{s}{\map{\btinp{U} \tinact}^{s} \Par \bout{\dual{s}}{V_1} \inact}}}
-							\]
-						%
-							then there exists $Q''$ such that:
-							\begin{eqnarray}
-								\begin{array}{crll}
-									& \Gamma; \es; \Delta_2' & \proves &		
-									\newsp{\widetilde{m_2}}{Q' \Par \hotrigger{t}{x}{s}{V_2}}
-									\\
-									\Hby{} &&&
-									\newsp{\widetilde{m_2}}{Q_2 \Par \fotrigger{t}{x}{s}{V_2}}
-									\\
-									{\hby{\bactinp{t}{\map{\btinp{U} \tinact}^{x}}}}& & &
-									\newsp{\widetilde{m_2}}{Q_2 \Par \newsp{s}{\map{\btinp{U} \tinact}^{s} \Par \bout{\dual{s}}{V_2} \inact}}
-									\\
-									\Hby{} & \Delta_4' & \proves & Q''
-								\end{array}
-								\label{lem:wb_eq_wbf_5}
-							\end{eqnarray}
-						%
-							and
-								\[
-									\horel{\Gamma}
-									{\Delta_3'}{\newsp{\widetilde{m_1}}{P' \Par \newsp{s}{\map{\btinp{U} \tinact}^{s} \Par \bout{\dual{s}}{V_1} \inact}}}
-									{\hwb}
-									{\Delta_4'}{Q''}
-								\]
-							which implies from the definition of $\Re$:
-							\begin{eqnarray}
-								\horel{\Gamma}
-								{\Delta_3'}{\newsp{\widetilde{m_1}}{P' \Par \newsp{s}{\map{\btinp{U} \tinact}^{s} \Par \bout{\dual{s}}{V_1} \inact}}}
-								{\ \Re\ }
-								{\Delta_4'}{Q''}
-								\label{lem:wb_eq_wbf6}
-							\end{eqnarray}
-						%
-							From the pair in \eqref{lem:wb_eq_wbf4}, we get:
-							\[
-								\mhorel{\Gamma}{\Delta_3}{\newsp{\widetilde{m_1}}{P' \Par \fotrigger{t}{x}{s}{\btinp{U} \tinact}{V_1}}}
-								{\hby{\bactinp{t}{m'}}}
-								{\Delta_3'}{}{\newsp{\widetilde{m_1}}{P' \Par \newsp{s}{\map{\btinp{U} \tinact}^{s} \Par \bout{\dual{s}}{V_1} \inact}}}
-							\]
-						%
-							The freshness of $t$ allows us to mimic the transitions
-							in \eqref{lem:wb_eq_wbf_5} to get:
-							\[
-								\begin{array}{crll}
-									& \Gamma; \es; \Delta_4 & \proves &		
-									\newsp{\widetilde{m_2}}{Q' \Par \fotrigger{t}{x}{s}{\btinp{U} \tinact}{V_2}}
-									\\
-									\Hby{} &&&
-									\newsp{\widetilde{m_2}}{Q_2 \Par \fotrigger{t}{x}{s}{\btinp{U} \tinact}{V_2}}
-									\\
-									\hby{\bactinp{t}{m'}}& & &
-									\newsp{\widetilde{m_2}}{Q_2 \Par \newsp{s}{\map{\btinp{U} \tinact}^{s} \Par \bout{\dual{s}}{V_2} \inact}}
-									\\
-									\Hby{} & \Delta_4' & \proves & Q''
-								\end{array}
-							\]
-						%
-						This last implication together with the result in \eqref{lem:wb_eq_wbf6}
-						concludes the proof of the case.
+							\noi which follows from \eqref{lem:wb_eq_wbf3}, Part 1 of \lemref{lem:trigger_equiv},
+							and the definition of $\Re$.
 
 					\item	The other cases are trivial.
 				\end{itemize}
@@ -593,191 +585,15 @@ We now proceed to state and prove these lemmas, together with some auxiliary res
 								\label{lem:fwb_sub_hbf4}
 							\end{eqnarray}
 						%
-							\noi \dk{which follows from \eqref{lem:fwb_sub_hbf3} and Part 2 of \lemref{app:lem_trigger_equiv}.}
-
-							\noi
-							From the characteristic bisimulation pair in \eqref{lem:fwb_sub_hbf3}
-							and fresh $m'$ we can conclude that:
-							\[
-								\mhorel{\Gamma}{\Delta_1'}{\newsp{\widetilde{m_1}}{P' \Par \fotrigger{t}{x}{s}{\btinp{U} \tinact}{V_1}}}
-%								{\hby{\bactinp{t}{\map{\btinp{U} \tinact}^{x}}}}
-								{\hby{\bactinp{t}{m'}}}
-								{\Delta_3'}{}{\newsp{\widetilde{m_1}}{P' \Par \newsp{s}{\map{\btinp{U} \tinact}^{s} \Par \bout{\dual{s}}{V_1} \inact}}}
-							\]
-						%
-							then there exists $Q''$ such that:
-							\begin{eqnarray}
-								\begin{array}{crll}
-									& \Gamma; \es; \Delta_2' & \proves &		
-									\newsp{\widetilde{m_2}}{Q' \Par \fotrigger{t}{x}{s}{\btinp{U} \tinact}{V_2}}
-									\\
-									\Hby{} &&&
-									\newsp{\widetilde{m_2}}{Q_2 \Par \fotrigger{t}{x}{s}{\btinp{U} \tinact}{V_2}}
-									\\
-%									{\hby{\bactinp{t}{\map{\btinp{U} \tinact}^{x}}}}
-									{\hby{\bactinp{t}{m'}}}& & &
-									\newsp{\widetilde{m_2}}{Q_2 \Par \newsp{s}{\map{\btinp{U} \tinact}^{s} \Par \bout{\dual{s}}{V_2} \inact}}
-									\\
-									\Hby{} & \Delta_4' & \proves & Q''
-								\end{array}
-								\label{lem:fwb_sub_hbf5}
-							\end{eqnarray}
-						%
-							and
-								\[
-									\horel{\Gamma}
-									{\Delta_3'}{\newsp{\widetilde{m_1}}{P' \Par \newsp{s}{\map{\btinp{U} \tinact}^{s} \Par \bout{\dual{s}}{V_1} \inact}}}
-									{\fwb}
-									{\Delta_4'}{Q''}
-								\]
-							which implies from the definition of $\Re$:
-							\begin{eqnarray}
-								\horel{\Gamma}
-								{\Delta_3'}{\newsp{\widetilde{m_1}}{P' \Par \newsp{s}{\map{\btinp{U} \tinact}^{s} \Par \bout{\dual{s}}{V_1} \inact}}}
-								{\ \Re\ }
-								{\Delta_4'}{Q''}
-								\label{lem:fwb_sub_hbf6}
-							\end{eqnarray}
-						%
-							From the pair in \eqref{lem:fwb_sub_hbf4}, we get:
-							\[
-								\mhorel{\Gamma}{\Delta_3}{\newsp{\widetilde{m_1}}{P' \Par \hotrigger{t}{x}{s}{V_1}}}
-								{\hby{\bactinp{t}{\map{\btinp{U} \tinact}^{x}}}}
-								{\Delta_3'}{}{\newsp{\widetilde{m_1}}{P' \Par \newsp{s}{\map{\btinp{U} \tinact}^{s} \Par \bout{\dual{s}}{V_1} \inact}}}
-							\]
-						%
-							The freshness of $t$ allows us to mimic the transitions
-							in \eqref{lem:fwb_sub_hbf5} to get:
-							\[
-								\begin{array}{crll}
-									& \Gamma; \es; \Delta_4 & \proves &		
-									\newsp{\widetilde{m_2}}{Q' \Par \hotrigger{t}{x}{s}{V_2}}
-									\\
-									\Hby{} &&&
-									\newsp{\widetilde{m_2}}{Q_2 \Par \hotrigger{t}{x}{s}{V_2}}
-									\\
-									{\hby{\bactinp{t}{\map{\btinp{U} \tinact}^{x}}}}& & &
-									\newsp{\widetilde{m_2}}{Q_2 \Par \newsp{s}{\map{\btinp{U} \tinact}^{s} \Par \bout{\dual{s}}{V_2} \inact}}
-									\\
-									\Hby{} & \Delta_4' & \proves & Q''
-								\end{array}
-							\]
-						%
-						This last implication together with the result in \eqref{lem:fwb_sub_hbf6}
-						concludes the proof of the case.
+							which follows from \eqref{lem:fwb_sub_hbf3}, Part 2 of \lemref{lem:trigger_equiv},
+							and the definition of $\Re$.
 
 					\item	The other cases are trivial.
 				\end{itemize}
-
-
-
 	\end{enumerate}
 	\qed
 \end{proof}
 
-
-\begin{comment}
-\begin{proof}
-	\noi We only prove the direction $\hwb \subseteq \fwb$. The
-	direction $\fwb \subseteq \hwb$ is similar.
-Consider the typed relation (for readability, we omit type information):
-%
-	\[
-		\Re = \set{%\horel{\Gamma}{\Delta_1}{P}{\ ,\ }{\Delta_2}{Q} 
-		(P, Q) 
-		\setbar \horel{\Gamma}{\Delta_1}{P}{\hwb}{\Delta_2}{Q}}
-	\]
-%
-	We show that $\Re$ is a characteristic bisimulation.
-	Suppose $\horel{\Gamma}{\Delta_1}{P}{\hby{ \ell}}{\Delta_1'}{P'}
-					\label{lem:wb_eq_wbf1}
-			$.
-				The proof does a case analysis on the transition label $\ell$.
-
-	\begin{enumerate}
-		\item	$\ell = \news{\widetilde{m_1}} \bactout{n}{V_1}$ is the non-trivial case. If
-			%
-				\begin{eqnarray}
-					\horel{\Gamma}{\Delta_1}{P}{\hby{\news{\widetilde{m_1}} \bactout{n}{V_1}}}{\Delta_1'}{P'}
-					\label{lem:wb_eq_wbf1}
-				\end{eqnarray}
-				then $\exists Q, V_2$ such that
-			%
-				\begin{eqnarray}
-					\horel{\Gamma}{\Delta_2}{Q}{\Hby{\news{\widetilde{m_2}} \bactout{n}{V_2}}}{\Delta_2'}{Q'}
-					\label{lem:wb_eq_wbf2}
-				\end{eqnarray}
-			%
-				and for fresh $t$:
-				\[
-					\mhorel{\Gamma}{\Delta_1'}{\newsp{\widetilde{m_1}}{P' \Par \hotrigger{t}{x}{s}{V_1}}}
-					{\hwb}
-					{\Delta_2}{}{\newsp{\widetilde{m_2}}{Q' \Par \hotrigger{t}{x}{s}{V_2} }}
-				\]
-			%
-				From the last typed pair we can derive that for $\Gamma; \es; \Delta \proves V_1 \hastype U$:
-			%
-				\[
-					\mhorel{\Gamma}{\Delta_1'}{\newsp{\widetilde{m_1}}{P' \Par \hotrigger{t}{x}{s}{V_1}}}
-					{\hby{\bactinp{t}{\map{\btinp{U} \tinact}^{x}}}}
-					{\Delta_1''}{}{\newsp{\widetilde{m_1}}{P' \Par \newsp{s}{\map{\btinp{U} \tinact}^{s} \Par \bout{\dual{s}}{V_1} \inact}}}
-				\]
-			%
-				\noi implies
-			%
-				\[
-					\mhorel{\Gamma}{\Delta_2'}{\newsp{\widetilde{m_2}}{Q' \Par \hotrigger{t}{x}{s}{V_2}}}
-					{\hby{\bactinp{t}{\map{\btinp{U} \tinact}^{x}}}}
-					{\Delta_2''}{}{\newsp{\widetilde{m_2}}{Q' \Par \newsp{s}{\map{\btinp{U} \tinact}^{s} \Par \bout{\dual{s}}{V_2} \inact}}}
-				\]
-			%
-				\noi and $\Gamma; \es; \Delta' \proves V_2 \hastype U$.
-
-				\noi To prove that $\Re$ is a characteristic bisimulation we
-				have that transition~\eqref{lem:wb_eq_wbf1} implies transition~\eqref{lem:wb_eq_wbf2}.
-				We still need to show that for fresh $t$:
-			%
-				\begin{eqnarray}
-					\mhorel{\Gamma}{\Delta_1'}{\newsp{\widetilde{m_1}}{P' \Par \fotrigger{t}{x}{s}{\btinp{U} \tinact}{V_1}}}
-					{\Re}
-					{\Delta_2}{}{\newsp{\widetilde{m_2}}{Q' \Par \fotrigger{t}{x}{s}{\btinp{U} \tinact}{V_2}}}
-					\label{lem:wb_eq_wbf3}
-				\end{eqnarray}
-			%
-				\noi To show result \eqref{lem:wb_eq_wbf3} we need to prove that the processes % in \eqref{lem:wb_eq_wbf3}
-				are higher-order bisimilar. We can show that by observing an input action on the fresh name $t$ on
-				both processes:
-
-				\noi The freshness of $t$ implies that
-				\[
-					\mhorel{\Gamma}{\Delta_1'}{\newsp{\widetilde{m_1}}{P' \Par \fotrigger{t}{x}{s}{\btinp{U} \tinact}{V_1}}}
-					{\hby{\bactinp{t}{m'}}}
-					{\Delta_1''}{}{\newsp{\widetilde{m_1}}{P' \Par \newsp{s}{\map{\btinp{U} \tinact}^{s} \Par \bout{\dual{s}}{V_1} \inact}}}
-				\]
-				\noi and
-			%
-				\[
-					\mhorel{\Gamma}{\Delta_2'}{\newsp{\widetilde{m_2}}{Q' \Par \fotrigger{t}{x}{s}{\btinp{U} \tinact}{V_2}}}
-					{\hby{\bactinp{t}{m'}}}
-					{\Delta_2''}{}{\newsp{\widetilde{m_2}}{Q' \Par \newsp{s}{\map{\btinp{U} \tinact}^{s} \Par \bout{\dual{s}}{V_2} \inact}}}
-				\]
-			%
-				\noi	thus processes in \eqref{lem:wb_eq_wbf3} are higher order bisimilar and
-						thus they are included in $\Re$.
-			%			which coincides with the transitions for $\hwb$,
-			%			from where we can conclude that 
-		
-
-		\item	The other cases are trivial.
-	\end{enumerate}
-
-	\noi The direction $\fwb \subseteq \hwb$ is very similar to the
-	direction $\hwb \subseteq \fwb$: it requires a case analysis
-	on the transition label $\ell$. Again, the non-trivial case is
-	$\ell = \news{\widetilde{m_1}} \bactout{n}{V_1}$.
-	\qed
-\end{proof}
-\end{comment}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
