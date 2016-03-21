@@ -313,7 +313,7 @@ and higher order trigger processes.
 	\end{eqnarray*}
 	%
 	We show that $\Re \subseteq \fwb$. We analyse three cases
-	\begin{itemize}
+	\begin{enumerate}
 		\item	Case
 			%
 			\[
@@ -453,7 +453,7 @@ and higher order trigger processes.
 			\]
 			is immediate from the definition of $\Re$.
 
-	\end{itemize}
+	\end{enumerate}
 	\qed
 \end{proof}
 
@@ -595,721 +595,238 @@ and higher order trigger processes.
 \end{proof}
 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% PROCESS SUBSTITUTION
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%  LINEAR SUBSTITUTION
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+A process substitution lemma is useful for showing the
+contextual for higher-order and characteristic bisimilarities.
+Before we state and prove a process substitution lemma
+we give an intermediate result.
 
-The next lemma implies a process substitution lemma as a corollary.
-Given two processes that are bisimilar under triggered substitution
-and characteristic process substitution, we can prove that they are
-bisimilar under every process substitution. This result is
-the key result for proving the soundness of the bisimulation. 
-%We prove for the case of the general polyadic abstractions. 
+\newcommand{\trval}[2]{\abs{x}{\binp{#1}{y} (\appl{y}{#2})}}
+\newcommand{\trvalx}[1]{\trval{#1}{x}}
 
-%We also use one of the equalities in the substitution lemmas. 
-%However all results hold for other equivalences. 
-%\jp{
-%Below I slightly modified the statement and added some structure (enumerate).
-%Some remaining issues:
-%
-%The statement should have some quantification on $P_1, Q_1$, I guess.
-%
-%The abstraction still mentions $\widetilde{x}$, it is better to have $\widetilde{z}$.
-%
-%The closure contains pairs of processes, not judgments: no need to mention $\Gamma$, $\Delta_1, \Delta_2$ in the 
-%LHS of the definition of $\Re$. 
-
-%I don't understand what is process 
-%$\newsp{\widetilde{m_1}}{P_1 \subst{\abs{\widetilde{x}}{R}}{x} \Par P_2\subst{\abs{\widetilde{x}}{R}}{x} }$
-%right before the case analysis. Do you mean
-%$\newsp{\widetilde{m_1}}{P_1\Par P_2\subst{\abs{\widetilde{x}}{R}}{x} }$
-%(without the substitution in $P_1$?) Is $x$ free also in $P_1$?
-
-%The rationale for the case analysis is not clear: why the two cases 
-%$P_2 = \appl{x}{\widetilde{n}}$ and $P_2 \not= \appl{x}{\widetilde{n}}$
-%are the only relevant cases? Where do you get the information to narrow down the options??
-
-%We need to mention what $C_1$ and $C_2$ are in the first case.
-
-%}
-
-\begin{lemma}[Linear Process Substitution]
-	\label{app:lem:subst_equiv}
-	Let $P_2$ and $Q_2$ be processes, with $\fpv{P_2} = \fpv{Q_2} = \set{x}$.
-	If $\exists \Gamma$ and $x: U$ such that the following hold
-%
-	\begin{enumerate}
-		\item	$\exists \Delta_1''', \Delta_2''',$ such that
-				$\Gamma; x: U; \Delta_1''' \proves P_2 \hastype \Proc$ and $\Gamma; x: U; \Delta_2''' \proves Q_2 \hastype \Proc$.
-		\item	$\exists P_1, Q_1$ such that
-		\begin{enumerate}[i.]
-			\item	$\exists \Delta_1'''', \Delta_2''''$ and fresh $t$ such that
-					$\horel{\Gamma}{\Delta_1''''}{\newsp{\widetilde{m_1}}{P_1 \Par P_2 \subst{\auxtr{t}}{x}}}
-					{\hwb}
-					{\Delta_2''''}{\newsp{\widetilde{m_2}}{Q_1 \Par Q_2 \subst{\auxtr{t}}{x}}}$.
-
-			\item	$\exists \Delta_1'', \Delta_2''$ such that
-					$\horel{\Gamma}{\Delta_1''}{\newsp{\widetilde{m_1}}{P_1 \Par P_2 \subst{\omapchar{U}}{x}}}
-					{\hwb}{\Delta_2''}{\newsp{\widetilde{m_2}}{Q_1 \Par Q_2 \subst{\omapchar{U}}{x}}}$.
-%					for some $U$.
-		\end{enumerate}
-	\end{enumerate}
-%
-	then $\forall R$ such that $\fv{R} = \widetilde{z}$
-\[
-	\horel{\Gamma}{\Delta_1}{\newsp{\widetilde{m_1}}{P_1 \Par P_2 \subst{\abs{\widetilde{z}}{R}}{x}}}
-	{\hwb}
-	{\Delta_2}{\newsp{\widetilde{m_2}}{Q_1 \Par Q_2 \subst{\abs{\widetilde{z}}{R}}{x}}}
-\]
+\begin{lemma}[Trigger Substitution]
+	\label{lem:tigger_subst}
+	Let fresh $t$. If
+	\[
+		\horel{\Gamma}{\Delta_1}{\newsp{\widetilde{m_1}}{P_1 \Par \appl{(\trvalx{t})}{n_1} }}
+		{\hwb}
+		{\Delta_2}{\newsp{\widetilde{m_2}}{P_2 \Par \appl{(\trvalx{t})}{n_2} }}
+	\]
+	then $\forall \abs{x}{R}, \exists \Delta_1', \Delta_2'$ such that
+	\[
+		\horel{\Gamma}{\Delta_1'}{\newsp{\widetilde{m_1}}{P_1 \Par \appl{(\abs{x}{R})}{n_1} }}
+		{\hwb}
+		{\Delta_2'}{\newsp{\widetilde{m_2}}{P_2 \Par \appl{(\abs{x}{R})}{n_2} }}
+	\]
 \end{lemma}
 
 \begin{proof}
-	Let relation
-%
-	\begin{eqnarray*}
-		\Re &=&
-%			\set{\horel{\Gamma}{\Delta_1}{\newsp{\widetilde{m_1}}{P_1 \Par P_2 \subst{\abs{\widetilde{z}}{R}}{x}}}{,}
-%			{\Delta_2}{\newsp{\widetilde{m_2}}{Q_1 \Par Q_2 \subst{\abs{\widetilde{z}}{R}}{x}}} \setbar \\
-			\set{
-				(\Gamma; \Delta_1 \proves \newsp{\widetilde{m_1}}{P_1 \Par P_2 \subst{\abs{\widetilde{z}}{R}}{x}} \hastype \Proc
-				\ ,\ 
-				\Gamma; \Delta_2 \proves \newsp{\widetilde{m_2}}{Q_1 \Par Q_2 \subst{\abs{\widetilde{z}}{R}}{x}} \hastype \Proc)
-				\setbar
-				\\
-			&& \quad \forall R \textrm{ such that } \fv{R} = \widetilde{z}, \fpv{P_2} = \fpv{Q_2} = \set{x} \vee \exists U \text{ such that }
-				\\
-			&& \quad ((\exists \Delta_1''', \Delta_2''', \text{fresh } t, \Gamma; x: U; \Delta_1''' \proves P_2 \hastype \Proc, \Gamma; x: U; \Delta_2''' \proves Q_2 \hastype \Proc),
-				\\
-			&& \quad \land (\exists \Delta_1'''', \Delta_2'''', \\
-			&& \quad \horel{\Gamma}{\Delta_1''''}{\newsp{\widetilde{m_1}}{P_1 \Par P_2 \subst{\auxtr{t}}{x}}}{\hwb}{\Delta_2''''}{\newsp{\widetilde{m_2}}{Q_1 \Par Q_2 \subst{\auxtr{t}}{x}}}),
-				\\
-			&& \quad \land (\exists \Delta_1'', \Delta_2'', \horel{\Gamma}{\Delta_1''}{\newsp{\widetilde{m_1}}{P_1 \Par P_2 \subst{\omapchar{U}}{x}}}{\hwb}{\Delta_2''}{\newsp{\widetilde{m_2}}{Q_1 \Par Q_2 \subst{\omapchar{U}}{x}}))} \\%\textrm{ for some } U}\\
-			&&}
-	\end{eqnarray*}
-%
-	\noi  We show that $\Re$ is a higher-order bisimulation up-to \betatran (\lemref{lem:up_to_deterministic_transition}).
-
-	\noi We do a case analysis on the structure of processes that perform the transition:
-%
-	\[
-		\horel{\Gamma}{\Delta_1}{\newsp{\widetilde{m_1}}{P_1 \Par P_2\subst{\abs{\widetilde{z}}{R}}{x} }}{\hby{\ell_1}}{\Delta_1'}{P_1'}
-	\]
-%
-	\noi We distinguish two cases:
-	i) either $P_2 = \appl{x}{\widetilde{n}}$ for some $\widetilde{n}$,
-	where the substitution of $\abs{\widetilde{z}}{R}$
-	on variable $x$ gives
-	$P_2 = \appl{\abs{\widetilde{z}}{R}}{\widetilde{n}}$ so we can observe the
-	application on abstraction $\abs{\widetilde{z}}{R}$; or
-	ii) $P_2 \not= \appl{x}{\widetilde{n}}$, where we can observe
-	an action on $P_2$ that does not involve $\abs{\widetilde{z}}{R}$.
-%	and easily verify the closure $\Re$.
-
-	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-	%          Case
-	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{enumerate}
-	\item Case: $P_2 \not= \appl{x}{\widetilde{n}}$ for some $\widetilde{n}$.
-%
-	\begin{eqnarray}
-		&&	\horel{\Gamma}{\Delta_1}
-		{\newsp{\widetilde{m_1}}{P_1 \Par P_2 \subst{\abs{\widetilde{z}}{R}}{x}}}
-		{\hby{\ell_1}}
-		{\Delta_1'}{\newsp{\widetilde{m_1'}}{P_1' \Par P_2' \subst{\abs{\widetilde{z}}{R}}{x}}}
-		\label{lem:subst_equiv0}
-	\end{eqnarray}
-
-	\noi From the latter transition, the fact $P_2 \not= \appl{x}{\widetilde{n}}$ we obtain that:
-%
-\[
-		\mhorel{\Gamma}{\Delta_1''''}{\newsp{\widetilde{m_1}}{P_1 \Par P_2 \subst{\auxtr{t}}{x}}}
-		{\hby{\ell_1}}{\Delta_3}{P' \scong}{\newsp{\widetilde{m_1}}{P_1' \Par P_2' \subst{\auxtr{t}}{x}}}
-\]
-%
-	\noi
-		From the freshness of $t$ ($t \notin \fn{\ell_1}$) and
-		from the definition of $\Re$, specifically, the requirement
-		$\horel{\Gamma}{\Delta_1''''}
-		{\newsp{\widetilde{m_1}}{P_1 \Par P_2 \subst{\auxtr{t}}{x} }}
-		{\hwb}
-		{\Delta_2''''}{\newsp{\widetilde{m_2}}{Q_1 \Par Q_2 \subst{\auxtr{t}}{x}}}$, we get that
-		$\exists \newsp{\widetilde{m_2'}}{Q_1' \Par Q_2' \subst{\auxtr{t}}{x}}, \Delta_4$ such that:
-%
-	\begin{eqnarray}
-		\Gamma; \es; &\Delta_2''''& \proves \newsp{\widetilde{m_2}}{Q_1 \Par Q_2 \subst{\auxtr{t}}{x}} \nonumber \\
-%		\Hby{}&& \newsp{\widetilde{m_2}}{Q_1'' \Par Q_2'' \subst{\auxtr{t}}{x}} \nonumber\\
-%		\hby{\ell_2}&& \newsp{\widetilde{m_2}}{Q_1''' \Par Q_2''' \subst{\auxtr{t}}{x}} \nonumber\\
-		\Hby{\ell_2} &\Delta_4& \proves \newsp{\widetilde{m_2'}}{Q_1' \Par Q_2' \subst{\auxtr{t}}{x}}
-		\label{lem:subst_equiv1}
-		\\
-		&&\horel{\Gamma}{\Delta_3}{\newsp{m_1'}{P' \Par C_1}}{\hwb}{\Delta_4}{\newsp{m_2'}{Q_1' \Par Q_2' \subst{\auxtr{t}}{x} \Par C_2}} \label{lem:subst_equiv2}
-	\end{eqnarray}
-%
-	\noi with $C_1 = \htrigger{t'}{V_1}, C_2 = \htrigger{t'}{V_2}$ for fresh $t'$
-	in the case where $\ell_1 = \news{m_1''}\bactout{n}{V_1}, \ell_2 = \news{m_2''}\bactout{n}{V_2}$ or $C_1 = C_2 = \inact$ otherwise.   
- 
-	\noi Furthermore, from the fact that $P_2 \not= \appl{x}{\widetilde{n}}$ we have:
-%
-\[
-	\horel{\Gamma}{\Delta_1''}{\newsp{\widetilde{m_1}}{P_1 \Par P_2 \subst{\omapchar{U}}{x}}}{\hby{\ell_1}}
-	{\Delta_5}{P'' \scong \newsp{\widetilde{m_1'}}{P_1' \Par P_2' \subst{\omapchar{U}}{x}}}
-\]
-%
-	\noi
-		From \ref{lem:subst_equiv0}, together with the latter transition consider process $C_1, C_2$ and action $\ell_2$.
-		From the definition of $\Re$, specifically, the requirement
-		$\horel{\Gamma}{\Delta_1''}{\newsp{\widetilde{m_1}}{P_1 \Par P_2 \subst{\omapchar{U}}{x}}}
-		{\hwb}{\Delta_2''}{\newsp{\widetilde{m_2}}{Q_1 \Par Q_2 \subst{\omapchar{U}}{x}}))}$,
-		we get that $\exists \newsp{\widetilde{m_2}'}{Q_1' \Par Q_2' \subst{\omapchar{U}}{x}}, \Delta_6$ such that:
-%
-	\begin{eqnarray}
-		\Gamma; \es; &\Delta_2''& \proves \newsp{\widetilde{m_2}}{Q_1 \Par Q_2 \subst{\omapchar{U}}{x}} \nonumber \\
-		\Hby{\ell_2} &\Delta_6& \proves \newsp{\widetilde{m_2}'}{Q_1' \Par Q_2' \subst{\omapchar{U}}{x}}
-		\label{lem:subst_equiv3}
-		\\
-		&&\horel{\Gamma}{\Delta_5}{\newsp{m_1'}{P'' \Par C_1}}{\hwb}{\Delta_6}{\newsp{m_2'}{Q_1' \Par Q_2' \subst{\omapchar{U}}{x} \Par C_2}} \label{lem:subst_equiv4}
-	\end{eqnarray}
-%
-	\noi From \eqref{lem:subst_equiv1} and \eqref{lem:subst_equiv3}, and $\forall R$ with $\fv{R} = \widetilde{z}$
-	there exist $\Delta_2', \newsp{\widetilde{m_2}'}{Q_1' \Par Q_2' \subst{\abs{\widetilde{z}}{R}}{x}}$ such that:
-%
-	\[
-		\horel{\Gamma}{\Delta_2}{\newsp{\widetilde{m_2}}{Q_1 \Par Q_2 \subst{\abs{\widetilde{z}}{R}}{x}}}
-		{\Hby{\ell_2}}
-		{\Delta_2'}{\newsp{\widetilde{m_2}'}{Q_1' \Par Q_2' \subst{\abs{\widetilde{z}}{R}}{x}}}
-	\]
-	%
-	\noi
-		Also if we combine~\eqref{lem:subst_equiv2} and~\eqref{lem:subst_equiv4} and the definition of $\Re$ we get that
-		$\forall R$ with $\fv{R} = \widetilde{z}$:
-	%
-	\begin{eqnarray*}
-		\horel{\Gamma}{\Delta_1'}{\newsp{\widetilde{m_1}'}{P_1' \Par P_2' \subst{\abs{\widetilde{z}}{R}}{x} \Par C_1}}
-		{\ \Re\ }
-		{\Delta_2'}{\newsp{\widetilde{m_2}'}{Q_1' \Par Q_2' \subst{\abs{\widetilde{z}}{R}}{x} \Par C_2}}
-	\end{eqnarray*}
-	%
-	The last two equations conclude the requirement for
-	$\Re$ being a higher-order bisimulation.
-%
-
-	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-	%          Case
-	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-	\item	Case: $P_2 = \appl{x}{\widetilde{n}}$ for some $\widetilde{n}$.
-			We distinguish two cases:
-			\begin{enumerate}[i.]
-				\item 	\noi $\forall R$ with $\fv{R} = \widetilde{z}, \exists \Delta_1'$ such that:
-%
-						\[
-							\horel{\Gamma}{\Delta_1}{\newsp{\widetilde{m_1}}{P_1 \Par (\appl{x}{\widetilde{n}}) \subst{\abs{\widetilde{z}}{R}}{x}}}
-							{\hby{\ell_1}}
-							{\Delta_1'}{}{\newsp{\widetilde{m_1'}}{P_1' \Par (\appl{x}{\widetilde{n}}) \subst{\abs{\widetilde{z}}{R}}{x}}}
-						\]
-%
-						\noi The case is very similar with Case 1 of this proof.
-
-				\item	\noi $\forall R$ with $\fv{R} = \widetilde{z}$
-%
-						\begin{eqnarray}
-							\horel{\Gamma}{\Delta_1}{\newsp{\widetilde{m_1}}{P_1 \Par (\appl{x}{\widetilde{n}}) \subst{\abs{\widetilde{z}}{R}}{x}}}
-							{\hby{\btau}}
-							{\Delta_1}{\newsp{\widetilde{m_1}}{P_1 \Par  R \subst{\widetilde{n}}{\widetilde{z}}}}
-							\label{lem:subst_equiv5}
-						\end{eqnarray}
-%
-						\noi
-							From the latter transition we get that:
-%
-						\begin{eqnarray*}
-							\horel{\Gamma}{\Delta_1''''}{\newsp{\widetilde{m_1}}{P_1 \Par \appl{x}{\widetilde{n}} \subst{\auxtr{t}}{x}}}
-							{\hby{\btau}}
-							{\Delta_1''''}{\newsp{\widetilde{m_1}}{P_1 \Par \binp{t}{y} \appl{y}{\widetilde{n}}}}
-%							\label{lem:subst_equiv6}
-						\end{eqnarray*}
-%
-						From the Determinacy Lemma (\lemref{app:lem:tau_inert}) we get
-%
-						\begin{eqnarray*}
-							\horel{\Gamma}{\Delta_1''''}{\newsp{\widetilde{m_1}}{P_1 \Par \appl{x}{\widetilde{n}} \subst{\auxtr{t}}{x}}}
-							{\hwb}
-							{\Delta_1''''}{\newsp{\widetilde{m_1}}{P_1 \Par \binp{t}{y} \appl{y}{\widetilde{n}}}}
-%							\label{lem:subst_equiv6}
-						\end{eqnarray*}
-%
-						and from the definition of $\Re$, specifically, the requirement
-						$\horel{\Gamma}{\Delta_1''''}
-						{\newsp{\widetilde{m_1}}{P_1 \Par \appl{x}{\widetilde{n}} \subst{\auxtr{t}}{x} }}
-						{\hwb}
-						{\Delta_2''''}{\newsp{\widetilde{m_2}}{Q_1 \Par Q_2 \subst{\auxtr{t}}{x}}}$, and the
-						transitivity of bisimulation we get:
-%
-						\begin{eqnarray}
-							\horel{\Gamma}{\Delta_1''''}{\newsp{\widetilde{m_1}}{P_1 \Par \binp{t}{y} \appl{y}{\widetilde{n}}}}
-							{\hwb}
-							{\Delta_2''''}{\newsp{\widetilde{m_2}}{Q_1 \Par Q_2 \subst{\auxtr{t}}{x}}}
-							\label{lem:subst_equiv7}
-						\end{eqnarray}
-%
-						Furthermore, from \eqref{lem:subst_equiv5} we get:
-%
-						\begin{eqnarray*}
-							\horel{\Gamma}{\Delta_1''}{\newsp{\widetilde{m_1}}{P_1 \Par \appl{x}{\widetilde{n}} \subst{\omapchar{U}}{x}}}
-							{\hby{\btau}}
-							{\Delta_1''}{\newsp{\widetilde{m_1}}{P_1 \Par \mapchar{U}{\widetilde{n}}}}% \binp{t}{y} \appl{y}{\widetilde{n}}}}
-%								\label{lem:subst_equiv6}
-						\end{eqnarray*}
-%
-						From the Determinacy Lemma (\lemref{app:lem:tau_inert}) we get
-%
-						\begin{eqnarray*}
-							\horel{\Gamma}{\Delta_1''}{\newsp{\widetilde{m_1}}{P_1 \Par \appl{x}{\widetilde{n}} \subst{\omapchar{U}}{x}}}
-							{\hwb}
-							{\Delta_1''}{\newsp{\widetilde{m_1}}{P_1 \Par \mapchar{U}{\widetilde{n}}}}% \binp{t}{y} \appl{y}{\widetilde{n}}}}
-%							\label{lem:subst_equiv6}
-						\end{eqnarray*}
-%
-						From the definition of $\Re$, specifically, the requirement
-						$\horel{\Gamma}{\Delta_1''}{\newsp{\widetilde{m_1}}{P_1 \Par \appl{x}{\widetilde{n}} \subst{\omapchar{U}}{x}}}
-						{\hwb}{\Delta_2''}{\newsp{\widetilde{m_2}}{Q_1 \Par Q_2 \subst{\omapchar{U}}{x}}))}$,
-						and the transitivity of $\hwb$ we get that:
-%
-						\begin{eqnarray}
-							\horel{\Gamma}{\Delta_1''}{\newsp{\widetilde{m_1}}{P_1 \Par \mapchar{U}{\widetilde{n}}}}
-							{\hwb}
-							{\Delta_2''}{\newsp{\widetilde{m_2}}{Q_1 \Par Q_2 \subst{\omapchar{U}}{x}}}
-							\label{lem:subst_equiv9}
-						\end{eqnarray}
-%
-%							\noi From \eqref{lem:subst_equiv6} and \eqref{lem:subst_equiv8}, and $\forall R$ with $\fv{R} = \widetilde{z}$
-%							there exist $\newsp{\widetilde{m_2}}{Q_1' \Par Q_2' \subst{\abs{\widetilde{z}}{R}}{x}}$ such that:
-%						%
-%							\[
-%								\horel{\Gamma}{\Delta_2}{\newsp{\widetilde{m_2}}{Q_1 \Par Q_2 \subst{\abs{\widetilde{z}}{R}}{x}}}
-%								{\Hby{}}
-%								{\Delta_2}{\newsp{\widetilde{m_2}}{Q_1' \Par Q_2' \subst{\abs{\widetilde{z}}{R}}{x}}}
-%							\]
-%							%
-						\noi
-						If we combine~\eqref{lem:subst_equiv7} and~\eqref{lem:subst_equiv9} and the definition of $\Re$ we get that
-						$\forall R$ with $\fv{R} = \widetilde{z}$:
-						%
-						\begin{eqnarray*}
-							\horel{\Gamma}{\Delta_1}{\newsp{\widetilde{m_1}}{P_1 \Par \appl{x}{\widetilde{n}} \subst{\abs{\widetilde{z}}{R}}{x}  }}
-							{\hby{\dtau} \ \Re\ }
-							{\Delta_2}{\newsp{\widetilde{m_2}}{Q_1 \Par Q_2 \subst{\abs{\widetilde{z}}{R}}{x}}}
-						\end{eqnarray*}
-						%
-						which coincides with the requirements of a $\Re$ being a bisimulation
-						up-to determinate transition (\lemref{lem:up_to_deterministic_transition}).
-			\end{enumerate}
-
-%	\item Case: $P_2 = \appl{x}{\widetilde{n}}$ for some $\widetilde{n}$.
-%
-%%	\noi We do a case analysis on action $\ell$.
-%%	\noi - Subcase: $\ell \not= \tau$.
-%
-%	\noi $\forall R$ with $\fv{R} = \widetilde{z}$
-%%
-%	\[
-%		\mhorel{\Gamma}{\Delta_1}{\newsp{\widetilde{m_1}}{P_1 \Par (\appl{x}{\widetilde{n}}) \subst{\abs{\widetilde{z}}{R}}{x}}}
-%		{\hby{\btau}}
-%		{\Delta_1'}{}{\newsp{\widetilde{m_1'}}{P_1 \Par  R \subst{\widetilde{n}}{\widetilde{z}}}}
-%	\]
-%%
-%	\noi From the latter transition we get that:
-%%
-%	\nhorel{\Gamma}{\Delta_1}{\newsp{\widetilde{m_1}}{P_1 \Par \appl{x}{\widetilde{n}} \subst{\auxtr{t}}{x}}}
-%	{\hby{\btau} \hby{\bactinp{t}{\auxtr{t'}}}}
-%	{\Delta_1'}{\newsp{\widetilde{m_1'}}{P_1 \Par \appl{x}{\widetilde{n}} \subst{\auxtr{t'}}{x}}}
-%	{lem:subst_equiv5}
-%%
-%%	\begin{eqnarray}
-%%		\Gamma; \es; \Delta_1 &\hby{\bactinp{t}{\auxtr{t'}}}& \Delta_1' \proves
-%%		\newsp{\widetilde{m_1}}{P_1 \Par \appl{X}{\widetilde{n}} \subst{\auxtr{t}}{X}} \nonumber \\
-%%		&\hby{\bactinp{t}{\auxtr{t'}}}& 
-%%		\newsp{\widetilde{m_1'}}{P_1 \Par \appl{X}{\widetilde{n}} \subst{\auxtr{t'}}{X}}
-%%		\label{lem:subst_equiv5}
-%%	\end{eqnarray}
-%%
-%	\noi and $t'$ a fresh name. From the freshness of $t$,
-%	the determinacy of the application transition
-%	and the fact that $x$ is linear in $Q_2$
-%	it has to be the case that:
-%%
-%	\[
-%		\begin{array}{crll}
-%			&\Gamma; \es; \Delta_2'& \proves &
-%			\newsp{\widetilde{m_2'}}{Q_1 \Par Q_2 \subst{\auxtr{t}}{x}}\\
-%			\Hby{} & & &
-%			\newsp{\widetilde{m_2'}}{Q_1'' \Par Q_3 \Par \appl{x}{\widetilde{m}} \subst{\auxtr{t}}{x}} \\
-%			\hby{\btau} \hby{\bactinp{t}{\auxtr{t'}}}
-%			& \Delta_2''& \proves& \newsp{\widetilde{m_2'}}{Q_1' \Par \appl{x}{\widetilde{m}} \subst{\auxtr{t'}}{x}}
-%		\end{array}
-%	\]
-%%
-%%
-%%	\[
-%%		\begin{array}{rcll}
-%%			\Gamma; \es; \Delta_2' &\Hby{\bactinp{t}{\auxtr{t'}}}& \Delta_2'' \proves &
-%%			\newsp{\widetilde{m_2'}}{Q_1 \Par Q_2 \subst{\auxtr{t}}{X}}\\
-%%			&\Hby{}& &
-%%			\newsp{\widetilde{m_2'}}{Q_1'' \Par Q_3 \Par \appl{X}{\widetilde{m}} \subst{\auxtr{t}}{X}} \\
-%%			&\hby{\bactinp{t}{\auxtr{t'}}}& &
-%%			\newsp{\widetilde{m_2'}}{Q_1' \Par \appl{X}{\widetilde{m}} \subst{\auxtr{t'}}{X}} \\
-%%		\end{array}
-%%	\]
-%%
-%	\noi and
-%%
-%%	\nhorel{\Gamma}{\Delta_1'}{\newsp{\widetilde{m_1'}}{P_1 \Par \appl{x}{\widetilde{n}} \subst{\auxtr{t'}}{x}}}
-%%	{\hwb}
-%%	{\Delta_2'}{\newsp{\widetilde{m_2}'}{Q_1' \Par \appl{x}{\widetilde{m}} \subst{\auxtr{t'}}{x}}}
-%%	{lem:subst_equiv6}
-%%
-%%
-%%	\begin{eqnarray}
-%%		\Gamma; \es; \Delta_1' &\hwb& \Delta_2' \proves 
-%%		\newsp{\widetilde{m_1'}}{P_1 \Par \appl{X}{\widetilde{n}} \subst{\auxtr{t'}}{X}} \nonumber \\
-%%		& \hwb &
-%%		\newsp{\widetilde{m_2}'}{Q_1' \Par \appl{X}{\widetilde{m}} \subst{\auxtr{t'}}{X}}
-%%		\label{lem:subst_equiv6}
-%%	\end{eqnarray} 
-%%
-%	\noi From the latter transition we can conclude that $\forall R$ with $\fv{R} = \set{x}$:
-%%
-%	\[
-%		\begin{array}{crll}
-%			&\Gamma; \es; \Delta_2'& \proves & 
-%			\newsp{\widetilde{m_2'}}{Q_1 \Par Q_2 \subst{\abs{\widetilde{z}}{R}}{x}}\\
-%			\Hby{} & & &
-%			\newsp{\widetilde{m_2'}}{Q_1' \Par \appl{x}{\widetilde{m}} \subst{\abs{\widetilde{z}}{R}}{x}} \\
-%			\hby{\btau}
-%			&\Delta_2''& \proves & \newsp{\widetilde{m_2'}}{Q_1' \Par R \subst{\widetilde{m}}{\widetilde{z}}}%\appl{x}{\widetilde{m}} \subst{\abs{\widetilde{x}}{R'}}{x}}
-%		\end{array}
-%	\]
-%%
-%%	\[
-%%		\begin{array}{rcll}
-%%			\Gamma; \es; \Delta_2' &\Hby{\ell}& \Delta_2'' \proves &
-%%			\newsp{\widetilde{m_2'}}{Q_1 \Par Q_2 \subst{\abs{\widetilde{x}}{R}}{X}}\\
-%%			&\Hby{}& &
-%%			\newsp{\widetilde{m_2'}}{Q_1' \Par \appl{X}{\widetilde{m}} \subst{\abs{\widetilde{x}}{R}}{X}} \\
-%%			&\hby{\ell}& &
-%%			\newsp{\widetilde{m_2'}}{Q_1' \Par \appl{X}{\widetilde{m}} \subst{\abs{\widetilde{x}}{R'}}{X}} \\
-%%		\end{array}
-%%	\]
-%%
-%	\noi From the definition of $\Re$ and~\eqref{lem:subst_equiv6},
-%	we also conclude that
-%	\begin{eqnarray*}
-%		&& \horel{\Gamma}
-%		{\Delta_1'}{\newsp{\widetilde{m_1'}}{P_1 \Par R \subst{\widetilde{n}}{\widetilde{z}}}}
-%		{\hby{\btau}\ \Re\ \stackrel{\btau}{\longmapsfrom}}
-%		{\Delta_2'}{\newsp{\widetilde{m_2}'}{Q_1' \Par R \subst{\widetilde{m}}{\widetilde{z}}}}
-%	\end{eqnarray*}
-	\end{enumerate}
-%
-%	\noi the latter substitution can be rewritten as
-%
-%	\begin{eqnarray*}
-%		&&\horel{\Gamma}
-%		{\Delta_1'}{\newsp{\widetilde{m_1'}}{P_1 \Par \appl{X}{s} \subst{\abs{\widetilde{x}}{R'}}{X} \Par C}}
-%		{\ \mathcal{S}\ }
-%		{\Delta_2'}{\newsp{\widetilde{m_2}'}{Q_1' \Par \appl{X}{s'} \subst{\abs{\widetilde{x}}{R'}}{X} \Par C}}
-%	\end{eqnarray*}
-%
-%	\noi with process $C$ being the process derived from action $\ell$
-%	to complete the bisimulation closure.
-	%\qed
-\begin{comment}
-	\noi - Subcase: $\ell = \tau$.
-
-	\noi $\forall R$ with $\fv{R} = \widetilde{x}$
-%
-	\[
-		\mhorel{\Gamma}{\Delta_1}{\newsp{\widetilde{m_1}}{P_1 \Par \appl{X}{\widetilde{n}} \subst{\abs{\widetilde{x}}{R}}{x}}}
-		{\hby{\tau}}
-		{\Delta_1'}{}{\newsp{\widetilde{m_1'}}{P_1' \Par \appl{X}{\widetilde{n}} \subst{\abs{\widetilde{x}}{R'}}{x}}}
-	\]
-%
-	\noi The last transition implies
-	\[
-		\mhorel{\Gamma}{\Delta_1}{\newsp{\widetilde{m_1}}{P_1 \Par \appl{X}{\widetilde{n}} \subst{\abs{\widetilde{x}}{R}}{x}}}
-		{\hby{\ell_1}}
-		{\Delta_1'}{}{\newsp{\widetilde{m_1'}}{P_1 \Par \appl{X}{\widetilde{n}} \subst{\abs{\widetilde{x}}{R'}}{x}}}
-	\]
-%
-	\noi and
-%
-	\[
-		\mhorel{\Gamma}{\Delta_1}{\newsp{\widetilde{m_1}}{P_1 \Par \appl{X}{\widetilde{n}} \subst{\abs{\widetilde{x}}{R}}{x}}}
-		{\hby{\ell_2}}
-		{\Delta_1'}{}{\newsp{\widetilde{m_1'}}{P_1' \Par \appl{X}{\widetilde{n}} \subst{\abs{\widetilde{x}}{R}}{x}}}
-	\]
-%
-	\noi We also get that:
-%
-	\[
-		\begin{array}{crll}
-			&\Gamma; \es; \Delta_1 & \proves &
-			\newsp{\widetilde{m_1}}{P_1 \Par \appl{X}{\widetilde{n}} \subst{\auxtr{t}}{x}} \\
-			\hby{\ell_1} & \Delta_1'' & \proves & \newsp{\widetilde{m_1}}{P_1' \Par \appl{x}{\widetilde{n}} \subst{\auxtr{t}}{x}} \\
-			\hby{\bactinp{t}{\abs{\widetilde{x}}{\binp{t'}{y} \appl{y}{\widetilde{x}}}}} 
-			&\Delta_1'& \proves & \newsp{\widetilde{m_1'}}{P_1' \Par \appl{x}{\widetilde{n}} \subst{\abs{\widetilde{x}}{\binp{t'}{y} \appl{y}{\widetilde{x}}}}{x}}
-		\end{array}
-	\]
-%
-%	\begin{eqnarray*}
-%		\Gamma; \es; \Delta_1 &\hby{\bactinp{t}{\auxtr{t'}}}& \Delta_1' \proves
-%		\newsp{\widetilde{m_1}}{P_1 \Par \appl{X}{\widetilde{n}} \subst{\auxtr{t}}{X}} \\
-%		&\hby{\ell_1}& \newsp{\widetilde{m_1}}{P_1' \Par \appl{X}{\widetilde{n}} \subst{\auxtr{t}}{X}} \\
-%		&\hby{\bactinp{t}{\auxtr{t'}}}& 
-%		\newsp{\widetilde{m_1'}}{P_1' \Par \appl{X}{\widetilde{n}} \subst{\auxtr{t'}}{X}}
-%		\label{lem:subst_equiv5}
-%	\end{eqnarray*}
-%
-	\noi and $t'$ a fresh name. From the freshness of $t$ and the fact that $X$ is linear in $Q_2$
-	it has to be the case that:
-%
-	\[
-		\begin{array}{crll}
-			& \Gamma; \es; \Delta_2'&  \proves &
-			\newsp{\widetilde{m_2'}}{Q_1 \Par Q_2 \subst{\auxtr{t}}{x}}\\
-			\Hby{\ell_2}& & &
-			\newsp{\widetilde{m_2'}}{Q_1'' \Par Q_3 \Par \appl{x}{\widetilde{m}} \subst{\auxtr{t}}{x}} \\
-			\hby{\bactinp{t}{\abs{\widetilde{x}}{\binp{t'}{y} \appl{y}{\widetilde{x}}}}}
-			&\Delta_2''& \proves& \newsp{\widetilde{m_2'}}{Q_1' \Par \appl{x}{\widetilde{m}} \subst{\abs{\widetilde{x}}{\binp{t'}{y} \appl{y}{\widetilde{x}}}}{x}} \\
-		\end{array}
-	\]
-%
-%	\[
-%		\begin{array}{rcll}
-%			\Gamma; \es; \Delta_2' &\Hby{\bactinp{t}{\auxtr{t'}}}& \Delta_2'' \proves &
-%			\newsp{\widetilde{m_2'}}{Q_1 \Par Q_2 \subst{\auxtr{t}}{X}}\\
-%			&\Hby{\ell_2}& &
-%			\newsp{\widetilde{m_2'}}{Q_1'' \Par Q_3 \Par \appl{X}{\widetilde{m}} \subst{\auxtr{t}}{X}} \\
-%			&\hby{\bactinp{t}{\auxtr{t'}}}& &
-%			\newsp{\widetilde{m_2'}}{Q_1' \Par \appl{X}{\widetilde{m}} \subst{\auxtr{t'}}{X}} \\
-%		\end{array}
-%	\]
-%
-	\noi From here the proof is similar with the previous case.
-	%\qed
-\end{comment}
-\qed
-\end{proof}
-
-\noindent
-We can generalise the result of the linear process substitution lemma
-to prove process substitution (\lemref{app:lem:proc_subst}).
-Intuitively, we can subsequently apply linear process substitution
-to achieve process substitution.
-
-%\jp{The following is so "loose" that I don't understand how can it help...}
-
-We first need to show that any process has a normal form:
-\begin{lemma}[Normal Form]
-	\label{app:lem:nomral_form}
-	For every process $P$, there exist (possibly empty) $\tilde{m}$
-	and (possibly inactive) $P_1, P_2$ such that
-	$P \scong \newsp{\tilde{m}}{P_1 \Par P_2}$.
-\end{lemma}
-
-\begin{proof}[Sketch]
-	The proof is a simple induction on the structure
-	of $P$ that uses structural congruence to show that
-	$P \scong \newsp{\tilde{m}}{P_1 \Par P_2}$. 
-\qed
-\end{proof}
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%	Process Substitution
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-%\jp{Some of the issues above apply verbatim also to this statement/proof.}
-
-\begin{lemma}[Process Substitution]
-	\label{app:lem:proc_subst}
-	Let $P$ and $Q$ be processes. If 
-%
-	\begin{enumerate}
-		\item	$\horel{\Gamma}{\Delta_1'}{P \subst{\auxtr{t}}{x}}{\hwb}{\Delta_2'}{Q \subst{\auxtr{t}}{x}}$,
-				for some fresh $t$.
-
-		\item	$\horel{\Gamma}{\Delta_1''}{P \subst{\omapchar{U}}{x}}{\hwb}{\Delta_2''}{Q \subst{\omapchar{U}}{x}}$,
-				for some $U$.
-	\end{enumerate}
-%
-	then $\forall R$ such that $\fv{R} = \widetilde{z}$
-\[
-	\horel{\Gamma}{\Delta_1}{P \subst{\abs{\widetilde{z}}{R}}{x}}{\hwb}{\Delta_2}{Q \subst{\abs{\widetilde{z}}{R}}{x}}
-\]
-\end{lemma}
-
-
-\begin{proof}
-	\noi We define a closure $\Re$ using the normal form (\lemref{app:lem:nomral_form}) of $P$ and $Q$:
-
-	\[
-		\begin{array}{rcll}
-			\Re &=& \set{
-			(\Gamma; \Delta_1 \proves \newsp{\widetilde{m_1}}{P_1 \subst{\abs{\widetilde{z}}{R}}{x} \Par P_2 \subst{\abs{\widetilde{z}}{R}}{x}} \hastype \Proc
-			\ ,\ 
-			\Gamma; \Delta_2 \proves \newsp{\widetilde{m_2}}{Q_1 \subst{\abs{\widetilde{z}}{R}}{x} \Par Q_2 \subst{\abs{\widetilde{z}}{R}}{x}} \hastype \Proc)
-			\setbar \\
-			&& \qquad \forall R \textrm{ such that } \fv{R} = \widetilde{z},\\
-			&& \qquad \textrm{ for fresh } t,
-			\mhorel{\Gamma}{\Delta_1'}
-			{\newsp{\widetilde{m_1}}{P_1 \subst{\auxtr{t}}{x} \Par P_2 \subst{\auxtr{t}}{x}}}
-			{\hwb}
-			{\Delta_2'}{}{\newsp{\widetilde{m_2}}{Q_1 \subst{\auxtr{t}}{x} \Par Q_2 \subst{\auxtr{t}}{x}}}\\
-			&& \qquad \textrm{ for some } U, 
-			\mhorel{\Gamma}{\Delta_1''}
-			{\newsp{\widetilde{m_1}}{P_1 \subst{\omapchar{U}}{x} \Par P_2 \subst{\omapchar{U}}{x}}}
-			{\hwb}
-			{\Delta_2''}{}{\newsp{\widetilde{m_2}}{Q_1 \subst{\omapchar{U}}{x} \Par Q_2 \subst{\omapchar{U}}{x}}} \\
-			&&}
-		\end{array}
-	\]
-%
-%	\begin{eqnarray*}
-%		\mathcal{S} &=& \set{\horel{\Gamma}{\Delta_1}{\newsp{\widetilde{m_1}}{P_1 \subst{\abs{\widetilde{x}}{R}}{X} \Par P_2 \subst{\abs{\widetilde{x}}{R}}{X}}}{,}{\Delta_2}{\newsp{\widetilde{m_2}}{Q_1 \subst{\abs{\widetilde{x}}{R}}{X} \Par Q_2 \subst{\abs{\widetilde{x}}{R}}{X}}} \setbar \\
-%		&& \quad \forall R \textrm{ such that } \fv{R} = \widetilde{x},\\
-%		&& \quad \textrm{ for fresh } t, \Gamma; \es; \Delta_1' \hwb \Delta_2' \proves \\
-%		&& \quad \newsp{\widetilde{m_1}}{P_1 \subst{\auxtr{t}}{X} \Par P_2 \subst{\auxtr{t}}{X}} \hwb \newsp{\widetilde{m_2}}{Q_1 \subst{\auxtr{t}}{X} \Par Q_2 \subst{\auxtr{t}}{X}}, \\
-%		&& \quad \textrm{ for some } U, \Gamma; \es; \Delta_1'' \hwb \Delta_2'' \proves \\
-%		&& \quad \newsp{\widetilde{m_1}}{P_1 \subst{\abs{\widetilde{x}}{\map{U}^x}}{X} \Par P_2 \subst{\abs{\widetilde{x}}{\map{U}^x}}{X}} \hwb \newsp{\widetilde{m_2}}{Q_1 \subst{\abs{\widetilde{x}}{\map{U}^x}}{X} \Par Q_2 \subst{\abs{\widetilde{x}}{\map{U}^x}}{X}} \\
-%		&&}
-%	\end{eqnarray*}
-%
-	\noi We show that $\Re$ is a bisimulation up to \betatran (\lemref{app:lem:tau_inert}).
-
-	\noi We distinguish two cases:
-	i) either $P_2 = \appl{x}{\widetilde{n}}$ for some $\widetilde{n}$,
-	where the substitution of $\abs{\widetilde{z}}{R}$
-	on variable $x$ gives
-	$P_2 = \appl{\abs{\widetilde{z}}{R}}{\widetilde{n}}$ so we can observe the
-	application on abstraction $\abs{\widetilde{z}}{R}$; or
-	ii) $P_2 \not= \appl{x}{\widetilde{n}}$, where we can observe
-	an action on $P_2$ that does not involve $\abs{\widetilde{z}}{R}$
-	and easily verify the closure $\Re$.
-
-	\begin{enumerate} 
-	\item Case: $P_2 \not= \appl{x}{\widetilde{n}}$ for some $\widetilde{n}$.
-%
-	\nhorel	{\Gamma}{\Delta_1}{\newsp{\widetilde{m_1}}{P_1 \subst{\abs{\widetilde{z}}{R}}{x} \Par P_2 \subst{\abs{\widetilde{z}}{R}}{x}}}
-		{\hby{\ell_1}}
-		{\Delta_1'}{\newsp{\widetilde{m_1'}}{P_1 \subst{\abs{\widetilde{z}}{R}}{x} \Par P_2' \subst{\abs{\widetilde{z}}{R}}{x}}}
-		{lem:subst_equiv11}
-%
-	\noi The case is similar to the first case of \lemref{app:lem:subst_equiv}.
-
-	\noi \item Case: $P_2 = \appl{x}{\widetilde{n}}$ for some $\widetilde{n}$.
-%
-\[
-	\mhorel	{\Gamma}{\Delta_1}{\newsp{\widetilde{m_1}}{P_1 \subst{\abs{\widetilde{z}}{R}}{x} \Par \appl{x}{\widetilde{n}} \subst{\abs{\widetilde{z}}{R}}{x}}}
-		{\hby{\btau}}{\Delta_1'}{}{\newsp{\widetilde{m_1'}}{P_1 \subst{\abs{\widetilde{z}}{R}}{x} \Par R \subst{\widetilde{n}}{\widetilde{z}}}} %\appl{x}{\widetilde{n}} \subst{\abs{\widetilde{x}}{R'}}{x}}}
-%		{\hby{\ell_1}}{\Delta_1'}{}{\newsp{\widetilde{m_1'}}{P_1 \subst{\abs{\widetilde{x}}{R}}{x} \Par \appl{x}{\widetilde{n}} \subst{\abs{\widetilde{x}}{R'}}{x}}}
-\]
-%
-	\noi From the latter transition we get that:
-%
-	\nhorel{\Gamma}{\Delta_1}
-	{\newsp{\widetilde{m_1}}{P_1 \subst{\auxtr{t}}{x} \Par \appl{x}{\widetilde{n}} \subst{\auxtr{t}}{x}}}
-	{\hby{\btau} \hby{\bactinp{t}{\auxtr{t'}}}}
-	{\Delta_1'}{\newsp{\widetilde{m_1}'}{P_1 \subst{\auxtr{t}}{x} \Par \appl{y}{\widetilde{n}} \subst{\auxtr{t'}}{y}}}
-%	{\hby{\bactinp{t}{\auxtr{t'}}}}
-%	{\Delta_1'}{\newsp{\widetilde{m_1}'}{P_1 \subst{\auxtr{t}}{x} \Par \appl{y}{\widetilde{n}} \subst{\abs{\widetilde{x}}{\binp{t'}{y} \appl{y}{\widetilde{x}}}}{y}}}
-	{cor:subst_equiv5}
-%
-%	\begin{eqnarray}
-%		\Gamma; \es; \Delta_1 &\hby{\bactinp{t}{\auxtr{t'}}}& \Delta_1' \proves
-%		\newsp{\widetilde{m_1}}{P_1 \subst{\auxtr{t}}{X} \Par \appl{X}{\widetilde{n}} \subst{\auxtr{t}}{X}}
-%		\nonumber \\
-%		&\hby{\bactinp{t}{\auxtr{t'}}}& 
-%		\newsp{\widetilde{m_1}'}{P_1 \subst{\auxtr{t}}{X} \Par \appl{Y}{\widetilde{n}} \subst{\auxtr{t'}}{Y}}
-%		\label{cor:subst_equiv5}
-%	\end{eqnarray}
-%
-	\noi and $t'$ a fresh name. From the freshness of $t$
-	and the determinacy of the application transition
-	it has to be the case that:
-%
-	\[
-		\begin{array}{crll}
-			& \Gamma; \es; \Delta_2'& \proves &
-			\newsp{\widetilde{m_2}'}{Q_1 \subst{\auxtr{t}}{x} \Par Q_2 \subst{\auxtr{t}}{x}}\\
-			\Hby{} && &
-			\newsp{\widetilde{m_2}'}{Q_1' \subst{\auxtr{t}}{x} \Par Q_2' \subst{\auxtr{t}}{x} \Par \\
-			&&& \qquad \qquad \appl{x}{\widetilde{m}} \subst{\auxtr{t}}{x}} \\
-			\hby{\btau} \hby{\bactinp{t}{\auxtr{t'}}}
-			& \Delta_2''& \proves& \newsp{\widetilde{m_2}'}{(Q_1' \Par Q_2') \subst{\auxtr{t}}{x} \Par \appl{y}{\widetilde{m}} \subst{\auxtr{t'}}{y}}
-%			\hby{\bactinp{t}{\abs{\widetilde{x}}{\binp{t'}{y} \appl{y}{\widetilde{x}}}}}
-%			& \Delta_2''& \proves& \newsp{\widetilde{m_2}'}{(Q_1' \Par Q_2') \subst{\auxtr{t}}{x} \Par \appl{y}{\widetilde{m}} \subst{\abs{\widetilde{x}}{\binp{t'}{y} \appl{y}{\widetilde{x}}}}{y}}
-		\end{array}
-	\]
-%
-%	\[
-%		\begin{array}{rcll}
-%			\Gamma; \es; \Delta_2' &\Hby{\bactinp{t}{\auxtr{t'}}}& \Delta_2'' \proves &
-%			\newsp{\widetilde{m_2}'}{Q_1 \subst{\auxtr{t}}{X} \Par Q_2 \subst{\auxtr{t}}{X}}\\
-%			&\Hby{}& &
-%			\newsp{\widetilde{m_2}'}{Q_1' \subst{\auxtr{t}}{X} \Par Q_2' \subst{\auxtr{t}}{X} \Par \appl{X}{\widetilde{m}} \subst{\auxtr{t}}{X}} \\
-%			&\hby{\bactinp{t}{\auxtr{t'}}}& &
-%			\newsp{\widetilde{m_2}'}{(Q_1' \Par Q_2') \subst{\auxtr{t}}{X} \Par \appl{Y}{\widetilde{m}} \subst{\auxtr{t'}}{Y}}
-%		\end{array}
-%	\]
-%
-	Let $Q_3$ such that
-	\[
-		\mhorel{\Gamma}{\Delta}{\newsp{\widetilde{m_2}'}{Q_1 \Par Q_3} \subst{\auxtr{t}}{x} \subst{\auxtr{t'}}{y}}
-		{\Hby{}}
-		{\Delta'}{}{\newsp{\widetilde{m_2}'}{(Q_1' \Par Q_2') \subst{\auxtr{t}}{x} \Par \appl{y}{\widetilde{m}} \subst{\auxtr{t'}}{y}}}
-%		\mhorel{\Gamma}{\Delta}{\newsp{\widetilde{m_2}'}{Q_1 \Par Q_3} \subst{\auxtr{t}}{x} \subst{\abs{\widetilde{x}}{\binp{t'}{y} \appl{y}{\widetilde{x}}}}{y}}
-%		{\Hby{}}
-%		{\Delta'}{}{\newsp{\widetilde{m_2}'}{(Q_1' \Par Q_2') \subst{\auxtr{t}}{x} \Par \appl{y}{\widetilde{m}} \subst{\abs{\widetilde{x}}{\binp{t'}{y} \appl{y}{\widetilde{x}}}}{y}}}
-	\]
-%
-	\noi From \lemref{app:lem:subst_equiv} we get that $\forall R$ with $\fv{R} = \widetilde{z}$
-%
-	\begin{eqnarray*}
-		\mhorel{\Gamma}{\Delta_1'''}{\newsp{\widetilde{m_1}'}{P_1 \subst{\auxtr{t}}{x} \Par \appl{y}{\widetilde{n}} \subst{\abs{\widetilde{z}}{R}}{y}}}
-		{\hwb}
-		{\Delta'}{}{\newsp{\widetilde{m_2}'}{(Q_1 \Par Q_3) \subst{\auxtr{t}}{x} \subst{\abs{\widetilde{z}}{R}}{y}}}
-%		\mhorel{\Gamma}{\Delta_1'''}{\newsp{\widetilde{m_1}'}{P_1 \subst{\auxtr{t}}{X} \Par \appl{y}{\widetilde{n}} \subst{\abs{\widetilde{x}}{R}}{y}}}
-%		{\hwb}
-%		{\Delta'}{}{\newsp{\widetilde{m_2}'}{(Q_1 \Par Q_3) \subst{\auxtr{t}}{X} \subst{\abs{\widetilde{x}}{R}}{y}}}
-	\end{eqnarray*}
-%
-	\noi From~\eqref{lem:subst_equiv11} we get that
-\[
-	\mhorel{\Gamma}{\Delta'}{\newsp{\widetilde{m_1}'}{(Q_1 \Par Q_3) \subst{\auxtr{t}}{x} \subst{\abs{\widetilde{z}}{R}}{y}}}
-	{\Hby{} \hby{\btau}}
-	{\Delta''}{}{\newsp{\widetilde{m_2}'}{(Q_1' \Par Q_2') \subst{\auxtr{t}}{x} \Par R \subst{\widetilde{m}}{\widetilde{z}}}}%\appl{Y}{\widetilde{m}} \subst{\auxtr{t'}}{Y}}}
-%	{\Hby{\ell_2}}
-%	{\Delta''}{}{\newsp{\widetilde{m_2}'}{(Q_1' \Par Q_2') \subst{\auxtr{t}}{x} \Par R'}}%\appl{Y}{\widetilde{m}} \subst{\abs{\widetilde{x}}{\binp{t'}{Y} \appl{Y}{\widetilde{x}}}}{Y}}}
-\]
-	\noi and from the definition of $\Re$
-%	\noi From \lemref{app:lem:subst_equiv} we get that $\forall R$ with $\fv{R} = x$
-%
-	\[
-		\mhorel{\Gamma}{\Delta_1''}{\newsp{\widetilde{m_1}'}{P_1 \subst{\abs{\widetilde{z}}{R}}{x} \Par \appl{y}{\widetilde{n}} \subst{\abs{\widetilde{z}}{R}}{y}}}
-		{\hby{\btau}\ \Re\ \stackrel{\btau}{\longleftarrow}}
-		{\Delta_2''}{}{\newsp{\widetilde{m_2}'}{(Q_1' \Par Q_2') \subst{\abs{\widetilde{z}}{R}}{x} \Par \appl{y}{\widetilde{m}} \subst{\abs{\widetilde{z}}{R}}{y}}}
-%		\mhorel{\Gamma}{\Delta_1''}{\newsp{\widetilde{m_1}'}{P_1 \subst{\abs{\widetilde{x}}{R}}{x} \Par \appl{Y}{\widetilde{n}} \subst{\abs{\widetilde{x}}{R'}}{y}}}
-%		{\ \mathcal{S}\ }
-%		{\Delta_2''}{}{\newsp{\widetilde{m_2}'}{(Q_1' \Par Q_2') \subst{\abs{\widetilde{x}}{R}}{x} \Par \appl{y}{\widetilde{m}} \subst{\abs{\widetilde{x}}{R'}}{y}}}
-	\]
-	\noi as required.
-%	\noi From here we apply \lemref{app:lem:subst_equiv} for each substituting instance of
-%	abstraction $\abs{\widetilde{x}}{R}$ to complete the proof.
-\end{enumerate}
+	\dk{put proof}
 	\qed
 \end{proof}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% PROCESS SUBSTITUTION - Second Lemma
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+We can now state a process substitution lemma, where given
+a higher order equivalence under a trigger value substitution,
+we can generalise for any process substitution that makes
+the equivalence typable.
+
+\begin{lemma}[Process Substitution]
+	Let fresh $t$. If
+	\[
+		\horel{\Gamma}{\Delta_1}{\newsp{\widetilde{m_1}}{P_1 \subst{\trvalx{t}}{x} }}
+		{\hwb}
+		{\Delta_2}{\newsp{\widetilde{m_2}}{P_2 \subst{\trvalx{t}}{x} }}
+	\]
+	then $\forall \abs{x}{R}, \exists \Delta_1', \Delta_2'$ such that
+	\[
+		\horel{\Gamma}{\Delta_1'}{\newsp{\widetilde{m_1}}{P_1 \subst{{\abs{x}{R}}}{x} }}
+		{\hwb}
+		{\Delta_2'}{\newsp{\widetilde{m_2}}{P_2 \subst{{\abs{x}{R}}}{x} }}
+	\]
+\end{lemma}
+
+
+\begin{proof}
+	Consider the typed relation (for readability, we omit type information):
+	\begin{eqnarray*}
+		\Re	&=&	\set{
+					(\newsp{\widetilde{m_1}}{P_1 \subst{{\abs{x}{R}}}{x}}, \newsp{\widetilde{m_2}}{P_1 \subst{{\abs{x}{R}}}{x}})
+					\setbar\\
+			&&		\qquad \horel{\Gamma}{\Delta_1}{\newsp{\widetilde{m_1}}{P_1 \subst{\trvalx{t}}{x} }}
+					{\hwb}
+					{\Delta_2}{\newsp{\widetilde{m_2}}{P_2 \subst{\trvalx{t}}{x} }}
+			\\
+			&&		}
+	\end{eqnarray*}
+	We show that $\Re$ is a higher order bisimilarity.
+	%
+	\begin{eqnarray}
+		\horel{\Gamma}{\Delta_1'}{\newsp{\widetilde{m_1}}{P_1 \subst{{\abs{x}{R}}}{x} }}
+		{\hby{\ell_1}}
+		{\Delta_3}{\newsp{\widetilde{m_1}}{P_1' \subst{{\abs{x}{R}}}{x} }}
+		\label{lem:proc_subst1}
+	\end{eqnarray}
+
+	We distinguish two cases
+	\begin{enumerate}
+		\item	Case $P_1 \not\scong Q \Par \appl{x}{n}$.
+
+				From the freshness of $t$ we can conclude that $\subj{\ell_1} \not= t$.
+				Furthermore, from the requirements of $\Re$
+				we get that
+				\begin{eqnarray*}
+					\horel{\Gamma}{\Delta_1}{\newsp{\widetilde{m_1}}{P_1 \subst{\trvalx{t}}{x} }}
+					{\hby{\ell_1}}
+					{\Delta_1''}{\newsp{\widetilde{m_1}}{P_1' \subst{\trvalx{t}}{x} }}
+				\end{eqnarray*}
+				which implies that there exists $\ell_2, \Delta_2'', P_2'$ such that
+				\begin{eqnarray}
+					\horel{\Gamma}{\Delta_2}{\newsp{\widetilde{m_2}'}{P_2 \subst{\trvalx{t}}{x} }}
+					{\Hby{\ell_2}}
+					{\Delta_2''}{\newsp{\widetilde{m_2}'}{P_2' \subst{\trvalx{t}}{x} }}
+					\label{lem:proc_subst0}
+				\end{eqnarray}
+				and
+				\begin{eqnarray*}
+					\horel{\Gamma}{\Delta_1}{\newsp{\widetilde{m_1}''}{P_1' \subst{\trvalx{t}}{x} \Par C_1}}
+					{\hwb}
+					{\Delta_2}{\newsp{\widetilde{m_2}''}{P_2' \subst{\trvalx{t}}{x} \Par C_2}}
+				\end{eqnarray*}
+				with $C_1$ (resp., $C_2$) being the higher order trigger process
+				in the cases where $\ell_1 = \news{\widetilde{m}} \bactout{n}{V_1}$ (resp., $\ell_2 = \news{\widetilde{m}'} \bactout{n}{V_2}$)
+				and $C_1 = C_2 = \inact$ otherwise.
+				Because $C_1$ and $C_2$ are closed terms we can write
+				\begin{eqnarray*}
+					\horel{\Gamma}{\Delta_1}{\newsp{\widetilde{m_1}''}{(P_1'\Par C_1) \subst{\trvalx{t}}{x}}}
+					{\hwb}
+					{\Delta_2}{\newsp{\widetilde{m_2}''}{(P_2'\Par C_2) \subst{\trvalx{t}}{x}}}
+				\end{eqnarray*}
+				to further conclude
+				\begin{eqnarray}
+					\horel{\Gamma}{\Delta_3'}{\newsp{\widetilde{m_1}''}{(P_1'\Par C_1) \subst{{\abs{x}{R}}}{x}}}
+					{\ \Re\ }
+					{\Delta_4'}{\newsp{\widetilde{m_2}''}{(P_2'\Par C_2) \subst{{\abs{x}{R}}}{x}}}
+					\label{lem:proc_subst3}
+				\end{eqnarray}
+				From \eqref{lem:proc_subst2} we can derive the transition
+				\begin{eqnarray*}
+					\horel{\Gamma}{\Delta_2'}{\newsp{\widetilde{m_2}}{P_2 \subst{{\abs{x}{R}}}{x} }}
+					{\Hby{\ell_2}}
+					{\Delta_4}{\newsp{\widetilde{m_2}'}{P_2' \subst{{\abs{x}{R}}}{x} }}
+				\end{eqnarray*}
+				Equation \eqref{lem:proc_subst3} concludes the case.
+
+
+		\item	Case $P_1 \scong Q \Par \appl{x}{n_1}$ and $Q \not\scong Q' \Par \appl{x}{n'}$.
+
+				We identify two sub-cases:
+				\begin{itemize}
+					\item	Sub-case
+							\begin{eqnarray*}
+								\horel{\Gamma}{\Delta_1'}{\newsp{\widetilde{m_1}}{(Q \Par \appl{x}{n_1}) \subst{{\abs{x}{R}}}{x} }}
+								{\hby{\ell_1}}
+								{\Delta_3}{\newsp{\widetilde{m_1}}{(Q' \Par \appl{x}{n_1}) \subst{{\abs{x}{R}}}{x} }}
+							\end{eqnarray*}
+							%
+							This sub-case is similar as the previous case.
+
+					\item	Sub-case
+							\begin{eqnarray}
+								\horel{\Gamma}{\Delta_1'}{\newsp{\widetilde{m_1}}{(Q \Par \appl{x}{n_1}) \subst{{\abs{x}{R}}}{x} }}
+								{\hby{\tau}}
+								{\Delta_3}{\newsp{\widetilde{m_1}}{Q \subst{{\abs{x}{R}}}{x} \Par R \subst{n_1}{x}  }}
+								\label{lem:proc_subst1}
+							\end{eqnarray}
+							%
+							From the requirements of $\Re$ we conclude that
+							\begin{eqnarray*}
+								\mhorel{\Gamma}{\Delta_1}{\newsp{\widetilde{m_1}}{(Q \Par \appl{x}{n_1}) \subst{\trvalx{t}}{x} }}
+								{\hby{\tau}}
+								{\Delta_1''}{}{\newsp{\widetilde{m_1}}{Q \subst{\trvalx{t}}{x} \Par \binp{t}{y} (\appl{y}{n_1})}}
+							\end{eqnarray*}
+							which implies that there $\exists P_2', \Delta_2''$ such that
+							%
+								\nhorel{\Gamma}{\Delta_2}{\newsp{\widetilde{m_2}}{P_2 \subst{\trvalx{t}}{x} }}
+								{\Hby{}}
+								{\Delta_2''}{\newsp{\widetilde{m_2}}{P_2' \subst{\trvalx{t}}{x}}}
+								{lem:proc_subst2}
+							%
+							and
+							\begin{eqnarray*}
+								\mhorel{\Gamma}{\Delta_1''}{\newsp{\widetilde{m_1}}{Q \subst{\trvalx{t}}{x} \Par \binp{t}{y} (\appl{y}{n_1})}}
+								{\hwb}
+								{\Delta_2''}{}{\newsp{\widetilde{m_2}}{P_2' \subst{\trvalx{t}}{x}}}
+							\end{eqnarray*}
+							%
+							From the last pair we can see that for fresh $t'$ if
+							\begin{eqnarray*}
+								\mhorel{\Gamma}{\Delta_1''}{\newsp{\widetilde{m_1}}{Q \subst{\trvalx{t}}{x} \Par \binp{t}{y} (\appl{y}{n_1})}}
+								{\hby{\bactinp{t}{\trvalx{t'}}}}
+								{\Delta_1'''}{}{\newsp{\widetilde{m_2}}{Q \subst{\trvalx{t}}{x} \Par \appl{\trvalx{t'}}{n_1}}}
+							\end{eqnarray*}
+							that implies that $\exists P_2'', \Delta_2'''$ such that
+							\begin{eqnarray}
+								\begin{array}{crll}
+											& \Gamma; \es; \Delta_2'' &\proves& \newsp{\widetilde{m_2}}{P_2'\subst{\trvalx{t}}{x}}
+									\\
+									\Hby{}	&	&&	\newsp{m_2}{(P_3 \Par \appl{x}{n_2}) \subst{\trvalx{t}}{x}}
+									\\
+									{\hby{\bactinp{t}{\trvalx{t'}}}} &
+												&&	\newsp{m_2}{P_3 \subst{\trvalx{t}}{x} \Par \appl{\trvalx{t'}}{n_2}}
+									\\
+									\Hby{}	& \Delta_2''' & \proves & \newsp{\widetilde{m_2}}{P_2'' \subst{\trvalx{t}}{x} \Par \appl{\trvalx{t'}}{n_2}}
+								\end{array}
+								\label{lem:proc_subst3}
+							\end{eqnarray}
+							and
+							\begin{eqnarray*}
+								\mhorel{\Gamma}{\Delta_1'''}{\newsp{\widetilde{m_1}}{Q \subst{\trvalx{t}}{x} \Par \appl{\trvalx{t'}}{n_1}}}
+								{\hwb}
+								{\Delta_2'''}{}{\newsp{\widetilde{m_2}}{P_2'' \subst{\trvalx{t}}{x} \Par \appl{\trvalx{t'}}{n_2}}}
+							\end{eqnarray*}
+							%
+							From \lemref{lem:tigger_subst} we can deduce that $\forall \abs{x}{R}$, if $\exists \Delta_5, \Delta_6$ then
+							\begin{eqnarray*}
+								\mhorel{\Gamma}{\Delta_5}{\newsp{\widetilde{m_1}}{Q \subst{\trvalx{t}}{x} \Par \appl{(\abs{x}{R})}{n_1}}}
+								{\hwb}
+								{\Delta_6}{}{\newsp{\widetilde{m_2}}{P_2'' \subst{\trvalx{t}}{x} \Par \appl{(\abs{x}{R})}{n_2}}}
+							\end{eqnarray*}
+							from the definition of $\Re$ we have that for all $\forall \abs{x}{R}$, if $\exists \Delta_3, \Delta_4$
+							%
+								\nhorel{\Gamma}{\Delta_3}{\newsp{\widetilde{m_1}}{Q \subst{(\abs{x}{R})}{x} \Par \appl{(\abs{x}{R})}{n_1}}}
+								{\ \Re\ }
+								{\Delta_4}{\newsp{\widetilde{m_2}}{P_2'' \subst{(\abs{x}{R})}{x} \Par \appl{(\abs{x}{R})}{n_2}}}
+								{lem:proc_subst4}
+							%	
+							We show that we can mimic first the
+							transition in \eqref{lem:proc_subst2} and then the silent part of
+							transitions \eqref{lem:proc_subst3} to get:
+							\begin{eqnarray}
+								\begin{array}{crll}
+											& \Gamma; \es; \Delta_2' &\proves& \newsp{\widetilde{m_2}}{P_2 \subst{(\abs{x}{R})}}
+									\\
+									\Hby{}	&	\Delta_2'			& \proves&	\newsp{\widetilde{m_2}}{P_2' \subst{\trvalx{t}}{x}}
+									\\
+									\Hby{} &	\Delta_4			& \proves&	\newsp{m_2}{P_2'' \subst{(\abs{x}{R})}{x} \Par \appl{(\abs{x}{R})}{n_2}}
+								\end{array}
+								\label{lem:proc_subst5}
+							\end{eqnarray}
+							We showed that if \eqref{lem:proc_subst0} then \eqref{lem:proc_subst5} and \eqref{lem:proc_subst4}
+							as required to show that $\Re$ is a higher order bisimilarity.
+							\qed
+				\end{itemize}
+	\end{enumerate}
+\end{proof}
+
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %  WB IS WBC
@@ -1894,7 +1411,7 @@ refined for session types in~\cite{KYHH2015,KY2015}.
 \begin{definition}[Definability]\myrm
 	\label{app:def:definibility}
 	Let $\Gamma; \emptyset; \Delta_1 \proves P \hastype \Proc$.
-	A visible action $\ell$ is \emph{definable} whenever
+	A visible action [Dimitris] $\ell$ is \emph{definable} whenever
 	there exists (testing) process
 	$\Gamma; \emptyset; \Delta_2 \proves T\lrangle{\ell, \suc} \hastype \Proc$
 	with $\suc$ fresh name % and $N$ a set of names.
