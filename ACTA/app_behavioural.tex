@@ -267,8 +267,9 @@ and higher order trigger processes.
 
 \begin{lemma}[Trigger Process Equivalence]
 	\label{lem:trigger_equiv}
-	Let $P$ and $Q$ be processes and let $t$ be a fresh name.
-	\jasks{We also need to say that $V_1, V_2$ are of type $U$, right?}
+	Let $P$ and $Q$ be processes, $t$ be a fresh name, and
+	let $\Gamma; \es; \Delta \proves V_i \hastype U, i \in \set{1, 2}$
+
 	\begin{enumerate}[1)]
 		\item	If
 				\[
@@ -299,163 +300,303 @@ and higher order trigger processes.
 \end{lemma}
 
 \begin{proof}
-	We present the proof for Part 2. Part 1 follows a subset of similar cases.
-	\jasks{I disagree, we should show both cases: this is the kind of claims that make reviewers upset :) Since both parts deal with different equivalences it is unclear how you could reuse cases of 2 into 1. I know it is a lot of work, but showing that the triggers are equivalence is really the key of our approach.}
-
-	\noi Consider the typed relation (for readability, we omit type information):
-	\begin{eqnarray*}
-		\Re	&=&		\set{	(\newsp{\widetilde{m_1}}{P \Par \hotrigger{t}{x}{s}{V_1}},
-							Q \Par \hotrigger{t}{x}{s}{V_2})
-					\setbar\\
-			&&			\mhorel{\Gamma}{\Delta_1'}{\newsp{\widetilde{m_1}}{P \Par \fotrigger{t}{x}{s}{\btinp{U} \tinact}{V_1}}}
-						{\fwb}
-						{\Delta_2'}{}{\newsp{\widetilde{m_2}}{Q \Par \fotrigger{t}{x}{s}{\btinp{U} \tinact}{V_2}}}
-			\\
-			&&		}
-	\end{eqnarray*}
-	%
-	We show that $\Re \subseteq \fwb$. We distinguish four cases, depending on the source/kind of visible action: 
 	\begin{enumerate}
-		\item	Case
-			%
-			\[
-				\mhorel{\Gamma}{\Delta_1'}{\newsp{\widetilde{m_1}}{P \Par \hotrigger{t}{x}{s}{V_1}}}
-				{\hby{\ell_1}}
-				{\Delta_3}{}{\newsp{\widetilde{m_1}'}{P' \Par \hotrigger{t}{x}{s}{V_1}}}
-			\]
-			%
-				then following the requirements of $\Re$ and the freshness of $t$
-				we can conclude that there exists $\Delta_1''$ such that
-			%
-			\[
-				\mhorel{\Gamma}{\Delta_1}{\newsp{\widetilde{m_1}}{P \Par \fotrigger{t}{x}{s}{\btinp{U} \tinact}{V_1}}}
-				{\hby{\ell_1}}
-				{\Delta_1''}{}{\newsp{\widetilde{m_1}'}{P' \Par \fotrigger{t}{x}{s}{\btinp{U} \tinact}{V_1}}}
-			\]
-			%
-				implies from the characteristic bisimilarity requirement of $\Re$ and
-				the freshness of $t$ that $\exists Q', \Delta_2''$ such that
-			%
-				\nhorel{\Gamma}{\Delta_2}{\newsp{\widetilde{m_2}}{Q \Par \fotrigger{t}{x}{s}{\btinp{U} \tinact}{V_2}}}
-				{\Hby{\ell_2}}
-				{\Delta_2''}{\newsp{\widetilde{m_2}'}{Q' \Par \fotrigger{t}{x}{s}{\btinp{U} \tinact}{V_2}}}
-				{proof:trig_equiv0}
-			%
-				and
-				\nhorel{\Gamma}{\Delta_1'''}{\newsp{\widetilde{m_1}''}{P' \Par \fotrigger{t}{x}{s}{\btinp{U} \tinact}{V_1} \Par C_1}}
-				{\fwb}
-				{\Delta_2'''}{\newsp{\widetilde{m_2}''}{Q' \Par \fotrigger{t}{x}{s}{\btinp{U} \tinact}{V_2} \Par C_2}}
-				{proof:trig_equiv1}
-			%
-				with $C_1$ (resp., $C_2$) being the characteristic trigger process
-				in the cases where $\ell_1 = \news{\widetilde{m}} \bactout{n}{V_1'}$ (resp., $\ell_2 = \news{\widetilde{m}'} \bactout{n}{V_2'}$)
-				and $C_1 = C_2 = \inact$ otherwise.
-			%
-				From \eqref{proof:trig_equiv0} we can conclude that $\exists \Delta_4$ such that
-			\[
-				\mhorel{\Gamma}{\Delta_2'}{\newsp{\widetilde{m_1}}{Q \Par \hotrigger{t}{x}{s}{V_2}}}
-				{\Hby{\ell_2}}
-				{\Delta_4}{}{\newsp{\widetilde{m_2}'}{Q' \Par \hotrigger{t}{x}{s}{V_2}}}
-			\]
-			%
-				Equation \eqref{proof:trig_equiv1} then concludes that
-			\[
-				\mhorel{\Gamma}{\Delta_3'}{\newsp{\widetilde{m_1}'''}{P' \Par \hotrigger{t}{x}{s}{V_1} \Par C_1}}
-				{\Re}
-				{\Delta_4'}{}{\newsp{\widetilde{m_2}'''}{Q' \Par \hotrigger{t}{x}{s}{V_2} \Par C_2}}
-			\]
-			%
-				as required.
+		\item	Part 1
 
-		\item	\jasks{I would probably put cases 2 and 3 within a single case, which is the case when the right-hand side process moves. }Case
-			\[
-				\mhorel{\Gamma}{\Delta_1'}{\newsp{\widetilde{m_1}}{P \Par \hotrigger{t}{x}{s}{V_1}}}
-				{\hby{\bactinp{t}{\map{\btinp{U} \tinact}^{x}}}}
-				{\Delta_3}{}{\newsp{\widetilde{m_1}}{P \Par \newsp{s}{\map{\btinp{U} \tinact}^{s} \Par \bout{\dual{s}}{V_1} \inact}}}
-			\]
-			%
-				Following requirements of $\Re$ and the freshness of $t$
-				we can conclude that there exists $\Delta_1''$ such that
-			%
-			\[
-				\mhorel{\Gamma}{\Delta_1}{\newsp{\widetilde{m_1}}{P \Par \fotrigger{t}{x}{s}{\btinp{U} \tinact}{V_1}}}
-				{\hby{\bactinp{t}{m}}}
-				{\Delta_1''}{}{\newsp{\widetilde{m_1}}{P \Par \newsp{s}{\map{\btinp{U} \tinact}^{s} \Par \bout{\dual{s}}{V_1} \inact}}}
-			\]
-			%
-				implies from the higher order bisimilarity requirement of the premise \jasks{(what premise?)} and
-				the freshness of $t$ that $\exists Q', \Delta_2''$ such that
-			%
-				\begin{eqnarray}
-					\begin{array}{crll}
-						& \Gamma; \es; \Delta_2 & \proves &		
-						\newsp{\widetilde{m_2}}{Q \Par \fotrigger{t}{x}{s}{\btinp{U} \tinact}{V_2}}
-						\\
-						\Hby{} &&&
-						\newsp{\widetilde{m_2}}{Q_2 \Par \fotrigger{t}{x}{s}{\btinp{U} \tinact}{V_2}}
-						\\
-						{\hby{\bactinp{t}{m}}}& & &
-						\newsp{\widetilde{m_2}}{Q_2 \Par \newsp{s}{\map{\btinp{U} \tinact}^{s} \Par \bout{\dual{s}}{V_2} \inact}}
-						\\
-						\Hby{} & \Delta_2'' & \proves & Q'
-					\end{array}
-					\label{proof:trig_equiv2}
-				\end{eqnarray}
-			%
-				and
-			%
-				\nhorel{\Gamma}{\Delta_1''}{\newsp{\widetilde{m_1}}{P \Par \newsp{s}{\map{\btinp{U} \tinact}^{s} \Par \bout{\dual{s}}{V_1} \inact}}}
-				{\fwb}
-				{\Delta_2''}{\newsp{\widetilde{m_2}}{Q'}}
-				{proof:trig_equiv3}
-			%
-				The freshness of $t$ allows us to mimic the transitions
-				in \eqref{proof:trig_equiv2} to get that for $\Delta_4$
-			%
+				\noi Consider the typed relation (for readability, we omit type information):
 				\begin{eqnarray*}
-					\begin{array}{crll}
-						& \Gamma; \es; \Delta_2' & \proves &		
-						\newsp{\widetilde{m_2}}{Q \Par \hotrigger{t}{x}{s}{V_2}}
+					\Re	&=&		\set{	(\newsp{\widetilde{m_1}}{P \Par \fotrigger{t}{x}{s}{\btinp{U} \tinact}{V_1} },
+										\newsp{\widetilde{m_2}}{Q \Par \fotrigger{t}{x}{s}{\btinp{U} \tinact}{V_2}})
+								\setbar\\
+						&&			\mhorel{\Gamma}{\Delta_1'}{\newsp{\widetilde{m_1}}{P \Par \hotrigger{t}{x}{s}{V_1}}}
+									{\hwb}
+									{\Delta_2'}{}{\newsp{\widetilde{m_2}}{Q \Par \hotrigger{t}{x}{s}{V_2}}}
 						\\
-						\Hby{} &&&
-						\newsp{\widetilde{m_2}}{Q_2 \Par \hotrigger{t}{x}{s}{V_2}}
-						\\
-						{\hby{\bactinp{t}{\map{\btinp{U} \tinact}^{x}}}}& & &
-						\newsp{\widetilde{m_2}}{Q_2 \Par \newsp{s}{\map{\btinp{U} \tinact}^{s} \Par \bout{\dual{s}}{V_2} \inact}}
-						\\
-						\Hby{} & \Delta_4 & \proves & Q'
-					\end{array}
+						&&		}
 				\end{eqnarray*}
-			%
-				The conclusion is immediate from \eqref{proof:trig_equiv3}.
+				%
+				We show that $\Re \subseteq \hwb$.
+				We distinguish four cases, depending on the source/kind of visible action: 
+				\begin{enumerate}
+					\item	Case
+						%
+						\[
+							\mhorel{\Gamma}{\Delta_1'}{\newsp{\widetilde{m_1}}{P \Par \fotrigger{t}{x}{s}{\btinp{U} \tinact}{V_1} }}
+							{\hby{\ell_1}}
+							{\Delta_3}{}{\newsp{\widetilde{m_1}'}{P' \Par \fotrigger{t}{x}{s}{\btinp{U} \tinact}{V_2} }}
+						\]
+						%
+							then following the requirements of $\Re$ and the freshness of $t$
+							we can conclude that there exists $\Delta_1''$ such that
+						%
+						\[
+							\mhorel{\Gamma}{\Delta_1}{\newsp{\widetilde{m_1}}{P \Par \hotrigger{t}{x}{s}{V_1}}}
+							{\hby{\ell_1}}
+							{\Delta_1''}{}{\newsp{\widetilde{m_1}'}{P' \Par \hotrigger{t}{x}{s}{V_2}}}
+						\]
+						%
+							implies from the characteristic bisimilarity requirement of $\Re$ and
+							the freshness of $t$ that $\exists Q', \Delta_2''$ such that
+						%
+							\nhorel{\Gamma}{\Delta_2}{\newsp{\widetilde{m_2}}{Q \Par \hotrigger{t}{x}{s}{V_2}}}
+							{\Hby{\ell_2}}
+							{\Delta_2''}{\newsp{\widetilde{m_2}'}{Q' \Par \hotrigger{t}{x}{s}{V_2}}}
+							{proof:trig_equiv00}
+						%
+							and
+							\nhorel{\Gamma}{\Delta_1'''}{\newsp{\widetilde{m_1}''}{P' \Par \hotrigger{t}{x}{s}{V_1} \Par C_1}}
+							{\hwb}
+							{\Delta_2'''}{\newsp{\widetilde{m_2}''}{Q' \Par \hotrigger{t}{x}{s}{V_2} \Par C_2}}
+							{proof:trig_equiv11}
+						%
+							with $C_1$ (resp., $C_2$) being the characteristic trigger process
+							in the cases where $\ell_1 = \news{\widetilde{m}} \bactout{n}{V_1'}$ (resp., $\ell_2 = \news{\widetilde{m}'} \bactout{n}{V_2'}$)
+							and $C_1 = C_2 = \inact$ otherwise.
+						%
+							From \eqref{proof:trig_equiv00} we can conclude that $\exists \Delta_4$ such that
+						\[
+							\mhorel{\Gamma}{\Delta_2'}{\newsp{\widetilde{m_1}}{Q \Par \fotrigger{t}{x}{s}{\btinp{U} \tinact}{V_2}}}
+							{\Hby{\ell_2}}
+							{\Delta_4}{}{\newsp{\widetilde{m_2}'}{Q' \Par \fotrigger{t}{x}{s}{\btinp{U} \tinact}{V_2}}}
+						\]
+						%
+							Equation \eqref{proof:trig_equiv11} then concludes that
+						\[
+							\mhorel{\Gamma}{\Delta_3'}{\newsp{\widetilde{m_1}'''}{P' \Par \fotrigger{t}{x}{s}{\btinp{U} \tinact}{V_1} \Par C_1}}
+							{\Re}
+							{\Delta_4'}{}{\newsp{\widetilde{m_2}'''}{Q' \Par \fotrigger{t}{x}{s}{\btinp{U} \tinact}{V_2} \Par C_2}}
+						\]
+						%
+							as required.
 
-		\item	Case
-			\[
-				\mhorel{\Gamma}{\Delta_1'}{\newsp{\widetilde{m_1}}{P \Par \hotrigger{t}{x}{s}{V_1}}}
-				{\hby{\bactinp{t}{ \abs{x}{\binp{t'}{y}{\appl{y}{x}}  }}}}
-				{\Delta_3'}{}{\newsp{\widetilde{m_1}}{P \Par \newsp{s}{  \appl{(\abs{x}{\binp{t'}{y}{\appl{y}{x}})}{s}  \Par \bout{\dual{s}}{V_1} \inact }}}}
-			\]
-			We show that there $\exists, \Delta_4, \newsp{\widetilde{m_1}}{Q \Par \hotrigger{t'}{x}{s}{V_1}}$ such that
-			\[
-				\mhorel{\Gamma}{\Delta_2'}{\newsp{\widetilde{m_1}}{Q \Par \hotrigger{t}{x}{s}{V_1}}}
-				{\Hby{\bactinp{t}{ \abs{x}{\binp{t'}{y}{\appl{y}{x}}  }}}}
-				{\Delta_4}{}{\newsp{\widetilde{m_1}}{Q \Par \hotrigger{t'}{x}{s}{V_1}}}
-			\]
-			and
-			\[
-				\mhorel{\Gamma}{\Delta_3'}{\newsp{\widetilde{m_1}}{P \Par \newsp{s}{  \appl{(\abs{x}{\binp{t'}{y}{\appl{y}{x}})}{s}  \Par \bout{\dual{s}}{V_1} \inact }}}}
-				{\Hby{\tau_d}}
-				{\Delta_3}{}{\newsp{\widetilde{m_1}}{P \Par \hotrigger{t'}{x}{s}{V_1}}}
-			\]
-			The result
-			\[
-				\mhorel{\Gamma}{\Delta_3}{\newsp{\widetilde{m_1}}{P \Par \hotrigger{t'}{x}{s}{V_1}}}
-				{\Re}
-				{\Delta_4}{}{\newsp{\widetilde{m_1}}{Q \Par \hotrigger{t'}{x}{s}{V_1}}}
-			\]
-			is immediate from the definition of $\Re$.
+					\item	Case
+						\[
+							\mhorel{\Gamma}{\Delta_1'}{\newsp{\widetilde{m_1}}{P \Par \fotrigger{t}{x}{s}{\btinp{U} \tinact}{V_1}}}
+%							{\hby{\bactinp{t}{\map{\btinp{U} \tinact}^{x}}}}
+							{\hby{\bactinp{t}{m}}}
+							{\Delta_3}{}{\newsp{\widetilde{m_1}}{P \Par \newsp{s}{\map{\btinp{U} \tinact}^{s} \Par \bout{\dual{s}}{V_1} \inact}}}
+						\]
+						%
+							Following requirements of $\Re$ and the freshness of $t$
+							we can conclude that there exists $\Delta_1''$ such that
+						%
+						\[
+							\mhorel{\Gamma}{\Delta_1}{\newsp{\widetilde{m_1}}{P \Par \hotrigger{t}{x}{s}{V_1}}}
+							{\hby{\bactinp{t}{\map{\btinp{U} \tinact}^{x}}}}
+%							{\hby{\bactinp{t}{m}}}
+							{\Delta_1''}{}{\newsp{\widetilde{m_1}}{P \Par \newsp{s}{\map{\btinp{U} \tinact}^{s} \Par \bout{\dual{s}}{V_1} \inact}}}
+						\]
+						%
+							implies from the higher order bisimilarity requirement of the $\Re$ definition and
+							the freshness of $t$ that $\exists Q', \Delta_2''$ such that
+						%
+							\begin{eqnarray}
+								\begin{array}{crll}
+									& \Gamma; \es; \Delta_2 & \proves &		
+									\newsp{\widetilde{m_2}}{Q \Par \hotrigger{t}{x}{s}{V_2}}
+									\\
+									\Hby{} &&&
+									\newsp{\widetilde{m_2}}{Q_2 \Par \hotrigger{t}{x}{s}{V_2}}
+									\\
+%									{\hby{\bactinp{t}{m}}}& & &
+									{\hby{\bactinp{t}{\map{\btinp{U} \tinact}^{x}}}} & & &
+									\newsp{\widetilde{m_2}}{Q_2 \Par \newsp{s}{\map{\btinp{U} \tinact}^{s} \Par \bout{\dual{s}}{V_2} \inact}}
+									\\
+									\Hby{} & \Delta_2'' & \proves & Q'
+								\end{array}
+								\label{proof:trig_equiv22}
+							\end{eqnarray}
+						%
+							and
+						%
+							\nhorel{\Gamma}{\Delta_1''}{\newsp{\widetilde{m_1}}{P \Par \newsp{s}{\map{\btinp{U} \tinact}^{s} \Par \bout{\dual{s}}{V_1} \inact}}}
+							{\hwb}
+							{\Delta_2''}{\newsp{\widetilde{m_2}}{Q'}}
+							{proof:trig_equiv33}
+						%
+							The freshness of $t$ allows us to mimic the transitions
+							in \eqref{proof:trig_equiv22} to get that for $\Delta_4$
+						%
+							\begin{eqnarray*}
+								\begin{array}{crll}
+									& \Gamma; \es; \Delta_2' & \proves &		
+									\newsp{\widetilde{m_2}}{Q \Par \fotrigger{t}{x}{s}{\btinp{U} \tinact}{V_2}}
+									\\
+									\Hby{} &&&
+									\newsp{\widetilde{m_2}}{Q_2 \Par \fotrigger{t}{x}{s}{\btinp{U} \tinact}{V_2}}
+									\\
+%									{\hby{\bactinp{t}{\map{\btinp{U} \tinact}^{x}}}}& & &
+									{\hby{\bactinp{t}{m}}}& & &
+									\newsp{\widetilde{m_2}}{Q_2 \Par \newsp{s}{\map{\btinp{U} \tinact}^{s} \Par \bout{\dual{s}}{V_2} \inact}}
+									\\
+									\Hby{} & \Delta_4 & \proves & Q'
+								\end{array}
+							\end{eqnarray*}
+						%
+							The conclusion is immediate from \eqref{proof:trig_equiv33}.
 
-	\item \jasks{The action comes from the interaction of $P$ and $\hotrigger{t}{x}{s}{V_1}$: This case is not possible, due to the freshness of $t$.}
+
+				\item \jasks{The action comes from the interaction of $P$ and $\hotrigger{t}{x}{s}{V_1}$: This case is not possible, due to the freshness of $t$.}
+				\end{enumerate}
+
+
+		\item	Part 2 
+
+				\noi Consider the typed relation (for readability, we omit type information):
+				\begin{eqnarray*}
+					\Re	&=&		\set{	(\newsp{\widetilde{m_1}}{P \Par \hotrigger{t}{x}{s}{V_1}},
+										\newsp{\widetilde{m_2}}{Q \Par \hotrigger{t}{x}{s}{V_2}})
+								\setbar\\
+						&&			\mhorel{\Gamma}{\Delta_1'}{\newsp{\widetilde{m_1}}{P \Par \fotrigger{t}{x}{s}{\btinp{U} \tinact}{V_1}}}
+									{\fwb}
+									{\Delta_2'}{}{\newsp{\widetilde{m_2}}{Q \Par \fotrigger{t}{x}{s}{\btinp{U} \tinact}{V_2}}}
+						\\
+						&&		}
+				\end{eqnarray*}
+				%
+				We show that $\Re \subseteq \fwb$. We distinguish four cases, depending on the source/kind of visible action: 
+				\begin{enumerate}
+					\item	Case
+						%
+						\[
+							\mhorel{\Gamma}{\Delta_1'}{\newsp{\widetilde{m_1}}{P \Par \hotrigger{t}{x}{s}{V_1}}}
+							{\hby{\ell_1}}
+							{\Delta_3}{}{\newsp{\widetilde{m_1}'}{P' \Par \hotrigger{t}{x}{s}{V_1}}}
+						\]
+						%
+							then following the requirements of $\Re$ and the freshness of $t$
+							we can conclude that there exists $\Delta_1''$ such that
+						%
+						\[
+							\mhorel{\Gamma}{\Delta_1}{\newsp{\widetilde{m_1}}{P \Par \fotrigger{t}{x}{s}{\btinp{U} \tinact}{V_1}}}
+							{\hby{\ell_1}}
+							{\Delta_1''}{}{\newsp{\widetilde{m_1}'}{P' \Par \fotrigger{t}{x}{s}{\btinp{U} \tinact}{V_1}}}
+						\]
+						%
+							implies from the characteristic bisimilarity requirement of $\Re$ and
+							the freshness of $t$ that $\exists Q', \Delta_2''$ such that
+						%
+							\nhorel{\Gamma}{\Delta_2}{\newsp{\widetilde{m_2}}{Q \Par \fotrigger{t}{x}{s}{\btinp{U} \tinact}{V_2}}}
+							{\Hby{\ell_2}}
+							{\Delta_2''}{\newsp{\widetilde{m_2}'}{Q' \Par \fotrigger{t}{x}{s}{\btinp{U} \tinact}{V_2}}}
+							{proof:trig_equiv0}
+						%
+							and
+							\nhorel{\Gamma}{\Delta_1'''}{\newsp{\widetilde{m_1}''}{P' \Par \fotrigger{t}{x}{s}{\btinp{U} \tinact}{V_1} \Par C_1}}
+							{\fwb}
+							{\Delta_2'''}{\newsp{\widetilde{m_2}''}{Q' \Par \fotrigger{t}{x}{s}{\btinp{U} \tinact}{V_2} \Par C_2}}
+							{proof:trig_equiv1}
+						%
+							with $C_1$ (resp., $C_2$) being the characteristic trigger process
+							in the cases where $\ell_1 = \news{\widetilde{m}} \bactout{n}{V_1'}$ (resp., $\ell_2 = \news{\widetilde{m}'} \bactout{n}{V_2'}$)
+							and $C_1 = C_2 = \inact$ otherwise.
+						%
+							From \eqref{proof:trig_equiv0} we can conclude that $\exists \Delta_4$ such that
+						\[
+							\mhorel{\Gamma}{\Delta_2'}{\newsp{\widetilde{m_1}}{Q \Par \hotrigger{t}{x}{s}{V_2}}}
+							{\Hby{\ell_2}}
+							{\Delta_4}{}{\newsp{\widetilde{m_2}'}{Q' \Par \hotrigger{t}{x}{s}{V_2}}}
+						\]
+						%
+							Equation \eqref{proof:trig_equiv1} then concludes that
+						\[
+							\mhorel{\Gamma}{\Delta_3'}{\newsp{\widetilde{m_1}'''}{P' \Par \hotrigger{t}{x}{s}{V_1} \Par C_1}}
+							{\Re}
+							{\Delta_4'}{}{\newsp{\widetilde{m_2}'''}{Q' \Par \hotrigger{t}{x}{s}{V_2} \Par C_2}}
+						\]
+						%
+							as required.
+
+					\item	\jasks{I would probably put cases 2 and 3 within a single case, which is the case when the right-hand side process moves. }Case
+						\[
+							\mhorel{\Gamma}{\Delta_1'}{\newsp{\widetilde{m_1}}{P \Par \hotrigger{t}{x}{s}{V_1}}}
+							{\hby{\bactinp{t}{\map{\btinp{U} \tinact}^{x}}}}
+							{\Delta_3}{}{\newsp{\widetilde{m_1}}{P \Par \newsp{s}{\map{\btinp{U} \tinact}^{s} \Par \bout{\dual{s}}{V_1} \inact}}}
+						\]
+						%
+							Following requirements of $\Re$ and the freshness of $t$
+							we can conclude that there exists $\Delta_1''$ such that
+						%
+						\[
+							\mhorel{\Gamma}{\Delta_1}{\newsp{\widetilde{m_1}}{P \Par \fotrigger{t}{x}{s}{\btinp{U} \tinact}{V_1}}}
+							{\hby{\bactinp{t}{m}}}
+							{\Delta_1''}{}{\newsp{\widetilde{m_1}}{P \Par \newsp{s}{\map{\btinp{U} \tinact}^{s} \Par \bout{\dual{s}}{V_1} \inact}}}
+						\]
+						%
+							implies from the higher order bisimilarity requirement of the $\Re$ definition and
+							the freshness of $t$ that $\exists Q', \Delta_2''$ such that
+						%
+							\begin{eqnarray}
+								\begin{array}{crll}
+									& \Gamma; \es; \Delta_2 & \proves &		
+									\newsp{\widetilde{m_2}}{Q \Par \fotrigger{t}{x}{s}{\btinp{U} \tinact}{V_2}}
+									\\
+									\Hby{} &&&
+									\newsp{\widetilde{m_2}}{Q_2 \Par \fotrigger{t}{x}{s}{\btinp{U} \tinact}{V_2}}
+									\\
+									{\hby{\bactinp{t}{m}}}& & &
+									\newsp{\widetilde{m_2}}{Q_2 \Par \newsp{s}{\map{\btinp{U} \tinact}^{s} \Par \bout{\dual{s}}{V_2} \inact}}
+									\\
+									\Hby{} & \Delta_2'' & \proves & Q'
+								\end{array}
+								\label{proof:trig_equiv2}
+							\end{eqnarray}
+						%
+							and
+						%
+							\nhorel{\Gamma}{\Delta_1''}{\newsp{\widetilde{m_1}}{P \Par \newsp{s}{\map{\btinp{U} \tinact}^{s} \Par \bout{\dual{s}}{V_1} \inact}}}
+							{\fwb}
+							{\Delta_2''}{\newsp{\widetilde{m_2}}{Q'}}
+							{proof:trig_equiv3}
+						%
+							The freshness of $t$ allows us to mimic the transitions
+							in \eqref{proof:trig_equiv2} to get that for $\Delta_4$
+						%
+							\begin{eqnarray*}
+								\begin{array}{crll}
+									& \Gamma; \es; \Delta_2' & \proves &		
+									\newsp{\widetilde{m_2}}{Q \Par \hotrigger{t}{x}{s}{V_2}}
+									\\
+									\Hby{} &&&
+									\newsp{\widetilde{m_2}}{Q_2 \Par \hotrigger{t}{x}{s}{V_2}}
+									\\
+									{\hby{\bactinp{t}{\map{\btinp{U} \tinact}^{x}}}}& & &
+									\newsp{\widetilde{m_2}}{Q_2 \Par \newsp{s}{\map{\btinp{U} \tinact}^{s} \Par \bout{\dual{s}}{V_2} \inact}}
+									\\
+									\Hby{} & \Delta_4 & \proves & Q'
+								\end{array}
+							\end{eqnarray*}
+						%
+							The conclusion is immediate from \eqref{proof:trig_equiv3}.
+
+					\item	Case
+						\[
+							\mhorel{\Gamma}{\Delta_1'}{\newsp{\widetilde{m_1}}{P \Par \hotrigger{t}{x}{s}{V_1}}}
+							{\hby{\bactinp{t}{ \abs{x}{\binp{t'}{y}{\appl{y}{x}}  }}}}
+							{\Delta_3'}{}{\newsp{\widetilde{m_1}}{P \Par \newsp{s}{  \appl{(\abs{x}{\binp{t'}{y}{\appl{y}{x}})}{s}  \Par \bout{\dual{s}}{V_1} \inact }}}}
+						\]
+						We show that there $\exists, \Delta_4, \newsp{\widetilde{m_1}}{Q \Par \hotrigger{t'}{x}{s}{V_1}}$ such that
+						\[
+							\mhorel{\Gamma}{\Delta_2'}{\newsp{\widetilde{m_1}}{Q \Par \hotrigger{t}{x}{s}{V_1}}}
+							{\Hby{\bactinp{t}{ \abs{x}{\binp{t'}{y}{\appl{y}{x}}  }}}}
+							{\Delta_4}{}{\newsp{\widetilde{m_1}}{Q \Par \hotrigger{t'}{x}{s}{V_1}}}
+						\]
+						and
+						\[
+							\mhorel{\Gamma}{\Delta_3'}{\newsp{\widetilde{m_1}}{P \Par \newsp{s}{  \appl{(\abs{x}{\binp{t'}{y}{\appl{y}{x}})}{s}  \Par \bout{\dual{s}}{V_1} \inact }}}}
+							{\Hby{\tau_d}}
+							{\Delta_3}{}{\newsp{\widetilde{m_1}}{P \Par \hotrigger{t'}{x}{s}{V_1}}}
+						\]
+						The result
+						\[
+							\mhorel{\Gamma}{\Delta_3}{\newsp{\widetilde{m_1}}{P \Par \hotrigger{t'}{x}{s}{V_1}}}
+							{\Re}
+							{\Delta_4}{}{\newsp{\widetilde{m_1}}{Q \Par \hotrigger{t'}{x}{s}{V_1}}}
+						\]
+						is immediate from the definition of $\Re$.
+
+				\item \jasks{The action comes from the interaction of $P$ and $\hotrigger{t}{x}{s}{V_1}$: This case is not possible, due to the freshness of $t$.}
+				\end{enumerate}
 	\end{enumerate}
 	\qed
 \end{proof}
@@ -576,9 +717,9 @@ and higher order trigger processes.
 								\label{lem:fwb_sub_hbf2}
 							\end{eqnarray}
 						%
-							and for fresh $t$ \jasks{(below we mean $\fwb$, right?)}:
+							and for fresh $t$:
 								\nhorel{\Gamma}{\Delta_1'}{\newsp{\widetilde{m_1}}{P' \Par \fotrigger{t}{x}{s}{\btinp{U} \tinact}{V_1}}}
-								{\hwb}
+								{\fwb}
 								{\Delta_2'}{\newsp{\widetilde{m_2}}{Q' \Par \fotrigger{t}{x}{s}{\btinp{U} \tinact}{V_2} }}
 								{lem:fwb_sub_hbf3}
 						%
