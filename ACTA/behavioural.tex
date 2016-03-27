@@ -907,7 +907,7 @@ LTS explained in \secref{sec:overview}.
 %	\noi It is easy to obtain a closure if allow only the
 %	trigger value as the input value. 
 	But if processes in \eqref{equ:7}/\eqref{equ:8}
-	input the characteristic value $\abs{z}{\binp{z}{x} (\appl{x}{m})}$,  
+	input the characteristic value $\abs{z}{\binp{z}{x} (\appl{x}{m})}$, \newc{where $m$ is a fresh name}, 
 	then they would become, under appropriate $\Gamma$ and $\Delta$:
 %
 	\begin{eqnarray*}
@@ -1473,68 +1473,195 @@ in \exref{exam:proc} are behaviourally equivalent.
 
 \begin{proposition}\label{p:examp}
 	Let
-	\begin{eqnarray*}
-		S &=& \btout{\rtype} \btinp{\Quote} \btsel{\accept: \btout{\creditc} \tinact, \reject: \tinact}\\
-		\Delta &=& s_1: \btout{\lhot{S}} \tinact \cat s_2: \btout{\lhot{S}} \tinact
-	\end{eqnarray*}
+	$S = \btout{\rtype} \btinp{\Quote} \btsel{\accept: \btout{\creditc} \tinact, \reject: \tinact}$
+	and
+	$\Delta = s_1: \btout{\lhot{S}} \tinact \cat s_2: \btout{\lhot{S}} \tinact$.
+%	\begin{eqnarray*}
+%		S &=& \btout{\rtype} \btinp{\Quote} \btsel{\accept: \btout{\creditc} \tinact, \reject: \tinact}\\
+%		\Delta &=& s_1: \btout{\lhot{S}} \tinact \cat s_2: \btout{\lhot{S}} \tinact
+%	\end{eqnarray*}
 	Then
 	$\horel{\es}{\Delta}{\Client_1}
 	{\hwb}
 	{\Delta}{\Client_2}$, where $\Client_1$ and $\Client_2$ are as in \exref{exam:proc}. 
 \end{proposition}
 
-\begin{proof}[Sketch]
-	\noi We show a higher-order bisimulation closure by following transitions on each $\Client$;
-	%We show the initial higher order transitions.
-	see \appref{hotel_closure} for details.
-	First, the characteristic process is given as:
-	$\mapchar{\btinp{\lhot{S}} \tinact}{s} = \binp{s}{x} (\appl{x}{k})$.
-	We show that the clients can simulate each other on
-	the first two output transitions, that also generate the trigger
-	processes:
+%\begin{proof}[Sketch]
+%	\noi We show a higher-order bisimulation closure by following transitions on each $\Client$;
+%	%We show the initial higher order transitions.
+%	see \appref{hotel_closure} for details.
+%	First, the characteristic process is given as:
+%	$\mapchar{\btinp{\lhot{S}} \tinact}{s} = \binp{s}{x} (\appl{x}{k})$.
+%	We show that the clients can simulate each other on
+%	the first two output transitions, that also generate the trigger
+%	processes:
+%%
+%\[
+%	\begin{array}{lll}
+%		&	\es; \es; \Delta \proves \Client_1
+%		&
+%			\by{\bactout{s_1}{\abs{x}{P_{xy} \subst{h_1}{y}}}}
+%			\qquad
+%			\by{\bactout{s_2}{\abs{x}{P_{xy} \subst{h_2}{y}}}}
+%		\\
+%		&	\es; \es; k_1: S \cat k_2: S \proves
+%		&
+%			\newsp{h_1, h_2}{\binp{\dual{h_1}}{x} \binp{\dual{h_2}}{y}
+%		\\
+%		&
+%		&	\If\ x \leq y\ \Then (\bsel{\dual{h_1}}{\accept} \bsel{\dual{h_2}}{\reject} \inact
+%			\Else \bsel{\dual{h_1}}{\reject} \bsel{\dual{h_2}}{\accept} \inact)
+%		\\
+%		&
+%		&	\Par \ftrigger{t_1}{\abs{x}{P_{xy} \subst{h_1}{y}}}{\lhot{S}} \Par \ftrigger{t_2}{\abs{x}{P_{xy} \subst{h_2}{y}}}{\lhot{S}}}
+%%		& \Par \binp{t_1}{x} \newsp{s}{\binp{s}{x} \appl{x}{k_1} \Par \bout{\dual{s}}{\abs{x}{P \subst{h_1}{y}}} \inact }\\
+%%		& \Par \binp{t_2}{x} \newsp{s}{\mapchar{\btinp{\lhot{S}}}{s} \Par \bout{\dual{s}}{\abs{x}{P \subst{h_2}{y}}} \inact }}
+%		\\[2mm]
+%		& \mbox{and}
+%		\\[2mm]
+%		&	\es; \es; \Delta \proves \Client_2
+%		&
+%			\by{\bactout{s_1}{\abs{x}{Q_1 \subst{h}{y}}}}
+%			\qquad
+%			\by{\bactout{s_2}{\abs{x}{Q_2 \subst{\dual{h}}{y}}}}
+%		\\
+%		&	\es; \es; k_1: S \cat k_2: S \proves & \newsp{h}{
+%			\ftrigger{t_1}{\abs{x}{Q_1 \subst{h}{y}}}{\lhot{S}} \Par \ftrigger{t_2}{\abs{x}{Q_2 \subst{\dual{h}}{y}}}{\lhot{S}}}
+%%		\binp{t_1}{x} \newsp{s}{\binp{s}{x} \appl{x}{k_1} \Par \bout{\dual{s}}{\abs{x}{P_1 \subst{h}{y}}} \inact }\\
+%%		&\Par \binp{t_2}{x} \newsp{s}{\binp{s}{x} \appl{x}{k_2} \Par \bout{\dual{s}}{\abs{x}{P_2 \subst{\dual{h}}{y}}} \inact }}
+%	\end{array}
+%\]
+%	\noi 
+%	After these transitions, 
+%	we can analyse that 
+%	the resulting processes are behaviourally equivalent
+%	since they have the same visible transitions; the rest 
+%	is internal deterministic transitions. 
+%	\qed
+%\end{proof}
+
+\begin{proof}
+	\noi	We show a case where each typed process simulates the other, according to the definition of
+			$\hwb$ (cf. \defref{d:hwb}).
+ For fresh sessions $s, k$, we get
+	$$
+		\mapchar{\btinp{\lhot{S}} \tinact}{s} = \binp{s}{x} (\mapchar{\tinact}{s} \Par \mapchar{\lhot{S}}{x})
+%		= \binp{s}{x} (\inact \Par \appl{x}{\omapchar{S}})
+%		= \binp{s}{x} (\inact \Par \appl{x}{k})
+		\scong \binp{s}{x} (\appl{x}{k})
+	$$
+	
+
+	\noi To observe $\Client_1$ assume:
 %
+	\begin{eqnarray*}
+		R' &\scong& \If\ x \leq y\ \Then (\bsel{\dual{h_1}}{\accept} \bsel{\dual{h_2}}{\reject} \inact
+		\Else \bsel{\dual{h_1}}{\reject} \bsel{\dual{h_2}}{\accept} \inact)\\
+		Q &\scong& \bbra{z}{\accept: \bsel{k_2}{\accept} \bout{k_2}{\creditc} \inact, \reject: \bsel{k_2}{\reject} \inact}
+%		Q &\scong& z \triangleleft \left\{
+%		\begin{array}{l}
+%			\accept: \bsel{k_2}{\accept} \bout{k_2}{\creditc} \inact,\\
+%			\reject: \bsel{k_2}{\reject} \inact
+%		\end{array}
+%		\right\}
+	\end{eqnarray*}
+%
+	\noi We can now observe $\Client_1$ as:
 \[
-	\begin{array}{lll}
-		&	\es; \es; \Delta \proves \Client_1
-		&
-			\by{\bactout{s_1}{\abs{x}{P_{xy} \subst{h_1}{y}}}}
-			\qquad
-			\by{\bactout{s_2}{\abs{x}{P_{xy} \subst{h_2}{y}}}}
-		\\
-		&	\es; \es; k_1: S \cat k_2: S \proves
-		&
-			\newsp{h_1, h_2}{\binp{\dual{h_1}}{x} \binp{\dual{h_2}}{y}
-		\\
-		&
-		&	\If\ x \leq y\ \Then (\bsel{\dual{h_1}}{\accept} \bsel{\dual{h_2}}{\reject} \inact
-			\Else \bsel{\dual{h_1}}{\reject} \bsel{\dual{h_2}}{\accept} \inact)
-		\\
-		&
-		&	\Par \ftrigger{t_1}{\abs{x}{P_{xy} \subst{h_1}{y}}}{\lhot{S}} \Par \ftrigger{t_2}{\abs{x}{P_{xy} \subst{h_2}{y}}}{\lhot{S}}}
-%		& \Par \binp{t_1}{x} \newsp{s}{\binp{s}{x} \appl{x}{k_1} \Par \bout{\dual{s}}{\abs{x}{P \subst{h_1}{y}}} \inact }\\
+	\begin{array}{ll}
+		& \es; \es; \Delta \proves \Client_1
+		\\[1mm]
+
+		\by{\bactout{s_1}{\abs{x}{P_{xy} \subst{h_1}{y}}}}&
+		\es; \es; s_2: \btout{\lhot{S}} \tinact \cat k_1: S \proves \\
+		& \newsp{h_1, h_2}{\bout{s_2}{\abs{x}{P_{xy} \subst{h_2}{y}}} \inact
+		\Par \binp{\dual{h_1}}{x} \binp{\dual{h_2}}{y} R'\\
+		& \Par \ftrigger{t_1}{P_{xy} \subst{h_1}{y}}{\lhot{S}}}
+		%\binp{t_1}{x} \newsp{s}{\mapchar{\btinp{\lhot{S}}}{s} \Par \bout{\dual{s}}{\abs{x}{P \subst{h_1}{y}}} \inact }}
+		\\[1mm]
+
+		\by{\bactout{s_2}{\abs{x}{P_{xy} \subst{h_2}{y}}}}&
+		\es; \es; k_1: S \cat k_2: S \proves \newsp{h_1, h_2}{
+		\binp{\dual{h_1}}{x} \binp{\dual{h_2}}{y} R'\\
+		& \ftrigger{t_1}{P_{xy} \subst{h_1}{y}}{\lhot{S}} \Par \ftrigger{t_2}{P_{xy} \subst{h_2}{y}}{\lhot{S}}}
+%		\Par \binp{t_1}{x} \newsp{s}{\binp{s}{x} \appl{x}{k_1} \Par \bout{\dual{s}}{\abs{x}{P \subst{h_1}{y}}} \inact }\\
 %		& \Par \binp{t_2}{x} \newsp{s}{\mapchar{\btinp{\lhot{S}}}{s} \Par \bout{\dual{s}}{\abs{x}{P \subst{h_2}{y}}} \inact }}
-		\\[2mm]
-		& \mbox{and}
-		\\[2mm]
-		&	\es; \es; \Delta \proves \Client_2
-		&
-			\by{\bactout{s_1}{\abs{x}{Q_1 \subst{h}{y}}}}
-			\qquad
-			\by{\bactout{s_2}{\abs{x}{Q_2 \subst{\dual{h}}{y}}}}
-		\\
-		&	\es; \es; k_1: S \cat k_2: S \proves & \newsp{h}{
-			\ftrigger{t_1}{\abs{x}{Q_1 \subst{h}{y}}}{\lhot{S}} \Par \ftrigger{t_2}{\abs{x}{Q_2 \subst{\dual{h}}{y}}}{\lhot{S}}}
-%		\binp{t_1}{x} \newsp{s}{\binp{s}{x} \appl{x}{k_1} \Par \bout{\dual{s}}{\abs{x}{P_1 \subst{h}{y}}} \inact }\\
-%		&\Par \binp{t_2}{x} \newsp{s}{\binp{s}{x} \appl{x}{k_2} \Par \bout{\dual{s}}{\abs{x}{P_2 \subst{\dual{h}}{y}}} \inact }}
+		\\[1mm]
+
+		\by{\bactinp{t_1}{b}} \by{\bactinp{t_2}{b}} \by{\dtau}\by{\dtau}&
+		\es; \es; k_1: S \cat k_2: S \proves \newsp{h_1, h_2}{
+		\binp{\dual{h_1}}{x} \binp{\dual{h_2}}{y} R'\\
+		& \Par P_{xy}\subst{h_1}{y} \subst{k_1}{x} \Par P_{xy}\subst{h_1}{y} \subst{k_2}{x}}
+		\\[1mm]
+
+		\by{\bactout{k_1}{\rtype}} \by{\bactout{k_2}{\rtype}}\\
+		\by{\bactinp{k_1}{\Quote}} \by{\bactinp{k_2}{\Quote}}
+		& \es; \es; k_1: S' \cat k_2: S' \proves \newsp{h_1, h_2}{
+		\binp{\dual{h_1}}{x} \binp{\dual{h_2}}{y} R'\\
+		& \Par \bout{h_1}{\Quote} Q \subst{h_1}{z} \Par \bout{h_2}{\Quote} Q \subst{h_2}{z}}
+		\\[1mm]
+
+		\by{\dtau} \by{\dtau} \by{\dtau}&
+		\es; \es; k_1: S' \cat k_2: S' \proves \\
+		& \newsp{h_1, h_2}{\bsel{\dual{h_1}}{\accept} \bsel{\dual{h_2}}{\reject} \inact
+		\Par Q \subst{h_1}{z} \Par Q \subst{h_2}{z}}
+		\\[1mm]
+
+		\by{\dtau} \by{\dtau}&
+		\es; \es; k_1: S' \cat k_2: S' \proves
+		\bsel{k_1}{\accept} \bout{k_1}{\creditc} \inact 
+		\Par \bsel{k_2}{\reject} \inact
+		\\[1mm]
+
+		\by{\bactsel{k_1}{\accept}} \by{\bactsel{k_2}{\reject}} \by{\bactsel{k_1}{\creditc}}&
+		\es; \es; \es \proves \inact
 	\end{array}
 \]
-	\noi 
-	After these transitions, 
-	we can analyse that 
-	the resulting processes are behaviourally equivalent
-	since they have the same visible transitions; the rest 
-	is internal deterministic transitions. 
-	\qed
+
+\noi	We can observe the same sequence of external transitions for $\Client_2$:
+
+\[
+	\begin{array}{ll}
+		& \es; \es; \Delta \proves \Client_2
+\\[1mm]
+
+		\by{\bactout{s_1}{\abs{x}{Q_1 \subst{h}{y}}}}&
+		\es; \es; s_2: \btout{\lhot{S}} \tinact \cat k_1: S \proves \newsp{h}{\bout{s_2}{\abs{x}{Q_2 \subst{\dual{h}}{y}}} \inact\\
+		& \Par \ftrigger{t_1}{Q_1 \subst{h}{y}}{\lhot{S}}}
+		% \binp{t_1}{x} \newsp{s}{\mapchar{\btinp{\lhot{S}}}{s} \Par \bout{\dual{s}}{\abs{x}{Q_1 \subst{h}{y}}} \inact }}
+\\[1mm]
+
+		\by{\bactout{s_2}{\abs{x}{Q_2 \subst{\dual{h}}{y}}}}&
+		\es; \es; k_1: S \cat k_2: S \proves \newsp{h}{\\
+		& \ftrigger{t_1}{Q_1 \subst{h}{y}}{\lhot{S}} \Par \ftrigger{t_2}{Q_2 \subst{\dual{h}}{y}}{\lhot{S}}}
+%		\binp{t_1}{x} \newsp{s}{\binp{s}{x} \appl{x}{k_1} \Par \bout{\dual{s}}{\abs{x}{Q_1 \subst{h}{y}}} \inact }\\
+%		& \Par \binp{t_2}{x} \newsp{s}{\mapchar{\btinp{\lhot{S}}}{s} \Par \bout{\dual{s}}{\abs{x}{Q_2 \subst{\dual{h}}{y}}} \inact }}
+\\[1mm]
+
+		\by{\bactinp{t_1}{b}} \by{\bactinp{t_2}{b}} \by{\dtau}\by{\dtau}&
+		\es; \es; k_1: S \cat k_2: S \proves \newsp{h}{
+		P\subst{h}{y} \subst{k_1}{x} \Par P_{xy}\subst{\dual{h}}{y} \subst{k_2}{x}}
+\\[1mm]
+
+		\by{\bactout{k_1}{\rtype}} \by{\bactout{k_2}{\rtype}}\\
+		\by{\bactinp{k_1}{\Quote}} \by{\bactinp{k_2}{\Quote}}
+		& \es; \es; k_1: S' \cat k_2: S' \proves \newsp{h}{
+		\bout{h}{\Quote_1} \binp{h}{\Quote_2} R \subst{k_1}{x} \\
+		& \Par \binp{\dual{h}}{\Quote_2} \bout{\dual{h}}{\Quote_1} R \subst{k_2}{x}}
+\\[1mm]
+		\by{\dtau} \by{\dtau}&
+		\es; \es; k_1: S' \cat k_2: S' \proves R \subst{k_1}{x} \Par R \subst{k_2}{x}
+\\[1mm]
+		\by{\dtau} \by{\dtau}&
+		\es; \es; k_1: S' \cat k_2: S' \proves
+		\bsel{k_1}{\accept} \bout{k_1}{\creditc} \inact 
+		\Par \bsel{k_2}{\reject} \inact
+\\[1mm]
+		\by{\bactsel{k_1}{\accept}} \by{\bactsel{k_2}{\reject}} \by{\bactsel{k_1}{\creditc}}&
+		\es; \es; \es \proves \inact
+	\end{array}
+\]
+\qed
 \end{proof}
 
 %\smallskip 
