@@ -175,23 +175,25 @@ We write $P_1 \by{\ell} P_2$ with the usual meaning.
 The rules are standard~\cite{KYHH2015,KY2015}; we comment on some of them.
 A process with an output prefix can
 interact with the environment with an output action that carries a value
-$V$ (rule~$\ltsrule{Snd}$).  Dually, in rule $\ltsrule{Rv}$ a
+$V$ (Rule~$\ltsrule{Snd}$).  Dually, in Rule~$\ltsrule{Rv}$ a
 receiver process can observe an input of an arbitrary value $V$.
 Select and branch processes observe the select and branch
-actions in rules $\ltsrule{Sel}$ and $\ltsrule{Bra}$, resp.
-Rule $\ltsrule{Res}$ closes the LTS under restriction 
-if the restricted name does not occur free in the
-observable action. 
+actions in Rules~$\ltsrule{Sel}$ and $\ltsrule{Bra}$, resp.
+Rule $\ltsrule{Res}$ 
+%closes the LTS under restriction 
+\newc{enables an observable action from a process with an outermost restriction, provided that 
+ the restricted name does not occur free in the action}. 
 If a restricted name occurs free in
 the carried value of an output action,
-the process performs scope opening (rule~$\ltsrule{New}$).  
+the process performs scope opening (Rule~$\ltsrule{New}$).  
 Rule~$\ltsrule{Rec}$ handles recursion unfolding.
 Rule~$\ltsrule{Tau}$ 
 states that two parallel processes which perform
 dual actions can synchronise by an internal transition.
-Rules $\ltsrule{Par${}_L$}$/$\ltsrule{Par${}_R$}$ 
-and $\ltsrule{Alpha}$ close the LTS
-under parallel composition and $\alpha$-renaming. 
+Rules~$\ltsrule{Par${}_L$}$/$\ltsrule{Par${}_R$}$ 
+and $\ltsrule{Alpha}$ 
+%close the LTS under parallel composition and $\alpha$-renaming. 
+\newc{define standard treatments for actions under parallel composition and $\alpha$-renaming.}
 
 \subsection{Environmental Labelled Transition System}
 \label{ss:elts}
@@ -206,20 +208,20 @@ denoted
 	(\Gamma_1, \Lambda_1, \Delta_1) \by{\ell} (\Gamma_2, \Lambda_2, \Delta_2)
 \]
 %
-Notice that  we have 
+\newc{Recall that  $\Gamma$ admits  weakening. 
+Using this principle (not valid for $\Lambda$ and $\Delta$), we have  
 $
 	(\Gamma', \Lambda_1, \Delta_1) \hby{\ell} (\Gamma', \Lambda_2, \Delta_2)
 $
-if
+whenever 
 $
 	(\Gamma, \Lambda_1, \Delta_1) \hby{\ell} (\Gamma', \Lambda_2, \Delta_2)
-$, 
-due to weakening of shared environments.
+$.}
 %
 \paragraph{Input Actions} 
 are defined by 
-rules~$\eltsrule{SRv}$ and $\eltsrule{ShRv}$.
-In rule~$\eltsrule{SRv}$
+Rules~$\eltsrule{SRv}$ and $\eltsrule{ShRv}$.
+In Rule~$\eltsrule{SRv}$
 the type of value $V$
 and the type of the object associated to the session type on $s$ 
 should coincide. 
@@ -229,30 +231,31 @@ The
 dual endpoint $\dual{s}$ cannot be
 present in the session environment: if it were present
 the only possible communication would be the interaction
-between the two endpoints (cf. rule~$\eltsrule{Tau}$).
+between the two endpoints (cf. Rule~$\eltsrule{Tau}$).
 Rule~$\eltsrule{ShRv}$ is for shared names and follows similar principles.
 
-\paragraph{Output Actions} are defined by rules~$\eltsrule{SSnd}$
+\paragraph{Output Actions} are defined by Rules~$\eltsrule{SSnd}$
 and $\eltsrule{ShSnd}$.  
-Rule $\eltsrule{SSnd}$ states the conditions for observing action
+Rule~$\eltsrule{SSnd}$ states the conditions for observing action
 $\news{\widetilde{m}} \bactout{s}{V}$ on a type tuple 
 $(\Gamma, \Lambda, \Delta\cdot \AT{s}{S})$. 
-The session environment $\Delta$ with $\AT{s}{S}$ 
-should include the session environment of the sent value $V$, 
+The session environment $\Delta \,\cat\, \AT{s}{S}$ 
+should include the session environment of the sent value $V$ \newc{(denoted $\Delta'$ in the rule)}, 
 {\em excluding} the session environments of names $m_j$ 
-in $\widetilde{m}$ which restrict the scope of value $V$. 
+in $\widetilde{m}$ which restrict the scope of value $V$ \newc{(denoted $\Delta_j$ in the rule)}. 
 Analogously, the linear variable environment 
 $\Lambda'$ of $V$ should be included in $\Lambda$. 
-Scope extrusion of session names in $\widetilde{m}$ requires
-that the dual endpoints of $\widetilde{m}$ should appear in
-the resulting session environment. Similarly for shared 
+\newc{The rule defines the scope extrusion of session names in $\widetilde{m}$; consequently, 
+environments associated to 
+their dual endpoints  (denoted $\Delta'_j$ in the rule) appear in
+the resulting session environment}. Similarly for shared 
 names in $\widetilde{m}$ that are extruded.  
-All free values used for typing $V$ are subtracted from the
+All free values used for typing $V$ \newc{(denoted $\Lambda'$ and $\Delta'$ in the rule)}are subtracted from the
 resulting type tuple. The prefix of session $s$ is consumed
 by the action.
-Rule $\eltsrule{ShSnd}$ is for output actions on shared names:
-the name must be typed with $\chtype{U}$; conditions on $V$ are identical to those
-on rule~$\eltsrule{SSnd}$.
+Rule $\eltsrule{ShSnd}$ follows very similar ideas for output actions on shared names:
+the name must be typed with $\chtype{U}$; 
+conditions on value $V$ are identical to those on Rule~$\eltsrule{SSnd}$.
 
 \begin{notation}
 Given a value $V$ of type $U$, we sometimes annotate the output action 
@@ -267,7 +270,7 @@ select and branch.
 %Both
 %rules require the absence of the dual endpoint from the session
 %environment.%, and the presence of the action labels in the type.
-Rule $\eltsrule{Tau}$ defines
+Rule~$\eltsrule{Tau}$ defines
 internal transitions: 
 it keeps the session environment unchanged or 
 reduces it (\defref{d:wtenvred}).
@@ -299,7 +302,7 @@ reduces it (\defref{d:wtenvred}).
 			\and
 			\dual{s} \notin \dom{\Delta}
 			\\
-			\Delta'\backslash \cup_j \Delta_j \subseteq (\Delta \cat s: S)
+			\Delta'\backslash (\cup_j \Delta_j) \subseteq (\Delta \cat s: S)
 			\and
 			\Gamma'; \es; \Delta_j' \proves \dual{m}_j  \hastype U_j'
 			\and
@@ -319,7 +322,7 @@ reduces it (\defref{d:wtenvred}).
 			\and
 			\Gamma ; \es ; \es \proves a \hastype \chtype{U}
 			\\
-			\Delta'\backslash \cup_j \Delta_j \subseteq \Delta
+			\Delta'\backslash (\cup_j \Delta_j) \subseteq \Delta
 			\and
 			\Gamma'; \es; \Delta_j' \proves \dual{m}_j\hastype U_j'
 			\and
@@ -1085,7 +1088,7 @@ $\beta$-reductions are deterministic.  We define an auxiliary proof technique th
 	\begin{enumerate}[$-$]
 		\item 
 				a {\em \sesstran} whenever the   transition $P \by{\tau} P'$ 
-				is derived using rule~$\ltsrule{Tau}$ 
+				is derived using Rule~$\ltsrule{Tau}$ 
 				(where $\subj{\ell_1}$ and $\subj{\ell_2}$ in the premise are dual endpoints), 
 				possibly followed by uses of  $\ltsrule{Alpha}$, $\ltsrule{Res}$, $\ltsrule{Rec}$, or $\ltsrule{Par${}_L$}/
 				\ltsrule{Par${}_R$}$.
