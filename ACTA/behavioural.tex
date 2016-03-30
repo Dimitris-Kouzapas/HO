@@ -417,8 +417,13 @@ and \figref{fig:envLTS}.
 	%extend to $\By{}$ and $\By{\hat{\ell}}$  where we 
 	write  $\By{}$ for the reflexive and transitive closure of $\by{}$,
 	$\By{\ell}$ for the transitions $\By{}\by{\ell}\By{}$, and $\By{\hat{\ell}}$
-	for $\By{\ell}$ if $\ell\not = \tau$ otherwise $\By{}$. 
+	for $\By{\ell}$ if $\ell\not = \tau$ otherwise $\By{}$.
 \end{definition}
+
+\dk{A typed transition relation requires type judgements with an empty $\Lambda$
+environment. This is for simplicity because we can always apply typing 
+rule $\trule{EProm}$ and get an empty $\Lambda$. Furthermore, recall that
+we are working with closed terms.}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %    Reduction closed barbed congruence
@@ -500,6 +505,11 @@ Typed barbs $\barb{n}$ (resp.\ $\Barb{n}$)
 are observed  on typed processes $\Gamma; \emptyset; \Delta \proves P \hastype \Proc$.
 When $n$ is a session name we require that its dual endpoint $\dual{n}$ is not
 present in the session environment $\Delta$.
+
+\dk{Observing the outputs is enough because input actions can be observed indirectly by output actions 
+on fresh names. For instance, the process $P = \binp{n}{x} P’$ has an input barb; by composing $P$
+with  $\bout{n}{m} \bout{\suc!}{} \inact$ (with fresh $\suc$) then one obtains a (weak) observation
+uniquely associated to  the input in $P$. }
 
 To define a congruence relation, we introduce the family $\C$ of contexts:
 
@@ -1280,7 +1290,30 @@ techniques for higher-order processes with sessions.
 \end{lemma}
 
 \begin{proof}[Sketch]
-	The key is to show that
+\dk{	The only difference in two bisimilarity relations definition
+	is the trigger process. Thus, the interesting case is the
+	case where we observe an output from a process. The
+	key after the output is to show that
+	\[
+		\newsp{\tilde{m_1}}{P_1 \Par \ftrigger{t}{V}{U}} \hwb \newsp{\tilde{m_2}}{P_2 \Par \ftrigger{t}{V_2}{U}}
+	\]
+	given that 
+	\[
+		\newsp{\tilde{m_1}}{P_1 \Par \htrigger{t}{V}} \hwb \newsp{\tilde{m_2}}{P_2 \Par \htrigger{t}{V_2}}
+	\]
+	when showing that $\fwb \subseteq \hwb$,
+	and
+	\[
+		\newsp{\tilde{m_1}}{P_1 \Par \htrigger{t}{V}} \fwb \newsp{\tilde{m_2}}{P_2 \Par \htrigger{t}{V_2}}
+	\]
+	given that 
+	\[
+		\newsp{\tilde{m_1}}{P_1 \Par \ftrigger{t}{V}} \fwb \newsp{\tilde{m_2}}{P_2 \Par \ftrigger{t}{V_2}{U}}
+	\]
+	when showing that $\hwb \subseteq \fwb$.
+}
+
+	The above comes from the intuition that
 	characteristic trigger processes
 	$\ftrigger{t}{V}{U}$
 	and
@@ -1336,24 +1369,24 @@ Indeed, while for the former we have
 The next lemma is crucial for the characterisation of
 higher-order and characteristic bisimilarities.
 It states that if two processes are equivalent under the
-trigger value and the characteristic value substitution then
-they are equivalent under any higher-order substitution.
+trigger value %and the characteristic value substitution
+then they are equivalent under any higher-order substitution.
 
 \begin{lemma}[Process Substitution]
 	\label{lem:proc_subst}
-	Let $P$ and $Q$ be two processes. If 
+	Let $P$ and $Q$ be two processes and some fresh $t$. If 
 %
-	\begin{enumerate}
-		\item	$\horel{\Gamma}{\Delta_1'}{P \subst{\auxtr{t}}{x}}{\hwb}{\Delta_2}{Q \subst{\auxtr{t}}{x}}$,
-			for some fresh $t$.
-
-		\item	$\horel{\Gamma}{\Delta_1''}{P \subst{\omapchar{U}}{x}}{\hwb}{\Delta_2''}{Q \subst{\omapchar{U}}{x}}$,
-				for some $U$.
-	\end{enumerate}
+%	\begin{enumerate}
+%		\item
+			\[\horel{\Gamma}{\Delta_1'}{P \subst{\trvalx{t}}{z}}{\hwb}{\Delta_2}{Q \subst{\trvalx{t}}{z}}\]
 %
-	then $\forall R$ such that $\fv{R} = \widetilde{x}$
+%		\item	$\horel{\Gamma}{\Delta_1''}{P \subst{\omapchar{U}}{x}}{\hwb}{\Delta_2''}{Q \subst{\omapchar{U}}{x}}$,
+%				for some $U$.
+%	\end{enumerate}
+%
+	then $\forall R$ such that $\fv{R} = x$
 	\[
-		\horel{\Gamma}{\Delta_1}{P \subst{\abs{\widetilde{x}}{R}}{x}}{\hwb}{\Delta_2}{Q \subst{\abs{\widetilde{x}}{R}}{x}}
+		\horel{\Gamma}{\Delta_1}{P \subst{\abs{x}{R}}{z}}{\hwb}{\Delta_2}{Q \subst{\abs{x}{R}}{z}}
 	\]
 \end{lemma}
 
