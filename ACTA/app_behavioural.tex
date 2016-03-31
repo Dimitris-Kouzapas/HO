@@ -753,14 +753,37 @@ We state an auxiliary lemma that captures a property of trigger
 processes in terms of process equivalence.
 \begin{lemma}[Trigger Process Application]
 	\label{lem:trigger_application}
-	Let $P$ and $Q$ be processes. Also, let $t$ be a fresh name
-	and $n_1 \not= n_2$. If
-	\[
-		\horel{\Gamma}{\Delta_1}{\newsp{\widetilde{m_1}}{P \Par \appl{(\trvalx{t})}{n_1} }}
-		{\hwb}
-		{\Delta_2}{\newsp{\widetilde{m_2}}{Q \Par \appl{(\trvalx{t})}{n_2} }}
-	\]
-	then $n_1, n_2$ sessions and $\dual{n_1} \in \fn{P}$ and $\dual{n_2} \in \fn{Q}$.
+	Let $P$ and $Q$ be processes. Also, let $t$ be a fresh name.
+	\begin{enumerate}
+		\item
+			If $n_1 \not= n_2$ and
+			\[
+				\horel{\Gamma}{\Delta_1}{\newsp{\widetilde{m_1}}{P \Par \appl{(\trvalx{t})}{n_1} }}
+				{\hwb}
+				{\Delta_2}{\newsp{\widetilde{m_2}}{Q \Par \appl{(\trvalx{t})}{n_2} }}
+			\]
+			then $n_1, n_2$ sessions and $\dual{n_1} \in \fn{P}$ and $\dual{n_2} \in \fn{Q}$.
+
+		\item
+			If
+			\[
+				\horel{\Gamma}{\Delta_1}{\newsp{\widetilde{m_1}}{P \Par  \appl{\omapchar{U}}{n_2} }}%\appl{\abs{x}{\mapchar{U}{x}}{n_1}} }}
+				{\hwb}
+				{\Delta_2}{\newsp{\widetilde{m_2}}{Q \Par \appl{\omapchar{U}}{n_1} }} %\appl{\abs{x}{\mapchar{U}{x}}{n_1}} }}
+			\]
+			then whenever
+			\[
+				\horel{\Gamma}{\Delta_1}{\newsp{\widetilde{m_1}}{P \Par \appl{\omapchar{U}}{n_1} }} %\appl{\abs{x}{\mapchar{U}{x}}{n_1}} }}
+				{\hby{\ell_1}}
+				{\Delta_1'}{\newsp{\widetilde{m_1}'}{P' \Par \appl{(\trvalx{t})}{n_1} }}
+			\]
+			implies
+			\[
+				\horel{\Gamma}{\Delta_2}{\newsp{\widetilde{m_1}}{Q \Par \appl{\omapchar{U}}{n_2} }} %\appl{\abs{x}{\mapchar{U}{x}}{n_2}} }}
+				{\Hby{\hat{\ell_2}}}
+				{\Delta_2'}{\newsp{\widetilde{m_2}'}{Q' \Par \appl{\omapchar{U}}{n_2} }} % }}
+			\]
+	\end{enumerate}
 \end{lemma}
 
 A process substitution lemma is useful for showing the
@@ -831,9 +854,9 @@ we give an intermediate result.
 				\]
 				and
 				\begin{eqnarray}
-					\horel{\Gamma}{\Delta_5}{\newsp{\widetilde{m_1}'}{P' \Par \appl{(\trvalx{t})}{n_1} \Par C_1}}
+					\mhorel{\Gamma}{\Delta_5}{\newsp{\widetilde{m_1}'}{P' \Par \appl{(\trvalx{t})}{n_1} \Par C_1}}
 					{\hwb}
-					{\Delta_6}{\newsp{\widetilde{m_2}'}{Q' \Par \appl{(\trvalx{t})}{n_2} \Par C_2}}
+					{\Delta_6}{}{\newsp{\widetilde{m_2}'}{Q' \Par \appl{(\trvalx{t})}{n_2} \Par C_2}}
 					\label{lem:trig_subst1}
 				\end{eqnarray}
 				where $C_1, C_2$ are the trigger processes if $\ell_1, \ell_2$ are output actions
@@ -868,7 +891,61 @@ we give an intermediate result.
 				\begin{enumerate}[i.]
 					\item	$\subj{\ell} \not= n_1$. The case is similar as above.
 
-					\item	$\subj{\ell} = n_1$ and $n_1 = n_2$. \dk{put proof}
+					\item	$\subj{\ell} = n_1$ and $n_1 = n_2$.
+							From the definition of $\Re$ we get that
+							\[
+								\horel{\Gamma}{\Delta_1}{\newsp{\widetilde{m_1}}{P \Par \binp{t}{x} \appl{x}{n_1}}}
+								{\hby{ \bactinp{t}{\omapchar{U}}}}
+								{\Delta_3}{\newsp{\widetilde{m_1}}{P \Par \appl{\omapchar{U}}{n_1}}}
+							\]
+							implies
+							\[
+								\horel{\Gamma}{\Delta_2}{\newsp{\widetilde{m_2}}{Q \Par \binp{t}{x} \appl{x}{n_2}}}
+								{\Hby{ \bactinp{t}{\omapchar{U}}}}
+								{\Delta_4}{\newsp{\widetilde{m_1}}{Q' \Par \mapchar{U}{x} \subst{n_2}{x} }}
+							\]
+							and
+							\begin{eqnarray*}
+								&& \Gamma; \Delta_3 \proves \newsp{\widetilde{m_1}}{P \Par \appl{\omapchar{U}}{n_1}}
+								\\
+								&\hby{\tau_{\beta}}&
+									\Delta_3 \proves \newsp{\widetilde{m_1}}{P \Par \mapchar{U}{x} \subst{n_1}{x}  }
+								\\
+								&\hwb&
+									\Delta_4 \proves \newsp{\widetilde{m_1}}{Q' \Par \mapchar{U}{x} \subst{n_2}{x}}
+							\end{eqnarray*}
+
+							The proof follows Part 2 of \lemref{lem:trigger_application} where
+							\[
+								\horel{\Gamma}{\Delta_3}{\newsp{\widetilde{m_1}}{P \Par \mapchar{U}{x} \subst{n_1}{x}  }}
+								{\hby{\ell}}
+								{\Delta_3'}{\newsp{\widetilde{m_1}'}{P \Par \binp{t'}{y}{\appl{y}{n_1}}}}
+							\]
+							implies
+							\[
+								\horel{\Gamma}{\Delta_4}{\newsp{\widetilde{m_2}}{Q' \Par \mapchar{U}{x} \subst{n_1}{x}  }}
+								{\Hby{\ell}}
+								{\Delta_4'}{\newsp{\widetilde{m_2}'}{Q'' \Par \binp{t'}{y}{\appl{y}{n_2}}}}
+							\]
+							and furthermore,
+							\[
+								\horel{\Gamma}{\Delta_3'}{\newsp{\widetilde{m_1}'}{P \Par \binp{t'}{y}{\appl{y}{n_1}}}}
+								{\hwb}
+								{\Delta_4'}{\newsp{\widetilde{m_2}'}{Q'' \Par \binp{t'}{y}{\appl{y}{n_2}}}}
+							\]
+							that implies from the definition of $\Re$ that $\forall R$ such that $x \in \fn{R}$
+							\[
+								\horel{\Gamma}{\Delta_3'}{\newsp{\widetilde{m_1}'}{P \Par R \subst{n_1}{x} }}
+								{\ \Re\ }
+								{\Delta_4'}{\newsp{\widetilde{m_2}'}{Q'' \Par R \subst{n_2}{x}}}
+							\]
+							The proof concludes when we verify that 
+							\[
+								\horel{\Gamma}{\Delta_2'}{\newsp{\widetilde{m_2}}{Q \Par R \subst{n_2}{x} }}
+								{\Hby{\ell}}
+								{\Delta_2''}{\newsp{\widetilde{m_1}'}{Q'' \Par R' \subst{n_2}{x} }}
+							\]
+							
 
 					\item	$\subj{\ell} = n_1$ and $n_1 \not= n_2$. This case
 							is not possible. \lemref{lem:trigger_application} implies
@@ -896,10 +973,10 @@ we give an intermediate result.
 				\end{eqnarray*}
 				We distinguish several subcases
 				\begin{enumerate}[i.]
-					\item	$\subj{\ell_1} \not= n_1$
+					\item	$\subj{\ell_1} \not= n_1$.
 					\item	$\subj{\ell_1} = n_1$ and $n_1 = n_2$
 					\item	$\subj{\ell_1} = n_1$ and $n_1 \not= n_2$
-					\item	$\obj{\ell_1} = n_1$
+					\item	$\obj{\ell_1} = n_1$.
 				\end{enumerate}
 	\end{enumerate}
 	\qed
