@@ -749,11 +749,23 @@ and higher order trigger processes.
 % PROCESS SUBSTITUTION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+We state an auxiliary lemma that captures a property of trigger
+processes in terms of process equivalence.
+\begin{lemma}[Trigger Process Application]
+	Let $P$ and $Q$ be processes. Also, let $t$ be a fresh name
+	and $n_1 \not= n_2$. If
+	\[
+		\horel{\Gamma}{\Delta_1}{\newsp{\widetilde{m_1}}{P \Par \appl{(\trvalx{t})}{n_1} }}
+		{\hwb}
+		{\Delta_2}{\newsp{\widetilde{m_2}}{Q \Par \appl{(\trvalx{t})}{n_2} }}
+	\]
+	then $n_1, n_2$ sessions and $\dual{n_1} \in \fn{P}$ and $\dual{n_2} \in \fn{Q}$.
+\end{lemma}
+
 A process substitution lemma is useful for showing the
 contextual for higher-order and characteristic bisimilarities.
 Before we state and prove a process substitution lemma
 we give an intermediate result.
-
 
 \begin{lemma}[Trigger Substitution]
 	\label{lem:tigger_subst}
@@ -772,7 +784,83 @@ we give an intermediate result.
 \end{lemma}
 
 \begin{proof}
-	\dk{put proof}
+	Let relation
+	\begin{eqnarray*}
+		\Re	&=&	\set{	(\horel{\Gamma}{\Delta_1'}{\newsp{\widetilde{m_1}}{P \Par \appl{(\abs{x}{R})}{n_1} }}
+						{\ ,\ }
+						{\Delta_2'}{\newsp{\widetilde{m_2}}{Q \Par \appl{(\abs{x}{R})}{n_2} }})
+					\setbar\\
+					&& \forall \abs{x}{R}, \exists \Delta_1', \Delta_2', \land \\
+					&&	\horel{\Gamma}{\Delta_1}{\newsp{\widetilde{m_1}}{P \Par \appl{(\trvalx{t})}{n_1} }}
+						{\hwb}
+						{\Delta_2}{\newsp{\widetilde{m_2}}{Q \Par \appl{(\trvalx{t})}{n_2}}}\\
+				&&}
+	\end{eqnarray*}
+	We show that $\Re$ is a higher-order bisimilarity.
+	The proof is done by a case analysis on the actions that can be observed
+	on the pairs of processes, so to check their higher-order bisimulation requirements.
+
+	\begin{enumerate}
+		\item	\[
+					\horel{\Gamma}{\Delta_1'}{\newsp{\widetilde{m_1}}{P \Par \appl{(\abs{x}{R})}{n_1} }}
+					{\hby{\ell_1}}
+					{\Delta_1''}{\newsp{\widetilde{m_1}'}{P' \Par \appl{(\abs{x}{R})}{n_1} }}
+				\]
+				implies
+				\[
+					\horel{\Gamma}{\Delta_3}{\newsp{\widetilde{m_1}}{P}}
+					{\hby{\ell_1}}
+					{\Delta_3'}{\newsp{\widetilde{m_1}'}{P'}}
+				\]
+				implies
+				\[
+					\horel{\Gamma}{\Delta_1}{\newsp{\widetilde{m_1}}{P \Par \appl{(\trvalx{t})}{n_1} }}
+					{\hby{\ell_1}}
+					{\Delta_5}{\newsp{\widetilde{m_1}'}{P' \Par \appl{(\trvalx{t})}{n_1} }}
+				\]
+				implies from the higher-order bisimilarity requirement of relation $\Re$ and the
+				freshness of $t$
+				\[
+					\horel{\Gamma}{\Delta_2}{\newsp{\widetilde{m_2}}{Q \Par \appl{(\trvalx{t})}{n_2} }}
+					{\Hby{\ell_2}}
+					{\Delta_6}{\newsp{\widetilde{m_2}'}{Q' \Par \appl{(\trvalx{t})}{n_1} }}
+				\]
+				and
+				\begin{eqnarray}
+					\horel{\Gamma}{\Delta_5}{\newsp{\widetilde{m_1}'}{P' \Par \appl{(\trvalx{t})}{n_1} \Par C_1}}
+					{\hwb}
+					{\Delta_6}{\newsp{\widetilde{m_2}'}{Q' \Par \appl{(\trvalx{t})}{n_2} \Par C_2}}
+					\label{lem:trig_subst1}
+				\end{eqnarray}
+				where $C_1, C_2$ are the trigger processes if $\ell_1, \ell_2$ are output actions
+				and $C_1 = C_2 = \inact$ otherwise.
+
+				The former transition implies
+				\[
+					\horel{\Gamma}{\Delta_4}{\newsp{\widetilde{m_2}}{Q }}
+					{\Hby{\ell_2}}
+					{\Delta_4'}{\newsp{\widetilde{m_2}'}{Q'}}
+				\]
+				which implies
+				\[
+					\horel{\Gamma}{\Delta_2'}{\newsp{\widetilde{m_2}}{Q \Par \appl{(\abs{x}{R})}{n_2} }}
+					{\Hby{\ell_2}}
+					{\Delta_2''}{\newsp{\widetilde{m_2}'}{Q' \Par \appl{(\abs{x}{R})}{n_2} }}
+				\]
+				Equation \eqref{lem:trig_subst1} and the definition of $\Re$ implies
+				\begin{eqnarray*}
+					\horel{\Gamma}{\Delta_1''}{\newsp{\widetilde{m_1}'}{P' \Par \appl{(\abs{x}{R})}{n_1} \Par C_1}}
+					{\hwb}
+					{\Delta_2''}{\newsp{\widetilde{m_2}'}{Q' \Par \appl{(\abs{x}{R})}{n_2} \Par C_2 }}
+				\end{eqnarray*}
+				that concludes the case.
+
+		\item	\[
+					\horel{\Gamma}{\Delta_1'}{\newsp{\widetilde{m_1}}{P \Par \appl{(\abs{x}{R})}{n_1} }}
+					{\hby{\ell_1}}
+					{\Delta_1''}{\newsp{\widetilde{m_1}'}{P \Par \appl{(\abs{x}{R'})}{n_1} }}
+				\]
+	\end{enumerate}
 	\qed
 \end{proof}
 
