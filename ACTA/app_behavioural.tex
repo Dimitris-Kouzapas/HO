@@ -783,6 +783,19 @@ processes in terms of process equivalence.
 				{\Hby{\hat{\ell_2}}}
 				{\Delta_2'}{\newsp{\widetilde{m_2}'}{Q' \Par \appl{\omapchar{U}}{n_2} }} % }}
 			\]
+			
+		\item If
+			\[
+				\horel{\Gamma}{\Delta_1}{ \newsp{m_1}{P \Par \bout{t}{n_1} \inact} }
+				{\hwb}
+				{\Delta_2}{ \newsp{m_2}{Q \Par \bout{t}{n_2} \inact} }
+			\]
+			then
+			\[
+				\horel{\Gamma}{\Delta_1}{ \newsp{m_1}{P \Par \binp{t}{x} \appl{x}{n_1}} }
+				{\hwb}
+				{\Delta_2}{ \newsp{m_2}{Q \Par \binp{t}{x} \appl{x}{n_2}} }
+			\]
 	\end{enumerate}
 \end{lemma}
 
@@ -795,32 +808,32 @@ we give an intermediate result.
 	\label{lem:trigger_subst}
 	Let $P$ and $Q$ be processes. Also, let $t$ be a fresh name. If
 	\[
-		\horel{\Gamma}{\Delta_1}{\newsp{\widetilde{m_1}}{P \Par \appl{(\trvalx{t})}{n_1} }}
+		\horel{\Gamma}{\Delta_1}{\newsp{\widetilde{m_1}}{P \Par \prod_{i \in I} \appl{(\trvalx{t_i})}{n_i} }}
 		{\hwb}
-		{\Delta_2}{\newsp{\widetilde{m_2}}{Q \Par \appl{(\trvalx{t})}{n_2} }}
+		{\Delta_2}{\newsp{\widetilde{m_2}}{Q \Par\prod_{i \in I} \appl{(\trvalx{t_i})}{m_i} }}
 	\]
-	then $\forall \abs{x}{R}, \exists \Delta_1', \Delta_2'$ such that
+	then $\forall \abs{\widetilde{x}}{R}, \exists \Delta_1', \Delta_2'$ such that
 	\[
-		\horel{\Gamma}{\Delta_1'}{\newsp{\widetilde{m_1}}{P \Par \appl{(\abs{x}{R})}{n_1} }}
+		\horel{\Gamma}{\Delta_1'}{\newsp{\widetilde{m_1}}{P \Par \appl{(\abs{\widetilde{x}}{R})}{\widetilde{n}} }}
 		{\hwb}
-		{\Delta_2'}{\newsp{\widetilde{m_2}}{Q \Par \appl{(\abs{x}{R})}{n_2} }}
+		{\Delta_2'}{\newsp{\widetilde{m_2}}{Q \Par \appl{(\abs{\widetilde{x}}{R})}{\widetilde{m}} }}
 	\]
 \end{lemma}
 
 \begin{proof}
 	We proof the result up-to the deterministic application
-	transition that substitutes names $n_1$ and $n_2$ to
-	processes $R_1$ and $R_2$, respectively.
+	transition that substitutes names $n_i$ and $m_i$ to
+	process $R$, respectively.
 	Let relation
 	\begin{eqnarray*}
-		\Re	&=&	\set{	(\horel{\Gamma}{\Delta_1'}{\newsp{\widetilde{m_1}}{P \Par R \subst{n_1}{x} }}
+		\Re	&=&	\set{	(\horel{\Gamma}{\Delta_1'}{\newsp{\widetilde{m_1}}{P \Par R \subst{\widetilde{n}}{\widetilde{x}} }}
 						{\ ,\ }
-						{\Delta_2'}{\newsp{\widetilde{m_2}}{Q \Par R \subst{n_2}{x} }})
+						{\Delta_2'}{\newsp{\widetilde{m_2}}{Q \Par R \subst{\widetilde{m}}{\widetilde{x}} }})
 					\setbar\\
-					&& \forall \abs{x}{R}, \exists \Delta_1', \Delta_2', \land \\
-					&&	\horel{\Gamma}{\Delta_1}{\newsp{\widetilde{m_1}}{P \Par \appl{(\trvalx{t})}{n_1} }}
+					&& \forall \abs{\widetilde{x}}{R}, \exists \Delta_1', \Delta_2', \land \\
+					&&	\horel{\Gamma}{\Delta_1}{\newsp{\widetilde{m_1}}{P \Par \prod_{i \in I} \appl{(\trvalx{t_i})}{n_i} }}
 						{\hwb}
-						{\Delta_2}{\newsp{\widetilde{m_2}}{Q \Par \appl{(\trvalx{t})}{n_2}}}\\
+						{\Delta_2}{\newsp{\widetilde{m_2}}{Q \Par \prod_{i \in I} \appl{(\trvalx{t_i})}{m_i}}}\\
 				&&}
 	\end{eqnarray*}
 	We show that $\Re$ is a higher-order bisimilarity.
@@ -829,9 +842,9 @@ we give an intermediate result.
 
 	\begin{enumerate}
 		\item	\[
-					\horel{\Gamma}{\Delta_1'}{\newsp{\widetilde{m_1}}{P \Par R \subst{n_1}{x} }}
+					\horel{\Gamma}{\Delta_1'}{\newsp{\widetilde{m_1}}{P \Par R \subst{\widetilde{n}}{\widetilde{x}} }}
 					{\hby{\ell_1}}
-					{\Delta_1''}{\newsp{\widetilde{m_1}'}{P' \Par R \subst{n_1}{x} }}
+					{\Delta_1''}{\newsp{\widetilde{m_1}'}{P' \Par R \subst{\widetilde{n}}{\widetilde{x}} }}
 				\]
 				implies
 				\[
@@ -841,22 +854,22 @@ we give an intermediate result.
 				\]
 				implies
 				\[
-					\horel{\Gamma}{\Delta_1}{\newsp{\widetilde{m_1}}{P \Par \appl{(\trvalx{t})}{n_1} }}
+					\horel{\Gamma}{\Delta_1}{\newsp{\widetilde{m_1}}{P \Par \prod_{i \in I} \appl{(\trvalx{t_i})}{n_i} }}
 					{\hby{\ell_1}}
-					{\Delta_5}{\newsp{\widetilde{m_1}'}{P' \Par \appl{(\trvalx{t})}{n_1} }}
+					{\Delta_5}{\newsp{\widetilde{m_1}'}{P' \Par \prod_{i \in I} \appl{(\trvalx{t_i})}{n_i} }}
 				\]
 				implies from the higher-order bisimilarity requirement of relation $\Re$ and the
-				freshness of $t$
+				freshness of $t_i, \forall i \in I$
 				\[
-					\horel{\Gamma}{\Delta_2}{\newsp{\widetilde{m_2}}{Q \Par \appl{(\trvalx{t})}{n_2} }}
+					\horel{\Gamma}{\Delta_2}{\newsp{\widetilde{m_2}}{Q \Par \prod_{i \in I} \appl{(\trvalx{t_i})}{m_i} }}
 					{\Hby{\ell_2}}
-					{\Delta_6}{\newsp{\widetilde{m_2}'}{Q' \Par \appl{(\trvalx{t})}{n_1} }}
+					{\Delta_6}{\newsp{\widetilde{m_2}'}{Q' \Par \prod_{i \in I} \appl{(\trvalx{t_i})}{n_i} }}
 				\]
 				and
 				\begin{eqnarray}
-					\mhorel{\Gamma}{\Delta_5}{\newsp{\widetilde{m_1}'}{P' \Par \appl{(\trvalx{t})}{n_1} \Par C_1}}
+					\mhorel{\Gamma}{\Delta_5}{\newsp{\widetilde{m_1}'}{P' \Par \prod_{i \in I} \appl{(\trvalx{t_i})}{n_i} \Par C_1}}
 					{\hwb}
-					{\Delta_6}{}{\newsp{\widetilde{m_2}'}{Q' \Par \appl{(\trvalx{t})}{n_2} \Par C_2}}
+					{\Delta_6}{}{\newsp{\widetilde{m_2}'}{Q' \Par \prod_{i \in I} \appl{(\trvalx{t_i})}{m_i} \Par C_2}}
 					\label{lem:trig_subst1}
 				\end{eqnarray}
 				where $C_1, C_2$ are the trigger processes if $\ell_1, \ell_2$ are output actions
@@ -870,74 +883,74 @@ we give an intermediate result.
 				\]
 				which implies
 				\[
-					\horel{\Gamma}{\Delta_2'}{\newsp{\widetilde{m_2}}{Q \Par R \subst{n_2}{x} }}
+					\horel{\Gamma}{\Delta_2'}{\newsp{\widetilde{m_2}}{Q \Par R \subst{\widetilde{m}}{\widetilde{x}}}}
 					{\Hby{\ell_2}}
-					{\Delta_2''}{\newsp{\widetilde{m_2}'}{Q' \Par R \subst{n_2}{x} }}
+					{\Delta_2''}{\newsp{\widetilde{m_2}'}{Q' \Par \subst{\widetilde{m}}{\widetilde{x}} }}
 				\]
 				Equation \eqref{lem:trig_subst1} and the definition of $\Re$ implies
 				\begin{eqnarray*}
-					\horel{\Gamma}{\Delta_1''}{\newsp{\widetilde{m_1}'}{P' \Par R \subst{n_1}{x} \Par C_1}}
+					\horel{\Gamma}{\Delta_1''}{\newsp{\widetilde{m_1}'}{P' \Par R \subst{\widetilde{n}}{\widetilde{x}} \Par C_1}}
 					{\hwb}
-					{\Delta_2''}{\newsp{\widetilde{m_2}'}{Q' \Par R \subst{n_2}{x} \Par C_2 }}
+					{\Delta_2''}{\newsp{\widetilde{m_2}'}{Q' \Par R \subst{\widetilde{m}}{\widetilde{x}} \Par C_2 }}
 				\end{eqnarray*}
 				that concludes the case.
 
 		\item	\[
-					\horel{\Gamma}{\Delta_1'}{\newsp{\widetilde{m_1}}{P \Par R \subst{n_1}{x} }}
+					\horel{\Gamma}{\Delta_1'}{\newsp{\widetilde{m_1}}{P \Par R \subst{\widetilde{n}}{\widetilde{x}}  }}
 					{\hby{\ell}}
-					{\Delta_1''}{\newsp{\widetilde{m_1}'}{P \Par R' \subst{n_1}{x} }}
+					{\Delta_1''}{\newsp{\widetilde{m_1}'}{P \Par R' \subst{\widetilde{n}}{\widetilde{x}} }}
 				\]
 				We identify three sub-cases:
 				\begin{enumerate}[i.]
-					\item	$\subj{\ell} \not= n_1$. The case is similar as above.
+					\item	$\subj{\ell} \not= n_i$. The case is similar as above.
 
-					\item	$\subj{\ell} = n_1$ and $n_1 = n_2$.
+					\item	$\subj{\ell} = n_k$ and $n_k = m_k$.
 							From the definition of $\Re$ we get that
 							\[
-								\horel{\Gamma}{\Delta_1}{\newsp{\widetilde{m_1}}{P \Par \binp{t}{x} \appl{x}{n_1}}}
-								{\hby{ \bactinp{t}{\omapchar{U}}}}
-								{\Delta_3}{\newsp{\widetilde{m_1}}{P \Par \appl{\omapchar{U}}{n_1}}}
+								\mhorel{\Gamma}{\Delta_1}{\newsp{\widetilde{m_1}}{P \Par \prod_{i \in I} \binp{t_i}{x} \appl{x}{n_i}}}
+								{\hby{ \bactinp{t_k}{\omapchar{U}}}}
+								{\Delta_3}{}{\newsp{\widetilde{m_1}}{P \Par \prod_{i \in I\backslash{\set{k}}} \binp{t_i}{x} \appl{x}{n_i} \Par \appl{\omapchar{U}}{n_k}}}
 							\]
 							implies
 							\[
-								\horel{\Gamma}{\Delta_2}{\newsp{\widetilde{m_2}}{Q \Par \binp{t}{x} \appl{x}{n_2}}}
-								{\Hby{ \bactinp{t}{\omapchar{U}}}}
-								{\Delta_4}{\newsp{\widetilde{m_1}}{Q' \Par \mapchar{U}{x} \subst{n_2}{x} }}
+								\mhorel{\Gamma}{\Delta_2}{\newsp{\widetilde{m_2}}{Q \Par \prod_{i \in I} \binp{t_i}{x} \appl{x}{m_i}}}
+								{\Hby{ \bactinp{t_k}{\omapchar{U}}}}
+								{\Delta_4}{}{\newsp{\widetilde{m_1}}{Q' \Par \prod_{i \in I \backslash{\set{k}}} \binp{t_i}{x} \appl{x}{m_i} \Par \mapchar{U}{x} \subst{m_k}{x} }}
 							\]
 							and
 							\begin{eqnarray*}
-								&& \Gamma; \Delta_3 \proves \newsp{\widetilde{m_1}}{P \Par \appl{\omapchar{U}}{n_1}}
+								&& \Gamma; \Delta_3 \proves \newsp{\widetilde{m_1}}{P \Par \prod_{i \in I \backslash{\set{k}}} \binp{t_i}{x} \appl{x}{n_i} \Par \appl{\omapchar{U}}{n_k}}
 								\\
 								&\hby{\tau_{\beta}}&
-									\Delta_3 \proves \newsp{\widetilde{m_1}}{P \Par \mapchar{U}{x} \subst{n_1}{x}  }
+									\Delta_3 \proves \newsp{\widetilde{m_1}}{P \Par \prod_{i \in I \backslash{\set{k}}} \binp{t_i}{x} \appl{x}{n_i} \Par \mapchar{U}{x} \subst{n_k}{x}  }
 								\\
 								&\hwb&
-									\Delta_4 \proves \newsp{\widetilde{m_1}}{Q' \Par \mapchar{U}{x} \subst{n_2}{x}}
+									\Delta_4 \proves \newsp{\widetilde{m_1}}{Q' \Par  \Par \prod_{i \in I \backslash{\set{k}}} \binp{t_i}{x} \appl{x}{m_i} \mapchar{U}{x} \subst{m_k}{x}}
 							\end{eqnarray*}
 
 							The proof follows Part 2 of \lemref{lem:trigger_application} where
 							\[
-								\horel{\Gamma}{\Delta_3}{\newsp{\widetilde{m_1}}{P \Par \mapchar{U}{x} \subst{n_1}{x}  }}
-								{\hby{\ell}}
-								{\Delta_3'}{\newsp{\widetilde{m_1}'}{P \Par \binp{t'}{y}{\appl{y}{n_1}}}}
+								\mhorel{\Gamma}{\Delta_3}{\newsp{\widetilde{m_1}}{P \Par \prod_{i \in I \backslash{\set{k}}} \binp{t_i}{x} \appl{x}{n_i} \Par \mapchar{U}{x} \subst{n_k}{x}  }}
+								{\hby{\ell} }
+								{\Delta_3'}{}{\newsp{\widetilde{m_1}'}{P \Par \prod_{i \in I \backslash{\set{k}}} \binp{t_i}{x} \appl{x}{n_i} \Par \bout{t'}{n_k} \inact }}
 							\]
 							implies
 							\[
-								\horel{\Gamma}{\Delta_4}{\newsp{\widetilde{m_2}}{Q' \Par \mapchar{U}{x} \subst{n_1}{x}  }}
-								{\Hby{\ell}}
-								{\Delta_4'}{\newsp{\widetilde{m_2}'}{Q'' \Par \binp{t'}{y}{\appl{y}{n_2}}}}
+								\mhorel{\Gamma}{\Delta_4}{\newsp{\widetilde{m_2}}{Q' \Par \prod_{i \in I \backslash{\set{k}}} \binp{t_i}{x} \appl{x}{m_i} \Par \mapchar{U}{x} \subst{m_k}{x}  }}
+								{\Hby{\ell} \dk{\dots}}
+								{\Delta_4'}{}{\newsp{\widetilde{m_2}'}{Q'' \Par \prod_{i \in I \backslash{\set{k}}} \binp{t_i}{x} \appl{x}{m_i} \Par \bout{t'}{m_k} \inact }}
 							\]
-							and furthermore, from the definition of $\Re$
+							and furthermore, from Part 3 of \lemref{lem:trigger_application}
 							\[
-								\horel{\Gamma}{\Delta_3'}{\newsp{\widetilde{m_1}'}{P \Par \binp{t'}{y}{\appl{y}{n_1}}}}
+								\mhorel{\Gamma}{\Delta_3'}{\newsp{\widetilde{m_1}'}{P \Par \prod_{i \in I \backslash{\set{k}}} \binp{t_i}{x} \appl{x}{n_i} \Par \binp{t'}{y}{\appl{y}{n_k}}}}
 								{\hwb}
-								{\Delta_4'}{\newsp{\widetilde{m_2}'}{Q'' \Par \binp{t'}{y}{\appl{y}{n_2}}}}
+								{\Delta_4'}{}{\newsp{\widetilde{m_2}'}{Q'' \Par \prod_{i \in I \backslash{\set{k}}} \binp{t_i}{x} \appl{x}{m_i} \Par \binp{t'}{y}{\appl{y}{m_k}}}}
 							\]
-							that implies from the definition of $\Re$ that $\forall R$ such that $x \in \fn{R}$
+							that implies from the definition of $\Re$ that $\forall R$ such that $\widetilde{x} \in \fn{R}$
 							\[
-								\horel{\Gamma}{\Delta_3'}{\newsp{\widetilde{m_1}'}{P \Par R \subst{n_1}{x} }}
+								\horel{\Gamma}{\Delta_3'}{\newsp{\widetilde{m_1}'}{P \Par R \subst{\widetilde{n}}{\widetilde{x}} }}
 								{\ \Re\ }
-								{\Delta_4'}{\newsp{\widetilde{m_2}'}{Q'' \Par R \subst{n_2}{x}}}
+								{\Delta_4'}{\newsp{\widetilde{m_2}'}{Q'' \Par R \subst{\widetilde{m}}{\widetilde{x}}}}
 							\]
 							The case concludes when we verify that 
 							\[
@@ -947,17 +960,17 @@ we give an intermediate result.
 							\]
 							
 
-					\item	$\subj{\ell} = n_1$ and $n_1 \not= n_2$. This case
+					\item	$\subj{\ell} = n_k$ and $n_k \not= m_k$. This case
 							is not possible. \lemref{lem:trigger_application} implies
-							that $n_1$ is a session and $\dual{n_1} \in \fn{P}$. From the
+							that $n_k$ is a session and $\dual{n_k} \in \fn{P}$. From the
 							definition of typed transition (\defref{d:tlts}) we get that we cannot observe $\ell$
-							on $R$, because $\dual{n_1} \in \fn{P}$ and $(\Gamma; \es; \Delta) \not\hby{\ell}$.
+							on $R \subst{\widetilde{n}}{\widetilde{x}}$, because $\dual{n_k} \in \fn{P}$ and $(\Gamma; \es; \Delta) \not\hby{\ell}$.
 				\end{enumerate}
 
 		\item	\[
-					\horel{\Gamma}{\Delta_1'}{\newsp{\widetilde{m_1}}{P \Par R \subst{n_1}{x} }}
+					\horel{\Gamma}{\Delta_1'}{\newsp{\widetilde{m_1}}{P \Par R \subst{\widetilde{n}}{\widetilde{x}} }}
 					{\hby{}}
-					{\Delta_1''}{\newsp{\widetilde{m_1}'}{P' \Par R' \subst{n_1}{x} }}
+					{\Delta_1''}{\newsp{\widetilde{m_1}'}{P' \Par R' \subst{\widetilde{m}}{\widetilde{x}} }}
 				\]
 				From the typed reduction definition (\defref{d:tlts}) we get that
 				\begin{eqnarray*}
@@ -965,17 +978,20 @@ we give an intermediate result.
 						{\hby{\ell_1}}
 						{\Delta_R}{\news{\widetilde{m_1}}{P}}
 					\\
-					&&	\horel{\Gamma}{\Delta_1'}{R \subst{n_1}{x} }
+					&&	\horel{\Gamma}{\Delta_1'}{R \subst{\widetilde{n}}{\widetilde{x}} }
 						{\hby{\ell_2}}
-						{\Delta_R'}{R' \subst{n_1}{x} }
+						{\Delta_R'}{R' \subst{\widetilde{n}}{\widetilde{x}} }
 					\\
 					&&	\ell_1 \comp \ell_2
 				\end{eqnarray*}
-				We distinguish several subcases
+				We distinguish several subcases.
 				\begin{enumerate}[i.]
 					\item	$\subj{\ell_1} \not= n_1$. \dk{put proof} %The case is similar with the previous cases.
 					\item	$\subj{\ell_1} = n_1$.  \dk{put proof} %The case is similar with sub-case (ii) of case 2.
 					\item	$\obj{\ell_1} = n_1$. \dk{put proof}
+					
+					\item	The most demanding sub-case is the case
+							where $\ell_1 = \bactinp{n_k}{n_l}$ and $\ell_2 = \bactout{n_k}{n_l}$.
 				\end{enumerate}
 	\end{enumerate}
 	\qed
@@ -1094,30 +1110,31 @@ substitution, we can generalise for any value substitution.
 %				\jasks{There is a problem with equation labels above!}
 
 
-		\item	Case $P_1 \scong Q \Par \appl{x}{n_1}$ and $Q \not\scong Q' \Par \appl{x}{n'}$.
-		\jasks{That is, $P_1$ has exactly one occurrence of $x$ at top-level. But we should explain why these two cases exclude other (non linear) possibilities, such as, e.g., $Q' \Par \appl{x}{n_1} \Par \appl{x}{n_2}$.} 
+		\item	Case $P_1 \scong P \Par \prod_{i \in I} \appl{x}{n_i} \Par \appl{x}{n_1}$ and
+				$P \not= P' \Par \appl{x}{n'}$. This is the case where $P$ does not include the form
+				of an application on name $x$.
 
 				We identify two sub-cases, depending on the source of the action $\ell_1$:
 				\begin{itemize}
 					\item	Sub-case
 							\begin{eqnarray*}
-								\horel{\Gamma}{\Delta_1'}{\newsp{\widetilde{m_1}}{(Q \Par \appl{x}{n_1}) \subst{{\abs{x}{R}}}{z} }}
+								\horel{\Gamma}{\Delta_1'}{\newsp{\widetilde{m_1}}{(P \Par \prod_{i \in I} \appl{x}{n_i} \Par \appl{x}{n_1}) \subst{{\abs{x}{R}}}{z} }}
 								{\hby{\ell_1}}
-								{\Delta_3}{\newsp{\widetilde{m_1}}{(Q' \Par \appl{x}{n_1}) \subst{{\abs{x}{R}}}{z} }}
+								{\Delta_3}{\newsp{\widetilde{m_1}}{(P' \Par \prod_{i \in I} \appl{x}{n_i} \Par \appl{x}{n_1}) \subst{{\abs{x}{R}}}{z} }}
 							\end{eqnarray*}
 							%
 							This sub-case is similar as the previous case.
 
-					\item	Sub-case \jasks{(I am not sure if I follow: is this case just the (deterministic) application of $n_1$?)}
+					\item	Sub-case (Assume $Q = P \Par \prod_{i \in I} \appl{x}{n_i}$)
 							\begin{eqnarray}
 								\horel{\Gamma}{\Delta_1'}{\newsp{\widetilde{m_1}}{(Q \Par \appl{x}{n_1}) \subst{{\abs{x}{R}}}{z} }}
 								{\hby{\tau}}
 								{\Delta_3}{\newsp{\widetilde{m_1}}{Q \subst{{\abs{x}{R}}}{z} \Par R \subst{n_1}{z}  }}
 								\label{lem:proc_subst1}
 							\end{eqnarray}
+							Which is the application of name $n_1$ on abstraction $\abs{x}{R}$.
 							%
 							From the requirements of $\Re$ we imply that
-			\jasks{(General comment: I notice that often you write `we conclude' but you mean `we infer' or `we obtain'. One ``concludes'' only at the very end.)}
 							\begin{eqnarray*}
 								\mhorel{\Gamma}{\Delta_1}{\newsp{\widetilde{m_1}}{(Q \Par \appl{x}{n_1}) \subst{\trvalx{t}}{z} }}
 								{\hby{\tau}}
