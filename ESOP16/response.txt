@@ -1,0 +1,55 @@
+We thank the reviewers for their remarks; we will incorporate their feedback in the next version of our paper. 
+
+Notice that our expressiveness results are not trivial; they have applications in functional languages with concurrency. Our results enable us to reason about languages such as Cloud Haskell and Concurrent Haskell (cf.Orchard&Yoshida’s POPL’16); type-preserving encodings are essential to transfer session type disciplines from (higher-order) process calculi to those languages. We will elaborate on these applications in a revised version. 
+
+=========Answers to specific questions/comments:============
+
+==Reviewer 3:====
+> This seems to be a very focussed contribution, perhaps more
+> suited to CONCUR, than to a broader programming focussed venue like ESOP.
+Our contributions fit well in the scope of ESOP’s CfP, under “Programming paradigms and styles” and “Concurrency and distribution”. Papers on session types and/or higher-order pi-calculi were presented at ESOP’15, ESOP’14, ESOP’13, ESOP’12, and so on, including the most cited session type work published in ESOP’98. 
+
+ Concerning relevance to programming/ESOP: see the answer above.
+
+==Reviewer 2:====
+> p10: The first sentence seems to contradict Theorem 2: where in Theorem
+> 2 are processes restricted to those not in \pi?
+We understand the confusion caused by the first sentence in p10, which we will rephrase. Coincidence of ~H and ~C in Thm.2 concerns HOpi processes; the coincidence also holds for the HO fragment of HOpi, but for the pi fragment we cannot use ~H, due to the application in higher-order triggers. In pi we can only use ~C. 
+
+> p13: Should the equivalence on HO\pi be higher-order bisimilarity 
+The equivalence on HOpi can be either ~H or ~C.
+
+> p8: Def of context: why not (\lambda x.P)C ?
+We don’t have it because the language has name application, not process application.
+
+==Reviewer 1:====
+> I do not quite understand your argument for type preservation [...]
+> In general that when an expression of some language is encoded into a different
+> language, the type of the expression is also _encoded_ rather than just _preserved_. 
+Our type preservation criterion assumes encodings of types from the source type system to the target type system; it requires a syntactic invariant on encodings of types. Type preservation is intended to rule out encodings of types which arbitrarily modify the session type structure (see next).
+
+> Definition 13: the motivation for type preservation is not very clear; 
+At the end of p4 we give an encoding of types that does not preserve type structure (it induces “role inversion”). As types abstract a process’ behavior, Def.13 serves to maintain those abstractions. Example: if the session type (protocol) of a process P is carelessly altered by a typed encoding [[-]] (say, an optimization) then a process Q able to interact with P may not interact correctly with [[P]]. 
+
+> [operational correspondence] is far too insufficient for explaining why full
+> abstraction holds!... You should explain why the
+> encoded processes do _not_ allow more observations than the originals.
+Yes, operational correspondence doesn’t ensure full abstraction. In our work, session types restrict behaviors; we prove full abstraction using strong forms of typed operational correspondence which involve labeled actions and are coupled with typed equivalences (cf. the Appendix).
+
+> p. 20, "The resulting processes have a mismatch [...]": I do not
+> quite understand this argument; [...] so the comparison does not seem fair.
+Our comparison is based on the possibility of stating a labeled transition correspondence. 
+By mismatch we mean: the observable actions of an HOpi process don’t correspond to those induced by the second encoding. So a correspondence for transition labels doesn’t hold.
+
+> p. 21, "There is no minimal encoding": Why does the encoding _have
+> to_ be minimal (barb preserving, in particular)?  [...] it seems natural that the
+> barbs are also _translated_, not _the same_.
+Minimal encodings require the least notion of observables (barbs) that complements the least notion of operational correspondence (tau-based operational completeness). Our developments don’t need to translate barbs: all HOpi variants have the same barbs. In general, barbs would need to be translated.
+
+> Fig. 8, [...] I cannot seem to find the definition of {{.}}^1 or "term mappings for \lambda x:C.P" anywhere in Fig. 6.
+This caption in Fig. 8 is inconsistent wrt Fig. 6. We will amend this.
+
+
+
+
+

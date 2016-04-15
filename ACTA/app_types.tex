@@ -1,9 +1,12 @@
+% !TEX root = main.tex
+
 %In this appendix 
 We 
-%first 
-%%formally define \emph{type equivalence} and \emph{duality}. Then, we  
+first 
+formally define \emph{type equivalence}. % and \emph{duality}. Then, we  
 %present and describe our typing rules, given in~\figref{fig:typerulesmy}.
 %Finally, we 
+Then we 
 give details of the proof of Theorem~\ref{t:sr} (page~\pageref{t:sr}).
 %\smallskip
 %\subsection{Type Equivalence and Duality}
@@ -68,10 +71,40 @@ give details of the proof of Theorem~\ref{t:sr} (page~\pageref{t:sr}).
 %\input{type_system}
 %\subsection{Proof of Theorem~\ref{t:sr}}
 %We state type soundness of our system.
-As our typed process framework is closely related to that considered
+
+\subsection{Type Equivalence}
+\begin{definition}[Type Equivalence]
+\label{def:iso}
+Let $\mathsf{ST}$ a set of closed session types. 
+Two types $S$ and $S'$ are said to be {\em isomorphic} if a pair $(S,S')$ is 
+in the largest fixed point of the monotone function
+$F:\mathcal{P}(\mathsf{ST}\times \mathsf{ST}) \to 
+\mathcal{P}(\mathsf{ST}\times \mathsf{ST})$ defined by: \\
+%\hspace{-0.5cm}
+\begin{tabular}{rcl}
+$F(\Re)$ &$\!\!=\!\!$&	$\set{(\tinact, \tinact)}$\\
+         &$\!\!\cup\!\!$&	$\set{(\btout{U_1} S_1, \btout{U_2} S_2)
+\bnfbar (S_1, S_2),(U_1, U_2)\in \Re}$\\ 
+       &$\!\!\cup\!\!$&	$\set{(\btinp{U_1} S_1, \btinp{U_2} S_2)
+\bnfbar(S_1, S_2),(U_1, U_2)\in \Re}$\\ 
+	&$\!\!\cup\!\!$&	$\set{(\btbra{l_i: S_i}_{i \in I} \,,\, \btbra{l_i: S_i'}_{i \in I}) \bnfbar \forall i\in I. (S_i, S_i')\in \Re}$\\
+	&$\!\!\cup\!\!$&	$\set{(\btsel{l_i: S_i}_{i \in I}\,,\, \btsel{l_i: S_i'}_{i \in I}) \bnfbar \forall i\in I. (S_i, S_i')\in \Re}$\\
+	&$\!\!\cup\!\!$&	$\set{(\trec{t}{S}, S')
+\bnfbar (S\subst{\trec{t}{S}}{\vart{t}},S')\in \Re}$\\
+	&$\!\!\cup\!\!$&	$\set{(S,\trec{t}{S'})
+\bnfbar (S,S'\subst{\trec{t}{S'}}{\vart{t}})\in \Re}$
+\end{tabular}
+
+Standard arguments ensure that $F$ is monotone, thus the greatest fixed point
+of $F$ exists. We write $S_1 \sim S_2$ if  $(S_1,S_2)\in \Re$. 
+\end{definition}
+
+
+\subsection{Proof of Theorem~\ref{t:sr} (Type Soundness)}
+As our type system is closely related to that considered
 by Mostrous and Yoshida~\cite{MostrousY15}, the proof of type soundness requires notions
-and properties which are specific instances of those already shown in~\cite{MostrousY15}.
-We begin by stating weakening and strengthening lemmas,
+and properties which are instances of those already shown in~\cite{MostrousY15}.
+We first state weakening and strengthening lemmas,
 which have standard proofs.
 
 %%% Weakening
@@ -121,7 +154,8 @@ which have standard proofs.
 			Then $\Gamma; \Lambda_1 \cat \Lambda_2; \Delta_1 \cat \Delta_2  \proves P\subst{V}{x} \hastype \Proc$.
 
 		\item	Suppose $\Gamma \cat x:\shot{U}; \Lambda; \Delta  \proves P \hastype \Proc$ and
-			$\Gamma; \emptyset ; \emptyset  \proves V \hastype \shot{U}$.
+			shared value $V$ such that $\Gamma; \emptyset ; \emptyset  \proves V \hastype \shot{U}$
+			\dk{(shared value means that there are no free linear names, thus $\Lambda, \Delta$ are empty --- recall type rule $\trule{Prom}$).}
 			Then $\Gamma; \Lambda; \Delta  \proves P\subst{V}{x} \hastype \Proc$.
 		\end{enumerate}
 \end{lemma}
@@ -162,7 +196,7 @@ which have standard proofs.
 %	\end{equation*}
 %%
 %	The proof of Part (4) follows similar lines as that of Part (3).
-%	\qed
+	\qed
 \end{proof}
 
 %\begin{definition}[Well-typed Session Environment]%\rm
@@ -185,14 +219,13 @@ It is worth noticing
 the 
 definition of structural congruence in~\cite{MostrousY15} is richer. 
 Also, their statement for subject reduction relies on an 
-ordering on typings associated to queues and other 
+ordering on typing associated to queues and other 
 runtime elements. % (such extended typings are denoted $\Delta$ in~\cite{MostrousY15}).
 Since we are working with synchronous communication we can omit such an ordering.
 
-We now repeat the statement of
-\thmref{t:sr} in Page~\pageref{t:sr}:
+We now prove the following statement; its second part corresponds to \thmref{t:sr} (Page~\pageref{t:sr}):
 
-\begin{theorem}[Type Soundness - \thmref{t:sr}]\rm\label{t:srfull}
+\begin{theorem}[Type Soundness]\rm\label{t:srfull}
 We have:
 	\begin{enumerate}[1.]
 		\item	(Subject Congruence) Suppose $\Gamma; \Lambda; \Delta \proves P \hastype \Proc$.
@@ -240,7 +273,8 @@ We have:
 	    
 	    \item Case \orule{Pass}: 
 	    There are several sub-cases, depending on the type of the communication 
-	    subject $n$ and the type of the object $V$. We analyse two representative sub-cases:
+	    subject $n$ \newc{(which could be a shared or a linear name)} and the type of the object $V$
+	    \newc{(which could be an abstraction or a shared/linear name)}. We analyse two representative sub-cases:
 	    
 	    \begin{enumerate}[(a)]
 	    \item $n$ is a shared name and $V$ is a name $v$. 

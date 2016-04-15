@@ -52,82 +52,93 @@ in~\cite{tlca07}, where tractable bisimilarities are not addressed.
 
 
 	\begin{figure}
+	\begin{subfigure}[c]{\textwidth}
 	\[
 		\begin{array}{rcl}
-			u,w &\bnfis& n \bnfbar x,y,z \qquad
-			n \bnfis a,b  \bnfbar s, \dual{s} \qquad 
-			V,W  \bnfis u \bnfbar \abs{x}{P} \\[1mm]
+			\multicolumn{3}{c}{n, m \bnfis a,b  \bnfbar s, \dual{s} \qquad \quad
+			u,w \bnfis n \bnfbar x,y,z \qquad \quad
+			V,W  \bnfis u \bnfbar \abs{x}{P}} 
+			\\[2mm]
 			P,Q & \bnfis & \bout{u}{V}{P}  \bnfbar  \binp{u}{x}{P} \bnfbar
 			\bsel{u}{l} P \bnfbar \bbra{u}{l_i:P_i}_{i \in I}   \\[1mm]
-			& \bnfbar & \rvar{X} \bnfbar \recp{X}{P} \bnfbar \appl{V}{W} \bnfbar P\Par Q \bnfbar \news{n} P \bnfbar \inact
+			& \bnfbar & \rvar{X} \bnfbar \recp{X}{P} \bnfbar \appl{V}{W} \bnfbar P\Par Q \bnfbar \news{n} P \bnfbar \inact 
+			%\\[2mm]
 		\end{array}
-	\]
+	\] 
+	\caption{Syntax.}\label{fig:redsemsyn}
+	\end{subfigure}
+	\\[3mm]
+	\begin{subfigure}[c]{\textwidth}
 	\[
 	\begin{array}{c}
 		P \Par \inact \scong P
-		\quad
+		\qquad \quad
 		P_1 \Par P_2 \scong P_2 \Par P_1
-		\quad
+		\qquad \quad
 		P_1 \Par (P_2 \Par P_3) \scong (P_1 \Par P_2) \Par P_3
-		\quad 
+		\\[1mm]
 		\recp{X}{P} \scong P\subst{\recp{X}{P}}{\rvar{X}}
-		\\%[1mm]
-
+ 		\qquad \quad
 		\news{n} \inact \scong \inact
-		\qquad 
+		\\[1mm]
 		P \Par \news{n} Q \scong \news{n}(P \Par Q)
 		\	(n \notin \fn{P})
-		\qquad
-		P \scong Q \textrm{ if } P \scong_\alpha Q
+		\qquad \quad
+		P \scong Q \textrm{ if } P \scong_\alpha Q %\\[2mm]
 	\end{array}
 \]
+	\caption{Structural Congruence.}\label{fig:redsemstr}
+	\end{subfigure}
+	\\[3mm]
+		\begin{subfigure}[c]{\textwidth}
 	\[
-		\!\!\!\begin{array}{lllcrll}
-			\orule{App} & (\abs{x}{P}) \, V   \red    P \subst{V}{x}
-			& 
-			  
-
-			\orule{Pass} & \bout{n}{V} P \Par \binp{\dual{n}}{x} Q   \red   P \Par Q \subst{V}{x} 
-			
-			\\[1mm]
-
-			 \orule{Res} & P \red P'  \Rightarrow  \news{n} P  \red  \news{n} P' 
-
-			&  
-			\orule{Sel}
-			&  \!\!\! \bsel{n}{l_j} Q \Par \bbra{\dual{n}}{l_i : P_i}_{i \in I}  \red   Q \Par P_j ~~(j \in I)
-			
-			\\[1mm]
-			\orule{Par} & P \red P'   \Rightarrow    P \Par Q  \red   P' \Par Q  
-			&  
-			\orule{Cong} & P \scong Q \red Q' \scong P'   \Rightarrow  P  \red  P' 
+		\!\!\!\begin{array}{lrcl}
+			\orule{App} & (\abs{x}{P}) \, V   &\red &     P \subst{V}{x}
+			\\[2mm]
+			\orule{Pass} & \bout{n}{V} P \Par \binp{\dual{n}}{x} Q   &\red &    P \Par Q \subst{V}{x} 			
+			\\[2mm]			
+			\orule{Sel} & \multicolumn{3}{c}{\inferrule{j \in I}{\bsel{n}{l_j} Q \Par \bbra{\dual{n}}{l_i : P_i}_{i \in I}  \red     Q \Par P_j}}
+			\\[3mm]
+			 \orule{Res} & \multicolumn{3}{c}{\inferrule{P \red P'}{\news{n} P  \red   \news{n} P' }}
+			\\[3mm]
+			\orule{Par} & \multicolumn{3}{c}{\inferrule{P \red P'}{P \Par Q  \red    P' \Par Q}}
+			\\[3mm]
+			\orule{Cong} & \multicolumn{3}{c}{\inferrule{P \scong Q \red Q' \scong P'}{  P  \red    P' } }
 	\end{array}
 	\]
+		\caption{Reduction Semantics.}\label{fig:redsemsem}
+	\end{subfigure}
 %	\vspace{-3mm}
-\caption{$\HOp$: Syntax and Operational Semantics (Structural Congruence and Reduction).
+\caption{$\HOp$: Syntax and Semantics (Structural Congruence and Reduction).
 \label{fig:redsem}}
 %\Hlinefig
 	%\vspace{-2mm}
 \end{figure}
 
 \subsection{Syntax} 
-The syntax of \HOp is defined in \figref{fig:redsem} (upper part).
-We use $a,b,c, \dots$ (resp.~$s, \dual{s}, \dots$) 
-to range over shared (resp. session) names. 
-We use $m, n, t, \dots$ for session or shared names. 
+The syntax of \HOp is defined in \figref{fig:redsemsyn}.
+We use $a,b,c, \dots$ 
+to range over shared names
+and $s, \dual{s}, \dots$
+to range over 
+session names. 
+We use $n, m, t, \dots$ for session or shared names. 
+Intuitively, session names
+represent deterministic communication \emph{endpoints}, 
+ while shared names represent non-deterministic points. 
 We define the dual operation over names $n$ as $\dual{n}$ with
 $\dual{\dual{s}} = s$ and $\dual{a} = a$.
-Intuitively, names $s$ and $\dual{s}$ are dual (two) \emph{endpoints} while 
-shared names represent non-deterministic points. 
-Variables are denoted with $x, y, z, \dots$, 
+This way, e.g., session names $s$ and $\dual{s}$ are two dual endpoints.
+Name variables are denoted with $x, y, z, \dots$, 
 and recursive variables are denoted with $\varp{X}, \varp{Y} \dots$.
-An abstraction %(or higher-order value) 
-$\abs{x}{P}$ is a process $P$ with name parameter $x$.
 %Symbols $u, v, \dots$ range over identifiers; and  $V, W, \dots$ to denote values. 
 Values $V,W$ include 
-identifiers $u, v, \ldots$ %(first-order values) 
+name identifiers $u, v, \ldots$ (first-order values) 
 and 
-abstractions $\abs{x}{P}$ (first- and higher-order values, resp.). 
+abstractions $\abs{x}{P}$ (higher-order values),
+where $P$ is a process $P$ and $x$ is a name parameter.
+
+ 
 
 {Terms} 
 include $\pi$-calculus constructs for sending/receiving values $V$.
@@ -144,7 +155,7 @@ Process
 $\appl{V}{W}$ 
 is the application
 which substitutes values $W$ on the abstraction~$V$. 
-\dk{Typing  ensures \jpc{that} $V$ is not a name.}
+Typing  ensures \jpc{that} $V$ is not a name.
 Processes $\bbra{u}{l_i: P_i}_{i \in I}$  and $\bsel{u}{l} P$ define labelled choice:
 given a finite index set $I$, process $\bbra{u}{l_i: P_i}_{i \in I}$ offers a choice 
 among processes with pairwise distinct labels;
@@ -159,10 +170,10 @@ name restriction $\news{n} P$ are standard.
 Session name restriction $\news{s} P$ simultaneously binds endpoints $s$ and $\dual{s}$ in $P$.
 %A well-formed process relies on assumptions for
 %guarded recursive processes.
-We use $\fv{P}$ and $\fn{P}$ to denote a set of free 
+We use $\fv{P}$ and $\fn{P}$ to denote the sets of free 
 %\jpc{recursion}
-variables and names in $P$; 
-and assume $V$ in $\bout{u}{V}{P}$ does not include free recursive 
+variables and names in $P$, respectively.
+We assume that $V$ in $\bout{u}{V}{P}$ does not include free recursive 
 variables $\rvar{X}$. 
 If $\fv{P} = \emptyset$, we call $P$ {\em closed}.
 %; and closed $P$ without 
@@ -257,19 +268,21 @@ If $\fv{P} = \emptyset$, we call $P$ {\em closed}.
 
 \subsection{Semantics}
 %	\label{subsec:semantics}
-	\figref{fig:redsem} (lower part) defines the operational semantics 
+	\figref{fig:redsemsem}  defines the operational semantics 
 of \HOp, given as
 %We define 
 a reduction relation that relies 
 on 
-a \emph{structural congruence} $\scong$. %, in the standard way. % are defined in \figref{fig:reduction} (bottom). 
+a \emph{structural congruence} relation, denoted $\scong$ (\figref{fig:redsemstr}): %, in the standard way. % are defined in \figref{fig:reduction} (bottom). 
+\newc{it includes a congruence that ensures the consistent renaming of bound names, 
+denoted $\scong_\alpha$.}
 \jpc{We assume the expected extension of $\scong$ to values $V$.}
 Reduction is denoted $\red$; some intuitions on the rules in \figref{fig:redsem} %(lower part) 
 follow.
-Rule~$\orule{App}$ is a value application; 
-rule~$\orule{Pass}$ defines a shared interaction at $n$ 
+Rule~$\orule{App}$ \newc{defines value application}; 
+Rule~$\orule{Pass}$ defines a shared interaction at $n$ 
 (\jpc{with} $\dual{n}=n$) or a session interaction;  
-rule~$\orule{Sel}$ is the standard rule for labelled choice/selection:
+Rule~$\orule{Sel}$ is the standard rule for labelled choice/selection:
 given an index set $I$, 
 a process selects label $l_j$ on name $n$ over a set of
 labels $\set{l_i}_{i \in I}$ offered by a branching 
@@ -339,10 +352,7 @@ Process $\Client_1$ sends two abstractions with body $P_{xy}$, one to each hotel
 		to receive the negotiation
 		result from the two remote instances of $P$ and then inform the two
 		processes for the final booking decision.
-Notice that	the above implementation does not affect
-the time needed for the whole protocol to execute,
-since the two remote processes are used
-to send/receive data to $\Client_1$.
+%Notice that	the above implementation does not affect the time needed for the whole protocol to execute, since the two remote processes are used to send/receive data to $\Client_1$.
 
 We present now a \emph{second  implementation}
 %of the same scenario, 

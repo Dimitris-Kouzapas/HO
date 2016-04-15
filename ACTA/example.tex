@@ -4,30 +4,28 @@
 %\noi 
 %Following up the claim made in \S\,\ref{sec:relwork}, 
 %we contrast our approach with that in~\cite{JeffreyR05} in a concrete, representative example.
-\begin{example}
-
-	Consider process
-	$$\Gamma; \es; \Delta \cat n: \btout{U} \tinact \proves \bout{n}{\abs{x}{\appl{x}(\abs{y}{\bout{y}{m}} \inact)}} \inact \hastype \Proc$$
+\begin{example}\label{exam:jr}
+	\newc{Let $V  =  \abs{x}{\appl{x}(\abs{y}{\bout{y}{m}} \inact)}$ be a value.
+	Consider a process such that
+	$$\Gamma; \es; \Delta \cat n: \btout{U} \tinact \proves  \bout{n}{V} \inact \hastype \Proc$$
 	with $U = \shot{(\shot{(\shot{(\btout{S} \tinact)})})}$. 
-	We describe the transitions required to check the bisimilarity
-	of this process with itself. 
+	We compare our approach to that in~\cite{JeffreyR05} by contrasting the transitions from $P$. 
 	In our framework, first we have a typed transition
-	$$
-	\Gamma; \es; \Delta \cat n: \btout{U} \tinact \proves \bout{n}{\abs{x}{\appl{x}(\abs{y}{\bout{y}{m}} \inact)}} \inact \by{\bactout{n}{\abs{x}{\appl{x}(\abs{y}{\bout{y}{m}} \inact)}}}\Gamma; \es; \Delta \proves \inact
-	$$
+	$
+	\Gamma; \es; \Delta \cat n: \btout{U} \tinact \proves P \by{\bactout{n}{V}}\Gamma; \es; \Delta \proves \inact
+	$.
 	In the framework of~\cite{JeffreyR05} a similar (but untyped) output transition takes place.
-    In \figref{f:comparison} we compare the closures obtained by the definition of bisimilarity in our approach (lines (1) to (5)) and in~\cite{JeffreyR05} (lines (6) to (10)).
-    In the upper part, we let 
-    \begin{eqnarray*}
-    V & = & \abs{x}{\appl{x}(\abs{y}{\bout{y}{m}} \inact)} \\
-	\mapchar{\btinp{U} \inact}{s} & = & \binp{s}{x} \appl{x}{(\abs{y}{(\appl{y}{a}))}}\qquad \textrm{for some fresh $a$}
-	\end{eqnarray*}
-	Then we have one visible input transition (line (1)), followed by four deterministic internal transitions; no replicated processes are needed.
-	The approach of~\cite{JeffreyR05} uses 
-	the same number of transitions (five), but more visible transitions are required
-	(three, in lines (6), (8), and (9)) and at the end, two replicated processes remain.
-	This is how linearity information in session types allows us to have more economical closures.
-	Note that $\tau_l$ and $\tau_k$ in lines (6) and (8) denote triggered processes on names $l$ and $k$.
+    \figref{f:comparison} presents a complete comparison of the labeled transitions in our approach (\figref{tablejr:1}) and in~\cite{JeffreyR05} (\figref{tablejr:2}).
+    In our approach, we let 
+$$
+	\mapchar{\btinp{U} \inact}{s}  =  \binp{s}{x} \appl{x}{(\abs{y}{(\appl{y}{a}))}}\qquad \textrm{for some fresh $a$}
+$$
+	Then we have one input transition (Line (1)), followed by four deterministic internal transitions; no replicated processes are needed.
+	The approach of~\cite{JeffreyR05} also uses five 
+	 transitions, but more visible transitions are required
+	(three, see Lines (1), (2), and (3) in \figref{tablejr:2}) and at the end, two replicated processes remain.
+	This is how linearity information in session types allows us to have simpler bisimulations.
+	Note that $\tau_l$ and $\tau_k$ in Lines (1) and (3) denote triggered processes on names $l$ and $k$.}
 	
 	
 %This simple example shows how both approaches feature the same number of (typed) transitions.
@@ -49,34 +47,43 @@
 %	the type $\shot{(\shot{(\shot{(\btout{S} \tinact)})})}$ is
 
 \begin{figure}
-\begin{tabular}{c}
+%\begin{tabular}{c}
 %\hline 
+\begin{subfigure}[t]{\textwidth}
 	\begin{tabular}{rcl}
-%		(1)& & $\Gamma; \es; \Delta \cat n: \btout{U} \tinact \proves \bout{n}{\abs{x}{\appl{x}(\abs{y}{\bout{y}{m}} \inact)}} \inact$ \\
-%		&$\by{\bactout{n}{\abs{x}{\appl{x}(\abs{y}{\bout{y}{m}} \inact)}}}$& $\Gamma; \es; \Delta \proves \inact$\\
-         &    &   $\ftrigger{t}{V}{U}$  \\
-		   &  $=$ & $\Gamma; \es; \Delta \proves \binp{t}{z} \newsp{s}{\mapchar{\btinp{U} \inact}{s} \Par \bout{\dual{s}}{\abs{x}{\appl{x}(\abs{y}{\bout{y}{m}} \inact)}} \inact}$\\
-		&  $=$& $\Gamma; \es; \Delta \proves \binp{t}{z} \newsp{s}{\binp{s}{x} \appl{x}{(\abs{y}{(\appl{y}{a}))}} \Par \bout{\dual{s}}{\abs{x}{\appl{x}(\abs{y}{\bout{y}{m}} \inact)}} \inact}$\\
+         &    &   $\ftrigger{t}{V}{U}$   
+         \\[1mm]
+		   &  $=$ & $\Gamma; \es; \Delta \proves \binp{t}{z} \newsp{s}{\mapchar{\btinp{U} \inact}{s} \Par \bout{\dual{s}}{\abs{x}{\appl{x}(\abs{y}{\bout{y}{m}} \inact)}} \inact}$ 
+		   \\[1mm]
+		&  $=$& $\Gamma; \es; \Delta \proves \binp{t}{z} \newsp{s}{\binp{s}{x} \appl{x}{(\abs{y}{(\appl{y}{a}))}} \Par \bout{\dual{s}}{\abs{x}{\appl{x}(\abs{y}{\bout{y}{m}} \inact)}} \inact}$
+		 \\[1mm]
 		(1)   &$\by{\bactinp{t}{b}}$& $\Gamma; \es; \Delta \proves \newsp{s}{\binp{s}{x} \appl{x}{(\abs{y}{(\appl{y}{a}))}} \Par \bout{\dual{s}}{\abs{x}{\appl{x}(\abs{y}{\bout{y}{m}} \inact)}} \inact}$\\
 		(2)  &$\by{\dtau}$& $\Gamma; \es; \Delta \proves \appl{\abs{x}{\appl{x}(\abs{y}{\bout{y}{m} \inact})}}{(\abs{y}{(\appl{y}{a}))}}$\\
 		(3)  &$\by{\dtau}$& $\Gamma; \es; \Delta \proves \appl{(\abs{y}{(\appl{y}{a})})}{(\abs{y}{\bout{y}{m} \inact})} $\\
 		(4)   &$\by{\dtau}$& $\Gamma; \es; \Delta \proves \appl{(\abs{y}{\bout{y}{m} \inact})}{a}$\\
-		(5)   &$\by{\dtau}$& $\Gamma; \es; \Delta \proves \bout{a}{m} \inact$ \\ \vspace{4mm}
-%	\end{tabular} 
-%	\\ %\vspace{2mm}
-%		\begin{tabular}{rrl}
-%		(1)& & $\Gamma; \es; \Delta \cat n: \btout{U} \tinact \proves \bout{n}{\abs{x}{\appl{x}(\abs{y}{\bout{y}{m}} \inact)}} \inact$ \\
-%		&$\by{\bactout{n}{\abs{x}{\appl{x}(\abs{y}{\bout{y}{m}} \inact)}}}$& $\Gamma; \es; \Delta \proves \inact$\\
-		 & & $\Gamma; \es; \Delta \proves \repl{} \binp{t}{x} \appl{x}(\abs{y}{\bout{y}{m}} \inact) $\\
-		(6) &$\by{\bactinp{t}{\tau_l}}$& $\Gamma; \es; \Delta \proves \repl{} \binp{t}{x} \appl{x}(\abs{y}{\bout{y}{m}} \inact) \Par \appl{(\abs{x}{\appl{x}(\abs{y}{\bout{y}{m}} \inact)})}{\tau_l}$\\
-		(7) &$\by{\dtau}$& $\Gamma; \es; \Delta \proves \repl{} \binp{t}{x} \appl{x}(\abs{y}{\bout{y}{m}} \inact) \Par \appl{\tau_l}{(\abs{y}{\bout{y}{m}} \inact)}$\\
-		(8) &$\by{\news{k} \bactout{l}{\tau_k}}$& $\Gamma; \es; \Delta \proves \repl{} \binp{t}{x} \appl{x}(\abs{y}{\bout{y}{m}} \inact) \Par \repl{} \binp{k}{y} \bout{y}{m} \inact $\\
-		(9) &$\by{\bactinp{k}{a}}$& $\Gamma; \es; \Delta \proves \repl{} \binp{t}{x} \appl{x}(\abs{y}{\bout{y}{m}} \inact) \Par \repl{} \binp{k}{y} \bout{y}{m} \inact \Par \appl{(\abs{y}{\bout{y}{m} \inact})}{a}$\\
-		(10) &$\by{\dtau}$& $\Gamma; \es; \Delta \proves \repl{} \binp{t}{x} \appl{x}(\abs{y}{\bout{y}{m}} \inact) \Par \repl{} \binp{k}{y} \bout{y}{m} \inact \Par \bout{a}{m} \inact$
+		(5)   &$\by{\dtau}$& $\Gamma; \es; \Delta \proves \bout{a}{m} \inact$   %\\ \vspace{4mm}
+	\end{tabular} 
+	\caption{Our approach.}\label{tablejr:1}
+	\end{subfigure}
+%	\\ %\vspace{2mm} 
+
+\bigskip
+
+\begin{subfigure}[t]{\textwidth}
+		\begin{tabular}{rrl}
+		 & & $\Gamma; \es; \Delta \proves \repl{} \binp{t}{x} \appl{x}(\abs{y}{\bout{y}{m}} \inact) $
+		 \\
+		(1) &$\by{\bactinp{t}{\tau_l}}$& $\Gamma; \es; \Delta \proves \repl{} \binp{t}{x} \appl{x}(\abs{y}{\bout{y}{m}} \inact) \Par \appl{(\abs{x}{\appl{x}(\abs{y}{\bout{y}{m}} \inact)})}{\tau_l}$\\
+		(2) &$\by{\dtau}$& $\Gamma; \es; \Delta \proves \repl{} \binp{t}{x} \appl{x}(\abs{y}{\bout{y}{m}} \inact) \Par \appl{\tau_l}{(\abs{y}{\bout{y}{m}} \inact)}$\\
+		(3) &$\by{\news{k} \bactout{l}{\tau_k}}$& $\Gamma; \es; \Delta \proves \repl{} \binp{t}{x} \appl{x}(\abs{y}{\bout{y}{m}} \inact) \Par \repl{} \binp{k}{y} \bout{y}{m} \inact $\\
+		(4) &$\by{\bactinp{k}{a}}$& $\Gamma; \es; \Delta \proves \repl{} \binp{t}{x} \appl{x}(\abs{y}{\bout{y}{m}} \inact) \Par \repl{} \binp{k}{y} \bout{y}{m} \inact \Par \appl{(\abs{y}{\bout{y}{m} \inact})}{a}$\\
+		(5) &$\by{\dtau}$& $\Gamma; \es; \Delta \proves \repl{} \binp{t}{x} \appl{x}(\abs{y}{\bout{y}{m}} \inact) \Par \repl{} \binp{k}{y} \bout{y}{m} \inact \Par \bout{a}{m} \inact$
 	\end{tabular}
 	 %\\ \hline
-	\end{tabular}
-\caption{Comparing our approach (upper part) and Jeffrey and Rathke's~\cite{JeffreyR05} (lower part).\label{f:comparison} }
+%	\end{tabular}
+\caption{Jeffrey and Rathke's approach~\cite{JeffreyR05}.}\label{tablejr:2}
+	\end{subfigure}
+\caption{Comparing labeled transitions associated to the process in Example~\ref{exam:jr}.\label{f:comparison} }
 \end{figure}
 
 %\noi In our approach, we would have the following typed transitions:
