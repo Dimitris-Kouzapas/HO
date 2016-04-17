@@ -955,7 +955,7 @@ we give an intermediate result.
 									\Delta_3 \proves \newsp{\widetilde{m_1}}{P \Par \prod_{i \in I \backslash{\set{k}}} \binp{t_i}{x} \appl{x}{n_i} \Par \mapchar{U}{x} \subst{n_k}{x}  }
 								\\
 								&\hwb&
-									\Delta_4 \proves \newsp{\widetilde{m_1}}{Q' \Par  \Par \prod_{i \in I \backslash{\set{k}}} \binp{t_i}{x} \appl{x}{m_i} \mapchar{U}{x} \subst{m_k}{x}}
+									\Delta_4 \proves \newsp{\widetilde{m_1}}{Q' \Par \prod_{i \in I \backslash{\set{k}}} \binp{t_i}{x} \appl{x}{m_i} \Par \mapchar{U}{x} \subst{m_k}{x}}
 							\end{eqnarray*}
 
 							The proof follows Part 2 of \lemref{lem:trigger_application} where
@@ -1000,28 +1000,90 @@ we give an intermediate result.
 		\item	\[
 					\horel{\Gamma}{\Delta_1'}{\newsp{\widetilde{m_1}}{P \Par R \subst{\widetilde{n}}{\widetilde{x}} }}
 					{\hby{}}
-					{\Delta_1''}{\newsp{\widetilde{m_1}'}{P' \Par R' \subst{\widetilde{m}}{\widetilde{x}} }}
+					{\Delta_1''}{\newsp{\widetilde{m_1}'}{P' \Par R' \subst{\widetilde{n}}{\widetilde{x}} }}
 				\]
 				From the typed reduction definition (\defref{d:tlts}) we get that
-				\begin{eqnarray*}
+				\begin{eqnarray}
 					&&	\horel{\Gamma}{\Delta_3}{\news{\widetilde{m_1}}{P}}
 						{\hby{\ell_1}}
 						{\Delta_R}{\news{\widetilde{m_1}}{P}}
 					\\
+					\label{lem:trigger_subst_31}
 					&&	\horel{\Gamma}{\Delta_1'}{R \subst{\widetilde{n}}{\widetilde{x}} }
 						{\hby{\ell_2}}
 						{\Delta_R'}{R' \subst{\widetilde{n}}{\widetilde{x}} }
+					\label{lem:trigger_subst_32}
 					\\
-					&&	\ell_1 \comp \ell_2
-				\end{eqnarray*}
+					&&	\ell_1 \comp \ell_2 \nonumber
+				\end{eqnarray}
+
 				We distinguish several subcases.
 				\begin{enumerate}[i.]
-					\item	$\subj{\ell_1} \not= n_1$. \dk{put proof} %The case is similar with the previous cases.
-					\item	$\subj{\ell_1} = n_1$.  \dk{put proof} %The case is similar with sub-case (ii) of case 2.
-					\item	$\obj{\ell_1} = n_1$. \dk{put proof}
-					
+	
+					\item	$\ell_1 = \bactinp{n_k}{n}$ and $\ell_2 = \bactout{n_k}{n}$.
+							\dk{put proof}
+
+					\item	An important sub-case is the case where
+							$\ell_1 = \bactinp{n}{n_k}$ and $\ell_2 = \bactout{n}{n_k}$.
+						%
+							From the definition of $\Re$ we have that
+							\[
+								\horel{\Gamma}{\Delta_1}{ \newsp{\widetilde{m_1}}{P \Par \prod_{i \in I} \binp{t_1}{x} \appl{x}{n_i}}}
+								{ \hby{ \bactinp{n}{m} } }
+								{\Delta_3}{  \newsp{\widetilde{m_1}}{P' \subst{m}{x} \Par \prod_{i \in I} \binp{t_1}{x} \appl{x}{n_i} }   }
+							\]
+						%
+							implies 
+							\begin{eqnarray}
+								\horel{\Gamma}{\Delta_2}{ \newsp{\widetilde{m_2}}{Q \Par \prod_{i \in I} \binp{t_1}{x} \appl{x}{n_i}}}
+								{ \Hby{ \bactinp{n}{m} } }
+								{\Delta_4}{  \newsp{\widetilde{m_2}}{Q' \subst{m}{x} \Par \prod_{i \in I} \binp{t_1}{x} \appl{x}{n_i} }   }
+								\label{ lem:trigger_subst_311 }
+							\end{eqnarray}
+							and
+							\[
+								\horel{\Gamma}{\Delta_3}{  \newsp{\widetilde{m_1}}{P' \subst{m}{x} \prod_{i \in I} \binp{t_1}{x} \appl{x}{n_i} }   }
+								{\hwb}
+								{\Delta_4}{  \newsp{\widetilde{m_2}}{Q' \subst{m}{x} \Par \prod_{i \in I} \binp{t_1}{x} \appl{x}{n_i} }   }
+							\]
+							implies from Part 4 of \lemref{lem:trigger_application} that
+							\[
+								\mhorel{\Gamma}{\Delta_3'}{  \newsp{\widetilde{m_1}}{P' \subst{n_k}{x} \Par \prod_{i \in I\backslash\set{k}} \binp{t_1}{x} \appl{x}{n_i} }   }
+								{\hwb}
+								{\Delta_4'}{}{  \newsp{\widetilde{m_2}}{Q' \subst{m_k}{x} \Par \prod_{i \in I\backslash\set{k}} \binp{t_1}{x} \appl{x}{n_i} }   }
+							\]
+							implies from the definition of $\Re$ that
+							\[
+								\mhorel{\Gamma}{\Delta_1'}{\newsp{\widetilde{m_1}}{P' \subst{n_k}{x} \Par R \subst{\widetilde{m}}{\widetilde{x}}}}
+								{\hwb}
+								{\Delta_2'}{}{  \newsp{\widetilde{m_2}}{Q' \subst{m_k}{x} \Par R' \subst{\widetilde{m}}{\widetilde{x}} } }
+							\]
+						%
+							From \eqref{ lem:trigger_subst_311 } and \eqref{lem:trigger_subst_32} we get that
+							\begin{eqnarray*}
+								\horel{\Gamma}{\Delta_2'}{ \newsp{\widetilde{m_2}}{Q \Par R \subst{\widetilde{m}}{\widetilde{x}} }}
+								{ \Hby{  } }
+								{\Delta_2''}{  \newsp{\widetilde{m_2}}{Q' \subst{m_k}{x} \Par R' \subst{\widetilde{m}}{\widetilde{x}} }   }
+							\end{eqnarray*}
+						%
+							that concludes the case.
+
 					\item	The most demanding sub-case is the case
-							where $\ell_1 = \bactinp{n_k}{n_l}$ and $\ell_2 = \bactout{n_k}{n_l}$.
+							where
+							$\ell_1 = \bactinp{n_k}{n_l}$ and $\ell_2 = \bactout{n_k}{n_l}$.
+							The proof is a consequence of the previews two sub-cases.	
+
+
+					\dk{finish proof}							
+
+
+					\item	The rest of the sub-cases are similar (or easier) to the above cases.
+
+%					\item	$\subj{\ell_1} \not= n_1$. \dk{put proof} %The case is similar with the previous cases.
+%					\item	$\subj{\ell_1} = n_1$.  \dk{put proof} %The case is similar with sub-case (ii) of case 2.
+%					\item	$\obj{\ell_1} = n_1$. \dk{put proof}
+%					
+%					\item	 $\ell_1 = \bactinp{n_k}{n_l}$ and $\ell_2 = \bactout{n_k}{n_l}$.
 				\end{enumerate}
 	\end{enumerate}
 	\qed
