@@ -663,7 +663,11 @@ We first define characteristic processes/values:
 %		& &
 %		 
 %		\\
-%		\mapchar{\trec{t}{S}}{u}
+%		\mapchar{\trec{t}{S}}{u}Thank you Oleg
+
+I too sent the last call for proposals on the mocca mailing list.
+
+I also invited my colleagues to submit their proposal.
 %		&\defeq&
 %		\recp{X_{\vart{t}}}{\mapchar{S}{u}}
 %		&&
@@ -1852,12 +1856,19 @@ in \exref{exam:proc} are behaviourally equivalent.
 \begin{proof}
 	\noi	We show a case where each typed process simulates the other, according to the definition of
 			$\hwb$ (cf. \defref{d:hwb}).
- For fresh sessions $s, k$, we get \dkmargin{change the characteristic process and the transitions below}
-	$$
-		\mapchar{\btinp{\lhot{S}} \tinact}{s} = \binp{s}{x} (\mapchar{\tinact}{s} \Par \mapchar{\lhot{S}}{x})
+ For fresh sessions $s, k$, we get \dkmargin{check the example if it correct}
+%	$$
+%		\mapchar{\btinp{\lhot{S}} \tinact}{s} = \binp{s}{x} (\mapchar{\tinact}{s} \Par \mapchar{\lhot{S}}{x})
 %		= \binp{s}{x} (\inact \Par \appl{x}{\omapchar{S}})
 %		= \binp{s}{x} (\inact \Par \appl{x}{k})
-		\scong \binp{s}{x} (\appl{x}{k})
+%		\scong \binp{s}{x} (\appl{x}{k})
+%	$$
+%
+	$$
+		\dk{\mapchar{\btinp{\lhot{S}} \tinact}{s} = \binp{s}{x} ( \bout{t}{s} \inact \Par \mapchar{\lhot{S}}{x})}
+%		= \binp{s}{x} (\inact \Par \appl{x}{\omapchar{S}})
+%		= \binp{s}{x} (\inact \Par \appl{x}{k})
+%		\scong \binp{s}{x} (\appl{x}{k})
 	$$
 	
 
@@ -1899,8 +1910,23 @@ in \exref{exam:proc} are behaviourally equivalent.
 
 		\by{\bactinp{t_1}{b}} \by{\bactinp{t_2}{b}} \by{\dtau}\by{\dtau}&
 		\es; \es; k_1: S \cat k_2: S \proves \newsp{h_1, h_2}{
-		\binp{\dual{h_1}}{x} \binp{\dual{h_2}}{y} R'\\
-		& \Par P_{xy}\subst{h_1}{y} \subst{k_1}{x} \Par P_{xy}\subst{h_1}{y} \subst{k_2}{x}}
+		\binp{\dual{h_1}}{x} \binp{\dual{h_2}}{y} R' \\
+		&  \Par \newsp{s_1', s_2'}{ P_{xy}\subst{h_1}{y} \subst{k_1}{x} \Par P_{xy}\subst{h_1}{y} \subst{k_2}{x}}\\
+		& \Par \bout{t_3}{s_1'} \inact \Par \bout{t_4}{s_2'} \inact}
+		\\[1mm]
+
+		\by{\bactout{t_3}{s_1'}} \by{ \bactout{t_4}{s_2'}} &
+		\es; \es; k_1: S \cat k_2: S \proves \newsp{h_1, h_2}{
+		\binp{\dual{h_1}}{x} \binp{\dual{h_2}}{y} R' \\
+		&  \Par P_{xy}\subst{h_1}{y} \subst{k_1}{x} \Par P_{xy}\subst{h_1}{y} \subst{k_2}{x}}\\
+		& \Par \newsp{s_1', s_2'}{\ftrigger{t_3'}{s_1'}{\tinact} \Par \ftrigger{t_4}{s_2'}{\tinact}}
+		\\[1mm]
+
+		\by{\bactout{t_3'}{c}} \by{ \bactout{t_4'}{c}} \\
+		\by{\dtau} \by{\dtau} \by{\dtau} \by{\dtau} &
+		\es; \es; k_1: S \cat k_2: S \proves \newsp{h_1, h_2}{
+		\binp{\dual{h_1}}{x} \binp{\dual{h_2}}{y} R' \\
+		&  \Par P_{xy}\subst{h_1}{y} \subst{k_1}{x} \Par P_{xy}\subst{h_1}{y} \subst{k_2}{x}}
 		\\[1mm]
 
 		\by{\bactout{k_1}{\rtype}} \by{\bactout{k_2}{\rtype}}\\
@@ -1949,8 +1975,22 @@ in \exref{exam:proc} are behaviourally equivalent.
 
 		\by{\bactinp{t_1}{b}} \by{\bactinp{t_2}{b}} \by{\dtau}\by{\dtau}&
 		\es; \es; k_1: S \cat k_2: S \proves \newsp{h}{
-		P\subst{h}{y} \subst{k_1}{x} \Par P_{xy}\subst{\dual{h}}{y} \subst{k_2}{x}}
+		P\subst{h}{y} \subst{k_1}{x} \Par P_{xy}\subst{\dual{h}}{y} \subst{k_2}{x}\\
+		& \Par \newsp{s_1', s_2'}{\bout{t_3}{s_1'} \inact \Par \bout{t_4}{s_2'} \inact}}
 \\[1mm]
+
+		\by{\bactout{t_3}{s_1'}} \by{ \bactout{t_4}{s_2'}} &
+		\es; \es; k_1: S \cat k_2: S \proves \newsp{h}{
+		P\subst{h}{y} \subst{k_1}{x} \Par P_{xy}\subst{\dual{h}}{y} \subst{k_2}{x}\\
+		& \Par \newsp{s_1', s_2'}{\ftrigger{t_3'}{s_1'}{\tinact} \Par \ftrigger{t_4'}{s_2'}{\tinact}}}
+\\[1mm]
+
+		\by{\bactout{t_3'}{c}} \by{ \bactout{t_4'}{c}} \\
+		\by{\dtau} \by{\dtau} \by{\dtau} \by{\dtau} &
+		\es; \es; k_1: S \cat k_2: S \proves \newsp{h}{
+		P\subst{h}{y} \subst{k_1}{x} \Par P_{xy}\subst{\dual{h}}{y} \subst{k_2}{x}}
+		\\[1mm]
+
 
 		\by{\bactout{k_1}{\rtype}} \by{\bactout{k_2}{\rtype}}\\
 		\by{\bactinp{k_1}{\Quote}} \by{\bactinp{k_2}{\Quote}}
