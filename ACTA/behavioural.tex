@@ -508,7 +508,7 @@ present in the session environment $\Delta$.
 
 \dk{Observing the outputs is enough because input actions can be observed indirectly by output actions 
 on fresh names. For instance, the process $P = \binp{n}{x} P’$ has an input barb; by composing $P$
-with  $\bout{n}{m} \bout{\suc!}{} \inact$ (with fresh $\suc$) then one obtains a (weak) observation
+with  $\bout{n}{m} \bout{\suc}{} \inact$ (with fresh $\suc$) then one obtains a (weak) observation
 uniquely associated to  the input in $P$. }
 
 To define a congruence relation, we introduce the family $\C$ of contexts:
@@ -663,7 +663,8 @@ We first define characteristic processes/values:
 %		& &
 %		 
 %		\\
-%		\mapchar{\trec{t}{S}}{u}
+%		\mapchar{\trec{t}{S}}{u}Thank you Oleg
+
 %		&\defeq&
 %		\recp{X_{\vart{t}}}{\mapchar{S}{u}}
 %		&&
@@ -949,6 +950,19 @@ do inhabit their associated type.
 	and $\mapchar{U}{u}$. 
 	\qed
 \end{proof}
+
+\dk{
+	We show an example of a characteristic process inhabiting a
+	recursive type.
+	\begin{example}
+		Let recursive type $S = \trec{t}{ \btout{S'} \vart{t}}$ with
+		$\mapchar{S}{s} = \mapchar{ \btout{S'} S }{s} = \bout{s}{s'} \bout{t}{s} \inact$. If we type the
+		characteristic process for $S$ we get:
+		\[
+			\Gamma; \es; s: S \cat s':S' \cat t: \btout{S} \tinact \proves \bout{s}{s'} \bout{t}{s} \inact \hastype \Proc
+		\]
+	\end{example}
+}
 
 The following example motivates the refined 
 LTS explained in \secref{sec:overview}.
@@ -1852,12 +1866,19 @@ in \exref{exam:proc} are behaviourally equivalent.
 \begin{proof}
 	\noi	We show a case where each typed process simulates the other, according to the definition of
 			$\hwb$ (cf. \defref{d:hwb}).
- For fresh sessions $s, k$, we get \dkmargin{change the characteristic process and the transitions below}
-	$$
-		\mapchar{\btinp{\lhot{S}} \tinact}{s} = \binp{s}{x} (\mapchar{\tinact}{s} \Par \mapchar{\lhot{S}}{x})
+ For fresh sessions $s, k$, we get \dkmargin{check the example if it correct}
+%	$$
+%		\mapchar{\btinp{\lhot{S}} \tinact}{s} = \binp{s}{x} (\mapchar{\tinact}{s} \Par \mapchar{\lhot{S}}{x})
 %		= \binp{s}{x} (\inact \Par \appl{x}{\omapchar{S}})
 %		= \binp{s}{x} (\inact \Par \appl{x}{k})
-		\scong \binp{s}{x} (\appl{x}{k})
+%		\scong \binp{s}{x} (\appl{x}{k})
+%	$$
+%
+	$$
+		\dk{\mapchar{\btinp{\lhot{S}} \tinact}{s} = \binp{s}{x} ( \bout{t}{s} \inact \Par \mapchar{\lhot{S}}{x})}
+%		= \binp{s}{x} (\inact \Par \appl{x}{\omapchar{S}})
+%		= \binp{s}{x} (\inact \Par \appl{x}{k})
+%		\scong \binp{s}{x} (\appl{x}{k})
 	$$
 	
 
@@ -1899,8 +1920,23 @@ in \exref{exam:proc} are behaviourally equivalent.
 
 		\by{\bactinp{t_1}{b}} \by{\bactinp{t_2}{b}} \by{\dtau}\by{\dtau}&
 		\es; \es; k_1: S \cat k_2: S \proves \newsp{h_1, h_2}{
-		\binp{\dual{h_1}}{x} \binp{\dual{h_2}}{y} R'\\
-		& \Par P_{xy}\subst{h_1}{y} \subst{k_1}{x} \Par P_{xy}\subst{h_1}{y} \subst{k_2}{x}}
+		\binp{\dual{h_1}}{x} \binp{\dual{h_2}}{y} R' \\
+		&  \Par \newsp{s_1', s_2'}{ P_{xy}\subst{h_1}{y} \subst{k_1}{x} \Par P_{xy}\subst{h_1}{y} \subst{k_2}{x}}\\
+		& \Par \bout{t_3}{s_1'} \inact \Par \bout{t_4}{s_2'} \inact}
+		\\[1mm]
+
+		\by{\bactout{t_3}{s_1'}} \by{ \bactout{t_4}{s_2'}} &
+		\es; \es; k_1: S \cat k_2: S \proves \newsp{h_1, h_2}{
+		\binp{\dual{h_1}}{x} \binp{\dual{h_2}}{y} R' \\
+		&  \Par P_{xy}\subst{h_1}{y} \subst{k_1}{x} \Par P_{xy}\subst{h_1}{y} \subst{k_2}{x}}\\
+		& \Par \newsp{s_1', s_2'}{\ftrigger{t_3'}{s_1'}{\tinact} \Par \ftrigger{t_4}{s_2'}{\tinact}}
+		\\[1mm]
+
+		\by{\bactout{t_3'}{c}} \by{ \bactout{t_4'}{c}} \\
+		\by{\dtau} \by{\dtau} \by{\dtau} \by{\dtau} &
+		\es; \es; k_1: S \cat k_2: S \proves \newsp{h_1, h_2}{
+		\binp{\dual{h_1}}{x} \binp{\dual{h_2}}{y} R' \\
+		&  \Par P_{xy}\subst{h_1}{y} \subst{k_1}{x} \Par P_{xy}\subst{h_1}{y} \subst{k_2}{x}}
 		\\[1mm]
 
 		\by{\bactout{k_1}{\rtype}} \by{\bactout{k_2}{\rtype}}\\
@@ -1949,8 +1985,22 @@ in \exref{exam:proc} are behaviourally equivalent.
 
 		\by{\bactinp{t_1}{b}} \by{\bactinp{t_2}{b}} \by{\dtau}\by{\dtau}&
 		\es; \es; k_1: S \cat k_2: S \proves \newsp{h}{
-		P\subst{h}{y} \subst{k_1}{x} \Par P_{xy}\subst{\dual{h}}{y} \subst{k_2}{x}}
+		P\subst{h}{y} \subst{k_1}{x} \Par P_{xy}\subst{\dual{h}}{y} \subst{k_2}{x}\\
+		& \Par \newsp{s_1', s_2'}{\bout{t_3}{s_1'} \inact \Par \bout{t_4}{s_2'} \inact}}
 \\[1mm]
+
+		\by{\bactout{t_3}{s_1'}} \by{ \bactout{t_4}{s_2'}} &
+		\es; \es; k_1: S \cat k_2: S \proves \newsp{h}{
+		P\subst{h}{y} \subst{k_1}{x} \Par P_{xy}\subst{\dual{h}}{y} \subst{k_2}{x}\\
+		& \Par \newsp{s_1', s_2'}{\ftrigger{t_3'}{s_1'}{\tinact} \Par \ftrigger{t_4'}{s_2'}{\tinact}}}
+\\[1mm]
+
+		\by{\bactout{t_3'}{c}} \by{ \bactout{t_4'}{c}} \\
+		\by{\dtau} \by{\dtau} \by{\dtau} \by{\dtau} &
+		\es; \es; k_1: S \cat k_2: S \proves \newsp{h}{
+		P\subst{h}{y} \subst{k_1}{x} \Par P_{xy}\subst{\dual{h}}{y} \subst{k_2}{x}}
+		\\[1mm]
+
 
 		\by{\bactout{k_1}{\rtype}} \by{\bactout{k_2}{\rtype}}\\
 		\by{\bactinp{k_1}{\Quote}} \by{\bactinp{k_2}{\Quote}}
