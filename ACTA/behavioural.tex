@@ -955,9 +955,22 @@ do inhabit their associated type.
 	We show an example of a characteristic process inhabiting a
 	recursive type.
 	\begin{example}
-		Let recursive type $S = \trec{t}{ \btout{S'} \vart{t}}$ with
-		$\mapchar{S}{s} = \mapchar{ \btout{S'} S }{s} = \bout{s}{s'} \bout{t}{s} \inact$. If we type the
-		characteristic process for $S$ we get:
+		Let recursive type $S = \trec{t}{ \btout{S'} \vart{t}}$.
+		From the definition of the characteristic process for 
+		recursive types we get:
+		\[
+			\mapchar{\trec{t}{ \btout{S'} \vart{t}}}{s} = \mapchar{ \btout{S'} \trec{t}{ \btout{S'} \vart{t}} }{s}
+		\]
+		From the definition of the characteristic process for the output
+		prefixed session types we get:
+		\[
+			\bout{s}{s'} \bout{t}{s} \inact
+		\]
+		Note that we get the same characteristic process even if we unfold the type more than once:
+		\[
+		\mapchar{ \btout{S'} \btout{S'} \trec{t}{ \btout{S'} \vart{t}} }{s} = \bout{s}{s'} \bout{t}{s} \inact
+		\]
+		If we type the characteristic process for $S$ we get:
 		\[
 			\Gamma; \es; s: S \cat s':S' \cat t: \btout{S} \tinact \proves \bout{s}{s'} \bout{t}{s} \inact \hastype \Proc
 		\]
@@ -1354,6 +1367,39 @@ $\htrigger{t}{V}$ (cf. \eqref{eqb:0}), $\hwb$ cannot be used to reason about fir
 \end{remark}
 }
 
+\dk{
+\begin{example}
+	\begin{eqnarray*}
+			&&\Gamma; \es; s: S \cat s_1:S' \cat t: \btout{S} \tinact \proves \bout{s}{s_1} \bout{t}{s} \inact
+			\\
+			&&\hby{\bactout{s}{s'}}
+			\Gamma; \es; s: S \cat s_1:S' \cat t: \btout{S} \tinact \cat t_1': \btinp{\btinp{S'} \tinact} \tinact \proves \htrigger{t_1'}{s_1} \Par \bout{t}{s} \inact
+			\\
+			&&\hby{\bactout{t}{s}}
+			\Gamma; \es; s: S \cat s_1:S' \cat t_1: \btinp{\btinp{S} \tinact} \tinact \cat t_1': \btinp{\btinp{S'} \tinact} \tinact \proves \htrigger{t_1'}{s_1} \Par \htrigger{t_1}{s}
+			\\
+			&&\hby{\bactinp{t}{ \omapchar{\btinp{S} \tinact} }} \hby{\dtau} \hby{\dtau}
+			\\
+			&&\Gamma; \es; s: S \cat s_1:S' \cat s_2: S' \cat t_2: \btout{S} \tinact \cat t_1': \btinp{\btinp{S'} \tinact} \tinact \cat t_1'': \btout{\tinact} \tinact \\
+			&&\proves \htrigger{t_1'}{s_1} \Par \bout{s}{s_2} \bout{t_2}{s} \inact \Par \news{s}{\bout{t_1''}{s} \inact}
+			\\
+			&&\hby{\bactout{t_1''}{ s }} \hby{\bactinp{t'''}{\omapchar{\btinp{\tinact} \tinact}} } \hby{\dtau} \hby{\dtau}
+			\\
+			&&\Gamma; \es; s: S \cat s_1:S' \cat s_2: S' \cat t_2: \btout{S} \tinact \cat t_1': \btinp{\btinp{S'} \tinact} \tinact
+			\\
+			&&\proves \htrigger{t_1'}{s_1} \Par \bout{s}{s_2} \bout{t_2}{s} \inact
+			\\
+			&& \vdots
+			\\
+			&&\Gamma; \es; s: S \cat s_1:S' \cat s_2: S' \cat s_3: S' \cat t_3: \btout{S} \tinact \cat t_1': \btinp{\btinp{S'} \tinact} \tinact \cat t_2': \btinp{\btinp{S'} \tinact} \tinact
+			\\
+			&&\proves \htrigger{t_1'}{s_1} \Par \htrigger{t_2'}{s_2} \Par \bout{s}{s_3} \bout{t_3}{s} \inact
+			\\
+			&& \vdots
+	\end{eqnarray*}
+\end{example}
+}
+
 \subsection{Deterministic Transitions and Up-to Techniques}
 \label{ss:deter}
 
@@ -1484,6 +1530,9 @@ Using the above determinacy properties, we can state the following up-to techniq
 	the use of \propref{lem:tau_inert}.
 	\qed
 \end{proof}
+
+\[
+\]
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
