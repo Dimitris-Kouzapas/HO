@@ -946,8 +946,41 @@ do inhabit their associated type.
 \end{proposition}
 
 \begin{proof}[Sketch]
-	By induction on the definition of $\mapchar{S}{u}$
-	and $\mapchar{U}{u}$. 
+	The proof of part 1 is done by a case analysis on the syntax of $S$. We give
+	some notable cases.
+	\begin{itemize}
+		\item	Case $S = \btout{U} S'$ with
+				$\mapchar{S}{s} = \bout{s}{\omapchar{U}} \bout{t}{s} \inact$.
+				If we type the last process we get the derivation:
+				\[
+					\tree{
+						\Gamma; \es; s: S' \cat t: \btout{S'} \tinact \hastype \bout{t}{s} \inact \hastype \Proc
+						\qquad
+						\Gamma; \es; \Delta \proves \omapchar{U} \hastype U
+					}{
+						\Gamma; \es; \Delta \cat s: \btout{U} S' \cat t: \btout{S} \tinact \hastype \bout{s}{\omapchar{U}}\bout{t}{s} \inact \hastype \Proc
+					}
+				\]
+		\item	Case $S = \btinp{S_1} S_2$ with
+				$\mapchar{S}{s} = \binp{s}{x} (\bout{t}{s} \inact \Par \mapchar{S_1}{x})$.
+				If we type the last process we have the following derivation
+				\[
+					\tree{
+						\tree{
+							\Gamma; \es; \Delta \cat x: S_1 \proves \mapchar{S_1}{x} \hastype \Proc
+							\qquad
+							\Gamma; \es; t: \btout{S_2} \tinact \cat s: S_2 \proves \bout{t}{s} \inact \hastype \Proc
+						}{
+							\Gamma; \es; \Delta \cat x: S_1 \cat t: \btout{S_2} \tinact \cat s: S_2 \proves
+							\bout{t}{s} \inact \Par \mapchar{S_1}{x} \hastype \Proc
+						}
+					}{
+						\Gamma; \es; \Delta \cat t: \btout{S_2} \tinact \cat s: \btinp{U} S_2 \proves \binp{s}{x} (\bout{t}{s} \inact \Par \mapchar{S_1}{x}) \hastype \Proc
+					}
+				\]
+			\item	Other cases are similar.
+	\end{itemize}
+	The proof for parts 2 and 3 is similar.
 	\qed
 \end{proof}
 
@@ -1278,8 +1311,14 @@ the two bisimulations
 use two different trigger processes (cf.~\eqref{eq:4}):
 %
 \begin{eqnarray}
-	\htrigger{t}{V}	& \defeq &	\hotrigger{t}{x}{s}{V}							\label{eqb:0} \\
-	\ftrigger{t}{V}{U}	& \defeq &	\fotrigger{t}{x}{s}{\btinp{U} \tinact}{V}	\label{eqb:4}
+	\htrigger{t}{V}	& \defeq &
+	\left\{ \begin{array}{ll}
+		\hotrigger{t}{x}{s}{V} & V = n\\
+		\binp{t}{x} \newsp{s}{\binp{s}{y} \appl{y}{x} \Par \bout{\dual{s}}{V} \inact} & V = \abs{x}{P}
+	\end{array}
+	\right.
+	\label{eqb:0} \\
+	\ftrigger{t}{V}{U}	& \defeq &	\fotrigger{t}{x}{s}{U}{V}	\label{eqb:4}
 %	\mapchar{\btinp{U} \tinact}{s}
 \end{eqnarray}
 %
@@ -1367,38 +1406,38 @@ $\htrigger{t}{V}$ (cf. \eqref{eqb:0}), $\hwb$ cannot be used to reason about fir
 \end{remark}
 }
 
-\dk{
-\begin{example}
-	\begin{eqnarray*}
-			&&\Gamma; \es; s: S \cat s_1:S' \cat t: \btout{S} \tinact \proves \bout{s}{s_1} \bout{t}{s} \inact
-			\\
-			&&\hby{\bactout{s}{s'}}
-			\Gamma; \es; s: S \cat s_1:S' \cat t: \btout{S} \tinact \cat t_1': \btinp{\btinp{S'} \tinact} \tinact \proves \htrigger{t_1'}{s_1} \Par \bout{t}{s} \inact
-			\\
-			&&\hby{\bactout{t}{s}}
-			\Gamma; \es; s: S \cat s_1:S' \cat t_1: \btinp{\btinp{S} \tinact} \tinact \cat t_1': \btinp{\btinp{S'} \tinact} \tinact \proves \htrigger{t_1'}{s_1} \Par \htrigger{t_1}{s}
-			\\
-			&&\hby{\bactinp{t}{ \omapchar{\btinp{S} \tinact} }} \hby{\dtau} \hby{\dtau}
-			\\
-			&&\Gamma; \es; s: S \cat s_1:S' \cat s_2: S' \cat t_2: \btout{S} \tinact \cat t_1': \btinp{\btinp{S'} \tinact} \tinact \cat t_1'': \btout{\tinact} \tinact \\
-			&&\proves \htrigger{t_1'}{s_1} \Par \bout{s}{s_2} \bout{t_2}{s} \inact \Par \news{s}{\bout{t_1''}{s} \inact}
-			\\
-			&&\hby{\bactout{t_1''}{ s }} \hby{\bactinp{t'''}{\omapchar{\btinp{\tinact} \tinact}} } \hby{\dtau} \hby{\dtau}
-			\\
-			&&\Gamma; \es; s: S \cat s_1:S' \cat s_2: S' \cat t_2: \btout{S} \tinact \cat t_1': \btinp{\btinp{S'} \tinact} \tinact
-			\\
-			&&\proves \htrigger{t_1'}{s_1} \Par \bout{s}{s_2} \bout{t_2}{s} \inact
-			\\
-			&& \vdots
-			\\
-			&&\Gamma; \es; s: S \cat s_1:S' \cat s_2: S' \cat s_3: S' \cat t_3: \btout{S} \tinact \cat t_1': \btinp{\btinp{S'} \tinact} \tinact \cat t_2': \btinp{\btinp{S'} \tinact} \tinact
-			\\
-			&&\proves \htrigger{t_1'}{s_1} \Par \htrigger{t_2'}{s_2} \Par \bout{s}{s_3} \bout{t_3}{s} \inact
-			\\
-			&& \vdots
-	\end{eqnarray*}
-\end{example}
-}
+%\dk{
+%\begin{example}
+%	\begin{eqnarray*}
+%			&&\Gamma; \es; s: S \cat s_1:S' \cat t: \btout{S} \tinact \proves \bout{s}{s_1} \bout{t}{s} \inact
+%			\\
+%			&&\hby{\bactout{s}{s'}}
+%			\Gamma; \es; s: S \cat s_1:S' \cat t: \btout{S} \tinact \cat t_1': \btinp{\btinp{S'} \tinact} \tinact \proves \htrigger{t_1'}{s_1} \Par \bout{t}{s} \inact
+%			\\
+%			&&\hby{\bactout{t}{s}}
+%			\Gamma; \es; s: S \cat s_1:S' \cat t_1: \btinp{\btinp{S} \tinact} \tinact \cat t_1': \btinp{\btinp{S'} \tinact} \tinact \proves \htrigger{t_1'}{s_1} \Par \htrigger{t_1}{s}
+%			\\
+%			&&\hby{\bactinp{t}{ \omapchar{\btinp{S} \tinact} }} \hby{\dtau} \hby{\dtau}
+%			\\
+%			&&\Gamma; \es; s: S \cat s_1:S' \cat s_2: S' \cat t_2: \btout{S} \tinact \cat t_1': \btinp{\btinp{S'} \tinact} \tinact \cat t_1'': \btout{\tinact} \tinact \\
+%			&&\proves \htrigger{t_1'}{s_1} \Par \bout{s}{s_2} \bout{t_2}{s} \inact \Par \news{s}{\bout{t_1''}{s} \inact}
+%			\\
+%			&&\hby{\bactout{t_1''}{ s }} \hby{\bactinp{t'''}{\omapchar{\btinp{\tinact} \tinact}} } \hby{\dtau} \hby{\dtau}
+%			\\
+%			&&\Gamma; \es; s: S \cat s_1:S' \cat s_2: S' \cat t_2: \btout{S} \tinact \cat t_1': \btinp{\btinp{S'} \tinact} \tinact
+%			\\
+%			&&\proves \htrigger{t_1'}{s_1} \Par \bout{s}{s_2} \bout{t_2}{s} \inact
+%			\\
+%			&& \vdots
+%			\\
+%			&&\Gamma; \es; s: S \cat s_1:S' \cat s_2: S' \cat s_3: S' \cat t_3: \btout{S} \tinact \cat t_1': \btinp{\btinp{S'} \tinact} \tinact \cat t_2': \btinp{\btinp{S'} \tinact} \tinact
+%			\\
+%			&&\proves \htrigger{t_1'}{s_1} \Par \htrigger{t_2'}{s_2} \Par \bout{s}{s_3} \bout{t_3}{s} \inact
+%			\\
+%			&& \vdots
+%	\end{eqnarray*}
+%\end{example}
+%}
 
 \subsection{Deterministic Transitions and Up-to Techniques}
 \label{ss:deter}
@@ -1583,14 +1622,14 @@ techniques for higher-order processes with sessions.
 	higher-order trigger processes
 	$\htrigger{t}{V}$
 	exhibit similar behaviour.
-Indeed, while for the former we have
+	Indeed, while for the former we have
 	\begin{eqnarray*}
-		\fotrigger{t}{x}{s}{\btinp{U} \tinact}{V} &\hby{\bactinp{t}{s'}}& \newsp{s}{ \binp{s}{y} \mapchar{U}{y}  \Par \bout{\dual{s}}{V} \inact}
-			\end{eqnarray*}
+		\fotrigger{t}{x}{s}{U}{V} &\hby{\bactinp{t}{s'}}& \newsp{s}{\binp{s}{y} \mapchar{U}{y}  \Par \bout{\dual{s}}{V} \inact}
+	\end{eqnarray*}
 		for the latter we have:
 	\begin{eqnarray*}
-		\hotrigger{t}{x}{s}{V} &\hby{\bactinp{t}{\omapchar{\btinp{U} \tinact}}}& \newsp{s}{ \appl{(\abs{x}{\binp{x}{y} \mapchar{U}{y}})}{s}  \Par \bout{\dual{s}}{V} \inact}\\
-		&\by{\tau}& \newsp{s}{ \binp{s}{y} \mapchar{U}{y}  \Par \bout{\dual{s}}{V} \inact}
+		\hotrigger{t}{x}{s}{V} &\hby{\bactinp{t}{\omapchar{U}}}& \newsp{s}{ \binp{s}{y} \mapchar{U}{y}  \Par \bout{\dual{s}}{V} \inact}\\
+%		&\by{\tau}& \newsp{s}{ \binp{s}{y} \mapchar{U}{y}  \Par \bout{\dual{s}}{V} \inact}
 	\end{eqnarray*}
 %
 	Using the above information we can show that typed relations induced by 
