@@ -962,10 +962,61 @@ processes in terms of process equivalence.
 					\Gamma; \es; \Delta_2' \proves \newsp{\widetilde{m_2}'}{Q' \Par \appl{\omapchar{U}}{n_2} }
 				\]
 
-		\item	For the proof for Part 3 we need to create a relation and prove that is a higher order bisimulation.
-
-				\dk{finish proof}
-
+		\item	For the proof of Part 3 we do a case analysis on the transitions for checking the bisimulation requirements. The interesting case is
+				\[
+					\Gamma; \Delta_1 \proves \newsp{\widetilde{m_1}}{P \Par \binp{t}{x} \appl{x}{n_1}}
+					\hby{\bactinp{t}{\omapchar{U}}} 
+					\Gamma; \Delta_1'' \proves \newsp{\widetilde{m_1}''}{P \Par \appl{\omapchar{U}}{n_1}}
+				\]
+				From the freshness of $t$ we can derive that
+				\[
+					\Gamma; \Delta_2 \proves \newsp{\widetilde{m_2}}{Q \Par \binp{t}{x} \appl{x}{n_2}}
+					\Hby{\bactinp{t}{\omapchar{U}}} 
+					\Gamma; \Delta_2'' \proves \newsp{\widetilde{m_2}'}{Q'' \Par \appl{\omapchar{U}}{n_2}}
+				\]
+				From the bisimulation requirement of the hypothesis that
+				\[
+					\horel{\Gamma}{\Delta_1}{ \newsp{\widetilde{m_1}}{P \Par \bout{t}{n_1} \inact} }
+					{\hby{\bactout{t}{n_1} }}
+					{\Delta_1'}{ \newsp{\widetilde{m_1}'}{P} }
+				\]
+				implies
+				\[
+					\horel{\Gamma}{\Delta_2}{ \newsp{\widetilde{m_2}}{Q \Par \bout{t}{n_2} \inact} }
+					{\Hby{\bactout{t}{n_2} }}
+					{\Delta_2'}{ \newsp{\widetilde{m_2}'}{Q'} }
+				\]
+				and
+				\[
+					\mhorel{\Gamma}{\Delta_1'}{ \newsp{\widetilde{m_1}'}{P \Par \binp{t}{x} \newsp{s}{ \binp{s}{y} \appl{x}{y} \Par \bout{\dual{s}}{n_1} \inact } } }
+					{\hwb}
+					{\Delta_2'}{}{ \newsp{\widetilde{m_2}'}{Q' \Par \binp{t}{x} \newsp{s}{ \binp{s}{y} \appl{x}{y} \Par \bout{\dual{s}}{n_2} \inact }} }
+				\]
+				Whenever
+				\[
+				\begin{array}{rcl}
+					&& \Gamma; \Delta_1' \proves \newsp{\widetilde{m_1}'}{P \Par \binp{t}{x} \newsp{s}{ \binp{s}{y} \appl{x}{y} \Par \bout{\dual{s}}{n_1} \inact } }\\ 
+					\hby{\bactinp{t}{\omapchar{U}}}&& 
+					\Delta_1'' \proves \newsp{\widetilde{m_1}''}{P \Par \newsp{s}{ \binp{s}{y} \appl{\omapchar{U}}{y} \Par \bout{\dual{s}}{n_1} \inact }}
+					\\
+					\hby{\dtau} &&
+					\Delta_1'' \proves \newsp{\widetilde{m_1}''}{P \Par \appl{\omapchar{U}}{n_1}}
+				\end{array}
+				\]
+				then
+				\[
+				\begin{array}{rcl}
+					&&\Gamma; \Delta_1' \proves \newsp{\widetilde{m_2}'}{Q' \Par \binp{t}{x} \newsp{s}{ \binp{s}{y} \appl{x}{y} \Par \bout{\dual{s}}{n_2} \inact } }
+					\\
+					\Hby{\bactinp{t}{\omapchar{U}}} &&
+					\Delta_2'' \proves \newsp{\widetilde{m_2}''}{Q''' \Par \newsp{s}{ \binp{s}{y} \appl{\omapchar{U}}{y} \Par \bout{\dual{s}}{n_2} \inact }}
+					\\
+					\Hby{\dtau} &&
+					\Delta_2'' \proves \newsp{\widetilde{m_2}''}{Q'' \Par \appl{\omapchar{U}}{n_2}}
+				\end{array}
+				\]
+				which concludes the case.
+				
 		\item	Part 4 requires
 
 				\dk{finish proof}
