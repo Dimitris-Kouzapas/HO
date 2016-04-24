@@ -1,5 +1,88 @@
 % !TEX root = main.tex
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Types inhabit their characteristic process
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\label{app:inhabit}
+
+\begin{proposition}[Characteristic Processes/Values Inhabit Their Types]
+	\label{app:characteristic_inhabit}
+	\begin{enumerate}
+		\item	
+				Let $S$ be a session type.
+				Then $\Gamma; \es; \Delta \cat s: S \proves \mapchar{S}{s} \hastype \Proc$.
+		\item	
+				Let $U$ be a channel type.
+				Then $\Gamma \cat a: U; \es; \Delta \proves \mapchar{U}{a} \hastype \Proc$.
+
+		\item	Let $U$ be a type.
+				Then $\Gamma; \es; \Delta \proves \omapchar{U} \hastype U$.
+	\end{enumerate}
+\end{proposition}
+
+\begin{proof}[Sketch]
+	The proof of part 1 is done by induction on the the syntax of $S$. We give
+	some notable cases.
+	\begin{itemize}
+		\item	Case $S = \btout{U} S'$ with
+				$\mapchar{S}{s} = \bout{s}{\omapchar{U}} \bout{t}{s} \inact$.
+				If we type the last process we get the derivation:
+				\[
+					\tree{
+						\begin{array}{l}
+							\Gamma; \es; s: S' \cat t: \btout{S'} \tinact \hastype \bout{t}{s} \inact \hastype \Proc \qquad \text{(Induction)}
+							\\
+							\Gamma; \es; \Delta \proves \omapchar{U} \hastype U
+						\end{array}
+					}{
+						\Gamma; \es; \Delta \cat s: \btout{U} S' \cat t: \btout{S} \tinact \hastype \bout{s}{\omapchar{U}}\bout{t}{s} \inact \hastype \Proc
+					}
+				\]
+		\item	Case $S = \btinp{S_1} S_2$ with
+				$\mapchar{S}{s} = \binp{s}{x} (\bout{t}{s} \inact \Par \mapchar{S_1}{x})$.
+				If we type the last process we have the following derivation
+				\[
+					\tree{
+						\tree{
+							\begin{array}{l}
+								\Gamma; \es; \Delta \cat x: S_1 \proves \mapchar{S_1}{x} \hastype \Proc
+								\qquad \text{(Induction)}
+								\\
+								\Gamma; \es; t: \btout{S_2} \tinact \cat s: S_2 \proves \bout{t}{s} \inact \hastype \Proc
+							\end{array}
+						}{
+							\Gamma; \es; \Delta \cat x: S_1 \cat t: \btout{S_2} \tinact \cat s: S_2 \proves
+							\bout{t}{s} \inact \Par \mapchar{S_1}{x} \hastype \Proc
+						}
+					}{
+						\Gamma; \es; \Delta \cat t: \btout{S_2} \tinact \cat s: \btinp{U} S_2 \proves \binp{s}{x} (\bout{t}{s} \inact \Par \mapchar{S_1}{x}) \hastype \Proc
+					}
+				\]
+			\item	Case $S = \trec{t}{S'}$.
+					We do a sub-case analysis on recursive unfold. A notable case is the output prefix.
+					$S = \trec{t}{\btout{U} S'}$ with $\mapchar{\btout{U} S' \subst{\trec{t}{\btout{U} S'}}{\vart{t}} }{s} = \bout{t}{\omapchar{U}} \bout{t}{s} \inact $. 
+					\[
+						\tree{
+							\begin{array}{l}
+								\Gamma; \es; s: S' \subst{\trec{t}{\btout{U} S'}}{\vart{t}} \cat t: \btout{S' \subst{\trec{t}{\btout{U} S'}}{\vart{t}}} \tinact \hastype \bout{t}{s} \inact \hastype \Proc
+								\\
+								\Gamma; \es; \Delta \proves \omapchar{U} \hastype U  \qquad \text{(Induction)}
+							\end{array}
+						}{
+							\Gamma; \es; \Delta \cat s: \btout{U} S' \subst{\trec{t}{\btout{U} S'}}{\vart{t}} \cat t: \btout{S' \subst{\trec{t}{\btout{U} S'}}{\vart{t}}} \tinact \hastype \bout{s}{\omapchar{U}}\bout{t}{s} \inact \hastype \Proc
+						}
+					\]
+
+			\item	Other cases are similar.
+	\end{itemize}
+	The proof for parts 2 and 3 is similar.
+	\qed
+\end{proof}
+
+
+
+
 %\section{Behavioural Semantics}
 
 We present the proofs for 
