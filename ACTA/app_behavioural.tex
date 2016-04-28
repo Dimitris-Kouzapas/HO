@@ -10,61 +10,63 @@ We state a more detailed form of \propref{p:inhabit} as given in Page~\pageref{p
 
 \begin{proposition}[Characteristic Processes/Values Inhabit Their Types]
 	\label{app:characteristic_inhabit}
-	Let $U$ be a type.
 	\begin{enumerate}
-		\item	If $U = S$ then for some s, $\es; \es; s: S \proves \omapchar{S} \hastype S$.
+		\item	Let type $U$, then
+		\begin{enumerate}
+			\item	If $U = S$ then for some s, $\es; \es; s: S \proves \omapchar{S} \hastype S$.
+	
+			\item	If $U = \chtype{S}$ then for some $a$, $a: \chtype{S}; \es; \es \proves \omapchar{\chtype{S}} \hastype \chtype{S}$.
+	
+			\item	If $U = \chtype{L}$ then for some $a$, $a: \chtype{L}; \es; \es \proves \omapchar{\chtype{L}} \hastype \chtype{L}$.
+	
+			\item	If $U = \shot{U'}$ then whenever $\exists \Gamma, \Delta$ such that
+					$\Gamma; \es; \Delta \proves \mapchar{U'}{x} \hastype \Proc$ then
+					$\Gamma \backslash x ; \es; \Delta \backslash x \proves \omapchar{\shot{U'}} \proves \shot{U'}$.
+	
+			\item	If $U = \shot{U'}$ then whenever $\exists \Gamma, \Delta$ such that
+					$\Gamma; \es; \Delta \proves \mapchar{U'}{x} \hastype \Proc$ then
+					$\Gamma \backslash x ; \es; \Delta \backslash x \proves \omapchar{\shot{U'}} \proves \shot{U'}$.
+		\end{enumerate}
 
-		\item	If $U = \chtype{S}$ then for some $a$, $a: \chtype{S}; \es; \es \proves \omapchar{\chtype{S}} \hastype \chtype{S}$.
+		\item	Let type $S$, then
+		\begin{enumerate}
+			\item	If $S = \btout{U} S'$ then
+					whenever $\Gamma; \es; \Delta \proves \omapchar{U} \hastype U$ then
+					$\Gamma; \es; \Delta \cat t: \btout{S'} \tinact \cat s: \btout{U} S' \proves \mapchar{\btout{U} S'}{s} \hastype \Proc$.
+	
+			\item	If $S = \btinp{U} S'$ then whenever $\exists \Gamma, \Delta$ such that
+					$\Gamma; \es; \Delta \proves \mapchar{U'}{x}  \hastype \Proc$ then
+					$\Gamma \backslash x; \es; (\Delta\backslash x) \cat t: \btinp{S'} \tinact \cat s: \btout{U} S' \proves \mapchar{\btinp{U} S'}{s} \hastype \Proc$.
+	
+			\item	If $S = \btsel{l: S'}$ then
+					$\es; \es; t: \btout{S'} \tinact \cat s: \btsel{l: S'} \proves \mapchar{\btsel{l: S'}}{s} \hastype \Proc$.
+	
+			\item	If $S = \btbra{l_i: S_i}_{i \in I}$ then
+					$\es; \es; \set{t_i: \btout{S_i}}_{i \in I} \tinact \cat s: \btbra{l_i: S_i}_{i \in I} \proves \mapchar{\btbra{l_i: S_i}_{i \in I}}{s} \hastype \Proc $.
+	
+			\item	If $S = \trec{t}{S'}$ then whenever
+					$\exists, \Gamma, \Delta \cat t: S_2$ such that
+					$\Gamma; \es; \Delta \cat t: S_2 \cat s: S' \subst{\tinact}{\vart{t}} \proves \mapchar{S' \subst{\tinact}{\vart{t}}}{s} \hastype \Proc$
+					then $\exists S_1$, 
+					$\Gamma; \es; \Delta \cat t: \btout{S_1} \tinact \cat s: \trec{t}{S'} \proves \mapchar{\trec{t}{S'}}{s} \hastype \Proc$.
+	
+			\item	If $S = \tinact$ then $\es; \es; \es; \proves \mapchar{\tinact}{s} \hastype \Proc$.
+		\end{enumerate}
 
-		\item	If $U = \chtype{L}$ then for some $a$, $a: \chtype{L}; \es; \es \proves \omapchar{\chtype{L}} \hastype \chtype{L}$.
-
-		\item	If $U = \shot{U'}$ then whenever $\exists \Gamma, \Delta$ such that
-				$\Gamma; \es; \Delta \proves \mapchar{U'}{x} \hastype \Proc$ then
-				$\Gamma \backslash x ; \es; \Delta \backslash x \proves \omapchar{\shot{U'}} \proves \shot{U'}$.
-
-		\item	If $U = \shot{U'}$ then whenever $\exists \Gamma, \Delta$ such that
-				$\Gamma; \es; \Delta \proves \mapchar{U'}{x} \hastype \Proc$ then
-				$\Gamma \backslash x ; \es; \Delta \backslash x \proves \omapchar{\shot{U'}} \proves \shot{U'}$.
-
-		\item	If $U = \btout{U'} S$ then
-				whenever $\Gamma; \es; \Delta \proves \omapchar{U'} \hastype U'$ then
-				$\Gamma; \es; \Delta \cat t: \btout{S} \tinact \cat s: \btout{U'} S \proves \mapchar{\btout{U'} S}{s} \hastype \Proc$.
-
-		\item	If $U = \btinp{U'} S$ then whenever
-				$\Gamma; \es; \Delta \proves \mapchar{U'}{x}  \hastype \Proc$
-%				and $\Gamma; \es; \Delta' \cat s: S \proves \mapchar{S}{s} \hastype \Proc$ then
-				$\Gamma \backslash x; \es; (\Delta\backslash x) \cat t: \btinp{S} \tinact \cat s: \btout{U'} S \proves \mapchar{\btinp{U'} S}{s} \hastype \Proc$.
-
-		\item	If $U = \btsel{l: S}$ then
-%				whenever $\Gamma; \es; \Delta' \cat s: S \proves \mapchar{S}{s} \hastype \Proc$ then
-				$\es; \es; t: \btout{S} \tinact \cat s: \btsel{l: S} \proves \mapchar{\btsel{l: S}}{s} \hastype \Proc $.
-
-		\item	If $U = \btbra{l_i: S_i}_{i \in I}$ then
-%				whenever $\forall i \in I, \Gamma; \es; \Delta' \cat s: S_i \proves \mapchar{S_i}{s} \hastype \Proc$ then
-				$\es; \es; \set{t_i: \btout{S_i}}_{i \in I} \tinact \cat s: \btbra{l_i: S_i}_{i \in I} \proves \mapchar{\btbra{l_i: S_i}_{i \in I}}{s} \hastype \Proc $.
-
-%		\item	If $U = \vart{t}$ then
-%				$\Gamma \cat \varp{X_{\vart{t}}}: \set{s: S}; \es; s: S \proves \mapchar{t}{s} \hastype \Proc$
-
-		\item	If $U = \trec{t}{S}$ then whenever $\exists, \Gamma, \Delta$ such that
-				$\Gamma; \es; \Delta \cat t: S'' \cat s: S \subst{\tinact}{\vart{t}} \proves \mapchar{S \subst{\tinact}{\vart{t}}}{s} \hastype \Proc$
-				then $\exists S'$
-				$\Gamma; \es; \Delta \cat t: \btout{S'} \tinact \cat s: \trec{t}{S} \proves \mapchar{\trec{t}{S}}{s} \hastype \Proc$.
-
-		\item	If $U = \tinact$ then $\es; \es; \es; \proves \mapchar{\tinact}{s} \hastype \Proc$.
-
-
-		\item	If $U = \chtype{S}$ then whenever $\es; \es; \Delta \proves \omapchar{S} \hastype S$ then
-				$a: \chtype{S}; \es; \Delta \cat t: \btout{\chtype{S}} \tinact \proves \mapchar{\chtype{S}}{a} \hastype \Proc$.
-
-		\item	If $U = \chtype{L}$ then whenever $\Gamma; \es; \Delta \proves \omapchar{L} \hastype L$ then
-				$\Gamma \cat a: \chtype{L}; \es; \Delta \cat t: \btout{\chtype{L}} \tinact \proves \mapchar{\chtype{L}}{a} \hastype \Proc$.
-
-		\item	If $U = \shot{U'}$ then whenever $\Gamma; \es; \Delta \proves \omapchar{U'} \hastype U'$ then
-				$\Gamma \cat x: \shot{U'}; \es;\Delta \proves \mapchar{\shot{U'}}{x} \hastype \Proc$.
-
-		\item	If $U = \lhot{U'}$ then whenever $\Gamma; \es; \Delta \proves \omapchar{U'} \hastype U'$ then
-				$\Gamma \cat x: \shot{U'}; \es;\Delta \proves \mapchar{\lhot{U'}}{x} \hastype \Proc$.
+		\item	Let type $U$.
+		\begin{enumerate}
+			\item	If $U = \chtype{S}$ then whenever $\es; \es; \Delta \proves \omapchar{S} \hastype S$ then
+					$a: \chtype{S}; \es; \Delta \cat t: \btout{\chtype{S}} \tinact \proves \mapchar{\chtype{S}}{a} \hastype \Proc$.
+	
+			\item	If $U = \chtype{L}$ then whenever $\Gamma; \es; \Delta \proves \omapchar{L} \hastype L$ then
+					$\Gamma \cat a: \chtype{L}; \es; \Delta \cat t: \btout{\chtype{L}} \tinact \proves \mapchar{\chtype{L}}{a} \hastype \Proc$.
+	
+			\item	If $U = \shot{U'}$ then whenever $\Gamma; \es; \Delta \proves \omapchar{U'} \hastype U'$ then
+					$\Gamma \cat x: \shot{U'}; \es;\Delta \proves \mapchar{\shot{U'}}{x} \hastype \Proc$.
+	
+			\item	If $U = \lhot{U'}$ then whenever $\Gamma; \es; \Delta \proves \omapchar{U'} \hastype U'$ then
+					$\Gamma \cat x: \shot{U'}; \es;\Delta \proves \mapchar{\lhot{U'}}{x} \hastype \Proc$.
+		\end{enumerate}
 	\end{enumerate}
 \end{proposition}
 
@@ -975,7 +977,7 @@ processes in terms of process equivalence.
 					{\Delta_2'}{\newsp{\widetilde{m_2}}{Q' \Par \appl{\omapchar{U}}{n_2}}}
 				\]
 				with $\subj{\ell_2} = n_1$.
-				But then in the latter result we can observe an action on $t'$ and on the latter
+				But then in the former result we can observe an action on $t'$ and on the latter
 				we cannot, thus leading to a contradiction with respect to bisimilarity.
 
 		\item	The proof for Part 2 is also done by contradiction. Assume that
