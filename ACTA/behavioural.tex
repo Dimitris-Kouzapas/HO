@@ -1264,11 +1264,13 @@ use two different trigger processes (cf.~\eqref{eq:4}):
 %
 \begin{eqnarray}
 	\htrigger{t}{V}	& \defeq &
-	\left\{ \begin{array}{ll}
-		\hotrigger{t}{x}{s}{V} & V = n\\
-		\binp{t}{x} \newsp{s}{\binp{s}{y} \appl{y}{x} \Par \bout{\dual{s}}{V} \inact} & V = \abs{x}{P}
-	\end{array}
-	\right.
+	\begin{cases}
+%	\left\{ \begin{array}{ll}
+		\hotrigger{t}{x}{s}{V} & \newc{\text{if $V$ is a first-order value}}\\
+		\binp{t}{x} \newsp{s}{\binp{s}{y} (\appl{y}{x}) \Par \bout{\dual{s}}{V} \inact} & \newc{\text{if $V$ is a higher-order value}~~}
+	%\end{array}
+	%\right.
+		\end{cases}
 	\label{eqb:0} \\
 	\ftrigger{t}{V}{U}	& \defeq &	\fotrigger{t}{x}{s}{U}{V}	\label{eqb:4}
 %	\mapchar{\btinp{U} \tinact}{s}
@@ -1544,43 +1546,41 @@ techniques for higher-order processes with sessions.
 \end{lemma}
 
 \begin{proof}[Sketch]
-\dk{
+\newc{
 	The main difference between the definition of the two bisimilarity relations
-	is the trigger process. Thus, the interesting case is the
-	case where we observe an output from a process. The
+	is the trigger process (namely, higher-order triggers $\htrigger{t}{V}$ in $\hwb$ and characteristic triggers $\ftrigger{t}{V}{U}$ in $\fwb$). Thus, the most interesting case is when we observe an output from a process. 
+	When showing that $\fwb \subseteq \hwb$, 
+	the
 	key after the output is to show that
 	\[
 		\newsp{\tilde{m_1}}{P_1 \Par \ftrigger{t}{V}{U}} \hwb \newsp{\tilde{m_2}}{P_2 \Par \ftrigger{t}{V_2}{U}}
 	\]
 	given that 
 	\[
-		\newsp{\tilde{m_1}}{P_1 \Par \htrigger{t}{V}} \hwb \newsp{\tilde{m_2}}{P_2 \Par \htrigger{t}{V_2}}
+		\newsp{\tilde{m_1}}{P_1 \Par \htrigger{t}{V}} \hwb \newsp{\tilde{m_2}}{P_2 \Par \htrigger{t}{V_2}}.
 	\]
-	when showing that $\fwb \subseteq \hwb$,
-	and
+	Similarly, in the proof of $\hwb \subseteq \fwb$, the key step is showing that
 	\[
 		\newsp{\tilde{m_1}}{P_1 \Par \htrigger{t}{V}} \fwb \newsp{\tilde{m_2}}{P_2 \Par \htrigger{t}{V_2}}
 	\]
 	given that 
 	\[
-		\newsp{\tilde{m_1}}{P_1 \Par \ftrigger{t}{V}} \fwb \newsp{\tilde{m_2}}{P_2 \Par \ftrigger{t}{V_2}{U}}
+		\newsp{\tilde{m_1}}{P_1 \Par \ftrigger{t}{V}} \fwb \newsp{\tilde{m_2}}{P_2 \Par \ftrigger{t}{V_2}{U}}.
 	\]
-	when showing that $\hwb \subseteq \fwb$.
-}
-	The above comes from the intuition that
+	Intuitively, the above equalities follow from the fact that  
 	characteristic trigger processes
 	$\ftrigger{t}{V}{U}$
 	and
 	higher-order trigger processes
 	$\htrigger{t}{V}$
-	exhibit similar behaviour.
+	exhibit similar behaviour.}
 	Indeed, while for the former we have
 	\begin{eqnarray*}
 		\fotrigger{t}{x}{s}{U}{V} &\hby{\bactinp{t}{s'}}& \newsp{s}{\binp{s}{y} \mapchar{U}{y}  \Par \bout{\dual{s}}{V} \inact}
 	\end{eqnarray*}
 		for the latter we have:
 	\begin{eqnarray*}
-		\hotrigger{t}{x}{s}{V} &\hby{\bactinp{t}{\omapchar{U}}}& \newsp{s}{ \binp{s}{y} \mapchar{U}{y}  \Par \bout{\dual{s}}{V} \inact}\\
+		\hotrigger{t}{x}{s}{V} &\hby{\bactinp{t}{\omapchar{U}}}& \newsp{s}{ \binp{s}{y} \mapchar{U}{y}  \Par \bout{\dual{s}}{V} \inact}
 %		&\by{\tau}& \newsp{s}{ \binp{s}{y} \mapchar{U}{y}  \Par \bout{\dual{s}}{V} \inact}
 	\end{eqnarray*}
 %
