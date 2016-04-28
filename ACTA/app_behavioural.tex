@@ -24,29 +24,30 @@
 				$\Gamma; \es; \Delta \proves \mapchar{U'}{x} \hastype \Proc$ then
 				$\Gamma \backslash x ; \es; \Delta \backslash x \proves \omapchar{\shot{U'}} \proves \shot{U'}$.
 
-		\item	If $U = \btout{U'} S$ then whenever
-				$\Gamma; \es; \Delta \proves \omapchar{U'} \hastype U'$ then
+		\item	If $U = \btout{U'} S$ then
+				whenever $\Gamma; \es; \Delta \proves \omapchar{U'} \hastype U'$ then
 				$\Gamma; \es; \Delta \cat t: \btout{S} \tinact \cat s: \btout{U'} S \proves \mapchar{\btout{U'} S}{s} \hastype \Proc$.
 
 		\item	If $U = \btinp{U'} S$ then whenever
 				$\Gamma; \es; \Delta \proves \mapchar{U'}{x}  \hastype \Proc$
-				and $\Gamma; \es; \Delta' \cat s: S \proves \mapchar{S}{s} \hastype \Proc$ then
+%				and $\Gamma; \es; \Delta' \cat s: S \proves \mapchar{S}{s} \hastype \Proc$ then
 				$\Gamma \backslash x; \es; (\Delta\backslash x) \cat t: \btinp{S} \tinact \cat s: \btout{U'} S \proves \mapchar{\btinp{U'} S}{s} \hastype \Proc$.
 
-		\item	If $U = \btsel{l: S}$ then whenever
-				$\Gamma; \es; \Delta' \cat s: S \proves \mapchar{S}{s} \hastype \Proc$ then
+		\item	If $U = \btsel{l: S}$ then
+%				whenever $\Gamma; \es; \Delta' \cat s: S \proves \mapchar{S}{s} \hastype \Proc$ then
 				$\es; \es; t: \btout{S} \tinact \cat s: \btsel{l: S} \proves \mapchar{\btsel{l: S}}{s} \hastype \Proc $.
 
-		\item	If $U = \btbra{l_i: S_i}_{i \in I}$ then whenever
-				$\forall i \in I, \Gamma; \es; \Delta' \cat s: S_i \proves \mapchar{S_i}{s} \hastype \Proc$ then
+		\item	If $U = \btbra{l_i: S_i}_{i \in I}$ then
+%				whenever $\forall i \in I, \Gamma; \es; \Delta' \cat s: S_i \proves \mapchar{S_i}{s} \hastype \Proc$ then
 				$\es; \es; \set{t_i: \btout{S_i}}_{i \in I} \tinact \cat s: \btbra{l_i: S_i}_{i \in I} \proves \mapchar{\btbra{l_i: S_i}_{i \in I}}{s} \hastype \Proc $.
 
-		\item	If $U = \vart{t}$ then
-				$\Gamma \cat \varp{X_{\vart{t}}}: \set{s: S}; \es; s: S \proves \mapchar{t}{s} \hastype \Proc$
+%		\item	If $U = \vart{t}$ then
+%				$\Gamma \cat \varp{X_{\vart{t}}}: \set{s: S}; \es; s: S \proves \mapchar{t}{s} \hastype \Proc$
 
-		\item	If $U = \trec{t}{S}$ then whenever $\exists \Gamma, \Delta$ such that
-				$\Gamma \cat \varp{X_{\vart{t}}}: \set{s: \trec{t}{S}}; \es; \Delta \cat t: \btout{S'} \tinact \cat s: S \proves \mapchar{S}{s} \hastype \Proc$ then
-				$\Gamma; \es; \Delta \cat t: \btout{S'} \tinact \cat s: S \proves \mapchar{\trec{t}{S}}{s} \hastype \Proc$.
+		\item	If $U = \trec{t}{S}$ then whenever $\exists, \Gamma, \Delta$ such that
+				$\Gamma; \es; \Delta \cat t: S'' \cat s: S \subst{\tinact}{\vart{t}} \proves \mapchar{S \subst{\tinact}{\vart{t}}}{s} \hastype \Proc$
+				then $\exists S'$
+				$\Gamma; \es; \Delta \cat t: \btout{S'} \tinact \cat s: \trec{t}{S} \proves \mapchar{\trec{t}{S}}{s} \hastype \Proc$.
 
 		\item	If $U = \tinact$ then $\es; \es; \es; \proves \mapchar{\tinact}{s} \hastype \Proc$.
 
@@ -104,47 +105,18 @@
 					}
 				\]
 			\item	Case $S = \trec{t}{S'}$.
-					\dk{proof}
-
-%					We do a sub-case analysis on recursive unfold. A notable case is the output prefix.
-%					$S = \trec{t}{\btout{U} S'}$ with $\mapchar{\btout{U} S' \subst{\trec{t}{\btout{U} S'}}{\vart{t}} }{s} = \bout{t}{\omapchar{U}} \bout{t}{s} \inact $. 
-%					\[
-%						\tree{
-%							\begin{array}{l}
-%								\Gamma; \es; s: S' \subst{\trec{t}{\btout{U} S'}}{\vart{t}} \cat t: \btout{S' \subst{\trec{t}{\btout{U} S'}}{\vart{t}}} \tinact \hastype \bout{t}{s} \inact \hastype \Proc
-%								\\
-%								\Gamma; \es; \Delta \proves \omapchar{U} \hastype U  \qquad \text{(Induction)}
-%							\end{array}
-%						}{
-%							\Gamma; \es; \Delta \cat s: \btout{U} S' \subst{\trec{t}{\btout{U} S'}}{\vart{t}} \cat t: \btout{S' \subst{\trec{t}{\btout{U} S'}}{\vart{t}}} \tinact \hastype \bout{s}{\omapchar{U}}\bout{t}{s} \inact \hastype \Proc
-%						}
-%					\]
-
+					\[
+						\tree{
+							\Gamma; \es; \Delta \cat t: \btout{S'} \tinact \cat s: S' \proves \bout{t}{s} \hastype \Proc
+						}{
+							\Gamma; \es; \Delta \cat t: \btout{S'} \tinact \cat s: \trec{t}{S} \hastype \mapchar{\trec{t}{S}}{s} \hastype \Proc
+						}
+					\]
 			\item	Other cases are similar.
 	\end{itemize}
 	The proof for parts 2 and 3 is similar.
 	\qed
 \end{proof}
-
-
-\begin{example}[Type inhabitation of $\trec{t}{\btout{\tinact} \vart{t}}$]
-	\[
-		\tree{ 
-			\tree{
-				\begin{array}{l}
-				\varp{X}_{\vart{t}}: \set {s : \trec{t}{\btout{\tinact} \vart{t}}}; \es; s : \trec{t}{\btout{\tinact} \vart{t}} \proves \mapchar{t}{s} = \varp{X}_{\vart{t}} \hastype \Proc
-				\\
-				\es: \es: s': \tinact \proves s' \hastype \tinact
-				\end{array}
-			}{
-				\Gamma \cat \varp{X}_{\vart{t}}: \set {s : \trec{t}{\btout{\tinact} \vart{t}}}; \es; t: \btout{\trec{t}{\btout{\tinact} \vart{t}}} \tinact \cat s : \btout{\tinact} \trec{t}{\btout{\tinact} \vart{t}} \proves \mapchar{\btout{\tinact} \vart{t}}{s} = \bout{s}{s'} \bout{t}{s} \tinact \hastype \Proc
-			}
-		}{
-				\Gamma \cat \varp{X}_{\vart{t}}: \set {s : \trec{t}{\btout{\tinact} \vart{t}}}; \es; t: \btout{\trec{t}{\btout{\tinact} \vart{t}}} \tinact \cat s : \btout{\tinact} \trec{t}{\btout{\tinact} \vart{t}} \proves \mapchar{\trec{t}{\btout{\tinact} \vart{t}}}{s} = \bout{s}{s'} \bout{t}{s} \tinact \hastype \Proc
-		}
-	\]
-\end{example}
-
 
 %\section{Behavioural Semantics}
 
@@ -750,7 +722,7 @@ and higher order trigger processes.
 						\]
 						is immediate from the definition of $\Re$.
 
-				\item The action comes from the interaction of $P$ and $\hotrigger{t}{x}{s}{V_1}$: This case is not possible, due to the freshness of $t$.
+				\item The action comes from the interaction of $P$ and $\htrigger{t}{V_1}$: This case is not possible, due to the freshness of $t$.
 				\end{enumerate}
 	\end{enumerate}
 	\qed
@@ -955,7 +927,7 @@ processes in terms of process equivalence.
 			\]
 
 		\item
-			If
+			If $n$ fresh and
 			\[
 				\horel{\Gamma}{\Delta_1}{ \newsp{\widetilde{m_1}}{P \subst{n}{x} \Par \bout{t_1}{n_1} \inact }}
 				{\hwb}
@@ -1107,15 +1079,15 @@ processes in terms of process equivalence.
 							\]
 							implies
 							\[
-								\horel{\Gamma}{\Delta_2}{\newsp{\widetilde{m_2}'}{Q \subst{m}{x}} \Par \bout{t}{n_2} \inact}
+								\horel{\Gamma}{\Delta_2}{\newsp{\widetilde{m_2}'}{Q \subst{n}{x}} \Par \bout{t}{n_2} \inact}
 								{\Hby{\ell_2}}
-								{\Delta_2'}{\newsp{\widetilde{m_2}'}{Q' \subst{m}{x}} \Par \bout{t}{n_2} \inact}
+								{\Delta_2'}{\newsp{\widetilde{m_2}'}{Q' \subst{n}{x}} \Par \bout{t}{n_2} \inact}
 							\]
 							and
 							\[
 								\horel{\Gamma}{\Delta_2}{\newsp{\widetilde{m_1}'}{P' \subst{n}{x}} \Par \bout{t}{n_2} \inact \Par C_1}
 								{\hwb}
-								{\Delta_2'}{\newsp{\widetilde{m_2}'}{Q' \subst{m}{x}} \Par \bout{t}{n_2} \inact \Par C_2}
+								{\Delta_2'}{\newsp{\widetilde{m_2}'}{Q' \subst{n}{x}} \Par \bout{t}{n_2} \inact \Par C_2}
 							\]
 							with $C_1 = \htrigger{t}{n_1}$ and $C_2 = \htrigger{t}{n_2}$ if $\ell_1$ and $\ell_2$ are output actions,
 							$C_1 = \inact$ and $C_2 = \inact$ otherwise.
@@ -1132,17 +1104,132 @@ processes in terms of process equivalence.
 								{\Delta_2'}{\newsp{\widetilde{m_2}'}{Q' \subst{n_2}{x}} \Par C_2}
 							\]
 
-					\item	$\subj{\ell_1} = n_1$. The case is similar as the previous case.
+					\item	$\subj{\ell_1} = n_1$. We distinguish two subcases
+							\begin{itemize}
+								\item	$n_1 = n_2$. The case is similar as the previous case.
+								\item	$n_1 \not= n_2$.
+										From the premise and Part 1 of this lemma we get
+										that $\dual{n_1} \in \fn{P}$ and $\dual{n_2} \in \fn{Q}$.
+										The latter implies that this case is not possible, since
+										no external action $\ell_1$ would be observed, because
+										of the typed transition requirement.
+							\end{itemize}
 
 					\item	$\ell_1 = \tau$. This implies the untyped transitions
-							\begin{eqnarray*}
-								\newsp{\widetilde{m_1}}{P \subst{n_1}{x}} &\hby{\ell_1'}& \newsp{\widetilde{m_{11}}}{P_1 \subst{n_1}{x}}\\
-								\newsp{\widetilde{m_1}}{P \subst{n_1}{x}} &\hby{\ell_2'}& \newsp{\widetilde{m_{12}}}{P_2 \subst{n_1}{x}}\\
+							\begin{eqnarray}
+								\newsp{\widetilde{m_1}}{P \subst{n_1}{x}} &\hby{\ell_{11}'}& \newsp{\widetilde{m_{11}}}{P_1 \subst{n_1}{x}}
+								\label{lem:tr_app_41}\\
+								\newsp{\widetilde{m_1}}{P \subst{n_1}{x}} &\hby{\ell_{12}'}& \newsp{\widetilde{m_{12}}}{P_2 \subst{n_1}{x}}
+								\label{lem:tr_app_42}\\
 								\ell_1' &\asymp& \ell_2'
-							\end{eqnarray*}
+							\end{eqnarray}
+							We distinguish two cases:
+							\begin{itemize}
+								\item	$\subj{\ell_1'} \not= n_1$. This case is similar with case 1 of this proof.
+								\item	$\subj{\ell_1'} = n_1$.
+										First observe that
+										\[
+											\horel{\Gamma}{\Delta_1}{\newsp{\widetilde{m_1}}{P \subst{n}{x} \Par \bout{t}{n_1} \inact}}
+											{ \hby{\ell_{11}''} }
+											{\Delta_1'}{\newsp{\widetilde{m_1}'}{P_1 \subst{n}{x} \Par \bout{t}{n_1} \inact}}
+										\]
+										with $\ell_{11}'' \subst{n_1}{n}  = \ell_{11}' $.
+										which implies
+										\[
+											\horel{\Gamma}{\Delta_2}{\newsp{\widetilde{m_2}}{Q \subst{n}{x} \Par \bout{t}{n_2} \inact}}
+											{ \Hby{\ell_{21}''} }
+											{\Delta_2'}{\newsp{\widetilde{m_2}'}{Q_1 \subst{n}{x} \Par \bout{t}{n_2} \inact}}
+										\]
+										with $\ell_{21}'' \subst{n_2}{n}  = \ell_{21}' $.
+										which in turn implies
+										\begin{eqnarray}
+											\newsp{\widetilde{m_2}}{Q \subst{n_2}{x}} &\hby{\ell_{22}'}& \newsp{\widetilde{m_{21}}}{Q_1 \subst{n_2}{x}}
+											\label{lem:tr_app_43}
+										\end{eqnarray}
+										Also observe that for $U = \Delta(n_1)$
+										\[
+											\mhorel{\Gamma}{\Delta_1}{\newsp{\widetilde{m_1}}{P \subst{n}{x} \Par \bout{t}{n_1} \inact}}
+											{ \hby{\bactout{t}{n_1}} \hby{\bactinp{t}{\omapchar{U}}} \Hby{\dtau} }
+											{\Delta_1''}{}{\newsp{\widetilde{m_1}''}{P \subst{n}{x} \Par \omapchar{U} \subst{n_1}{x}}}
+										\]
+										which implies
+										\[
+											\mhorel{\Gamma}{\Delta_2}{\newsp{\widetilde{m_2}}{Q \subst{n}{x} \Par \bout{t}{n_2} \inact}}
+											{ \Hby{\bactout{t}{n_2}} \Hby{\bactinp{t}{\omapchar{U}}} \Hby{\dtau} }
+											{\Delta_2''}{}{\newsp{\widetilde{m_2}''}{Q' \subst{n}{x} \Par \omapchar{U} \subst{n_2}{x}}}
+										\]
+										with
+										\[
+											\mhorel{\Gamma}{\Delta_1''}{\newsp{\widetilde{m_1}''}{P \subst{n}{x} \Par \omapchar{U} \subst{n_1}{x}}}
+											{\hwb}
+											{\Delta_2''}{}{\newsp{\widetilde{m_2}''}{Q' \subst{n}{x} \Par \omapchar{U} \subst{n_2}{x}}}
+										\]
+										From \eqref{lem:tr_app_42} we can see that
+										\[
+											\mhorel{\Gamma}{\Delta_1''}{\newsp{\widetilde{m_1}''}{P \subst{n}{x} \Par \omapchar{U} \subst{n_1}{x}}}
+											{ \hby{\tau} }
+											{\Delta_1'''}{}{\newsp{\widetilde{m_1}''}{P_2 \subst{n}{x} \Par \bout{t'}{n_1} \inact}}
+										\]
+										which implies from part 2 of this lemma
+										\begin{eqnarray}
+											\mhorel{\Gamma}{\Delta_2''}{\newsp{\widetilde{m_2}''}{Q' \subst{n}{x} \Par \omapchar{U} \subst{n_2}{x}}}
+											{\Hby{\tau}}
+											{\Delta_2'''}{}{\newsp{\widetilde{m_2}''}{Q_2 \subst{n}{x} \Par \btout{t'}{n_1} \inact}}
+											\label{lem:tr_app_44}
+										\end{eqnarray}
+										and
+										\begin{eqnarray}
+											\horel{\Gamma}{\Delta_1'''}{\newsp{\widetilde{m_1}''}{P_2 \subst{n}{x} \Par \bout{t'}{n_1} \inact}}
+											{\hwb}
+											{\Delta_2'''}{\newsp{\widetilde{m_2}''}{Q_2 \subst{n}{x} \Par \btout{t'}{n_1} \inact}}
+											\label{lem:tr_app_45}
+										\end{eqnarray}
+										where \eqref{lem:tri_app_44} implies the untyped transition
+										\[
+											\newsp{\widetilde{m_2}''}{Q' \subst{n}{x} \Par \omapchar{U} \subst{n_2}{x}}
+											\Hby{ \ell_{22}'' }
+											\newsp{\widetilde{m_2}''}{Q_2 \subst{n}{x} \Par \omapchar{U} \subst{n_2}{x}}
+										\]
+										and furthermore,
+										\[
+											\newsp{\widetilde{m_2}''}{Q' \subst{n_2}{x}}
+											\Hby{ \ell_{22}' }
+											\newsp{\widetilde{m_2}''}{Q_2 \subst{n_2}{x}}
+										\]
+										with $\ell_{22}'' \subst{n_2}{n} = \ell_{22}'$.
+										From the last result and \eqref{{lem:tr_app_43}} we get
+										\[
+											\mhorel{\Gamma}{\Delta_2}{\newsp{\widetilde{m_2}}{ Q \subst{n_2}{x}   }  }
+											{\Hby{\tau}}
+											{\Delta_2'}{}{\newsp{\widetilde{m_2}''}{ Q'' \subst{n_2}{x}   }  }
+										\]
+										Furthermore, from \eqref{lem:tr_app_45} we can get that
+										\[
+											\horel{\Gamma}{\Delta_1'''}{\newsp{\widetilde{m_1}''}{P_2 \subst{n}{x} \Par \bout{t'}{n_1} \inact}}
+											{\hby{\ell_{12}''}}
+											{\Delta_3}{\newsp{\widetilde{m_1}'''}{P' \subst{n}{x} \Par \bout{t'}{n_1} \inact}}
+										\]
+										which implies
+										\[
+											\horel{\Gamma}{\Delta_2'''}{\newsp{\widetilde{m_2}''}{Q_2 \subst{n}{x} \Par \btout{t'}{n_2} \inact}}
+											{\hby{\ell_{22}''}}
+											\horel{\Delta_4}{\newsp{\widetilde{m_2}'''}{Q'' \subst{n}{x} \Par \bout{t'}{n_2} \inact}}
+										\]
+										and
+										\begin{eqnarray*}
+											\horel{\Gamma}{\Delta_3}{\newsp{\widetilde{m_1}'''}{P' \subst{n}{x} \Par \bout{t'}{n_1} \inact}}
+											{\hwb}
+											{\Delta_4}{\newsp{\widetilde{m_2}'''}{Q'' \subst{n}{x} \Par \btout{t'}{n_1} \inact}}
+										\end{eqnarray*}
+										which in turn implies
+										\begin{eqnarray*}
+											\horel{\Gamma}{\Delta_1'}{\newsp{\widetilde{m_1}'''}{P' \subst{n_1}{x}}}
+											{\ \Re\ }
+											{\Delta_2'}{\newsp{\widetilde{m_2}'''}{Q'' \subst{n_2}{x}}}
+										\end{eqnarray*}
+										as required.
+							\end{itemize}
 					\end{itemize}
-
-				\dk{finish proof}
 	\end{enumerate}
 	\qed
 \end{proof}
