@@ -183,10 +183,24 @@ We state a more detailed form of \propref{p:inhabit} as given in Page~\pageref{p
 			\item	$\trec{t}{  \btbra{l_1: \vart{t}, l_2: \tinact}  }$
 					\[
 					\tree{
+					}{
 						\es; \es; t_1: \btout{\tinact} \tinact \cat t_2: \btout{\tinact} \tinact \cat
 						s: \btbra{l_1: \tinact, l_2: \tinact} \proves
 						\mapchar{\btbra{l_1: \tinact, l_2: \tinact}}{s} = \bbra{s}{l_1: \bout{t_1}{s} \inact, l_2: \bout{t_2}{s} \inact}
 						\hastype \Proc
+					}
+					\]
+					and
+					\[
+					\tree{
+						\begin{array}{l}
+							\es; \es; t_1: \btout{\trec{t}{  \btbra{l_1: \vart{t}, l_2: \tinact}}} \tinact
+							\cat s: \trec{t}{  \btbra{l_1: \vart{t}, l_2: \tinact}} \proves
+							\bout{t_1}{s} \inact \hastype \Proc
+							\\
+							\es; \es; t_2: \btout{\tinact} \tinact \cat \tinact \proves
+							\bout{t_2}{s} \inact \hastype \Proc
+						\end{array}
 					}{
 						\es; \es; t_1: \btout{\trec{t}{  \btbra{l_1: \vart{t}, l_2: \tinact}}} \tinact \cat t_2: \btout{\tinact} \tinact \cat
 						s: \trec{t}{  \btbra{l_1: \vart{t}, l_2: \tinact}} \proves
@@ -453,6 +467,406 @@ several lemmas:
 		which implies $\wbc \subseteq \cong$.
 \item	\lemref{app:lem:cong_is_wb} shows  that $\cong \subseteq \hwb$.
 \end{enumerate}
+
+\newcommand{\ntrigger}[2]{#1 \leftharpoonup #2}
+\newcommand{\newtrigger}[2]{\binp{#1}{x} \newsp{s}{\appl{x}{s} \Par \bout{\dual{s}}{#2} \inact} }
+
+First we introduce an alternative trigger process
+that is used to simplify the proofs. Let
+\[
+	\ntrigger{t}{V} = \newtrigger{t}{V}
+\]
+
+The first auxiliary lemma states the equivalence between
+the trigger processes $\htrigger{t}{V}$ and $\ntrigger{t}{V}$.
+\begin{lemma}[Alternative Trigger Process]
+	\begin{enumerate}
+		\item	Let $t$ a fresh name, $\Delta_1 = \Delta_3 \cat t: \btout{\tinact} \tinact$ and
+				$\Delta_2 = \Delta_4 \cat t: \btout{\tinact} \tinact$
+				\[
+					\horel{\Gamma}{\Delta_1}{\newsp{\widetilde{m_1}}{P \Par \newsp{s}{\bout{t}{s} \inact}  } }
+					{\hwb}
+					{\Delta_2}{\newsp{\widetilde{m_2}}{Q \Par \newsp{s}{\bout{t}{s} \inact}  } }
+				\]
+				if and only if
+				\[
+					\horel{\Gamma}{\Delta_3}{\newsp{\widetilde{m_1}}{P  } }
+					{\hwb}
+					{\Delta_4}{\newsp{\widetilde{m_2}}{Q}}
+				\]
+
+		\item
+				\[
+					\horel{\Gamma}{\Delta_1}{\newsp{\widetilde{m_1}}{P \Par \ntrigger{t}{V_1}  } }
+					{\hwb}
+					{\Delta_2}{\newsp{\widetilde{m_2}}{Q \Par \ntrigger{t}{V_2}  } }
+				\]
+				if and only if
+				\[
+					\horel{\Gamma}{\Delta_3}{\newsp{\widetilde{m_1}}{P \Par \htrigger{t}{V_1}  } }
+					{\hwb}
+					{\Delta_4}{\newsp{\widetilde{m_2}}{Q \Par \htrigger{t}{V_2}}}
+				\]
+	\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+	Part 1. We split the proof into the two directions
+	of the if and only if requirements.
+	\begin{enumerate}
+		\item	First direction. Consider typed relation (we omit the type information for readability)
+				\begin{eqnarray*}
+					\Re &=& \set{	\newsp{\widetilde{m_1}}{P}\ , \ 
+									\newsp{\widetilde{m_2}}{Q} \setbar\\
+					&&
+									\horel{\Gamma}{\Delta_1}{\newsp{\widetilde{m_1}}{P \Par \newsp{s}{\bout{t}{s} \inact}  } }
+									{\hwb}
+									{\Delta_2}{\newsp{\widetilde{m_2}}{Q \Par \newsp{s}{\bout{t}{s} \inact}  } }
+					}
+				\end{eqnarray*}
+				We check the requirements of higher order bisimulation
+				for relation $\Re$.
+
+				Assume that
+				\[
+					\horel{\Gamma}{\Delta_3}{\newsp{\widetilde{m_1}}{P   } }
+					{\hby{\ell_1}}
+					{\Delta_3'}{\newsp{\widetilde{m_1}'}{P'}}
+				\]
+				then we can derive that
+				\[
+					\horel{\Gamma}{\Delta_1}{\newsp{\widetilde{m_1}}{P \Par \newsp{s}{\bout{t}{s} \inact}  } }
+					{\hby{\ell_1}}
+					{\Delta_1'}{\newsp{\widetilde{m_1}'}{P' \Par \newsp{s}{\bout{t}{s} \inact}  } }
+				\]
+				which implies from the freshness of $t$ that there exists $Q'$ such that
+				\begin{eqnarray}
+					\horel{\Gamma}{\Delta_2}{\newsp{\widetilde{m_2}}{Q \Par \newsp{s}{\bout{t}{s} \inact}  } }
+					{\Hby{\ell_2}}
+					{\Delta_2'}{\newsp{\widetilde{m_2}'}{Q' \Par \newsp{s}{\bout{t}{s} \inact}  } }
+					\label{help_tr_1}
+				\end{eqnarray}
+				and
+				\[
+					\horel{\Gamma}{\Delta_1'}{\newsp{\widetilde{m_1}'}{P' \Par C_1 \Par \newsp{s}{\bout{t}{s} \inact}  } }
+					{\hwb}
+					{\Delta_2'}{\newsp{\widetilde{m_2}'}{Q' \Par C_2 \Par \newsp{s}{\bout{t}{s} \inact}  } }
+				\]
+				with $C_1 = \htrigger{t'}{V_1}$ and $C_2 = \htrigger{t'}{V_1}$ if $\ell_1, \ell_2$ output actions
+				with objects $V_1, V_2$, respectively. Otherwise $C_1 = C_2 = \inact$.
+				The latter equation implies from the definition of $\Re$
+				\[
+					\horel{\Gamma}{\Delta_1'}{\newsp{\widetilde{m_1}'}{P' \Par C_1 \Par \newsp{s}{\bout{t}{s} \inact}  } }
+					{\ \Re\ }
+					{\Delta_2'}{\newsp{\widetilde{m_2}'}{Q' \Par C_2 \Par \newsp{s}{\bout{t}{s} \inact}  } }
+				\]
+				and \eqref{help_tr_1} implies
+				\begin{eqnarray*}
+					\horel{\Gamma}{\Delta_2}{\newsp{\widetilde{m_2}}{Q } }
+					{\Hby{\ell_2}}
+					{\Delta_2'}{\newsp{\widetilde{m_2}'}{Q'} }
+				\end{eqnarray*}
+				to complete the proof of the case.
+
+		\item	Second direction. Consider typed relation (we omit the type information for readability)
+				\begin{eqnarray*}
+					\Re &=& \set{	\newsp{\widetilde{m_1}}{P \Par \newsp{s}{\bout{t}{s} \inact}}\ , \ 
+									\newsp{\widetilde{m_2}}{Q \Par \newsp{s}{\bout{t}{s} \inact}} \setbar\\
+					&&
+									\horel{\Gamma}{\Delta_3}{\newsp{\widetilde{m_1}}{P  } }
+									{\hwb}
+									{\Delta_4}{\newsp{\widetilde{m_2}}{Q  } }
+					}	
+				\end{eqnarray*}
+				We check the requirements of higher order bisimulation
+				for relation $\Re$.
+				We analyse three cases
+				\begin{enumerate}
+					\item
+							\[
+								\horel{\Gamma}{\Delta_1}{\newsp{\widetilde{m_1}}{P \Par \newsp{s}{\bout{t}{s} \inact}  } }
+								{\hby{\ell_1}}
+								{\Delta_1'}{\newsp{\widetilde{m_1}'}{P' \Par \newsp{s}{\bout{t}{s} \inact}}}
+							\]
+							The proof is similar with the previous case.
+
+					\item	\[
+								\horel{\Gamma}{\Delta_1}{\newsp{\widetilde{m_1}}{P \Par \newsp{s}{\bout{t}{s} \inact}  } }
+								{\hby{\bactout{t}{s}} }
+								{\Delta_1'}{\newsp{\widetilde{m_1}}{P'}}
+							\]
+							First note the typing derivation
+							reveals that $\Delta_1(t) \Delta_2(t) = \btout{\tinact} \tinact$.
+							This is because the dual endpoint of restricted session $s$ does not appear
+							in process $\newsp{s}{\bout{t}{s} \inact}$ and thus it has the inactive type $\tinact$.
+
+							We can then observe that
+							\[
+								\horel{\Gamma}{\Delta_2}{\newsp{\widetilde{m_2}}{Q \Par \newsp{s}{\bout{t}{s} \inact}  } }
+								{\Hby{\bactout{t}{s}} }
+								{\Delta_2'}{\newsp{\widetilde{m_2}}{Q}}
+							\]
+
+							We need to show that
+							\[
+								\horel{\Gamma}{\Delta_1'}{\newsp{\widetilde{m_1}}{P \Par \htrigger{t'}{s}  } }
+								{\hwb}
+								{\Delta_2'}{\newsp{\widetilde{m_2}}{Q \Par \htrigger{t'}{s}  } }
+							\]
+							The proof is easy if we consider that both processes can observe the
+							up to deterministic transitions $\bactinp{t'}{\abs{z}{\tinact}} \dtau$.
+							\begin{eqnarray*}
+								&&\Gamma; \es; \Delta_1' \proves \newsp{\widetilde{m_1}}{P \Par \htrigger{t'}{s}  } \\
+								\hby{\bactinp{t'}{\abs{z}{\tinact}}} &&
+								\Delta_1' \proves \newsp{\widetilde{m_1}}{P \Par \newsp{s'}{\binp{s'}{y} \appl{\inact}{y} \Par \bout{\dual{s'}}{s}}}
+								\\
+								\hby{\dtau} &&
+								\Delta_1' \proves \newsp{\widetilde{m_1}}{P}
+							\end{eqnarray*}
+							and
+							\begin{eqnarray*}
+								&&\Gamma; \es; \Delta_2' \proves \newsp{\widetilde{m_2}}{Q \Par \htrigger{t'}{s}  } \\
+								\hby{\bactinp{t'}{\abs{z}{\tinact}}} &&
+								\Delta_2' \proves \newsp{\widetilde{m_2}}{Q \Par \newsp{s'}{\binp{s'}{y} \appl{\inact}{y} \Par \bout{\dual{s'}}{s}}}
+								\\
+								\hby{\dtau} &&
+								\Delta_2' \proves \newsp{\widetilde{m_2}}{Q}
+							\end{eqnarray*}
+							The result is then immediate from the definition of $Re$ that
+							requires
+							\[
+								\horel{\Gamma}{\Delta_3}{\newsp{\widetilde{m_1}}{P  } }
+								{\hwb}
+								{\Delta_4}{\newsp{\widetilde{m_2}}{Q  } }
+							\]
+					\item	A third case requires the interaction of name $t$ with process $P$,
+							which cannot be done due to the freshness of $t$.
+				\end{enumerate}
+	\end{enumerate}
+
+	The proof for Part 2 relies on Part 1. We do an analysis on the two
+	directions of the if and only if requirement.
+	\begin{enumerate}
+		\item	Let typed relation (for readability, we omit the type information)
+				\begin{eqnarray*}
+					\Re &=&	\set{	\newsp{\widetilde{m_1}}{P \Par \htrigger{t}{V_1}}\ ,\ 
+									\newsp{\widetilde{m_2}}{Q \Par \htrigger{t}{V_2}} \setbar\\
+						&&
+									\horel{\Gamma}{\Delta_1}{\newsp{\widetilde{m_1}}{P \Par \ntrigger{t}{V_1}  } }
+									{\hwb}
+									{\Delta_2}{\newsp{\widetilde{m_2}}{Q \Par \ntrigger{t}{V_2}  } }
+					}
+				\end{eqnarray*}
+				We show that $\Re \subseteq \hwb$, with a case analysis on the defining requirements
+				of higher-order bisimulation.
+				\begin{enumerate}
+					\item
+							\[
+								\horel{\Gamma}{\Delta_3}{\newsp{\widetilde{m_1}}{P \Par \htrigger{t}{V_1}  } }
+								{\hby{\ell_1}}
+								{\Delta_3'}{\newsp{\widetilde{m_1}'}{P' \Par \htrigger{t}{V_2}  } }
+							\]
+							The proof is similar with case 1 of Part 1 of this lemma.
+					\item	Let $\omapchar{U} = n$
+							\[
+								\horel{\Gamma}{\Delta_3}{\newsp{\widetilde{m_1}}{P \Par \htrigger{t}{V_1}  } }
+								{\hby{\bactinp{t}{n}}}
+								{\Delta_3'}{\newsp{\widetilde{m_1}'}{P \Par \newsp{s}{\binp{s}{y} \appl{y}{n} \Par \bout{\dual{s}}{V_1} \inact}}}
+							\]
+							Furthermore we can see that
+							\[
+								\horel{\Gamma}{\Delta_4}{\newsp{\widetilde{m_2}}{Q \Par \htrigger{t}{V_2}  } }
+								{\Hby{\bactinp{t}{n}}}
+								{\Delta_4'}{\newsp{\widetilde{m_2}'}{Q \Par \appl{V_2}{n}}}
+							\]
+							and
+							\[
+								\horel{\Gamma}{\Delta_3'}{\newsp{\widetilde{m_1}'}{P \Par \newsp{s}{\binp{s}{y} \appl{y}{n} \Par \bout{\dual{s}}{V_1} \inact}}}
+								{\hby{\dtau}}
+								{\Delta_3'}{\newsp{\widetilde{m_1}'}{P \Par \appl{V_1}{n}}}
+							\]
+							We need to show that
+							\[
+								\horel{\Gamma}{\Delta_3'}{\newsp{\widetilde{m_1}'}{P \Par \appl{V_1}{n}}}
+								{\hwb}
+								{\Delta_4'}{\newsp{\widetilde{m_2}'}{Q \Par \appl{V_2}{n}}}
+							\]
+							This is done by considering the requirement of $\Re$.
+							Let $\omapchar{\btinp{U} \tinact} = \abs{z}{ \binp{z}{y} ( \bout{t'}{z} \inact \Par \appl{y}{n} ) } $
+							\[
+								\mhorel{\Gamma}{\Delta_1}{\newsp{\widetilde{m_1}}{P \Par \ntrigger{t}{V_1}  } }
+								{\hby{\bactinp{t}{\omapchar{\btinp{U} \tinact}}}}
+								{\Delta_1'}{}{\newsp{\widetilde{m_1}'}{P \Par \newsp{s}{\appl{\abs{z}{ \binp{z}{y} ( \bout{t'}{z} \inact \Par \appl{y}{n} ) }}{s} \Par \bout{\dual{s}}{V_1} \inact}}}
+							\]
+							Furthermore we can see that
+							\[
+								\horel{\Gamma}{\Delta_2}{\newsp{\widetilde{m_2}}{Q \Par \ntrigger{t}{V_2}  } }
+								{\Hby{\bactinp{t}{\omapchar{\btinp{U} \tinact}}}}
+								{\Delta_2'}{\newsp{\widetilde{m_2}'}{Q \Par \appl{V_2}{n} \Par \newsp{s}{\bout{t'}{s} \inact}}}
+							\]
+							with
+							\[
+								\horel{\Gamma}{\Delta_1'}{\newsp{\widetilde{m_1}'}{P \Par \newsp{s}{\binp{s}{y} \appl{y}{n} \Par \bout{\dual{s}}{V_1} \inact}}}
+								{\Hby{\dtau}}
+								{\Delta_1'}{\newsp{\widetilde{m_1}'}{P \Par \appl{V_1}{n} \Par \newsp{s}{\bout{t'}{s} \inact}}}
+							\]
+							and
+							\[
+								\horel{\Gamma}{\Delta_1'}{\newsp{\widetilde{m_1}'}{P \Par \appl{V_1}{n} \Par \newsp{s}{\bout{t'}{s} \inact}}}
+								{\hwb}
+								{\Delta_2'}{\newsp{\widetilde{m_2}'}{Q \Par \appl{V_2}{n} \Par \newsp{s}{\bout{t'}{s} \inact}}}
+							\]
+							which implies by Part 1 of this lemma
+							\[
+								\horel{\Gamma}{\Delta_1'}{\newsp{\widetilde{m_1}'}{P \Par \appl{V_1}{n}}}
+								{\hwb}
+								{\Delta_2'}{\newsp{\widetilde{m_2}'}{Q \Par \appl{V_2}{n}}}
+							\]
+							as required.
+
+						\item	Let $\omapchar{U} = \abs{z}{\mapchar{U'}{z}} $
+							\[
+								\horel{\Gamma}{\Delta_3}{\newsp{\widetilde{m_1}}{P \Par \htrigger{t}{V_1}  } }
+								{\hby{\bactinp{t}{\abs{z}{\mapchar{U'}{z}}}}}
+								{\Delta_3'}{\newsp{\widetilde{m_1}'}{P \Par \newsp{s}{\binp{s}{y} \appl{\abs{z}{\mapchar{U'}{z}}}{y} \Par \bout{\dual{s}}{V_1} \inact}}}
+							\]
+							Furthermore we can see that
+							\[
+								\horel{\Gamma}{\Delta_4}{\newsp{\widetilde{m_2}}{Q \Par \htrigger{t}{V_2}  } }
+								{\Hby{\bactinp{t}{\abs{z}{\mapchar{U'}{z}}}}}
+								{\Delta_4'}{\newsp{\widetilde{m_2}'}{Q \Par \appl{\abs{z}{\mapchar{U'}{z}}}{V_2}}}
+							\]
+							and
+							\[
+								\horel{\Gamma}{\Delta_3'}{\newsp{\widetilde{m_1}'}{P \Par \newsp{s}{\binp{s}{y} \appl{y}{n} \Par \bout{\dual{s}}{V_1} \inact}}}
+								{\hby{\dtau}}
+								{\Delta_3'}{\newsp{\widetilde{m_1}'}{P \Par \appl{\abs{z}{\mapchar{U'}{z}}}{V_1}}}
+							\]
+							We need to show that
+							\[
+								\horel{\Gamma}{\Delta_3'}{\newsp{\widetilde{m_1}'}{P \Par \appl{\abs{z}{\mapchar{U'}{z}}}{V_1}}}
+								{\hwb}
+								{\Delta_4'}{\newsp{\widetilde{m_2}'}{Q \Par \appl{\abs{z}{\mapchar{U'}{z}}}{V_2}}}
+							\]
+							This is done by considering the requirement of $\Re$.
+
+							Let $\omapchar{\btinp{U} \tinact} = \abs{w}{ \binp{w}{y} ( \bout{t'}{w} \inact \Par \appl{\abs{z}{\mapchar{U'}{z}}}{y} ) } $
+							\[
+								\mhorel{\Gamma}{\Delta_1}{\newsp{\widetilde{m_1}}{P \Par \ntrigger{t}{V_1}  } }
+								{\hby{\bactinp{t}{\omapchar{\btinp{U} \tinact}}}}
+								{\Delta_2'}{}{\newsp{\widetilde{m_1}'}{P \Par \newsp{s}{\appl{\abs{w}{ \binp{w}{y} ( \bout{t'}{w} \inact \Par \appl{\abs{z}{\mapchar{U'}{z}}}{y} ) }}{s} \Par \bout{\dual{s}}{V_1} \inact}}}
+							\]
+							Furthermore we can see that
+							\[
+								\horel{\Gamma}{\Delta_2}{\newsp{\widetilde{m_2}}{Q \Par \ntrigger{t}{V_2}  } }
+								{\Hby{\bactinp{t}{\omapchar{\btinp{U} \tinact}}}}
+								{\Delta_2'}{\newsp{\widetilde{m_2}'}{Q \Par \appl{\abs{z}{\mapchar{U'}{z}}}{V_2} \Par \newsp{s}{\bout{t'}{s} \inact}}}
+							\]
+							with
+							\[
+								\horel{\Gamma}{\Delta_1'}{\newsp{\widetilde{m_1}'}{P \Par \newsp{s}{\binp{s}{y} \appl{y}{n} \Par \bout{\dual{s}}{V_1} \inact}}}
+								{\Hby{\dtau}}
+								{\Delta_1'}{\newsp{\widetilde{m_1}'}{P \Par \appl{\abs{z}{\mapchar{U'}{z}}}{V_1} \Par \newsp{s}{\bout{t'}{s} \inact}}}
+							\]
+							and
+							\[
+								\horel{\Gamma}{\Delta_1'}{\newsp{\widetilde{m_1}'}{P \Par \appl{\abs{z}{\mapchar{U'}{z}}}{V_1} \Par \newsp{s}{\bout{t'}{s} \inact}}}
+								{\hwb}
+								{\Delta_2'}{\newsp{\widetilde{m_2}'}{Q \Par \appl{\abs{z}{\mapchar{U'}{z}}}{V_2} \Par \newsp{s}{\bout{t'}{s} \inact}}}
+							\]
+							which implies by Part 1 of this lemma
+							\[
+								\horel{\Gamma}{\Delta_1'}{\newsp{\widetilde{m_1}'}{P \Par \appl{\abs{z}{\mapchar{U'}{z}}}{V_1}}}
+								{\hwb}
+								{\Delta_2'}{\newsp{\widetilde{m_2}'}{Q \Par \appl{\abs{z}{\mapchar{U'}{z}}}{V_2}}}
+							\]
+							as required.
+				\end{enumerate}
+		\item
+				Let typed relation (for readability, we omit the type information)
+				\begin{eqnarray*}
+					\Re &=&	\set{	\newsp{\widetilde{m_1}}{P \Par \ntrigger{t}{V_1}}\ ,\ 
+									\newsp{\widetilde{m_2}}{Q \Par \ntrigger{t}{V_2}} \setbar\\
+						&&
+									\horel{\Gamma}{\Delta_3}{\newsp{\widetilde{m_1}}{P \Par \htrigger{t}{V_1}  } }
+									{\hwb}
+									{\Delta_4}{\newsp{\widetilde{m_2}}{Q \Par \htrigger{t}{V_2}  } }
+					}
+				\end{eqnarray*}
+				We show that $\Re \subseteq \hwb$, with a case analysis on the defining requirements
+				of higher-order bisimulation.
+				We concentrate on the cases of an input action on fresh name $t$ since
+				other cases are similar with the previous cases.
+				\begin{enumerate}
+					\item	Let $\omapchar{\btinp{U} \tinact} = \abs{z}{ \binp{z}{y} (\bout{t'}{z} \inact \Par \appl{y}{n})}$
+							\[
+								\mhorel{\Gamma}{\Delta_1}{\newsp{\widetilde{m_1}}{P \Par \ntrigger{t}{V_1}  } }
+								{\hby{\bactinp{t}{\omapchar{\btinp{U} \tinact}}}}
+								{\Delta_1'}{}{\newsp{\widetilde{m_1}'}{P \Par \newsp{s}{ \appl{(\abs{z}{ \binp{z}{y} (\bout{t'}{z} \inact \Par \appl{y}{n})})}{s} \Par \bout{\dual{s}}{V_1} \inact}}}
+							\]
+							Furthermore we can see that
+							\[
+								\horel{\Gamma}{\Delta_2}{\newsp{\widetilde{m_2}}{Q \Par \ntrigger{t}{V_2}  } }
+								{\Hby{\bactinp{t}{\omapchar{\btinp{U} \tinact}}}}
+								{\Delta_2'}{\newsp{\widetilde{m_2}'}{Q \Par \appl{V_2}{n} \Par \newsp{s}{\bout{t'}{s} \inact}}}
+							\]
+							and
+							\[
+								\horel{\Gamma}{\Delta_1'}{\newsp{\widetilde{m_1}'}{P \Par \newsp{s}{\binp{s}{y} \appl{y}{n} \Par \bout{\dual{s}}{V_1} \inact}}}
+								{\hby{\dtau}}
+								{\Delta_1'}{\newsp{\widetilde{m_1}'}{P \Par \appl{V_1}{n}\Par \newsp{s}{\bout{t'}{s} \inact}}}
+							\]
+							We need to show that
+							\[
+								\horel{\Gamma}{\Delta_1'}{\newsp{\widetilde{m_1}'}{P \Par \appl{V_1}{n} \Par \newsp{s}{\bout{t'}{s} \inact}}}
+								{\hwb}
+								{\Delta_2'}{\newsp{\widetilde{m_2}'}{Q \Par \appl{V_2}{n} \Par \newsp{s}{\bout{t'}{s} \inact}}}
+							\]
+							This is done by considering the requirement of $\Re$.
+							Let $\omapchar{U} = n$
+							\[
+								\mhorel{\Gamma}{\Delta_3}{\newsp{\widetilde{m_1}}{P \Par \htrigger{t}{V_1}  } }
+								{\hby{\bactinp{t}{n}}}
+								{\Delta_3'}{}{\newsp{\widetilde{m_1}'}{P \Par \newsp{s}{\binp{s}{y} \appl{y}{n} \Par \bout{\dual{s}}{V_1} \inact}}}
+							\]
+							Furthermore we can see that
+							\[
+								\horel{\Gamma}{\Delta_4}{\newsp{\widetilde{m_2}}{Q \Par \htrigger{t}{V_2}  } }
+								{\Hby{\bactinp{t}{n}}}
+								{\Delta_4'}{\newsp{\widetilde{m_2}'}{Q \Par \appl{V_2}{n}}}
+							\]
+							with
+							\[
+								\horel{\Gamma}{\Delta_3'}{\newsp{\widetilde{m_1}'}{P \Par \newsp{s}{\binp{s}{y} \appl{y}{n} \Par \bout{\dual{s}}{V_1} \inact}}}
+								{\Hby{\dtau}}
+								{\Delta_3'}{\newsp{\widetilde{m_1}'}{P \Par \appl{V_1}{n}}}
+							\]
+							and
+							\[
+								\horel{\Gamma}{\Delta_3'}{\newsp{\widetilde{m_1}'}{P \Par \appl{V_1}{n}}}
+								{\hwb}
+								{\Delta_4'}{\newsp{\widetilde{m_2}'}{Q \Par \appl{V_2}{n}}}
+							\]
+							which implies by Part 1 of this lemma
+							\[
+								\horel{\Gamma}{\Delta_3'}{\newsp{\widetilde{m_1}'}{P \Par \appl{V_1}{n} \Par \newsp{s}{\bout{t'}{s} \inact}}}
+								{\hwb}
+								{\Delta_4'}{\newsp{\widetilde{m_2}'}{Q \Par \appl{V_2}{n} \Par \newsp{s}{\bout{t'}{s} \inact}}}
+							\]
+							as required.
+
+						\item	Let $\omapchar{\btinp{U} \tinact} = \abs{w}{ \binp{w}{y} ( \bout{t'}{w} \inact \Par \appl{\abs{z}{\mapchar{U'}{z}}}{y} ) } $.
+								and
+							\[	
+								\mhorel{\Gamma}{\Delta_3}{\newsp{\widetilde{m_1}}{P \Par \htrigger{t}{V_1}  } }
+								{\hby{\omapchar{\btinp{U}\tinact}}}
+								{\Delta_3'}{}
+								{\newsp{\widetilde{m_1}'}{P \Par \newsp{s}{\appl{\abs{w}{ \binp{w}{y} ( \bout{t'}{w} \inact \Par \appl{\abs{z}{\mapchar{U'}{z}}}{y} ) }}{s} \Par \bout{\dual{s}}{V_1} \inact}}}
+							\]
+							Follows similar proof structure as the previous case.
+				\end{enumerate}
+	\end{enumerate}
+\end{proof}
 
 %By the combination of the lemmas, we can obtain the theorem.
 
