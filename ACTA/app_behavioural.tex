@@ -47,9 +47,9 @@ We state a more detailed form of \propref{p:inhabit} as given in Page~\pageref{p
 			\item	If $S = \trec{t}{S'}$ then whenever
 					$\exists, \Gamma, \Delta$ such that
 					$\Gamma; \es; \Delta \cat t: S_2 \cat s: S' \subst{\tinact}{\vart{t}} \proves \mapchar{S' \subst{\tinact}{\vart{t}}}{s} \hastype \Proc$
-					then $\exists S_1$, 
-					$\Gamma; \es; \Delta \cat t: \btout{S_1} \tinact \cat s: \trec{t}{S'} \proves \mapchar{\trec{t}{S'}}{s} \hastype \Proc$
-					\dk{and $\pi;S_1 = \mathsf{unfold}(\trec{t}{S'})$ where $\pi$ is a session type prefix}
+					then $\exists S_i, i \in I$, 
+					$\Gamma; \es; \Delta \cat {t_i: \btout{S_i}}_{i \in I} \tinact \cat s: \trec{t}{S'} \proves \mapchar{\trec{t}{S'}}{s} \hastype \Proc$
+					\dk{$\forall i, S \red S_i$ where $red$ (needs to be defined) consumes a session type prefix, e.g. $\btbra{l_i: S_i}_{i \in I} \red S_k, k \in I$}
 	
 			\item	If $S = \tinact$ then $\es; \es; \es; \proves \mapchar{\tinact}{s} \hastype \Proc$.
 		\end{enumerate}
@@ -179,6 +179,20 @@ We state a more detailed form of \propref{p:inhabit} as given in Page~\pageref{p
 							\Gamma; \es; \Delta \cat t: \btout{\btinp{U_2} \trec{t}{\btout{U} \vart{t}}} \tinact \cat s: \trec{t}{\btout{U} \vart{t}} \proves
 							\bout{s}{\omapchar{U_1}} \bout{t}{s} \inact \hastype \Proc
 						}
+					\]
+			\item	$\trec{t}{  \btbra{l_1: \vart{t}, l_2: \tinact}  }$
+					\[
+					\tree{
+						\es; \es; t_1: \btout{\tinact} \tinact \cat t_2: \btout{\tinact} \tinact \cat
+						s: \btbra{l_1: \tinact, l_2: \tinact} \proves
+						\mapchar{\btbra{l_1: \tinact, l_2: \tinact}}{s} = \bbra{s}{l_1: \bout{t_1}{s} \inact, l_2: \bout{t_2}{s} \inact}
+						\hastype \Proc
+					}{
+						\es; \es; t_1: \btout{\trec{t}{  \btbra{l_1: \vart{t}, l_2: \tinact}}} \tinact \cat t_2: \btout{\tinact} \tinact \cat
+						s: \trec{t}{  \btbra{l_1: \vart{t}, l_2: \tinact}} \proves
+						\mapchar{\trec{t}{\btbra{l_1: \vart{t}, l_2: \tinact}}}{s} = \bbra{s}{l_1: \bout{t_1}{s} \inact, l_2: \bout{t_2}{s} \inact}
+						\hastype \Proc
+					}
 					\]
 		\end{itemize}
 	\end{example}
