@@ -45,10 +45,11 @@ We state a more detailed form of \propref{p:inhabit} as given in Page~\pageref{p
 					$\es; \es; \set{t_i: \btout{S_i}}_{i \in I} \tinact \cat s: \btbra{l_i: S_i}_{i \in I} \proves \mapchar{\btbra{l_i: S_i}_{i \in I}}{s} \hastype \Proc $.
 	
 			\item	If $S = \trec{t}{S'}$ then whenever
-					$\exists, \Gamma, \Delta \cat t: S_2$ such that
+					$\exists, \Gamma, \Delta$ such that
 					$\Gamma; \es; \Delta \cat t: S_2 \cat s: S' \subst{\tinact}{\vart{t}} \proves \mapchar{S' \subst{\tinact}{\vart{t}}}{s} \hastype \Proc$
 					then $\exists S_1$, 
-					$\Gamma; \es; \Delta \cat t: \btout{S_1} \tinact \cat s: \trec{t}{S'} \proves \mapchar{\trec{t}{S'}}{s} \hastype \Proc$.
+					$\Gamma; \es; \Delta \cat t: \btout{S_1} \tinact \cat s: \trec{t}{S'} \proves \mapchar{\trec{t}{S'}}{s} \hastype \Proc$
+					\dk{and $\pi;S_1 = \mathsf{unfold}(\trec{t}{S'})$ where $\pi$ is a session type prefix}
 	
 			\item	If $S = \tinact$ then $\es; \es; \es; \proves \mapchar{\tinact}{s} \hastype \Proc$.
 		\end{enumerate}
@@ -116,11 +117,72 @@ We state a more detailed form of \propref{p:inhabit} as given in Page~\pageref{p
 							\Gamma; \es; \Delta \cat t: \btout{S_1} \tinact \cat s: \trec{t}{S} \hastype \mapchar{\trec{t}{S}}{s} \hastype \Proc
 						}
 					\]
+					\dk{put proof}
+%					\[
+%						\tree{
+%							\Gamma; \es; \Delta \cat t: \btout{S'} \tinact \cat s: S' \proves \bout{t}{s} \hastype \Proc
+%						}{
+%							\Gamma; \es; \Delta \cat t: \btout{S'} \tinact \cat s: \trec{t}{S} \hastype \mapchar{\trec{t}{S}}{s} \hastype \Proc
+%						}
+%					\]
 			\item	Other cases are similar.
 	\end{itemize}
 	The proof for parts 2 and 3 is similar.
 	\qed
 \end{proof}
+
+\dk{
+	\begin{example}
+		\begin{itemize}
+			\item	$\trec{t}{\btout{U} \vart{t}}$
+					%
+					\[
+						\tree{
+							\Gamma; \es; \Delta \hastype \omapchar{U} \hastype U\\
+							\Gamma; \es; t: \btout{\tinact} \tinact \cat s: \tinact \proves \bout{t}{s} \inact \hastype \Proc
+						}{
+							\Gamma; \es; \Delta \cat t: \btout{\tinact} \tinact \cat s: \btout{U} \tinact \proves
+							\mapchar{\btout{U} \tinact}{s} = \bout{s}{\omapchar{U}} \bout{t}{s} \inact \hastype \Proc
+						}
+					\]
+					and
+					\[
+						\tree {
+							\Gamma; \es; \Delta \cat t: \btout{\trec{t}{\btout{U} \vart{t}}} \tinact \cat s: \trec{t}{\btout{U} \vart{t}} \proves
+							\bout{t}{s} \inact \hastype \Proc
+						}{
+							\Gamma; \es; \Delta \cat t: \btout{\trec{t}{\btout{U} \vart{t}}} \tinact \cat s: \trec{t}{\btout{U} \vart{t}} \proves
+							\mapchar{\trec{t}{\btout{U} \vart{t} }}{s} =
+							\mapchar{(\btout{U} \vart{t}) \subst{\tinact}{\vart{t}}}{s} =
+							\mapchar{\btout{U} \tinact}{s} = \bout{s}{\omapchar{U}} \bout{t}{s} \inact \hastype \Proc
+						}
+					\]
+
+					\item	$\trec{t}{\btout{U_1} \btinp{U_2} \vart{t}}$
+					%
+					\[
+						\tree{
+							\Gamma; \es; \Delta \hastype \omapchar{U_1} \hastype U_2\\
+							\Gamma; \es; t: \btout{\btinp{U_2} \tinact} \tinact \cat s: \btinp{U_2} \tinact \proves \bout{t}{s} \inact \hastype \Proc
+						}{
+							\Gamma; \es; \Delta \cat t: \btout{\btinp{U_2} \tinact} \tinact \cat s: \btout{U_1} \btinp{U_2} \tinact \proves
+							\mapchar{\btout{U_1} \btinp{U_2} \tinact}{s} = \bout{s}{\omapchar{U_1}} \bout{t}{s} \inact \hastype \Proc
+						}
+					\]
+					and
+					\[
+						\tree {
+							\Gamma; \es; \Delta \cat t: \btout{\btinp{U_2} \trec{t}{\btout{U_1} \btinp{U_2} \vart{t}}} \tinact
+							\cat s: \btinp{U_2} \trec{t}{\btout{U} \vart{t}} \proves
+							\bout{t}{s} \inact \hastype \Proc
+						}{
+							\Gamma; \es; \Delta \cat t: \btout{\btinp{U_2} \trec{t}{\btout{U} \vart{t}}} \tinact \cat s: \trec{t}{\btout{U} \vart{t}} \proves
+							\bout{s}{\omapchar{U_1}} \bout{t}{s} \inact \hastype \Proc
+						}
+					\]
+		\end{itemize}
+	\end{example}
+}
 
 %\section{Behavioural Semantics}
 
@@ -215,7 +277,7 @@ for shorthand notations.
 	\noi 
 	We prove Part 1 --- the proof for Part 2 follows straightforwardly.
 	The proof is by induction on the structure of $\by{\tau}$
-	which coincides the reduction $\red$.
+	which coincides with the reduction $\red$.
 
 	\noi Basic step:
 	\begin{enumerate}

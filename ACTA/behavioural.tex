@@ -434,7 +434,12 @@ Furthermore, we can always apply Rule~$\trule{EProm}$ and obtain an empty $\Lamb
 
 \noi We now define \emph{typed relations} and \emph{contextual equivalence} (i.e., barbed congruence).  
 To define typed relations, we first define \emph{confluence}
-over session environments $\Delta$:
+over session environments $\Delta$.
+\newc{Recall that 
+$\Delta$ captures session communication, which is deterministic. 
+The notion of confluence allows us to abstract away from alternative computation paths 
+that may arise due to non-interfering reductions of session names.}
+
 %
 \begin{definition}[Session Environment Confluence]\label{d:conf}
 	Two session environments $\Delta_1$ and $\Delta_2$
@@ -1252,7 +1257,7 @@ when the type of $V$ is~$U$.
 %to define the following two bisimulations. 
 
 
-\subsection{Higher-Order ($\hwb$) and  Characteristic  Bisimilarity ($\fwb$)}
+\subsection{Higher-Order Bisimilarity ($\hwb$) and  Characteristic  Bisimilarity ($\fwb$)}
 \label{ss:hwb}
 
 We define \emph{higher-order bisimilarity} and 
@@ -1286,7 +1291,7 @@ We use higher-order trigger processes to define \emph{higher-order bisimilarity}
 
 \begin{definition}[Higher-Order Bisimilarity]
 	\label{d:hwb}
-	A typed relation $\Re$ is a {\em  HO bisimulation} if 
+	A typed relation $\Re$ is a {\em  higher-order bisimulation} if 
 	for all $\horel{\Gamma}{\Delta_1}{P_1}{\ \Re \ }{\Delta_2}{Q_1}$ 
 %
 	\begin{enumerate}[1)]
@@ -1537,7 +1542,7 @@ Using the above determinacy properties, we can state the following up-to techniq
 
 This section proves the main result; %typed bisimilarities collapse for \HOp processes. 
 it allows us to use $\fwb$ and $\hwb$   as tractable reasoning
-techniques for higher-order processes with sessions.
+techniques for \HOp processes.
 
 
 \begin{lemma}
@@ -1547,8 +1552,10 @@ techniques for higher-order processes with sessions.
 
 \begin{proof}[Sketch]
 \newc{
-	The main difference between the definition of the two bisimilarity relations
-	is the trigger process (namely, higher-order triggers $\htrigger{t}{V}$ in $\hwb$ and characteristic triggers $\ftrigger{t}{V}{U}$ in $\fwb$). Thus, the most interesting case is when we observe an output from a process. 
+	The main difference between 
+	$\hwb$ and $\fwb$
+%	the definition of the two bisimilarity relations
+	is the trigger process (namely, higher-order triggers $\htrigger{t}{V}$ in $\hwb$ and characteristic triggers $\ftrigger{t}{V}{U}$ in $\fwb$). Thus, the most interesting case in the proof is when we observe an output from a process. 
 	When showing that $\fwb \subseteq \hwb$, 
 	the
 	key after the output is to show that
@@ -1649,8 +1656,7 @@ then they are equivalent under any higher-order substitution.
 	substitution properties stated by the lemma
 	and proving that it is a higher-order bisimulation.
 	Following the higher-order bisimulation requirements we
-	need to use \lemref{lem:trigger_subst} where
-	we show that if
+	need to use \lemref{lem:trigger_subst}, which shows that if
 	\[
 		\horel{\Gamma}{\Delta_1}{\newsp{\widetilde{m_1}}{P \Par \appl{(\trvalx{t})}{n_1} }}
 		{\hwb}
@@ -1748,7 +1754,7 @@ Context bisimilarity is included in barbed congruence:
 	\qed
 \end{proof}
 
-The last ingredient required is the following inclusion.
+The last ingredient required for our main result is the following inclusion.
 
 \begin{lemma}
 	\label{lem:cong_is_wb}
@@ -1756,12 +1762,13 @@ The last ingredient required is the following inclusion.
 \end{lemma}
 
 \begin{proof}[Sketch]	
-	We prove the above result by exploiting
+	The proof exploits
 the \emph{definability} technique developed in~\cite[\S6.7]{Hennessy07} and
 refined for session types in~\cite{KYHH2015,KY2015}.
-Intuitively, this technique exploits small test processes which
+Intuitively, this technique exploits small test processes that
 reveal the presence of a visible action by reducing with a given pair of processes
 and exhibiting a barb on a fresh name.
+
 More precisely, given a fresh name $\suc$, and for each visible action $\ell$, we define 
 		a  test process
 	$\Gamma; \emptyset; \Delta_2 \proves T\lrangle{\ell, \suc} \hastype \Proc$
