@@ -496,6 +496,20 @@ the trigger processes $\htrigger{t}{V}$ and $\ntrigger{t}{V}$.
 					{\Delta_4}{\newsp{\widetilde{m_2}}{Q}}
 				\]
 
+		\item	Let $t$ a fresh name, $\Delta_1 = \Delta_3 \cat t: \btout{\tinact} \tinact$ and
+				$\Delta_2 = \Delta_4 \cat t: \btout{\tinact} \tinact$
+				\[
+					\horel{\Gamma}{\Delta_1}{\newsp{\widetilde{m_1}}{P \Par \newsp{s}{\bout{t}{s} \inact}  } }
+					{\fwb}
+					{\Delta_2}{\newsp{\widetilde{m_2}}{Q \Par \newsp{s}{\bout{t}{s} \inact}  } }
+				\]
+				if and only if
+				\[
+					\horel{\Gamma}{\Delta_3}{\newsp{\widetilde{m_1}}{P  } }
+					{\fwb}
+					{\Delta_4}{\newsp{\widetilde{m_2}}{Q}}
+				\]
+
 		\item
 				\[
 					\horel{\Gamma}{\Delta_1}{\newsp{\widetilde{m_1}}{P \Par \ntrigger{t}{V_1}  } }
@@ -644,8 +658,11 @@ the trigger processes $\htrigger{t}{V}$ and $\ntrigger{t}{V}$.
 							which cannot be done due to the freshness of $t$.
 				\end{enumerate}
 	\end{enumerate}
+	
+	The proof for Part 2, follows same arguments and structure as
+	the proof for Part 1.
 
-	The proof for Part 2 relies on Part 1. We do an analysis on the two
+	The proof for Part 3 relies on Part 1. We do an analysis on the two
 	directions of the if and only if requirement.
 	\begin{enumerate}
 		\item	Let typed relation (for readability, we omit the type information)
@@ -1072,8 +1089,8 @@ and higher order trigger processes.
 				\end{eqnarray*}
 				%
 				We first need to show that that $\Re \subseteq \fwb$.
-				The result is then a consequence of \lemref{lem:alt_tr} (Part 2).
-
+				Note that we are using the alternative trigger process $\ntrigger{t}{V_1}$.
+				The result is then a consequence of \lemref{lem:alt_tr} (Part 3).
 
 			We distinguish three cases, depending on the source/kind of visible action: 
 				\begin{enumerate}
@@ -1141,13 +1158,15 @@ and higher order trigger processes.
 							Following requirements of $\Re$ and the freshness of $t$
 							we can conclude that there exists $\Delta_1''$ such that
 						%
-						\[
-							\horel{\Gamma}{\Delta_1}{\newsp{\widetilde{m_1}}{P \Par \ftrigger{t}{V_1}{U}}}
-							{\hby{\bactinp{t}{m}}}
-							{\Delta_1''}{\newsp{\widetilde{m_1}}{P \Par \newsp{s}{\binp{s}{y} \mapchar{U}{y} \Par \bout{\dual{s}}{V_1} \inact}}}
-						\]
+						\begin{eqnarray*}
+							&& \Gamma; \es; \Delta_1 \proves \newsp{\widetilde{m_1}}{P \Par \ftrigger{t}{V_1}{U}}\\
+							\hby{\bactinp{t}{m}} &&
+							\Delta_1'' \proves \newsp{\widetilde{m_1}}{P \Par \newsp{s}{\binp{s}{y} \mapchar{U}{y} \Par \bout{\dual{s}}{V_1} \inact}}\\
+							\Hby{\dtau}
+							\Delta_1'' \proves \newsp{\widetilde{m_1}}{P'}
+						\end{eqnarray*}
 						%
-							implies from the higher order bisimilarity requirement of the $\Re$ definition and
+							which implies from the higher order bisimilarity requirement of the $\Re$ definition and
 							the freshness of $t$ that $\exists Q', \Delta_2''$ such that
 						%
 							\begin{eqnarray}
@@ -1168,12 +1187,19 @@ and higher order trigger processes.
 						%
 							and
 						%
-							\begin{eqnarray}
-							\horel{\Gamma}{\Delta_1''}{\newsp{\widetilde{m_1}}{P \Par \newsp{s}{\binp{s}{y} \mapchar{U}{y} \Par \bout{\dual{s}}{V_1} \inact}}}
-							{\fwb}
-							{\Delta_2''}{\newsp{\widetilde{m_2}}{Q'}}
-							\label{proof:trig_equiv3}
-							\end{eqnarray}
+							\begin{eqnarray*}
+								\horel{\Gamma}{\Delta_1''}{\newsp{\widetilde{m_1}}{P'}}
+								{\fwb}
+								{\Delta_2''}{\newsp{\widetilde{m_2}}{Q'}}
+							\end{eqnarray*}
+							which implies from \lemref{lem:alt_tr} (Part 2) that
+							for fresh $t'$
+							\begin{eqnarray*}
+								\horel{\Gamma}{\Delta_1''}{\newsp{\widetilde{m_1}}{P' \Par \newsp{s}{\bout{t'}{s} \inact} }}
+								{\fwb}
+								{\Delta_2''}{\newsp{\widetilde{m_2}}{Q'}  \Par \newsp{s}{\bout{t'}{s} \inact}}
+								\label{proof:trig_equiv3}
+							\end{eqnarray*}
 						%
 							The freshness of $t$ allows us to mimic the transitions
 							in \eqref{proof:trig_equiv2} to get that for $\Delta_4$
@@ -1189,10 +1215,16 @@ and higher order trigger processes.
 									{\hby{\bactinp{t}{\omapchar{\btinp{U} \tinact}}}}& & &
 									\newsp{\widetilde{m_2}}{Q_2 \Par \newsp{s}{\appl{\omapchar{\btinp{U} \tinact}}{s} \Par \bout{\dual{s}}{V_2} \inact}}
 									\\
-									\Hby{} & \Delta_4 & \proves & Q'
+									\Hby{} & \Delta_4 & \proves & \newsp{\widetilde{m_2}'}{Q' \Par \newsp{s}{\bout{t'}{s} \inact} }
 								\end{array}
 							\end{eqnarray*}
 						%
+							and 
+							\[
+								\horel{\Gamma}{\Delta_3}{\newsp{\widetilde{m_1}}{P \Par \newsp{s}{ \appl{\omapchar{\btinp{U} \tinact}}{s} \Par \bout{\dual{s}}{V_1} \inact}}}
+								{\Hby{\dtau}}
+								{\Delta_3}{\newsp{\widetilde{m_1}'}{P' \Par \newsp{s}{ \bout{t'}{s} \inact}}}
+							\]
 							The conclusion is immediate from \eqref{proof:trig_equiv3}.
 
 					\item	Case
