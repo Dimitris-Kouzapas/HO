@@ -480,6 +480,7 @@ that is used to simplify the proofs. Let
 The first auxiliary lemma states the equivalence between
 the trigger processes $\htrigger{t}{V}$ and $\ntrigger{t}{V}$.
 \begin{lemma}[Alternative Trigger Process]
+	\label{lem:alt_tr}
 	\begin{enumerate}
 		\item	Let $t$ a fresh name, $\Delta_1 = \Delta_3 \cat t: \btout{\tinact} \tinact$ and
 				$\Delta_2 = \Delta_4 \cat t: \btout{\tinact} \tinact$
@@ -928,7 +929,7 @@ and higher order trigger processes.
 				\end{eqnarray*}
 				%
 				We show that $\Re \subseteq \hwb$.
-				We distinguish four cases, depending on the source/kind of visible action: 
+				We distinguish three cases, depending on the source/kind of visible action: 
 				\begin{enumerate}
 					\item	Case
 						%
@@ -1060,24 +1061,28 @@ and higher order trigger processes.
 
 				\noi Consider the typed relation (for readability, we omit type information):
 				\begin{eqnarray*}
-					\Re	&=&		\set{	(\newsp{\widetilde{m_1}}{P \Par \htrigger{t}{V_1}},
-										\newsp{\widetilde{m_2}}{Q \Par \htrigger{t}{V_2}})
+					\Re	&=&		\set{	(\newsp{\widetilde{m_1}}{P \Par \ntrigger{t}{V_1}},
+										\newsp{\widetilde{m_2}}{Q \Par \ntrigger{t}{V_2}})
 								\setbar\\
-						&&			\mhorel{\Gamma}{\Delta_1'}{\newsp{\widetilde{m_1}}{P \Par \ftrigger{t}{V_1}{U}}}
+						&&			\horel{\Gamma}{\Delta_1'}{\newsp{\widetilde{m_1}}{P \Par \ftrigger{t}{V_1}{U}}}
 									{\fwb}
-									{\Delta_2'}{}{\newsp{\widetilde{m_2}}{Q \Par \ftrigger{t}{V_2}{U}}}
+									{\Delta_2'}{\newsp{\widetilde{m_2}}{Q \Par \ftrigger{t}{V_2}{U}}}
 						\\
 						&&		}
 				\end{eqnarray*}
 				%
-				We show that $\Re \subseteq \fwb$. We distinguish four cases, depending on the source/kind of visible action: 
+				We first need to show that that $\Re \subseteq \fwb$.
+				The result is then a consequence of \lemref{lem:alt_tr} (Part 2).
+
+
+			We distinguish three cases, depending on the source/kind of visible action: 
 				\begin{enumerate}
 					\item	Case
 						%
 						\[
-							\horel{\Gamma}{\Delta_1'}{\newsp{\widetilde{m_1}}{P \Par \htrigger{t}{V_1}}}
+							\horel{\Gamma}{\Delta_1'}{\newsp{\widetilde{m_1}}{P \Par \ntrigger{t}{V_1}}}
 							{\hby{\ell_1}}
-							{\Delta_3}{\newsp{\widetilde{m_1}'}{P' \Par \htrigger{t}{V_1}}}
+							{\Delta_3}{\newsp{\widetilde{m_1}'}{P' \Par \ntrigger{t}{V_1}}}
 						\]
 						%
 							then following the requirements of $\Re$ and the freshness of $t$
@@ -1111,16 +1116,16 @@ and higher order trigger processes.
 						%
 							From \eqref{proof:trig_equiv0} we can conclude that $\exists \Delta_4$ such that
 						\[
-							\horel{\Gamma}{\Delta_2'}{\newsp{\widetilde{m_1}}{Q \Par \htrigger{t}{V_2}}}
+							\horel{\Gamma}{\Delta_2'}{\newsp{\widetilde{m_1}}{Q \Par \ntrigger{t}{V_2}}}
 							{\Hby{\ell_2}}
-							{\Delta_4}{\newsp{\widetilde{m_2}'}{Q' \Par \htrigger{t}{V_2}}}
+							{\Delta_4}{\newsp{\widetilde{m_2}'}{Q' \Par \ntrigger{t}{V_2}}}
 						\]
 						%
 							Equation \eqref{proof:trig_equiv1} then concludes that
 						\[
-							\horel{\Gamma}{\Delta_3'}{\newsp{\widetilde{m_1}'''}{P' \Par \htrigger{t}{V_1} \Par C_1}}
+							\horel{\Gamma}{\Delta_3'}{\newsp{\widetilde{m_1}'''}{P' \Par \ntrigger{t}{V_1} \Par C_1}}
 							{\Re}
-							{\Delta_4'}{}{\newsp{\widetilde{m_2}'''}{Q' \Par \htrigger{t}{V_2} \Par C_2}}
+							{\Delta_4'}{}{\newsp{\widetilde{m_2}'''}{Q' \Par \ntrigger{t}{V_2} \Par C_2}}
 						\]
 						%
 							as required.
@@ -1128,9 +1133,9 @@ and higher order trigger processes.
 					\item	%\jasks{I would probably put cases 2 and 3 within a single case, which is the case when the right-hand side process moves. }
 						Case
 						\[
-							\horel{\Gamma}{\Delta_1'}{\newsp{\widetilde{m_1}}{P \Par \htrigger{t}{V_1}}}
-							{\hby{\bactinp{t}{\omapchar{U}}}}
-							{\Delta_3}{\newsp{\widetilde{m_1}}{P \Par \newsp{s}{\binp{s}{y} \mapchar{U}{y} \Par \bout{\dual{s}}{V_1} \inact}}}
+							\horel{\Gamma}{\Delta_1'}{\newsp{\widetilde{m_1}}{P \Par \ntrigger{t}{V_1}}}
+							{\hby{\bactinp{t}{\omapchar{\btinp{U} \tinact}}}}
+							{\Delta_3}{\newsp{\widetilde{m_1}}{P \Par \newsp{s}{ \appl{\omapchar{\btinp{U} \tinact}}{s} \Par \bout{\dual{s}}{V_1} \inact}}}
 						\]
 						%
 							Following requirements of $\Re$ and the freshness of $t$
@@ -1176,13 +1181,13 @@ and higher order trigger processes.
 							\begin{eqnarray*}
 								\begin{array}{crll}
 									& \Gamma; \es; \Delta_2' & \proves &		
-									\newsp{\widetilde{m_2}}{Q \Par \htrigger{t}{V_2}}
+									\newsp{\widetilde{m_2}}{Q \Par \ntrigger{t}{V_2}}
 									\\
 									\Hby{} &&&
-									\newsp{\widetilde{m_2}}{Q_2 \Par \htrigger{t}{V_2}}
+									\newsp{\widetilde{m_2}}{Q_2 \Par \ntrigger{t}{V_2}}
 									\\
-									{\hby{\bactinp{t}{\omapchar{U}}}}& & &
-									\newsp{\widetilde{m_2}}{Q_2 \Par \newsp{s}{\binp{s}{y} \mapchar{U}{y} \Par \bout{\dual{s}}{V_2} \inact}}
+									{\hby{\bactinp{t}{\omapchar{\btinp{U} \tinact}}}}& & &
+									\newsp{\widetilde{m_2}}{Q_2 \Par \newsp{s}{\appl{\omapchar{\btinp{U} \tinact}}{s} \Par \bout{\dual{s}}{V_2} \inact}}
 									\\
 									\Hby{} & \Delta_4 & \proves & Q'
 								\end{array}
@@ -1192,31 +1197,31 @@ and higher order trigger processes.
 
 					\item	Case
 						\[
-							\mhorel{\Gamma}{\Delta_1'}{\newsp{\widetilde{m_1}}{P \Par \hotrigger{t}{x}{s}{V_1}}}
+							\mhorel{\Gamma}{\Delta_1'}{\newsp{\widetilde{m_1}}{P \Par \ntrigger{t}{V_1}}}
 							{\hby{\bactinp{t}{ \abs{x}{\binp{t'}{y}{\appl{y}{x}}  }}}}
 							{\Delta_3'}{}{\newsp{\widetilde{m_1}}{P \Par \newsp{s}{  \appl{(\abs{x}{\binp{t'}{y}{\appl{y}{x}})}{s}  \Par \bout{\dual{s}}{V_1} \inact }}}}
 						\]
-						We show that there $\exists, \Delta_4, \newsp{\widetilde{m_1}}{Q \Par \hotrigger{t'}{x}{s}{V_1}}$ such that
+						We show that there $\exists, \Delta_4, \newsp{\widetilde{m_1}}{Q \Par \newsp{s}{  \appl{(\abs{x}{\binp{t'}{y}{\appl{y}{x}})}{s}  \Par \bout{\dual{s}}{V_2} \inact }}}$ such that
 						\[
-							\mhorel{\Gamma}{\Delta_2'}{\newsp{\widetilde{m_1}}{Q \Par \hotrigger{t}{x}{s}{V_1}}}
+							\mhorel{\Gamma}{\Delta_2'}{\newsp{\widetilde{m_1}}{Q \Par \ntrigger{t}{V_2}}}
 							{\Hby{\bactinp{t}{ \abs{x}{\binp{t'}{y}{\appl{y}{x}}  }}}}
-							{\Delta_4}{}{\newsp{\widetilde{m_1}}{Q \Par \hotrigger{t'}{x}{s}{V_1}}}
+							{\Delta_4}{}{\newsp{\widetilde{m_1}}{Q \Par \ntrigger{t'}{V_2} }}
 						\]
 						and
 						\[
-							\mhorel{\Gamma}{\Delta_3'}{\newsp{\widetilde{m_1}}{P \Par \newsp{s}{  \appl{(\abs{x}{\binp{t'}{y}{\appl{y}{x}})}{s}  \Par \bout{\dual{s}}{V_1} \inact }}}}
+							\mhorel{\Gamma}{\Delta_3'}{\newsp{\widetilde{m_1}}{P \Par \newsp{s}{ \appl{(\abs{x}{\binp{t'}{y}{\appl{y}{x}})}{s}  \Par \bout{\dual{s}}{V_1} \inact }}}}
 							{\Hby{\tau_d}}
-							{\Delta_3}{}{\newsp{\widetilde{m_1}}{P \Par \hotrigger{t'}{x}{s}{V_1}}}
+							{\Delta_3}{}{\newsp{\widetilde{m_1}}{P \Par \ntrigger{t'}{V_1}}}
 						\]
 						The result
 						\[
-							\mhorel{\Gamma}{\Delta_3}{\newsp{\widetilde{m_1}}{P \Par \hotrigger{t'}{x}{s}{V_1}}}
-							{\Re}
-							{\Delta_4}{}{\newsp{\widetilde{m_1}}{Q \Par \hotrigger{t'}{x}{s}{V_1}}}
+							\horel{\Gamma}{\Delta_3}{\newsp{\widetilde{m_1}}{P \Par \ntrigger{t'}{V_1}}}
+							{\ \Re\ }
+							{\Delta_4}{\newsp{\widetilde{m_1}}{Q \Par \ntrigger{t'}{V_2}}}
 						\]
 						is immediate from the definition of $\Re$.
 
-				\item The action comes from the interaction of $P$ and $\htrigger{t}{V_1}$: This case is not possible, due to the freshness of $t$.
+				\item The action comes from the interaction of $P$ and $\ntrigger{t}{V_1}$: This case is not possible, due to the freshness of $t$.
 				\end{enumerate}
 	\end{enumerate}
 	\qed
@@ -1673,12 +1678,12 @@ processes in terms of process equivalence.
 										\end{eqnarray}
 										and
 										\begin{eqnarray}
-											\horel{\Gamma}{\Delta_1'''}{\newsp{\widetilde{m_1}''}{P_2 \subst{n}{x} \Par \bout{t'}{n_1} \inact}}
+											\mhorel{\Gamma}{\Delta_1'''}{\newsp{\widetilde{m_1}''}{P_2 \subst{n}{x} \Par \bout{t'}{n_1} \inact}}
 											{\hwb}
-											{\Delta_2'''}{\newsp{\widetilde{m_2}''}{Q_2 \subst{n}{x} \Par \btout{t'}{n_1} \inact}}
+											{\Delta_2'''}{}{\newsp{\widetilde{m_2}''}{Q_2 \subst{n}{x} \Par \bout{t'}{n_1} \inact}}
 											\label{lem:tr_app_45}
 										\end{eqnarray}
-										where \eqref{lem:tri_app_44} implies the untyped transition
+										where \eqref{lem:tr_app_44} implies the untyped transition
 										\[
 											\newsp{\widetilde{m_2}''}{Q' \subst{n}{x} \Par \omapchar{U} \subst{n_2}{x}}
 											\Hby{ \ell_{22}'' }
@@ -1691,7 +1696,7 @@ processes in terms of process equivalence.
 											\newsp{\widetilde{m_2}''}{Q_2 \subst{n_2}{x}}
 										\]
 										with $\ell_{22}'' \subst{n_2}{n} = \ell_{22}'$.
-										From the last result and \eqref{{lem:tr_app_43}} we get
+										From the last result and \eqref{lem:tr_app_43} we get
 										\[
 											\mhorel{\Gamma}{\Delta_2}{\newsp{\widetilde{m_2}}{ Q \subst{n_2}{x}   }  }
 											{\Hby{\tau}}
