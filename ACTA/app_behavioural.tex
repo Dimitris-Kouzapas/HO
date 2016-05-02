@@ -4,6 +4,46 @@
 % Types inhabit their characteristic process
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+\newcommand{\delete}[1]{\mathsf{del}(#1)}
+\newcommand{\unfold}[1]{\mathsf{unfold}(#1)}
+We state session type unfolding:
+\begin{definition}[Session Type Prefix Deletion]
+	\[
+	\begin{array}{c}
+		\unfold{\btout{U} S} = \btout{U} S
+		\qquad
+		\unfold{\btinp{U} S} = \btinp{U} S
+		\qquad
+		\unfold{\btsel{l: S}} = \btsel{l: S}
+		\\
+		\unfold{\btbra{l_i: S_i}_{i \in I}} = \btbra{l_i: S_i}_{i \in I}
+		\qquad 
+		\unfold{\tinact} = \tinact
+		\qquad
+		\unfold{\trec{t}{S}} = \unfold{S \subst{\trec{t}{S}}{t}  }
+	\end{array}
+	\]
+\end{definition}
+
+We state session type prefix deletion relation:
+\begin{definition}[Session Type Prefix Deletion]
+	\[
+	\begin{array}{c}
+		\delete{\btout{U} S} = \set{S}
+		\qquad \quad
+		\delete{\btinp{U} S} = \set{S}
+		\qquad \quad
+		\delete{\btsel{l: S}} = \set{S}
+		\\
+		\delete{\btbra{l_i: S_i}_{i \in I}} = \set{S_i}_{i \in I}
+		\qquad \quad
+		\delete{\tinact} = \set{\tinact}
+		\qquad \quad
+		\delete{\trec{t}{S}} = \delete{\unfold{\trec{t}{S}}}
+	\end{array}
+	\]
+\end{definition}
+
 \label{app:inhabit}
 
 We state a more detailed form of \propref{p:inhabit} as given in Page~\pageref{p:inhabit}:
@@ -43,16 +83,20 @@ We state a more detailed form of \propref{p:inhabit} as given in Page~\pageref{p
 	
 			\item	If $S = \btbra{l_i: S_i}_{i \in I}$ then
 					$\es; \es; \set{t_i: \btout{S_i}}_{i \in I} \tinact \cat s: \btbra{l_i: S_i}_{i \in I} \proves \mapchar{\btbra{l_i: S_i}_{i \in I}}{s} \hastype \Proc $.
-	
-			\item	If $S = \trec{t}{S'}$ then whenever
-					$\exists, \Gamma, \Delta$ such that
-					$\Gamma; \es; \Delta \cat t: S_2 \cat s: S' \subst{\tinact}{\vart{t}} \proves \mapchar{S' \subst{\tinact}{\vart{t}}}{s} \hastype \Proc$
-					then $\exists S_i, i \in I$, 
-					$\Gamma; \es; \Delta \cat {t_i: \btout{S_i}}_{i \in I} \tinact \cat s: \trec{t}{S'} \proves \mapchar{\trec{t}{S'}}{s} \hastype \Proc$
-					\dk{$\forall i, S \red S_i$ where $red$ (needs to be defined) consumes a session type prefix, e.g. $\btbra{l_i: S_i}_{i \in I} \red S_k, k \in I$}
-	
 			\item	If $S = \tinact$ then $\es; \es; \es; \proves \mapchar{\tinact}{s} \hastype \Proc$.
-		\end{enumerate}
+	
+			\item	If $S = \trec{t}{S'}$ then
+					\begin{itemize}
+						\item whenever $\es; \es; \es \proves \mapchar{S' \subst{\tinact}{\vart{t}}}{s} \hastype \Proc$
+						then $\es; \es; \es \proves \mapchar{\trec{t}{S'}}{s} \hastype \Proc$
+
+						\item whenever $\forall S_i \in \delete{S}$,
+						$\exists, \Gamma, \Delta, S_i'$ such that
+						$\Gamma; \es; \Delta \cat \set{t_i: S_i'}_{i \in I} \cat s: S' \subst{\tinact}{\vart{t}} \proves \mapchar{S' \subst{\tinact}{\vart{t}}}{s} \hastype \Proc$
+						then
+						$\Gamma; \es; \Delta \cat \set{t_i: \btout{S_i} \tinact}_{i \in I} \cat s: \trec{t}{S'} \proves \mapchar{\trec{t}{S'}}{s} \hastype \Proc$.
+					\end{itemize}
+			\end{enumerate}
 
 		\item	Let type $U$.
 		\begin{enumerate}
@@ -896,6 +940,7 @@ The next lemma states a form of equivalence between the characteristic
 and higher order trigger processes.
 
 \begin{lemma}[Trigger Process Equivalence]
+	\dkmargin{Please read}
 	\label{lem:trigger_equiv}
 	Let $P$ and $Q$ be processes, $t$ be a fresh name, and
 	let $\Gamma; \es; \Delta \proves V_i \hastype U, i \in \set{1, 2}$
@@ -1265,6 +1310,7 @@ and higher order trigger processes.
 
 
 \begin{lemma}
+\dkmargin{Please Read}
 	\label{app:lem:wb_eq_wbf}
 	$\hwb = \fwb$.
 \end{lemma}
@@ -1410,6 +1456,7 @@ and higher order trigger processes.
 We state an auxiliary lemma that captures a property of trigger
 processes in terms of process equivalence.
 \begin{lemma}[Trigger Process Application]
+	\dkmargin{Please Read}
 	\label{lem:trigger_application}
 	Let $P$ and $Q$ be processes. Also, let $t$ be a fresh name.
 	\begin{enumerate}
@@ -1771,6 +1818,7 @@ Before we state and prove a process substitution lemma
 we give an intermediate result.
 
 \begin{lemma}[Trigger Substitution]
+	\dkmargin{Please Read}
 	\label{lem:trigger_subst}
 	Let $P$ and $Q$ be processes. Also, let $t$ be a fresh name. If
 	\[
@@ -2135,6 +2183,7 @@ substitution, we can generalise for any value substitution.
 %the equivalence typable.
 
 \begin{lemma}[Process Substitution]
+\dkmargin{Please Read}
 	\label{lem:process_subst}
 	Let $P_1$ and $P_2$ be processes, with $z \in \fn{P_1}, z \in \fn{P_2}$.
 	Also, let $t$ be a fresh name. 
