@@ -20,15 +20,18 @@ We first informally introduce some basic notation and terminology; formal defini
 			& \bnfbar & \rvar{X} \bnfbar \recp{X}{P} & \text{recursion} \\
 			& \bnfbar & \appl{V}{W} & \text{value application} \\
 			& \bnfbar & P\Par Q \bnfbar \news{n} P \bnfbar \inact  & \text{composition, restriction, inaction}
-			\\[2mm]
+			%\\[2mm]
 		\end{array}
 	\] 
 }
 We write $n$ to range over shared names $a,b,\ldots$ and session (linear) names $s, \dual{s}, \ldots$.
 Also, $u, w$ denotes a name or a name variable.
-Session names are sometimes called \emph{endpoints}; this way, e.g., 
-$\bout{\dual{s}}{V} Q$ denotes 
-for an output of value $V$ along endpoint $\dual{s}$ (the \emph{dual} of~$s$).
+Session names are sometimes called \emph{endpoints}. 
+%this way, e.g., 
+%$\bout{\dual{s}}{V} Q$ denotes for an output of value $V$ along endpoint 
+We consider a notion of \emph{duality} on names, particularly relevant for session names:
+we shall write 
+  $\dual{s}$ to denote the {dual} endpoint of~$s$.
 The higher-order character of \HOp thus comes from the fact that $V$ can be an abstraction.
 The semantics of \HOp can be given in terms of a labelled transition system (LTS),
 denoted $P \by{\ell} P'$, where $\ell$ denotes a transition label or the internal action $\tau$.
@@ -43,7 +46,8 @@ $P \By{\ell} Q'$, abstract from internal actions in the usual way.
 Throughout the paper, we write $\Re, \Re',\ldots$ to denote binary relations on (typed) processes.
 
 \newc{
-\HOp processes are meant to be disciplined by \emph{session types}, denoted $S, S', \ldots$, 
+\HOp processes specify structured communications (protocols) as 
+disciplined by \emph{session types}, denoted $S, S', \ldots$, 
 which we informally describe next:
 		\[
 		\begin{array}{lcll}
@@ -86,7 +90,7 @@ in the above clause process $R$ stands for any possible \emph{context} to which 
 As explained in~\cite{San96H}, considering 
 all possible contexts $R$ is key to achieve an adequate distinguishing power.
 
-The \emph{second issue} is due to inputs: it  
+The \emph{second issue} is due to inputs, and  
 %appears in input clauses, and 
 follows from 
 the fact that we work with an \emph{early}
@@ -102,7 +106,7 @@ in %our notion of
 bisimilarity} ($\fwb$)
 we take two (related) steps: 
 \begin{enumerate}[(a)]
-	\item We replace $(\star)$ with a clause involving a context \emph{more tractable} than $R\subst{V}{x}$; and 
+	\item We replace $(\star)$ with a clause involving a context \emph{more tractable} than $R\subst{V}{x}$ (and $R\subst{W}{x}$); and 
 	\item We refine  inputs % transitions 
 	to avoid observing infinitely many actions on the same input prefix.
 \end{enumerate}
@@ -166,15 +170,15 @@ we take the following two steps:
 \paragraph{Trigger Processes.} % with Session Communication.}
 To address~(a), we exploit session types. 
 We first 
-observe that %closure 
-$R\subst{V}{x}$ 
+observe that, \newc{for any $V$}, %closure 
+process $R\subst{V}{x}$ 
 in $(\star)$
 is context bisimilar to the process
 %\begin{equation}\label{equ:1}
 	$$P = \newsp{s}{\appl{(\abs{z}{\binp{z}{x}{R}})}{s} \Par \bout{\dual{s}}{V} \inact}$$
 %\end{equation}
 %\noi 
-In fact,
+In fact, \newc{through a name application and a synchronization on session endpoint $s$}
 we do have $P \wbc R\subst{V}{x}$:
 \begin{eqnarray*}%\label{equ:1}
 	P & \red &  \newsp{s}{\appl{\binp{s}{x}{R}} \Par \bout{\dual{s}}{V} \inact} \\
@@ -222,37 +226,39 @@ As we explain below, we can give an alternative trigger process; the key is usin
 %$\abs{z}{\binp{z}{x} R}$.   
 
 \paragraph{Characteristic Processes and Values.}
-\dkmargin{check narrative here}
+\dkmargin{check narrative here---\newc{JP: seems fine now}}
 To address (b), we limit the possible 
 input values (such as $\abs{z}{\binp{z}{x} R}$ above) %processes 
 by exploiting session types.
 The key concept is that of {\bf \emph{characteristic process/value}}
 of a type,  
 %The characteristic process of a session type $S$ is the process inhabiting $S$. 
-a simple term inhabiting that type (\defref{def:char}).
+a simple process term that inhabits that type (\defref{def:char}).
 %Thus, characteristic processes follow the communication structures decreed by session types.
-
-\dk{As an example of a characteristic process consider}
-$S = \btinp{\shot{S_1}} \btout{S_2} \tinact$
-be the session type that first
-inputs an abstraction, %from values $S_1$ to processes, 
+\newc{To illustrate the key idea underlying characteristic processes, consider}
+$S = \btinp{\shot{S_1}} \btout{S_2} \tinact$, i.e.,  a session type denoting a protocol that 
+ first
+inputs an abstraction (a function from values $S_1$ to processes), 
 and then outputs a value of type $S_2$.
-\dk{Then, a process $\binp{u}{x} (\bout{u}{s_2} \inact \Par \appl{x}{s_1})$
-that inhabits $S$ is a kind of characteristic process for $S$ along
-name $u$. In fact, for the needs of the theory developed in this paper
-we consider characteristic processes that contain more information (cf.~\defref{def:char}).
-For type $S$ the characteristic process we consider has the form
-$\binp{u}{x} (\bout{t}{u} \inact \Par \appl{x}{s_1})$ for fresh name $t$.}
+\newc{Let $P$ be the process $\binp{u}{x} (\bout{u}{s_2} \inact \Par \appl{x}{s_1})$, where $s_1, s_2$ are fresh names.
+It can be shown that $P$ inhabits session type $S$;  
+for the purposes of the behavioural theory developed in this paper,
+process $P$ will serve as a kind of characteristic (representative) process for $S$ along
+name $u$. 
+%Characteristic processes are formally given in \defref{def:char}; as
+% we will see, 
+%we will consider characteristic processes that contain important information extracted from (session) types.
+%For type $S$ the characteristic process we consider has the form $\binp{u}{x} (\bout{t}{u} \inact \Par \appl{x}{s_1})$ for fresh name $t$.
+}
 %is a \emph{characteristic process} for $S$ 
 %\jpc{along $u$.}
 
 
-Given a session type $S$, we write $\mapchar{S}{u} $
-for its characteristic process along   $u$
-(cf.~\defref{def:char}).
+Given a session type $S$ \newc{and a name $u$}, we write $\mapchar{S}{u} $
+for the characteristic process of $S$ along   $u$.
 Also, %Similarly, 
-given value type $U$ (i.e., a type for channels or abstractions), then
-$\omapchar{U}$ denotes its \emph{characteristic value}.
+a given value type $U$ (i.e., a type for channels or abstractions), then
+$\omapchar{U}$ denotes its \emph{characteristic value} (cf.~\defref{def:char}).
 As we explain next, we use 
 %the %characteristic %Precisely, we exploit  the
 % characteristic value %$\lambda x.\mapchar{U}{x}$. %$\lambda x.\mapchar{U}{x}$. 
@@ -279,7 +285,7 @@ to observe/simulate application processes.
 we define an alternative, refined  LTS on typed processes, denoted  $\hby{\ell}$.
 We use this refined LTS to define
 %both higher-order ($\hwb$) and 
-characteristic  bisimulation 
+\emph{characteristic  bisimulation} 
 %(Defs.~\ref{d:hbw} and~\ref{d:fwb}),
 ($\fwb$, \defref{d:fwb}),
 in which the demanding clause~$(\star)$ is replaced with 
@@ -287,8 +293,8 @@ a more tractable output clause based on
 %trigger processes \jpc{(cf.~\eqref{equ:2})}  and 
 characteristic 
 trigger processes
-\jpc{(cf.~\eqref{eq:4})}.
-The key of this alternative LTS is 
+\jpc{(cf.~\eqref{eq:4} below)}.
+Key to this alternative LTS is 
 the following (refined) transition rule for input actions (cf. \defref{def:rlts}) 
 which, roughly speaking, given some fresh $t$,
 %We write $P \by{\bactinp{n}{V}} P'$ for the input transition along $n$.
@@ -313,7 +319,7 @@ P \hby{\bactinp{n}{V}} P'~~
 }
 $$
 %for some fresh $t$.
-Note the distinction between standard and refined transitions: $\by{\bactinp{n}{V}}$ vs. $\hby{\bactinp{n}{V}}$.
+Note the different notation for standard and refined transitions: $\by{\bactinp{n}{V}}$ vs. $\hby{\bactinp{n}{V}}$.
 %Our refined  rule for \jpc{(higher-order)} input admits only names, trigger values, and characteristic values.
 
 %respectively.
@@ -323,10 +329,11 @@ Note the distinction between standard and refined transitions: $\by{\bactinp{n}{
 \paragraph{Characteristic Triggers.}
 Following the same reasoning as (\ref{equ:2}), 
 we can use an alternative trigger process, called
-{\bf\em characteristic trigger process} with type 
-$U$ to replace clause
+{\bf\em characteristic trigger process} to replace clause
 % (1) in Definition~\ref{def:wbc}:
-($\star$): % in \defref{def:wbc}:
+($\star$). 
+\newc{Given a fresh name $t$ and a value $V$ of with type 
+$U$, we have}: % in \defref{def:wbc}:
 \begin{equation}
 	\label{eq:4}
 	 {
@@ -337,7 +344,8 @@ $U$ to replace clause
 %Note that if $U=L$, $\ftrigger{t}{V}{U}$ subsumes 
 %$\htrigger{t}{V}$. 
 \noi
-This is justified because in~\eqref{equ:2} $T_V \hby{\bactinp{t}{\omapchar{\btinp{U} \tinact}}} \wbc \newsp{s}{\mapchar{\btinp{U} \tinact}{s} \Par \bout{\dual{s}}{V} \inact }$.
+This formulation is justified, because given $T_V$ as in~\eqref{equ:2}, we may show that
+$$T_V \hby{\bactinp{t}{\omapchar{\btinp{U} \tinact}}} \wbc \newsp{s}{\mapchar{\btinp{U} \tinact}{s} \Par \bout{\dual{s}}{V} \inact }.$$
 \noi 
 \jpc{Thus, unlike process~\eqref{equ:2}, the characteristic trigger process 
 in~\eqref{eq:4}
@@ -350,60 +358,12 @@ our %{trigger processes}
 do {\em not} use recursion or 
 replication. This is key to preserve linearity of session endpoints.  
 
-
-\begin{comment}
-%\smallskip 
-\myparagraph{Refined Input Transitions.}
-Based on 
-the above discussion, we refine 
-the (early) transition rule for input actions. 
-%We write $P \by{\bactinp{n}{V}} P'$ for the input transition along $n$.
-The refined transition rule for input roughly becomes 
-(see \defref{def:rlts} for details):
-%\[
-%\tree {
-%	P \by{\bactinp{n}{V}} P' \quad 
-%	V = m \vee V \scong \abs{{x}}{\binp{t}{y} (\appl{y}{{x}})}
-%	\vee  V \scong \omapchar{U}  \textrm{ with } t \textrm{ fresh} 
-%}{
-%	P' \hby{\bactinp{n}{V}} P'
-%}
-%\]
-$$
-\boxed{
-~~P \by{\bactinp{n}{V}} P' ~\land~ (V = m \vee V \scong \abs{{x}}{\binp{t}{y} (\appl{y}{{x}})} \vee  V \scong \omapchar{U}  \textrm{ with } t \textrm{ fresh}) ~~\Rightarrow~~
-P' \hby{\bactinp{n}{V}} P'~~}
-$$
-\noi
-Thus, our refined LTS admits only names, trigger values, and characteristic values in inputs.
-Note the distinction between standard and refined transitions: $\by{\bactinp{n}{V}}$ vs. $\hby{\bactinp{n}{V}}$.
-Using this rule, we define an alternative  LTS
-with refined 
-\jpc{(higher-order)}
-input. %; all other rules are kept unchanged.
-This refined LTS is used for 
-%both higher-order ($\hwb$) and 
-characteristic  bisimulation 
-%(Defs.~\ref{d:hbw} and~\ref{d:fwb}),
-($\fwb$, Def.~\ref{d:fwb}),
-in which the demanding clause~$(\star)$ is replaced with 
-a more tractable output clause based on 
-%trigger processes \jpc{(cf.~\eqref{equ:2})}  and 
-characteristic 
-trigger processes
-\jpc{(cf.~\eqref{eq:4})}.
-%respectively.
-%We show that $\hwb$ is useful for \HOp and \HO, and that~$\fwb$ can be uniformly used in all subcalculi, including \sessp. 
-\end{comment}
-
 \newc{It is also noteworthy that \HOp lacks name matching, 
 which is crucial in~\cite{JeffreyR05} to prove completeness of bisimilarity.}
-\dk{The lack of matching is compensated with the use of types.
-Matching gives the ability to the observer of the
-to test a received name. Instead, in our theory a process trigger
-embeds a name into a characteristic process so to observe its session behaviour.
-Thus, equivalent processes deal with (possibly different) names that have
-the same behaviour.}
+\dk{The lack of matching is compensated here with the use of (session) types.}
+\newc{Matching gives the observer the ability to test the equality of received names. In contrast, 
+in our theory a process trigger embeds a name into a characteristic process so as to observe its (typed) behaviour.
+Thus, equivalent processes deal with (possibly different) names that have the same (typed) behaviour.}
 
 %Instead of matching, we use types:
 %a process trigger embeds a name into a characteristic

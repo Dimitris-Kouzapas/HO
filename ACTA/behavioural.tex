@@ -29,7 +29,7 @@ higher-order  and  characteristic bisimilarities  (\secref{ss:hwb}).
 Then, we develop an auxiliary  proof technique based on deterministic transitions (\secref{ss:deter}).
 Our main result, the 
 characterisation of barbed congruence in terms of $\hwb$ and $\fwb$, is stated in~\secref{ss:charact}.
-Finally, we revisit our two implementations for the Hotel Booking Scenario (\exref{exam:proc}), 
+Finally, we revisit our two implementations for the Hotel Booking Scenario (\secref{exam:proc}), 
 using  \thmref{the:coincidence}
 to show that they are behaviourally equivalent (\secref{ss:examprev}).
 
@@ -250,7 +250,7 @@ environments associated to
 their dual endpoints  (denoted $\Delta'_j$ in the rule) appear in
 the resulting session environment}. Similarly for shared 
 names in $\widetilde{m}$ that are extruded.  
-All free values used for typing $V$ \newc{(denoted $\Lambda'$ and $\Delta'$ in the rule)}are subtracted from the
+All free values used for typing $V$ \newc{(denoted $\Lambda'$ and $\Delta'$ in the rule)} are subtracted from the
 resulting type tuple. The prefix of session $s$ is consumed
 by the action.
 Rule $\eltsrule{ShSnd}$ follows very similar ideas for output actions on shared names:
@@ -420,10 +420,10 @@ and \figref{fig:envLTS}.
 	for $\By{\ell}$ if $\ell\not = \tau$ otherwise $\By{}$.
 \end{definition}
 
-\dk{A typed transition relation requires type judgements with an empty $\Lambda$
-environment. This is for simplicity because we can always apply typing 
-rule $\trule{EProm}$ and get an empty $\Lambda$. Furthermore, recall that
-we are working with closed terms.}
+\newc{A typed transition relation requires type judgements with an empty $\Lambda$. 
+Notice that we are working with closed terms.
+Furthermore, we can always apply Rule~$\trule{EProm}$ and obtain an empty $\Lambda$. 
+}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %    Reduction closed barbed congruence
@@ -434,7 +434,12 @@ we are working with closed terms.}
 
 \noi We now define \emph{typed relations} and \emph{contextual equivalence} (i.e., barbed congruence).  
 To define typed relations, we first define \emph{confluence}
-over session environments $\Delta$:
+over session environments $\Delta$.
+\newc{Recall that 
+$\Delta$ captures session communication, which is deterministic. 
+The notion of confluence allows us to abstract away from alternative computation paths 
+that may arise due to non-interfering reductions of session names.}
+
 %
 \begin{definition}[Session Environment Confluence]\label{d:conf}
 	Two session environments $\Delta_1$ and $\Delta_2$
@@ -506,10 +511,10 @@ are observed  on typed processes $\Gamma; \emptyset; \Delta \proves P \hastype \
 When $n$ is a session name we require that its dual endpoint $\dual{n}$ is not
 present in the session environment $\Delta$.
 
-\dk{Observing the outputs is enough because input actions can be observed indirectly by output actions 
-on fresh names. For instance, the process $P = \binp{n}{x} P’$ has an input barb; by composing $P$
+\newc{Notice that observing output  barbs is enough 
+to (indirectly) observe input actions. For instance, the process $P = \binp{n}{x} P'$ has an input barb on $n$; by composing $P$
 with  $\bout{n}{m} \bout{\suc}{} \inact$ (with fresh $\suc$) then one obtains a (weak) observation
-uniquely associated to  the input in $P$. }
+uniquely associated to  the input along $n$ in $P$. }
 
 To define a congruence relation, we introduce the family $\C$ of contexts:
 
@@ -621,8 +626,8 @@ We first define characteristic processes/values:
 \begin{definition}[Characteristic Process and Values]
 	\label{def:char}
 	Let $u$ and $U$ be a name and a type, respectively.
-	\figref{fig:char} defines the {\em characteristic process} 
-	$\mapchar{U}{u}$ and the {\em characteristic value} $\omapchar{U}$.
+	\newc{The {\em characteristic process} of $U$ (along $u$), denoted $\mapchar{U}{u}$, and 
+	the {\em characteristic value} of $U$, denoted $\omapchar{U}$, are defined in \figref{fig:char}.}
 \end{definition}
 
 %%%%%%%%%%%%%%%%%%%%%%%% Characteristic Process Figure %%%%%%%%%%%%%%%%%%%%%%%%%
@@ -809,48 +814,33 @@ We first define characteristic processes/values:
 		\\
 		\mapchar{\btbra{l_i: S_i}_{i \in I}}{u}
 		& \defeq &
-		\bbra{u}{l_i: \bout{t}{u} \inact}_{i \in I}		 
+		\bbra{u}{l_i: \bout{t_i}{u} \inact}_{i \in I}		 
 		&&
 		\omapchar{\shot{U}} &\defeq& \abs{x}{\mapchar{U}{x}}
 		\\
 		 
 %		\\
-%\dk{		\mapchar{\tvar{t}}{u}}
+%		\mapchar{\tvar{t}}{u}
 %		&\defeq&
 %		\varp{X}_{\vart{t}}
-%		& & 
-%		 
-%		& &
-\dk{		\mapchar{\trec{t}{S}}{u}}
-		&\defeq&
-%		\recp{X_{\vart{t}}}{\mapchar{S}{u}}
-		\mapchar{S \subst{\trec{t}{S}}{\vart{t}}}{u}
+%		\\
+%
+		\mapchar{ \trec{t}{S} }{u} &\defeq& \mapchar{S \subst{\tinact}{\vart{t}} }{u}
+
 		&&
 		\omapchar{\lhot{U}} & \defeq &  \abs{x}{\mapchar{U}{x}}
 		\\
 		\mapchar{\tinact}{u}
 		& \defeq &
 		\inact
-		& & 
-		  
-		& &
-		 
 		\\
 		\mapchar{\chtype{S}}{u} 
 		&\defeq&
-		\bout{u}{\omapchar{S}} \bout{t}{u} \inact
-		& & 	
-					 
-		&   &
-		 
+		\bout{u}{\omapchar{S}} \bout{t}{u} \inact		 
 		\\
 		\mapchar{\chtype{L}}{u}
 		&\defeq&
-		 \bout{u}{\omapchar{L}} \bout{t}{u} \inact
-		&&
-		 
-		& &
- 
+		 \bout{u}{\omapchar{L}} \bout{t}{u} \inact 
 		\\
 		\mapchar{\shot{U}}{u}
 		&\defeq& 
@@ -931,7 +921,7 @@ We first define characteristic processes/values:
 \noi We can verify that characteristic processes/values  
 do inhabit their associated type.
 
-\begin{proposition}[Characteristic Processes/Values Inhabit Their Types]
+\begin{proposition}[Characteristic Processes/Values Inhabit Their Types]\label{p:inhabit}
 	\begin{enumerate}
 		\item	
 				Let $S$ be a session type.
@@ -946,8 +936,8 @@ do inhabit their associated type.
 \end{proposition}
 
 \begin{proof}[Sketch]
-	By induction on the definition of $\mapchar{S}{u}$
-	and $\mapchar{U}{u}$. 
+	The proof is done by induction on the syntax of types.
+	We give some notable cases in the Appendix---see \propref{app:characteristic_inhabit} (\mypageref{app:characteristic_inhabit})
 	\qed
 \end{proof}
 
@@ -955,12 +945,25 @@ do inhabit their associated type.
 	We show an example of a characteristic process inhabiting a
 	recursive type.
 	\begin{example}
-		Let recursive type $S = \trec{t}{ \btout{S'} \vart{t}}$ with
-		$\mapchar{S}{s} = \mapchar{ \btout{S'} S }{s} = \bout{s}{s'} \bout{t}{s} \inact$. If we type the
-		characteristic process for $S$ we get:
+		Let recursive type $S = \trec{t}{ \btout{S'} \vart{t}}$.
+		From the definition of the characteristic process for 
+		recursive types we get:
 		\[
-			\Gamma; \es; s: S \cat s':S' \cat t: \btout{S} \tinact \proves \bout{s}{s'} \bout{t}{s} \inact \hastype \Proc
+			\mapchar{\trec{t}{ \btout{S'} \vart{t}}}{s} = \mapchar{ \btout{S'} \trec{t}{ \btout{S'} \vart{t}} }{s}
 		\]
+		From the definition of the characteristic process for the output
+		prefixed session types we get:
+		\[
+			\bout{s}{s'} \bout{t}{s} \inact
+		\]
+%		Note that we get the same characteristic process even if we unfold the type more than once:
+%		\[
+%		\mapchar{ \btout{S'} \btout{S'} \trec{t}{ \btout{S'} \vart{t}} }{s} = \bout{s}{s'} \bout{t}{s} \inact
+%		\]
+%		If we type the characteristic process for $S$ we get:
+%		\[
+%			\Gamma; \es; s: S \cat s':S' \cat t: \btout{S} \tinact \proves \bout{s}{s'} \bout{t}{s} \inact \hastype \Proc
+%		\]
 	\end{example}
 }
 
@@ -1212,10 +1215,17 @@ trigger or characteristic values or names:
 	(\Gamma_1; \Lambda_1; \Delta_1) \hby{\ell} (\Gamma_2; \Lambda_2; \Delta_2)
 	$$
 	is 
-	defined by the all
-	rules in \figref{fig:envLTS} excepting Rules $\eltsrule{SRv}$ and $\eltsrule{ShRv}$, 
-	which are replaced by the following one:
+	defined by on top of the rules
+	in \figref{fig:envLTS} using the following rules:
 	\begin{mathpar}
+		\inferrule[\eltsrule{Tr}] {
+			(\Gamma_1; \Lambda_1; \Delta_1) \by{\ell} (\Gamma_2; \Lambda_2; \Delta_2)
+			\and
+			\ell \not= \bactinp{n}{V}
+		}{
+			(\Gamma_1; \Lambda_1; \Delta_1) \hby{\ell} (\Gamma_2; \Lambda_2; \Delta_2)
+		}
+		\\
 		\inferrule[\eltsrule{RRcv}]{
 			(\Gamma_1; \Lambda_1; \Delta_1) \by{\bactinp{n}{V}} (\Gamma_2; \Lambda_2; \Delta_2)
 			\and
@@ -1254,7 +1264,7 @@ when the type of $V$ is~$U$.
 %to define the following two bisimulations. 
 
 
-\subsection{Higher-Order ($\hwb$) and  Characteristic  Bisimilarity ($\fwb$)}
+\subsection{Higher-Order Bisimilarity ($\hwb$) and  Characteristic  Bisimilarity ($\fwb$)}
 \label{ss:hwb}
 
 We define \emph{higher-order bisimilarity} and 
@@ -1265,8 +1275,16 @@ the two bisimulations
 use two different trigger processes (cf.~\eqref{eq:4}):
 %
 \begin{eqnarray}
-	\htrigger{t}{V}	& \defeq &	\hotrigger{t}{x}{s}{V}							\label{eqb:0} \\
-	\ftrigger{t}{V}{U}	& \defeq &	\fotrigger{t}{x}{s}{\btinp{U} \tinact}{V}	\label{eqb:4}
+	\htrigger{t}{V}	& \defeq &
+	\begin{cases}
+%	\left\{ \begin{array}{ll}
+		\hotrigger{t}{x}{s}{V} & \newc{\text{if $V$ is a first-order value}}\\
+		\binp{t}{x} \newsp{s}{\binp{s}{y} (\appl{y}{x}) \Par \bout{\dual{s}}{V} \inact} & \newc{\text{if $V$ is a higher-order value}~~}
+	%\end{array}
+	%\right.
+		\end{cases}
+	\label{eqb:0} \\
+	\ftrigger{t}{V}{U}	& \defeq &	\fotrigger{t}{x}{s}{U}{V}	\label{eqb:4}
 %	\mapchar{\btinp{U} \tinact}{s}
 \end{eqnarray}
 %
@@ -1280,7 +1298,7 @@ We use higher-order trigger processes to define \emph{higher-order bisimilarity}
 
 \begin{definition}[Higher-Order Bisimilarity]
 	\label{d:hwb}
-	A typed relation $\Re$ is a {\em  HO bisimulation} if 
+	A typed relation $\Re$ is a {\em  higher-order bisimulation} if 
 	for all $\horel{\Gamma}{\Delta_1}{P_1}{\ \Re \ }{\Delta_2}{Q_1}$ 
 %
 	\begin{enumerate}[1)]
@@ -1353,6 +1371,39 @@ trigger process considered. Because of the application in
 $\htrigger{t}{V}$ (cf. \eqref{eqb:0}), $\hwb$ cannot be used to reason about first-order session processes (i.e., processes without higher-order features). In contrast, $\fwb$ is more general: it can uniformly input characteristic, first- or higher-order values. 
 \end{remark}
 }
+
+%\dk{
+%\begin{example}
+%	\begin{eqnarray*}
+%			&&\Gamma; \es; s: S \cat s_1:S' \cat t: \btout{S} \tinact \proves \bout{s}{s_1} \bout{t}{s} \inact
+%			\\
+%			&&\hby{\bactout{s}{s'}}
+%			\Gamma; \es; s: S \cat s_1:S' \cat t: \btout{S} \tinact \cat t_1': \btinp{\btinp{S'} \tinact} \tinact \proves \htrigger{t_1'}{s_1} \Par \bout{t}{s} \inact
+%			\\
+%			&&\hby{\bactout{t}{s}}
+%			\Gamma; \es; s: S \cat s_1:S' \cat t_1: \btinp{\btinp{S} \tinact} \tinact \cat t_1': \btinp{\btinp{S'} \tinact} \tinact \proves \htrigger{t_1'}{s_1} \Par \htrigger{t_1}{s}
+%			\\
+%			&&\hby{\bactinp{t}{ \omapchar{\btinp{S} \tinact} }} \hby{\dtau} \hby{\dtau}
+%			\\
+%			&&\Gamma; \es; s: S \cat s_1:S' \cat s_2: S' \cat t_2: \btout{S} \tinact \cat t_1': \btinp{\btinp{S'} \tinact} \tinact \cat t_1'': \btout{\tinact} \tinact \\
+%			&&\proves \htrigger{t_1'}{s_1} \Par \bout{s}{s_2} \bout{t_2}{s} \inact \Par \news{s}{\bout{t_1''}{s} \inact}
+%			\\
+%			&&\hby{\bactout{t_1''}{ s }} \hby{\bactinp{t'''}{\omapchar{\btinp{\tinact} \tinact}} } \hby{\dtau} \hby{\dtau}
+%			\\
+%			&&\Gamma; \es; s: S \cat s_1:S' \cat s_2: S' \cat t_2: \btout{S} \tinact \cat t_1': \btinp{\btinp{S'} \tinact} \tinact
+%			\\
+%			&&\proves \htrigger{t_1'}{s_1} \Par \bout{s}{s_2} \bout{t_2}{s} \inact
+%			\\
+%			&& \vdots
+%			\\
+%			&&\Gamma; \es; s: S \cat s_1:S' \cat s_2: S' \cat s_3: S' \cat t_3: \btout{S} \tinact \cat t_1': \btinp{\btinp{S'} \tinact} \tinact \cat t_2': \btinp{\btinp{S'} \tinact} \tinact
+%			\\
+%			&&\proves \htrigger{t_1'}{s_1} \Par \htrigger{t_2'}{s_2} \Par \bout{s}{s_3} \bout{t_3}{s} \inact
+%			\\
+%			&& \vdots
+%	\end{eqnarray*}
+%\end{example}
+%}
 
 \subsection{Deterministic Transitions and Up-to Techniques}
 \label{ss:deter}
@@ -1485,6 +1536,9 @@ Using the above determinacy properties, we can state the following up-to techniq
 	\qed
 \end{proof}
 
+\[
+\]
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %  Characterisation of rc bp congruence
@@ -1495,7 +1549,7 @@ Using the above determinacy properties, we can state the following up-to techniq
 
 This section proves the main result; %typed bisimilarities collapse for \HOp processes. 
 it allows us to use $\fwb$ and $\hwb$   as tractable reasoning
-techniques for higher-order processes with sessions.
+techniques for \HOp processes.
 
 
 \begin{lemma}
@@ -1504,44 +1558,44 @@ techniques for higher-order processes with sessions.
 \end{lemma}
 
 \begin{proof}[Sketch]
-\dk{
-	The main difference between the definition of the two bisimilarity relations
-	is the trigger process. Thus, the interesting case is the
-	case where we observe an output from a process. The
+\newc{
+	The main difference between 
+	$\hwb$ and $\fwb$
+%	the definition of the two bisimilarity relations
+	is the trigger process (namely, higher-order triggers $\htrigger{t}{V}$ in $\hwb$ and characteristic triggers $\ftrigger{t}{V}{U}$ in $\fwb$). Thus, the most interesting case in the proof is when we observe an output from a process. 
+	When showing that $\fwb \subseteq \hwb$, 
+	the
 	key after the output is to show that
 	\[
 		\newsp{\tilde{m_1}}{P_1 \Par \ftrigger{t}{V}{U}} \hwb \newsp{\tilde{m_2}}{P_2 \Par \ftrigger{t}{V_2}{U}}
 	\]
 	given that 
 	\[
-		\newsp{\tilde{m_1}}{P_1 \Par \htrigger{t}{V}} \hwb \newsp{\tilde{m_2}}{P_2 \Par \htrigger{t}{V_2}}
+		\newsp{\tilde{m_1}}{P_1 \Par \htrigger{t}{V}} \hwb \newsp{\tilde{m_2}}{P_2 \Par \htrigger{t}{V_2}}.
 	\]
-	when showing that $\fwb \subseteq \hwb$,
-	and
+	Similarly, in the proof of $\hwb \subseteq \fwb$, the key step is showing that
 	\[
 		\newsp{\tilde{m_1}}{P_1 \Par \htrigger{t}{V}} \fwb \newsp{\tilde{m_2}}{P_2 \Par \htrigger{t}{V_2}}
 	\]
 	given that 
 	\[
-		\newsp{\tilde{m_1}}{P_1 \Par \ftrigger{t}{V}} \fwb \newsp{\tilde{m_2}}{P_2 \Par \ftrigger{t}{V_2}{U}}
+		\newsp{\tilde{m_1}}{P_1 \Par \ftrigger{t}{V}{U}} \fwb \newsp{\tilde{m_2}}{P_2 \Par \ftrigger{t}{V_2}{U}}.
 	\]
-	when showing that $\hwb \subseteq \fwb$.
-}
-	The above comes from the intuition that
+	Intuitively, the above equalities follow from the fact that  
 	characteristic trigger processes
 	$\ftrigger{t}{V}{U}$
 	and
 	higher-order trigger processes
 	$\htrigger{t}{V}$
-	exhibit similar behaviour.
-Indeed, while for the former we have
+	exhibit similar behaviour, see \lemref{lem:trigger_equiv} in the Appendix for more details.}
+	Indeed, while for the former we have
 	\begin{eqnarray*}
-		\fotrigger{t}{x}{s}{\btinp{U} \tinact}{V} &\hby{\bactinp{t}{s'}}& \newsp{s}{ \binp{s}{y} \mapchar{U}{y}  \Par \bout{\dual{s}}{V} \inact}
-			\end{eqnarray*}
+		\fotrigger{t}{x}{s}{U}{V} &\hby{\bactinp{t}{s'}}& \newsp{s}{\binp{s}{y} \mapchar{U}{y}  \Par \bout{\dual{s}}{V} \inact}
+	\end{eqnarray*}
 		for the latter we have:
 	\begin{eqnarray*}
-		\hotrigger{t}{x}{s}{V} &\hby{\bactinp{t}{\omapchar{\btinp{U} \tinact}}}& \newsp{s}{ \appl{(\abs{x}{\binp{x}{y} \mapchar{U}{y}})}{s}  \Par \bout{\dual{s}}{V} \inact}\\
-		&\by{\tau}& \newsp{s}{ \binp{s}{y} \mapchar{U}{y}  \Par \bout{\dual{s}}{V} \inact}
+		\hotrigger{t}{x}{s}{V} &\hby{\bactinp{t}{\omapchar{U}}}& \newsp{s}{ \binp{s}{y} \mapchar{U}{y}  \Par \bout{\dual{s}}{V} \inact}
+%		&\by{\tau}& \newsp{s}{ \binp{s}{y} \mapchar{U}{y}  \Par \bout{\dual{s}}{V} \inact}
 	\end{eqnarray*}
 %
 	Using the above information we can show that typed relations induced by 
@@ -1609,8 +1663,7 @@ then they are equivalent under any higher-order substitution.
 	substitution properties stated by the lemma
 	and proving that it is a higher-order bisimulation.
 	Following the higher-order bisimulation requirements we
-	need to use \lemref{lem:trigger_subst} where
-	we show that if
+	need to use \lemref{lem:trigger_subst}, which shows that if
 	\[
 		\horel{\Gamma}{\Delta_1}{\newsp{\widetilde{m_1}}{P \Par \appl{(\trvalx{t})}{n_1} }}
 		{\hwb}
@@ -1622,6 +1675,41 @@ then they are equivalent under any higher-order substitution.
 		{\hwb}
 		{\Delta_2'}{\newsp{\widetilde{m_2}}{Q \Par \appl{(\abs{x}{R})}{n_2} }}
 	\]
+	The proof for the above lemma follows the syntax of the characteristic process.
+	The sketch of proof requires to construct a relation
+	\begin{eqnarray*}
+		\Re &=& \set{
+					\horel{\Gamma}{\Delta_1'}{\newsp{\widetilde{m_1}}{P \Par \appl{(\abs{x}{R})}{n_1} }}
+					{\hwb}
+					{\Delta_2'}{\newsp{\widetilde{m_2}}{Q \Par \appl{(\abs{x}{R})}{n_2} }} \setbar
+					\\
+				&&	\horel{\Gamma}{\Delta_1}{\newsp{\widetilde{m_1}}{P \Par \appl{(\trvalx{t})}{n_1} }}
+					{\hwb}
+					{\Delta_2}{\newsp{\widetilde{m_2}}{Q \Par \appl{(\trvalx{t})}{n_2} }}
+				}
+	\end{eqnarray*}
+	The proof that $\Re$ is a higher-order bisimulation then follows the transitions:
+	\[
+	\begin{array}{rcll}
+		&&\Gamma; \es; \Delta_1 \proves \newsp{\widetilde{m_1}}{P \Par \appl{(\trvalx{t})}{n_1} }
+		\\
+		\hby{ \bactinp{t}{\omapchar{U}} } \Hby{\dtau}
+		&& \newsp{\widetilde{m_1}''}{P \Par \appl{\omapchar{U}}{n_1} }
+		\\
+		\hby{\ell}
+		&& \newsp{\widetilde{m_1}'''}{P' \Par \bout{t}{n_1} \inact } & \textrm{\small Characteristic Process Definition}
+		\\
+		\hby{\bactout{t}{n_1}} \Hby{\dtau} \hwb
+		&&
+		\Delta_1' \proves \newsp{\widetilde{m_1}'}{P' \Par \appl{(\trvalx{t})}{n_1} }
+	\end{array}
+	\]
+	which can be mimicked by the second typing judgement:
+	\[
+		\horel{\Gamma}{\Delta_2}{\newsp{\widetilde{m_2}}{Q \Par \appl{(\trvalx{t})}{n_2} }}
+		{\Hby{\bactinp{t}{\omapchar{U}}} \dots}
+		{\Delta_2'}{\newsp{\widetilde{m_2}'}{Q' \Par \appl{(\trvalx{t})}{n_2} }}
+	\]s
 %	The result is proved by constructing a typed relation on the above
 %	substitution properties and proving that it is a
 %	higher-order bisimulation, up-to \betatran (\lemref{lem:up_to_deterministic_transition}).
@@ -1630,7 +1718,8 @@ then they are equivalent under any higher-order substitution.
 	\qed
 \end{proof}
 
-We now show that higher-order bisimilarity is sound with respect to contextual bisimilarity:
+We now show that higher-order bisimilarity is sound with respect to contextual bisimilarity.
+To show soundness we use the crucial result of \lemref{lem:proc_subst}:
 
 \begin{lemma}
 	\label{lem:wb_is_wbc}
@@ -1708,7 +1797,7 @@ Context bisimilarity is included in barbed congruence:
 	\qed
 \end{proof}
 
-The last ingredient required is the following inclusion.
+The last ingredient required for our main result is the following inclusion.
 
 \begin{lemma}
 	\label{lem:cong_is_wb}
@@ -1716,12 +1805,13 @@ The last ingredient required is the following inclusion.
 \end{lemma}
 
 \begin{proof}[Sketch]	
-	We prove the above result by exploiting
+	The proof exploits
 the \emph{definability} technique developed in~\cite[\S6.7]{Hennessy07} and
 refined for session types in~\cite{KYHH2015,KY2015}.
-Intuitively, this technique exploits small test processes which
+Intuitively, this technique exploits small test processes that
 reveal the presence of a visible action by reducing with a given pair of processes
 and exhibiting a barb on a fresh name.
+
 More precisely, given a fresh name $\suc$, and for each visible action $\ell$, we define 
 		a  test process
 	$\Gamma; \emptyset; \Delta_2 \proves T\lrangle{\ell, \suc} \hastype \Proc$
@@ -1741,12 +1831,12 @@ More precisely, given a fresh name $\suc$, and for each visible action $\ell$, w
 	\[
 		\Gamma; \Delta_1 \proves P\ \cong\ \Delta_2 \proves Q
 	\]
-	implies from congruence of $\cong$:
+	implies from congruence of $\cong$, that if there exist $\Delta_3, \Delta_4$ such that:
 	\begin{eqnarray*}
 		\Gamma; \Delta_3 \proves P \Par T\lrangle{\ell, \suc}\ \cong\ \Delta_4 \proves Q \Par T\lrangle{\ell, \suc}
 %		\label{prsk:1}
 	\end{eqnarray*}
-	which implies from reduction-closeness of $\cong$ and the definition of $T\lrangle{\ell, \suc}$:
+	then it implies from reduction-closeness of $\cong$ and the definition of $T\lrangle{\ell, \suc}$:
 	\begin{eqnarray}
 		\Gamma; \Delta_3' \proves P' \Par \bout{\suc}{\dual{m}} \inact\ \cong\ \Delta_4' \proves Q' \Par \bout{\suc}{\dual{m}} \inact
 		\label{prsk:2}
@@ -1788,11 +1878,11 @@ Indeed, we may conclude $$\cong\ \subseteq\ \hwb\ =\ \fwb\ \subseteq\ \wbc\ \sub
 \end{proof}
  
 
-\subsection{Revisiting the Hotel Booking Scenario (\exref{exam:proc})}
+\subsection{Revisiting the Hotel Booking Scenario (Section \ref{exam:proc})}
 \label{ss:examprev}
 
 Now we prove that $\Client_1$ and $\Client_2$ 
-in \exref{exam:proc} are behaviourally equivalent.
+in \secref{exam:proc} are behaviourally equivalent.
 
 \begin{proposition}\label{p:examp}
 	Let
@@ -1806,7 +1896,7 @@ in \exref{exam:proc} are behaviourally equivalent.
 	Then
 	$\horel{\es}{\Delta}{\Client_1}
 	{\hwb}
-	{\Delta}{\Client_2}$, where $\Client_1$ and $\Client_2$ are as in \exref{exam:proc}. 
+	{\Delta}{\Client_2}$, where $\Client_1$ and $\Client_2$ are as in \secref{exam:proc}. 
 \end{proposition}
 
 %\begin{proof}[Sketch]
