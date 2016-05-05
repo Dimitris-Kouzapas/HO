@@ -21,15 +21,13 @@ The syntax of types of \HOp is given below:
 			\\[1mm]
 			\textrm{(name)} & C \bnfis & S \bnfbar \chtype{S} \bnfbar \chtype{L}
 			\\[1mm]
-			\textrm{(abstr)} & L \bnfis & \shot{U} \bnfbar \lhot{U}
-		\end{array}
-		&
-		\begin{array}{lcl}
-			\textrm{(session)} & S \bnfis &  \btout{U} S \bnfbar \btinp{U} S \bnfbar \tinact
-			\\[1mm]
-			&\bnfbar& \btsel{l_i:S_i}_{i \in I} \bnfbar \trec{t}{S} \bnfbar \vart{t}
-			\\[1mm]
-			&\bnfbar& \btbra{l_i:S_i}_{i \in I}
+			\textrm{(abstractions)}~~ & L \bnfis & \shot{U} \bnfbar \lhot{U}
+			\\[1mm]		
+			\textrm{(session)} & S \bnfis &  \btout{U} S \bnfbar \btinp{U} S 
+			\bnfbar \btsel{l_i:S_i}_{i \in I}  \bnfbar \btbra{l_i:S_i}_{i \in I}
+			\\[1mm]					
+			& \bnfbar & \trec{t}{S} \bnfbar \vart{t}  \bnfbar \tinact
+			
 		\end{array}
 	\end{array}
 	\]
@@ -37,11 +35,12 @@ Value type $U$ includes
 the first-order types $C$ and the higher-order
 types $L$. Session types are denoted with $S$ and
 shared types with $\chtype{S}$ and $\chtype{L}$.
+\newc{We write $\Proc$ to denote the \emph{process type}.}
 %Note that we dissallow type $\chtype{U}$, thus
 %in the type discipline shared names cannot carry shared names.
 %In name types, $\chtype{U}$ is shared name types 
 %which are sent via shared names. 
-Types $\shot{U}$ and $\lhot{U}$ denote
+\newc{The functional} types $\shot{U}$ and $\lhot{U}$ denote
 {\em shared} and {\em linear} higher-order 
 %\jpc{functional}
 types, respectively.
@@ -56,9 +55,13 @@ the {\em output type}
 $\btout{U} S$ %is assigned to a name that 
 first sends a value of
 type $U$ and then follows the type described by $S$.  Dually,
-$\btinp{U} S$ denotes an {\em input type}. The {\em branching type}
-$\btbra{l_i:S_i}_{i \in I}$ and the {\em selection type}
-$\btsel{l_i:S_i}_{i \in I}$ define the labelled choice. 
+$\btinp{U} S$ denotes an {\em input type}. 
+The {\em selection type}
+$\btsel{l_i:S_i}_{i \in I}$ 
+and the 
+{\em branching type}
+$\btbra{l_i:S_i}_{i \in I}$ 
+define labelled choice, \newc{implemented at the level of processes by internal and external choice mechanisms, respectively.}
 We assume the {\em recursive type} $\trec{t}{S}$ is guarded,
 i.e.,  $\trec{t}{\vart{t}}$ is not allowed. 
 %We stress that carried type $U$ in $\btout{U} S$ and
@@ -160,21 +163,21 @@ of $F$ exists. We write $S_1 \dualof S_2$ if  $(S_1,S_2)\in \Re$.
 	\Delta   &\bnfis &  \emptyset \bnfbar \Delta \cat \AT{u}{S}
 \end{eqnarray*}
 %]
-\noi 
+\newc{Typing environments $\Gamma$, $\Lambda$, and $\Delta$ satisfy different structural principles.
+Intuitively, the \emph{exchange} principle indicates that the ordering of type assignments does not matter. 
+\emph{Weakening} says that type assignments need not be used. 
+Finally, \emph{contraction}  says that type assignments may be duplicated.}
+
 $\Gamma$ maps variables and shared names to value types, and recursive 
 variables to session environments;  
 it admits weakening, contraction, and exchange principles.
-\newc{Intuitive definitions of these structural principles follow. Exchange indicates that the ordering of type assignments does not matter. 
-Weakening says that type assignments need not be used. 
-Finally, contraction  says that type assignments may be duplicated.
 Given $\Gamma$, we write $\Gamma \backslash x$ to denote the environment obtained from 
-$\Gamma$ by removing the assignment $x:\shot{U}$, for some $U$.
-}
-$\Lambda$ maps variables to 
+ $\Gamma$ by removing the assignment $x:\shot{U}$, for some $U$.
+While  $\Lambda$ maps variables to 
 %the
  linear %functional 
 higher-order
-types, and $\Delta$ maps
+types, $\Delta$ maps
 session names to session types. 
 Both $\Lambda$ and $\Delta$ %behave linearly: they 
 are
