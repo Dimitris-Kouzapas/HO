@@ -26,6 +26,15 @@ We state session type unfolding:
 	\]
 \end{definition}
 
+\begin{lemma}
+	Let $S$ be a session type. Then $\unfold{S} = S'$ and
+	$S' \not= \trec{t}{S''}$.
+\end{lemma}
+
+\begin{proof}
+	The proof is a straightforward induction on the syntax of $S$.
+\end{proof}
+
 We state session type prefix deletion relation:
 \begin{definition}[Session Type Prefix Deletion]
 	\[
@@ -164,21 +173,30 @@ We state a more detailed form of \propref{p:inhabit} as given in Page~\pageref{p
 					}
 				\]
 			\item	Case $S = \trec{t}{S'}$.
-					\[
-						\tree{
-							\Gamma; \es; \Delta \cat t: \btout{S_2} \tinact \cat s: S_1 \proves \bout{t}{s} \inact \hastype \Proc
-						}{
-							\Gamma; \es; \Delta \cat t: \btout{S_1} \tinact \cat s: \trec{t}{S} \hastype \mapchar{\trec{t}{S}}{s} \hastype \Proc
-						}
-					\]
-					\dk{put proof}
-%					\[
-%						\tree{
-%							\Gamma; \es; \Delta \cat t: \btout{S'} \tinact \cat s: S' \proves \bout{t}{s} \hastype \Proc
-%						}{
-%							\Gamma; \es; \Delta \cat t: \btout{S'} \tinact \cat s: \trec{t}{S} \hastype \mapchar{\trec{t}{S}}{s} \hastype \Proc
-%						}
-%					\]
+					The proof is done by induction on the shape of $S'$.
+					\begin{enumerate}
+						\item	$S' = \btbra{l_i: S_i}_{i \in I}$
+
+								The characteristic process for $S$ is
+								$\mapchar{S' \subst{\tinact}{\vart{t}}}{s} = \bbra{s}{l_i: \bout{t_i}{s} \inact}_{i \in I}$
+								and $\delete{S} = \set{S_i}_{i \in I}$
+								\[
+									\tree {
+										\forall i \in I, \es; \es; t_i: S_i \subst{\tinact}{\vart{t}} \proves \bout{t_i}{s} \inact \hastype \Proc
+									}{
+										\es; \es; t_i: S_i \subst{\tinact}{\vart{t}} \cat s: S' \subst{\tinact}{\vart{t}} \proves \bbra{s}{l_i: \bout{t_i}{s} \inact}_{i \in I} \hastype \Proc
+									}
+								\]
+								We then type $\mapchar{\trec{t}{ \btbra{l_i: S_i}_{i \in I} }}{s}$.
+								\[
+									\tree {
+										\forall i \in I, \es; \es; t_i: S_i \proves \bout{t_i}{s} \inact \hastype \Proc
+									}{
+										\es; \es; t_i: S_i \cat s: \trec{t}{ \btbra{l_i: S_i}_{i \in I} } \proves \bbra{s}{l_i: \bout{t_i}{s} \inact}_{i \in I} \hastype \Proc
+									}
+								\]
+					\end{enumerate}
+
 			\item	Other cases are similar.
 	\end{itemize}
 	The proof for parts 2 and 3 is similar.
