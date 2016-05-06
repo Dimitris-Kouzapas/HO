@@ -21,7 +21,7 @@ We state session type unfolding:
 		\qquad 
 		\unfold{\tinact} = \tinact
 		\qquad
-		\unfold{\trec{t}{S}} = \unfold{S \subst{\trec{t}{S}}{t}  }
+		\unfold{\trec{t}{S}} = \unfold{S \subst{\trec{t}{S}}{\tvar{t}}  }
 	\end{array}
 	\]
 \end{definition}
@@ -128,7 +128,8 @@ We state a more detailed form of \propref{p:inhabit} as given in Page~\pageref{p
 			\item	If $U = \shot{U'}$ and  $\Gamma; \es; \Delta \proves \omapchar{U'} \hastype U'$ then
 					$\Gamma \cat x: \shot{U'}; \es;\Delta \proves \mapchar{\shot{U'}}{x} \hastype \Proc$.
 	
-			\item	If $U = \lhot{U'}$ and   $\Gamma; \es; \Delta \proves \omapchar{U'} \hastype U'$ then
+			\item	
+\NY{Is this correct? Better typing?} If $U = \lhot{U'}$ and   $\Gamma; \es; \Delta \proves \omapchar{U'} \hastype U'$ then
 					$\Gamma \cat x: \shot{U'}; \es;\Delta \proves \mapchar{\lhot{U'}}{x} \hastype \Proc$.
 		\end{enumerate}
 	\end{enumerate}
@@ -203,7 +204,7 @@ We state a more detailed form of \propref{p:inhabit} as given in Page~\pageref{p
 	\qed
 \end{proof}
 
-\dk{
+\dk{NY: I propose to comment out this example after Jorge check
 	\begin{example}
 		\begin{itemize}
 			\item	$\trec{t}{\btout{U} \vart{t}}$
@@ -266,12 +267,12 @@ We state a more detailed form of \propref{p:inhabit} as given in Page~\pageref{p
 					\[
 					\tree{
 						\begin{array}{l}
-							\es; \es; t_1: \btout{\trec{t}{  \btbra{l_1: \vart{t}, l_2: \tinact}}} \tinact
-							\cat s: \trec{t}{  \btbra{l_1: \vart{t}, l_2: \tinact}} \proves
-							\bout{t_1}{s} \inact \hastype \Proc
+			\es; \es; t_1: \btout{\trec{t}{  \btbra{l_1: \vart{t}, l_2: \tinact}}} \tinact
+		\cat s: \trec{t}{  \btbra{l_1: \vart{t}, l_2: \tinact}} \proves
+					\bout{t_1}{s} \inact \hastype \Proc
 							\\
-							\es; \es; t_2: \btout{\tinact} \tinact \cat \tinact \proves
-							\bout{t_2}{s} \inact \hastype \Proc
+		\es; \es; t_2: \btout{\tinact} \tinact \cat \tinact \proves
+				\bout{t_2}{s} \inact \hastype \Proc
 						\end{array}
 					}{
 						\es; \es; t_1: \btout{\trec{t}{  \btbra{l_1: \vart{t}, l_2: \tinact}}} \tinact \cat t_2: \btout{\tinact} \tinact \cat
@@ -701,11 +702,11 @@ the trigger processes $\htrigger{t}{V}$ and $\ntrigger{t}{V}$.
 								{\Delta_2'}{\newsp{\widetilde{m_2}}{Q \Par \htrigger{t'}{s}  } }
 							\]
 							The proof is easy if we consider that both processes can observe the
-							up to deterministic transitions $\hby{\bactinp{t'}{\abs{z}{\tinact}}} \Hby{\dtau}$.
+							up to deterministic transitions $\hby{\bactinp{t'}{\abs{z}{\inact}}} \Hby{\dtau}$.
 							\begin{eqnarray*}
 								&&\Gamma; \es; \Delta_1' \proves \newsp{\widetilde{m_1}}{P \Par \htrigger{t'}{s}  } \\
-								\hby{\bactinp{t'}{\abs{z}{\tinact}}} &&
-								\Delta_1' \proves \newsp{\widetilde{m_1}}{P \Par \newsp{s'}{\binp{s'}{y} (\appl{\abs{z}{\inact}}{y}) \Par \bout{\dual{s'}}{s} \inact}}
+								\hby{\bactinp{t'}{\abs{z}{\inact}}} &&
+								\Delta_1' \proves \newsp{\widetilde{m_1}}{P \Par \newsp{s'}{\binp{s'}{y} (\appl{(\abs{z}{\inact})}{y}) \Par \bout{\dual{s'}}{s} \inact}}
 								\\
 								\hby{\dtau} &&
 								\Delta_1' \proves \news{\widetilde{m_1}}{P}
@@ -713,8 +714,8 @@ the trigger processes $\htrigger{t}{V}$ and $\ntrigger{t}{V}$.
 							and
 							\begin{eqnarray*}
 								&&\Gamma; \es; \Delta_2' \proves \newsp{\widetilde{m_2}}{Q \Par \htrigger{t'}{s}  } \\
-								\hby{\bactinp{t'}{\abs{z}{\tinact}}} &&
-								\Delta_2' \proves \newsp{\widetilde{m_2}}{Q \Par \newsp{s'}{\binp{s'}{y} (\appl{\abs{z}{\inact}}{y}) \Par \bout{\dual{s'}}{s} \inact}}
+								\hby{\bactinp{t'}{\abs{z}{\inact}}} &&
+								\Delta_2' \proves \newsp{\widetilde{m_2}}{Q \Par \newsp{s'}{\binp{s'}{y} (\appl{(\abs{z}{\inact})}{y}) \Par \bout{\dual{s'}}{s} \inact}}
 								\\
 								\hby{\dtau} &&
 								\Delta_2' \proves \news{\widetilde{m_2}}{Q}
@@ -761,7 +762,7 @@ the trigger processes $\htrigger{t}{V}$ and $\ntrigger{t}{V}$.
 							\[
 								\horel{\Gamma}{\Delta_3}{\newsp{\widetilde{m_1}}{P \Par \htrigger{t}{V_1}  } }
 								{\hby{\bactinp{t}{n}}}
-								{\Delta_3'}{\newsp{\widetilde{m_1}'}{P \Par \newsp{s}{\binp{s}{y} \appl{y}{n} \Par \bout{\dual{s}}{V_1} \inact}}}
+								{\Delta_3'}{\newsp{\widetilde{m_1}'}{P \Par \newsp{s}{\binp{s}{y} (\appl{y}{n}) \Par \bout{\dual{s}}{V_1} \inact}}}
 							\]
 							Furthermore we can see that
 							\[
@@ -771,7 +772,7 @@ the trigger processes $\htrigger{t}{V}$ and $\ntrigger{t}{V}$.
 							\]
 							and
 							\[
-								\horel{\Gamma}{\Delta_3'}{\newsp{\widetilde{m_1}'}{P \Par \newsp{s}{\binp{s}{y} \appl{y}{n} \Par \bout{\dual{s}}{V_1} \inact}}}
+								\horel{\Gamma}{\Delta_3'}{\newsp{\widetilde{m_1}'}{P \Par \newsp{s}{\binp{s}{y}{(\appl{y}{n})} \Par \bout{\dual{s}}{V_1} \inact}}}
 								{\hby{\dtau}}
 								{\Delta_3'}{\newsp{\widetilde{m_1}'}{P \Par \appl{V_1}{n}}}
 							\]
@@ -790,7 +791,7 @@ the trigger processes $\htrigger{t}{V}$ and $\ntrigger{t}{V}$.
 							\]
 							Furthermore we can see that
 							\[
-								\horel{\Gamma}{\Delta_2}{\newsp{\widetilde{m_2}}{Q \Par \ntrigger{t}{V_2}  } }
+	\horel{\Gamma}{\Delta_2}{\newsp{\widetilde{m_2}}{Q \Par \ntrigger{t}{V_2}  } }
 								{\Hby{\bactinp{t}{\omapchar{\btinp{U} \tinact}}}}
 								{\Delta_2'}{\newsp{\widetilde{m_2}'}{Q \Par \appl{V_2}{n} \Par \newsp{s}{\bout{t'}{s} \inact}}}
 							\]
@@ -818,64 +819,64 @@ the trigger processes $\htrigger{t}{V}$ and $\ntrigger{t}{V}$.
 							\[
 								\horel{\Gamma}{\Delta_3}{\newsp{\widetilde{m_1}}{P \Par \htrigger{t}{V_1}  } }
 								{\hby{\bactinp{t}{\abs{z}{\mapchar{U'}{z}}}}}
-								{\Delta_3'}{\newsp{\widetilde{m_1}'}{P \Par \newsp{s}{\binp{s}{y} \appl{\abs{z}{\mapchar{U'}{z}}}{y} \Par \bout{\dual{s}}{V_1} \inact}}}
+								{\Delta_3'}{\newsp{\widetilde{m_1}'}{P \Par \newsp{s}{\binp{s}{y} {(\appl{(\abs{z}{\mapchar{U'}{z}})}{y}}) \Par \bout{\dual{s}}{V_1} \inact}}}
 							\]
 							Furthermore we can see that
 							\[
 								\horel{\Gamma}{\Delta_4}{\newsp{\widetilde{m_2}}{Q \Par \htrigger{t}{V_2}  } }
 								{\Hby{\bactinp{t}{\abs{z}{\mapchar{U'}{z}}}}}
-								{\Delta_4'}{\newsp{\widetilde{m_2}'}{Q \Par \appl{\abs{z}{\mapchar{U'}{z}}}{V_2}}}
+								{\Delta_4'}{\newsp{\widetilde{m_2}'}{Q \Par \appl{(\abs{z}{\mapchar{U'}{z}})}{V_2}}}
 							\]
 							and
 							\[
-								\horel{\Gamma}{\Delta_3'}{\newsp{\widetilde{m_1}'}{P \Par \newsp{s}{\binp{s}{y} \appl{y}{n} \Par \bout{\dual{s}}{V_1} \inact}}}
+								\horel{\Gamma}{\Delta_3'}{\newsp{\widetilde{m_1}'}{P \Par \newsp{s}{\binp{s}{y}{(\appl{y}{n})} \Par \bout{\dual{s}}{V_1} \inact}}}
 								{\hby{\dtau}}
-								{\Delta_3'}{\newsp{\widetilde{m_1}'}{P \Par \appl{\abs{z}{\mapchar{U'}{z}}}{V_1}}}
+								{\Delta_3'}{\newsp{\widetilde{m_1}'}{P \Par \appl{(\abs{z}{\mapchar{U'}{z}})}{V_1}}}
 							\]
 							We need to show that
 							\[
-								\horel{\Gamma}{\Delta_3'}{\newsp{\widetilde{m_1}'}{P \Par \appl{\abs{z}{\mapchar{U'}{z}}}{V_1}}}
+								\horel{\Gamma}{\Delta_3'}{\newsp{\widetilde{m_1}'}{P \Par \appl{(\abs{z}{\mapchar{U'}{z}})}{V_1}}}
 								{\hwb}
-								{\Delta_4'}{\newsp{\widetilde{m_2}'}{Q \Par \appl{\abs{z}{\mapchar{U'}{z}}}{V_2}}}
+								{\Delta_4'}{\newsp{\widetilde{m_2}'}{Q \Par \appl{(\abs{z}{\mapchar{U'}{z}})}{V_2}}}
 							\]
 							This is done by considering the requirement of $\Re$.
 
-							Let $\omapchar{\btinp{U} \tinact} = \abs{w}{ \binp{w}{y} ( \bout{t'}{w} \inact \Par \appl{\abs{z}{\mapchar{U'}{z}}}{y} ) } $
+							Let $\omapchar{\btinp{U} \tinact} = \abs{w}{ \binp{w}{y} ( \bout{t'}{w} \inact \Par \appl{(\abs{z}{\mapchar{U'}{z}})}{y} ) } $
 							\[
 								\mhorel{\Gamma}{\Delta_1}{\newsp{\widetilde{m_1}}{P \Par \ntrigger{t}{V_1}  } }
 								{\hby{\bactinp{t}{\omapchar{\btinp{U} \tinact}}}}
-								{\Delta_2'}{}{\newsp{\widetilde{m_1}'}{P \Par \newsp{s}{\appl{\abs{w}{ \binp{w}{y} ( \bout{t'}{w} \inact \Par \appl{\abs{z}{\mapchar{U'}{z}}}{y} ) }}{s} \Par \bout{\dual{s}}{V_1} \inact}}}
+								{\Delta_2'}{}{\newsp{\widetilde{m_1}'}{P \Par \newsp{s}{\appl{(\abs{w}{ \binp{w}{y} ( \bout{t'}{w} \inact \Par \appl{(\abs{z}{\mapchar{U'}{z}})}{y} ) })}{s} \Par \bout{\dual{s}}{V_1} \inact}}}
 							\]
 							Furthermore we can see that
 							\[
 								\horel{\Gamma}{\Delta_2}{\newsp{\widetilde{m_2}}{Q \Par \ntrigger{t}{V_2}  } }
 								{\Hby{\bactinp{t}{\omapchar{\btinp{U} \tinact}}}}
-								{\Delta_2'}{\newsp{\widetilde{m_2}'}{Q \Par \appl{\abs{z}{\mapchar{U'}{z}}}{V_2} \Par \newsp{s}{\bout{t'}{s} \inact}}}
+								{\Delta_2'}{\newsp{\widetilde{m_2}'}{Q \Par \appl{(\abs{z}{\mapchar{U'}{z}})}{V_2} \Par \newsp{s}{\bout{t'}{s} \inact}}}
 							\]
 							with
 							\[
-								\horel{\Gamma}{\Delta_1'}{\newsp{\widetilde{m_1}'}{P \Par \newsp{s}{\binp{s}{y} \appl{y}{n} \Par \bout{\dual{s}}{V_1} \inact}}}
+								\horel{\Gamma}{\Delta_1'}{\newsp{\widetilde{m_1}'}{P \Par \newsp{s}{\binp{s}{y} (\appl{y}{n}) \Par \bout{\dual{s}}{V_1} \inact}}}
 								{\Hby{\dtau}}
-								{\Delta_1'}{\newsp{\widetilde{m_1}'}{P \Par \appl{\abs{z}{\mapchar{U'}{z}}}{V_1} \Par \newsp{s}{\bout{t'}{s} \inact}}}
+								{\Delta_1'}{\newsp{\widetilde{m_1}'}{P \Par \appl{(\abs{z}{\mapchar{U'}{z}})}{V_1} \Par \newsp{s}{\bout{t'}{s} \inact}}}
 							\]
 							and
 							\[
-								\horel{\Gamma}{\Delta_1'}{\newsp{\widetilde{m_1}'}{P \Par \appl{\abs{z}{\mapchar{U'}{z}}}{V_1} \Par \newsp{s}{\bout{t'}{s} \inact}}}
+								\horel{\Gamma}{\Delta_1'}{\newsp{\widetilde{m_1}'}{P \Par \appl{(\abs{z}{\mapchar{U'}{z}})}{V_1} \Par \newsp{s}{\bout{t'}{s} \inact}}}
 								{\hwb}
-								{\Delta_2'}{\newsp{\widetilde{m_2}'}{Q \Par \appl{\abs{z}{\mapchar{U'}{z}}}{V_2} \Par \newsp{s}{\bout{t'}{s} \inact}}}
+								{\Delta_2'}{\newsp{\widetilde{m_2}'}{Q \Par \appl{(\abs{z}{\mapchar{U'}{z}})}{V_2} \Par \newsp{s}{\bout{t'}{s} \inact}}}
 							\]
 							which implies by Part 1 of this lemma
 							\[
-								\horel{\Gamma}{\Delta_1'}{\newsp{\widetilde{m_1}'}{P \Par \appl{\abs{z}{\mapchar{U'}{z}}}{V_1}}}
+								\horel{\Gamma}{\Delta_1'}{\newsp{\widetilde{m_1}'}{P \Par \appl{(\abs{z}{\mapchar{U'}{z}})}{V_1}}}
 								{\hwb}
-								{\Delta_2'}{\newsp{\widetilde{m_2}'}{Q \Par \appl{\abs{z}{\mapchar{U'}{z}}}{V_2}}}
+								{\Delta_2'}{\newsp{\widetilde{m_2}'}{Q \Par \appl{(\abs{z}{\mapchar{U'}{z}})}{V_2}}}
 							\]
 							as required.
 				\end{enumerate}
 		\item
 				Let typed relation (for readability, we omit the type information)
 				\begin{eqnarray*}
-					\Re &=&	\set{	\newsp{\widetilde{m_1}}{P \Par \ntrigger{t}{V_1}}\ ,\ 
+		\Re &=&	\set{	\newsp{\widetilde{m_1}}{P \Par \ntrigger{t}{V_1}}\ ,\ 
 									\newsp{\widetilde{m_2}}{Q \Par \ntrigger{t}{V_2}} \setbar\\
 						&&
 									\horel{\Gamma}{\Delta_3}{\newsp{\widetilde{m_1}}{P \Par \htrigger{t}{V_1}  } }
@@ -902,7 +903,7 @@ the trigger processes $\htrigger{t}{V}$ and $\ntrigger{t}{V}$.
 							\]
 							and
 							\[
-								\horel{\Gamma}{\Delta_1'}{\newsp{\widetilde{m_1}'}{P \Par \newsp{s}{\binp{s}{y} \appl{y}{n} \Par \bout{\dual{s}}{V_1} \inact}}}
+								\horel{\Gamma}{\Delta_1'}{\newsp{\widetilde{m_1}'}{P \Par \newsp{s}{\binp{s}{y} (\appl{y}{n}) \Par \bout{\dual{s}}{V_1} \inact}}}
 								{\hby{\dtau}}
 								{\Delta_1'}{\newsp{\widetilde{m_1}'}{P \Par \appl{V_1}{n}\Par \newsp{s}{\bout{t'}{s} \inact}}}
 							\]
@@ -915,19 +916,19 @@ the trigger processes $\htrigger{t}{V}$ and $\ntrigger{t}{V}$.
 							This is done by considering the requirement of $\Re$.
 							Let $\omapchar{U} = n$
 							\[
-								\mhorel{\Gamma}{\Delta_3}{\newsp{\widetilde{m_1}}{P \Par \htrigger{t}{V_1}  } }
+					\mhorel{\Gamma}{\Delta_3}{\newsp{\widetilde{m_1}}{P \Par \htrigger{t}{V_1}  } }
 								{\hby{\bactinp{t}{n}}}
-								{\Delta_3'}{}{\newsp{\widetilde{m_1}'}{P \Par \newsp{s}{\binp{s}{y} \appl{y}{n} \Par \bout{\dual{s}}{V_1} \inact}}}
+								{\Delta_3'}{}{\newsp{\widetilde{m_1}'}{P \Par \newsp{s}{\binp{s}{y} (\appl{y}{n}) \Par \bout{\dual{s}}{V_1} \inact}}}
 							\]
 							Furthermore we can see that
 							\[
 								\horel{\Gamma}{\Delta_4}{\newsp{\widetilde{m_2}}{Q \Par \htrigger{t}{V_2}  } }
-								{\Hby{\bactinp{t}{n}}}
-								{\Delta_4'}{\newsp{\widetilde{m_2}'}{Q \Par \appl{V_2}{n}}}
+							{\Hby{\bactinp{t}{n}}}
+			{\Delta_4'}{\newsp{\widetilde{m_2}'}{Q \Par \appl{V_2}{n}}}
 							\]
 							with
 							\[
-								\horel{\Gamma}{\Delta_3'}{\newsp{\widetilde{m_1}'}{P \Par \newsp{s}{\binp{s}{y} \appl{y}{n} \Par \bout{\dual{s}}{V_1} \inact}}}
+					\horel{\Gamma}{\Delta_3'}{\newsp{\widetilde{m_1}'}{P \Par \newsp{s}{\binp{s}{y}{(\appl{y}{n})} \Par \bout{\dual{s}}{V_1} \inact}}}
 								{\Hby{\dtau}}
 								{\Delta_3'}{\newsp{\widetilde{m_1}'}{P \Par \appl{V_1}{n}}}
 							\]
@@ -1303,13 +1304,14 @@ and higher order trigger processes.
 					\item	Case
 						\[
 							\mhorel{\Gamma}{\Delta_1'}{\newsp{\widetilde{m_1}}{P \Par \ntrigger{t}{V_1}}}
-							{\hby{\bactinp{t}{ \abs{x}{\binp{t'}{y}{\appl{y}{x}}  }}}}
-							{\Delta_3'}{}{\newsp{\widetilde{m_1}}{P \Par \newsp{s}{  \appl{(\abs{x}{\binp{t'}{y}{\appl{y}{x}})}{s}  \Par \bout{\dual{s}}{V_1} \inact }}}}
+							{\hby{\bactinp{t}{ \abs{x}{\binp{t'}{y}{(\appl{y}{x})}  }}}}
+							{\Delta_3'}{}{\newsp{\widetilde{m_1}}{P \Par \newsp{s}{  \appl{(\abs{x}{\binp{t'}{y}{(\appl{y}{x})})}{s}  \Par \bout{\dual{s}}{V_1} \inact }}}}
 						\]
-						We show that there $\exists, \Delta_4, \newsp{\widetilde{m_1}}{Q \Par \newsp{s}{  \appl{(\abs{x}{\binp{t'}{y}{\appl{y}{x}})}{s}  \Par \bout{\dual{s}}{V_2} \inact }}}$ such that
+						We show that there
+                                                exist $\Delta_4, \newsp{\widetilde{m_1}}{Q \Par \newsp{s}{  \appl{(\abs{x}{\binp{t'}{y}{(\appl{y}{x})})}{s}  \Par \bout{\dual{s}}{V_2} \inact }}}$ such that
 						\[
 							\mhorel{\Gamma}{\Delta_2'}{\newsp{\widetilde{m_1}}{Q \Par \ntrigger{t}{V_2}}}
-							{\Hby{\bactinp{t}{ \abs{x}{\binp{t'}{y}{\appl{y}{x}}  }}}}
+							{\Hby{\bactinp{t}{ \abs{x}{\binp{t'}{y}{(\appl{y}{x})}  }}}}
 							{\Delta_4}{}{\newsp{\widetilde{m_1}}{Q \Par \ntrigger{t'}{V_2} }}
 						\]
 						and
@@ -1527,9 +1529,9 @@ processes in terms of process equivalence.
 			\]
 			then
 			\[
-				\horel{\Gamma}{\Delta_1}{ \newsp{m_1}{P \Par \binp{t}{x} \appl{x}{n_1}} }
+				\horel{\Gamma}{\Delta_1}{ \newsp{m_1}{P \Par \binp{t}{x}{(\appl{x}{n_1})}} }
 				{\hwb}
-				{\Delta_2}{ \newsp{m_2}{Q \Par \binp{t}{x} \appl{x}{n_2}} }
+				{\Delta_2}{ \newsp{m_2}{Q \Par \binp{t}{x}{(\appl{x}{n_2})}}}
 			\]
 
 		\item
@@ -1949,44 +1951,44 @@ we give an intermediate result.
 					\item	$\subj{\ell} = n_k$ and $n_k = m_k$.
 							From the definition of $\Re$ we get that
 							\[
-								\mhorel{\Gamma}{\Delta_1}{\newsp{\widetilde{m_1}}{P \Par \prod_{i \in I} \binp{t_i}{x} \appl{x}{n_i}}}
+								\mhorel{\Gamma}{\Delta_1}{\newsp{\widetilde{m_1}}{P \Par \prod_{i \in I} \binp{t_i}{x} (\appl{x}{n_i})}}
 								{\hby{ \bactinp{t_k}{\omapchar{U}}}}
-								{\Delta_3}{}{\newsp{\widetilde{m_1}}{P \Par \prod_{i \in I\backslash{\set{k}}} \binp{t_i}{x} \appl{x}{n_i} \Par \appl{\omapchar{U}}{n_k}}}
+								{\Delta_3}{}{\newsp{\widetilde{m_1}}{P \Par \prod_{i \in I\backslash{\set{k}}} \binp{t_i}{x} (\appl{x}{n_i}) \Par \appl{\omapchar{U}}{n_k}}}
 							\]
 							implies
 							\[
-								\mhorel{\Gamma}{\Delta_2}{\newsp{\widetilde{m_2}}{Q \Par \prod_{i \in I} \binp{t_i}{x} \appl{x}{m_i}}}
+								\mhorel{\Gamma}{\Delta_2}{\newsp{\widetilde{m_2}}{Q \Par \prod_{i \in I} \binp{t_i}{x} (\appl{x}{m_i})}}
 								{\Hby{ \bactinp{t_k}{\omapchar{U}}}}
-								{\Delta_4}{}{\newsp{\widetilde{m_1}}{Q' \Par \prod_{i \in I \backslash{\set{k}}} \binp{t_i}{x} \appl{x}{m_i} \Par \mapchar{U}{x} \subst{m_k}{x} }}
+								{\Delta_4}{}{\newsp{\widetilde{m_1}}{Q' \Par \prod_{i \in I \backslash{\set{k}}} \binp{t_i}{x} (\appl{x}{m_i}) \Par \mapchar{U}{x} \subst{m_k}{x} }}
 							\]
 							and
 							\begin{eqnarray*}
-								&& \Gamma; \Delta_3 \proves \newsp{\widetilde{m_1}}{P \Par \prod_{i \in I \backslash{\set{k}}} \binp{t_i}{x} \appl{x}{n_i} \Par \appl{\omapchar{U}}{n_k}}
+								&& \Gamma; \Delta_3 \proves \newsp{\widetilde{m_1}}{P \Par \prod_{i \in I \backslash{\set{k}}} \binp{t_i}{x} (\appl{x}{n_i}) \Par \appl{\omapchar{U}}{n_k}}
 								\\
 								&\hby{\tau_{\beta}}&
-									\Delta_3 \proves \newsp{\widetilde{m_1}}{P \Par \prod_{i \in I \backslash{\set{k}}} \binp{t_i}{x} \appl{x}{n_i} \Par \mapchar{U}{x} \subst{n_k}{x}  }
+									\Delta_3 \proves \newsp{\widetilde{m_1}}{P \Par \prod_{i \in I \backslash{\set{k}}} \binp{t_i}{x} (\appl{x}{n_i}) \Par \mapchar{U}{x} \subst{n_k}{x}  }
 								\\
 								&\hwb&
-									\Delta_4 \proves \newsp{\widetilde{m_1}}{Q' \Par \prod_{i \in I \backslash{\set{k}}} \binp{t_i}{x} \appl{x}{m_i} \Par \mapchar{U}{x} \subst{m_k}{x}}
+									\Delta_4 \proves \newsp{\widetilde{m_1}}{Q' \Par \prod_{i \in I \backslash{\set{k}}} \binp{t_i}{x} (\appl{x}{m_i}) \Par \mapchar{U}{x} \subst{m_k}{x}}
 							\end{eqnarray*}
 
 							The proof follows Part 2 of \lemref{lem:trigger_application} where
 							\[
-								\mhorel{\Gamma}{\Delta_3}{\newsp{\widetilde{m_1}}{P \Par \prod_{i \in I \backslash{\set{k}}} \binp{t_i}{x} \appl{x}{n_i} \Par \mapchar{U}{x} \subst{n_k}{x}  }}
+								\mhorel{\Gamma}{\Delta_3}{\newsp{\widetilde{m_1}}{P \Par \prod_{i \in I \backslash{\set{k}}} \binp{t_i}{x} (\appl{x}{n_i}) \Par \mapchar{U}{x} \subst{n_k}{x}  }}
 								{\hby{\ell} }
-								{\Delta_3'}{}{\newsp{\widetilde{m_1}'}{P \Par \prod_{i \in I \backslash{\set{k}}} \binp{t_i}{x} \appl{x}{n_i} \Par \bout{t'}{n_k} \inact }}
+								{\Delta_3'}{}{\newsp{\widetilde{m_1}'}{P \Par \prod_{i \in I \backslash{\set{k}}} \binp{t_i}{x} (\appl{x}{n_i}) \Par \bout{t'}{n_k} \inact }}
 							\]
 							implies
 							\[
-								\mhorel{\Gamma}{\Delta_4}{\newsp{\widetilde{m_2}}{Q' \Par \prod_{i \in I \backslash{\set{k}}} \binp{t_i}{x} \appl{x}{m_i} \Par \mapchar{U}{x} \subst{m_k}{x}  }}
+								\mhorel{\Gamma}{\Delta_4}{\newsp{\widetilde{m_2}}{Q' \Par \prod_{i \in I \backslash{\set{k}}} \binp{t_i}{x} (\appl{x}{m_i}) \Par \mapchar{U}{x} \subst{m_k}{x}  }}
 								{\Hby{\ell} \dk{\dots}}
-								{\Delta_4'}{}{\newsp{\widetilde{m_2}'}{Q'' \Par \prod_{i \in I \backslash{\set{k}}} \binp{t_i}{x} \appl{x}{m_i} \Par \bout{t'}{m_k} \inact }}
+								{\Delta_4'}{}{\newsp{\widetilde{m_2}'}{Q'' \Par \prod_{i \in I \backslash{\set{k}}} \binp{t_i}{x} (\appl{x}{m_i}) \Par \bout{t'}{m_k} \inact }}
 							\]
 							and furthermore, from Part 3 of \lemref{lem:trigger_application}
 							\[
-								\mhorel{\Gamma}{\Delta_3'}{\newsp{\widetilde{m_1}'}{P \Par \prod_{i \in I \backslash{\set{k}}} \binp{t_i}{x} \appl{x}{n_i} \Par \binp{t'}{y}{\appl{y}{n_k}}}}
+								\mhorel{\Gamma}{\Delta_3'}{\newsp{\widetilde{m_1}'}{P \Par \prod_{i \in I \backslash{\set{k}}} \binp{t_i}{x} (\appl{x}{n_i}) \Par \binp{t'}{y}{(\appl{y}{n_k})}}}
 								{\hwb}
-								{\Delta_4'}{}{\newsp{\widetilde{m_2}'}{Q'' \Par \prod_{i \in I \backslash{\set{k}}} \binp{t_i}{x} \appl{x}{m_i} \Par \binp{t'}{y}{\appl{y}{m_k}}}}
+								{\Delta_4'}{}{\newsp{\widetilde{m_2}'}{Q'' \Par \prod_{i \in I \backslash{\set{k}}} \binp{t_i}{x} (\appl{x}{m_i}) \Par \binp{t'}{y}{(\appl{y}{m_k})}}}
 							\]
 							that implies from the definition of $\Re$ that $\forall R$ such that $\widetilde{x} \in \fn{R}$
 							\[
@@ -2037,65 +2039,65 @@ we give an intermediate result.
 							From the requirement of $\Re$ we get that there exists $U$
 							such that
 							\[
-								\mhorel{\Gamma}{\Delta_1}{ \newsp{\widetilde{m_1}}{P \Par \prod_{i \in I} \binp{t_i}{x} \appl{x}{n_i}}}
+								\mhorel{\Gamma}{\Delta_1}{ \newsp{\widetilde{m_1}}{P \Par \prod_{i \in I} \binp{t_i}{x} (\appl{x}{n_i})}}
 								{ \hby{ \bactinp{t}{ \omapchar{U} }} \Hby{\dtau} }
-								{\Delta_3}{}{  \newsp{\widetilde{m_1}'}{P \Par \prod_{i \in I\backslash{k}} \binp{t_i}{x} \appl{x}{n_i}
+								{\Delta_3}{}{  \newsp{\widetilde{m_1}'}{P \Par \prod_{i \in I\backslash{k}} \binp{t_i}{x} (\appl{x}{n_i})
 								\Par  \mapchar{U}{x} \subst{n_k}{x} }}
 							\]
 							which implies that
 							\[
-								\mhorel{\Gamma}{\Delta_2}{ \newsp{\widetilde{m_2}}{Q \Par \prod_{i \in I} \binp{t_i}{x} \appl{x}{m_i}}}
+								\mhorel{\Gamma}{\Delta_2}{ \newsp{\widetilde{m_2}}{Q \Par \prod_{i \in I} \binp{t_i}{x} (\appl{x}{m_i})}}
 								{ \Hby{ \bactinp{t}{ \omapchar{U} }} \Hby{\dtau} }
-								{\Delta_4}{}{  \newsp{\widetilde{m_2}'}{Q' \Par \prod_{i \in I\backslash{k}} \binp{t_i}{x} \appl{x}{m_i}
+								{\Delta_4}{}{  \newsp{\widetilde{m_2}'}{Q' \Par \prod_{i \in I\backslash{k}} \binp{t_i}{x} (\appl{x}{m_i})
 								\Par  \mapchar{U}{x} \subst{m_k}{x} }}
 							\]
 							and
 							\[
-								\mhorel{\Gamma}{\Delta_3}{  \newsp{\widetilde{m_1}'}{P \Par \prod_{i \in I\backslash{k}} \binp{t_i}{x} \appl{x}{n_i}
+								\mhorel{\Gamma}{\Delta_3}{  \newsp{\widetilde{m_1}'}{P \Par \prod_{i \in I\backslash{k}} \binp{t_i}{x} (\appl{x}{n_i})
 								\Par  \mapchar{U}{x} \subst{n_k}{x} }}
 								{\hwb}
-								{\Delta_4}{}{  \newsp{\widetilde{m_2}'}{Q' \Par \prod_{i \in I\backslash{k}} \binp{t_i}{x} \appl{x}{m_i}
+								{\Delta_4}{}{  \newsp{\widetilde{m_2}'}{Q' \Par \prod_{i \in I\backslash{k}} \binp{t_i}{x} (\appl{x}{m_i})
 								\Par  \mapchar{U}{x} \subst{m_k}{x} }}
 							\]
 							From Part 2 of \lemref{lem:trigger_application} we get that if 
 							\[
-								\mhorel{\Gamma}{\Delta_3}{  \newsp{\widetilde{m_1}'}{P \Par \prod_{i \in I\backslash{k}} \binp{t_i}{x} \appl{x}{n_i}
+								\mhorel{\Gamma}{\Delta_3}{  \newsp{\widetilde{m_1}'}{P \Par \prod_{i \in I\backslash{k}} \binp{t_i}{x} (\appl{x}{n_i})
 								\Par  \mapchar{U}{x} \subst{n_k}{x} }}
 								{ \hby{\tau} }
-								{\Delta_3'}{}{  \newsp{\widetilde{m_1}''}{P' \Par \prod_{i \in I\backslash{k}} \binp{t_i}{x} \appl{x}{n_i} \Par
-								\binp{t'_k}{x} \appl{x}{n_k}}}
+								{\Delta_3'}{}{  \newsp{\widetilde{m_1}''}{P' \Par \prod_{i \in I\backslash{k}} \binp{t_i}{x} (\appl{x}{n_i}) \Par
+								\binp{t'_k}{x} (\appl{x}{n_k})}}
 							\]
 							then
 							\begin{eqnarray*}
-								\mhorel{\Gamma}{\Delta_4}{  \newsp{\widetilde{m_2}'}{Q' \Par \prod_{i \in I\backslash{k}} \binp{t_i}{x} \appl{x}{m_i}
+								\mhorel{\Gamma}{\Delta_4}{  \newsp{\widetilde{m_2}'}{Q' \Par \prod_{i \in I\backslash{k}} \binp{t_i}{x} (\appl{x}{m_i})
 								\Par  \mapchar{U}{x} \subst{m_k}{x} }}
 								{ \Hby{\tau} }
-								{\Delta_4'}{}{  \newsp{\widetilde{m_2}''}{Q'' \Par \prod_{i \in I\backslash{k}} \binp{t_i}{x} \appl{x}{m_i} \Par
-								\binp{t'_k}{x} \appl{x}{m_k} }}
+								{\Delta_4'}{}{  \newsp{\widetilde{m_2}''}{Q'' \Par \prod_{i \in I\backslash{k}} \binp{t_i}{x} (\appl{x}{m_i}) \Par
+								\binp{t'_k}{x} (\appl{x}{m_k}) }}
 							\end{eqnarray*}
 							and
 							\begin{eqnarray}
-								\mhorel{\Gamma}{\Delta_3'}{  \newsp{\widetilde{m_1}''}{P' \Par \prod_{i \in I\backslash{k}} \binp{t_i}{x} \appl{x}{n_i} \Par
-								\binp{t'_k}{x} \appl{x}{n_k}}}
+								\mhorel{\Gamma}{\Delta_3'}{  \newsp{\widetilde{m_1}''}{P' \Par \prod_{i \in I\backslash{k}} \binp{t_i}{x} (\appl{x}{n_i}) \Par
+								\binp{t'_k}{x} (\appl{x}{n_k})}}
 								{ \hwb }
-								{\Delta_4'}{}{\newsp{\widetilde{m_2}''}{Q'' \Par \prod_{i \in I\backslash{k}} \binp{t_i}{x} \appl{x}{m_i} \Par \binp{t'_k}{x} \appl{x}{m_k} }}
+								{\Delta_4'}{}{\newsp{\widetilde{m_2}''}{Q'' \Par \prod_{i \in I\backslash{k}} \binp{t_i}{x} (\appl{x}{m_i}) \Par \binp{t'_k}{x} (\appl{x}{m_k})}}
 								\label{lem:tr_subst_41}
 							\end{eqnarray}
 
 							This means that there exists $U'$ (see definition of characteristic process)
 							\begin{eqnarray*}
-								\newsp{\widetilde{m_1}'}{P \Par \prod_{i \in I\backslash{k}} \binp{t_i}{x} \appl{x}{n_i}}
+								\newsp{\widetilde{m_1}'}{P \Par \prod_{i \in I\backslash{k}} \binp{t_i}{x} (\appl{x}{n_i})}
 								&\hby{\bactinp{n_k}{\omapchar{U'}}}&
-								\newsp{\widetilde{m_3}}{P' \subst{\omapchar{U'}}{x} \Par \prod_{i \in I\backslash{k}} \binp{t_i}{x} \appl{x}{n_i}}
+								\newsp{\widetilde{m_3}}{P' \subst{\omapchar{U'}}{x} \Par \prod_{i \in I\backslash{k}} \binp{t_i}{x} (\appl{x}{n_i})}
 								\\
 								\mapchar{U}{x} \subst{n_k}{x}
 								&\hby{\bactout{n_k}{\omapchar{U'}}}&
 								\bout{t'_k}{n_k} \inact
 								\\
 								\\
-								\newsp{\widetilde{m_2}''}{Q' \Par \prod_{i \in I\backslash{k}} \binp{t_i}{x} \appl{x}{m_i}}
+								\newsp{\widetilde{m_2}''}{Q' \Par \prod_{i \in I\backslash{k}} \binp{t_i}{x} (\appl{x}{m_i})}
 								&\Hby{\bactinp{m_k}{\omapchar{U'}}}&
-								\newsp{\widetilde{m_4}}{Q'' \subst{\omapchar{U'}}{x} \Par \prod_{i \in I\backslash{k}} \binp{t_i}{x} \appl{x}{m_i}}
+								\newsp{\widetilde{m_4}}{Q'' \subst{\omapchar{U'}}{x} \Par \prod_{i \in I\backslash{k}} \binp{t_i}{x} (\appl{x}{m_i})}
 								\\
 								\mapchar{U}{x} \subst{m_k}{x}
 								&\hby{\bactout{m_k}{\omapchar{U'}}}&
@@ -2104,9 +2106,9 @@ we give an intermediate result.
 							But then we can generalise the above result to match actions in \eqref{lem:trigger_subst_31}
 							and \eqref{lem:trigger_subst_32}. 
 							\begin{eqnarray*}
-								\newsp{\widetilde{m_2}''}{Q' \Par \prod_{i \in I\backslash{k}} \binp{t_i}{x} \appl{x}{m_i}}
+								\newsp{\widetilde{m_2}''}{Q' \Par \prod_{i \in I\backslash{k}} \binp{t_i}{x} (\appl{x}{m_i})}
 								&\Hby{\bactinp{m_k}{V}}&
-								\newsp{\widetilde{m_4}}{Q'' \subst{V}{x} \Par \prod_{i \in I\backslash{k}} \binp{t_i}{x} \appl{x}{m_i}}
+								\newsp{\widetilde{m_4}}{Q'' \subst{V}{x} \Par \prod_{i \in I\backslash{k}} \binp{t_i}{x} (\appl{x}{m_i})}
 								\\
 								R \subst{\widetilde{m}}{\widetilde{x}}
 								&\hby{\bactout{m_k}{V}}&
@@ -2133,29 +2135,29 @@ we give an intermediate result.
 						%
 							From the definition of $\Re$ we have that
 							\[
-								\horel{\Gamma}{\Delta_1}{ \newsp{\widetilde{m_1}}{P \Par \prod_{i \in I} \binp{t_1}{x} \appl{x}{n_i}}}
+								\horel{\Gamma}{\Delta_1}{ \newsp{\widetilde{m_1}}{P \Par \prod_{i \in I} \binp{t_1}{x} (\appl{x}{n_i})}}
 								{ \hby{ \bactinp{n}{m} } }
-								{\Delta_3}{  \newsp{\widetilde{m_1}}{P' \subst{m}{x} \Par \prod_{i \in I} \binp{t_1}{x} \appl{x}{n_i} }   }
+								{\Delta_3}{  \newsp{\widetilde{m_1}}{P' \subst{m}{x} \Par \prod_{i \in I} \binp{t_1}{x} (\appl{x}{n_i})}   }
 							\]
 						%
 							implies 
 							\begin{eqnarray}
-								\mhorel{\Gamma}{\Delta_2}{ \newsp{\widetilde{m_2}}{Q \Par \prod_{i \in I} \binp{t_1}{x} \appl{x}{n_i}}}
+								\mhorel{\Gamma}{\Delta_2}{ \newsp{\widetilde{m_2}}{Q \Par \prod_{i \in I} \binp{t_1}{x} (\appl{x}{n_i})}}
 								{ \Hby{ \bactinp{n}{m} } }
-								{\Delta_4}{}{  \newsp{\widetilde{m_2}}{Q' \subst{m}{x} \Par \prod_{i \in I} \binp{t_1}{x} \appl{x}{n_i} }   }
+								{\Delta_4}{}{  \newsp{\widetilde{m_2}}{Q' \subst{m}{x} \Par \prod_{i \in I} \binp{t_1}{x} (\appl{x}{n_i})}   }
 								\label{ lem:trigger_subst_311 }
 							\end{eqnarray}
 							and
 							\[
-								\horel{\Gamma}{\Delta_3}{  \newsp{\widetilde{m_1}}{P' \subst{m}{x} \prod_{i \in I} \binp{t_1}{x} \appl{x}{n_i} }   }
+								\horel{\Gamma}{\Delta_3}{  \newsp{\widetilde{m_1}}{P' \subst{m}{x} \prod_{i \in I} \binp{t_1}{x} (\appl{x}{n_i})}   }
 								{\hwb}
-								{\Delta_4}{  \newsp{\widetilde{m_2}}{Q' \subst{m}{x} \Par \prod_{i \in I} \binp{t_1}{x} \appl{x}{n_i} }   }
+								{\Delta_4}{  \newsp{\widetilde{m_2}}{Q' \subst{m}{x} \Par \prod_{i \in I} \binp{t_1}{x} (\appl{x}{n_i})}   }
 							\]
 							implies from Part 4 of \lemref{lem:trigger_application} that
 							\[
-								\mhorel{\Gamma}{\Delta_3'}{  \newsp{\widetilde{m_1}}{P' \subst{n_k}{x} \Par \prod_{i \in I\backslash\set{k}} \binp{t_1}{x} \appl{x}{n_i} }   }
+								\mhorel{\Gamma}{\Delta_3'}{  \newsp{\widetilde{m_1}}{P' \subst{n_k}{x} \Par \prod_{i \in I\backslash\set{k}} \binp{t_1}{x}(\appl{x}{n_i})}   }
 								{\hwb}
-								{\Delta_4'}{}{  \newsp{\widetilde{m_2}}{Q' \subst{m_k}{x} \Par \prod_{i \in I\backslash\set{k}} \binp{t_1}{x} \appl{x}{n_i} }   }
+								{\Delta_4'}{}{  \newsp{\widetilde{m_2}}{Q' \subst{m_k}{x} \Par \prod_{i \in I\backslash\set{k}} \binp{t_1}{x}(\appl{x}{n_i})}   }
 							\]
 							implies from the definition of $\Re$ that
 							\[
@@ -2356,9 +2358,11 @@ substitution, we can generalise for any value substitution.
 							\begin{eqnarray*}
 								\mhorel{\Gamma}{\Delta_1''}{\newsp{\widetilde{m_1}}{Q \subst{\trvalx{t}}{z} \Par \binp{t}{y} (\appl{y}{n_1})}}
 								{\hby{\bactinp{t}{\trvalx{t'}}}}
-								{\Delta_1'''}{}{\newsp{\widetilde{m_2}}{Q \subst{\trvalx{t}}{z} \Par \appl{\trvalx{t'}}{n_1}}}
+								{\Delta_1'''}{}{\newsp{\widetilde{m_2}}{Q \subst{\trvalx{t}}{z} \Par \appl{(\trvalx{t'})}{n_1}}}
 							\end{eqnarray*}
-							that implies that $\exists P_2'', \Delta_2'''$ such that
+							that implies
+                                                        that 
+there exist $P_2'', \Delta_2'''$ such that
 							\begin{eqnarray}
 								\begin{array}{crll}
 											& \Gamma; \es; \Delta_2'' &\proves& \newsp{\widetilde{m_2}}{P_2'\subst{\trvalx{t}}{z}}
@@ -2366,17 +2370,17 @@ substitution, we can generalise for any value substitution.
 									\Hby{}	&	&&	\newsp{m_2}{(P_3 \Par \appl{x}{n_2}) \subst{\trvalx{t}}{z}}
 									\\
 									{\hby{\bactinp{t}{\trvalx{t'}}}} &
-												&&	\newsp{m_2}{P_3 \subst{\trvalx{t}}{z} \Par \appl{\trvalx{t'}}{n_2}}
+												&&	\newsp{m_2}{P_3 \subst{\trvalx{t}}{z} \Par \appl{(\trvalx{t'})}{n_2}}
 									\\
-									\Hby{}	& \Delta_2''' & \proves & \newsp{\widetilde{m_2}}{P_2'' \subst{\trvalx{t}}{z} \Par \appl{\trvalx{t'}}{n_2}}
+									\Hby{}	& \Delta_2''' & \proves & \newsp{\widetilde{m_2}}{P_2'' \subst{\trvalx{t}}{z} \Par \appl{(\trvalx{t'})}{n_2}}
 								\end{array}
 								\label{lem:proc_subst3}
 							\end{eqnarray}
 							and
 							\begin{eqnarray*}
-								\mhorel{\Gamma}{\Delta_1'''}{\newsp{\widetilde{m_1}}{Q \subst{\trvalx{t}}{z} \Par \appl{\trvalx{t'}}{n_1}}}
+								\mhorel{\Gamma}{\Delta_1'''}{\newsp{\widetilde{m_1}}{Q \subst{\trvalx{t}}{z} \Par \appl{(\trvalx{t'})}{n_1}}}
 								{\hwb}
-								{\Delta_2'''}{}{\newsp{\widetilde{m_2}}{P_2'' \subst{\trvalx{t}}{z} \Par \appl{\trvalx{t'}}{n_2}}}
+								{\Delta_2'''}{}{\newsp{\widetilde{m_2}}{P_2'' \subst{\trvalx{t}}{z} \Par \appl{(\trvalx{t'})}{n_2}}}
 							\end{eqnarray*}
 							%
 							From \lemref{lem:trigger_subst} we can deduce that $\forall \abs{x}{R}$, if $\exists \Delta_5, \Delta_6$ then
@@ -2397,7 +2401,7 @@ substitution, we can generalise for any value substitution.
 							transitions \eqref{lem:proc_subst3} to get:
 							\begin{eqnarray}
 								\begin{array}{crll}
-											& \Gamma; \es; \Delta_2' &\proves& \newsp{\widetilde{m_2}}{P_2 \subst{(\abs{x}{R})}}
+										& \Gamma; \es; \Delta_2' &\proves& \newsp{\widetilde{m_2}}{P_2 \subst{(\abs{x}{R})}{z}}
 									\\
 									\Hby{}	&	\Delta_2'			& \proves&	\newsp{\widetilde{m_2}}{P_2' \subst{\trvalx{t}}{z}}
 									\\
@@ -2561,13 +2565,13 @@ $\ell$ is an higher-order output; $\ell$ is a first-order output.
 			\[
 				\horel{\Gamma}{\Delta_1'}{\newsp{\widetilde{m_1}'}{P_2 \Par \htrigger{t}{\abs{\widetilde{x}}{P}}}}
 				{ \hby{ \bactinp{t}{m} } }
-				{\Delta_1''}{\newsp{\widetilde{m_1}'}{P_2 \Par \newsp{s}{\binp{s}{y} \appl{y}{m} \Par \bout{\dual{s}}{\abs{\widetilde{x}}{P}} \inact } }}
+				{\Delta_1''}{\newsp{\widetilde{m_1}'}{P_2 \Par \newsp{s}{\binp{s}{y} (\appl{y}{m}) \Par \bout{\dual{s}}{\abs{\widetilde{x}}{P}} \inact } }}
 			\]
 			and
 			\[
 				\horel{\Gamma}{\Delta_2'}{\newsp{\widetilde{m_2}'}{Q_2 \Par \htrigger{t}{\abs{\widetilde{x}}{P}}}}
 				{ \Hby{ \bactinp{t}{m} } }
-				{\Delta_2''}{\newsp{\widetilde{m_1}'}{Q_2 \Par \newsp{s}{\binp{s}{y} \appl{y}{m} \Par \bout{\dual{s}}{\abs{\widetilde{x}}{Q}} \inact } }}
+				{\Delta_2''}{\newsp{\widetilde{m_1}'}{Q_2 \Par \newsp{s}{\binp{s}{y} (\appl{y}{m}) \Par \bout{\dual{s}}{\abs{\widetilde{x}}{Q}} \inact } }}
 			\]
 			%
 				\noi From the  third case of this proof we can conclude that $\forall R$ with $\fpv{R} = \set{x}$:
@@ -2588,7 +2592,7 @@ $\ell$ is an higher-order output; $\ell$ is a first-order output.
 					{ \Hby{ \bactinp{t}{m} } } &
 					\Delta_1'' \proves \newsp{\widetilde{m_1}'}{Q_2 \Par \newsp{s}{\binp{s}{y} R \subst{m}{x} \Par \bout{\dual{s}}{\abs{\widetilde{x}}{Q}} \inact } }\\
 					\hby{\tau} &
-					\Delta_1'' \proves \newsp{\widetilde{m_1}'}{Q_2 \Par\binp{s}{y} R \subst{m}{x} \subst{}{y}{\abs{\widetilde{x}}{Q}}}
+					\Delta_1'' \proves \newsp{\widetilde{m_1}'}{Q_2 \Par\binp{s}{y} R \subst{m}{x} \subst{y}{\abs{\widetilde{x}}{Q}}}
 				\end{array}
 			\]
 				\noi and furthermore it is easy to see that $\forall R$ with $\fpv{R} = \set{x}$:
@@ -2985,7 +2989,7 @@ $\ell$ is an higher-order output; $\ell$ is a first-order output.
 						\[
 							\horel{\Gamma}{\Delta_2 \cat \Delta_3}{\newsp{\widetilde{m_2}}{P_2 \Par R}}
 							{\By{}}
-							{\Delta_2' \cat \Delta_3''}{\newsp{\widetilde{m_2}''}{P_2' \Par R' \subst{\abs{\widetilde{x}}{Q_2}}{X}}}
+							{\Delta_2' \cat \Delta_3''}{\newsp{\widetilde{m_2}''}{P_2' \Par R' \subst{\abs{\widetilde{x}}{Q_2}}{x}}}
 						\]
 					%
 						\noi In result in~\eqref{lem:wbc_is_cong16}, set $Q$ as $R'$ to obtain:
