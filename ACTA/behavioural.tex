@@ -999,11 +999,15 @@ $\abs{{x}}{\binp{t}{y} (\appl{y}{{x}})}$.
 %\end{example}
 
 
-\begin{example}[The Need for Refined Typed LTS]
-	\dkmargin{check if this example is OK}
+\begin{example}[The Need for the Refined Typed LTS]
+	\dkmargin{check if this example is OK. \newc{JP: looks OK}}
 	\label{ex:motivation}
-	We show that observing as input
-	a characteristic value
+	We illustrate the complementary r\^{o}le that characteristic values 
+	(cf. \figref{fig:char})
+	and the trigger value (\defref{d:trigger}) play in defining sound bisimilarities.
+	
+	We first notice that observing  characteristic values
+	as inputs
 	is not enough
 	to define a sound bisimulation.
 	Consider   processes % $P_1, P_2$:
@@ -1025,20 +1029,20 @@ $\abs{{x}}{\binp{t}{y} (\appl{y}{{x}})}$.
 %	\end{eqnarray}
 %
 %	where $\Delta = s_1: \btinp{C} \tinact \cat s_2: \btinp{C} \tinact$ and:
-	where $\Delta = s_1: \tinact \cat s_2: \tinact$ and:
+such that 
+	\[
+		\Gamma; \es; \Delta \cat s: \btinp{\shot{\tinact}} \tinact \proves P_i \hastype \Proc \qquad (i \in \set{1,2})
+	\]
+with $\Delta = s_1{:}\tinact \cat s_2{:}\tinact$.
 %
 %	\[
 %		\Gamma; \es; \Delta \cat s: \btinp{\shot{(\btinp{C} \tinact)}} \tinact \proves P_i \hastype \Proc \qquad (i \in \set{1,2})
 %	\]
-	\[
-		\Gamma; \es; \Delta \cat s: \btinp{\shot{\tinact}} \tinact \proves P_i \hastype \Proc \qquad (i \in \set{1,2})
-	\]
 %
-	If $P_1$ and $P_2$ input 
+	If $P_1$ and $P_2$ input along $s$
 	a characteristic value of the form
 %	$\omapchar{\shot{(\btinp{C} \tinact)}} = \abs{x}{\binp{x}{y} \inact}$
-	$\omapchar{\shot{(\tinact)}} = \abs{z}{\inact}$
-	along $s$, then they would evolve into:
+	$\omapchar{\shot{(\tinact)}} = \abs{z}{\inact}$ (cf. \figref{fig:char}), then both of them  would evolve into:
 %
 %	\[
 %		\Gamma; \es; \Delta \proves \binp{s_1}{y} \inact \Par \binp{s_2}{y} \inact \hastype \Proc
@@ -1050,7 +1054,7 @@ $\abs{{x}}{\binp{t}{y} (\appl{y}{{x}})}$.
 	\]
 %
 	\noi therefore becoming context bisimilar.
-	However, the processes in (\ref{equ:6}) 
+	However, processes $P_1$ and $P_2$ in (\ref{equ:6}) 
 	are clearly {\em not} context bisimilar: many input actions
 	may be used to distinguish them.
 	For example, if  $P_1$ and $P_2$ input
@@ -1086,8 +1090,8 @@ $\abs{{x}}{\binp{t}{y} (\appl{y}{{x}})}$.
 	Observing only the characteristic value
 	results in an under-discriminating bisimulation.
 	However, if a trigger value
-	$\abs{{x}}{\binp{t}{y} (\appl{y}{{x}})}$ 
-	is received on $s$, 
+	$\abs{{x}}{\binp{t}{y} (\appl{y}{{x}})}$  (\defref{d:trigger})
+	is received along $s$, 
 	we can distinguish $P_1$ and $P_2$ in~\eqref{equ:6}:  
 	%
 	\begin{eqnarray*}
@@ -1100,7 +1104,7 @@ $\abs{{x}}{\binp{t}{y} (\appl{y}{{x}})}$.
 %		\hastype \Proc
 	\end{eqnarray*}
 %
-	One question is whether the trigger value is enough
+	In the light of this example, one natural question is whether the trigger value suffices
 	to distinguish two processes (hence no need of characteristic values). % as the input. 
 	This is not the case: the trigger value
 	alone also results in an under-discriminating bisimulation relation.
@@ -1120,7 +1124,7 @@ $\abs{{x}}{\binp{t}{y} (\appl{y}{{x}})}$.
 		\label{equ:8}
 	\end{eqnarray}
 %
-	\noi If processes in \eqref{equ:7}/\eqref{equ:8}
+	\noi If processes in \eqref{equ:7} and \eqref{equ:8}
 	input the trigger value, we obtain:
 %
 	\begin{eqnarray*}
@@ -1167,7 +1171,7 @@ $\abs{{x}}{\binp{t}{y} (\appl{y}{{x}})}$.
 	
 	These examples illustrate the need for both 
 	trigger and characteristic values 
-	as an input observation in the input transition relation.   %(\eltsrule{RRcv})
+	as an input observation in the refined transition relation.   %(\eltsrule{RRcv})
 	This will be the content of \defref{def:rlts} below.
 	\qed
 \end{example}
@@ -1246,8 +1250,13 @@ trigger or characteristic values or names:
 	with 
 	$
 	(\Gamma_1; \Lambda_1; \Delta_1) \hby{\ell} (\Gamma_2; \Lambda_2; \Delta_2)
-	$, as just defined.}
-\end{definition}
+	$, as just defined.
+	Also following \defref{d:tlts}, 
+	we 
+	write  $\Hby{}$ for the reflexive and transitive closure of $\hby{\tau}$,
+	$\Hby{\ell}$ for the transitions $\Hby{}\hby{\ell}\Hby{}$, and $\Hby{\hat{\ell}}$
+	for $\Hby{\ell}$ if $\ell\not = \tau$ otherwise $\Hby{}$.}
+	\end{definition}
 
 
  Notice that
@@ -1255,7 +1264,7 @@ the (refined) transition
 $\horel{\Gamma}{\Delta_1}{P_1}{\hby{\ell}}{\Delta_2}{P_2}$  implies  
 the (ordinary) transition
 $\horel{\Gamma}{\Delta_1}{P_1}{\by{\,\ell\,}}{\Delta_2}{P_2}$.
-\begin{notation} 
+\begin{notation}\label{not:outtype}
 Below we sometimes write  
 $\hby{\news{\widetilde{m}} \bactout{n}{\AT{V}{U}}}$
 when the type of $V$ is~$U$.
@@ -1268,10 +1277,10 @@ when the type of $V$ is~$U$.
 
 \subsection{Higher-Order Bisimilarity ($\hwb$) and  Characteristic  Bisimilarity ($\fwb$)}
 \label{ss:hwb}
-
-We define \emph{higher-order bisimilarity} and 
-\emph{characteristic bisimilarity} which are
-two tractable bisimilarity relations on $\HOp$ processes.
+\newc{Having introduced a refined LTS on $\HOp$ processes,}
+we now define \emph{higher-order bisimilarity} and 
+\emph{characteristic bisimilarity}, 
+two tractable bisimilarity relations.
 As explained in \secref{sec:overview},
 the two bisimulations 
 use two different trigger processes (cf.~\eqref{eq:4}):
@@ -1331,7 +1340,8 @@ We use higher-order trigger processes to define \emph{higher-order bisimilarity}
 \end{definition}
 
 
-We use characteristic trigger processes to define \emph{characteristic bisimilarity}: 
+Using \notref{not:outtype}, 
+we exploit characteristic trigger processes to define \emph{characteristic bisimilarity}: 
 
 \begin{definition}[Characteristic Bisimilarity]
 \label{d:fwb}
