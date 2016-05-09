@@ -8,7 +8,8 @@
 \newcommand{\unfold}[1]{\mathsf{unfold}(#1)}
 \dkmargin{Read next 2 definitions}
 We state session type unfolding:
-\begin{definition}[Session Type Unfolding] \newc{Given a session type $S$, the function $\unfold{S}$ is defined as:}
+\begin{definition}[Session Type Unfolding]
+	Given a session type $S$, the function $\unfold{S}$ is defined as:
 	\[
 	\begin{array}{c}
 		\unfold{\btout{U} S} = \btout{U} S
@@ -36,7 +37,8 @@ We state session type unfolding:
 \end{proof}
 
 We state session type prefix deletion relation:
-\begin{definition}[Session Type Prefix Deletion] \newc{Given a session type $S$, the set $\set{S}$ is defined inductively as follows:}
+\begin{definition}[Session Type Prefix Deletion]
+	Given a session type $S$, the set $\set{S}$ is defined inductively as follows:
 	\[
 	\begin{array}{c}
 		\delete{\btout{U} S} = \set{S}
@@ -70,15 +72,15 @@ We state a more detailed form of \propref{p:inhabit} as given in Page~\pageref{p
 	
 			\item	If $U = \chtype{L}$ then, for some $a$, we have $a: \chtype{L}; \es; \es \proves \omapchar{\chtype{L}} \hastype \chtype{L}$.
 
-			\item	\newc{If $U = \shot{U'}$ and  
+			\item	If $U = \shot{U'}$ and  
 					$\Gamma; \es; \Delta \proves \mapchar{U'}{x} \hastype \Proc$
 					 then we have 
-					$\Gamma \backslash x ; \es; \Delta \backslash x \proves \omapchar{\shot{U'}} \hastype \shot{U'}$.}
+					$\Gamma \backslash x ; \es; \Delta \backslash x \proves \omapchar{\shot{U'}} \hastype \shot{U'}$.
 
-			\item	\newc{If $U = \lhot{U'}$ and  
+			\item	If $U = \lhot{U'}$ and
 					$\Gamma; \es; \Delta \proves \mapchar{U'}{x} \hastype \Proc$
 					 then we have 
-					$\Gamma \backslash x ; \es; \Delta \backslash x \proves \omapchar{\lhot{U'}} \hastype \lhot{U'}$.}
+					$\Gamma \backslash x ; \es; \Delta \backslash x \proves \omapchar{\lhot{U'}} \hastype \lhot{U'}$.
 
 		\end{enumerate}
 
@@ -100,7 +102,7 @@ We state a more detailed form of \propref{p:inhabit} as given in Page~\pageref{p
 			\item	If $S = \btbra{l_i: S_i}_{i \in I}$ then \\
 					$\es; \es; \set{t_i: \btout{S_i} \tinact}_{i \in I} \cat s: \btbra{l_i: S_i}_{i \in I} \proves \mapchar{\btbra{l_i: S_i}_{i \in I}}{s} \hastype \Proc $.
 	
-			\item	If $S = \trec{t}{S'}$ then \newc{either}
+			\item	If $S = \trec{t}{S'}$ then either
 					\begin{itemize}
 %						\item whenever $\es; \es; \es \proves \mapchar{S' \subst{\tinact}{\vart{t}}}{s} \hastype \Proc$
 %						then $\es; \es; \es \proves \mapchar{\trec{t}{S'}}{s} \hastype \Proc$
@@ -131,99 +133,157 @@ We state a more detailed form of \propref{p:inhabit} as given in Page~\pageref{p
 			\item	If $U = \shot{U'}$ and  $\Gamma; \es; \Delta \proves \omapchar{U'} \hastype U'$ then \\
 					$\Gamma \cat x: \shot{U'}; \es;\Delta \proves \mapchar{\shot{U'}}{x} \hastype \Proc$.
 	
-			\item	
-\NY{Is this correct? Better typing?} If $U = \lhot{U'}$ and   $\Gamma; \es; \Delta \proves \omapchar{U'} \hastype U'$ then \\
+			\item
+					If $U = \lhot{U'}$ and   $\Gamma; \es; \Delta \proves \omapchar{U'} \hastype U'$ then \\
 					$\Gamma \cat x: \shot{U'}; \es;\Delta \proves \mapchar{\lhot{U'}}{x} \hastype \Proc$.
 		\end{enumerate}
 	\end{enumerate}
 \end{proposition}
 
 \begin{proof}[Sketch]
-	The proof of part 2 is done by induction on the the syntax of $S$.
-	We detail some notable cases.
-	\begin{itemize}
-		\item	Case $S = \btout{U} S'$. Then, by \defref{def:char}, we have 
-				$\mapchar{S}{s} = \bout{s}{\omapchar{U}} \bout{t}{s} \inact$ and 
-				we may obtain the following derivation:
-				\[
-					\tree{
-						\begin{array}{l}
-							\Gamma; \es; s: S' \cat t: \btout{S'} \tinact \hastype \bout{t}{s} \inact \hastype \Proc \qquad \text{(Induction)}
-							\\
-							\Gamma; \es; \Delta \proves \omapchar{U} \hastype U
-						\end{array}
-					}{
-						\Gamma; \es; \Delta \cat s: \btout{U} S' \cat t: \btout{S} \tinact \hastype \bout{s}{\omapchar{U}}\bout{t}{s} \inact \hastype \Proc
-					}
-				\]
-		\item	Case $S = \btinp{S_1} S_2$. Then, by \defref{def:char}, we have 
-				$\mapchar{S}{s} = \binp{s}{x} (\bout{t}{s} \inact \Par \mapchar{S_1}{x})$.
-				 and 
-				we may obtain the following derivation:
-				\[
-					\tree{
-						\tree{
-							\begin{array}{l}
-								\Gamma; \es; \Delta \cat x: S_1 \proves \mapchar{S_1}{x} \hastype \Proc
-								\qquad \text{(Induction)}
-								\\
-								\Gamma; \es; t: \btout{S_2} \tinact \cat s: S_2 \proves \bout{t}{s} \inact \hastype \Proc
-							\end{array}
-						}{
-							\Gamma; \es; \Delta \cat x: S_1 \cat t: \btout{S_2} \tinact \cat s: S_2 \proves
-							\bout{t}{s} \inact \Par \mapchar{S_1}{x} \hastype \Proc
-						}
-					}{
-						\Gamma; \es; \Delta \cat t: \btout{S_2} \tinact \cat s: \btinp{U} S_2 \proves \binp{s}{x} (\bout{t}{s} \inact \Par \mapchar{S_1}{x}) \hastype \Proc
-					}
-				\]
-			\item	Case $S = \trec{t}{S'}$. Then, by \defref{def:char}, $\mapchar{S' \subst{\tinact}{\vart{t}} }{u}$.
-					The proof is done by induction on the shape of $S'$; we detail a few sub-cases.
-					\begin{enumerate}
-						\item	$S' = \btbra{l_i: S_i}_{i \in I}$. Then
-								$\mapchar{S' \subst{\tinact}{\vart{t}}}{s} = \bbra{s}{l_i: \bout{t_i}{s} \inact}_{i \in I}$
-								and $\delete{S} = \set{S_i}_{i \in I}$
-								\[
-									\tree {
-										\forall i \in I, \es; \es; t_i: S_i \subst{\tinact}{\vart{t}} \proves \bout{t_i}{s} \inact \hastype \Proc
-									}{
-										\es; \es; t_i: S_i \subst{\tinact}{\vart{t}} \cat s: S' \subst{\tinact}{\vart{t}} \proves \bbra{s}{l_i: \bout{t_i}{s} \inact}_{i \in I} \hastype \Proc
-									}
-								\]
-								We may then type $\mapchar{\trec{t}{ \btbra{l_i: S_i}_{i \in I} }}{s}$.
-								\[
-									\tree {
-										\forall i \in I, \es; \es; t_i: S_i \proves \bout{t_i}{s} \inact \hastype \Proc
-									}{
-										\es; \es; t_i: S_i \cat s: \trec{t}{ \btbra{l_i: S_i}_{i \in I} } \proves \bbra{s}{l_i: \bout{t_i}{s} \inact}_{i \in I} \hastype \Proc
-									}
-								\]
+	\begin{enumerate}
+		\item	The proof for part 1 uses the results from Part 2 and 3.
+				We do a case analysis on the syntax of $U$.
+			\begin{enumerate}
+				\item	$U = S$.
+				\item	$U = \chtype{S}$.
+				\item	$U = \chtype{L}$.
 
-						\item	$S' = \trec{t'}{S''}$. Then 
-								$\mapchar{\trec{t'}{S''} \subst{\tinact}{\vart{t}}}{s} = \mapchar{S'' \subst{\tinact}{\vart{t}} \subst{\tinact}{\vart{t'}}  }{s}$. 
+						The proof is straightforward from the typing rules $\trule{Sess}$ and $\trule{Sh}$.
+
+				\item	$U = \shot{U'}$. By the parts 2 and 3 of this proof we get that
+						$\Gamma; \es; \Delta \proves \mapchar{U'}{x} \hastype \Proc$ which implies by
+						typing rules $\trule{Abs}$ and $\trule{EProm}$ that
+						$\Gamma \backslash x ; \es; \Delta \backslash x \proves \omapchar{\shot{U'}} \hastype \shot{U'}$.
+
+				\item	$U = \lhot{U'}$. Similar using type rule $\trule{Abs}$.
+			\end{enumerate}
+		\item	The proof of part 2 is done by induction on the the syntax of $S$.
+				We detail some notable cases.
+			\begin{enumerate}
+				\item	Case $S = \btout{U} S'$. Then, by \defref{def:char}, we have 
+						$\mapchar{S}{s} = \bout{s}{\omapchar{U}} \bout{t}{s} \inact$ and 
+						we may obtain the following derivation:
+						\[
+							\tree{
+								\begin{array}{l}
+									\Gamma; \es; s: S' \cat t: \btout{S'} \tinact \hastype \bout{t}{s} \inact \hastype \Proc \qquad \text{(Induction)}
+									\\
+									\Gamma; \es; \Delta \proves \omapchar{U} \hastype U
+								\end{array}
+							}{
+								\Gamma; \es; \Delta \cat s: \btout{U} S' \cat t: \btout{S} \tinact \hastype \bout{s}{\omapchar{U}}\bout{t}{s} \inact \hastype \Proc
+							}
+						\]
+				\item	Case $S = \btinp{S_1} S_2$. Then, by \defref{def:char}, we have 
+						$\mapchar{S}{s} = \binp{s}{x} (\bout{t}{s} \inact \Par \mapchar{S_1}{x})$.
+						 and 
+						we may obtain the following derivation:
+						\[
+							\tree{
+								\tree{
+									\begin{array}{l}
+										\Gamma; \es; \Delta \cat x: S_1 \proves \mapchar{S_1}{x} \hastype \Proc
+										\qquad \text{(Induction)}
+										\\
+										\Gamma; \es; t: \btout{S_2} \tinact \cat s: S_2 \proves \bout{t}{s} \inact \hastype \Proc
+									\end{array}
+								}{
+									\Gamma; \es; \Delta \cat x: S_1 \cat t: \btout{S_2} \tinact \cat s: S_2 \proves
+									\bout{t}{s} \inact \Par \mapchar{S_1}{x} \hastype \Proc
+								}
+							}{
+								\Gamma; \es; \Delta \cat t: \btout{S_2} \tinact \cat s: \btinp{U} S_2 \proves \binp{s}{x} (\bout{t}{s} \inact \Par \mapchar{S_1}{x}) \hastype \Proc
+							}
+						\]
+					\item	Case $S = \trec{t}{S'}$. Then, by \defref{def:char}, $\mapchar{S' \subst{\tinact}{\vart{t}} }{u}$.
+							The proof is done by induction on the shape of $S'$; we detail a few sub-cases.
+							\begin{enumerate}
+								\item	$S' = \btbra{l_i: S_i}_{i \in I}$. Then
+										$\mapchar{S' \subst{\tinact}{\vart{t}}}{s} = \bbra{s}{l_i: \bout{t_i}{s} \inact}_{i \in I}$
+										and $\delete{S} = \set{S_i}_{i \in I}$
+										\[
+											\tree {
+												\forall i \in I, \es; \es; t_i: S_i \subst{\tinact}{\vart{t}} \proves \bout{t_i}{s} \inact \hastype \Proc
+											}{
+												\es; \es; t_i: S_i \subst{\tinact}{\vart{t}} \cat s: S' \subst{\tinact}{\vart{t}} \proves \bbra{s}{l_i: \bout{t_i}{s} \inact}_{i \in I} \hastype \Proc
+											}
+										\]
+										We may then type $\mapchar{\trec{t}{ \btbra{l_i: S_i}_{i \in I} }}{s}$.
+										\[
+											\tree {
+												\forall i \in I, \es; \es; t_i: S_i \proves \bout{t_i}{s} \inact \hastype \Proc
+											}{
+												\es; \es; t_i: S_i \cat s: \trec{t}{ \btbra{l_i: S_i}_{i \in I} } \proves \bbra{s}{l_i: \bout{t_i}{s} \inact}_{i \in I} \hastype \Proc
+											}
+										\]
+
+								\item	$S' = \trec{t'}{S''}$. Then 
+										$\mapchar{\trec{t'}{S''} \subst{\tinact}{\vart{t}}}{s} = \mapchar{S'' \subst{\tinact}{\vart{t}} \subst{\tinact}{\vart{t'}}  }{s}$. 
 								
-								If $\mapchar{S'' \subst{\tinact}{\vart{t}} \subst{\tinact}{\vart{t'}}  }{s} = \inact$ then the proof is straightforward. If $\delete{S} = \set{S_i}_{i \in I}$ then by induction
-								\[
-									\tree {
-										\textrm{Induction}
-									}{
-										\Gamma; \es; \Delta \cat t_i: S_i \subst{\tinact}{\vart{t}} \subst{\tinact}{\vart{t'}} \cat s: S'' \subst{\tinact}{\vart{t}} \subst{\tinact}{\vart{t'}} \proves \mapchar{S'' \subst{\tinact}{\vart{t}} \subst{\tinact}{\vart{t'}}  }{s} \hastype \Proc
-									}
-								\]
-								We then type $\mapchar{S}{s}$.
-								\[
-									\tree {
-										\textrm{Induction} %\forall i \in I, \es; \es; t_i: S_i \proves \bout{t_i}{s} \inact \hastype \Proc
-									}{
-										\Gamma; \es; \Delta \cat t_i: S_i \cat s: S \proves \mapchar{\trec{t}{ \trec{t'}{S''}}}{s} \hastype \Proc
-									}
-								\]
+										If $\mapchar{S'' \subst{\tinact}{\vart{t}} \subst{\tinact}{\vart{t'}}  }{s} = \inact$ then the proof is straightforward. If $\delete{S} = \set{S_i}_{i \in I}$ then by induction
+										\[
+											\tree {
+												\textrm{Induction}
+											}{
+												\Gamma; \es; \Delta \cat t_i: S_i \subst{\tinact}{\vart{t}} \subst{\tinact}{\vart{t'}} \cat s: S'' \subst{\tinact}{\vart{t}} \subst{\tinact}{\vart{t'}} \proves \mapchar{S'' \subst{\tinact}{\vart{t}} \subst{\tinact}{\vart{t'}}  }{s} \hastype \Proc
+											}
+										\]
+										We then type $\mapchar{S}{s}$.
+										\[
+											\tree {
+												\textrm{Induction} %\forall i \in I, \es; \es; t_i: S_i \proves \bout{t_i}{s} \inact \hastype \Proc
+											}{
+												\Gamma; \es; \Delta \cat t_i: S_i \cat s: S \proves \mapchar{\trec{t}{ \trec{t'}{S''}}}{s} \hastype \Proc
+											}
+										\]
 
-					\end{enumerate}
+							\end{enumerate}
 
-			\item	Other cases are similar.
-	\end{itemize}
-	The proof for parts 2 and 3 is similar. \newc{NO, we need to add some cases for these other parts.}
+					\item	Other cases are similar.
+			\end{enumerate}
+
+		\item	The proof for Part 3 uses the results of Parts 1.
+				We do a case analysis on the structure of $U$.
+			\begin{enumerate}
+				\item	$U = \chtype{S}$.
+
+						From Part 1 we have that $\es; \es; \Delta \proves \omapchar{S} \hastype S$.
+						By applying rule $\trule{Req}$ we get that
+						\[
+							\tree{
+								a: \chtype{S}; \es; \Delta \proves \omapchar{S} \hastype S
+								\qquad
+								a: \chtype{S}; \es; t: \btout{\chtype{S}} \tinact \proves \bout{t}{a} \inact \hastype \Proc
+							}{
+								a: \chtype{S}; \es; \Delta \cat t: \btout{\chtype{S}} \tinact \proves \mapchar{\chtype{S}}{a} \hastype \Proc
+							}
+						\]
+
+				\item	$U = \chtype{S}$. Similar argumentation as the previous case.
+
+				\item
+						$U = \lhot{U'}$ then from Part 1 we get that
+						$\Gamma; \es; \Delta \proves \omapchar{U'} \hastype U'$.
+						By applying typing rule $\trule{App}$ and rule $\trule{EProm}$ we get
+						\[
+							\tree {
+								\tree {
+									\Gamma; \es; \Delta \proves \omapchar{U'} \hastype U'
+									\qquad
+									\Gamma; x: \lhot{U'}; \es \proves x \hastype \lhot{U'}
+								}{
+									\Gamma; x: \lhot{U'}; \Delta \proves \appl{x}{\omapchar{U'}} \hastype \Proc 
+								}
+							}{
+								\Gamma \cat x: \shot{U'}; \es;\Delta \proves \mapchar{\lhot{U'}}{x} \hastype \Proc
+							}
+						\]
+
+				\item	$U = \shot{U'}$. Similar argumentation with the previous case
+						without applying rule $\trule{EProm}$.
+			\end{enumerate}
+	\end{enumerate}
 	\qed
 \end{proof}
 
@@ -386,7 +446,7 @@ for shorthand notations.
 
 \begin{proposition}[$\tau$-inertness]
 	\label{app:lem:tau_inert}
-	Suppose $\Gamma; \es; \Delta \proves P \hastype \Proc$  \newc{with balanced $\Delta$}.
+	Suppose $\Gamma; \es; \Delta \proves P \hastype \Proc$  with balanced $\Delta$.
 	Then
 	\begin{enumerate}[1.]
 		\item	$\horel{\Gamma}{\Delta}{P}{\hby{\dtau}}{\Delta'}{P'}$ implies
