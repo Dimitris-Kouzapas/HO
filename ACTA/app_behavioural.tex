@@ -8,7 +8,7 @@
 \newcommand{\unfold}[1]{\mathsf{unfold}(#1)}
 \dkmargin{Read next 2 definitions}
 We state session type unfolding:
-\begin{definition}[Session Type Unfolding]
+\begin{definition}[Session Type Unfolding] \newc{Given a session type $S$, the function $\unfold{S}$ is defined as:}
 	\[
 	\begin{array}{c}
 		\unfold{\btout{U} S} = \btout{U} S
@@ -36,7 +36,7 @@ We state session type unfolding:
 \end{proof}
 
 We state session type prefix deletion relation:
-\begin{definition}[Session Type Prefix Deletion] \newc{We define the set:}
+\begin{definition}[Session Type Prefix Deletion] \newc{Given a session type $S$, the set $\set{S}$ is defined inductively as follows:}
 	\[
 	\begin{array}{c}
 		\delete{\btout{U} S} = \set{S}
@@ -62,7 +62,7 @@ We state a more detailed form of \propref{p:inhabit} as given in Page~\pageref{p
 	\dkmargin{Check this proposition}
 	\label{app:characteristic_inhabit}
 	\begin{enumerate}
-		\item	Let $U$ be a type. 
+		\item	Let $U$ and $\omapchar{U}$ be a type and its characteristic value, respectively. 
 		\begin{enumerate}
 			\item	If $U = S$ then, for some s, we have $\es; \es; s: S \proves \omapchar{S} \hastype S$.
 	
@@ -82,7 +82,7 @@ We state a more detailed form of \propref{p:inhabit} as given in Page~\pageref{p
 
 		\end{enumerate}
 
-		\item	Let $S$ be a session type. 
+		\item	Let $S$ and \mapchar{S}{s} be a session type and its characteristic process, respectively. 
 		\begin{enumerate}
 			\item	If $S = \tinact$ then $\es; \es; \es; \proves \mapchar{\tinact}{s} \hastype \Proc$.
 	
@@ -102,14 +102,14 @@ We state a more detailed form of \propref{p:inhabit} as given in Page~\pageref{p
 	
 			\item	If $S = \trec{t}{S'}$ then \newc{either}
 					\begin{itemize}
-						\item whenever $\es; \es; \es \proves \mapchar{S' \subst{\tinact}{\vart{t}}}{s} \hastype \Proc$
-						then $\es; \es; \es \proves \mapchar{\trec{t}{S'}}{s} \hastype \Proc$
-
-						\item whenever $\forall S_i \in \delete{S}$,
-						$\exists, \Gamma, \Delta, S_i'$ such that
-						$\Gamma; \es; \Delta \cat \set{t_i: S_i'}_{i \in I} \cat s: S' \subst{\tinact}{\vart{t}} \proves \mapchar{S' \subst{\tinact}{\vart{t}}}{s} \hastype \Proc$
-						then
-						$\Gamma; \es; \Delta \cat \set{t_i: \btout{S_i} \tinact}_{i \in I} \cat s: \trec{t}{S'} \proves \mapchar{\trec{t}{S'}}{s} \hastype \Proc$.
+%						\item whenever $\es; \es; \es \proves \mapchar{S' \subst{\tinact}{\vart{t}}}{s} \hastype \Proc$
+%						then $\es; \es; \es \proves \mapchar{\trec{t}{S'}}{s} \hastype \Proc$
+%
+%						\item whenever $\forall S_i \in \delete{S}$,
+%						$\exists, \Gamma, \Delta, S_i'$ such that
+%						$\Gamma; \es; \Delta \cat \set{t_i: S_i'}_{i \in I} \cat s: S' \subst{\tinact}{\vart{t}} \proves \mapchar{S' \subst{\tinact}{\vart{t}}}{s} \hastype \Proc$
+%						then
+%						$\Gamma; \es; \Delta \cat \set{t_i: \btout{S_i} \tinact}_{i \in I} \cat s: \trec{t}{S'} \proves \mapchar{\trec{t}{S'}}{s} \hastype \Proc$.
 
 						\item \newc{$\es; \es; \es \proves \mapchar{\trec{t}{S'}}{s} \hastype \Proc$}
 
@@ -120,19 +120,19 @@ We state a more detailed form of \propref{p:inhabit} as given in Page~\pageref{p
 					\end{itemize}
 			\end{enumerate}
 
-		\item	Let $U$ be a type.
+		\item	Let $U$ and $\mapchar{U}{a}$  be a channel type and its characteristic process, respectively.
 		\begin{enumerate}
-			\item	If $U = \chtype{S}$ and $\es; \es; \Delta \proves \omapchar{S} \hastype S$ then 
+			\item	If $U = \chtype{S}$ and $\es; \es; \Delta \proves \omapchar{S} \hastype S$ then \\
 					$a: \chtype{S}; \es; \Delta \cat t: \btout{\chtype{S}} \tinact \proves \mapchar{\chtype{S}}{a} \hastype \Proc$.
 	
-			\item	If $U = \chtype{L}$ and $\Gamma; \es; \Delta \proves \omapchar{L} \hastype L$ then
+			\item	If $U = \chtype{L}$ and $\Gamma; \es; \Delta \proves \omapchar{L} \hastype L$ then \\
 					$\Gamma \cat a: \chtype{L}; \es; \Delta \cat t: \btout{\chtype{L}} \tinact \proves \mapchar{\chtype{L}}{a} \hastype \Proc$.
 	
-			\item	If $U = \shot{U'}$ and  $\Gamma; \es; \Delta \proves \omapchar{U'} \hastype U'$ then
+			\item	If $U = \shot{U'}$ and  $\Gamma; \es; \Delta \proves \omapchar{U'} \hastype U'$ then \\
 					$\Gamma \cat x: \shot{U'}; \es;\Delta \proves \mapchar{\shot{U'}}{x} \hastype \Proc$.
 	
 			\item	
-\NY{Is this correct? Better typing?} If $U = \lhot{U'}$ and   $\Gamma; \es; \Delta \proves \omapchar{U'} \hastype U'$ then
+\NY{Is this correct? Better typing?} If $U = \lhot{U'}$ and   $\Gamma; \es; \Delta \proves \omapchar{U'} \hastype U'$ then \\
 					$\Gamma \cat x: \shot{U'}; \es;\Delta \proves \mapchar{\lhot{U'}}{x} \hastype \Proc$.
 		\end{enumerate}
 	\end{enumerate}
@@ -140,11 +140,11 @@ We state a more detailed form of \propref{p:inhabit} as given in Page~\pageref{p
 
 \begin{proof}[Sketch]
 	The proof of part 2 is done by induction on the the syntax of $S$.
-	We give some notable cases.
+	We detail some notable cases.
 	\begin{itemize}
-		\item	Case $S = \btout{U} S'$ with
-				$\mapchar{S}{s} = \bout{s}{\omapchar{U}} \bout{t}{s} \inact$.
-				If we type the last process we get the derivation:
+		\item	Case $S = \btout{U} S'$. Then, by \defref{def:char}, we have 
+				$\mapchar{S}{s} = \bout{s}{\omapchar{U}} \bout{t}{s} \inact$ and 
+				we may obtain the following derivation:
 				\[
 					\tree{
 						\begin{array}{l}
@@ -156,9 +156,10 @@ We state a more detailed form of \propref{p:inhabit} as given in Page~\pageref{p
 						\Gamma; \es; \Delta \cat s: \btout{U} S' \cat t: \btout{S} \tinact \hastype \bout{s}{\omapchar{U}}\bout{t}{s} \inact \hastype \Proc
 					}
 				\]
-		\item	Case $S = \btinp{S_1} S_2$ with
+		\item	Case $S = \btinp{S_1} S_2$. Then, by \defref{def:char}, we have 
 				$\mapchar{S}{s} = \binp{s}{x} (\bout{t}{s} \inact \Par \mapchar{S_1}{x})$.
-				If we type the last process we have the following derivation
+				 and 
+				we may obtain the following derivation:
 				\[
 					\tree{
 						\tree{
@@ -176,12 +177,10 @@ We state a more detailed form of \propref{p:inhabit} as given in Page~\pageref{p
 						\Gamma; \es; \Delta \cat t: \btout{S_2} \tinact \cat s: \btinp{U} S_2 \proves \binp{s}{x} (\bout{t}{s} \inact \Par \mapchar{S_1}{x}) \hastype \Proc
 					}
 				\]
-			\item	Case $S = \trec{t}{S'}$.
-					The proof is done by induction on the shape of $S'$.
+			\item	Case $S = \trec{t}{S'}$. Then, by \defref{def:char}, $\mapchar{S' \subst{\tinact}{\vart{t}} }{u}$.
+					The proof is done by induction on the shape of $S'$; we detail a few sub-cases.
 					\begin{enumerate}
-						\item	$S' = \btbra{l_i: S_i}_{i \in I}$
-
-								The characteristic process for $S$ is
+						\item	$S' = \btbra{l_i: S_i}_{i \in I}$. Then
 								$\mapchar{S' \subst{\tinact}{\vart{t}}}{s} = \bbra{s}{l_i: \bout{t_i}{s} \inact}_{i \in I}$
 								and $\delete{S} = \set{S_i}_{i \in I}$
 								\[
@@ -191,7 +190,7 @@ We state a more detailed form of \propref{p:inhabit} as given in Page~\pageref{p
 										\es; \es; t_i: S_i \subst{\tinact}{\vart{t}} \cat s: S' \subst{\tinact}{\vart{t}} \proves \bbra{s}{l_i: \bout{t_i}{s} \inact}_{i \in I} \hastype \Proc
 									}
 								\]
-								We then type $\mapchar{\trec{t}{ \btbra{l_i: S_i}_{i \in I} }}{s}$.
+								We may then type $\mapchar{\trec{t}{ \btbra{l_i: S_i}_{i \in I} }}{s}$.
 								\[
 									\tree {
 										\forall i \in I, \es; \es; t_i: S_i \proves \bout{t_i}{s} \inact \hastype \Proc
@@ -200,13 +199,10 @@ We state a more detailed form of \propref{p:inhabit} as given in Page~\pageref{p
 									}
 								\]
 
-						\item	$S' = \trec{t'}{S''}$
-								The characteristic process for $S$ is:
-								$\mapchar{\trec{t'}{S''} \subst{\tinact}{\vart{t}}}{s} = \mapchar{S'' \subst{\tinact}{\vart{t}} \subst{\tinact}{\vart{t'}}  }{s}$
-
-								If $\mapchar{S'' \subst{\tinact}{\vart{t}} \subst{\tinact}{\vart{t'}}  }{s} = \inact$ then the proof is straightforward.
-
-								If $\delete{S} = \set{S_i}_{i \in I}$ then by induction
+						\item	$S' = \trec{t'}{S''}$. Then 
+								$\mapchar{\trec{t'}{S''} \subst{\tinact}{\vart{t}}}{s} = \mapchar{S'' \subst{\tinact}{\vart{t}} \subst{\tinact}{\vart{t'}}  }{s}$. 
+								
+								If $\mapchar{S'' \subst{\tinact}{\vart{t}} \subst{\tinact}{\vart{t'}}  }{s} = \inact$ then the proof is straightforward. If $\delete{S} = \set{S_i}_{i \in I}$ then by induction
 								\[
 									\tree {
 										\textrm{Induction}
@@ -227,7 +223,7 @@ We state a more detailed form of \propref{p:inhabit} as given in Page~\pageref{p
 
 			\item	Other cases are similar.
 	\end{itemize}
-	The proof for parts 2 and 3 is similar.
+	The proof for parts 2 and 3 is similar. \newc{NO, we need to add some cases for these other parts.}
 	\qed
 \end{proof}
 
