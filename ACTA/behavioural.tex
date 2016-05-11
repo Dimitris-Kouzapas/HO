@@ -943,31 +943,60 @@ do inhabit their associated type.
 	\qed
 \end{proof}
 
-\dk{
+\newc{
 	We show an example of a characteristic process inhabiting a
 	recursive type.
 	\begin{example}
-		Let recursive type $S = \trec{t}{ \btout{S'} \vart{t}}$.
-		From the definition of the characteristic process for 
-		recursive types we get:
-		\[
-			\mapchar{\trec{t}{ \btout{S'} \vart{t}}}{s} = \mapchar{ \btout{S'} \trec{t}{ \btout{S'} \vart{t}} }{s}
-		\]
-		From the definition of the characteristic process for the output
-		prefixed session types we get:
-		\[
-			\bout{s}{s'} \bout{t}{s} \inact
-		\]
-%		Note that we get the same characteristic process even if we unfold the type more than once:
+	Consider the type 
+	$S = \trec{t}{\btout{U_1} \btinp{U_2} \vart{t}}$.
+	By \defref{def:char}, we have that $\mapchar{S}{s} = \mapchar{\btout{U_1} \btinp{U_2} \tinact}{s} = \bout{s}{\omapchar{U_1}} \bout{t}{s} \inact$.
+	For this process, we can infer the following type derivations:
+					%
+					\[
+						\tree{
+							\Gamma; \es; \Delta \hastype \omapchar{U_1} \hastype U_2\\
+							\Gamma; \es; t: \btout{\btinp{U_2} \tinact} \tinact \cat s: \btinp{U_2} \tinact \proves \bout{t}{s} \inact \hastype \Proc
+						}{
+							\Gamma; \es; \Delta \cat t: \btout{\btinp{U_2} \tinact} \tinact \cat s: \btout{U_1} \btinp{U_2} \tinact \proves
+							%\mapchar{\btout{U_1} \btinp{U_2} \tinact}{s} = 
+							\bout{s}{\omapchar{U_1}} \bout{t}{s} \inact \hastype \Proc
+						}
+					\]
+					and
+					\[
+						\tree {
+							\Gamma; \es; \Delta \cat t: \btout{\btinp{U_2} \trec{t}{\btout{U_1} \btinp{U_2} \vart{t}}} \tinact
+							\cat s: \btinp{U_2} \trec{t}{\btout{U} \vart{t}} \proves
+							\bout{t}{s} \inact \hastype \Proc
+						}{
+							\Gamma; \es; \Delta \cat t: \btout{\btinp{U_2} \trec{t}{\btout{U} \vart{t}}} \tinact \cat s: \trec{t}{\btout{U} \vart{t}} \proves
+							\bout{s}{\omapchar{U_1}} \bout{t}{s} \inact \hastype \Proc
+						}
+					\]
+					\end{example}
+	}
+%	\begin{example}
+%		Let recursive type $S = \trec{t}{ \btout{S'} \vart{t}}$.
+%		From the definition of the characteristic process for 
+%		recursive types we get:
 %		\[
-%		\mapchar{ \btout{S'} \btout{S'} \trec{t}{ \btout{S'} \vart{t}} }{s} = \bout{s}{s'} \bout{t}{s} \inact
+%			\mapchar{\trec{t}{ \btout{S'} \vart{t}}}{s} = \mapchar{ \btout{S'} \trec{t}{ \btout{S'} \vart{t}} }{s}
 %		\]
-%		If we type the characteristic process for $S$ we get:
+%		From the definition of the characteristic process for the output
+%		prefixed session types we get:
 %		\[
-%			\Gamma; \es; s: S \cat s':S' \cat t: \btout{S} \tinact \proves \bout{s}{s'} \bout{t}{s} \inact \hastype \Proc
+%			\bout{s}{s'} \bout{t}{s} \inact
 %		\]
-	\end{example}
-}
+%%		Note that we get the same characteristic process even if we unfold the type more than once:
+%%		\[
+%%		\mapchar{ \btout{S'} \btout{S'} \trec{t}{ \btout{S'} \vart{t}} }{s} = \bout{s}{s'} \bout{t}{s} \inact
+%%		\]
+%%		If we type the characteristic process for $S$ we get:
+%%		\[
+%%			\Gamma; \es; s: S \cat s':S' \cat t: \btout{S} \tinact \proves \bout{s}{s'} \bout{t}{s} \inact \hastype \Proc
+%%		\]
+%	\end{example}
+
 
 The following example motivates the refined 
 LTS explained in \secref{sec:overview}.
@@ -1485,12 +1514,12 @@ ensures behavioural invariance on deterministic transitions.
 \begin{proof}[Sketch]
 	The proof for Part 1 requires a case analysis on the structure of
 	\betatran and session-transition. The proof for Part 2 is direct from Part 1.
-	See \appref{app:sub_tau_inert} (\mypageref{app:sub_tau_inert}) for the full details of the proof.
+	See \appref{app:sub_tau_inert} (\mypageref{app:sub_tau_inert}) for the details of the proof.
 	\qed
 \end{proof}
 
 
-Using the above determinacy properties, we can state the following up-to technique.
+Using the above properties, we can state the following up-to technique.
 %We write $\Hby{\dtau}$ to denote a (possibly empty) sequence of deterministic steps $\hby{\dtau}$.
 
 \begin{lemma}[Up-to Deterministic Transition]
@@ -1665,18 +1694,18 @@ then they are equivalent under any higher-order substitution.
 %				for some $U$.
 %	\end{enumerate}
 %
-	then $\forall R$ such that $\fv{R} = x$
+	then. for all $R$ such that $\fv{R} = x$, we have
 	\[
-		\horel{\Gamma}{\Delta_1}{P \subst{\abs{x}{R}}{z}}{\hwb}{\Delta_2}{Q \subst{\abs{x}{R}}{z}}
+		\horel{\Gamma}{\Delta_1}{P \subst{\abs{x}{R}}{z}}{\hwb}{\Delta_2}{Q \subst{\abs{x}{R}}{z}}.
 	\]
 \end{lemma}
 
     \newc{The full proof of \lemref{lem:proc_subst} can be found in \appref{app:sub_coinc}, 
 	\lemref{lem:process_subst} (\mypageref{lem:process_subst}); it is obtained 
-by constructing a typed relation on the
+by (i)~constructing a typed relation on the
 	substitution properties stated by the lemma
-	and proving that it is a higher-order bisimulation, using the auxiliary result given next.
-	 Given a finite index set $I = \{1, \ldots, n\}$, we 
+	and (ii)~proving that it is a higher-order bisimulation, using the auxiliary result given next.
+	 In the following, given a finite index set $I = \{1, \ldots, n\}$, we 
 	shall write 
 	$\prod_{i \in I} P_i$ to stand for $P_1 \Par P_2 \Par \cdots \Par P_n$.
 	}

@@ -33,7 +33,7 @@ We state session type unfolding:
 \end{lemma}
 
 \begin{proof}
-	The proof is a straightforward induction on the syntax of $S$.
+	The proof is a straightforward induction on the syntax of $S$. \qed
 \end{proof}
 
 We state session type prefix deletion relation:
@@ -140,25 +140,23 @@ We state a more detailed form of \propref{p:inhabit} as given in Page~\pageref{p
 	\end{enumerate}
 \end{proposition}
 
-\begin{proof}[Sketch]
+\begin{proof}[Sketch] The proof proceeds by mutual induction on the syntax of types.
 	\begin{enumerate}
-		\item	The proof for part 1 uses the results from Part 2 and 3.
+		\item	The proof the results from Parts 2 and 3.
 				We do a case analysis on the syntax of $U$.
 			\begin{enumerate}
-				\item	$U = S$.
-				\item	$U = \chtype{S}$.
-				\item	$U = \chtype{L}$.
+				\item[-]	Cases (a) $U = S$, (b) $U = \chtype{S}$, and (c) $U = \chtype{L}$: \\
+The proof is straightforward from Rules $\trule{Sess}$ and $\trule{Sh}$ (cf. \figref{fig:typerulesmy}).
 
-						The proof is straightforward from the typing rules $\trule{Sess}$ and $\trule{Sh}$.
+				\item[-]	Case (d) $U = \shot{U'}$. By Parts 2 and 3 of this lemma we obtain 
+						$\Gamma; \es; \Delta \proves \mapchar{U'}{x} \hastype \Proc$, which implies 
+						$\Gamma \backslash x ; \es; \Delta \backslash x \proves \omapchar{\shot{U'}} \hastype \shot{U'}$
+						by
+						 Rules $\trule{Abs}$ and $\trule{EProm}$ (cf. \figref{fig:typerulesmy}).
 
-				\item	$U = \shot{U'}$. By the parts 2 and 3 of this proof we get that
-						$\Gamma; \es; \Delta \proves \mapchar{U'}{x} \hastype \Proc$ which implies by
-						typing rules $\trule{Abs}$ and $\trule{EProm}$ that
-						$\Gamma \backslash x ; \es; \Delta \backslash x \proves \omapchar{\shot{U'}} \hastype \shot{U'}$.
-
-				\item	$U = \lhot{U'}$. Similar using type rule $\trule{Abs}$.
+				\item[-]	Case (e) $U = \lhot{U'}$. Similar, using Rule $\trule{Abs}$ (cf. \figref{fig:typerulesmy}).
 			\end{enumerate}
-		\item	The proof of part 2 is done by induction on the the syntax of $S$.
+		\item	The proof is by induction on the the syntax of $S$.
 				We detail some notable cases.
 			\begin{enumerate}
 				\item	Case $S = \btout{U} S'$. Then, by \defref{def:char}, we have 
@@ -196,7 +194,7 @@ We state a more detailed form of \propref{p:inhabit} as given in Page~\pageref{p
 								\Gamma; \es; \Delta \cat t: \btout{S_2} \tinact \cat s: \btinp{U} S_2 \proves \binp{s}{x} (\bout{t}{s} \inact \Par \mapchar{S_1}{x}) \hastype \Proc
 							}
 						\]
-					\item	Case $S = \trec{t}{S'}$. Then, by \defref{def:char}, $\mapchar{S' \subst{\tinact}{\vart{t}} }{u}$.
+					\item	Case $S = \trec{t}{S'}$. Then, by \defref{def:char}, $\mapchar{S} = \mapchar{S' \subst{\tinact}{\vart{t}} }{u}$.
 							The proof is done by induction on the shape of $S'$; we detail a few sub-cases.
 							\begin{enumerate}
 								\item	$S' = \btbra{l_i: S_i}_{i \in I}$. Then
@@ -243,13 +241,13 @@ We state a more detailed form of \propref{p:inhabit} as given in Page~\pageref{p
 					\item	Other cases are similar.
 			\end{enumerate}
 
-		\item	The proof for Part 3 uses the results of Parts 1.
+		\item	The proof  uses the result of Part 1.
 				We do a case analysis on the structure of $U$.
 			\begin{enumerate}
 				\item	$U = \chtype{S}$.
 
 						From Part 1 we have that $\es; \es; \Delta \proves \omapchar{S} \hastype S$.
-						By applying rule $\trule{Req}$ we get that
+						By applying Rule $\trule{Req}$ (cf. \figref{fig:typerulesmy}) we obtain
 						\[
 							\tree{
 								a: \chtype{S}; \es; \Delta \proves \omapchar{S} \hastype S
@@ -260,12 +258,12 @@ We state a more detailed form of \propref{p:inhabit} as given in Page~\pageref{p
 							}
 						\]
 
-				\item	$U = \chtype{S}$. Similar argumentation as the previous case.
+				\item	$U = \chtype{S}$. Similar argumentation as in the previous case.
 
 				\item
 						$U = \lhot{U'}$ then from Part 1 we get that
 						$\Gamma; \es; \Delta \proves \omapchar{U'} \hastype U'$.
-						By applying typing rule $\trule{App}$ and rule $\trule{EProm}$ we get
+						By applying Rules~$\trule{App}$ and  $\trule{EProm}$ (cf. \figref{fig:typerulesmy}) we obtain
 						\[
 							\tree {
 								\tree {
@@ -280,8 +278,8 @@ We state a more detailed form of \propref{p:inhabit} as given in Page~\pageref{p
 							}
 						\]
 
-				\item	$U = \shot{U'}$. Similar argumentation with the previous case
-						without applying rule $\trule{EProm}$.
+				\item	$U = \shot{U'}$. Similar argumentation as in the previous case
+						without applying Rule~$\trule{EProm}$ (cf. \figref{fig:typerulesmy}).
 			\end{enumerate}
 	\end{enumerate}
 	\qed
@@ -337,6 +335,7 @@ We state a more detailed form of \propref{p:inhabit} as given in Page~\pageref{p
 							\bout{s}{\omapchar{U_1}} \bout{t}{s} \inact \hastype \Proc
 						}
 					\]
+					
 			\item	$\trec{t}{  \btbra{l_1: \vart{t}, l_2: \tinact}  }$
 					\[
 					\tree{
@@ -371,6 +370,14 @@ We state a more detailed form of \propref{p:inhabit} as given in Page~\pageref{p
 \end{comment}
 
 %\section{Behavioural Semantics}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% tau - Innertness
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Deterministic Transitions}
+\label{app:sub_tau_inert}
+
 
 We present the proofs for 
 \thmref{the:coincidence} (Page \pageref{the:coincidence}).
@@ -432,12 +439,6 @@ for shorthand notations.
 %the theorem in \secref{sec:behavioural}.
 
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% tau - Innertness
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\subsection{Deterministic Transitions}
-\label{app:sub_tau_inert}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -634,13 +635,14 @@ that is used to simplify the proofs. Let
 \[
 	\ntrigger{t}{V} = \newtrigger{t}{V}
 \]
-
-The first auxiliary lemma states the equivalence between
-the trigger processes $\htrigger{t}{V}$ and $\ntrigger{t}{V}$.
+\noindent
+The first auxiliary lemma states the equivalence (up to $\hwb$) between
+the trigger processes $\htrigger{t}{V}$ (cf.~\eqref{eqb:0}) and $\ntrigger{t}{V}$.
 \begin{lemma}[Alternative Trigger Process]
+Let $P$ and $Q$ be processes.
 	\label{lem:alt_tr}
 	\begin{enumerate}
-		\item	Let $t$ a fresh name, $\Delta_1 = \Delta_3 \cat t: \btout{\tinact} \tinact$ and
+		\item	Let $t$ be a fresh name, $\Delta_1 = \Delta_3 \cat t: \btout{\tinact} \tinact$, and
 				$\Delta_2 = \Delta_4 \cat t: \btout{\tinact} \tinact$
 				\[
 					\horel{\Gamma}{\Delta_1}{\newsp{\widetilde{m_1}}{P \Par \newsp{s}{\bout{t}{s} \inact}  } }
@@ -648,11 +650,11 @@ the trigger processes $\htrigger{t}{V}$ and $\ntrigger{t}{V}$.
 					{\Delta_2}{\newsp{\widetilde{m_2}}{Q \Par \newsp{s}{\bout{t}{s} \inact}  } }
 				\]
 				if and only if
-				\[
+				$
 					\horel{\Gamma}{\Delta_3}{\newsp{\widetilde{m_1}}{P  } }
 					{\hwb}
 					{\Delta_4}{\newsp{\widetilde{m_2}}{Q}}
-				\]
+				$.
 
 		\item	Let $t$ a fresh name, $\Delta_1 = \Delta_3 \cat t: \btout{\tinact} \tinact$ and
 				$\Delta_2 = \Delta_4 \cat t: \btout{\tinact} \tinact$
@@ -662,11 +664,11 @@ the trigger processes $\htrigger{t}{V}$ and $\ntrigger{t}{V}$.
 					{\Delta_2}{\newsp{\widetilde{m_2}}{Q \Par \newsp{s}{\bout{t}{s} \inact}  } }
 				\]
 				if and only if
-				\[
+				$
 					\horel{\Gamma}{\Delta_3}{\newsp{\widetilde{m_1}}{P  } }
 					{\fwb}
 					{\Delta_4}{\newsp{\widetilde{m_2}}{Q}}
-				\]
+				$.
 
 		\item
 				\[
@@ -684,10 +686,12 @@ the trigger processes $\htrigger{t}{V}$ and $\ntrigger{t}{V}$.
 \end{lemma}
 
 \begin{proof}
-	Part 1. We split the proof into the two directions
+We analyze each of the three parts:
+\begin{itemize}
+	\item Part 1. We split the proof into the two directions
 	of the if and only if requirements.
 	\begin{enumerate}
-		\item	First direction. Consider typed relation (we omit the type information for readability)
+		\item	First direction. Consider the typed relation (we omit the type information for readability):
 				\begin{eqnarray*}
 					\Re &=& \set{	\newsp{\widetilde{m_1}}{P}\ , \ 
 									\newsp{\widetilde{m_2}}{Q} \setbar\\
@@ -697,9 +701,8 @@ the trigger processes $\htrigger{t}{V}$ and $\ntrigger{t}{V}$.
 									{\Delta_2}{\newsp{\widetilde{m_2}}{Q \Par \newsp{s}{\bout{t}{s} \inact}  } }
 					}
 				\end{eqnarray*}
-				We check the requirements of higher order bisimulation
-				for relation $\Re$.
-
+				We check the requirements of higher-order bisimulation
+				for  $\Re$.
 				Assume that
 				\[
 					\horel{\Gamma}{\Delta_3}{\newsp{\widetilde{m_1}}{P   } }
@@ -712,7 +715,7 @@ the trigger processes $\htrigger{t}{V}$ and $\ntrigger{t}{V}$.
 					{\hby{\ell_1}}
 					{\Delta_1'}{\newsp{\widetilde{m_1}'}{P' \Par \newsp{s}{\bout{t}{s} \inact}  } }
 				\]
-				which implies from the freshness of $t$ that there exists $Q'$ such that
+				which implies from the freshness of $t$ that there exists a $Q'$ such that
 				\begin{eqnarray}
 					\horel{\Gamma}{\Delta_2}{\newsp{\widetilde{m_2}}{Q \Par \newsp{s}{\bout{t}{s} \inact}  } }
 					{\Hby{\ell_2}}
@@ -725,8 +728,8 @@ the trigger processes $\htrigger{t}{V}$ and $\ntrigger{t}{V}$.
 					{\hwb}
 					{\Delta_2'}{\newsp{\widetilde{m_2}'}{Q' \Par C_2 \Par \newsp{s}{\bout{t}{s} \inact}  } }
 				\]
-				with $C_1 = \htrigger{t'}{V_1}$ and $C_2 = \htrigger{t'}{V_1}$ if $\ell_1, \ell_2$ output actions
-				with objects $V_1, V_2$, respectively. Otherwise $C_1 = C_2 = \inact$.
+				with $C_1 = \htrigger{t'}{V_1}$ and $C_2 = \htrigger{t'}{V_1}$ (if $\ell_1$ and $\ell_2$ are output actions
+				with objects $V_1$ and $V_2$, respectively) and $C_1 = C_2 = \inact$ (otherwise).
 				The latter equation implies from the definition of $\Re$
 				\[
 					\horel{\Gamma}{\Delta_1'}{\newsp{\widetilde{m_1}'}{P' \Par C_1 \Par \newsp{s}{\bout{t}{s} \inact}  } }
@@ -741,35 +744,36 @@ the trigger processes $\htrigger{t}{V}$ and $\ntrigger{t}{V}$.
 				\end{eqnarray*}
 				to complete the proof of the case.
 
-		\item	Second direction. Consider typed relation (we omit the type information for readability)
+		\item	Second direction. Consider the typed relation (we omit the type information for readability)
 				\begin{eqnarray*}
 					\Re &=& \set{	\newsp{\widetilde{m_1}}{P \Par \newsp{s}{\bout{t}{s} \inact}}\ , \ 
 									\newsp{\widetilde{m_2}}{Q \Par \newsp{s}{\bout{t}{s} \inact}} \setbar\\
 					&&
-									\horel{\Gamma}{\Delta_3}{\newsp{\widetilde{m_1}}{P  } }
+									\qquad \qquad \qquad \qquad \qquad \qquad \horel{\Gamma}{\Delta_3}{\newsp{\widetilde{m_1}}{P  } }
 									{\hwb}
 									{\Delta_4}{\newsp{\widetilde{m_2}}{Q  } }
 					}	
 				\end{eqnarray*}
-				We check the requirements of higher order bisimulation
-				for relation $\Re$.
-				We analyse three cases
+				We check the requirements of higher-order bisimulation
+				for $\Re$.
+				We analyse three cases:
 				\begin{enumerate}
-					\item
+					\item Process $P$ moves autonomously:
 							\[
 								\horel{\Gamma}{\Delta_1}{\newsp{\widetilde{m_1}}{P \Par \newsp{s}{\bout{t}{s} \inact}  } }
 								{\hby{\ell_1}}
 								{\Delta_1'}{\newsp{\widetilde{m_1}'}{P' \Par \newsp{s}{\bout{t}{s} \inact}}}
 							\]
-							The proof is similar with the previous case.
+							The proof is similar to the previous case.
 
-					\item	\[
+					\item An action on the fresh name $t$:
+					\[
 								\horel{\Gamma}{\Delta_1}{\newsp{\widetilde{m_1}}{P \Par \newsp{s}{\bout{t}{s} \inact}  } }
 								{\hby{\bactout{t}{s}} }
 								{\Delta_1'}{\newsp{\widetilde{m_1}}{P'}}
 							\]
-							First note the typing derivation
-							reveals that $\Delta_1(t) \Delta_2(t) = \btout{\tinact} \tinact$.
+							First notice that the typing derivation
+							reveals that $\Delta_1(t) = \Delta_2(t) = \btout{\tinact} \tinact$.
 							This is because the dual endpoint of restricted session $s$ does not appear
 							in process $\newsp{s}{\bout{t}{s} \inact}$ and thus it has the inactive type $\tinact$.
 
@@ -779,7 +783,7 @@ the trigger processes $\htrigger{t}{V}$ and $\ntrigger{t}{V}$.
 								{\Hby{\bactout{t}{s}} }
 								{\Delta_2'}{\newsp{\widetilde{m_2}}{Q}}
 							\]
-
+							\newc{JP: Above we should have $Q'$ instead of $Q$ in the RS, right?}
 							We need to show that
 							\[
 								\horel{\Gamma}{\Delta_1'}{\newsp{\widetilde{m_1}}{P \Par \htrigger{t'}{s}  } }
@@ -787,7 +791,7 @@ the trigger processes $\htrigger{t}{V}$ and $\ntrigger{t}{V}$.
 								{\Delta_2'}{\newsp{\widetilde{m_2}}{Q \Par \htrigger{t'}{s}  } }
 							\]
 							The proof is easy if we consider that both processes can observe the
-							up to deterministic transitions $\hby{\bactinp{t'}{\abs{z}{\inact}}} \Hby{\dtau}$.
+							up-to deterministic transitions $\hby{\bactinp{t'}{\abs{z}{\inact}}} \Hby{\dtau}$.
 							\begin{eqnarray*}
 								&&\Gamma; \es; \Delta_1' \proves \newsp{\widetilde{m_1}}{P \Par \htrigger{t'}{s}  } \\
 								\hby{\bactinp{t'}{\abs{z}{\inact}}} &&
@@ -805,25 +809,25 @@ the trigger processes $\htrigger{t}{V}$ and $\ntrigger{t}{V}$.
 								\hby{\dtau} &&
 								\Delta_2' \proves \news{\widetilde{m_2}}{Q}
 							\end{eqnarray*}
-							The result is then immediate from the definition of $Re$ that
+							The result is then immediate from the definition of $\Re$ that
 							requires
 							\[
 								\horel{\Gamma}{\Delta_3}{\news{\widetilde{m_1}}{P  } }
 								{\hwb}
 								{\Delta_4}{\news{\widetilde{m_2}}{Q  } }
 							\]
-					\item	A third case requires the interaction of name $t$ with process $P$,
-							which cannot be done due to the freshness of $t$.
+					\item	The interaction of name $t$ with process $P$: this cannot occur 
+							due to the freshness of $t$.
 				\end{enumerate}
 	\end{enumerate}
-	
-	The proof for Part 2, follows same arguments and structure as
-	the proof for Part 1.
+    This concludes the proof of Part 1.
+    	
+	\item Part 2 follows same arguments and structure as	the proof for Part 1.
 
-	The proof for Part 3 relies on Part 1. We do an analysis on the two
+	\item Part 3 relies on Part 1. We do an analysis on the two
 	directions of the if and only if requirement.
 	\begin{enumerate}
-		\item	Let typed relation (for readability, we omit the type information)
+		\item First direction. Let $\Re$ be the typed relation (for readability, we omit the type information):
 				\begin{eqnarray*}
 					\Re &=&	\set{	\newsp{\widetilde{m_1}}{P \Par \htrigger{t}{V_1}}\ ,\ 
 									\newsp{\widetilde{m_2}}{Q \Par \htrigger{t}{V_2}} \setbar\\
@@ -836,77 +840,77 @@ the trigger processes $\htrigger{t}{V}$ and $\ntrigger{t}{V}$.
 				We show that $\Re \subseteq \hwb$, with a case analysis on the defining requirements
 				of higher-order bisimulation.
 				\begin{enumerate}
-					\item
+					\item $P$ moves on its own:
 							\[
 								\horel{\Gamma}{\Delta_3}{\newsp{\widetilde{m_1}}{P \Par \htrigger{t}{V_1}  } }
 								{\hby{\ell_1}}
 								{\Delta_3'}{\newsp{\widetilde{m_1}'}{P' \Par \htrigger{t}{V_2}  } }
 							\]
-							The proof is similar with case 1 of Part 1 of this lemma.
-					\item	Let $\omapchar{U} = n$
+							The proof is similar to Case 1 of Part 1 of this lemma.
+					\item	An action along $t$. Let $\omapchar{U} = n$
 							\[
 								\horel{\Gamma}{\Delta_3}{\newsp{\widetilde{m_1}}{P \Par \htrigger{t}{V_1}  } }
 								{\hby{\bactinp{t}{n}}}
 								{\Delta_3'}{\newsp{\widetilde{m_1}'}{P \Par \newsp{s}{\binp{s}{y} (\appl{y}{n}) \Par \bout{\dual{s}}{V_1} \inact}}}
 							\]
-							Furthermore we can see that
+							Furthermore, we can see that
 							\[
 								\horel{\Gamma}{\Delta_4}{\newsp{\widetilde{m_2}}{Q \Par \htrigger{t}{V_2}  } }
 								{\Hby{\bactinp{t}{n}}}
-								{\Delta_4'}{\newsp{\widetilde{m_2}'}{Q \Par \appl{V_2}{n}}}
+								{\Delta_4'}{\newsp{\widetilde{m_2}'}{Q \Par (\appl{V_2}{n})}}
 							\]
 							and
 							\[
 								\horel{\Gamma}{\Delta_3'}{\newsp{\widetilde{m_1}'}{P \Par \newsp{s}{\binp{s}{y}{(\appl{y}{n})} \Par \bout{\dual{s}}{V_1} \inact}}}
 								{\hby{\dtau}}
-								{\Delta_3'}{\newsp{\widetilde{m_1}'}{P \Par \appl{V_1}{n}}}
+								{\Delta_3'}{\newsp{\widetilde{m_1}'}{P \Par (\appl{V_1}{n})}}
 							\]
 							We need to show that
 							\[
-								\horel{\Gamma}{\Delta_3'}{\newsp{\widetilde{m_1}'}{P \Par \appl{V_1}{n}}}
+								\horel{\Gamma}{\Delta_3'}{\newsp{\widetilde{m_1}'}{P \Par (\appl{V_1}{n})}}
 								{\hwb}
-								{\Delta_4'}{\newsp{\widetilde{m_2}'}{Q \Par \appl{V_2}{n}}}
+								{\Delta_4'}{\newsp{\widetilde{m_2}'}{Q \Par (\appl{V_2}{n})}}
 							\]
-							This is done by considering the requirement of $\Re$.
-							Let $\omapchar{\btinp{U} \tinact} = \abs{z}{ \binp{z}{y} ( \bout{t'}{z} \inact \Par \appl{y}{n} ) } $
+							This is done by considering the requirements of $\Re$.
+							Let $\omapchar{\btinp{U} \tinact} = \abs{z}{ \binp{z}{y} ( \bout{t'}{z} \inact \Par (\appl{y}{n}) ) } $
 							\[
 								\mhorel{\Gamma}{\Delta_1}{\newsp{\widetilde{m_1}}{P \Par \ntrigger{t}{V_1}  } }
 								{\hby{\bactinp{t}{\omapchar{\btinp{U} \tinact}}}}
-								{\Delta_1'}{}{\newsp{\widetilde{m_1}'}{P \Par \newsp{s}{\appl{\abs{z}{ \binp{z}{y} ( \bout{t'}{z} \inact \Par \appl{y}{n} ) }}{s} \Par \bout{\dual{s}}{V_1} \inact}}}
+								{\Delta_1'}{}{\newsp{\widetilde{m_1}'}{P \Par \newsp{s}{\appl{\abs{z}{ \binp{z}{y} ( \bout{t'}{z} \inact \Par (\appl{y}{n}) ) }}{s} \Par \bout{\dual{s}}{V_1} \inact}}}
 							\]
-							Furthermore we can see that
+							Furthermore, we can see that
 							\[
 	\horel{\Gamma}{\Delta_2}{\newsp{\widetilde{m_2}}{Q \Par \ntrigger{t}{V_2}  } }
 								{\Hby{\bactinp{t}{\omapchar{\btinp{U} \tinact}}}}
-								{\Delta_2'}{\newsp{\widetilde{m_2}'}{Q \Par \appl{V_2}{n} \Par \newsp{s}{\bout{t'}{s} \inact}}}
+								{\Delta_2'}{\newsp{\widetilde{m_2}'}{Q \Par (\appl{V_2}{n}) \Par \newsp{s}{\bout{t'}{s} \inact}}}
 							\]
 							with
 							\[
 								\horel{\Gamma}{\Delta_1'}{\newsp{\widetilde{m_1}'}{P \Par \newsp{s}{\binp{s}{y} \appl{y}{n} \Par \bout{\dual{s}}{V_1} \inact}}}
 								{\Hby{\dtau}}
-								{\Delta_1'}{\newsp{\widetilde{m_1}'}{P \Par \appl{V_1}{n} \Par \newsp{s}{\bout{t'}{s} \inact}}}
+								{\Delta_1'}{\newsp{\widetilde{m_1}'}{P \Par (\appl{V_1}{n}) \Par \newsp{s}{\bout{t'}{s} \inact}}}
 							\]
 							and
 							\[
-								\horel{\Gamma}{\Delta_1'}{\newsp{\widetilde{m_1}'}{P \Par \appl{V_1}{n} \Par \newsp{s}{\bout{t'}{s} \inact}}}
+								\horel{\Gamma}{\Delta_1'}{\newsp{\widetilde{m_1}'}{P \Par (\appl{V_1}{n}) \Par \newsp{s}{\bout{t'}{s} \inact}}}
 								{\hwb}
-								{\Delta_2'}{\newsp{\widetilde{m_2}'}{Q \Par \appl{V_2}{n} \Par \newsp{s}{\bout{t'}{s} \inact}}}
+								{\Delta_2'}{\newsp{\widetilde{m_2}'}{Q \Par (\appl{V_2}{n}) \Par \newsp{s}{\bout{t'}{s} \inact}}}
 							\]
-							which implies by Part 1 of this lemma
+							which implies, by Part 1 of this lemma,
 							\[
-								\horel{\Gamma}{\Delta_1'}{\newsp{\widetilde{m_1}'}{P \Par \appl{V_1}{n}}}
+								\horel{\Gamma}{\Delta_1'}{\newsp{\widetilde{m_1}'}{P \Par (\appl{V_1}{n})}}
 								{\hwb}
-								{\Delta_2'}{\newsp{\widetilde{m_2}'}{Q \Par \appl{V_2}{n}}}
+								{\Delta_2'}{\newsp{\widetilde{m_2}'}{Q \Par (\appl{V_2}{n}) }}
 							\]
 							as required.
 
-						\item	Let $\omapchar{U} = \abs{z}{\mapchar{U'}{z}} $
+						\item	An action along $t$. Let $\omapchar{U} = \abs{z}{\mapchar{U'}{z}} $
 							\[
 								\horel{\Gamma}{\Delta_3}{\newsp{\widetilde{m_1}}{P \Par \htrigger{t}{V_1}  } }
 								{\hby{\bactinp{t}{\abs{z}{\mapchar{U'}{z}}}}}
 								{\Delta_3'}{\newsp{\widetilde{m_1}'}{P \Par \newsp{s}{\binp{s}{y} {(\appl{(\abs{z}{\mapchar{U'}{z}})}{y}}) \Par \bout{\dual{s}}{V_1} \inact}}}
 							\]
-							Furthermore we can see that
+							Furthermore, we can see that
 							\[
 								\horel{\Gamma}{\Delta_4}{\newsp{\widetilde{m_2}}{Q \Par \htrigger{t}{V_2}  } }
 								{\Hby{\bactinp{t}{\abs{z}{\mapchar{U'}{z}}}}}
@@ -958,13 +962,13 @@ the trigger processes $\htrigger{t}{V}$ and $\ntrigger{t}{V}$.
 							\]
 							as required.
 				\end{enumerate}
-		\item
+		\item	Second direction.
 				Let typed relation (for readability, we omit the type information)
 				\begin{eqnarray*}
 		\Re &=&	\set{	\newsp{\widetilde{m_1}}{P \Par \ntrigger{t}{V_1}}\ ,\ 
 									\newsp{\widetilde{m_2}}{Q \Par \ntrigger{t}{V_2}} \setbar\\
 						&&
-									\horel{\Gamma}{\Delta_3}{\newsp{\widetilde{m_1}}{P \Par \htrigger{t}{V_1}  } }
+							\qquad \qquad \qquad		\horel{\Gamma}{\Delta_3}{\newsp{\widetilde{m_1}}{P \Par \htrigger{t}{V_1}  } }
 									{\hwb}
 									{\Delta_4}{\newsp{\widetilde{m_2}}{Q \Par \htrigger{t}{V_2}  } }
 					}
@@ -972,7 +976,7 @@ the trigger processes $\htrigger{t}{V}$ and $\ntrigger{t}{V}$.
 				We show that $\Re \subseteq \hwb$, with a case analysis on the defining requirements
 				of higher-order bisimulation.
 				We concentrate on the cases of an input action on fresh name $t$ since
-				other cases are similar with the previous cases.
+				other cases are similar to previous cases.
 				\begin{enumerate}
 					\item	Let $\omapchar{\btinp{U} \tinact} = \abs{z}{ \binp{z}{y} (\bout{t'}{z} \inact \Par \appl{y}{n})}$
 							\[
@@ -1041,7 +1045,10 @@ the trigger processes $\htrigger{t}{V}$ and $\ntrigger{t}{V}$.
 							\]
 							Follows similar proof structure as the previous case.
 				\end{enumerate}
+				This concludes the proof of Part 3. 
 	\end{enumerate}
+\end{itemize}
+\qed
 \end{proof}
 
 %By the combination of the lemmas, we can obtain the theorem.
@@ -1050,8 +1057,8 @@ the trigger processes $\htrigger{t}{V}$ and $\ntrigger{t}{V}$.
 We now proceed to state and prove these lemmas, together with some auxiliary results.
 %\thmref{app:thm:coincidence} (Page~\pageref{app:thm:coincidence}) summarises the coincidence result.
 
-The next lemma states a form of equivalence between the characteristic
-and higher order trigger processes.
+The next lemma states the equivalence between the characteristic
+and higher-order trigger processes (cf. \eqref{eqb:0} and \eqref{eqb:4}).
 
 \begin{lemma}[Trigger Process Equivalence]
 	\dkmargin{Please read}
@@ -1066,11 +1073,11 @@ and higher order trigger processes.
 					{\hwb}
 					{\Delta_2}{\newsp{\widetilde{m_2}}{Q \Par \htrigger{t}{V_2} }}
 				\]
-				then for $\Delta_1', \Delta_2'$
+				then there exist $\Delta_1', \Delta_2'$ such that 
 				\[
 					\horel{\Gamma}{\Delta_1'}{\newsp{\widetilde{m_1}}{P \Par \ftrigger{t}{V_1}{U}}}
 					{\hwb}
-					{\Delta_2'}{\newsp{\widetilde{m_2}}{Q \Par \ftrigger{t}{V_2}{U}}}
+					{\Delta_2'}{\newsp{\widetilde{m_2}}{Q \Par \ftrigger{t}{V_2}{U}}}.
 				\]
 
 		\item	If
@@ -1079,16 +1086,17 @@ and higher order trigger processes.
 					{\fwb}
 					{\Delta_2}{\newsp{\widetilde{m_2}}{Q \Par \ftrigger{t}{V_2}{U}}}
 				\]
-				then for $\Delta_1', \Delta_2'$
+				then there exist $\Delta_1', \Delta_2'$ such that
 				\[
 					\horel{\Gamma}{\Delta_1'}{\newsp{\widetilde{m_1}}{P \Par \htrigger{t}{V_1}}}
 					{\fwb}
-					{\Delta_2'}{\newsp{\widetilde{m_2}}{Q \Par \htrigger{t}{V_2} }}
+					{\Delta_2'}{\newsp{\widetilde{m_2}}{Q \Par \htrigger{t}{V_2} }}.
 				\]
 	\end{enumerate}
 \end{lemma}
 
 \begin{proof}
+We analyse both parts separately:
 	\begin{enumerate}
 		\item	Part 1
 
@@ -1097,7 +1105,7 @@ and higher order trigger processes.
 					\Re	&=&		\set{	(\newsp{\widetilde{m_1}}{P \Par \ftrigger{t}{V_1}{U} },
 										\newsp{\widetilde{m_2}}{Q \Par \ftrigger{t}{V_2}{U}})
 								\setbar\\
-						&&			\horel{\Gamma}{\Delta_1'}{\newsp{\widetilde{m_1}}{P \Par \htrigger{t}{V_1}}}
+						&&		\qquad	\horel{\Gamma}{\Delta_1'}{\newsp{\widetilde{m_1}}{P \Par \htrigger{t}{V_1}}}
 									{\hwb}
 									{\Delta_2'}{\newsp{\widetilde{m_2}}{Q \Par \htrigger{t}{V_2}}}
 						\\
@@ -1180,7 +1188,7 @@ and higher order trigger processes.
 							{\Delta_1''}{}{\newsp{\widetilde{m_1}}{P \Par \newsp{s}{\binp{s}{y} \mapchar{U}{y} \Par \bout{\dual{s}}{V_1} \inact}}}
 						\]
 						%
-							implies from the higher order bisimilarity requirement of the $\Re$ definition and
+							implies from the higher-order bisimilarity requirement of the $\Re$ definition and
 							the freshness of $t$ that $\exists Q', \Delta_2''$ such that
 						%
 							\begin{eqnarray}
@@ -1233,14 +1241,14 @@ and higher order trigger processes.
 				\end{enumerate}
 
 
-		\item	Part 2 
+		\item	Part 2.
 
 				\noi Consider the typed relation (for readability, we omit type information):
 				\begin{eqnarray*}
 					\Re	&=&		\set{	(\newsp{\widetilde{m_1}}{P \Par \ntrigger{t}{V_1}},
 										\newsp{\widetilde{m_2}}{Q \Par \ntrigger{t}{V_2}})
 								\setbar\\
-						&&			\horel{\Gamma}{\Delta_1'}{\newsp{\widetilde{m_1}}{P \Par \ftrigger{t}{V_1}{U}}}
+						&&			\qquad \horel{\Gamma}{\Delta_1'}{\newsp{\widetilde{m_1}}{P \Par \ftrigger{t}{V_1}{U}}}
 									{\fwb}
 									{\Delta_2'}{\newsp{\widetilde{m_2}}{Q \Par \ftrigger{t}{V_2}{U}}}
 						\\
