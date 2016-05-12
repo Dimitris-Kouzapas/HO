@@ -784,12 +784,11 @@ We analyze each of the three parts:
 								{\Hby{\bactout{t}{s}} }
 								{\Delta_2'}{\newsp{\widetilde{m_2}}{Q}}
 							\]
-							\newc{JP: Above we should have $Q'$ instead of $Q$ in the RS, right?}
 							We need to show that
 							\[
 								\horel{\Gamma}{\Delta_1'}{\newsp{\widetilde{m_1}}{P \Par \htrigger{t'}{s}  } }
 								{\hwb}
-								{\Delta_2'}{\newsp{\widetilde{m_2}}{Q \Par \htrigger{t'}{s}  } }
+								{\Delta_2'}{\newsp{\widetilde{m_2}}{Q' \Par \htrigger{t'}{s}  } }
 							\]
 							The proof is easy if we consider that both processes can observe the
 							up-to deterministic transitions $\hby{\bactinp{t'}{\abs{z}{\inact}}} \Hby{\dtau}$.
@@ -805,17 +804,17 @@ We analyze each of the three parts:
 							\begin{eqnarray*}
 								&&\Gamma; \es; \Delta_2' \proves \newsp{\widetilde{m_2}}{Q \Par \htrigger{t'}{s}  } \\
 								\hby{\bactinp{t'}{\abs{z}{\inact}}} &&
-								\Delta_2' \proves \newsp{\widetilde{m_2}}{Q \Par \newsp{s'}{\binp{s'}{y} (\appl{(\abs{z}{\inact})}{y}) \Par \bout{\dual{s'}}{s} \inact}}
+								\Delta_2' \proves \newsp{\widetilde{m_2}}{Q' \Par \newsp{s'}{\binp{s'}{y} (\appl{(\abs{z}{\inact})}{y}) \Par \bout{\dual{s'}}{s} \inact}}
 								\\
 								\hby{\dtau} &&
-								\Delta_2' \proves \news{\widetilde{m_2}}{Q}
+								\Delta_2' \proves \news{\widetilde{m_2}}{Q'}
 							\end{eqnarray*}
 							The result is then immediate from the definition of $\Re$ that
 							requires
 							\[
 								\horel{\Gamma}{\Delta_3}{\news{\widetilde{m_1}}{P  } }
 								{\hwb}
-								{\Delta_4}{\news{\widetilde{m_2}}{Q  } }
+								{\Delta_4}{\news{\widetilde{m_2}}{Q'  } }
 							\]
 					\item	The interaction of name $t$ with process $P$: this cannot occur 
 							due to the freshness of $t$.
@@ -1258,8 +1257,19 @@ We analyse both parts separately:
 				%
 				We first need to show that that $\Re \subseteq \fwb$.
 				Note that we are using the alternative trigger process $\ntrigger{t}{V_1}$.
-				\newc{JP: But the equivalence of triggers is up-to $\hwb$ not $\fwb$...}
-				The result is then a consequence of \lemref{lem:alt_tr} (Part 3).
+				The result is then a consequence of \lemref{lem:alt_tr} (Part 3), where
+				we can imply the relation
+				\begin{eqnarray*}
+					\Re	&=&		\set{	(\newsp{\widetilde{m_1}}{P \Par \htrigger{t}{V_1}},
+										\newsp{\widetilde{m_2}}{Q \Par \htrigger{t}{V_2}})
+								\setbar\\
+						&&			\qquad \horel{\Gamma}{\Delta_1'}{\newsp{\widetilde{m_1}}{P \Par \ftrigger{t}{V_1}{U}}}
+									{\fwb}
+									{\Delta_2'}{\newsp{\widetilde{m_2}}{Q \Par \ftrigger{t}{V_2}{U}}}
+						\\
+						&&		}
+				\end{eqnarray*}
+				%
 
 			We distinguish three cases, depending on the source/kind of visible action: 
 				\begin{enumerate}
@@ -1593,7 +1603,7 @@ processes in terms of process equivalence.
 				{\hwb}
 				{\Delta_2}{\newsp{\widetilde{m_2}}{Q \Par \appl{(\trvalx{t})}{n_2} }}
 			\]
-			then $n_1, n_2$ sessions \newc{JP: what does this mean?} and $\dual{n_1} \in \fn{P}$ and $\dual{n_2} \in \fn{Q}$.
+			then $n_1, n_2$ are session names and $\dual{n_1} \in \fn{P}$ and $\dual{n_2} \in \fn{Q}$.
 
 		\item
 			If
