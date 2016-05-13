@@ -926,20 +926,20 @@ do inhabit their associated type.
 \begin{proposition}[Characteristic Processes/Values Inhabit Their Types]\label{p:inhabit}
 	\begin{enumerate}
 		\item	Let $U$ be a channel type.
-				Then $\Gamma; \es; \Delta \proves \omapchar{U} \hastype U$.
+				Then, \newc{for some $\Gamma, \Delta$,  we have} $\Gamma; \es; \Delta \proves \omapchar{U} \hastype U$.
 		\item	
 				Let $S$ be a session type.
-				Then $\Gamma; \es; \Delta \cat s: S \proves \mapchar{S}{s} \hastype \Proc$.
+				Then, \newc{for some $\Gamma, \Delta$, we have} $\Gamma; \es; \Delta \cat s: S \proves \mapchar{S}{s} \hastype \Proc$.
 		\item	
 				Let $U$ be a channel type.
-				Then $\Gamma \cat a: U; \es; \Delta \proves \mapchar{U}{a} \hastype \Proc$.
+				Then, \newc{for some $\Gamma, \Delta$, we have} $\Gamma \cat a: U; \es; \Delta \proves \mapchar{U}{a} \hastype \Proc$.
 
 	\end{enumerate}
 \end{proposition}
 
 \begin{proof}[Sketch]
 	The proof is done by induction on the syntax of types.
-	We give some notable cases in the Appendix---see \propref{app:characteristic_inhabit} (\mypageref{app:characteristic_inhabit})
+	See \propref{app:characteristic_inhabit} (\mypageref{app:characteristic_inhabit}) in the Appendix for details.
 	\qed
 \end{proof}
 
@@ -2090,25 +2090,50 @@ in \secref{exam:proc} are behaviourally equivalent.
 		\dk{\mapchar{\btinp{\lhot{S}} \tinact}{s} = \binp{s}{x} ( \bout{t}{s} \inact \Par \mapchar{\lhot{S}}{x})}
 %		= \binp{s}{x} (\inact \Par \appl{x}{\omapchar{S}})
 %		= \binp{s}{x} (\inact \Par \appl{x}{k})
-%		\scong \binp{s}{x} (\appl{x}{k})
+%		\scong \binp{s}{x} (\appl{x}{k}) 
+\quad\text{\newc{JP: Why is this relevant here??}}
 	$$
 	
-
-	\noi To observe $\Client_1$ assume:
-%
-	\begin{eqnarray*}
-		R' &\scong& \If\ x \leq y\ \Then (\bsel{\dual{h_1}}{\accept} \bsel{\dual{h_2}}{\reject} \inact
-		\Else \bsel{\dual{h_1}}{\reject} \bsel{\dual{h_2}}{\accept} \inact)\\
-		Q &\scong& \bbra{z}{\accept: \bsel{k_2}{\accept} \bout{k_2}{\creditc} \inact, \reject: \bsel{k_2}{\reject} \inact}
+\newc{For convenience, we recall the definition of $\Client_1$:
+	\begin{eqnarray*}%{rcl}
+		 \Client_1   & \defeq  &  \newsp{h_1, h_2}{\bout{s_1}{\abs{x}{P_{xy} \subst{h_1}{y}}} \bout{s_2}{\abs{x}{P_{xy} \subst{h_2}{y}}} \inact \Par  %\\
+		%& & \qquad \qquad
+		\binp{\dual{h_1}}{x} \binp{\dual{h_2}}{y}  R'
+		}
+	\end{eqnarray*}
+	where
+\begin{eqnarray*}
+				 P_{xy}    & \defeq &    \bout{x}{\rtype} \binp{x}{\Quote} \bout{y}{\Quote}
+		y \triangleright \left\{
+				\begin{array}{l}
+					\accept: \bsel{x}{\accept} \bout{x}{\creditc} \inact~,\\
+					\reject: \bsel{x}{\reject} \inact
+				\end{array}
+				\right\} \\
+						R' &\scong& \If\ x \leq y\ \Then (\bsel{\dual{h_1}}{\accept} \bsel{\dual{h_2}}{\reject} \inact~~
+		\Else ~~\bsel{\dual{h_1}}{\reject} \bsel{\dual{h_2}}{\accept} \inact)
+\end{eqnarray*}
+	}
+In the following analysis, we use the following shorthand notation:
+%	\begin{eqnarray*}
+$$
+		Q \scong \bbra{z}{\accept: \bsel{k_2}{\accept} \bout{k_2}{\creditc} \inact, \reject: \bsel{k_2}{\reject} \inact}
 %		Q &\scong& z \triangleleft \left\{
 %		\begin{array}{l}
 %			\accept: \bsel{k_2}{\accept} \bout{k_2}{\creditc} \inact,\\
 %			\reject: \bsel{k_2}{\reject} \inact
 %		\end{array}
 %		\right\}
-	\end{eqnarray*}
+%	\end{eqnarray*}
 %
-	\noi We can now observe $\Client_1$ as:
+$$
+A detailed account of the observable behavior of 
+$\Client_1$ is given in \figref{f:cli1}; similarly, \figref{f:cli2}
+illustrates the actions possible from $\Client_2$, which are the same as for $\Client_1$.
+\newc{JP: The observable actions do not concern the refined LTS. Also, it seems that the actions 
+use characteristic triggers, not the HO triggers of $\hwb$. Clearly both relations coincide, but we should mention it.}
+	
+	\begin{figure}
 \[
 	\begin{array}{ll}
 		& \es; \es; \Delta \proves \Client_1
@@ -2174,9 +2199,12 @@ in \secref{exam:proc} are behaviourally equivalent.
 		\es; \es; \es \proves \inact
 	\end{array}
 \]
+\caption{Observable actions from $\Client_1$. \label{f:cli1}}
+\end{figure}
 
-\noi	We can observe the same sequence of external transitions for $\Client_2$:
+%\noi	We can observe the same sequence of external transitions for $\Client_2$:
 
+\begin{figure}
 \[
 	\begin{array}{ll}
 		& \es; \es; \Delta \proves \Client_2
@@ -2189,8 +2217,8 @@ in \secref{exam:proc} are behaviourally equivalent.
 \\[1mm]
 
 		\by{\bactout{s_2}{\abs{x}{Q_2 \subst{\dual{h}}{y}}}}&
-		\es; \es; k_1: S \cat k_2: S \proves \newsp{h}{\\
-		& \ftrigger{t_1}{Q_1 \subst{h}{y}}{\lhot{S}} \Par \ftrigger{t_2}{Q_2 \subst{\dual{h}}{y}}{\lhot{S}}}
+		\es; \es; k_1: S \cat k_2: S \proves \\
+		& \newsp{h}{\ftrigger{t_1}{Q_1 \subst{h}{y}}{\lhot{S}} \Par \ftrigger{t_2}{Q_2 \subst{\dual{h}}{y}}{\lhot{S}}}
 %		\binp{t_1}{x} \newsp{s}{\binp{s}{x} \appl{x}{k_1} \Par \bout{\dual{s}}{\abs{x}{Q_1 \subst{h}{y}}} \inact }\\
 %		& \Par \binp{t_2}{x} \newsp{s}{\mapchar{\btinp{\lhot{S}}}{s} \Par \bout{\dual{s}}{\abs{x}{Q_2 \subst{\dual{h}}{y}}} \inact }}
 \\[1mm]
@@ -2232,6 +2260,8 @@ in \secref{exam:proc} are behaviourally equivalent.
 		\es; \es; \es \proves \inact
 	\end{array}
 \]
+\caption{Observable actions from $\Client_2$. \label{f:cli2}}
+\end{figure}
 \qed
 \end{proof}
 

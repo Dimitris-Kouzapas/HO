@@ -38,7 +38,7 @@ We state session type unfolding:
 
 We state session type prefix deletion relation:
 \begin{definition}[Session Type Prefix Deletion]
-	Given a session type $S$, the set $\set{S}$ is defined inductively as follows:
+	Given a session type $S$, the set $\delete{S}$ is defined inductively as follows:
 	\[
 	\begin{array}{c}
 		\delete{\btout{U} S} = \set{S}
@@ -61,7 +61,7 @@ We state session type prefix deletion relation:
 We state a more detailed form of \propref{p:inhabit} as given in Page~\pageref{p:inhabit}:
 
 \begin{proposition}[Characteristic Processes/Values Inhabit Their Types]
-	\dkmargin{Check this proposition}
+	\dkmargin{Check this proposition. \newc{JP: I have checked, now it is OK.}}
 	\label{app:characteristic_inhabit}
 	\begin{enumerate}
 		\item	Let $U$ and $\omapchar{U}$ be a type and its characteristic value, respectively. 
@@ -140,10 +140,10 @@ We state a more detailed form of \propref{p:inhabit} as given in Page~\pageref{p
 	\end{enumerate}
 \end{proposition}
 
-\begin{proof}[Sketch] The proof proceeds by mutual induction on the syntax of types.
+\begin{proof} The proof proceeds by mutual induction on the syntax of types. We analyze the three parts separately: 
 	\begin{enumerate}
-		\item	The proof relies on the results from Parts 2 and 3.
-				We do a case analysis on the syntax of $U$.
+		\item	We use the results from Parts 2 and 3 in a 
+				case analysis on the syntax of $U$.
 			\begin{enumerate}
 				\item[-]	Cases (a) $U = S$, (b) $U = \chtype{S}$, and (c) $U = \chtype{L}$: \\
 The proof is straightforward from Rules $\trule{Sess}$ and $\trule{Sh}$ (cf. \figref{fig:typerulesmy}).
@@ -156,8 +156,8 @@ The proof is straightforward from Rules $\trule{Sess}$ and $\trule{Sh}$ (cf. \fi
 
 				\item[-]	Case (e) $U = \lhot{U'}$. Similar, using Rule $\trule{Abs}$ (cf. \figref{fig:typerulesmy}).
 			\end{enumerate}
-		\item	The proof is by induction on the the syntax of $S$.
-				We detail some notable cases.
+		\item	The proof is by induction on the syntax of $S$.
+				We detail some notable cases:
 			\begin{enumerate}
 				\item	Case $S = \btout{U} S'$. Then, by \defref{def:char}, we have 
 						$\mapchar{S}{s} = \bout{s}{\omapchar{U}} \bout{t}{s} \inact$ and 
@@ -196,10 +196,10 @@ The proof is straightforward from Rules $\trule{Sess}$ and $\trule{Sh}$ (cf. \fi
 						\]
 					\item	Case $S = \trec{t}{S'}$. Then, by \defref{def:char}, $\mapchar{S} = \mapchar{S' \subst{\tinact}{\vart{t}} }{u}$.
 							The proof is done by induction on the shape of $S'$. We detail two sub-cases; the rest is similar or simpler.
-							\begin{enumerate}
+							\begin{enumerate}[i)]
 								\item	$S' = \btbra{l_i: S_i}_{i \in I}$. Then
 										$\mapchar{S' \subst{\tinact}{\vart{t}}}{s} = \bbra{s}{l_i: \bout{t_i}{s} \inact}_{i \in I}$
-										and $\delete{S} = \set{S_i}_{i \in I}$
+										and $\delete{S} = \set{S_i}_{i \in I}$:
 										\[
 											\tree {
 												\forall i \in I, \es; \es; t_i: S_i \subst{\tinact}{\vart{t}} \proves \bout{t_i}{s} \inact \hastype \Proc
@@ -207,7 +207,7 @@ The proof is straightforward from Rules $\trule{Sess}$ and $\trule{Sh}$ (cf. \fi
 												\es; \es; t_i: S_i \subst{\tinact}{\vart{t}} \cat s: S' \subst{\tinact}{\vart{t}} \proves \bbra{s}{l_i: \bout{t_i}{s} \inact}_{i \in I} \hastype \Proc
 											}
 										\]
-										We may then type $\mapchar{\trec{t}{ \btbra{l_i: S_i}_{i \in I} }}{s}$.
+										We may then type $\mapchar{\trec{t}{ \btbra{l_i: S_i}_{i \in I} }}{s}$:
 										\[
 											\tree {
 												\forall i \in I, \es; \es; t_i: S_i \proves \bout{t_i}{s} \inact \hastype \Proc
@@ -227,7 +227,7 @@ The proof is straightforward from Rules $\trule{Sess}$ and $\trule{Sh}$ (cf. \fi
 												\Gamma; \es; \Delta \cat t_i: S_i \subst{\tinact}{\vart{t}} \subst{\tinact}{\vart{t'}} \cat s: S'' \subst{\tinact}{\vart{t}} \subst{\tinact}{\vart{t'}} \proves \mapchar{S'' \subst{\tinact}{\vart{t}} \subst{\tinact}{\vart{t'}}  }{s} \hastype \Proc
 											}
 										\]
-										We may then type $\mapchar{S}{s}$.
+										We may then type $\mapchar{S}{s}$:
 										\[
 											\tree {
 												\textrm{Induction} %\forall i \in I, \es; \es; t_i: S_i \proves \bout{t_i}{s} \inact \hastype \Proc
