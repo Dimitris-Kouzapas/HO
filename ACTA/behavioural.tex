@@ -944,7 +944,7 @@ do inhabit their associated type.
 \end{proof}
 
 \newc{
-	We show an example of a characteristic process inhabiting a
+	We give an example of a characteristic process inhabiting a
 	recursive type.
 	\begin{example}
 	Consider the type 
@@ -1568,12 +1568,12 @@ Using the above properties, we can state the following up-to technique.
 \end{lemma}
 
 \begin{proof}[Sketch]
-	The proof is easy by considering the relation
+	The proof proceeds by considering the relation
 	\[
 		\Re^{\Hby{\dtau}} = \set{ \horel{\Gamma}{\Delta_1'}{P_2}{,}{\Delta_2'}{Q_1} \setbar \horel{\Gamma}{\Delta_1}{P_1}{\ \Re\ }{\Delta_2'}{Q_1},
 		\horel{\Gamma}{\Delta_1}{P_1}{\Hby{\dtau}}{\Delta_1'}{P_2} }
 	\]
-	We verify that $\Re^{\Hby{\dtau}}$ is a bisimulation with
+	We may verify that $\Re^{\Hby{\dtau}}$ is a bisimulation with
 	the use of \propref{lem:tau_inert}.
 	\qed
 \end{proof}
@@ -1741,7 +1741,7 @@ by (i)~constructing a typed relation on the
 	\begin{proof}[Sketch]
 	The proof follows the definition of the characteristic process; 
 	see \lemref{lem:trigger_subst}, page \pageref{lem:trigger_subst}, in the Appendix for details.
-	Let us consider a particular case; we need to construct a typed relation:
+	Let us consider a particular case; we construct a typed relation $\Re$:
 	\begin{eqnarray*}
 		\Re &=& \set{
 					\horel{\Gamma}{\Delta_1'}{\newsp{\widetilde{m_1}}{P \Par \appl{(\abs{x}{R})}{n_1} }}
@@ -1753,12 +1753,12 @@ by (i)~constructing a typed relation on the
 					{\Delta_2}{\newsp{\widetilde{m_2}}{Q \Par \appl{(\trvalx{t})}{n_2} }}
 				}
 	\end{eqnarray*}
-	Typed relation $\Re$ can be shown to be a higher-order bisimulation
+	$\Re$ can be shown to be a higher-order bisimulation
 	by taking advantage of the shape of the characteristic process; each time
-	a characteristic process does a transition then an output on a fresh name
-	appears, $\bout{t}{n} \inact$ where $n$ can be either a shared or a session name. 
-	To understand this better 
-	we sketch the demanding case of the proof that $\Re$ is a higher-order bisimulation.
+	that a characteristic process does a transition, an output $\bout{t}{n} \inact$ 
+	(on a fresh name $t$) is observed, where $n$ is either a shared or a session name. 
+	To better illustrate this, let us 
+	sketch the demanding case of the proof that $\Re$ is a higher-order bisimulation.
 	Assume that
 	\begin{eqnarray*}
 		\Gamma; \es; \Delta_1' \proves \newsp{\widetilde{m_1}}{P \Par R \subst{n_1}{x} }
@@ -1770,13 +1770,14 @@ by (i)~constructing a typed relation on the
 		\Gamma; \es; \Delta_1 \proves \newsp{\widetilde{m_1}}{P \Par \appl{(\trvalx{t})}{n_1} }
 		\hby{\dtau}\hby{ \bactinp{t}{\omapchar{U}} } \Hby{\dtau}
 		\Delta_3 \proves \newsp{\widetilde{m_1}''}{P \Par \mapchar{U}{n_1} }
-	\end{eqnarray*}
-	Characteristic processes have the property that
+	\end{eqnarray*} 
+	Characteristic processes have the following property: 
 	\[
 		\mapchar{U}{n} \by{\ell} \bout{t}{n} \inact 
 	\]
-	By the last property we can always observe (note that $\ell_1$ might be action $\tau$ denoting
-	the interaction of $P$ and $\mapchar{U}{n_1}$)
+	\JP{But this is only true when $U$ is a session type different from $\tinact$, right? Is this an issue when $U$ is an arrow type?}
+	By the last property we can always observe (note that below $\ell_1$ may be an action $\tau$, thus denoting
+	the interaction of $P$ and $\mapchar{U}{n_1}$):
 	\begin{eqnarray*}
 		\Gamma; \es; \Delta_3 \proves \newsp{\widetilde{m_1}''}{P \Par \mapchar{U}{n_1} }
 		\hby{\ell_1}
@@ -1786,7 +1787,7 @@ by (i)~constructing a typed relation on the
 %		\Hby{\dtau} \hwb
 %		\Delta_1' \proves \newsp{\widetilde{m_1}'}{P' \Par \appl{(\trvalx{t'})}{n_1} }
 	\end{eqnarray*}
-	which implies from the requirements of higher-order bisimulation that there exists
+	which implies, from the requirements of higher-order bisimulation, that there exists
 	$\newsp{\widetilde{m_2}''}{Q' \Par \mapchar{U}{x} \subst{n_2}{x} }$ such that
 	\begin{eqnarray*}
 		\Gamma; \es; \Delta_2 \proves \newsp{\widetilde{m_2}}{Q \Par \appl{(\trvalx{t})}{n_2} }
@@ -1825,7 +1826,8 @@ by (i)~constructing a typed relation on the
 		{\hwb}
 		{\Delta_4''}{ \newsp{\widetilde{m_2}'''}{Q'' \Par \appl{(\trvalx{t''})}{n_2} } } 
 	\]
-	\newc{JP: How do we infer these facts, exactly? Also, we need to infer a weak transition from 
+	\JP{How do we infer these facts, exactly??
+	Also, we need to infer a weak transition from 
 	$\newsp{\widetilde{m_2}}{Q \Par \appl{(\abs{x}{R})}{n_2} }$, right?...}
 	which implies from the definition of $\Re$ that for $R'$ we get
 	\[
@@ -1841,7 +1843,7 @@ by (i)~constructing a typed relation on the
 \end{proof}
 
 We now show that higher-order bisimilarity is sound with respect to contextual bisimilarity.
-To show soundness we use the crucial result of \lemref{lem:proc_subst}:
+To show soundness we use the crucial result of \lemref{lem:proc_substmt}:
 
 \begin{lemma}
 	\label{lem:wb_is_wbc}
@@ -1849,14 +1851,14 @@ To show soundness we use the crucial result of \lemref{lem:proc_subst}:
 \end{lemma}
 
 \begin{proof}[Sketch]
-	The proof relies on \lemref{lem:proc_subst} to prove that:
+	The proof relies on \lemref{lem:proc_substmt} to establish that:
 	\begin{enumerate}
 		\item	Whenever two processes are higher-order bisimilar
 				under the input of
 				a characteristic value and a trigger value
 				then they are higher-order bisimilar under the
 				input of any value $\abs{x}{R}$, which is the
-				requirement for context bisimilarity (cf.~\defref{def:wbc}).
+				requirement for $\wbc$ (cf.~\defref{def:wbc}).
 
 		\item	The input requirement is then further used
 				to prove that the 
@@ -1871,12 +1873,12 @@ To show soundness we use the crucial result of \lemref{lem:proc_subst}:
 					\end{array}
 				\]
 			%
-				implies the output clause requirement for $\wbc$ that is,
+				implies the output clause requirement for $\wbc$, that is,
 				for all $R$ with $\fv{R}=x$:
 				\[
 					\horel{\Gamma}{\Delta_1}{\newsp{\widetilde{m_1}}{P_2 \Par R\subst{V_1}{x}}}
 					{\ \Re\ }
-					{\Delta_2}{\newsp{\widetilde{m_2}}{Q_2 \Par R\subst{V_2}{x}}};
+					{\Delta_2}{\newsp{\widetilde{m_2}}{Q_2 \Par R\subst{V_2}{x}}}.
 				\]
 	\end{enumerate}
 %
@@ -1895,10 +1897,9 @@ Context bisimilarity is included in barbed congruence:
 	We show that $\wbc$ satisfies the defining
 	properties of $\cong$.
 	It is easy to show that $\wbc$ is reduction-closed
-	and barb preserving (cf. \defref{d:conf}).
-		The challenging part is
-	to show that $\wbc$ is a congruence; the most challenging
-	case is parallel congruence.
+	and barb preserving (cf. \defref{d:conf} and \defref{def:barbs}).
+		The most challenging part is
+	to show that $\wbc$ is a congruence, in particular a congruence with respect to parallel composition.
 	To this end, we construct the following relation:
 %	a parallel congruence closure:
 %
@@ -1934,17 +1935,15 @@ Intuitively, this technique exploits small test processes that
 reveal the presence of a visible action by reducing with a given pair of processes
 and exhibiting a barb on a fresh name.
 
-More precisely, given a fresh name $\suc$, and for each visible action $\ell$, we define 
-		a  test process
+Intuitively, for each visible action $\ell$, we use 
+a fresh name $\suc$ to we define a  (typed) test process
 	$\Gamma; \emptyset; \Delta_2 \proves T\lrangle{\ell, \suc} \hastype \Proc$
 	with the following property:
-%
-	\[
+$$
 		\Gamma; \Delta_1 \proves P \Par T\lrangle{\ell, \suc} \red \Delta_2 \proves P' \Par \bout{\suc}{\dual{m}} \inact \barb{\suc}
 		\quad \mbox{iff} \quad
 		\Gamma; \Delta \proves P \hby{\ell} \Gamma; \Delta' \proves P'
-	\]
-%
+$$
 	See \defref{app:def:definibility} (\mypageref{app:def:definibility}) for the formal definition.
 	The test processes can therefore be used to check the
 	typed labelled transition interactions of two
@@ -2091,7 +2090,7 @@ in \secref{exam:proc} are behaviourally equivalent.
 %		= \binp{s}{x} (\inact \Par \appl{x}{\omapchar{S}})
 %		= \binp{s}{x} (\inact \Par \appl{x}{k})
 %		\scong \binp{s}{x} (\appl{x}{k}) 
-\quad\text{\newc{JP: Why is this relevant here??}}
+\quad\text{\JP{Why is this relevant here??}}
 	$$
 	
 \newc{For convenience, we recall the definition of $\Client_1$:
@@ -2113,26 +2112,26 @@ in \secref{exam:proc} are behaviourally equivalent.
 						R' &\scong& \If\ x \leq y\ \Then (\bsel{\dual{h_1}}{\accept} \bsel{\dual{h_2}}{\reject} \inact~~
 		\Else ~~\bsel{\dual{h_1}}{\reject} \bsel{\dual{h_2}}{\accept} \inact)
 \end{eqnarray*}
+Also, the definition of $\Client_2$ is as follows:
+	\begin{eqnarray*} 
+		\Client_2 &\defeq& \newsp{h}{\bout{s_1}{\abs{x}{Q_1 \subst{h}{y}}} \bout{s_2}{\abs{x}{Q_2 \subst{\dual{h}}{y}}} \inact}
+\\
+		Q_1 &\defeq&	\bout{x}{\rtype} \binp{x}{\Quote_1} \bout{y}{\Quote_1} \binp{y}{\Quote_2} R_x \\
+		Q_2 &\defeq&	\bout{x}{\rtype} \binp{x}{\Quote_1} \binp{y}{\Quote_2} \bout{y}{\Quote_1} R_x \\
+			    R_x & \defeq & \If\ \Quote_1 \leq \Quote_2 \, \Then  (\bsel{x}{\accept} \bout{x}{\creditc} \inact \  \Else \ \bsel{x}{\reject} \inact)
+	\end{eqnarray*}
 	}
-In the following analysis, we use the following shorthand notation:
-%	\begin{eqnarray*}
+A detailed account of the observable behavior of 
+$\Client_1$ is given in \figref{f:cli1}, where 
+we use the following shorthand notation:
 $$
 		Q \scong \bbra{z}{\accept: \bsel{k_2}{\accept} \bout{k_2}{\creditc} \inact, \reject: \bsel{k_2}{\reject} \inact}
-%		Q &\scong& z \triangleleft \left\{
-%		\begin{array}{l}
-%			\accept: \bsel{k_2}{\accept} \bout{k_2}{\creditc} \inact,\\
-%			\reject: \bsel{k_2}{\reject} \inact
-%		\end{array}
-%		\right\}
-%	\end{eqnarray*}
-%
 $$
-A detailed account of the observable behavior of 
-$\Client_1$ is given in \figref{f:cli1}; similarly, \figref{f:cli2}
+Similarly, \figref{f:cli2}
 illustrates the actions possible from $\Client_2$, which are the same as for $\Client_1$.
-\newc{JP: The observable actions do not concern the refined LTS. Also, it seems that the actions 
+\JP{JP: The observable actions do not concern the refined LTS. Also, it seems that the actions 
 use characteristic triggers, not the HO triggers of $\hwb$. Clearly both relations coincide, but we should mention it.}
-	
+		
 	\begin{figure}
 \[
 	\begin{array}{ll}
