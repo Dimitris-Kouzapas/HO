@@ -2550,9 +2550,10 @@ substitution, we can generalise for any value substitution.
 		\horel{\Gamma}{\Delta_1}{P_1}{\hby{\ell}}{\Delta_1'}{P_2}
 		\label{lem:wb_is_wbc1}
 	\end{eqnarray}
+	We need to infer an appropriate matching transition from $Q_1$.
 	The proof proceeds by a case analyses on the action label $\ell$.
 We distinguish four cases: $\ell$ is not an output or an input action; $\ell$ is an input action;
-$\ell$ is an higher-order output; $\ell$ is a first-order output \JP{What about higher-order input?}.
+$\ell$ is an higher-order output; $\ell$ is a first-order output. \JP{What about higher-order input?}
 	\begin{enumerate}[1.]
 		\item Case $\ell \notin \set{ \news{\widetilde{m_1}} \bactout{n}{\abs{\widetilde{x}}{P}},  \news{\widetilde{m_1}'} \bactout{n}{\widetilde{m_1}}, \bactinp{n}{\abs{\widetilde{x}}{P}} }$: 
 		We first notice that in this case the definition of $\wbc$ and $\hwb$ coincide, so 
@@ -2603,69 +2604,64 @@ $\ell$ is an higher-order output; $\ell$ is a first-order output \JP{What about 
 			for all $P$ with $\fv{P} = \widetilde{x}$, as required. \newc{JP - I have modified, please check.}
 
 		\item	Case $\ell = \news{\widetilde{m_1}'} \bactout{n}{\widetilde{m_1}}$: In this case, 
- transition \eqref{lem:wb_is_wbc1} and $\Re$ imply the existence of a process $Q_2$ such that 
+ transition \eqref{lem:wb_is_wbc1} and $\Re$ imply the existence of a process $Q_2$ and name $m_2$ such that 
 			%
 			\[
 				\horel{\Gamma}{\Delta_2}{Q_1}{\Hby{\news{\widetilde{m_2}'} \bactout{n}{m_2}}}{\Delta_2'}{Q_2}
 			\]
 			%
-				\noi and for fresh $t$
+				\noi and
 			%
 			\[
 				\horel	{\Gamma}{\Delta_1'}{\newsp{\widetilde{m_1}'}{P_2 \Par \htrigger{t}{m_1}}}
 				{\hwb}
 				{\Delta_2'}{\newsp{\widetilde{m_2}'}{Q_2 \Par \htrigger{t}{m_2}}}
 			\]
-			%
-				\noi From the  second case of this proof we can conclude that $\forall R$ with $\fpv{R} = \set{x}$:
+			 for some fresh $t$.
+				\noi From the  second case of this proof \JP{It is not clear what case you are referring to here} we can conclude that for all $R$ with $\fpv{R} = \set{x}$:
 			%
 			\[
-				\begin{array}{rl}
-					\Gamma; \es; &\Delta_1' \proves \newsp{\widetilde{m_1}'}{P_2 \Par \htrigger{t}{m_1}} \\
-					\by{\bactinp{t}{\abs{z}{\binp{z}{x} R}}}& \newsp{\widetilde{m_1}'}{P_2 \Par \newsp{s}{\binp{s}{x} R \Par \bout{\dual{s}}{m_1} \inact }}\\
-					\by{\tau} \quad &\Delta_1'' \proves \newsp{\widetilde{m_1}'}{P_2 \Par  R \subst{m_1}{x}}
+				\begin{array}{rcl}
+					\Gamma; \es; \Delta_1' \proves \newsp{\widetilde{m_1}'}{P_2 \Par \htrigger{t}{m_1}} 
+					& \by{\bactinp{t}{\abs{z}{\binp{z}{x} R}}}& \newsp{\widetilde{m_1}'}{P_2 \Par \newsp{s}{\binp{s}{x} R \Par \bout{\dual{s}}{m_1} \inact }}\\
+					& \by{\tau}   &\Delta_1'' \proves \newsp{\widetilde{m_1}'}{P_2 \Par  R \subst{m_1}{x}}
 				\end{array}
 			\]
 			%
 				\noi and
 			%
 			\[
-				\begin{array}{rl}
-					\Gamma; \es; &\Delta_2' \proves \newsp{\widetilde{m_2}'}{Q_2 \Par \htrigger{t}{m_2} } \\
-					\by{\bactinp{t}{\abs{z}{\binp{z}{x} R}}} &\newsp{\widetilde{m_2}'}{Q_2 \Par \newsp{s}{\binp{s}{x} R \Par \bout{\dual{s}}{m_2} \inact}}\\
-					\by{\tau} &\Delta_2'' \proves \newsp{\widetilde{m_2}'}{Q_2 \Par  R \subst{m_2}{x}}
+				\begin{array}{rcl}
+					\Gamma; \es; \Delta_2' \proves \newsp{\widetilde{m_2}'}{Q_2 \Par \htrigger{t}{m_2} } 
+					& \by{\bactinp{t}{\abs{z}{\binp{z}{x} R}}} &\newsp{\widetilde{m_2}'}{Q_2 \Par \newsp{s}{\binp{s}{x} R \Par \bout{\dual{s}}{m_2} \inact}}\\
+					& \by{\tau} &\Delta_2'' \proves \newsp{\widetilde{m_2}'}{Q_2 \Par  R \subst{m_2}{x}}
 				\end{array}
 			\]
-			%
-				\noi and furthermore it is easy to see that $\forall R$ with $\fpv{R} = \set{x}$:
+			where, in each case, the $\tau$-steps correspond to deterministic internal transitions (in the sense of \defref{def:dettrans}). Therefore, it is easy to see that 
 			%
 			\[
 				\horel{\Gamma}{\Delta_1''}{\newsp{\widetilde{m_1}'}{P_2 \Par  R \subst{m_1}{x}}}{\hwb}{\Delta_2}{\newsp{\widetilde{m_2}'}{Q_2 \Par R \subst{m_2}{x}} }
 			\]
-			%
-				\noi as required by the definition of $\wbc$.
+			for all $R$ with $\fpv{R} = \set{x}$, as required by the definition of $\wbc$ (\mydefref{def:wbc}).
+			\\ \newc{JP - I have modified here, please check.}
 
 
 
-		\item	Case $\ell = \news{\widetilde{m_1}'} \bactout{n}{\abs{\widetilde{x}}{P}}$:
-
-				This case is similar with the previous case but makes use of the alternative trigger, $\ntrigger{t}{V}$ (cf.~\eqref{eq:ntrig}).
-
-				\noi From transition \eqref{lem:wb_is_wbc1} we imply:
+		\item	Case $\ell = \news{\widetilde{m_1}'} \bactout{n}{\abs{\widetilde{x}}{P}}$: This case is similar to the previous case but makes use of the alternative trigger, $\ntrigger{t}{V}$ (cf.~\eqref{eq:ntrig}).
+			The definition of $\Re$ and transition \eqref{lem:wb_is_wbc1} allow us to infer the existence of $Q$ and $Q_2$ such that
 			%
 			\[
 				\horel{\Gamma}{\Delta_2}{Q_1}{\Hby{\news{\widetilde{m_2}'} \bactout{n}{\abs{\widetilde{x}}{Q}}}}{\Delta_2'}{Q_2}
 			\]
 			%
-				\noi and for fresh $t$
+				\noi and 
 			%
 			\[
 				\horel	{\Gamma}{\Delta_1'}{\newsp{\widetilde{m_1}'}{P_2 \Par \htrigger{t}{\abs{\widetilde{x}}{P}}}}
 				{\hwb}
 				{\Delta_2'}{ \newsp{\widetilde{m_2}' }{Q_2 \Par \htrigger{t}{\abs{\widetilde{x}}{Q}}}}
 			\]
-			%
-			From \lemref{lem:alt_tr} we get that
+			for some fresh $t$. Using \mylemref{lem:alt_tr}, we above equality implies that
 			%
 			\[
 				\horel	{\Gamma}{\Delta_1'}{\newsp{\widetilde{m_1}'}{P_2 \Par \ntrigger{t}{\abs{\widetilde{x}}{P}}}}
@@ -2673,7 +2669,7 @@ $\ell$ is an higher-order output; $\ell$ is a first-order output \JP{What about 
 				{\Delta_2'}{ \newsp{\widetilde{m_2}' }{Q_2 \Par \ntrigger{t}{\abs{\widetilde{x}}{Q}}}}
 			\]
 			%
-			which implies
+			which in turn implies
 			\[
 				\mhorel{\Gamma}{\Delta_1'}{\newsp{\widetilde{m_1}'}{P_2 \Par \ntrigger{t}{\abs{\widetilde{x}}{P}}}}
 				{ \hby{ \bactinp{t}{  \abs{y}{\binp{t'}{x} (\appl{x}{y}) }    } } }
@@ -2681,7 +2677,7 @@ $\ell$ is an higher-order output; $\ell$ is a first-order output \JP{What about 
 			\]
 			and
 			\[
-				\mhorel{\Gamma}{\Delta_2'}{\newsp{\widetilde{m_2}'}{Q_2 \Par \ntrigger{t}{\abs{\widetilde{x}}{P}}}}
+				\mhorel{\Gamma}{\Delta_2'}{\newsp{\widetilde{m_2}'}{Q_2 \Par \ntrigger{t}{\abs{\widetilde{x}}{Q}}}}
 				{ \Hby{ \bactinp{t}{  \abs{y}{\binp{t'}{x} (\appl{x}{y}) }    } } }
 				{\Delta_2''}{}{\newsp{\widetilde{m_1}'}{Q_2' \Par \newsp{s}{\appl{(\abs{y}{\binp{t'}{x} (\appl{x}{y})) }{s}}  \Par \bout{\dual{s}}{\abs{\widetilde{x}}{Q}} \inact } }}
 			\]
@@ -2691,26 +2687,26 @@ $\ell$ is an higher-order output; $\ell$ is a first-order output \JP{What about 
 			\[
 				\mhorel{\Gamma}{\Delta_1''}{\newsp{\widetilde{m_1}'}{P_2 \Par \newsp{s}{  \appl{(\abs{y}{\binp{t'}{x} (\appl{x}{y})) }{s}} \Par \bout{\dual{s}}{\abs{\widetilde{x}}{P}} \inact } }}
 				{\hwb}
-				{\Delta_2''}{}{\newsp{\widetilde{m_1}'}{Q_2' \Par \newsp{s}{\appl{(\abs{y}{\binp{t'}{x} (\appl{x}{y})) }{s}}  \Par \bout{\dual{s}}{\abs{\widetilde{x}}{Q}} \inact } }}
+				{\Delta_2''}{}{\newsp{\widetilde{m_1}'}{Q_2' \Par \newsp{s}{\appl{(\abs{y}{\binp{t'}{x} (\appl{x}{y})) }{s}}  \Par \bout{\dual{s}}{\abs{\widetilde{x}}{Q}} \inact } }}.
 			\]
-				\noi From the  second case of this proof we can conclude that $\forall R$ with $\fpv{R} = x$:
+				\noi From the  second case of this proof \JP{It is not clear what case you are referring to here} we can conclude that :
 			%
 			\[
 				\mhorel{\Gamma}{\Delta_1''}{\newsp{\widetilde{m_1}'}{P_2 \Par \newsp{s}{  \appl{(\abs{y}{\binp{y}{x} R})}{s} \Par \bout{\dual{s}}{\abs{\widetilde{x}}{P}} \inact } }}
 				{\hwb}
 				{\Delta_2''}{}{\newsp{\widetilde{m_1}'}{Q_2' \Par \newsp{s}{\appl{(\abs{y}{\binp{y}{x} R}}){s}  \Par \bout{\dual{s}}{\abs{\widetilde{x}}{Q}} \inact } }}
 			\]
-				\noi with simple determinate transitions is easy to see that $\forall R$ with $\fpv{R} = x$:
+			for all $R$ with $\fpv{R} = x$. Now, 
+			using deterministic transitions (cf. \defref{def:dettrans}) is easy to see that
 			%
 			\[
 				\horel{\Gamma}{\Delta_1''}{\newsp{\widetilde{m_1}}{P_2 \Par  R \subst{\abs{\widetilde{x}}{P}}{y}}}{\hwb}{\Delta_2}{\newsp{\widetilde{m_2}}{Q_2 \Par R \subst{\abs{\widetilde{x}}{Q}}{y}}}
 			\]
-			%
-				\noi as required by the definition of $\wbc$.
+			for all $R$ with $\fpv{R} = x$, as required by the definition of $\wbc$ (cf. \defref{def:wbc}).\\
+			\newc{JP - I have modified here, pls check}
+			
 
-		\item	Case $\ell = \news{\widetilde{m_1}'} \bactout{n}{\widetilde{m_1}}$: 
-
-				This case shares a similar argumentation with the previous case.
+		\item	Case $\ell = \news{\widetilde{m_1}'} \bactout{n}{\widetilde{m_1}}$: This case is similar to the previous one.
 	\end{enumerate}
 	\qed
 \end{proof}
@@ -2727,11 +2723,12 @@ $\ell$ is an higher-order output; $\ell$ is a first-order output \JP{What about 
 
 
 \begin{proof}
-	\noi We prove that $\wbc$ satisfies the three defining properties of $\cong$:
-	reduction closure, barb preservation, congruence (cf. \defref{def:rc}).
+	\noi We prove that $\wbc$ (cf. \mydefref{def:wbc}) satisfies the three defining properties of $\cong$:
+	reduction closure, barb preservation, congruence (cf. \mydefref{def:rc}).
 %
+\begin{enumerate}[I.]
 
-\noi	{\bf Reduction Closed:}
+\item	{\bf Reduction-Closed:}
 	Let
 		$\horel{\Gamma}{\Delta_1}{P_1}{\wbc}{\Delta_2}{P_2}$. The reduction
 
@@ -2739,29 +2736,22 @@ $\ell$ is an higher-order output; $\ell$ is a first-order output \JP{What about 
 		\horel{\Gamma}{\Delta_1}{P_1}{\red}{\Delta_1'}{P_1'}
 	\]
 %
-	\noi implies that 
-	$\exists P_2'$ such that 
-%
-	\begin{eqnarray*}
-		\horel{\Gamma}{\Delta_2}{P_2}{\By{}}{\Delta_2'}{P_2'}\\
+	\noi implies that there exists a $P_2'$ such that 
+  \[
+		\horel{\Gamma}{\Delta_2}{P_2}{\By{}}{\Delta_2'}{P_2'}
+		\qquad \text{and} \qquad
 		\horel{\Gamma}{\Delta_1}{P_1'}{\wbc}{\Delta_2'}{P_2'}
-	\end{eqnarray*}
-%
-	\noi Same arguments hold for the symmetric case, thus $\wbc$ is reduction closed.
+		\]
+ The same arguments hold for the symmetric case, thus $\wbc$ is reduction-closed.
 
-	\noi {\bf Barb Preservation:} We have that
-%
+	\item {\bf Barb Preservation:} Following \mydefref{def:barbs}, we have that
+$		\Gamma; \emptyset; \Delta_1 \proves P_1 \barb{n}$
+	implies 
 	\begin{eqnarray*}
-		\Gamma; \emptyset; \Delta_1 \proves P_1 \barb{n}
+		P &\cong& \newsp{\widetilde{m}}{\bout{n}{V_1} P_3 \Par P_4}
 	\end{eqnarray*}
-%
-	implies that
-	\begin{eqnarray*}
-		P &\cong& \newsp{\widetilde{m}}{\bout{n}{V_1} P_3 \Par P_4}\\
-		\dual{n} &\notin& \Delta_1
-	\end{eqnarray*}
-%
-	\noi From the definition of $\wbc$ we get that
+with $\dual{n} \notin \Delta_1$.
+	\noi From the definition of $\wbc$ we infer that
 %
 \[
 	\horel	{\Gamma}{\Delta_1}{\newsp{\widetilde{m}}{\bout{n}{V_1} P_3 \Par P_4}}
@@ -2770,50 +2760,43 @@ $\ell$ is an higher-order output; $\ell$ is a first-order output \JP{What about 
 		{\newsp{\widetilde{m'}}{P_3 \Par P_4}}
 \]
 %
-	\noi implies
+	\noi implies the existence of $V_2$ and $P'_2$ such that
 %
 	\begin{eqnarray*}
-		\horel{\Gamma}{\Delta_2}{P_2}{\By{\news{m_2} \bactout{n}{V_2}}}{\Delta_2'}{P_2'}\\
+		\horel{\Gamma}{\Delta_2}{P_2}{\By{\news{m_2} \bactout{n}{V_2}}}{\Delta_2'}{P_2'}
 	\end{eqnarray*}
-%
-	\noi From the last result we obtain
-%
-	\begin{eqnarray*}
-		\Gamma; \emptyset; \Delta_2 \proves P_2 \Barb{n}
-	\end{eqnarray*}
-%
-	\noi as required.
+   Therefore, we infer that 
+$		\Gamma; \emptyset; \Delta_2 \proves P_2 \Barb{n}$, as desired.
 
-	\noi {\bf Congruence:}
-
-	\noi The congruence property requires that we check that $\wbc$
-	is preserved under any context.
-	The most interesting context case is parallel composition.
-
-	\noi We construct a congruence relation. Let
+	\item {\bf Congruence:} We have to show that  $\wbc$
+	is preserved under any context. The most interesting context case is parallel composition; 
+we construct an appropriate typed relation defined as 
 	\[
 	\begin{array}{rcl}
 		\mathcal{S} &=&	\set{
 				(\Gamma; \emptyset; \Delta_1 \cat \Delta_3 \proves \newsp{\widetilde{n_1}}{P_1 \Par R} \hastype \Proc,
 				\Gamma; \emptyset; \Delta_2 \cat \Delta_3 \proves \newsp{\widetilde{n_2}}{P_2 \Par R})
 				\setbar \\
-		& &		\horel{\Gamma}{\Delta_1}{P_1}{\wbc}{\Delta_2}{P_2}, \forall \Gamma; \emptyset; \Delta_3 \proves R \hastype \Proc\\
+		& &		\qquad \horel{\Gamma}{\Delta_1}{P_1}{\wbc}{\Delta_2}{P_2}, \forall \Gamma; \emptyset; \Delta_3 \proves R \hastype \Proc\\
 		& &}
 	\end{array}
 	\]
-	\noi We need to show that 
-	%the above congruence is a bisimulation.
-	%To show that 
-	$\mathcal{S}$ is a bisimulation:  we do a case analysis on the structure
-	of the $\by{\ell}$ transition. There are three main cases.
+	\noi We  show that $\mathcal{S}$ is a context bisimulation.
+	Suppose that 
+	$$
+	\horel{\Gamma}{\Delta_1 \cat \Delta_3}{\newsp{\widetilde{n_1}}{P_1 \Par R}}
+					{\by{\ell}}
+					{\Delta_1' \cat \Delta_3}{P'}
+					$$
+	We have to show an appropriate matching action from $\newsp{\widetilde{n_2}}{P_2 \Par R}$.
+	We proceed by a case analysis on the ``source'' of  action $\ell$ (i.e., $P_1$, $R$, an interaction between $P_1$ and $R$).
 
-
-	\begin{enumerate}
+	\begin{enumerate}[1.]
 	%%%%%%%%%%%%%%%
 	% Case 1
 	%%%%%%%%%%%%%%%
 
-		\item Suppose
+		\item Suppose that $\ell$ originates in $P_1$:
 				%
 				\[
 					\horel{\Gamma}{\Delta_1 \cat \Delta_3}{\newsp{\widetilde{n_1}}{P_1 \Par R}}
@@ -2821,25 +2804,23 @@ $\ell$ is an higher-order output; $\ell$ is a first-order output \JP{What about 
 					{\Delta_1' \cat \Delta_3}{\newsp{\widetilde{n_1'}}{P_1' \Par R}}
 				\]
 				%
-				\noi The case is divided into three subcases:
+				\noi The case is divided into three sub-cases, depending on the shape of $\ell$:
 
 				\begin{enumerate}[i.]
-					\item Sub-case	$\ell \notin \set{\news{\widetilde{m}} \bactout{n}{\abs{\widetilde{x}}{Q}}, \news{\widetilde{mm_1}} \bactout{n}{\widetilde{m_1}}}$:
-					
-							\noi From the definition of typed transition we get:
+					\item Sub-case	$\ell \notin \set{\news{\widetilde{m}} \bactout{n}{\abs{\widetilde{x}}{Q}}, \news{\widetilde{mm_1}} \bactout{n}{\widetilde{m_1}}}$: Then from the definition of typed transition we infer:
 					%
 							\[
 								\horel{\Gamma}{\Delta_1}{P_1}{\by{\ell}}{\Delta_1'}{P_1'}
 							\]
-							\noi which implies that
+							\noi which implies the existence of a $P_2'$ such that
 							\begin{eqnarray}
 								\horel{\Gamma}{\Delta_1}{P_2}{\By{\ell}}{\Delta_2'}{P_2'}
 								\label{lem:wbc_is_cong1}\\
-								\horel{\Gamma}{\Delta_1'}{P_1'}{\wbc}{\Delta_2''}{P_2'}
+								\horel{\Gamma}{\Delta_1'}{P_1'}{\wbc}{\Delta_2''}{P_2'}.
 								\label{lem:wbc_is_cong2}
 							\end{eqnarray}
 					%
-							\noi From transition in~\eqref{lem:wbc_is_cong1} we conclude that 
+							\noi From transition~\eqref{lem:wbc_is_cong1} we may infer that 
 							\[
 								\horel{\Gamma}{\Delta_2 \cat \Delta_3}{\newsp{\widetilde{n_2}}{P_2 \Par R}}
 								{\By{\ell}}
@@ -2853,118 +2834,112 @@ $\ell$ is an higher-order output; $\ell$ is a first-order output \JP{What about 
 								{\ \mathcal{S}\ }
 								{\Delta_2' \cat \Delta_3}{\newsp{\widetilde{n_2}'}{P_2' \Par R}}
 							\]
-
+							as desired.
+							
 					\item	Sub-case $\ell = \news{\widetilde{m_1}} \bactout{n}{\abs{\widetilde{x}}{Q_1}}$:
-
-							\noi From the definition of typed transition we get
+					Then we infer the typed transition 
 							\[
 								\horel{\Gamma}{\Delta_1}{P_1}
 								{\by{\news{\widetilde{m_1}} \bactout{n}{\abs{\widetilde{x}}{Q_1}}}}
 								{\Delta_1'}{P_1'}
 							\]
-							\noi which implies that
-					%
-							\begin{eqnarray}
-								&& \horel{\Gamma}{\Delta_1}{P_2}{\By{\news{\widetilde{m_2}} \bactout{n}{\abs{\widetilde{x}}{Q_2}}}}{\Delta_2'}{P_2'}
-								\label{lem:wbc_is_cong3} \\
-								&&\forall Q, \set{x} \in \fpv{Q} \nonumber \\
-						%		\forall s'
-								&& \horel{\Gamma}{\Delta_1''}{\newsp{\widetilde{n_1}''}{P_1' \Par Q \subst{\abs{\widetilde{x}}{Q_1}}{x}}}
+							which implies the existence of $P'_2$ and $\Delta_2''$ such that 
+							\begin{equation}
+								 \horel{\Gamma}{\Delta_1}{P_2}{\By{\news{\widetilde{m_2}} \bactout{n}{\abs{\widetilde{x}}{Q_2}}}}{\Delta_2'}{P_2'}
+								\label{lem:wbc_is_cong3}
+								\end{equation}
+								and 
+						\begin{equation}
+								  \horel{\Gamma}{\Delta_1''}{\newsp{\widetilde{n_1}''}{P_1' \Par Q \subst{\abs{\widetilde{x}}{Q_1}}{x}}}
 								{\ \wbc\ }
 								{\Delta_2''}{\newsp{\widetilde{n_2}''}{P_2' \Par Q \subst{\abs{\widetilde{x}}{Q_2}}{x}}}
 								\label{lem:wbc_is_cong4}
-							\end{eqnarray}
-					%
-							\noi From transition~\eqref{lem:wbc_is_cong3} conclude that 
+							\end{equation}
+					for all $Q$, with  $\set{x} \in \fpv{Q}$.  From transition~\eqref{lem:wbc_is_cong3}, we infer that 
 							\[
 								\horel{\Gamma}{\Delta_2 \cat \Delta_3}{\newsp{\widetilde{n_2}}{P_2 \Par R}}
 								{\By{\news{\widetilde{m_2}} \bactout{n}{\abs{\widetilde{x}}{Q_2}}}}
 								{\Delta_2' \cat \Delta_3}{\newsp{\widetilde{n_2}'}{P_2' \Par R}}
 							\]
-					%
-							\noi Furthermore, from~\eqref{lem:wbc_is_cong4} we conclude that $\forall Q$ with $\set{x} = \fpv{Q}$
+				 Furthermore, from~\eqref{lem:wbc_is_cong4} we conclude that 
 					%
 							\[
 								\horel{\Gamma}{\Delta_1'' \cat \Delta_3}{\newsp{\widetilde{n_1}''}{P_1' \Par Q \subst{(\widetilde{x}) Q_1}{x} \Par R}}
 								{\ \mathcal{S}\ }
 								{\Delta_2'' \cat \Delta_3}{\newsp{\widetilde{n_2}''}{P_2' \Par Q \subst{\abs{\widetilde{x}}{Q_2}}{x} \Par R}}
 							\]
-					%
+				for all $Q$, with  $\set{x} \in \fpv{Q}$, as desired. \\
 
 					\item	Sub-case $\ell = \news{\widetilde{mm_1}} \bactout{n}{\widetilde{m_1}}$:
-
-							\noi From the definition of typed transition we get that
+ From the definition of typed transition we infer that
 							\[
 								\horel{\Gamma}{\Delta_1}{P_1}
 								{\by{\news{\widetilde{mm_1}} \bactout{n}{\widetilde{m_1}}}}
 								{\Delta_1'}{P_1'}
 							\]
-							\noi which implies that $\exists P_2', s_2$ such that
+							which, in turn, implies that there exist $P_2', m_2$ such that
 					%
-							\begin{eqnarray}
-								&& \horel{\Gamma}{\Delta_1}{P_2}
+							\begin{equation}
+							\horel{\Gamma}{\Delta_1}{P_2}
 								{\By{\news{\widetilde{mm_2}} \bactout{n}{\widetilde{m_2}}}}
 								{\Delta_2'}{P_2'}
-								\label{lem:wbc_is_cong5}\\
-								&&\forall Q, x = \fn{Q}, \nonumber \\%  &&
-								&& \horel{\Gamma}{\Delta_1''}{\newsp{\widetilde{n_1}}{P_1' \Par Q \subst{\widetilde{m_1}}{\widetilde{x}}}}
+								\label{lem:wbc_is_cong5}
+								\end{equation}
+								and
+								\begin{equation}
+							\horel{\Gamma}{\Delta_1''}{\newsp{\widetilde{n_1}}{P_1' \Par Q \subst{\widetilde{m_1}}{\widetilde{x}}}}
 								{\ \wbc\ }
 								{\Delta_2''}{\newsp{\widetilde{n_2}}{P_2' \Par Q \subst{\widetilde{m_2}}{\widetilde{x}}}}
 								\label{lem:wbc_is_cong6}
-							\end{eqnarray}
-					%
-						\noi From transition~\eqref{lem:wbc_is_cong5} conclude that 
+							\end{equation}
+						 for all $Q$ with $x = \fn{Q}$.
+						\noi From transition~\eqref{lem:wbc_is_cong5} we infer that 
 						\[
 							\horel{\Gamma}{\Delta_2 \cat \Delta_3}{\newsp{\widetilde{n_2}'}{P_2 \Par R}}
 							{\By{\news{\widetilde{mm_2}} \bactout{n}{\widetilde{m_2}}}}
 							{\Delta_2' \cat \Delta_3}{\newsp{\widetilde{n_2}'''}{P_2' \Par R}}
 						\]
 					%
-						\noi Furthermore, from~\eqref{lem:wbc_is_cong6} we conclude that $\forall Q, x = \fn{Q}$
+						\noi Furthermore, from~\eqref{lem:wbc_is_cong6} we conclude that 
 					%
 						\[
 							\horel{\Gamma}{\Delta_1'' \cat \Delta_3}{\newsp{\widetilde{n_1}''}{P_1' \Par Q \subst{\widetilde{m_1}}{\widetilde{x}} \Par R}}
 							{\ \mathcal{S}\ }
 							{\Delta_2'' \cat \Delta_3}{\newsp{\widetilde{n_2}''}{P_2' \Par Q \subst{\widetilde{m_2}}{\widetilde{x}} \Par R}}
 						\]
-					%
+					for all $Q$ with $x = \fn{Q}$, as desired.
 				\end{enumerate}
 	%%%%%%%%%%%%%%%
 	% Case 2
 	%%%%%%%%%%%%%%%
 
-		\item Suppose
+		\item Suppose that $\ell$ originates in $R$:
 			%
 				\[
 					\horel{\Gamma}{\Delta_1 \cat \Delta_3}{\newsp{\widetilde{m_1}}{P_1 \Par R}}
 					{\by{\ell}}
 					{\Delta_1 \cat \Delta_3'}{\newsp{\widetilde{m_1}'}{P_1 \Par R'}}
 				\]
-				\noi This case is divided into three subcases:
+				\noi This case is also divided into three sub-cases:
 
 				\begin{enumerate}[i.]
 			%
-					\item Sub-case 	$\ell \notin \set{\news{\widetilde{m}} \bactout{n}{\abs{\widetilde{x}}{Q}}, \news{\widetilde{mm_1}} \bactout{n}{\widetilde{m_1}}}$:
-
-							\noi From the LTS we get that:
+					\item Sub-case 	$\ell \notin \set{\news{\widetilde{m}} \bactout{n}{\abs{\widetilde{x}}{Q}}, \news{\widetilde{mm_1}} \bactout{n}{\widetilde{m_1}}}$: From the LTS we infer that 
 							\[
 								\horel{\Gamma}{\Delta_3}{R}{\by{\ell}}{\Delta_3'}{R'}
 							\]
-						%
-							\noi Which in turn implies
+						which in turn implies
 							\begin{eqnarray*}
 								\horel{\Gamma}{\Delta_2 \cat \Delta_3}{\newsp{\widetilde{m_2}}{P_2 \Par R}}
 								{\by{\ell}}
 								{\Delta_2 \cat \Delta_3'}{\newsp{\widetilde{m_2}'}{P_2 \Par R'}}
 							\end{eqnarray*}
-						%
-							\noi From the definition of $\mathcal{S}$ we conclude that
+						Now, from the definition of $\mathcal{S}$ we may obtain the desired conclusion:
 							\[
 								\horel{\Gamma}{\Delta_1 \cat \Delta_3'}{\newsp{\widetilde{m_1}'}{P_1 \Par R'}}
 								{\ \mathcal{S}\ }
 								{\Delta_2 \cat \Delta_3''}{\newsp{\widetilde{m_2}'}{P_2 \Par R'}}
 							\]
-							\noi as required.
 
 				\item	Sub-case $\ell = \news{\widetilde{m_1}} \bactout{n}{\abs{\widetilde{x}}{Q}}$:
 
@@ -3150,6 +3125,7 @@ $\ell$ is an higher-order output; $\ell$ is a first-order output \JP{What about 
 							{\Delta_2''}{\newsp{\widetilde{m_2}'}{P_2' \Par R' \subst{\widetilde{m_2}}{\widetilde{x}}}}
 						\]
 		\end{enumerate}
+	\end{enumerate}
 	\end{enumerate}
 	\qed
 \end{proof}
