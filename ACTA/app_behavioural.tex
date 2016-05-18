@@ -2541,26 +2541,23 @@ substitution, we can generalise for any value substitution.
 \end{lemma}
 
 \begin{proof}
-	Let $\Re$ be the typed relation (for readability, we omit typing judgements from the definition):
+	Let $\Re$ be the typed relation (for readability, we omit typing information):
 	\[
 		\Re = \set{(P_1, Q_1) \setbar \horel{\Gamma}{\Delta_1}{P_1}{\hwb}{\Delta_2}{Q_1}}
 	\]
-	We show that $\Re$ is a context bisimulation.
-	The proof is divided on cases on the label $\ell$ for the transition:
-%
-	\begin{eqnarray}
+	We show that $\Re$ is a context bisimulation (cf. \mydefref{def:wbc}). Suppose that
+		\begin{eqnarray}
 		\horel{\Gamma}{\Delta_1}{P_1}{\hby{\ell}}{\Delta_1'}{P_2}
 		\label{lem:wb_is_wbc1}
 	\end{eqnarray}
-%
+	The proof proceeds by a case analyses on the action label $\ell$.
 We distinguish four cases: $\ell$ is not an output or an input action; $\ell$ is an input action;
-$\ell$ is an higher-order output; $\ell$ is a first-order output.
-	\begin{enumerate}
-		\item
-				Case $\ell \notin \set{ \news{\widetilde{m_1}} \bactout{n}{\abs{\widetilde{x}}{P}},  \news{\widetilde{m_1}'} \bactout{n}{\widetilde{m_1}}, \bactinp{n}{\abs{\widetilde{x}}{P}} }$:
-
-				\noi For the latter $\ell$ and transition in \eqref{lem:wb_is_wbc1} we impy that:	
-			%
+$\ell$ is an higher-order output; $\ell$ is a first-order output \JP{What about higher-order input?}.
+	\begin{enumerate}[1.]
+		\item Case $\ell \notin \set{ \news{\widetilde{m_1}} \bactout{n}{\abs{\widetilde{x}}{P}},  \news{\widetilde{m_1}'} \bactout{n}{\widetilde{m_1}}, \bactinp{n}{\abs{\widetilde{x}}{P}} }$: 
+		We first notice that in this case the definition of $\wbc$ and $\hwb$ coincide, so 
+		we have to show the existence of 
+		a process $Q'_2$ such that:	
 				\[
 					\horel{\Gamma}{\Delta_2}{Q_1}{\Hby{\ell}}{\Delta_2'}{Q_2}
 				\]
@@ -2568,14 +2565,13 @@ $\ell$ is an higher-order output; $\ell$ is a first-order output.
 				\noi and
 			%
 				\[
-					\horel{\Gamma}{\Delta_1'}{P_2}{\hwb}{\Delta_2'}{Q_2}
+					\horel{\Gamma}{\Delta_1'}{P_2}{\,\Re\,}{\Delta_2'}{Q_2}.
 				\]
-			%
-				The above premise and conclusion coincides with defining cases for $\ell$ in $\wbc$.
+		This is immediate from 
+		transition \eqref{lem:wb_is_wbc1} 
+		and the definition of $\hwb$ (cf. \mydefref{d:hwb}). \newc{JP - I have modified, please check.}
 
-		\item	Case $\ell = \bactinp{n}{\abs{\widetilde{x}}{P}}$:
-
-				\noi Transition in \eqref{lem:wb_is_wbc1} implies:
+		\item	Case $\ell = \bactinp{n}{\abs{\widetilde{x}}{P}}$: In this case, the transition \eqref{lem:wb_is_wbc1} can be written as 
 			%
 				\[
 					\begin{array}{l}
@@ -2583,14 +2579,11 @@ $\ell$ is an higher-order output; $\ell$ is a first-order output.
 						\horel{\Gamma}{\Delta_1}{P_1}{\hby{\bactinp{n}{\auxtr{t}}}}{\Delta_1''}{P_2 \subst{\auxtr{t}}{x}}
 					\end{array}
 				\]
-			%
-				\noi The last transition implies:
+			In turn, the above transition and $\Re$ imply the existence of a process $Q_2$ such that:
 			%
 			\[
-				\begin{array}{l}
 %					\horel{\Gamma}{\Delta_2}{Q_1}{\Hby{\bactinp{n}{\abs{\widetilde{x}}{\mapchar{U}{\widetilde{x}}}}}}{\Delta_2'}{Q_2 \subst{\abs{\widetilde{x}}{\mapchar{U}{\widetilde{x}}}}{x}}\\
 					\horel{\Gamma}{\Delta_2}{Q_1}{\Hby{\bactinp{n}{\auxtr{t}}}}{\Delta_2''}{Q_2 \subst{\auxtr{t}}{x}}
-				\end{array}
 			\]
 			%
 				\noi and
@@ -2598,22 +2591,19 @@ $\ell$ is an higher-order output; $\ell$ is a first-order output.
 			\[
 				\begin{array}{l}
 %					\horel{\Gamma}{\Delta_1'}{P_2 \subst{\abs{\widetilde{x}}{\mapchar{U}{\widetilde{x}}}}{x}}{\hwb}{\Delta_2'}{Q_2 \subst{\abs{\widetilde{x}}{\mapchar{U}{\widetilde{x}}}}{x}}\\
-					\horel{\Gamma}{\Delta_1''}{P_2 \subst{\auxtr{t}}{x}}{\hwb}{\Delta_2''}{Q_2 \subst{\auxtr{t}}{x}}
+					\horel{\Gamma}{\Delta_1''}{P_2 \subst{\auxtr{t}}{x}}{\hwb}{\Delta_2''}{Q_2 \subst{\auxtr{t}}{x}}.
 				\end{array}
 			\]
-			%
-				\noi To conclude from (\lemref{lem:process_subst}) that
-				$\forall P$ with $\fv{P} = \widetilde{x}$
+			 Then, by using the previous equality and \mylemref{lem:process_subst}, we may conclude
+				 that
 			%
 			\[
 				\horel{\Gamma}{\Delta_1'}{P_2 \subst{\abs{\widetilde{x}}{P}}{x}}{\hwb}{\Delta_2'}{Q_2 \subst{\abs{\widetilde{x}}{P}}{x}}
 			\]
-			%
-				\noi as required.
+			for all $P$ with $\fv{P} = \widetilde{x}$, as required. \newc{JP - I have modified, please check.}
 
-		\item	Case $\ell = \news{\widetilde{m_1}'} \bactout{n}{\widetilde{m_1}}$: 
-
-				\noi From transition \eqref{lem:wb_is_wbc1} we conclude:
+		\item	Case $\ell = \news{\widetilde{m_1}'} \bactout{n}{\widetilde{m_1}}$: In this case, 
+ transition \eqref{lem:wb_is_wbc1} and $\Re$ imply the existence of a process $Q_2$ such that 
 			%
 			\[
 				\horel{\Gamma}{\Delta_2}{Q_1}{\Hby{\news{\widetilde{m_2}'} \bactout{n}{m_2}}}{\Delta_2'}{Q_2}
