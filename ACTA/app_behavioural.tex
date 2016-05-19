@@ -7,7 +7,9 @@
 \newcommand{\delete}[1]{\mathsf{del}(#1)}
 \newcommand{\unfold}[1]{\mathsf{unfold}(#1)}
 \dkmargin{Read next 2 definitions}
-We state session type unfolding:
+
+\noi We state and prove a more detailed form of \propref{p:inhabit} (Page~\pageref{p:inhabit}).
+The case of recursive session types requires the following two auxiliary definitions for session type unfolding and prefix deletion.
 \begin{definition}[Session Type Unfolding]
 	Given a session type $S$, the function $\unfold{S}$ is defined as:
 	\[
@@ -15,15 +17,15 @@ We state session type unfolding:
 		\unfold{\btout{U} S} = \btout{U} S
 		\qquad
 		\unfold{\btinp{U} S} = \btinp{U} S
-		\qquad
-		\unfold{\btsel{l_i: S_i}_{i \in I}} = \btsel{l_i: S_i}_{i \in I}
 		\\
-		\unfold{\btbra{l_i: S_i}_{i \in I}} = \btbra{l_i: S_i}_{i \in I}
-		\qquad 
-		\unfold{\tinact} = \tinact
+		\unfold{\btsel{l_i: S_i}_{i \in I}} = \btsel{l_i: S_i}_{i \in I}
 		\qquad
-		\unfold{\trec{t}{S}} = \unfold{S \subst{\trec{t}{S}}{\tvar{t}}  }
-	\end{array}
+		\unfold{\btbra{l_i: S_i}_{i \in I}} = \btbra{l_i: S_i}_{i \in I}
+		\\
+				\unfold{\trec{t}{S}} = \unfold{S \subst{\trec{t}{S}}{\tvar{t}}  }
+		\qquad
+		\unfold{\tinact} = \tinact
+		\end{array}
 	\]
 \end{definition}
 
@@ -42,23 +44,23 @@ We state session type prefix deletion relation:
 	\[
 	\begin{array}{c}
 		\delete{\btout{U} S} = \set{S}
-		\qquad \quad
+		\qquad 
 		\delete{\btinp{U} S} = \set{S}
-		\qquad \quad
-		\delete{\btsel{l_i: S_i}_{i \in I}} = \set{S_i}_{i \in I}
 		\\
+		\delete{\btsel{l_i: S_i}_{i \in I}} = \set{S_i}_{i \in I}
+		\qquad
 		\delete{\btbra{l_i: S_i}_{i \in I}} = \set{S_i}_{i \in I}
-		\qquad \quad
+		\\
+				\delete{\trec{t}{S}} = \delete{\unfold{\trec{t}{S}}}
+\qquad
 		\delete{\tinact} = \set{\tinact}
-		\qquad \quad
-		\delete{\trec{t}{S}} = \delete{\unfold{\trec{t}{S}}}
 	\end{array}
 	\]
 \end{definition}
 
 \label{app:inhabit}
 
-We state a more detailed form of \propref{p:inhabit} as given in Page~\pageref{p:inhabit}:
+We may now finally state and prove the following proposition:
 
 \begin{proposition}[Characteristic Processes/Values Inhabit Their Types]
 	\dkmargin{Check this proposition. \newc{JP: I have checked, now it is OK.}}
@@ -144,22 +146,22 @@ We state a more detailed form of \propref{p:inhabit} as given in Page~\pageref{p
 	\begin{enumerate}
 		\item	We use the results from Parts 2 and 3 in a 
 				case analysis on the syntax of $U$.
-			\begin{enumerate}
-				\item[-]	Cases (a) $U = S$, (b) $U = \chtype{S}$, and (c) $U = \chtype{L}$: \\
+			\begin{enumerate}[-]
+				\item	Cases (a) $U = S$, (b) $U = \chtype{S}$, and (c) $U = \chtype{L}$: \\
 The proof is straightforward from Rules $\trule{Sess}$ and $\trule{Sh}$ (cf. \figref{fig:typerulesmy}).
 
-				\item[-]	Case (d) $U = \shot{U'}$. By Parts 2 and 3 of this lemma we obtain 
+				\item	Case (d) $U = \shot{U'}$: By Parts 2 and 3 of this lemma we obtain 
 						$\Gamma; \es; \Delta \proves \mapchar{U'}{x} \hastype \Proc$, which implies 
 						$\Gamma \backslash x ; \es; \Delta \backslash x \proves \omapchar{\shot{U'}} \hastype \shot{U'}$
 						by
 						 Rules $\trule{Abs}$ and $\trule{EProm}$ (cf. \figref{fig:typerulesmy}).
 
-				\item[-]	Case (e) $U = \lhot{U'}$. Similar, using Rule $\trule{Abs}$ (cf. \figref{fig:typerulesmy}).
+				\item	Case (e) $U = \lhot{U'}$: Similar, using Rule $\trule{Abs}$ (cf. \figref{fig:typerulesmy}).
 			\end{enumerate}
 		\item	The proof is by induction on the syntax of $S$.
 				We detail some notable cases:
 			\begin{enumerate}
-				\item	Case $S = \btout{U} S'$. Then, by \defref{def:char}, we have 
+				\item	Case $S = \btout{U} S'$: Then, by \defref{def:char}, we have 
 						$\mapchar{S}{s} = \bout{s}{\omapchar{U}} \bout{t}{s} \inact$ and 
 						we may obtain the following derivation:
 						\[
@@ -173,7 +175,8 @@ The proof is straightforward from Rules $\trule{Sess}$ and $\trule{Sh}$ (cf. \fi
 								\Gamma; \es; \Delta \cat s: \btout{U} S' \cat t: \btout{S} \tinact \hastype \bout{s}{\omapchar{U}}\bout{t}{s} \inact \hastype \Proc
 							}
 						\]
-				\item	Case $S = \btinp{S_1} S_2$. Then, by \defref{def:char}, we have 
+						
+				\item	Case $S = \btinp{S_1} S_2$: Then, by \defref{def:char}, we have 
 						$\mapchar{S}{s} = \binp{s}{x} (\bout{t}{s} \inact \Par \mapchar{S_1}{x})$.
 						 and 
 						we may obtain the following derivation:
@@ -194,10 +197,10 @@ The proof is straightforward from Rules $\trule{Sess}$ and $\trule{Sh}$ (cf. \fi
 								\Gamma; \es; \Delta \cat t: \btout{S_2} \tinact \cat s: \btinp{U} S_2 \proves \binp{s}{x} (\bout{t}{s} \inact \Par \mapchar{S_1}{x}) \hastype \Proc
 							}
 						\]
-					\item	Case $S = \trec{t}{S'}$. Then, by \defref{def:char}, $\mapchar{S} = \mapchar{S' \subst{\tinact}{\vart{t}} }{u}$.
+					\item	Case $S = \trec{t}{S'}$: Then, by \defref{def:char}, $\mapchar{S} = \mapchar{S' \subst{\tinact}{\vart{t}} }{u}$.
 							The proof is done by induction on the shape of $S'$. We detail two sub-cases; the rest is similar or simpler.
 							\begin{enumerate}[i)]
-								\item	$S' = \btbra{l_i: S_i}_{i \in I}$. Then
+								\item	Sub-case $S' = \btbra{l_i: S_i}_{i \in I}$: Then
 										$\mapchar{S' \subst{\tinact}{\vart{t}}}{s} = \bbra{s}{l_i: \bout{t_i}{s} \inact}_{i \in I}$
 										and $\delete{S} = \set{S_i}_{i \in I}$:
 										\[
@@ -216,7 +219,7 @@ The proof is straightforward from Rules $\trule{Sess}$ and $\trule{Sh}$ (cf. \fi
 											}
 										\]
 
-								\item	$S' = \trec{t'}{S''}$. Then 
+								\item	Sub-case $S' = \trec{t'}{S''}$: Then 
 										$\mapchar{\trec{t'}{S''} \subst{\tinact}{\vart{t}}}{s} = \mapchar{S'' \subst{\tinact}{\vart{t}} \subst{\tinact}{\vart{t'}}  }{s}$. 
 								
 										If $\mapchar{S'' \subst{\tinact}{\vart{t}} \subst{\tinact}{\vart{t'}}  }{s} = \inact$ then the proof is straightforward. If $\delete{S} = \set{S_i}_{i \in I}$ then by induction
@@ -244,7 +247,7 @@ The proof is straightforward from Rules $\trule{Sess}$ and $\trule{Sh}$ (cf. \fi
 		\item	The proof  uses the result of Part 1.
 				We do a case analysis on the structure of $U$.
 			\begin{enumerate}
-				\item	Case $U = \chtype{S}$.
+				\item	Case $U = \chtype{S}$:
 						From Part 1 we have that $\es; \es; \Delta \proves \omapchar{S} \hastype S$.
 						By applying Rule $\trule{Req}$ (cf. \figref{fig:typerulesmy}) we obtain:
 						\[
@@ -257,10 +260,10 @@ The proof is straightforward from Rules $\trule{Sess}$ and $\trule{Sh}$ (cf. \fi
 							}
 						\]
 
-				\item	Case $U = \chtype{S}$. Similar argumentation as in the previous case.
+				\item	Case $U = \chtype{S}$: Similar argumentation as in the previous case.
 
 				\item
-						Case $U = \lhot{U'}$. From Part 1 we know that
+						Case $U = \lhot{U'}$: From Part 1 we know that
 						$\Gamma; \es; \Delta \proves \omapchar{U'} \hastype U'$.
 						By applying Rules~$\trule{App}$ and  $\trule{EProm}$ (cf. \figref{fig:typerulesmy}) we obtain:
 						\[
@@ -277,7 +280,7 @@ The proof is straightforward from Rules $\trule{Sess}$ and $\trule{Sh}$ (cf. \fi
 							}
 						\]
 
-				\item	$U = \shot{U'}$. Similar argumentation as in the previous case
+				\item	Case $U = \shot{U'}$: Similar argumentation as in the previous case
 						without applying Rule~$\trule{EProm}$ (cf. \figref{fig:typerulesmy}).
 			\end{enumerate}
 	\end{enumerate}
@@ -429,8 +432,11 @@ Some notions needed to prove this auxiliary result are presented next.
 %	The Knaster-Tarski theorem ensures that the largest higher-order bisimulation exists;
 %	it is called \emph{higher-order bisimilarity} and is denoted by $\hwb$.
 %\end{definition}
-In this appendix, we use the polyadic abstractions and name passing 
-for shorthand notations. 
+In the following we sometimes use the polyadic abstractions 
+(denoted $\abs{\tilde{x}}{P}$) and
+and polyadic name passing 
+(denoted $\bout{u}{\tilde{V}}{P}$   $\binp{u}{\tilde{x}}{P}$)
+as shorthand notations. 
 
 %\smallskip
 
@@ -443,6 +449,9 @@ for shorthand notations.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %    TAU - INNERTNESS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+We now prove \propref {lem:tau_inert} as stated in Page~\pageref{lem:tau_inert}:
+
 
 \begin{proposition}[$\tau$-inertness]
 	\label{app:lem:tau_inert}
@@ -460,6 +469,12 @@ for shorthand notations.
 %which is confusing. In general: I would have done this proof by coinduction, constructing a closure containing $(P, P')$.}
 
 \begin{proof}
+\JP{I am pretty sure that this holds, but why do we have a proof by induction? Strictly speaking, we need a co-inductive proof in which we show that the relation 
+$$
+\Re = \{ (P,P') ~|~ \horel{\Gamma}{\Delta}{P}{\hby{\dtau}}{\Delta'}{P'}\}
+$$
+is a higher-order bisimulation. Such a coinductive proof would use the current analysis.
+}
 	\noi 
 	We only prove Part 1; the proof for Part 2 follows straightforwardly.
 	The proof is by induction on the structure of $\by{\tau}$
@@ -712,7 +727,8 @@ We analyze each of the three parts:
 					{\hby{\ell_1}}
 					{\Delta_3'}{\newsp{\widetilde{m_1}'}{P'}}
 				\]
-				then we can derive that
+				\newc{then we need to show a matching action from $\newsp{\widetilde{m_1}}{Q}$. }
+				We can derive that
 				\[
 					\horel{\Gamma}{\Delta_1}{\newsp{\widetilde{m_1}}{P \Par \newsp{s}{\bout{t}{s} \inact}  } }
 					{\hby{\ell_1}}
@@ -725,6 +741,7 @@ We analyze each of the three parts:
 					{\Delta_2'}{\newsp{\widetilde{m_2}'}{Q' \Par \newsp{s}{\bout{t}{s} \inact}  } }
 					\label{help_tr_1}
 				\end{eqnarray}
+				\JP{ We need to say that $\ell_2$ is only different from $\ell_1$ in the output case!}
 				and
 				\[
 					\horel{\Gamma}{\Delta_1'}{\newsp{\widetilde{m_1}'}{P' \Par C_1 \Par \newsp{s}{\bout{t}{s} \inact}  } }
@@ -758,7 +775,9 @@ We analyze each of the three parts:
 					}	
 				\end{eqnarray*}
 				We check the requirements of higher-order bisimulation
-				for $\Re$.
+				for $\Re$. \\
+				\newc{Suppose that $\newsp{\widetilde{m_1}}{P \Par \newsp{s}{\bout{t}{s} \inact}}$ moves;
+				we need to infer an appropriate matching action from $\newsp{\widetilde{m_2}}{Q \Par \newsp{s}{\bout{t}{s} \inact}}$.}
 				We analyse three cases:
 				\begin{enumerate}[i)]
 					\item Process $P$ moves autonomously:
