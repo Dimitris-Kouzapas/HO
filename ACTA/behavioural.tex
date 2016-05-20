@@ -1781,7 +1781,9 @@ by (i)~constructing a typed relation on the
 	\[
 		\mapchar{U}{n} \by{\ell} \bout{t}{n} \inact 
 	\]
-	\JP{But this is only true when $U$ is a session type different from $\tinact$, right? Is this an issue when $U$ is an arrow type?}
+	\JP{But this is only true when $U$ is a session type different from $\tinact$, right?
+	\dk{that is true. We are showing the important case here where $U$ is not $\tinact$}
+	Is this an issue when $U$ is an arrow type? \dk{No it is not an issue - you can check that either type has the same transition}}
 	By the last property we can always observe (note that below $\ell_1$ may be an action $\tau$, thus denoting
 	the interaction of $P$ and $\mapchar{U}{n_1}$):
 	\begin{eqnarray*}
@@ -2022,7 +2024,7 @@ in \secref{exam:proc} are behaviourally equivalent.
 %	\end{eqnarray*}
 	Then
 	$\horel{\es}{\Delta}{\Client_1}
-	{\hwb}
+	{\fwb}
 	{\Delta}{\Client_2}$, where $\Client_1$ and $\Client_2$ are as in \secref{exam:proc}. 
 \end{proposition}
 
@@ -2081,9 +2083,12 @@ in \secref{exam:proc} are behaviourally equivalent.
 %\end{proof}
 
 \begin{proof}
-	\noi	We show a case where each typed process simulates the other, according to the definition of
-			$\hwb$ (cf. \defref{d:hwb}).
- For fresh sessions $s, k$, we get \dkmargin{check the example if it correct}
+	\noi	We show a case where each typed process simulates the other,
+			according to the definition of
+			$\fwb$ (cf. \defref{d:fwb}).
+			In order to show the bisimulation game consider
+			the definition of the characteristic process for type $\btinp{\lhot{S}} \tinact$.
+			For fresh sessions $s, k$, we have \dkmargin{check the example if it correct}
 %	$$
 %		\mapchar{\btinp{\lhot{S}} \tinact}{s} = \binp{s}{x} (\mapchar{\tinact}{s} \Par \mapchar{\lhot{S}}{x})
 %		= \binp{s}{x} (\inact \Par \appl{x}{\omapchar{S}})
@@ -2096,7 +2101,7 @@ in \secref{exam:proc} are behaviourally equivalent.
 %		= \binp{s}{x} (\inact \Par \appl{x}{\omapchar{S}})
 %		= \binp{s}{x} (\inact \Par \appl{x}{k})
 %		\scong \binp{s}{x} (\appl{x}{k}) 
-\quad\text{\JP{Why is this relevant here??}}
+%\quad\text{\JP{Why is this relevant here??}}
 	$$
 	
 \newc{For convenience, we recall the definition of $\Client_1$:
@@ -2135,8 +2140,9 @@ $$
 $$
 Similarly, \figref{f:cli2}
 illustrates the actions possible from $\Client_2$, which are the same as for $\Client_1$.
-\JP{JP: The observable actions do not concern the refined LTS. Also, it seems that the actions 
-use characteristic triggers, not the HO triggers of $\hwb$. Clearly both relations coincide, but we should mention it.}
+\JP{JP: %The observable actions do not concern the refined LTS. Also,
+it seems that the actions  use characteristic triggers, not the HO triggers of $\hwb$ \dk{I changed the
+lemma to require characteristic bisimulation}. Clearly both relations coincide, but we should mention it.}
 		
 	\begin{figure}
 \[
@@ -2144,7 +2150,7 @@ use characteristic triggers, not the HO triggers of $\hwb$. Clearly both relatio
 		& \es; \es; \Delta \proves \Client_1
 		\\[1mm]
 
-		\by{\bactout{s_1}{\abs{x}{P_{xy} \subst{h_1}{y}}}}&
+		\hby{\bactout{s_1}{\abs{x}{P_{xy} \subst{h_1}{y}}}}&
 		\es; \es; s_2: \btout{\lhot{S}} \tinact \cat k_1: S \proves \\
 		& \newsp{h_1, h_2}{\bout{s_2}{\abs{x}{P_{xy} \subst{h_2}{y}}} \inact
 		\Par \binp{\dual{h_1}}{x} \binp{\dual{h_2}}{y} R'\\
@@ -2152,7 +2158,7 @@ use characteristic triggers, not the HO triggers of $\hwb$. Clearly both relatio
 		%\binp{t_1}{x} \newsp{s}{\mapchar{\btinp{\lhot{S}}}{s} \Par \bout{\dual{s}}{\abs{x}{P \subst{h_1}{y}}} \inact }}
 		\\[1mm]
 
-		\by{\bactout{s_2}{\abs{x}{P_{xy} \subst{h_2}{y}}}}&
+		\hby{\bactout{s_2}{\abs{x}{P_{xy} \subst{h_2}{y}}}}&
 		\es; \es; k_1: S \cat k_2: S \proves \newsp{h_1, h_2}{
 		\binp{\dual{h_1}}{x} \binp{\dual{h_2}}{y} R'\\
 		& \ftrigger{t_1}{P_{xy} \subst{h_1}{y}}{\lhot{S}} \Par \ftrigger{t_2}{P_{xy} \subst{h_2}{y}}{\lhot{S}}}
@@ -2160,47 +2166,47 @@ use characteristic triggers, not the HO triggers of $\hwb$. Clearly both relatio
 %		& \Par \binp{t_2}{x} \newsp{s}{\mapchar{\btinp{\lhot{S}}}{s} \Par \bout{\dual{s}}{\abs{x}{P \subst{h_2}{y}}} \inact }}
 		\\[1mm]
 
-		\by{\bactinp{t_1}{b}} \by{\bactinp{t_2}{b}} \by{\dtau}\by{\dtau}&
+		\hby{\bactinp{t_1}{b}} \hby{\bactinp{t_2}{b}} \hby{\dtau} \hby{\dtau}&
 		\es; \es; k_1: S \cat k_2: S \proves \newsp{h_1, h_2}{
 		\binp{\dual{h_1}}{x} \binp{\dual{h_2}}{y} R' \\
 		&  \Par \newsp{s_1', s_2'}{ P_{xy}\subst{h_1}{y} \subst{k_1}{x} \Par P_{xy}\subst{h_1}{y} \subst{k_2}{x}}\\
 		& \Par \bout{t_3}{s_1'} \inact \Par \bout{t_4}{s_2'} \inact}
 		\\[1mm]
 
-		\by{\bactout{t_3}{s_1'}} \by{ \bactout{t_4}{s_2'}} &
+		\hby{\bactout{t_3}{s_1'}} \hby{ \bactout{t_4}{s_2'}} &
 		\es; \es; k_1: S \cat k_2: S \proves \newsp{h_1, h_2}{
 		\binp{\dual{h_1}}{x} \binp{\dual{h_2}}{y} R' \\
 		&  \Par P_{xy}\subst{h_1}{y} \subst{k_1}{x} \Par P_{xy}\subst{h_1}{y} \subst{k_2}{x}}\\
 		& \Par \newsp{s_1', s_2'}{\ftrigger{t_3'}{s_1'}{\tinact} \Par \ftrigger{t_4}{s_2'}{\tinact}}
 		\\[1mm]
 
-		\by{\bactout{t_3'}{c}} \by{ \bactout{t_4'}{c}} \\
-		\by{\dtau} \by{\dtau} \by{\dtau} \by{\dtau} &
+		\hby{\bactout{t_3'}{c}} \hby{ \bactout{t_4'}{c}} \\
+		\hby{\dtau} \hby{\dtau} \hby{\dtau} \hby{\dtau} &
 		\es; \es; k_1: S \cat k_2: S \proves \newsp{h_1, h_2}{
 		\binp{\dual{h_1}}{x} \binp{\dual{h_2}}{y} R' \\
 		&  \Par P_{xy}\subst{h_1}{y} \subst{k_1}{x} \Par P_{xy}\subst{h_1}{y} \subst{k_2}{x}}
 		\\[1mm]
 
-		\by{\bactout{k_1}{\rtype}} \by{\bactout{k_2}{\rtype}}\\
-		\by{\bactinp{k_1}{\Quote}} \by{\bactinp{k_2}{\Quote}}
+		\hby{\bactout{k_1}{\rtype}} \hby{\bactout{k_2}{\rtype}}\\
+		\hby{\bactinp{k_1}{\Quote}} \hby{\bactinp{k_2}{\Quote}}
 		& \es; \es; k_1: S' \cat k_2: S' \proves \newsp{h_1, h_2}{
 		\binp{\dual{h_1}}{x} \binp{\dual{h_2}}{y} R'\\
 		& \Par \bout{h_1}{\Quote} Q \subst{h_1}{z} \Par \bout{h_2}{\Quote} Q \subst{h_2}{z}}
 		\\[1mm]
 
-		\by{\dtau} \by{\dtau} \by{\dtau}&
+		\hby{\dtau} \hby{\dtau} \hby{\dtau}&
 		\es; \es; k_1: S' \cat k_2: S' \proves \\
 		& \newsp{h_1, h_2}{\bsel{\dual{h_1}}{\accept} \bsel{\dual{h_2}}{\reject} \inact
 		\Par Q \subst{h_1}{z} \Par Q \subst{h_2}{z}}
 		\\[1mm]
 
-		\by{\dtau} \by{\dtau}&
+		\hby{\dtau} \hby{\dtau}&
 		\es; \es; k_1: S' \cat k_2: S' \proves
 		\bsel{k_1}{\accept} \bout{k_1}{\creditc} \inact 
 		\Par \bsel{k_2}{\reject} \inact
 		\\[1mm]
 
-		\by{\bactsel{k_1}{\accept}} \by{\bactsel{k_2}{\reject}} \by{\bactsel{k_1}{\creditc}}&
+		\hby{\bactsel{k_1}{\accept}} \hby{\bactsel{k_2}{\reject}} \hby{\bactsel{k_1}{\creditc}}&
 		\es; \es; \es \proves \inact
 	\end{array}
 \]
@@ -2215,53 +2221,53 @@ use characteristic triggers, not the HO triggers of $\hwb$. Clearly both relatio
 		& \es; \es; \Delta \proves \Client_2
 \\[1mm]
 
-		\by{\bactout{s_1}{\abs{x}{Q_1 \subst{h}{y}}}}&
+		\hby{\bactout{s_1}{\abs{x}{Q_1 \subst{h}{y}}}}&
 		\es; \es; s_2: \btout{\lhot{S}} \tinact \cat k_1: S \proves \newsp{h}{\bout{s_2}{\abs{x}{Q_2 \subst{\dual{h}}{y}}} \inact\\
 		& \Par \ftrigger{t_1}{Q_1 \subst{h}{y}}{\lhot{S}}}
 		% \binp{t_1}{x} \newsp{s}{\mapchar{\btinp{\lhot{S}}}{s} \Par \bout{\dual{s}}{\abs{x}{Q_1 \subst{h}{y}}} \inact }}
 \\[1mm]
 
-		\by{\bactout{s_2}{\abs{x}{Q_2 \subst{\dual{h}}{y}}}}&
+		\hby{\bactout{s_2}{\abs{x}{Q_2 \subst{\dual{h}}{y}}}}&
 		\es; \es; k_1: S \cat k_2: S \proves \\
 		& \newsp{h}{\ftrigger{t_1}{Q_1 \subst{h}{y}}{\lhot{S}} \Par \ftrigger{t_2}{Q_2 \subst{\dual{h}}{y}}{\lhot{S}}}
 %		\binp{t_1}{x} \newsp{s}{\binp{s}{x} \appl{x}{k_1} \Par \bout{\dual{s}}{\abs{x}{Q_1 \subst{h}{y}}} \inact }\\
 %		& \Par \binp{t_2}{x} \newsp{s}{\mapchar{\btinp{\lhot{S}}}{s} \Par \bout{\dual{s}}{\abs{x}{Q_2 \subst{\dual{h}}{y}}} \inact }}
 \\[1mm]
 
-		\by{\bactinp{t_1}{b}} \by{\bactinp{t_2}{b}} \by{\dtau}\by{\dtau}&
+		\hby{\bactinp{t_1}{b}} \hby{\bactinp{t_2}{b}} \hby{\dtau}\hby{\dtau}&
 		\es; \es; k_1: S \cat k_2: S \proves \newsp{h}{
 		P\subst{h}{y} \subst{k_1}{x} \Par P_{xy}\subst{\dual{h}}{y} \subst{k_2}{x}\\
 		& \Par \newsp{s_1', s_2'}{\bout{t_3}{s_1'} \inact \Par \bout{t_4}{s_2'} \inact}}
 \\[1mm]
 
-		\by{\bactout{t_3}{s_1'}} \by{ \bactout{t_4}{s_2'}} &
+		\hby{\bactout{t_3}{s_1'}} \hby{ \bactout{t_4}{s_2'}} &
 		\es; \es; k_1: S \cat k_2: S \proves \newsp{h}{
 		P\subst{h}{y} \subst{k_1}{x} \Par P_{xy}\subst{\dual{h}}{y} \subst{k_2}{x}\\
 		& \Par \newsp{s_1', s_2'}{\ftrigger{t_3'}{s_1'}{\tinact} \Par \ftrigger{t_4'}{s_2'}{\tinact}}}
 \\[1mm]
 
-		\by{\bactout{t_3'}{c}} \by{ \bactout{t_4'}{c}} \\
-		\by{\dtau} \by{\dtau} \by{\dtau} \by{\dtau} &
+		\hby{\bactout{t_3'}{c}} \hby{ \bactout{t_4'}{c}} \\
+		\hby{\dtau} \hby{\dtau} \hby{\dtau} \hby{\dtau} &
 		\es; \es; k_1: S \cat k_2: S \proves \newsp{h}{
 		P\subst{h}{y} \subst{k_1}{x} \Par P_{xy}\subst{\dual{h}}{y} \subst{k_2}{x}}
 		\\[1mm]
 
 
-		\by{\bactout{k_1}{\rtype}} \by{\bactout{k_2}{\rtype}}\\
-		\by{\bactinp{k_1}{\Quote}} \by{\bactinp{k_2}{\Quote}}
+		\hby{\bactout{k_1}{\rtype}} \hby{\bactout{k_2}{\rtype}}\\
+		\hby{\bactinp{k_1}{\Quote}} \hby{\bactinp{k_2}{\Quote}}
 		& \es; \es; k_1: S' \cat k_2: S' \proves \newsp{h}{
 		\bout{h}{\Quote_1} \binp{h}{\Quote_2} R \subst{k_1}{x} \\
 		& \Par \binp{\dual{h}}{\Quote_2} \bout{\dual{h}}{\Quote_1} R \subst{k_2}{x}}
 \\[1mm]
-		\by{\dtau} \by{\dtau}&
+		\hby{\dtau} \hby{\dtau}&
 		\es; \es; k_1: S' \cat k_2: S' \proves R \subst{k_1}{x} \Par R \subst{k_2}{x}
 \\[1mm]
-		\by{\dtau} \by{\dtau}&
+		\hby{\dtau} \hby{\dtau}&
 		\es; \es; k_1: S' \cat k_2: S' \proves
 		\bsel{k_1}{\accept} \bout{k_1}{\creditc} \inact 
 		\Par \bsel{k_2}{\reject} \inact
 \\[1mm]
-		\by{\bactsel{k_1}{\accept}} \by{\bactsel{k_2}{\reject}} \by{\bactsel{k_1}{\creditc}}&
+		\hby{\bactsel{k_1}{\accept}} \hby{\bactsel{k_2}{\reject}} \hby{\bactsel{k_1}{\creditc}}&
 		\es; \es; \es \proves \inact
 	\end{array}
 \]
