@@ -433,7 +433,7 @@ Some notions needed to prove this auxiliary result are presented next.
 %	it is called \emph{higher-order bisimilarity} and is denoted by $\hwb$.
 %\end{definition}
 In the following we sometimes use the polyadic abstractions 
-(denoted $\abs{\tilde{x}}{P}$) and
+(denoted $\abs{\tilde{x}}{P}$)
 and polyadic name passing 
 (denoted $\bout{u}{\tilde{V}}{P}$   $\binp{u}{\tilde{x}}{P}$)
 as shorthand notations. 
@@ -688,7 +688,7 @@ Let $P$ and $Q$ be processes.
 					{\Delta_4}{\newsp{\widetilde{m_2}}{Q}}
 				$.
 
-		\item We have that
+		\item	Let $t$ be a fresh name. Then
 				\[
 					\horel{\Gamma}{\Delta_1}{\newsp{\widetilde{m_1}}{P \Par \ntrigger{t}{V_1}  } }
 					{\hwb}
@@ -711,8 +711,8 @@ We analyze each of the three parts:
 	\begin{enumerate}[a)]
 		\item	First direction. Consider the typed relation (we omit the type information):
 				\begin{eqnarray*}
-					\Re &=& \set{	\newsp{\widetilde{m_1}}{P}\ , \ 
-									\newsp{\widetilde{m_2}}{Q} \setbar\\
+					\Re &=& \set{	(\newsp{\widetilde{m_1}}{P}\ , \ 
+									\newsp{\widetilde{m_2}}{Q}) \setbar\\
 					&&
 									\quad \horel{\Gamma}{\Delta_1}{\newsp{\widetilde{m_1}}{P \Par \newsp{s}{\bout{t}{s} \inact}  } }
 									{\hwb}
@@ -721,7 +721,7 @@ We analyze each of the three parts:
 				\end{eqnarray*}
 				We check the requirements of higher-order bisimulation
 				for  $\Re$.
-				Suppose
+				Suppose that
 				\[
 					\horel{\Gamma}{\Delta_3}{\newsp{\widetilde{m_1}}{P   } }
 					{\hby{\ell_1}}
@@ -767,8 +767,8 @@ We analyze each of the three parts:
 
 		\item	Second direction. Consider the typed relation (we omit the type information):
 				\begin{eqnarray*}
-					\Re &=& \set{	\newsp{\widetilde{m_1}}{P \Par \newsp{s}{\bout{t}{s} \inact}}\ , \ 
-									\newsp{\widetilde{m_2}}{Q \Par \newsp{s}{\bout{t}{s} \inact}} \setbar\\
+					\Re &=& \set{	(\newsp{\widetilde{m_1}}{P \Par \newsp{s}{\bout{t}{s} \inact}}\ , \ 
+									\newsp{\widetilde{m_2}}{Q \Par \newsp{s}{\bout{t}{s} \inact}}) \setbar\\
 					&&
 									\qquad \qquad \qquad \qquad \qquad \qquad \horel{\Gamma}{\Delta_3}{\newsp{\widetilde{m_1}}{P  } }
 									{\hwb}
@@ -793,18 +793,18 @@ We analyze each of the three parts:
 					\[
 								\horel{\Gamma}{\Delta_1}{\newsp{\widetilde{m_1}}{P \Par \newsp{s}{\bout{t}{s} \inact}  } }
 								{\hby{\bactout{t}{s}} }
-								{\Delta_1'}{\newsp{\widetilde{m_1}}{P'}}
+								{\Delta_1'}{\news{\widetilde{m_1}} P}
 							\]
 							First notice that the typing derivation
 							reveals that $\Delta_1(t) = \Delta_2(t) = \btout{\tinact} \tinact$.
-							This is because the dual endpoint of restricted session $s$ does not appear
+							This is because the dual endpoint of the restricted session $s$ does not appear
 							in process $\newsp{s}{\bout{t}{s} \inact}$ and thus it has the inactive type $\tinact$.
 
 							We can then observe that
 							\[
 								\horel{\Gamma}{\Delta_2}{\newsp{\widetilde{m_2}}{Q \Par \newsp{s}{\bout{t}{s} \inact}  } }
 								{\Hby{\bactout{t}{s}} }
-								{\Delta_2'}{\newsp{\widetilde{m_2}}{Q}}
+								{\Delta_2'}{\news{\widetilde{m_2}} Q'}
 							\]
 							We need to show that
 							\[
@@ -850,8 +850,8 @@ We analyze each of the three parts:
 	\begin{enumerate}
 		\item First direction. Let $\Re$ be the typed relation (we omit the type information):
 				\begin{eqnarray*}
-					\Re &=&	\set{	\newsp{\widetilde{m_1}}{P \Par \htrigger{t}{V_1}}\ ,\ 
-									\newsp{\widetilde{m_2}}{Q \Par \htrigger{t}{V_2}} \setbar\\
+					\Re &=&	\set{	(\newsp{\widetilde{m_1}}{P \Par \htrigger{t}{V_1}}\ ,\ 
+									\newsp{\widetilde{m_2}}{Q \Par \htrigger{t}{V_2}}) \setbar\\
 						&&
 									\qquad \horel{\Gamma}{\Delta_1}{\newsp{\widetilde{m_1}}{P \Par \ntrigger{t}{V_1}  } }
 									{\hwb}
@@ -868,7 +868,8 @@ We analyze each of the three parts:
 								{\Delta_3'}{\newsp{\widetilde{m_1}'}{P' \Par \htrigger{t}{V_2}  } }
 							\]
 							The proof is similar to case (a) of Part 1 of this lemma.
-					\item	An action along $t$. Let $\omapchar{U} = n$:
+					\item	An input action, $\bactinp{t}{n}$ along fresh name $t$.
+							In this we have that there exists $U$ such that $\omapchar{U} = n$:
 							\[
 								\horel{\Gamma}{\Delta_3}{\newsp{\widetilde{m_1}}{P \Par \htrigger{t}{V_1}  } }
 								{\hby{\bactinp{t}{n}}}
@@ -892,8 +893,10 @@ We analyze each of the three parts:
 								{\hwb}
 								{\Delta_4'}{\newsp{\widetilde{m_2}'}{Q' \Par (\appl{V_2}{n})}}
 							\]
-							This is done by considering the requirements of $\Re$. \\
-							Let $\omapchar{\btinp{U} \tinact} = \abs{z}{ \binp{z}{y} ( \bout{t'}{z} \inact \Par (\appl{y}{n}) ) } $:
+							This is done by considering the requirements of $\Re$.
+							\\
+							From the fact that $\omapchar{U} = n$ we have that
+							$\omapchar{\btinp{U} \tinact} = \abs{z}{ \binp{z}{y} ( \bout{t'}{z} \inact \Par (\appl{y}{n}) ) } $:
 							\[
 								\mhorel{\Gamma}{\Delta_1}{\newsp{\widetilde{m_1}}{P \Par \ntrigger{t}{V_1}  } }
 								{\hby{\bactinp{t}{\omapchar{\btinp{U} \tinact}}}}
@@ -908,9 +911,9 @@ We analyze each of the three parts:
 %							\JP{Why $Q$ doesn't move to some $Q'$ in the above weak transition?} 
 							with
 							\begin{eqnarray*}
-								\horel{\Gamma}{\Delta_1'}{\newsp{\widetilde{m_1}'}{P \Par \newsp{s}{\binp{s}{y} \appl{y}{n} \Par \bout{\dual{s}}{V_1} \inact}}}
-								{\Hby{\dtau}} \\
-								 {\Delta_1'}{\newsp{\widetilde{m_1}'}{P \Par (\appl{V_1}{n}) \Par \newsp{s}{\bout{t'}{s} \inact}}}
+								\mhorel{\Gamma}{\Delta_1'}{\newsp{\widetilde{m_1}'}{P \Par \newsp{s}{\appl{\abs{z}{ \binp{z}{y} ( \bout{t'}{z} \inact \Par (\appl{y}{n}) ) }}{s} \Par \bout{\dual{s}}{V_1} \inact}}}
+								{\hby{\dtau} \hby{\dtau}}
+								{\Delta_1'}{}{\newsp{\widetilde{m_1}'}{P \Par (\appl{V_1}{n}) \Par \newsp{s}{\bout{t'}{s} \inact}}}
 							\end{eqnarray*}
 							and
 							\[
@@ -926,7 +929,8 @@ We analyze each of the three parts:
 							\]
 							as required.
 
-						\item	An action along $t$. Let $\omapchar{U} = \abs{z}{\mapchar{U'}{z}}$: 
+						\item	An action, $\bactinp{t}{\abs{z}{\mapchar{U'}{z}}}$, along fresh name $t$.
+								This means that there exists $U$ such that $\omapchar{U} = \abs{z}{\mapchar{U'}{z}}$: 
 							\[
 								\horel{\Gamma}{\Delta_3}{\newsp{\widetilde{m_1}}{P \Par \htrigger{t}{V_1}  } }
 								{\hby{\bactinp{t}{\abs{z}{\mapchar{U'}{z}}}}}
@@ -952,11 +956,13 @@ We analyze each of the three parts:
 							\]
 							This is done by considering the requirement of $\Re$.
 
-							Let $\omapchar{\btinp{U} \tinact} = \abs{w}{ \binp{w}{y} ( \bout{t'}{w} \inact \Par \appl{(\abs{z}{\mapchar{U'}{z}})}{y} ) } $
+							From the fact that $\omapchar{U} = \abs{z}{\mapchar{U'}{z}}$ we get that
+							$\omapchar{\btinp{U} \tinact} = \abs{w}{ \binp{w}{y} ( \bout{t'}{w} \inact \Par \appl{(\abs{z}{\mapchar{U'}{z}})}{y} ) }$
+							and
 							\[
 								\mhorel{\Gamma}{\Delta_1}{\newsp{\widetilde{m_1}}{P \Par \ntrigger{t}{V_1}  } }
 								{\hby{\bactinp{t}{\omapchar{\btinp{U} \tinact}}}}
-								{\Delta_2'}{}{\newsp{\widetilde{m_1}'}{P \Par \newsp{s}{\appl{(\abs{w}{ \binp{w}{y} ( \bout{t'}{w} \inact \Par \appl{(\abs{z}{\mapchar{U'}{z}})}{y} ) })}{s} \Par \bout{\dual{s}}{V_1} \inact}}}
+								{\Delta_1'}{}{\newsp{\widetilde{m_1}'}{P \Par \newsp{s}{\appl{(\abs{w}{ \binp{w}{y} ( \bout{t'}{w} \inact \Par \appl{(\abs{z}{\mapchar{U'}{z}})}{y} ) })}{s} \Par \bout{\dual{s}}{V_1} \inact}}}
 							\]
 							Furthermore we can see that
 							\[
@@ -967,9 +973,9 @@ We analyze each of the three parts:
 %							\JP{Why $Q$ doesn't move to some $Q'$ in the above weak transition?}
 							with
 							\[
-								\horel{\Gamma}{\Delta_1'}{\newsp{\widetilde{m_1}'}{P \Par \newsp{s}{\binp{s}{y} (\appl{y}{n}) \Par \bout{\dual{s}}{V_1} \inact}}}
-								{\Hby{\dtau}}
-								{\Delta_1'}{\newsp{\widetilde{m_1}'}{P \Par \appl{(\abs{z}{\mapchar{U'}{z}})}{V_1} \Par \newsp{s}{\bout{t'}{s} \inact}}}
+								\mhorel{\Gamma}{\Delta_1'}{\newsp{\widetilde{m_1}'}{P \Par \newsp{s}{\appl{(\abs{w}{ \binp{w}{y} ( \bout{t'}{w} \inact \Par \appl{(\abs{z}{\mapchar{U'}{z}})}{y} ) })}{s} \Par \bout{\dual{s}}{V_1} \inact}}}
+								{\hby{\dtau} \hby{\dtau}}
+								{\Delta_1'}{}{\newsp{\widetilde{m_1}'}{P \Par \appl{(\abs{z}{\mapchar{U'}{z}})}{V_1} \Par \newsp{s}{\bout{t'}{s} \inact}}}
 							\]
 							and
 							\[
@@ -988,8 +994,8 @@ We analyze each of the three parts:
 		\item	Second direction.
 				Let $\Re$ be the typed relation (we omit the type information):
 				\begin{eqnarray*}
-		\Re &=&	\set{	\newsp{\widetilde{m_1}}{P \Par \ntrigger{t}{V_1}}\ ,\ 
-									\newsp{\widetilde{m_2}}{Q \Par \ntrigger{t}{V_2}} \setbar\\
+		\Re &=&	\set{	(\newsp{\widetilde{m_1}}{P \Par \ntrigger{t}{V_1}}\ ,\ 
+									\newsp{\widetilde{m_2}}{Q \Par \ntrigger{t}{V_2}}) \setbar\\
 						&&
 							\qquad \qquad \qquad		\horel{\Gamma}{\Delta_3}{\newsp{\widetilde{m_1}}{P \Par \htrigger{t}{V_1}  } }
 									{\hwb}
@@ -1001,33 +1007,34 @@ We analyze each of the three parts:
 				We concentrate on the cases of an input action on fresh name $t$; 
 				other cases are similar to previous ones.
 				\begin{enumerate}
-					\item	Let $\omapchar{\btinp{U} \tinact} = \abs{z}{ \binp{z}{y} (\bout{t'}{z} \inact \Par \appl{y}{n})}$:
+					\item	Value $V_1$ is higher-order which implies that there exists $U$
+							such that $\omapchar{\btinp{U} \tinact} = \abs{z}{ \binp{z}{y} (\bout{t'}{z} \inact \Par \appl{y}{n})}$:
 							\[
 								\mhorel{\Gamma}{\Delta_1}{\newsp{\widetilde{m_1}}{P \Par \ntrigger{t}{V_1}  } }
 								{\hby{\bactinp{t}{\omapchar{\btinp{U} \tinact}}}}
-								{\Delta_1'}{}{\newsp{\widetilde{m_1}'}{P \Par \newsp{s}{ \appl{(\abs{z}{ \binp{z}{y} (\bout{t'}{z} \inact \Par \appl{y}{n})})}{s} \Par \bout{\dual{s}}{V_1} \inact}}}
+								{\Delta_1'}{}{\newsp{\widetilde{m_1}'}{P \Par \newsp{s}{ \appl{(\abs{z}{ \binp{z}{y} (\bout{t'}{z} \inact \Par (\appl{y}{n}))})}{s} \Par \bout{\dual{s}}{V_1} \inact}}}
 							\]
 							Furthermore we can see that
 							\[
 								\horel{\Gamma}{\Delta_2}{\newsp{\widetilde{m_2}}{Q \Par \ntrigger{t}{V_2}  } }
 								{\Hby{\bactinp{t}{\omapchar{\btinp{U} \tinact}}}}
-								{\Delta_2'}{\newsp{\widetilde{m_2}'}{Q' \Par \appl{V_2}{n} \Par \newsp{s}{\bout{t'}{s} \inact}}}
+								{\Delta_2'}{\newsp{\widetilde{m_2}'}{Q' \Par (\appl{V_2}{n}) \Par \newsp{s}{\bout{t'}{s} \inact}}}
 							\]
 %							\JP{Why $Q$ doesn't move to some $Q'$ in the above weak transition?}
 							and
 							\[
-								\horel{\Gamma}{\Delta_1'}{\newsp{\widetilde{m_1}'}{P \Par \newsp{s}{\binp{s}{y} (\appl{y}{n}) \Par \bout{\dual{s}}{V_1} \inact}}}
-								{\hby{\dtau}}
-								{\Delta_1'}{\newsp{\widetilde{m_1}'}{P \Par \appl{V_1}{n}\Par \newsp{s}{\bout{t'}{s} \inact}}}
+								\mhorel{\Gamma}{\Delta_1'}{\newsp{\widetilde{m_1}'}{P \Par \newsp{s}{ \appl{(\abs{z}{ \binp{z}{y} (\bout{t'}{z} \inact \Par (\appl{y}{n}))})}{s} \Par \bout{\dual{s}}{V_1} \inact}}}
+								{\hby{\dtau} \hby{\dtau}}
+								{\Delta_1'}{}{\newsp{\widetilde{m_1}'}{P \Par (\appl{V_1}{n}) \Par \newsp{s}{\bout{t'}{s} \inact}}}
 							\]
 							We need to show that
 							\[
-								\horel{\Gamma}{\Delta_1'}{\newsp{\widetilde{m_1}'}{P \Par \appl{V_1}{n} \Par \newsp{s}{\bout{t'}{s} \inact}}}
+								\horel{\Gamma}{\Delta_1'}{\newsp{\widetilde{m_1}'}{P \Par (\appl{V_1}{n}) \Par \newsp{s}{\bout{t'}{s} \inact}}}
 								{\hwb}
-								{\Delta_2'}{\newsp{\widetilde{m_2}'}{Q \Par \appl{V_2}{n} \Par \newsp{s}{\bout{t'}{s} \inact}}}
+								{\Delta_2'}{\newsp{\widetilde{m_2}'}{Q \Par (\appl{V_2}{n}) \Par \newsp{s}{\bout{t'}{s} \inact}}}
 							\]
 							This is done by considering the requirement of $\Re$.
-							Let $\omapchar{U} = n$:
+							We know that $\omapchar{U} = n$:
 							\[
 								\mhorel{\Gamma}{\Delta_3}{\newsp{\widetilde{m_1}}{P \Par \htrigger{t}{V_1}  } }
 								{\hby{\bactinp{t}{n}}}
@@ -1037,37 +1044,38 @@ We analyze each of the three parts:
 							\[
 								\horel{\Gamma}{\Delta_4}{\newsp{\widetilde{m_2}}{Q \Par \htrigger{t}{V_2}  } }
 								{\Hby{\bactinp{t}{n}}}
-								{\Delta_4'}{\newsp{\widetilde{m_2}'}{Q' \Par \appl{V_2}{n}}}
+								{\Delta_4'}{\newsp{\widetilde{m_2}'}{Q' \Par (\appl{V_2}{n})}}
 							\]
 %							\JP{Why $Q$ doesn't move to some $Q'$ in the above weak transition?}
 							with
 							\[
 								\horel{\Gamma}{\Delta_3'}{\newsp{\widetilde{m_1}'}{P \Par \newsp{s}{\binp{s}{y}{(\appl{y}{n})} \Par \bout{\dual{s}}{V_1} \inact}}}
-								{\Hby{\dtau}}
-								{\Delta_3'}{\newsp{\widetilde{m_1}'}{P \Par \appl{V_1}{n}}}
+								{\hby{\dtau}}
+								{\Delta_3'}{\newsp{\widetilde{m_1}'}{P \Par (\appl{V_1}{n})}}
 							\]
 							and
 							\[
-								\horel{\Gamma}{\Delta_3'}{\newsp{\widetilde{m_1}'}{P \Par \appl{V_1}{n}}}
+								\horel{\Gamma}{\Delta_3'}{\newsp{\widetilde{m_1}'}{P \Par (\appl{V_1}{n})}}
 								{\hwb}
-								{\Delta_4'}{\newsp{\widetilde{m_2}'}{Q' \Par \appl{V_2}{n}}}
+								{\Delta_4'}{\newsp{\widetilde{m_2}'}{Q' \Par (\appl{V_2}{n})}}
 							\]
 							which implies by Part 1 of this lemma
 							\[
-								\horel{\Gamma}{\Delta_3'}{\newsp{\widetilde{m_1}'}{P \Par \appl{V_1}{n} \Par \newsp{s}{\bout{t'}{s} \inact}}}
+								\horel{\Gamma}{\Delta_3'}{\newsp{\widetilde{m_1}'}{P \Par (\appl{V_1}{n}) \Par \newsp{s}{\bout{t'}{s} \inact}}}
 								{\hwb}
-								{\Delta_4'}{\newsp{\widetilde{m_2}'}{Q' \Par \appl{V_2}{n} \Par \newsp{s}{\bout{t'}{s} \inact}}}
+								{\Delta_4'}{\newsp{\widetilde{m_2}'}{Q' \Par (\appl{V_2}{n}) \Par \newsp{s}{\bout{t'}{s} \inact}}}
 							\]
 							as required.
 
-						\item	Let $\omapchar{\btinp{U} \tinact} = \abs{w}{ \binp{w}{y} ( \bout{t'}{w} \inact \Par \appl{\abs{z}{\mapchar{U'}{z}}}{y} ) } $
+						\item	Value $V_1$ is first-order which implies that there exists $U$
+								such that $\omapchar{\btinp{U} \tinact} = \abs{w}{ \binp{w}{y} ( \bout{t'}{w} \inact \Par \appl{\abs{z}{\mapchar{U'}{z}}}{y} ) } $
 								and
-							\[	
-								\mhorel{\Gamma}{\Delta_3}{\newsp{\widetilde{m_1}}{P \Par \htrigger{t}{V_1}  } }
-								{\hby{\omapchar{\btinp{U}\tinact}}}
-								{\Delta_3'}{}
-								{\newsp{\widetilde{m_1}'}{P \Par \newsp{s}{\appl{\abs{w}{ \binp{w}{y} ( \bout{t'}{w} \inact \Par \appl{\abs{z}{\mapchar{U'}{z}}}{y} ) }}{s} \Par \bout{\dual{s}}{V_1} \inact}}}
-							\]
+								\[	
+									\mhorel{\Gamma}{\Delta_3}{\newsp{\widetilde{m_1}}{P \Par \htrigger{t}{V_1}  } }
+									{\hby{\omapchar{\btinp{U}\tinact}}}
+									{\Delta_3'}{}
+									{\newsp{\widetilde{m_1}'}{P \Par \newsp{s}{\appl{\abs{w}{ \binp{w}{y} ( \bout{t'}{w} \inact \Par \appl{\abs{z}{\mapchar{U'}{z}}}{y} ) }}{s} \Par \bout{\dual{s}}{V_1} \inact}}}
+								\]
 							This case follows a similar proof structure as the previous case.
 				\end{enumerate}
 				This concludes the proof of Part 3. 
@@ -1078,8 +1086,8 @@ We analyze each of the three parts:
 
 %By the combination of the lemmas, we can obtain the theorem.
 
-\noi
-We now proceed to state and prove these lemmas, together with some auxiliary results.
+%\noi
+%We now proceed to state and prove these lemmas, together with some auxiliary results.
 %\thmref{app:thm:coincidence} (Page~\pageref{app:thm:coincidence}) summarises the coincidence result.
 
 The next lemma states the equivalence between the characteristic
