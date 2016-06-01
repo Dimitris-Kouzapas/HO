@@ -35,7 +35,7 @@ The case of recursive session types requires the following two auxiliary definit
 \end{lemma}
 
 \begin{proof}
-	The proof is a straightforward induction on the syntax of $S$. \qed
+	A straightforward induction on the syntax of $S$. \qed
 \end{proof}
 
 We state session type prefix deletion relation:
@@ -432,7 +432,7 @@ Some notions needed to prove this auxiliary result are presented next.
 %	The Knaster-Tarski theorem ensures that the largest higher-order bisimulation exists;
 %	it is called \emph{higher-order bisimilarity} and is denoted by $\hwb$.
 %\end{definition}
-In the following we sometimes use the polyadic abstractions 
+In the following we sometimes use polyadic abstractions 
 (denoted $\abs{\tilde{x}}{P}$)
 and polyadic name passing 
 (denoted $\bout{u}{\tilde{V}}{P}$   $\binp{u}{\tilde{x}}{P}$)
@@ -450,7 +450,7 @@ as shorthand notations.
 %    TAU - INNERTNESS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-We now prove \propref {lem:tau_inert} as stated in Page~\pageref{lem:tau_inert}:
+We now prove \propref {lem:tau_inert}, as stated in Page~\pageref{lem:tau_inert}:
 
 
 \begin{proposition}[$\tau$-inertness]
@@ -469,94 +469,108 @@ We now prove \propref {lem:tau_inert} as stated in Page~\pageref{lem:tau_inert}:
 %which is confusing. In general: I would have done this proof by coinduction, constructing a closure containing $(P, P')$.}
 
 \begin{proof}
-\JP{I am pretty sure that this holds, but why do we have a proof by induction? Strictly speaking, we need a co-inductive proof in which we show that the relation 
+We only prove Part 1; the proof for Part 2 follows straightforwardly.
+The proof proceeds by showing that the relation 
 $$
 \Re = \{ (P,P') ~|~ \horel{\Gamma}{\Delta}{P}{\hby{\dtau}}{\Delta'}{P'}\}
 $$
-is a higher-order bisimulation. Such a coinductive proof would use the current analysis.
-}
-	\noi 
-	We only prove Part 1; the proof for Part 2 follows straightforwardly.
-	The proof is by induction on the structure of $\by{\tau}$
-	which coincides with the reduction $\red$.
+is a higher-order bisimulation. 
 
-	\noi Basic step: 
-	\begin{enumerate}
-		\item %Case: $P = \appl{(\abs{x}{P})}{n}$:
-	%
-		\[
-			\horel{\Gamma}{\Delta}{\appl{(\abs{x}{P})}{n}}{\hby{\btau}}{\Delta'}{P \subst{n}{x}}
-		\]
-	%
-		\noi Bisimulation requirements hold because there is no other transition to observe than ${\hby{\btau}}$.
+Suppose first that 
+$\horel{\Gamma}{\Delta}{P}{\hby{\ell}}{\Delta'}{P''}$, for some $P''$; we have to show that $P'$ can produce an appropriate matching action.
+There are two main cases: $\ell \neq \tau$ (a visible action) and  $\ell = \tau$ (an unobservable, possibly deterministic action). 
+The first case follows easily by typing conditions and type soundness, which ensure that $P'$ has the same potential as $P$ for performing visible actions. 
+The second case can be divided into two sub-cases: first, if $\tau = \dtau$ then $P' = P''$ and the thesis trivially follows; second, if $\tau \neq \dtau$ (i.e., $P$ has the possibility of performing both $\dtau$ and some other $\tau$) 
+then either $P'$ has the same $\tau$ or $P'$ does not have it, because $\dtau$ excluded the occurrence of $\tau$. 
+We thesis follows by noticing that, in the first case, $P'$ can match the move from $P$; the second case cannot occur because of the definition of deterministic transitions. 
 
-		\item %Case: $P = \bout{s}{V} P_1 \Par \binp{\dual{s}}{x} P_2$:
-	%
-		\[
-			\horel{\Gamma}{\Delta}{\bout{s}{V} P_1 \Par \binp{\dual{s}}{x} P_2}{\hby{\stau}}{\Delta'}{P_1 \Par P_2}
-		\]
-	%
-		\noi The proof follows from the fact that we can only observe a $\tau$
-		action on typed process
-		$\Gamma; \emptyset; \Delta \proves P \hastype \Proc$.
-		Actions $\bactout{s}{V}$ and $\bactinp{\dual{s}}{V}$
-		are forbidden by the LTS for typed environments;
-		\dk{this is because
-		$s: \btout{U} S_1 \cat \dual{s}: \btinp{U} S_2 \in \Delta$ and
-		Rule \eltsrule{SSnd} (resp., \eltsrule{SRv}) cannot be applied
-		in order to observe action $(\Gamma; \es; \Delta) \by{\bactout{s}{V}} (\Gamma; \es; \Delta')$
-		(resp., action $(\Gamma; \es; \Delta) \by{\bactinp{\dual{s}}{V}} (\Gamma; \es; \Delta'')$)
-		because of the requirement $\dual{s} \notin \dom{\Delta}$ (resp., $s \notin \dom{\Delta}$).
-		}
-
-		\noi It is easy to conclude then that $\horel{\Gamma}{\Delta}{P}{\hwb}{\Delta'}{P'}$.
-
-		\item %Case:
-			\[
-				\horel{\Gamma}{\Delta}{\bsel{s}{l_k} P \Par \bbra{\dual{s}}{l_i: P_i}_{i \in I}}{\hby{\stau}}{\Delta'}{P \Par P_k}
-			\]
-
-		\noi Similar arguments as the previous case.
-	\end{enumerate}
-	
-	\noi Induction hypothesis:
-
-	\noi If $P_1 \red P_2$ then $\horel{\Gamma_1}{\Delta_1}{P_1}{\hwb}{\Delta_2}{P_2}$.
-	\noi Induction Step:
-	\begin{enumerate}
-		\item %Case: $P = \news{s} P_1$
-	%
-		\[
-			\horel{\Gamma}{\Delta}{\news{s}{P_1}}{\hby{\stau}}{\Delta'}{\news{s} P_2}
-		\]
-	%
-		\noi From the induction hypothesis and the fact that bisimulation is a congruence
-		we infer that $\horel{\Gamma}{\Delta}{P}{\hwb}{\Delta'}{P'}$.
-
-		\item  %Case: $P = P_1 \Par P_3$
-	%
-		\[
-			\horel{\Gamma}{\Delta}{P_1 \Par P_3}{\hby{\stau}}{\Delta'}{P_2 \Par P_3}
-		\]
-	%
-		\noi From the induction hypothesis and the fact that bisimulation is a congruence
-		we infer that $\horel{\Gamma}{\Delta}{P}{\hwb}{\Delta'}{P'}$.
-
-		\item   %Case:
-			\[
-				P \scong P_1 \text{ and }\horel{\Gamma}{\Delta}{P_1}{\hby{\stau}}{\Delta'}{P'}
-			\]
+Suppose now  that 
+$\horel{\Gamma}{\Delta}{P'}{\hby{\ell}}{\Delta'}{P''}$, for some $P''$.
+This case follows immediately by noticing that $P$ can always match action $\ell$ by performing the deterministic action $\dtau$ first, i.e., we can always have
+$\horel{\Gamma}{\Delta}{P}{\hby{\dtau}\hby{\ell}}{\Delta'}{P''}$.
+This concludes the proof.
 %
-		From the induction hypothesis and the fact that bisimulation is a congruence \dk{(\thmref{the:coincidence})}
-		and structural congruence preserves $\hwb$
-		we infer that $\horel{\Gamma}{\Delta}{P}{\hwb}{\Delta'}{P'}$.
-	\end{enumerate}
-%	The proof for part two is an induction on the length of $\red^*$.
-%	The basic step is trivial and the inductive step
-%	deploys part 1 of this lemma and the fact that bisimulation is
-%	transitive to conclude.
-%	We can now conclude that
-%	$P \wbc P'$ because $P \wbc P''$ and $P'' \wbc P'$.
+%OLD PROOF:
+%	The proof is by induction on the structure of $\by{\tau}$
+%	which coincides with the reduction $\red$.
+%
+%	\noi Basic step: 
+%	\begin{enumerate}
+%		\item %Case: $P = \appl{(\abs{x}{P})}{n}$:
+%	%
+%		\[
+%			\horel{\Gamma}{\Delta}{\appl{(\abs{x}{P})}{n}}{\hby{\btau}}{\Delta'}{P \subst{n}{x}}
+%		\]
+%	%
+%		\noi Bisimulation requirements hold because there is no other transition to observe than ${\hby{\btau}}$.
+%
+%		\item %Case: $P = \bout{s}{V} P_1 \Par \binp{\dual{s}}{x} P_2$:
+%	%
+%		\[
+%			\horel{\Gamma}{\Delta}{\bout{s}{V} P_1 \Par \binp{\dual{s}}{x} P_2}{\hby{\stau}}{\Delta'}{P_1 \Par P_2}
+%		\]
+%	%
+%		\noi The proof follows from the fact that we can only observe a $\tau$
+%		action on typed process
+%		$\Gamma; \emptyset; \Delta \proves P \hastype \Proc$.
+%		Actions $\bactout{s}{V}$ and $\bactinp{\dual{s}}{V}$
+%		are forbidden by the LTS for typed environments;
+%		\dk{this is because
+%		$s: \btout{U} S_1 \cat \dual{s}: \btinp{U} S_2 \in \Delta$ and
+%		Rule \eltsrule{SSnd} (resp., \eltsrule{SRv}) cannot be applied
+%		in order to observe action $(\Gamma; \es; \Delta) \by{\bactout{s}{V}} (\Gamma; \es; \Delta')$
+%		(resp., action $(\Gamma; \es; \Delta) \by{\bactinp{\dual{s}}{V}} (\Gamma; \es; \Delta'')$)
+%		because of the requirement $\dual{s} \notin \dom{\Delta}$ (resp., $s \notin \dom{\Delta}$).
+%		}
+%
+%		\noi It is easy to conclude then that $\horel{\Gamma}{\Delta}{P}{\hwb}{\Delta'}{P'}$.
+%
+%		\item %Case:
+%			\[
+%				\horel{\Gamma}{\Delta}{\bsel{s}{l_k} P \Par \bbra{\dual{s}}{l_i: P_i}_{i \in I}}{\hby{\stau}}{\Delta'}{P \Par P_k}
+%			\]
+%
+%		\noi Similar arguments as the previous case.
+%	\end{enumerate}
+%	
+%	\noi Induction hypothesis:
+%
+%	\noi If $P_1 \red P_2$ then $\horel{\Gamma_1}{\Delta_1}{P_1}{\hwb}{\Delta_2}{P_2}$.
+%	\noi Induction Step:
+%	\begin{enumerate}
+%		\item %Case: $P = \news{s} P_1$
+%	%
+%		\[
+%			\horel{\Gamma}{\Delta}{\news{s}{P_1}}{\hby{\stau}}{\Delta'}{\news{s} P_2}
+%		\]
+%	%
+%		\noi From the induction hypothesis and the fact that bisimulation is a congruence
+%		we infer that $\horel{\Gamma}{\Delta}{P}{\hwb}{\Delta'}{P'}$.
+%
+%		\item  %Case: $P = P_1 \Par P_3$
+%	%
+%		\[
+%			\horel{\Gamma}{\Delta}{P_1 \Par P_3}{\hby{\stau}}{\Delta'}{P_2 \Par P_3}
+%		\]
+%	%
+%		\noi From the induction hypothesis and the fact that bisimulation is a congruence
+%		we infer that $\horel{\Gamma}{\Delta}{P}{\hwb}{\Delta'}{P'}$.
+%
+%		\item   %Case:
+%			\[
+%				P \scong P_1 \text{ and }\horel{\Gamma}{\Delta}{P_1}{\hby{\stau}}{\Delta'}{P'}
+%			\]
+%%
+%		From the induction hypothesis and the fact that bisimulation is a congruence \dk{(\thmref{the:coincidence})}
+%		and structural congruence preserves $\hwb$
+%		we infer that $\horel{\Gamma}{\Delta}{P}{\hwb}{\Delta'}{P'}$.
+%	\end{enumerate}
+%%	The proof for part two is an induction on the length of $\red^*$.
+%%	The basic step is trivial and the inductive step
+%%	deploys part 1 of this lemma and the fact that bisimulation is
+%%	transitive to conclude.
+%%	We can now conclude that
+%%	$P \wbc P'$ because $P \wbc P''$ and $P'' \wbc P'$.
 	\qed
 \end{proof}
 
