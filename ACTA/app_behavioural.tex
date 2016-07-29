@@ -666,7 +666,7 @@ First we introduce notation $\mact{\ell}$, used throughout
 the rest of this section to represent matching actions.
 
 \begin{definition}
-Let $\ell$ be an action label (cf. \secref{ss:lts}). We define the action $\mact{l}$ as 
+Let $\ell$ be an action label (cf. \secref{ss:lts}). We define the action $\mact{\ell}$ as 
 	\[
 		\mact{\ell} =
 		\left\{
@@ -701,12 +701,12 @@ Let $P$ and $Q$ be processes.
 					{\hwb}
 					{\Delta_2}{\newsp{\widetilde{m_2}}{Q \Par \newsp{s}{\bout{t}{s} \inact}  } }
 				\]
-				if and only if
-				$
+				if and only if%,  for some $\Delta_3, \Delta_4$
+				\[
 					\horel{\Gamma}{\Delta_3}{\news{\widetilde{m_1}}P  }
 					{\hwb}
 					{\Delta_4}{\news{\widetilde{m_2}}Q}
-				$ for some $\Delta_3, \Delta_4$.
+				\]
 
 		\item	Let $t$ a fresh name, $\Delta_1 = \Delta_3 \cat t: \btout{\tinact} \tinact$ and
 				$\Delta_2 = \Delta_4 \cat t: \btout{\tinact} \tinact$. Then:
@@ -715,12 +715,12 @@ Let $P$ and $Q$ be processes.
 					{\fwb}
 					{\Delta_2}{\newsp{\widetilde{m_2}}{Q \Par \newsp{s}{\bout{t}{s} \inact}  } }
 				\]
-				if and only if
-				$
+				if and only if%, for some $\Delta_3, \Delta_4$
+				\[
 					\horel{\Gamma}{\Delta_3}{\news{\widetilde{m_1}}P}
 					{\fwb}
 					{\Delta_4}{\news{\widetilde{m_2}}Q}
-				$ for some $\Delta_3, \Delta_4$.
+				\]
 
 		\item	Let $t$ be a fresh name. Then
 				\[
@@ -906,7 +906,7 @@ We analyze each of the three parts:
 							\]
 							The proof is similar to case (a) of Part 1 of this lemma.
 					\item	An input action of the form $\bactinp{t}{n}$ along fresh name $t$.
-							In this case, we have that there exist $\Delta'_1$ and $U$ such that $\omapchar{U} = n$:
+							Let $U$ such that $\omapchar{U} = n$ and $V_1$ a higher-order value.  There exist $\Delta'_1$ such that:
 							$$
 							\begin{array}{rcl}
 							\Gamma; \Delta_1 \proves \newsp{\widetilde{m_1}}{P \Par \htrigger{t}{V_1}  } & \hby{\bactinp{t}{n}}& 
@@ -940,16 +940,16 @@ We analyze each of the three parts:
 							\]
 							This is done by considering the requirements of $\Re$.
 							Since $\omapchar{U} = n$, we have that
-							$\omapchar{\btinp{U} \tinact} = \abs{z}{ \binp{z}{y} ( \bout{t'}{z} \inact \Par (\appl{y}{n}) ) } $:
+							$\omapchar{\shot{\btinp{U} \tinact}} = \abs{z}{ \binp{z}{y} ( \bout{t'}{z} \inact \Par (\appl{y}{n}) ) } $:
 							\[
 								\mhorel{\Gamma}{\Delta_1}{\newsp{\widetilde{m_1}}{P \Par \ntrigger{t}{V_1}  } }
-								{\hby{\bactinp{t}{\omapchar{\btinp{U} \tinact}}}}
+								{\hby{\bactinp{t}{\omapchar{\shot{\btinp{U} \tinact}}}}}
 								{\Delta_1'}{}{\newsp{\widetilde{m_1}'}{P \Par \newsp{s}{\appl{\abs{z}{ \binp{z}{y} ( \bout{t'}{z} \inact \Par (\appl{y}{n}) ) }}{s} \Par \bout{\dual{s}}{V_1} \inact}}}
 							\]
 							Furthermore, we can see that
 							\[
-	\horel{\Gamma}{\Delta_2}{\newsp{\widetilde{m_2}}{Q \Par \ntrigger{t}{V_2}  } }
-								{\Hby{\bactinp{t}{\omapchar{\btinp{U} \tinact}}}}
+								\horel{\Gamma}{\Delta_2}{\newsp{\widetilde{m_2}}{Q \Par \ntrigger{t}{V_2}  } }
+								{\Hby{\bactinp{t}{\omapchar{\shot{\btinp{U} \tinact}}}}}
 								{\Delta_2'}{\newsp{\widetilde{m_2}'}{Q' \Par (\appl{V_2}{n}) \Par \newsp{s}{\bout{t'}{s} \inact}}}
 							\]
 %							\JP{Why $Q$ doesn't move to some $Q'$ in the above weak transition?} 
@@ -959,7 +959,7 @@ We analyze each of the three parts:
 								{\hby{\dtau} \hby{\dtau}}
 								{\Delta_1'}{}{\newsp{\widetilde{m_1}'}{P \Par (\appl{V_1}{n}) \Par \newsp{s}{\bout{t'}{s} \inact}}}
 							\end{eqnarray*}
-							and
+							to imply from the up-to determinate (\lemref{lem:up_to_deterministic_transition}) that
 							\[
 								\horel{\Gamma}{\Delta_1'}{\newsp{\widetilde{m_1}'}{P \Par (\appl{V_1}{n}) \Par \newsp{s}{\bout{t'}{s} \inact}}}
 								{\hwb}
@@ -974,7 +974,8 @@ We analyze each of the three parts:
 							as required.
 
 						\item	An action of the form $\bactinp{t}{\abs{z}{\mapchar{U'}{z}}}$ along fresh name $t$.
-								This means that there exist $U$ and  $\Delta_1'$ such that $\omapchar{U} = \abs{z}{\mapchar{U'}{z}}$ and
+								Let $U$ such that $\omapchar{U} = \abs{z}{\mapchar{U'}{z}}$.
+								There exist $U$ and  $\Delta_1'$ such that 
 							\[
 							\begin{array}{rcl}
 							& & \Gamma; \Delta_1 \proves \newsp{\widetilde{m_1}}{P \Par \htrigger{t}{V_1}  } \\
@@ -1004,17 +1005,17 @@ We analyze each of the three parts:
 							\]
 							This is done by considering the requirements of $\Re$.
 							From the fact that $\omapchar{U} = \abs{z}{\mapchar{U'}{z}}$ we obtain that
-							$\omapchar{\btinp{U} \tinact} = \abs{w}{ \binp{w}{y} ( \bout{t'}{w} \inact \Par \appl{(\abs{z}{\mapchar{U'}{z}})}{y} ) }$
+							$\omapchar{\shot{\btinp{U} \tinact}} = \abs{w}{ \binp{w}{y} ( \bout{t'}{w} \inact \Par \appl{(\abs{z}{\mapchar{U'}{z}})}{y} ) }$
 							and
 							\[
 								\mhorel{\Gamma}{\Delta_1}{\newsp{\widetilde{m_1}}{P \Par \ntrigger{t}{V_1}  } }
-								{\hby{\bactinp{t}{\omapchar{\btinp{U} \tinact}}}}
+								{\hby{\bactinp{t}{\omapchar{\shot{\btinp{U} \tinact}}}}}
 								{\Delta_1'}{}{\newsp{\widetilde{m_1}'}{P \Par \newsp{s}{\appl{(\abs{w}{ \binp{w}{y} ( \bout{t'}{w} \inact \Par \appl{(\abs{z}{\mapchar{U'}{z}})}{y} ) })}{s} \Par \bout{\dual{s}}{V_1} \inact}}}
 							\]
-							Furthermore we can see that for some $\Delta'_2$
+							Furthermore, we can see that for some $\Delta'_2$
 							\[
 								\horel{\Gamma}{\Delta_2}{\newsp{\widetilde{m_2}}{Q \Par \ntrigger{t}{V_2}  } }
-								{\Hby{\bactinp{t}{\omapchar{\btinp{U} \tinact}}}}
+								{\Hby{\bactinp{t}{\shot{\omapchar{\btinp{U} \tinact}}}}}
 								{\Delta_2'}{\newsp{\widetilde{m_2}'}{Q' \Par \appl{(\abs{z}{\mapchar{U'}{z}})}{V_2} \Par \newsp{s}{\bout{t'}{s} \inact}}}
 							\]
 %							\JP{Why $Q$ doesn't move to some $Q'$ in the above weak transition?}
@@ -1024,7 +1025,7 @@ We analyze each of the three parts:
 								{\hby{\dtau} \hby{\dtau}}
 								{\Delta_1'}{}{\newsp{\widetilde{m_1}'}{P \Par \appl{(\abs{z}{\mapchar{U'}{z}})}{V_1} \Par \newsp{s}{\bout{t'}{s} \inact}}}
 							\]
-							and
+							to imply from the up-to determinate (\lemref{lem:up_to_deterministic_transition}) that
 							\[
 							\begin{array}{c}
 								\horel{\Gamma}{\Delta_1'}{\newsp{\widetilde{m_1}'}{P \Par \appl{(\abs{z}{\mapchar{U'}{z}})}{V_1} \Par \newsp{s}{\bout{t'}{s} \inact}}}
@@ -1402,8 +1403,8 @@ $\newsp{\widetilde{m_2}}{Q \Par \ntrigger{t}{V_2}}$.
 						$\ntrigger{t}{V_1}$ moves autonomously, i.e., for some $\Delta_3$ we have:
 						\[
 							\horel{\Gamma}{\Delta_1'}{\newsp{\widetilde{m_1}}{P \Par \ntrigger{t}{V_1}}}
-							{\hby{\bactinp{t}{\omapchar{\btinp{U} \tinact}}}}
-							{\Delta_3}{\newsp{\widetilde{m_1}}{P \Par \newsp{s}{ \appl{\omapchar{\btinp{U} \tinact}}{s} \Par \bout{\dual{s}}{V_1} \inact}}}
+							{\hby{\bactinp{t}{\omapchar{\shot{\btinp{U} \tinact}}}}}
+							{\Delta_3}{\newsp{\widetilde{m_1}}{P \Par \newsp{s}{ \appl{\omapchar{\shot{\btinp{U} \tinact}}}{s} \Par \bout{\dual{s}}{V_1} \inact}}}
 						\]
 						%
 							Following requirements of $\Re$ and the freshness of $t$
@@ -1685,13 +1686,13 @@ processes in terms of process equivalence.
 				{\hwb}
 				{\Delta_2}{\newsp{\widetilde{m_2}}{Q \Par \appl{\omapchar{U}}{n_2} }} %\appl{\abs{x}{\mapchar{U}{x}}{n_1}} }}
 			$
-			then whenever
+			then for all $\ell$ whenever
 			\[
 				\horel{\Gamma}{\Delta_1}{\newsp{\widetilde{m_1}}{P \Par \appl{\omapchar{U}}{n_1} }} %\appl{\abs{x}{\mapchar{U}{x}}{n_1}} }}
 				{\hby{\ell}}
 				{\Delta_1'}{\newsp{\widetilde{m_1}'}{P' \Par \appl{(\trvalx{t})}{n_1} }}
 			\]
-			implies that there exist $\Delta_2'$, $\newsp{\widetilde{m_2}'}{Q' \Par \appl{(\trvalx{t})}{n_2} }$ such that
+			then there exist $\Delta_2'$, $\newsp{\widetilde{m_2}'}{Q' \Par \appl{(\trvalx{t})}{n_2} }$ such that
 			\[
 				\horel{\Gamma}{\Delta_2}{\newsp{\widetilde{m_1}}{Q \Par \appl{\omapchar{U}}{n_2} }} %\appl{\abs{x}{\mapchar{U}{x}}{n_2}} }}
 				{\Hby{\hat{\ell_2}}}
@@ -1919,7 +1920,7 @@ We analyse each part separately:
 							\end{eqnarray}
 							We distinguish two cases:
 							\begin{itemize}
-								\item	$\subj{\ell_1'} \not= n_1$. This case is similar with case 1 of this proof.
+								\item	$\subj{\ell_1'} \not= n_1$. This case is similar to case 1 of this proof.
 								\item	$\subj{\ell_1'} = n_1$.
 										First observe that
 										\[
@@ -2039,7 +2040,7 @@ we give an intermediate result.
 \begin{lemma}[Trigger Substitution]
 	\dkmargin{Please Read \\ \newc{JP: I have read, not yet convinced}.}
 	\label{lem:trigger_subst}
-	Let $P$ and $Q$ be processes. Also, let $t_i, i \in I$ be a fresh name. If
+	Let $P$ and $Q$ be processes. Also, let for all $i \in I, t_i$ is a fresh name. If
 	\[
 		\horel{\Gamma}{\Delta_1}{\newsp{\widetilde{m_1}}{P \Par \prod_{i \in I} \appl{(\trvalx{t_i})}{n_i} }}
 		{\hwb}
@@ -2054,9 +2055,10 @@ we give an intermediate result.
 \end{lemma}
 
 \begin{proof}
-	We prove the result up-to the deterministic application
-	transition that substitutes names $n_i$ and $m_i$ in
-	process $R$, respectively.
+	We prove the result up-to the application
+	%transition %that results in the substitution
+	of names $n_i$ and $m_i$
+	to process $R$, respectively.
 	Let $\Re$ be the relation
 	\begin{eqnarray*}
 		\Re	&=&	\set{	(\horel{\Gamma}{\Delta_1'}{\newsp{\widetilde{m_1}}{P \Par R \subst{\widetilde{n}}{\widetilde{x}} }}
@@ -2136,7 +2138,7 @@ we give an intermediate result.
 				for some $\Delta_1''$.
 				We identify three sub-cases:
 				\begin{enumerate}[i.]
-					\item	$\subj{\ell} \not= n_i$. The case is similar as above.
+					\item	$\subj{\ell} \not= n_i$, i.e.~ the subject of $\ell$ is not any of the names $\tilde{n}$. The case is similar as above.
 
 					\item	$\subj{\ell} = n_k$ and $n_k = m_k$.
 							From the definition of $\Re$ we get that
@@ -2428,7 +2430,7 @@ substitution, we can generalise for any value substitution.
 	Consider the typed relation (for readability, we omit type information):
 	\begin{eqnarray*}
 		\Re	&=&	\set{
-					(\newsp{\widetilde{m_1}}{P_1 \subst{{\abs{x}{R}}}{z}}, \newsp{\widetilde{m_2}}{P_2 \subst{{\abs{x}{R}}}{z}})
+					(\Gamma; \Delta_1' \proves \newsp{\widetilde{m_1}}{P_1 \subst{{\abs{x}{R}}}{z}}, \Delta_2' \proves \newsp{\widetilde{m_2}}{P_2 \subst{{\abs{x}{R}}}{z}})
 					\setbar\\
 			&&		\qquad \horel{\Gamma}{\Delta_1}{\newsp{\widetilde{m_1}}{P_1 \subst{\trvalx{t}}{z} }}
 					{\hwb}
@@ -2601,7 +2603,7 @@ substitution, we can generalise for any value substitution.
 								\end{array}
 								\label{lem:proc_subst5}
 							\end{eqnarray}
-							We showed that if \eqref{lem:proc_subst0} then \eqref{lem:proc_subst5} and \eqref{lem:proc_subst4}
+							We showed that if \eqref{lem:proc_subst1} then \eqref{lem:proc_subst5} and \eqref{lem:proc_subst4}
 							as required to show that $\Re$ is a higher-order bisimulation.							\qed
 				\end{itemize}
 	\end{enumerate}
@@ -2851,9 +2853,14 @@ with $\dual{n} \notin \Delta_1$.
    Therefore, we infer that 
 $		\Gamma; \emptyset; \Delta_2 \proves P_2 \Barb{n}$, as desired.
 
-	\item {\bf Congruence:} We have to show that  $\wbc$
-	is preserved under any context. The most interesting context case is parallel composition; 
-we construct an  typed relation defined as 
+	\item {\bf Congruence:}
+	We have to show that  $\wbc$
+	is preserved under any context.
+	The most interesting context case is parallel composition.
+	Input congruence, which is the case that generates substitution,
+	is straightforward, since we are dealing with closed terms.
+
+	To show the congruence of the paralllel composition we construct an  typed relation defined as 
 	\[
 	\begin{array}{rcl}
 		\mathcal{S} &=&	\set{
@@ -3413,9 +3420,18 @@ We require the following auxiliary result:
 				\[
 					\newsp{\widetilde{m_1}}{Q \Par \bout{\suc}{\dual{n}, V_2} \inact}
 					\red^{*}
-					\newsp{\widetilde{m_1}}{Q' \Par \bout{\suc}{\dual{n}, V_2} \inact}.
+					\newsp{\widetilde{m_1}}{Q' \Par \bout{\suc}{\dual{n}, V_2} \inact}
 				\]
-				Therefore, 			$Q \red^{*} Q'$, as required.
+				Therefore, $Q \red^{*} Q'$. Furthermore,
+				\[
+					\newsp{\widetilde{m_1}}{P' \Par \bout{\suc}{\dual{n}, V_1} \inact} \cong 
+					\newsp{\widetilde{m_1}}{Q' \Par \bout{\suc}{\dual{n}, V_2} \inact}
+				\]
+				that implies
+				\[
+					\Gamma; \Delta_1'' \proves P'\ S\ \Delta_2'' \proves  Q'
+				\]
+				as required.
 
 	\item	{\bf Barb Preserving:} Suppose $\Gamma; \es; \Delta_1 \proves P \barb{m}$. We analyse three cases, depending on the nature of $m$:
 			%
