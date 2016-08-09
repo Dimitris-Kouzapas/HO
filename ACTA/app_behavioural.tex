@@ -688,6 +688,14 @@ that is used to simplify the proofs. Let
 	\ntrigger{t}{V} = \newtrigger{t}{V}
 	\label{eq:ntrig}
 \end{equation}
+The alternative trigger process has a simpler formulation
+from the higher-order trigger process which is useful to proofs.
+However, the input of characteristic values on name $t$
+results in the creation of redundant parallel components
+of the form $\news{s}{\bout{t}{s}}$ which need to
+be treated in a bisimulation closure. The next
+lemma shows how we can ignore these parallel components. 
+
 \noindent
 The first auxiliary lemma states the equivalence (up to $\hwb$) between
 higher-order trigger processes $\htrigger{t}{V}$ (cf.~\eqref{eqb:0}) and $\ntrigger{t}{V}$.
@@ -826,7 +834,7 @@ We analyze each of the three parts:
 							\]
 							Then the proof is similar to the previous case.
 
-					\item An action on the fresh name $t$, , i.e., for some $\Delta_1'$ we have:
+					\item An action on the fresh name $t$, i.e., for some $\Delta_1'$ we have:
 					\[
 								\horel{\Gamma}{\Delta_1}{\newsp{\widetilde{m_1}}{P \Par \newsp{s}{\bout{t}{s} \inact}  } }
 								{\hby{\bactout{t}{s}} }
@@ -861,12 +869,41 @@ We analyze each of the three parts:
 							and
 							\begin{eqnarray*}
 								&&\Gamma; \es; \Delta_2' \proves \newsp{\widetilde{m_2}}{Q \Par \htrigger{t'}{s}  } \\
-								\hby{\bactinp{t'}{\abs{z}{\inact}}} &&
+								\Hby{\bactinp{t'}{\abs{z}{\inact}}} &&
 								\Delta_2' \proves \newsp{\widetilde{m_2}}{Q' \Par \newsp{s'}{\binp{s'}{y} (\appl{(\abs{z}{\inact})}{y}) \Par \bout{\dual{s'}}{s} \inact}}
 								\\
 								\hby{\dtau} &&
 								\Delta_2' \proves \news{\widetilde{m_2}}{Q'}
 							\end{eqnarray*}
+%							We also require to input the trigger value
+%%
+%							\begin{eqnarray*}
+%								&&\Gamma; \es; \Delta_1' \proves \newsp{\widetilde{m_1}}{P \Par \htrigger{t'}{s}  } \\
+%								\hby{\bactinp{t'}{ \abs{z}{\binp{t''}{w} \appl{w}{z}} }} &&
+%								\Delta_1' \proves \newsp{\widetilde{m_1}}{P \Par \newsp{s'}{\binp{s'}{y} (\appl{(\abs{z}{\binp{t''}{w} \appl{w}{z}})}{y}) \Par \bout{\dual{s'}}{s} \inact}}
+%								\\
+%								\hby{\dtau} \hby{\dtau} &&
+%								\Delta_1'' \proves \news{\widetilde{m_1}}{P \Par \binp{t''}{w} (\appl{w}{s})}
+%								\\
+%								\hby{\bactinp{t''}{\abs{z}{\inact}} \hby{\dtau}}&&
+%								\Delta_1' \proves \news{\widetilde{m_1}}{P}
+%							\end{eqnarray*}
+%							and
+%							\begin{eqnarray*}
+%								&&\Gamma; \es; \Delta_2' \proves \newsp{\widetilde{m_2}}{Q \Par \htrigger{t'}{s}  } \\
+%								\Hby{\bactinp{t'}{ \abs{z}{\binp{t''}{w} \appl{w}{z}} }} &&
+%								\Delta_2' \proves \newsp{\widetilde{m_2}}{Q' \Par \newsp{s'}{\binp{s'}{y} (\appl{(\abs{z}{\binp{t''}{w} \appl{w}{z}})}{y}) \Par \bout{\dual{s'}}{s} \inact}}
+%								\\
+%								\hby{\dtau} \hby{\dtau} &&
+%								\Delta_1'' \proves \news{\widetilde{m_1}}{Q' \Par \binp{t''}{w} (\appl{w}{s})}
+%								\\
+%								\hby{\bactinp{t''}{\abs{z}{\inact}} \hby{\dtau}}&&
+%								\Delta_1' \proves \news{\widetilde{m_1}}{Q'}
+%							\end{eqnarray*}
+%
+%							Note that in the input on name $t''$, if we input a new trigger value
+%							this will result in the same process.
+%
 							The result is then immediate from the definition of $\Re$ that
 							requires
 							\[
@@ -941,7 +978,16 @@ We analyze each of the three parts:
 								{\hwb}
 								{\Delta_2'}{\newsp{\widetilde{m_2}'}{Q' \Par (\appl{V_2}{n})}}
 							\]
-							This is done by considering the requirements of $\Re$.
+%							This is done by considering the requirements of $\Re$.
+%							\[
+%								\mhorel{\Gamma}{\Delta_1}{\newsp{\widetilde{m_1}}{P \Par \ntrigger{t}{V_1}  } }
+%								{\hby{\bactinp{t}{ \abs{x}{\binp{t'}{y} \appl{y}{x} }}
+%								{\Delta_1'}{}{\newsp{\widetilde{m_1}'}{P \Par \newsp{s}{ \appl{(\abs{x}{\binp{t'}{y} \appl{y}{x})}{s} \Par \bout{\dual{s}}{V_1} \inact}}}
+%							\]
+%
+%
+%
+%
 							Since $\omapchar{U} = n$, we have that
 							$\omapchar{\shot{\btinp{U} \tinact}} = \abs{z}{ \binp{z}{y} ( \bout{t'}{z} \inact \Par (\appl{y}{n}) ) } $:
 							\[
@@ -1755,7 +1801,7 @@ with $\ell_2 = \mact{\ell}$.
 We analyse each part separately:
 	\begin{enumerate}[1.]
 		\item	The proof for Part 1 is done by contradiction.
-				Assume that $\dual{n_1} \notin \fn{P}$ and $\dual{n_2} \notin \fn{Q}$.
+				Assume that $\dual{n_1} \notin \fn{P}$ or $\dual{n_2} \notin \fn{Q}$.
 				Then the bisimulation requirement allows us to observe for some $U \not= \tinact$:
 				\[
 					\horel{\Gamma}{\Delta_1}{\newsp{\widetilde{m_1}}{P \Par \appl{(\trvalx{t})}{n_1} }}
@@ -1840,7 +1886,7 @@ We analyse each part separately:
 				then for some $Q_2''$
 				\[
 				\begin{array}{rcl}
-					&&\Gamma; \Delta_1' \proves \newsp{\widetilde{m_2}'}{Q' \Par \binp{t}{x} \newsp{s}{ \binp{s}{y}(\appl{x}{y}) \Par \bout{\dual{s}}{n_2} \inact } }
+					&&\Gamma; \Delta_2' \proves \newsp{\widetilde{m_2}'}{Q' \Par \binp{t}{x} \newsp{s}{ \binp{s}{y}(\appl{x}{y}) \Par \bout{\dual{s}}{n_2} \inact } }
 					\\
 					\Hby{\bactinp{t}{\omapchar{U}}} &&
 					\Delta_2'' \proves \newsp{\widetilde{m_2}''}{Q''' \Par \newsp{s}{ \binp{s}{y}(\appl{\omapchar{U}}{y}) \Par \bout{\dual{s}}{n_2} \inact }}
@@ -2172,7 +2218,8 @@ we give an intermediate result.
 									\Delta_4 \proves \newsp{\widetilde{m_1}}{Q' \Par \prod_{i \in I \backslash{\set{k}}} \binp{t_i}{x} (\appl{x}{m_i}) \Par \mapchar{U}{x} \subst{m_k}{x}}
 							\end{eqnarray*}
 for some $\Delta_4$.
-							The proof follows Part 2 of \lemref{lem:trigger_application} where, for some $\Delta_3'$:
+							From the shape of $\mapchar{U}{x}$ we can observe
+							%The proof follows Part 2 of \lemref{lem:trigger_application} where, for some $\Delta_3'$:
 							\[
 								\mhorel{\Gamma}{\Delta_3}{\newsp{\widetilde{m_1}}{P \Par \prod_{i \in I \backslash{\set{k}}} \binp{t_i}{x} (\appl{x}{n_i}) \Par \mapchar{U}{x} \subst{n_k}{x}  }}
 								{\hby{\ell} }
@@ -2260,7 +2307,8 @@ for some $\Delta_4$.
 								{\Delta_4}{}{  \newsp{\widetilde{m_2}'}{Q' \Par \prod_{i \in I\backslash{\set{k}}} \binp{t_i}{x} (\appl{x}{m_i})
 								\Par  \mapchar{U}{x} \subst{m_k}{x} }}
 							\]
-							From Part 2 of \lemref{lem:trigger_application} we obtain that if, for some $\Delta_3'$, 
+							From the shape of $\mapchar{U}{x}$ we can observe the
+							interaction between $\mapchar{U}{x}$ and $P$ to get that if, for some $\Delta_3'$, 
 							\[
 								\mhorel{\Gamma}{\Delta_3}{  \newsp{\widetilde{m_1}'}{P \Par \prod_{i \in I\backslash{\set{k}}} \binp{t_i}{x} (\appl{x}{n_i})
 								\Par  \mapchar{U}{x} \subst{n_k}{x} }}
@@ -2493,14 +2541,16 @@ substitution, we can generalise for any value substitution.
 					{\Delta_2}{\newsp{\widetilde{m_2}''}{(P_2'\Par C_2) \subst{\trvalx{t}}{z}}}
 				\end{eqnarray*}
 				Since $\ell, \mact{\ell}$ do not act on the substitution,
-				we can consider any $\abs{x}{R}$ instead of $\trvalx{t}$.
-				Thus we further deduce that
+				we can consider the same transition with any $\abs{x}{R}$ instead of $\trvalx{t}$.
+				Thus from the definition of $\Re$ we further deduce that
 				\begin{eqnarray}
 					\horel{\Gamma}{\Delta_3'}{\newsp{\widetilde{m_1}''}{(P_1'\Par C_1) \subst{{\abs{x}{R}}}{z}}}
 					{\ \Re\ }
 					{\Delta_4'}{\newsp{\widetilde{m_2}''}{(P_2'\Par C_2) \subst{{\abs{x}{R}}}{z}}}
 					\label{lem:proc_subst33}
 				\end{eqnarray}
+				{\color{blue}{Note that $C_1$ and $C_2$ appear to meet the bisimulation
+				requirements on the output case.}}
 
 				From \eqref{lem:proc_subst0} we can derive the transition
 				\begin{eqnarray*}
