@@ -428,9 +428,11 @@ and \figref{fig:envLTS}.
 	for $\By{\ell}$ if $\ell\not = \tau$ otherwise $\By{}$.
 \end{definition}
 
-\newc{A typed transition relation requires type judgements with an empty $\Lambda$. 
-Notice that we are working with closed terms.
-Furthermore, we can always apply Rule~$\trule{EProm}$ and obtain an empty $\Lambda$. 
+\newc{A typed transition relation requires type judgements with an empty $\Lambda$, i.e., an empty environment 
+for linear higher-order types.
+Notice that for open process terms (i.e., with free process variables), 
+we can always apply Rule~$\trule{EProm}$ (cf. \figref{fig:typerulesmy}) and obtain an empty $\Lambda$. 
+As it will be clear below (cf. \defref{d:typedrel}), we will be working with closed process terms, i.e., processes with no free process variables.
 }
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -458,21 +460,25 @@ that may arise due to non-interfering reductions of session names.}
 	(here we write $\red^\ast$ for the multi-step reduction in \defref{d:wtenvred}).
 \end{definition}
 
+We illustrate confluence by means of an example: 
+
 \begin{example}[Session Environment Confluence]
-	Consider environments
-	$\Delta_1 = \set{s_1: T_1 \cat s_2: \btinp{U_2} \tinact \cat \dual{s_2}: \btout{U_2} \tinact}$
-	and
-	$\Delta_2 = \set{s_1: T_1 \cat s_2: \btout{U_1} \btinp{U_2} \tinact \cat \dual{s_2}: \btout{U_1} \btout{U_2} \tinact}$.
-	Then $\Delta_1 \red \set{s_1: T_1 \cat s_2: \tinact \cat \dual{s_2}: \tinact}$
-	and $\Delta_2 \red \red \set{s_1: T_1 \cat s_2: \tinact \cat \dual{s_2}: \tinact}$
-	thus $\Delta_1$ and $\Delta_2$ are confluent.
+	Consider the (balanced) session environments:
+	\begin{eqnarray*}
+	\Delta_1 & = & \set{s_1: T_1 \cat s_2: \btinp{U_2} \tinact \cat \dual{s_2}: \btout{U_2} \tinact} \\
+	\Delta_2 & = & \set{s_1: T_1 \cat s_2: \btout{U_1} \btinp{U_2} \tinact \cat \dual{s_2}: \btinp{U_1} \btout{U_2} \tinact}
+	\end{eqnarray*}
+	Following \defref{d:wtenvred}, we have that 
+ $\Delta_1 \red \set{s_1: T_1 \cat s_2: \tinact \cat \dual{s_2}: \tinact}$
+	and $\Delta_2 \red \red \set{s_1: T_1 \cat s_2: \tinact \cat \dual{s_2}: \tinact}$.
+	Therefore,  $\Delta_1$ and $\Delta_2$ are confluent.
 	\qed
 \end{example}
 
 Typed relations relate only closed terms whose
 session environments are balanced  and confluent:
 
-\begin{definition}[Typed Relation]
+\begin{definition}[Typed Relation]\label{d:typedrel}
 	We say that a binary relation over typing judgements
 	\[
 		\Gamma; \emptyset; \Delta_1 \proves P_1 \hastype \Proc\ \Re \ \Gamma; \emptyset; \Delta_2 \proves P_2 \hastype \Proc
@@ -1534,7 +1540,7 @@ ensures behavioural invariance on deterministic transitions.
 	\[
 		\Re = \set{(P, P') \setbar \Gamma; \Delta \proves P \hby{\dtau} \Delta' \proves P'}
 	\]
-	is a bisimulation.
+	is a higher-order bisimulation.
 %	The proof for Part 1 requires a case analysis on the structure of \betatran and session-transition.
 	The proof for Part 2 is direct from Part 1.
 	See \appref{app:sub_tau_inert} (\mypageref{app:sub_tau_inert}) for the details of the proof.
@@ -1563,7 +1569,9 @@ Using the above properties, we can state the following up-to technique.
 			$
 				\horel{\Gamma}{\Delta_3}{P_3}{\Hby{\dtau}}{\Delta_1'}{P_2}
 			$
-			and for fresh $t$:\\
+			and for 
+			a
+			fresh $t$:\\
 			\[
 				\horel{\Gamma}{\Delta_1''}{\newsp{\widetilde{m_1}}{P_2 \Par \htrigger{t}{V_1}}}
 				{\ \Re\ }
@@ -1764,7 +1772,7 @@ by (i)~constructing a typed relation on the
 	\begin{proof}[Sketch]
 	The proof follows the definition of the characteristic process; 
 	see \lemref{lem:trigger_subst}, page \pageref{lem:trigger_subst}, in the Appendix for details.
-	Let us consider a particular case; we construct a typed relation $\Re$:
+	Let us consider the particular case in which $I$ is a singleton; we construct a typed relation $\Re$:
 	\begin{eqnarray*}
 		\Re &=& \set{
 					\horel{\Gamma}{\Delta_1'}{\newsp{\widetilde{m_1}}{P \Par \appl{(\abs{x}{R})}{n_1} }}
@@ -1803,14 +1811,14 @@ by (i)~constructing a typed relation on the
 %	\JP{But this is only true when $U$ is a session type different from $\tinact$, right?
 %	\dk{that is true. We are showing the important case here where $U$ is not $\tinact$}
 %	Is this an issue when $U$ is an arrow type? \dk{No it is not an issue - you can check that either type has the same transition}}
-	By the last property we can always observe, for some $\Delta'_1$ (note that below $\ell_1$ may be an action $\tau$, thus denoting
+	By the last property we can always observe, for some $\Delta''_3$ (note that below $\ell_1$ may be an action $\tau$, thus denoting
 	the interaction of $P$ and $\mapchar{U}{n_1}$):
 	\begin{eqnarray*}
 		\Gamma; \es; \Delta_3 \proves \newsp{\widetilde{m_1}''}{P \Par \mapchar{U}{n_1} }
 		\hby{\ell_1}
 		\newsp{\widetilde{m_1}'''}{P' \Par \bout{t'}{n_1} \inact }
 		\hby{\bactout{t'}{n_1}}
-		\Delta_1' \proves \news{\widetilde{m_1}'''} P'
+		\Delta''_3 \proves \news{\widetilde{m_1}'''} P'
 %		\Hby{\dtau} \hwb
 %		\Delta_1' \proves \newsp{\widetilde{m_1}'}{P' \Par \appl{(\trvalx{t'})}{n_1} }
 	\end{eqnarray*}
