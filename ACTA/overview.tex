@@ -9,7 +9,16 @@ We first informally introduce some basic notation and terminology; formal defini
 
 
 \paragraph{Preliminaries.}
-\newc{The syntax of \HOp considered in this paper is the following:
+\newc{The syntax of \HOp considered in this paper is given below.
+We write $n$ to range over shared names $a,b,\ldots$
+and
+$s, {s}', \ldots$ to range over 
+session (linear) names.
+Also, $u, w$ denotes a name or a name variable.
+Session names are sometimes called \emph{endpoints}.
+We consider a notion of \emph{duality} on names, particularly 
+relevant for session names: we shall write 
+  $\dual{s}$ to denote the {dual} endpoint of~$s$.
 	\[
 		\begin{array}{rcll}
 			\text{Values}~~ V,W  & \bnfis & u & \text{names (shared and linear)} \\
@@ -24,26 +33,19 @@ We first informally introduce some basic notation and terminology; formal defini
 		\end{array}
 	\] 
 }
-We write $n$ to range over shared names $a,b,\ldots$ and session (linear) names $s, \dual{s}, \ldots$.
-Also, $u, w$ denotes a name or a name variable.
-Session names are sometimes called \emph{endpoints}. 
+Hence, the higher-order character of \HOp comes from the fact that $V$ can be an abstraction.
+
 %this way, e.g., 
 %$\bout{\dual{s}}{V} Q$ denotes for an output of value $V$ along endpoint 
-We consider a notion of \emph{duality} on names, %particularly 
-relevant for session names:
-we shall write 
-  $\dual{s}$ to denote the {dual} endpoint of~$s$.
-The higher-order character of \HOp thus comes from the fact that $V$ can be an abstraction.
 The semantics of \HOp can be given in terms of a labelled transition system (LTS),
 denoted $P \by{\ell} P'$, where $\ell$ denotes a transition label or the internal action $\tau$.
-This way, e.g., 
-$P \by{\bactinp{n}{V}} P'$ denotes an input transition along $n$
+This way, for instance, 
+$P \by{\bactinp{n}{V}} P'$ denotes an input transition (a value $V$ received along $n$)
 and
 $P \by{\news{\widetilde{m}} \bactout{n}{V}} P'$
-denotes an output transition along $n$, 
-sending value $V$, and extruding names $\widetilde{m}$. 
+denotes an output transition (a value $V$ emitted along $n$, extruding names $\widetilde{m}$). 
 Weak transitions, written 
-$P \By{\ell} Q'$, abstract from internal actions in the usual way.
+$P \By{\ell} P'$, abstract from internal actions in the usual way.
 Throughout the paper, we write $\Re, \Re',\ldots$ to denote binary relations on (typed) processes.
 
 \newc{
@@ -68,13 +70,13 @@ where $\Proc$ is the type for processes.}
 
 %\smallskip
 \paragraph{Issues of Context Bisimilarity.}
-Context bisimilarity ($\wbc$, \defref{def:wbc}) is an overly demanding relation on higher-order processes. 
-There are two issues, associated to demanding clauses for output and input actions. 
+Context bisimilarity (denoted $\wbc$, cf. \defref{def:wbc}) is an overly demanding relation on higher-order processes. 
+It is far from satisfactory due to two issues, associated to demanding clauses for output and input actions. 
 %The first demanding issue arises from the universal quantification on the output clause of context bisimilarity:
 A \emph{first issue} %appears in 
 is 
 the universal quantification in the output clause of context bisimilarity.
-Suppose $P \,\Re\, Q$, for some context bisimulation~$\Re$. We have:
+Suppose $P \,\Re\, Q$, for some context bisimulation~$\Re$. We have the following clause:
 \begin{enumerate}[$(\star)$]
 	\item	Whenever 
 		$P \by{\news{\widetilde{m_1}} \bactout{n}{V}} P'$
@@ -85,9 +87,10 @@ Suppose $P \,\Re\, Q$, for some context bisimulation~$\Re$. We have:
 		and, \\ \emph{\textbf{for all} $R$}  with $\fv{R}=\{x\}$, 
 		$\newsp{\widetilde{m_1}}{P' \Par R\subst{V}{x}} \,\Re\, \newsp{\widetilde{m_2}}{Q' \Par R\subst{W}{x}}$.
 \end{enumerate}
-Intuitively, 
-in the above clause process $R$ stands for any possible \emph{context} to which the emitted value
+Intuitively, process $R$ above stands for any possible \emph{context} to which the emitted value
 ($V$ and $W$) is supposed to go. 
+(As usual, $R\subst{V}{x}$ denotes 
+the capture-avoiding substitution of $V$ for $x$ in process $R$.)
 As explained in~\cite{San96H}, considering 
 all possible contexts $R$ is key to achieve an adequate distinguishing power.
 
@@ -104,7 +107,7 @@ To alleviate these issues,
 %universal quantification,
 in %our notion of
 \emph{characteristic
-bisimilarity} ($\fwb$)
+bisimilarity} (denoted $\fwb$, cf. \defref{d:fwb})
 we take two (related) steps: 
 \begin{enumerate}[(a)]
 	\item We replace $(\star)$ with a clause involving a context \emph{more tractable} than $R\subst{V}{x}$ (and $R\subst{W}{x}$); and 
@@ -236,8 +239,9 @@ of a type,  i.e.,
 %The characteristic process of a session type $S$ is the process inhabiting $S$. 
 a simple process term that inhabits that type (\defref{def:char}).
 %Thus, characteristic processes follow the communication structures decreed by session types.
-\newc{To illustrate the key idea underlying characteristic processes, consider the type}
-$S = \btinp{\shot{S_1}} \btout{S_2} \tinact$, i.e.,  the session type abstracting a protocol that 
+\newc{To illustrate the key idea underlying characteristic processes, consider the session type}
+$$S = \btinp{\shot{S_1}} \btout{S_2} \tinact~,$$
+which abstracts a protocol that 
  first
 inputs an abstraction (a function from values $S_1$ to processes), 
 and then outputs a value of type $S_2$.
@@ -286,9 +290,10 @@ to observe/simulate application processes.
 we define an alternative  LTS on typed processes, denoted  $\hby{\ell}$.
 We use this refined LTS to define
 %both higher-order ($\hwb$) and 
-\emph{characteristic  bisimulation} 
+{characteristic  bisimulation}
 %(Defs.~\ref{d:hbw} and~\ref{d:fwb}),
-($\fwb$, \defref{d:fwb}),
+%($\fwb$, 
+(\defref{d:fwb}),
 in which the demanding clause~$(\star)$ is replaced with 
 a more tractable output clause based on 
 %trigger processes \jpc{(cf.~\eqref{equ:2})}  and 
@@ -361,7 +366,7 @@ replication. This is key to preserve linearity of session endpoints.
 
 \newc{It is also noteworthy that \HOp lacks name matching, 
 which is crucial in~\cite{JeffreyR05} to prove completeness of bisimilarity.}
-\dk{The lack of matching is compensated here with the use of (session) types.}
+\dk{The lack of matching operators is compensated here with the use of (session) types.}
 \newc{Matching gives the observer the ability to test the equality of received names. In contrast, 
 in our theory a process trigger embeds a name into a characteristic process so as to observe its (typed) behaviour.
 Thus, equivalent processes deal with (possibly different) names that have the same (typed) behaviour.}

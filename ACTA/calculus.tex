@@ -143,24 +143,26 @@ abstractions $\abs{x}{P}$ (higher-order values),
 where $P$ is a process $P$ and $x$ is a name parameter.
 
  
-
-{Terms} 
-include  usual $\pi$-calculus constructs for sending and receiving values $V$.
-Process $\bout{u}{V} P$ denotes the output of   $V$
-over name $u$, with continuation $P$;
+Process
+{terms} 
+include  usual $\pi$-calculus constructs for sending and receiving values $V$:
+process $\bout{u}{V} P$ denotes the output of   $V$
+over name $u$, with continuation $P$, while
 process $\binp{u}{x} P$ denotes the input prefix on name $u$ of a value
 that 
-will substitute variable $x$ in continuation $P$. 
+will substitute variable $x$ in the continuation $P$. 
 Recursion is expressed by $\recp{X}{P}$,
 which binds the recursive variable $\varp{X}$ in process $P$.
 Process 
 %ny
 %$\appl{x}{u}$ 
-$\appl{V}{W}$ 
-is the application
-which substitutes values $W$ on the abstraction~$V$. 
+$\appl{V}{W}$ represents 
+the application
+of abstraction~$V$ to value $W$. 
 Typing  ensures \jpc{that} $V$ is not a name.
-Processes $\bbra{u}{l_i: P_i}_{i \in I}$  and $\bsel{u}{l} P$ define labelled choice:
+In the spirit of session-based $\pi$-calculi~\cite{honda.vasconcelos.kubo:language-primitives}, 
+we consider 
+processes $\bbra{u}{l_i: P_i}_{i \in I}$  and $\bsel{u}{l} P$ to define labelled choice:
 given a finite index set $I$, process $\bbra{u}{l_i: P_i}_{i \in I}$ offers a choice 
 among processes with pairwise distinct labels;
 %on labels $l_i$ with continuation $P_i$, given that $i \in I$.
@@ -168,10 +170,10 @@ among processes with pairwise distinct labels;
 %Given $i \in I$ 
 %Others are standard c
 Constructs for 
-inaction $\inact$,  parallel composition $P_1 \Par P_2$, and 
-name restriction $\news{n} P$ are standard.
+inaction $\inact$ and  parallel composition $P_1 \Par P_2$ are standard.
+Name restriction $\news{n} P$ is also as customary; we notice that 
+restriction for session names $\news{s} P$ simultaneously binds endpoints $s$ and $\dual{s}$ in $P$.
 
-Session name restriction $\news{s} P$ simultaneously binds endpoints $s$ and $\dual{s}$ in $P$.
 %A well-formed process relies on assumptions for
 %guarded recursive processes.
 We use $\fv{P}$ and $\fn{P}$ to denote the sets of free 
@@ -284,14 +286,17 @@ denoted $\scong_\alpha$.}
 \jpc{We assume the expected extension of $\scong$ to values $V$.}
 Reduction is denoted $\red$; some intuitions on the rules in \figref{fig:redsem} %(lower part) 
 follow.
-Rule~$\orule{App}$ \newc{defines value application}; 
-Rule~$\orule{Pass}$ defines a shared interaction at $n$ 
-(\jpc{with} $\dual{n}=n$) or a session interaction;  
-Rule~$\orule{Sel}$ is the standard rule for labelled choice/selection:
-given an index set $I$, 
-a process selects label $l_j$ on name $n$ over a set of
+Rule~$\orule{App}$ \newc{defines value application}.
+Rule~$\orule{Pass}$ defines an interaction/synchronization at $n$;
+it can be on a shared name 
+(\jpc{with} $\dual{n}=n$) or a session endpoint.  
+Rule~$\orule{Sel}$ is the standard rule for labelled choice/selection~\cite{honda.vasconcelos.kubo:language-primitives}:
+given a finite index set $I$, 
+a process selects label $l_j$ on name $n$ over a pairwise distinct set of
 labels $\set{l_i}_{i \in I}$ offered by a branching 
-on the dual endpoint $\dual{n}$; and other rules are standard.
+on the dual endpoint $\dual{n}$; 
+as a result, process $P_j$ is selected, and the remaining alternatives are discarded.
+Other rules are standard.
 We write $\red^\ast$ for a multi-step reduction. 
 
 
@@ -336,7 +341,7 @@ The \emph{first implementation} is  as follows:
 %
 Process $\Client_1$ sends two abstractions with body $P_{xy}$, one to each hotel, 
 		using sessions $s_1$ and $s_2$.
-		That is, $P_{xy}$ is the mobile code, with free names $x, y$:
+		That is, $P_{xy}$ is the mobile code with free names $x, y$:
 	while
 		name $x$ is meant to be instantiated by the hotel as the negotiating
 		endpoint, name $y$ is used to interact with $\Client_1$.	
@@ -346,8 +351,8 @@ Process $\Client_1$ sends two abstractions with body $P_{xy}$, one to each hotel
 		\item  receives a quote from the hotel;
 		\item  sends the quote to  $\Client_1$;
 		\item expects a choice from   $\Client_1$ whether to accept or reject the offer;
-		\item if the choice is accept then it informs the hotel and performs the booking;
-		otherwise, if the choice is reject then it informs the hotel and ends the session.
+		\item if the choice is $\accept$ then it informs the hotel and performs the booking;
+		otherwise, if the choice is $\reject$ then it informs the hotel and ends the session.
 		\end{enumerate}
 				$\Client_1$ instantiates two copies of  $P_{xy}$ as abstractions
 		on session $x$. It uses two
