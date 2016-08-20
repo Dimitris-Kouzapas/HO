@@ -41,7 +41,7 @@ The case of recursive session types requires the following two auxiliary definit
 	A straightforward induction on the syntax of $S$. \qed
 \end{proof}
 
-We state session type prefix deletion relation:
+We define a relation for session type prefix deletion:
 \begin{definition}[Session Type Prefix Deletion]
 	Given a session type $S$, the set $\delete{S}$ is defined inductively as follows:
 	\[
@@ -642,6 +642,9 @@ This concludes the proof.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %          COINCIDENCE
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\ntrigger}[2]{#1 \leftharpoonup_\mathtt{A} #2}
+\newcommand{\newtrigger}[2]{\binp{#1}{x} \newsp{s}{\appl{x}{s} \Par \bout{\dual{s}}{#2} \inact} }
+
 
 \subsection{Proof of \thmref{the:coincidence}}
 \label{app:sub_coinc}
@@ -650,6 +653,10 @@ This concludes the proof.
 \noi We split the proof of \thmref{the:coincidence} (Page \pageref{the:coincidence}) into 
 several lemmas:
 \begin{enumerate}[$-$]
+\item \lemref{l:altrig} connects characteristic and higher-order trigger processes with an alternative trigger process
+(denoted $\ntrigger{t}{V}$, defined below).
+\item \lemref{lem:trigger_equiv}
+establishes the equivalence between characteristic and higher-order trigger processes.
 \item	\lemref{app:lem:wb_eq_wbf} establishes $\hwb\ =\ \fwb$.
 \item    \lemref{lem:trigger_subst} establishes a trigger substitution lemma (\lemref{lem:trigger_substmt} in the main text), using 
 \lemref{lem:trigger_application} (Page \pageref{lem:trigger_application}).
@@ -661,8 +668,6 @@ several lemmas:
 \lemref{lem:definibility} (definability) and \lemref{lem:extrusion} (extrusion).
 \end{enumerate}
 
-\newcommand{\ntrigger}[2]{#1 \leftharpoonup #2}
-\newcommand{\newtrigger}[2]{\binp{#1}{x} \newsp{s}{\appl{x}{s} \Par \bout{\dual{s}}{#2} \inact} }
 
 We introduce a useful notation for action labels, which will be used in the following to represent matching actions.
 
@@ -700,6 +705,7 @@ lemma shows how we can ignore these parallel components.
 The first auxiliary lemma states the equivalence (up to $\hwb$) between
 higher-order trigger processes $\htrigger{t}{V}$ (cf.~\eqref{eqb:0}) and $\ntrigger{t}{V}$.
 \begin{lemma}[Alternative Trigger Process]
+\label{l:altrig}
 Let $P$ and $Q$ be processes.
 	\label{lem:alt_tr}
 	\begin{enumerate}
@@ -844,7 +850,7 @@ We analyze each of the three parts:
 							reveals that $\Delta_1(t) = \Delta_2(t) = \btout{\tinact} \tinact$.
 							This is because the dual endpoint of the (restricted) session $s$ does not appear
 							in $\newsp{s}{\bout{t}{s} \inact}$ and thus it has the inactive type $\tinact$.
-							We can then observe that,  for some $\Delta_2'$ we have:
+							We can then observe that,  for some $\Delta_2'$, we have:
 							\[
 								\horel{\Gamma}{\Delta_2}{\newsp{\widetilde{m_2}}{Q \Par \newsp{s}{\bout{t}{s} \inact}  } }
 								{\Hby{\bactout{t}{s}} }
@@ -1023,7 +1029,7 @@ We analyze each of the three parts:
 							\]
 							as required.
 
-						\item	An action of the form $\bactinp{t}{\abs{z}{\mapchar{U'}{z}}}$ along fresh name $t$.
+						\item	An action of the form $\bactinp{t}{\abs{z}{\mapchar{U'}{z}}}$ along the fresh name $t$.
 								Let $U$ such that $\omapchar{U} = \abs{z}{\mapchar{U'}{z}}$.
 								There exist $U$ and  $\Delta_1'$ such that 
 
@@ -1073,13 +1079,13 @@ We analyze each of the three parts:
 							and
 							\[
 								\mhorel{\Gamma}{\Delta_1}{\newsp{\widetilde{m_1}}{P \Par \ntrigger{t}{V_1}  } }
-								{\hby{\bactinp{t}{\omapchar{\shot{\btinp{U} \tinact}}}}}
+								{\hby{\bactinp{t}{\omapchar{\shot{\btinp{U} \tinact~}}}}}
 								{\Delta_1'}{}{\newsp{\widetilde{m_1}'}{P \Par \newsp{s}{\appl{(\abs{w}{ \binp{w}{y} ( \bout{t'}{w} \inact \Par \appl{(\abs{z}{\mapchar{U'}{z}})}{y} ) })}{s} \Par \bout{\dual{s}}{V_1} \inact}}}
 							\]
 							Furthermore, we can see that for some $\Delta'_2$
 							\[
 								\horel{\Gamma}{\Delta_2}{\newsp{\widetilde{m_2}}{Q \Par \ntrigger{t}{V_2}  } }
-								{\Hby{\bactinp{t}{\shot{\omapchar{\btinp{U} \tinact}}}}}
+								{\Hby{\bactinp{t}{\shot{\omapchar{\btinp{U} \tinact}~}}}}
 								{\Delta_2'}{\newsp{\widetilde{m_2}'}{Q' \Par \appl{(\abs{z}{\mapchar{U'}{z}})}{V_2} \Par \newsp{s}{\bout{t'}{s} \inact}}}
 							\]
 %							\JP{Why $Q$ doesn't move to some $Q'$ in the above weak transition?}
@@ -1467,11 +1473,11 @@ $\newsp{\widetilde{m_2}}{Q \Par \ntrigger{t}{V_2}}$.
 						$\ntrigger{t}{V_1}$ moves autonomously, i.e., for some $\Delta_3$ we have:
 						\[
 							\horel{\Gamma}{\Delta_1'}{\newsp{\widetilde{m_1}}{P \Par \ntrigger{t}{V_1}}}
-							{\hby{\bactinp{t}{\omapchar{\shot{\btinp{U} \tinact}}}}}
+							{\hby{\bactinp{t}{\omapchar{\shot{\btinp{U} \tinact~}}}}}
 							{\Delta_3}{\newsp{\widetilde{m_1}}{P \Par \newsp{s}{ \appl{\omapchar{\shot{\btinp{U} \tinact}}}{s} \Par \bout{\dual{s}}{V_1} \inact}}}
 						\]
 						%
-							Following requirements of $\Re$ and the freshness of $t$
+							Following requirements of $\Re$ and the freshness of $t$,
 							we infer that there is a $\Delta_1''$ such that
 						%
 						\begin{eqnarray*}
@@ -2099,7 +2105,7 @@ We analyse each part separately:
 
 A process substitution lemma is useful for showing the
 contextuality property for higher-order and characteristic bisimilarities.
-Before we state and prove a process substitution lemma
+Before we state and prove a process substitution lemma,
 we give an intermediate result.
 (This is \lemref{lem:trigger_substmt} in the main text.)
 
@@ -2140,6 +2146,7 @@ we give an intermediate result.
 	We show that $\Re$ is a higher-order bisimulation.
 	The proof is done by a case analysis on the actions that can be observed
 	on the pairs of processes, so to check their higher-order bisimulation requirements.
+	There are three cases:
 
 	\begin{enumerate}
 		\item	Suppose an action from $P$, for some $\Delta_1''$:
@@ -2932,12 +2939,12 @@ $		\Gamma; \emptyset; \Delta_2 \proves P_2 \Barb{n}$, as desired.
 	Input congruence, which is the case that generates substitution,
 	is straightforward, since we are dealing with closed terms.
 
-	To show the congruence of the paralllel composition we construct an  typed relation defined as 
+	To show the congruence of the paralllel composition we construct a typed relation defined as 
 	\[
 	\begin{array}{rcl}
 		\mathcal{S} &=&	\set{
 				(\Gamma; \emptyset; \Delta_1 \cat \Delta_3 \proves \newsp{\widetilde{n_1}}{P_1 \Par R} \hastype \Proc,
-				\Gamma; \emptyset; \Delta_2 \cat \Delta_3 \proves \newsp{\widetilde{n_2}}{P_2 \Par R})
+				\Gamma; \emptyset; \Delta_2 \cat \Delta_3 \proves \newsp{\widetilde{n_2}}{P_2 \Par R}\hastype \Proc)
 				\setbar \\
 		& &		\qquad \horel{\Gamma}{\Delta_1}{P_1}{\wbc}{\Delta_2}{P_2}, \forall \Gamma; \emptyset; \Delta_3 \proves R \hastype \Proc~~}\\
 	\end{array}
@@ -2951,7 +2958,8 @@ $		\Gamma; \emptyset; \Delta_2 \proves P_2 \Barb{n}$, as desired.
 					$$
 	for some $\Delta'_1$. We must show an appropriate matching action from $\newsp{\widetilde{n_2}}{P_2 \Par R}$.
 	We proceed by a case analysis on the ``source'' of  action $\ell$ (i.e., $P_1$, $R$, an interaction between $P_1$ and $R$).
-
+    There are three cases:
+    
 	\begin{enumerate}[1.]
 	%%%%%%%%%%%%%%%
 	% Case 1

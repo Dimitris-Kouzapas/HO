@@ -9,8 +9,11 @@ and
 \emph{characteristic bisimulation} (\defref{d:fwb}), 
 denoted $\hwb$ and $\fwb$, respectively.
 We prove that
-they coincide with reduction-closed,
-barbed congruence (\thmref{the:coincidence}, page \pageref{the:coincidence}).
+they coincide with (reduction-closed)
+barbed congruence, the form of contextual equivalence used in concurrency 
+(denoted $\cong$, cf. \defref{def:rc}).
+This characterisation result is given in 
+\thmref{the:coincidence} (page \pageref{the:coincidence}).
 
 We briefly summarise our strategy for obtaining \thmref{the:coincidence}.
 We begin by defining an (early) labelled transition system (LTS) on
@@ -60,9 +63,9 @@ $\widetilde{m}$
 Dually, the action for value reception is 
 $\bactinp{n}{V}$.
 Actions for select and branch on
-a label~$l$ are denoted $\bactsel{n}{l}$ and $\bactbra{n}{l}$, resp.
+a label~$l$ are denoted $\bactsel{n}{l}$ and $\bactbra{n}{l}$, respectively.
 We write $\fn{\ell}$ and $\bn{\ell}$ to denote the
-sets of free/bound names in $\ell$, resp.
+sets of free/bound names in $\ell$, respectively.
 %and set $\mathsf{n}(\ell)=\bn{\ell}\cup \fn{\ell}$. 
 Given $\ell \neq \tau$, we 
 say $\ell$ is a \emph{visible action}; we
@@ -121,9 +124,9 @@ $\subj{\news{\widetilde{m}} \bactout{n}{V}} =
 		\inferrule[\ltsrule{New}]{
 			P \by{\news{\widetilde{m}} \bactout{n}{V}} P'
 			\and
-			m \in \fn{V}
+			m_1 \in \fn{V}
 		}{
-			\news{m} P \by{\news{m\cat\widetilde{m}'} \bactout{n}{V}} P'
+			\news{m_1} P \by{\news{m_1\cat\widetilde{m}} \bactout{n}{V}} P'
 		}
 		\and
 		\inferrule[\ltsrule{Par${}_L$}]{
@@ -174,7 +177,7 @@ as the least symmetric relation $\asymp$ on action labels that satisfies:
 
 The (early) labelled transition system
 (LTS) %LTS
-over \emph{untyped processes}
+fpr \emph{untyped} processes
 is given in
 \figref{fig:untyped_LTS}. 
 We write $P_1 \by{\ell} P_2$ with the usual meaning.
@@ -184,7 +187,7 @@ interact with the environment with an output action that carries a value
 $V$ (Rule~$\ltsrule{Snd}$).  Dually, in Rule~$\ltsrule{Rv}$ a
 receiver process can observe an input of an arbitrary value $V$.
 Select and branch processes observe the select and branch
-actions in Rules~$\ltsrule{Sel}$ and $\ltsrule{Bra}$, resp.
+actions in Rules~$\ltsrule{Sel}$ and $\ltsrule{Bra}$, respectively.
 Rule $\ltsrule{Res}$ 
 %closes the LTS under restriction 
 \newc{enables an observable action from a process with an outermost restriction, provided that 
@@ -204,7 +207,9 @@ and $\ltsrule{Alpha}$
 \subsection{Environmental Labelled Transition System}
 \label{ss:elts}
 Our typed LTS is obtained by coupling the untyped LTS given before with a labelled transition relation 
-on typing environments. Such a relation, given in \figref{fig:envLTS}, 
+on typing environments, given in \figref{fig:envLTS}. 
+Building upon the reduction relation for session environments in \defref{d:wtenvred},
+such a relation
 is defined on triples of environments by 
 extending the LTSs
 in \cite{KYHH2015,KY2015}; it is 
@@ -238,7 +243,8 @@ dual endpoint $\dual{s}$ cannot be
 present in the session environment: if it were present
 the only possible communication would be the interaction
 between the two endpoints (cf. Rule~$\eltsrule{Tau}$).
-Rule~$\eltsrule{ShRv}$ is for shared names and follows similar principles.
+Following similar principles, 
+Rule~$\eltsrule{ShRv}$ defines input actions for shared names.
 
 \paragraph{Output Actions} are defined by Rules~$\eltsrule{SSnd}$
 and $\eltsrule{ShSnd}$.  
@@ -259,9 +265,23 @@ names in $\widetilde{m}$ that are extruded.
 All free values used for typing $V$ \newc{(denoted $\Lambda'$ and $\Delta'$ in the rule)} are subtracted from the
 resulting type tuple. The prefix of session $s$ is consumed
 by the action.
-Rule $\eltsrule{ShSnd}$ follows very similar ideas for output actions on shared names:
+Rule $\eltsrule{ShSnd}$ follows similar ideas for output actions on shared names:
 the name must be typed with $\chtype{U}$; 
 conditions on value $V$ are identical to those on Rule~$\eltsrule{SSnd}$.
+
+\paragraph{Other Actions}
+Rules $\eltsrule{Sel}$ and $\eltsrule{Bra}$ describe actions for
+select and branch.
+%Both
+%rules require the absence of the dual endpoint from the session
+%environment.%, and the presence of the action labels in the type.
+Rule~$\eltsrule{Tau}$ defines
+internal transitions: 
+it reduces the session environment (cf. \defref{d:wtenvred}) or keeps it 
+unchanged.
+
+\smallskip
+
 \newc{We illustrate Rule~$\eltsrule{SSnd}$ by means of an example:}
 
 \begin{example}
@@ -279,7 +299,7 @@ conditions on value $V$ are identical to those on Rule~$\eltsrule{SSnd}$.
 %		\Delta'_1=\set{\overline{m}: \btout{\tinact} \tinact}
 %	$
 %	and $U=\btout{\lhot{\btout{S} \tinact}} \tinact$.
-	Then by Rule $\eltsrule{SSnd}$, we can derive:
+	Then, by Rule $\eltsrule{SSnd}$, we can derive:
 %
 	\[
 		(\Gamma; \es; s: \btout{\lhot{\btout{S} \tinact}} \tinact \cat s': S) \by{\news{m} \bactout{s}{V}} (\Gamma; \es; s: \tinact \cat \dual{m}: \btout{\tinact} \tinact)
@@ -297,18 +317,8 @@ with the type of $V$
 as $\news{\widetilde{m}} \bactout{n}{\AT{V}{U}}$.
 \end{notation}
 
-\paragraph{Other Actions}
-Rules $\eltsrule{Sel}$ and $\eltsrule{Bra}$ describe actions for
-select and branch.
-%Both
-%rules require the absence of the dual endpoint from the session
-%environment.%, and the presence of the action labels in the type.
-Rule~$\eltsrule{Tau}$ defines
-internal transitions: 
-it reduces the session environment or keeps it 
-unchanged (\defref{d:wtenvred}).
 
-\smallskip
+%\smallskip
 
 %%%%%%%%%%%%%%%%%%%% Environment LTS Figure %%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{figure}
@@ -430,9 +440,9 @@ and \figref{fig:envLTS}.
 
 \newc{A typed transition relation requires type judgements with an empty $\Lambda$, i.e., an empty environment 
 for linear higher-order types.
-Notice that for open process terms (i.e., with free process variables), 
+Notice that for open process terms (i.e., with free variables), 
 we can always apply Rule~$\trule{EProm}$ (cf. \figref{fig:typerulesmy}) and obtain an empty $\Lambda$. 
-As it will be clear below (cf. \defref{d:typedrel}), we will be working with closed process terms, i.e., processes with no free process variables.
+As it will be clear below (cf. \defref{d:typedrel}), we will be working with closed process terms, i.e., processes with no free  variables.
 }
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -454,7 +464,7 @@ that may arise due to non-interfering reductions of session names.}
 \begin{definition}[Session Environment Confluence]\label{d:conf}
 	Two session environments $\Delta_1$ and $\Delta_2$
 	are \emph{confluent}, denoted $\Delta_1 \bistyp \Delta_2$,
-	if there exists $\Delta$ such that:
+	if there exists a $\Delta$ such that:
 	i)~$\Delta_1 \red^\ast \Delta$ and 
 	ii)~$\Delta_2 \red^\ast \Delta$
 	(here we write $\red^\ast$ for the multi-step reduction in \defref{d:wtenvred}).
@@ -475,7 +485,7 @@ We illustrate confluence by means of an example:
 	\qed
 \end{example}
 
-Typed relations relate only closed terms whose
+Typed relations relate only closed processes whose
 session environments are balanced  and confluent:
 
 \begin{definition}[Typed Relation]\label{d:typedrel}
@@ -539,7 +549,7 @@ present in the session environment $\Delta$.
 
 \newc{Notice that observing output  barbs is enough 
 to (indirectly) observe input actions. For instance, the process $P = \binp{n}{x} P'$ has an input barb on $n$; by composing $P$
-with  $\bout{n}{m} \bout{\suc}{} \inact$ (with a fresh $\suc$) then one obtains a (weak) observation
+with  $\bout{n}{m} \bout{\suc}{} \inact$ (with a fresh name $\suc$) then one obtains a (weak) observation
 uniquely associated to  the input along $n$ in $P$. }
 
 To define a congruence relation, we introduce the family $\C$ of contexts:
@@ -557,7 +567,7 @@ To define a congruence relation, we introduce the family $\C$ of contexts:
 	the hole $\hole$ in $\C$ with process $P$.
 \end{definition}
 
-\noi The first behavioural relation we define is reduction-closed, barbed congruence \cite{HondaKYoshida95}. 
+\noi The first behavioural relation that we define is reduction-closed, barbed congruence~\cite{HondaKYoshida95}. 
 
 \begin{definition}[Reduction-Closed, Barbed Congruence]
 \label{def:rc}
@@ -631,7 +641,7 @@ we now define the standard (weak) context bisimilarity.
 \newc{context bisimilarity is an overly demanding relation on processes}.
 Below we introduce \emph{higher-order bisimulation} and \emph{characteristic bisimulation},
 which are meant to offer a \emph{tractable} proof technique over session typed
-processes with higher-order communication.
+processes with first- and higher-order communication.
 %$\hwb$ and  $\fwb$.
 %due to: (1) the universal
 %quantification over contexts in the output case;
@@ -1132,10 +1142,10 @@ with $\Delta = s_1{:}\tinact \cat s_2{:}\tinact$.
 %\]
 \[
 	\begin{array}{rcll}
-		\Gamma; \es; \Delta &\proves& P_1 \by{\bactinp{s}{\abs{x} \newsp{s'}{\bout{a}{s'} \inact}}} \red \red\\
+		\Gamma; \es; \Delta &\proves& P_1 \by{\bactinp{s}{\abs{x} \newsp{s'}{\bout{a}{s'} \inact}}} \by{~\tau~} \by{~\tau~}\\
 		\Delta &\proves& \newsp{s'}{\bout{a}{s'} \inact} \Par \newsp{s'}{\bout{a}{s'} \inact}
 		\\[4mm]
-		\Gamma; \es; \Delta &\proves& P_2 \by{\bactinp{s}{\abs{x} \newsp{s'}{\bout{a}{s'} \inact}}} \red\\
+		\Gamma; \es; \Delta &\proves& P_2 \by{\bactinp{s}{\abs{x} \newsp{s'}{\bout{a}{s'} \inact}}} \by{~\tau~}\\
 		\Delta &\proves& \newsp{s'}{\bout{a}{s'} \inact} \Par \appl{(\abs{z}{\inact})}{s_2}
 	\end{array}
 \]
@@ -1199,9 +1209,9 @@ with $\Delta = s_1{:}\tinact \cat s_2{:}\tinact$.
 	But if processes in \eqref{equ:7}/\eqref{equ:8}
 	input the characteristic value
 %	$\abs{z}{\binp{z}{x} (\appl{x}{m})}$,
-	$\abs{z}{\binp{z}{x} ( \bout{t}{z} \inact \Par \appl{x}{m})}$,
-	\newc{where $m$ is a fresh name}, 
-	then they would become, under appropriate $\Gamma$ and $\Delta$:
+	$\abs{z}{\binp{z}{x} ( \bout{t}{z} \inact \Par \appl{x}{m})}$
+	\newc{(where $m$ is a fresh name)} 
+	then, under appropriate $\Gamma$ and $\Delta$, they would become:
 %
 %	\begin{eqnarray*}
 %		\Gamma; \es; \Delta \proves \newsp{s}{\binp{s}{x} (\appl{x}{m}) \Par \bout{\dual{s}}{\abs{x} R_i} \inact}\ \wbc\ \Delta \proves R_i \subst{m}{x}
@@ -1274,7 +1284,7 @@ trigger or characteristic values or names:
 	(\Gamma_1; \Lambda_1; \Delta_1) \hby{\ell} (\Gamma_2; \Lambda_2; \Delta_2)
 	$$
 	is 
-	defined by on top of the rules
+	defined on top of the rules
 	in \figref{fig:envLTS} using the following rules:
 	\begin{mathpar}
 		\inferrule[\eltsrule{Tr}] {
@@ -1318,7 +1328,7 @@ $\horel{\Gamma}{\Delta_1}{P_1}{\hby{\ell}}{\Delta_2}{P_2}$  implies
 the (ordinary) transition
 $\horel{\Gamma}{\Delta_1}{P_1}{\by{\,\ell\,}}{\Delta_2}{P_2}$.
 \begin{notation}\label{not:outtype}
-Below we sometimes write  
+We sometimes write  
 $\hby{\news{\widetilde{m}} \bactout{n}{\AT{V}{U}}}$
 when the type of $V$ is~$U$.
 \end{notation}
@@ -1520,7 +1530,7 @@ $\beta$-reductions are deterministic.  To define an auxiliary proof technique th
 
 
 Deterministic transitions imply the $\tau$-inertness property~\cite{DBLP:journals/tcs/GrooteS96}, which
-ensures behavioural invariance on deterministic transitions.
+ensures behavioural invariance on deterministic transitions:
 
 \begin{proposition}[$\tau$-inertness]
 	\label{lem:tau_inert}
@@ -1543,7 +1553,7 @@ ensures behavioural invariance on deterministic transitions.
 	is a higher-order bisimulation.
 %	The proof for Part 1 requires a case analysis on the structure of \betatran and session-transition.
 	The proof for Part 2 is direct from Part 1.
-	See \appref{app:sub_tau_inert} (\mypageref{app:sub_tau_inert}) for the details of the proof.
+	See \appref{app:sub_tau_inert} (\mypageref{app:sub_tau_inert}) for the details.
 	\qed
 \end{proof}
 
@@ -1571,11 +1581,13 @@ Using the above properties, we can state the following up-to technique.
 			$
 			and for 
 			a
-			fresh $t$:\\
+			fresh name $t$ and $\Delta_1'', \Delta_2''$:\\
 			\[
 				\horel{\Gamma}{\Delta_1''}{\newsp{\widetilde{m_1}}{P_2 \Par \htrigger{t}{V_1}}}
 				{\ \Re\ }
 				{\Delta_2''}{}{\newsp{\widetilde{m_2}}{Q_2 \Par \htrigger{t}{V_2}}}
+%				\qquad
+%				\text{(for some $\Delta_1'', \Delta_2''$)}
 			\]
 %
 		\item	$\forall \ell \not= \news{\widetilde{m}} \bactout{n}{V}$ such that
@@ -1604,8 +1616,7 @@ Using the above properties, we can state the following up-to technique.
 		\Re^{\Hby{\dtau}} = \set{ \horel{\Gamma}{\Delta_1'}{P_2}{,}{\Delta_2'}{Q_1} \setbar \horel{\Gamma}{\Delta_1}{P_1}{\ \Re\ }{\Delta_2'}{Q_1},
 		\horel{\Gamma}{\Delta_1}{P_1}{\Hby{\dtau}}{\Delta_1'}{P_2} }
 	\]
-	We may verify that $\Re^{\Hby{\dtau}}$ is a bisimulation with
-	the use of \propref{lem:tau_inert}.
+	We may verify that $\Re^{\Hby{\dtau}}$ is a higher-order bisimulation by using \propref{lem:tau_inert}.
 	\qed
 \end{proof}
 
@@ -1725,7 +1736,7 @@ then they are equivalent under any higher-order substitution.
 %				for some $U$.
 %	\end{enumerate}
 %
-	then. for all $R$ such that $\fv{R} = \{x\}$, we have
+	then for all $R$ such that $\fv{R} = \{x\}$, we have
 	\[
 		\horel{\Gamma}{\Delta_1}{P \subst{\abs{x}{R}}{z}}{\hwb}{\Delta_2}{Q \subst{\abs{x}{R}}{z}}.
 	\]
@@ -1772,7 +1783,7 @@ by (i)~constructing a typed relation on the
 	\begin{proof}[Sketch]
 	The proof follows the definition of the characteristic process; 
 	see \lemref{lem:trigger_subst}, page \pageref{lem:trigger_subst}, in the Appendix for details.
-	Let us consider the particular case in which $I$ is a singleton; we construct a typed relation $\Re$:
+	Let us consider the particular case in which $I$ is a singleton; we then construct a typed relation $\Re$:
 	\begin{eqnarray*}
 		\Re &=& \set{
 					\horel{\Gamma}{\Delta_1'}{\newsp{\widetilde{m_1}}{P \Par \appl{(\abs{x}{R})}{n_1} }}
@@ -1797,7 +1808,7 @@ by (i)~constructing a typed relation on the
 		\Delta_1'' \proves \newsp{\widetilde{m_1}'}{P' \Par R' \subst{n_1}{x}}
 	\end{eqnarray*}
 	for some $\Delta''_1$.
-	Then from the definition of $\Re$ we have:
+	Then, from the definition of $\Re$, we have:
 	\begin{eqnarray*}
 		\Gamma; \es; \Delta_1 \proves \newsp{\widetilde{m_1}}{P \Par \appl{(\trvalx{t})}{n_1} }
 		\hby{\dtau}\hby{ \bactinp{t}{\omapchar{U}} } \Hby{\dtau}
@@ -1879,7 +1890,7 @@ by (i)~constructing a typed relation on the
 	\qed
 \end{proof}
 
-We now show that higher-order bisimilarity is sound with respect to contextual bisimilarity.
+We now show that higher-order bisimilarity is sound with respect to context bisimilarity.
 To show soundness we use the crucial result of \lemref{lem:proc_substmt}:
 
 \begin{lemma}
@@ -2039,7 +2050,7 @@ Indeed, we may conclude $$\cong\ \subseteq\ \hwb\ =\ \fwb\ \subseteq\ \wbc\ \sub
 \subsection{Revisiting the Hotel Booking Scenario (Section \ref{exam:proc})}
 \label{ss:examprev}
 
-Now we prove that $\Client_1$ and $\Client_2$ 
+Now we revisit our running example to prove that $\Client_1$ and $\Client_2$ 
 in \secref{exam:proc} are behaviourally equivalent.
 
 \begin{proposition}\label{p:examp}
@@ -2190,29 +2201,29 @@ $$
 %		& \Par \binp{t_2}{x} \newsp{s}{\mapchar{\btinp{\lhot{S}}}{s} \Par \bout{\dual{s}}{\abs{x}{P \subst{h_2}{y}}} \inact }}
 		\\[1mm]
 
-		\hby{\bactinp{t_1}{b}} \hby{\bactinp{t_2}{b}} \hby{\dtau} \hby{\dtau}&
+		\hby{\bactinp{t_1}{b}} ~ \hby{\bactinp{t_2}{b}} \, \hby{\dtau} \, \hby{\dtau}&
 		\es; \es; k_1: S \cat k_2: S \proves \newsp{h_1, h_2}{
 		\binp{\dual{h_1}}{x} \binp{\dual{h_2}}{y} R' \\
 		&  \Par \newsp{s_1', s_2'}{ P_{xy}\subst{h_1}{y} \subst{k_1}{x} \Par P_{xy}\subst{h_1}{y} \subst{k_2}{x}}\\
 		& \Par \bout{t_3}{s_1'} \inact \Par \bout{t_4}{s_2'} \inact}
 		\\[1mm]
 
-		\hby{\bactout{t_3}{s_1'}} \hby{ \bactout{t_4}{s_2'}} &
+		\hby{\bactout{t_3}{s_1'}}~ \hby{ \bactout{t_4}{s_2'}} &
 		\es; \es; k_1: S \cat k_2: S \proves \newsp{h_1, h_2}{
 		\binp{\dual{h_1}}{x} \binp{\dual{h_2}}{y} R' \\
 		&  \Par P_{xy}\subst{h_1}{y} \subst{k_1}{x} \Par P_{xy}\subst{h_1}{y} \subst{k_2}{x}}\\
 		& \Par \newsp{s_1', s_2'}{\ftrigger{t_3'}{s_1'}{\tinact} \Par \ftrigger{t_4}{s_2'}{\tinact}}
 		\\[1mm]
 
-		\hby{\bactout{t_3'}{c}} \hby{ \bactout{t_4'}{c}} \\
+		\hby{\bactout{t_3'}{c}} ~\hby{ \bactout{t_4'}{c}} \\
 		\hby{\dtau} \hby{\dtau} \hby{\dtau} \hby{\dtau} &
 		\es; \es; k_1: S \cat k_2: S \proves \newsp{h_1, h_2}{
 		\binp{\dual{h_1}}{x} \binp{\dual{h_2}}{y} R' \\
 		&  \Par P_{xy}\subst{h_1}{y} \subst{k_1}{x} \Par P_{xy}\subst{h_1}{y} \subst{k_2}{x}}
 		\\[1mm]
 
-		\hby{\bactout{k_1}{\rtype}} \hby{\bactout{k_2}{\rtype}}\\
-		\hby{\bactinp{k_1}{\Quote}} \hby{\bactinp{k_2}{\Quote}}
+		\hby{\bactout{k_1}{\rtype}}~ \hby{\bactout{k_2}{\rtype}}\\
+		\hby{\bactinp{k_1}{\Quote}}~ \hby{\bactinp{k_2}{\Quote}}
 		& \es; \es; k_1: S' \cat k_2: S' \proves \newsp{h_1, h_2}{
 		\binp{\dual{h_1}}{x} \binp{\dual{h_2}}{y} R'\\
 		& \Par \bout{h_1}{\Quote} Q \subst{h_1}{z} \Par \bout{h_2}{\Quote} Q \subst{h_2}{z}}
@@ -2230,7 +2241,7 @@ $$
 		\Par \bsel{k_2}{\reject} \inact
 		\\[1mm]
 
-		\hby{\bactsel{k_1}{\accept}} \hby{\bactsel{k_2}{\reject}} \hby{\bactsel{k_1}{\creditc}}&
+		\hby{\bactsel{k_1}{\accept}} ~ \hby{\bactsel{k_2}{\reject}} ~ \hby{\bactsel{k_1}{\creditc}}&
 		\es; \es; \es \proves \inact
 	\end{array}
 \]
@@ -2258,40 +2269,40 @@ $$
 %		& \Par \binp{t_2}{x} \newsp{s}{\mapchar{\btinp{\lhot{S}}}{s} \Par \bout{\dual{s}}{\abs{x}{Q_2 \subst{\dual{h}}{y}}} \inact }}
 \\[1mm]
 
-		\hby{\bactinp{t_1}{b}} \hby{\bactinp{t_2}{b}} \hby{\dtau}\hby{\dtau}&
+		\hby{\bactinp{t_1}{b}}~ \hby{\bactinp{t_2}{b}} ~\hby{\dtau}\,\hby{\dtau}&
 		\es; \es; k_1: S \cat k_2: S \proves \newsp{h}{
 		P\subst{h}{y} \subst{k_1}{x} \Par P_{xy}\subst{\dual{h}}{y} \subst{k_2}{x}\\
 		& \Par \newsp{s_1', s_2'}{\bout{t_3}{s_1'} \inact \Par \bout{t_4}{s_2'} \inact}}
 \\[1mm]
 
-		\hby{\bactout{t_3}{s_1'}} \hby{ \bactout{t_4}{s_2'}} &
+		\hby{\bactout{t_3}{s_1'}}~ \hby{ \bactout{t_4}{s_2'}} &
 		\es; \es; k_1: S \cat k_2: S \proves \newsp{h}{
 		P\subst{h}{y} \subst{k_1}{x} \Par P_{xy}\subst{\dual{h}}{y} \subst{k_2}{x}\\
 		& \Par \newsp{s_1', s_2'}{\ftrigger{t_3'}{s_1'}{\tinact} \Par \ftrigger{t_4'}{s_2'}{\tinact}}}
 \\[1mm]
 
-		\hby{\bactout{t_3'}{c}} \hby{ \bactout{t_4'}{c}} \\
+		\hby{\bactout{t_3'}{c}} ~\hby{ \bactout{t_4'}{c}} \\
 		\hby{\dtau} \hby{\dtau} \hby{\dtau} \hby{\dtau} &
 		\es; \es; k_1: S \cat k_2: S \proves \newsp{h}{
 		P\subst{h}{y} \subst{k_1}{x} \Par P_{xy}\subst{\dual{h}}{y} \subst{k_2}{x}}
 		\\[1mm]
 
 
-		\hby{\bactout{k_1}{\rtype}} \hby{\bactout{k_2}{\rtype}}\\
-		\hby{\bactinp{k_1}{\Quote}} \hby{\bactinp{k_2}{\Quote}}
+		\hby{\bactout{k_1}{\rtype}}~ \hby{\bactout{k_2}{\rtype}}\\
+		\hby{\bactinp{k_1}{\Quote}}~ \hby{\bactinp{k_2}{\Quote}}
 		& \es; \es; k_1: S' \cat k_2: S' \proves \newsp{h}{
 		\bout{h}{\Quote_1} \binp{h}{\Quote_2} R \subst{k_1}{x} \\
 		& \Par \binp{\dual{h}}{\Quote_2} \bout{\dual{h}}{\Quote_1} R \subst{k_2}{x}}
 \\[1mm]
-		\hby{\dtau} \hby{\dtau}&
+		\hby{\dtau}\, \hby{\dtau}&
 		\es; \es; k_1: S' \cat k_2: S' \proves R \subst{k_1}{x} \Par R \subst{k_2}{x}
 \\[1mm]
-		\hby{\dtau} \hby{\dtau}&
+		\hby{\dtau} \, \hby{\dtau}&
 		\es; \es; k_1: S' \cat k_2: S' \proves
 		\bsel{k_1}{\accept} \bout{k_1}{\creditc} \inact 
 		\Par \bsel{k_2}{\reject} \inact
 \\[1mm]
-		\hby{\bactsel{k_1}{\accept}} \hby{\bactsel{k_2}{\reject}} \hby{\bactsel{k_1}{\creditc}}&
+		\hby{\bactsel{k_1}{\accept}} ~ \hby{\bactsel{k_2}{\reject}} ~\hby{\bactsel{k_1}{\creditc}}&
 		\es; \es; \es \proves \inact
 	\end{array}
 \]
