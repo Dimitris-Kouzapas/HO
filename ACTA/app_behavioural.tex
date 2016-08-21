@@ -642,8 +642,7 @@ This concludes the proof.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %          COINCIDENCE
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\newcommand{\ntrigger}[2]{#1 \leftharpoonup_\mathtt{A} #2}
-\newcommand{\newtrigger}[2]{\binp{#1}{x} \newsp{s}{\appl{x}{s} \Par \bout{\dual{s}}{#2} \inact} }
+
 
 
 \subsection{Proof of \thmref{the:coincidence}}
@@ -693,8 +692,10 @@ that is used to simplify the proofs. Let
 	\ntrigger{t}{V} = \newtrigger{t}{V}
 	\label{eq:ntrig}
 \end{equation}
+
+\textcolor{blue}{JP - This paragraph is not very clear:}
 The alternative trigger process has a simpler formulation
-from the higher-order trigger process which is useful to proofs.
+from the higher-order trigger process (cf.~\eqref{eqb:0}) which is useful to proofs.
 However, the input of characteristic values on name $t$
 results in the creation of redundant parallel components
 of the form $\news{s}{\bout{t}{s}}$ which need to
@@ -704,7 +705,7 @@ lemma shows how we can ignore these parallel components.
 \noindent
 The first auxiliary lemma states the equivalence (up to $\hwb$) between
 higher-order trigger processes $\htrigger{t}{V}$ (cf.~\eqref{eqb:0}) and $\ntrigger{t}{V}$.
-\begin{lemma}[Alternative Trigger Process]
+\begin{lemma}[Auxiliary Results for Trigger Processes]
 \label{l:altrig}
 Let $P$ and $Q$ be processes.
 	\label{lem:alt_tr}
@@ -3456,26 +3457,36 @@ We first show that every visible action $\ell$ is definable.
 \end{lemma}
 
 \begin{proof}
-	Let $\suc$ be a fresh name. We define $T\lrangle{\ell, \suc}$ as follows:
-	\begin{eqnarray*}
-		T\lrangle{\bactinp{n}{V}, \suc} &=&
-		\bout{\dual{n}}{V} \bout{\suc}{\dual{n}} \inact
-		\\
-		T\lrangle{\bactbra{n}{l}, \suc} &=&
-		\bsel{\dual{n}}{l} \bout{\suc}{\dual{n}} \inact
-		\\
-%		T\lrangle{\news{\widetilde{m}} \bactout{n}{\widetilde{m}}, \suc} &=&
-%		\binp{\dual{n}}{\widetilde{y}} (\hotrigger{t}{x}{s}{\widetilde{y}} \Par \bout{\suc}{\dual{n}, \widetilde{y}} \inact)
+	Let $\suc$ be a fresh name. We define:
+%	 $T\lrangle{\ell, \suc}$ as follows:
+%	\begin{eqnarray*}
+%		T\lrangle{\bactinp{n}{V}, \suc} &=&
+%		\bout{\dual{n}}{V} \bout{\suc}{\dual{n}} \inact
 %		\\
-%		T\lrangle{\news{\widetilde{m}} \bactout{n}{\abs{\widetilde{x}}{Q}}, \suc} &=&
-%		\binp{\dual{n}}{y} (\hotrigger{t}{x}{s}{\abs{\widetilde{x}}{(\appl{y}{\widetilde{x}}})} \Par \bout{\suc}{\dual{n}, y} \inact)
+%		T\lrangle{\bactbra{n}{l}, \suc} &=&
+%		\bsel{\dual{n}}{l} \bout{\suc}{\dual{n}} \inact
 %		\\
-		T\lrangle{\news{\widetilde{m}} \bactout{n}{V}, \suc} &=&
-		\binp{\dual{n}}{y} (\htrigger{t}{y} \Par \bout{\suc}{\dual{n}, y} \inact)
-		\\
-		T\lrangle{\bactsel{n}{l}, \suc} &=&
-		\bbra{\dual{n}}{l: \bout{\suc}{\dual{n}} \inact), l_i: \newsp{a}{\binp{a}{y} \bout{\suc}{\dual{n}} \inact}}_{i \in I}
-	\end{eqnarray*}
+%%		T\lrangle{\news{\widetilde{m}} \bactout{n}{\widetilde{m}}, \suc} &=&
+%%		\binp{\dual{n}}{\widetilde{y}} (\hotrigger{t}{x}{s}{\widetilde{y}} \Par \bout{\suc}{\dual{n}, \widetilde{y}} \inact)
+%%		\\
+%%		T\lrangle{\news{\widetilde{m}} \bactout{n}{\abs{\widetilde{x}}{Q}}, \suc} &=&
+%%		\binp{\dual{n}}{y} (\hotrigger{t}{x}{s}{\abs{\widetilde{x}}{(\appl{y}{\widetilde{x}}})} \Par \bout{\suc}{\dual{n}, y} \inact)
+%%		\\
+%		T\lrangle{\news{\widetilde{m}} \bactout{n}{V}, \suc} &=&
+%		\binp{\dual{n}}{y} (\htrigger{t}{y} \Par \bout{\suc}{\dual{n}, y} \inact)
+%		\\
+%		T\lrangle{\bactsel{n}{l}, \suc} &=&
+%		\bbra{\dual{n}}{l: \bout{\suc}{\dual{n}} \inact), l_i: \newsp{a}{\binp{a}{y} \bout{\suc}{\dual{n}} \inact}}_{i \in I}
+%	\end{eqnarray*}
+		\[
+		T\lrangle{\ell, \suc} =
+		\begin{cases}
+		\bout{\dual{n}}{V} \bout{\suc}{\dual{n}} \inact & \text{if $\ell = \bactinp{n}{V}$} \\
+		\bsel{\dual{n}}{l} \bout{\suc}{\dual{n}} \inact & \text{if $\ell = \bactbra{n}{l}$} \\
+		\binp{\dual{n}}{y} (\htrigger{t}{y} \Par \bout{\suc}{\dual{n}, y} \inact) & \text{if $\ell = \news{\widetilde{m}} \bactout{n}{V}$} \\
+		\bbra{\dual{n}}{l: \bout{\suc}{\dual{n}} \inact), l_i: \newsp{a}{\binp{a}{y} \bout{\suc}{\dual{n}} \inact}}_{i \in I} & \text{if $\ell = \bactsel{n}{l}$} 
+		\end{cases}
+	\]
 Consider the process 
 	\[
 		\Gamma; \emptyset; \Delta \proves P \hastype \Proc
