@@ -10,8 +10,7 @@ and
 denoted $\hwb$ and $\fwb$, respectively.
 We prove that
 they coincide with (reduction-closed)
-barbed congruence, the form of contextual equivalence used in concurrency 
-(denoted $\cong$, cf. \defref{def:rc}).
+barbed congruence (denoted $\cong$, cf. \defref{def:rc}), the form of contextual equivalence used in concurrency.
 This characterisation result is given in 
 \thmref{the:coincidence} (page \pageref{the:coincidence}).
 
@@ -442,7 +441,7 @@ and \figref{fig:envLTS}.
 for linear higher-order types.
 Notice that for open process terms (i.e., with free variables), 
 we can always apply Rule~$\trule{EProm}$ (cf. \figref{fig:typerulesmy}) and obtain an empty $\Lambda$. 
-As it will be clear below (cf. \defref{d:typedrel}), we will be working with closed process terms, i.e., processes with no free  variables.
+As it will be clear below (cf. \defref{d:typedrel}), we will be working with closed process terms, i.e., processes without free  variables.
 }
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -980,7 +979,7 @@ do inhabit their associated type.
 \newc{
 	We give an example of a characteristic process inhabiting a
 	recursive type.
-	\begin{example}
+	\begin{example}[Characteristic process for a recursive session type]
 	Consider the type 
 	$S = \trec{t}{\btout{U_1} \btinp{U_2} \vart{t}}$.
 	By \defref{def:char}, we have that $\mapchar{S}{s} = \mapchar{\btout{U_1} \btinp{U_2} \tinact}{s} = \bout{s}{\omapchar{U_1}} \bout{t}{s} \inact$.
@@ -1314,7 +1313,7 @@ trigger or characteristic values or names:
 	$
 	(\Gamma_1; \Lambda_1; \Delta_1) \hby{\ell} (\Gamma_2; \Lambda_2; \Delta_2)
 	$, as just defined.
-	Also following \defref{d:tlts}, 
+	Following \defref{d:tlts}, 
 	we 
 	write  $\Hby{}$ for the reflexive and transitive closure of $\hby{\tau}$,
 	$\Hby{\ell}$ for the transitions $\Hby{}\hby{\ell}\Hby{}$, and $\Hby{\hat{\ell}}$
@@ -1358,7 +1357,8 @@ use two different trigger processes (cf.~\eqref{eq:4}):
 	%\right.
 		\end{cases}
 	\label{eqb:0} \\
-	\ftrigger{t}{V}{U}	& \defeq &	\fotrigger{t}{x}{s}{U}{V}	\label{eqb:4}
+	\ftrigger{t}{V}{U}	& \defeq &	\fotrigger{t}{x}{s}{U}{V}	
+	\label{eqb:4}
 %	\mapchar{\btinp{U} \tinact}{s}
 \end{eqnarray}
 %
@@ -1438,7 +1438,7 @@ We exploit characteristic trigger processes to define \emph{characteristic bisim
 	The largest such bisimulation is called \emph{characteristic bisimilarity}, denoted by $\fwb$.
 \end{definition}
 
-Observe how we have used \notref{not:outtype} to explicitly refer to the type in output actions.
+Observe how we have used \notref{not:outtype} to explicitly refer to the type of the emitted value in output actions.
 
 \newc{
 \begin{remark}[Differences between $\hwb$ and $\fwb$]
@@ -1646,7 +1646,7 @@ techniques for \HOp processes.
 	The main difference between 
 	$\hwb$ and $\fwb$
 %	the definition of the two bisimilarity relations
-	is the trigger process (namely, higher-order triggers $\htrigger{t}{V}$ in $\hwb$ and characteristic triggers $\ftrigger{t}{V}{U}$ in $\fwb$). Thus, the most interesting case in the proof is when we observe an output from a process. 
+	is the trigger process (higher-order triggers $\htrigger{t}{V}$ in $\hwb$ and characteristic triggers $\ftrigger{t}{V}{U}$ in $\fwb$). Thus, the most interesting case in the proof is when we observe an output from a process. 
 	When showing that $\fwb \ \subseteq \ \hwb$, 
 	the
 	key after the output is to show that
@@ -1657,7 +1657,7 @@ techniques for \HOp processes.
 	\[
 		\newsp{\tilde{m_1}}{P_1 \Par \htrigger{t}{V}} \hwb \newsp{\tilde{m_2}}{P_2 \Par \htrigger{t}{V_2}}.
 	\]
-	Similarly, in the proof of $\hwb \subseteq \fwb$, the key step is showing that
+	Similarly, in the proof of $\hwb \ \subseteq \ \fwb$, the key step is showing that
 	\[
 		\newsp{\tilde{m_1}}{P_1 \Par \htrigger{t}{V}} \fwb \newsp{\tilde{m_2}}{P_2 \Par \htrigger{t}{V_2}}
 	\]
@@ -1665,26 +1665,47 @@ techniques for \HOp processes.
 	\[
 		\newsp{\tilde{m_1}}{P_1 \Par \ftrigger{t}{V}{U}} \fwb \newsp{\tilde{m_2}}{P_2 \Par \ftrigger{t}{V_2}{U}}.
 	\]
-	Intuitively, the above equalities follow from the fact that  
+	The proof for the above equalities is coinductive, exploiting the freshness of the trigger name in each case; see  \lemref{lem:trigger_equiv} in the Appendix.
+	While the proof of the first equality (i.e., higher-order triggers imply characteristic triggers) follows expected lines, the proof of the second 
+	equality 
+	(i.e., characteristic triggers imply higher-order triggers) is a bit more involved: 
+	we exploit an alternative trigger process, denoted $\ntrigger{t}{V}$, simpler than the 
+	higher-order trigger $\htrigger{t}{V}$ in \eqref{eqb:0}:
+\begin{equation*}
+	\ntrigger{t}{V} = \newtrigger{t}{V}
+%	\label{eq:ntrig}
+\end{equation*}
+In the proofs for these coincidence results, we exploit some auxiliary results for trigger processes, including 
+  a two-way connection between $\htrigger{t}{V}$ and $\ntrigger{t}{V}$
+   (cf. \lemref{lem:alt_tr} (3) in the Appendix).
+	We thus infer that 
 	characteristic trigger processes
 	$\ftrigger{t}{V}{U}$
 	and
 	higher-order trigger processes
 	$\htrigger{t}{V}$
-	exhibit similar behaviour, see \lemref{lem:trigger_equiv} in the Appendix for more details.}
-	Indeed, while for the former we have
-	\begin{eqnarray*}
-		\fotrigger{t}{x}{s}{U}{V} &\hby{\bactinp{t}{s'}}& \newsp{s}{\binp{s}{y} \mapchar{U}{y}  \Par \bout{\dual{s}}{V} \inact}
-	\end{eqnarray*}
-		for the latter we have:
-	\begin{eqnarray*}
-		\hotrigger{t}{x}{s}{V} &\hby{\bactinp{t}{\omapchar{U}}}& \newsp{s}{ \binp{s}{y} \mapchar{U}{y}  \Par \bout{\dual{s}}{V} \inact}
-%		&\by{\tau}& \newsp{s}{ \binp{s}{y} \mapchar{U}{y}  \Par \bout{\dual{s}}{V} \inact}
-	\end{eqnarray*}
-%
-	Using the above information we can show that typed relations induced by 
+	exhibit a similar behaviour.}
+	
+%	Intuitively, the above equalities follow from the fact that  
+%	characteristic trigger processes
+%	$\ftrigger{t}{V}{U}$
+%	and
+%	higher-order trigger processes
+%	$\htrigger{t}{V}$
+%	exhibit similar behaviour, see \lemref{lem:trigger_equiv} in the Appendix for more details.
+%	Indeed, while for the former we have
+%	\begin{eqnarray*}
+%		\fotrigger{t}{x}{s}{U}{V} &\hby{\bactinp{t}{s'}}& \newsp{s}{\binp{s}{y} \mapchar{U}{y}  \Par \bout{\dual{s}}{V} \inact}
+%	\end{eqnarray*}
+%		for the latter we have:
+%	\begin{eqnarray*}
+%		\hotrigger{t}{x}{s}{V} &\hby{\bactinp{t}{\omapchar{U}}}& \newsp{s}{ \binp{s}{y} \mapchar{U}{y}  \Par \bout{\dual{s}}{V} \inact}
+%%		&\by{\tau}& \newsp{s}{ \binp{s}{y} \mapchar{U}{y}  \Par \bout{\dual{s}}{V} \inact}
+%	\end{eqnarray*}
+%%
+	In turn, using the above results we can show that typed relations induced by 
 	$\hwb$ and $\fwb$ coincide.
-	The full proof is found in 
+	The full proof is 
 	in \appref{app:sub_coinc}, \lemref{app:lem:wb_eq_wbf} (\mypageref{app:lem:wb_eq_wbf}).
 	\qed
 \end{proof}

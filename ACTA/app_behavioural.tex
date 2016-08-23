@@ -482,10 +482,12 @@ is a higher-order bisimulation.
 Suppose first that 
 $\horel{\Gamma}{\Delta}{P}{\hby{\ell}}{\Delta'}{P''}$, for some $P''$; we have to show that $P'$ can produce an appropriate matching action.
 There are two main cases: $\ell \neq \tau$ (a visible action) and  $\ell = \tau$ (an unobservable, possibly deterministic action). 
-The first case follows easily by typing conditions and type soundness, which ensure that $P'$ has the same potential as $P$ for performing visible actions. 
-The second case can be divided into two sub-cases: first, if $\tau = \dtau$ then $P' = P''$ and the thesis trivially follows; second, if $\tau \neq \dtau$ (i.e., $P$ has the possibility of performing both $\dtau$ and some other $\tau$) 
+\begin{enumerate}[1.]
+\item The first case follows easily by typing conditions and type soundness, which ensure that $P'$ has the same potential as $P$ for performing visible actions. 
+\item The second case can be divided into two sub-cases: first, if $\tau = \dtau$ then $P' = P''$ and the thesis trivially follows; second, if $\tau \neq \dtau$ (i.e., $P$ has the possibility of performing both $\dtau$ and some other $\tau$) 
 then either $P'$ has the same $\tau$ or $P'$ does not have it, because $\dtau$ excluded the occurrence of $\tau$. 
 The thesis follows by noticing that, in the first case, $P'$ can match the move from $P$; the second case cannot occur because of typing and the definition of deterministic transitions. 
+\end{enumerate}
 
 Suppose now  that 
 $\horel{\Gamma}{\Delta}{P'}{\hby{\ell}}{\Delta'}{P''}$, for some $P''$.
@@ -642,8 +644,7 @@ This concludes the proof.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %          COINCIDENCE
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\newcommand{\ntrigger}[2]{#1 \leftharpoonup_\mathtt{A} #2}
-\newcommand{\newtrigger}[2]{\binp{#1}{x} \newsp{s}{\appl{x}{s} \Par \bout{\dual{s}}{#2} \inact} }
+
 
 
 \subsection{Proof of \thmref{the:coincidence}}
@@ -653,10 +654,12 @@ This concludes the proof.
 \noi We split the proof of \thmref{the:coincidence} (Page \pageref{the:coincidence}) into 
 several lemmas:
 \begin{enumerate}[$-$]
-\item \lemref{l:altrig} connects characteristic and higher-order trigger processes with an alternative trigger process
+\item \lemref{l:altrig} 
+establishes useful properties of characteristic and higher-order processes, including a two-way connection between 
+higher-order trigger processes and an alternative trigger process
 (denoted $\ntrigger{t}{V}$, defined below).
 \item \lemref{lem:trigger_equiv}
-establishes the equivalence between characteristic and higher-order trigger processes.
+establishes the equivalence between characteristic and higher-order trigger processes. %, using \lemref{l:altrig}.
 \item	\lemref{app:lem:wb_eq_wbf} establishes $\hwb\ =\ \fwb$.
 \item    \lemref{lem:trigger_subst} establishes a trigger substitution lemma (\lemref{lem:trigger_substmt} in the main text), using 
 \lemref{lem:trigger_application} (Page \pageref{lem:trigger_application}).
@@ -693,8 +696,10 @@ that is used to simplify the proofs. Let
 	\ntrigger{t}{V} = \newtrigger{t}{V}
 	\label{eq:ntrig}
 \end{equation}
+
+\textcolor{blue}{JP - This new paragraph is not clear:}
 The alternative trigger process has a simpler formulation
-from the higher-order trigger process which is useful to proofs.
+from the higher-order trigger process (cf.~\eqref{eqb:0}) which is useful to proofs.
 However, the input of characteristic values on name $t$
 results in the creation of redundant parallel components
 \begin{eqnarray*}
@@ -713,7 +718,7 @@ lemma shows how we can ignore these parallel components.
 \noindent
 The first auxiliary lemma states the equivalence (up to $\hwb$) between
 higher-order trigger processes $\htrigger{t}{V}$ (cf.~\eqref{eqb:0}) and $\ntrigger{t}{V}$.
-\begin{lemma}[Alternative Trigger Process]
+\begin{lemma}[Auxiliary Results for Trigger Processes]
 \label{l:altrig}
 Let $P$ and $Q$ be processes.
 	\label{lem:alt_tr}
@@ -1014,7 +1019,7 @@ We analyze each of the three parts:
 							Furthermore, we can see that
 							\[
 								\horel{\Gamma}{\Delta_2}{\newsp{\widetilde{m_2}}{Q \Par \ntrigger{t}{V_2}  } }
-								{\Hby{\bactinp{t}{\omapchar{\shot{\btinp{U} \tinact}}}}}
+								{\Hby{\bactinp{t}{\omapchar{\shot{\btinp{U} \tinact~}}}}}
 								{\Delta_2'}{\newsp{\widetilde{m_2}'}{Q' \Par (\appl{V_2}{n}) \Par \newsp{s}{\bout{t'}{s} \inact}}}
 							\]
 %							\JP{Why $Q$ doesn't move to some $Q'$ in the above weak transition?} 
@@ -1024,7 +1029,7 @@ We analyze each of the three parts:
 								{\hby{\dtau} \hby{\dtau}}
 								{\Delta_1'}{}{\newsp{\widetilde{m_1}'}{P \Par (\appl{V_1}{n}) \Par \newsp{s}{\bout{t'}{s} \inact}}}
 							\end{eqnarray*}
-							to imply from the up-to determinate (\lemref{lem:up_to_deterministic_transition}) that
+							to imply from the up-to technique for deterministic transitions (\lemref{lem:up_to_deterministic_transition}) that
 							\[
 								\horel{\Gamma}{\Delta_1'}{\newsp{\widetilde{m_1}'}{P \Par (\appl{V_1}{n}) \Par \newsp{s}{\bout{t'}{s} \inact}}}
 								{\hwb}
@@ -1074,7 +1079,7 @@ We analyze each of the three parts:
 							\]
 							This is done by considering the requirements of $\Re$.
 
-							Note that input of the trigger value has no effect on the
+							Note that an input of the trigger value has no effect on the
 							bisimulation closure.
 							\[
 								\mhorel{\Gamma}{\Delta_1}{\newsp{\widetilde{m_1}}{P \Par \ntrigger{t}{V_1}  } }
@@ -1104,7 +1109,8 @@ We analyze each of the three parts:
 								{\hby{\dtau} \hby{\dtau}}
 								{\Delta_1'}{}{\newsp{\widetilde{m_1}'}{P \Par \appl{(\abs{z}{\mapchar{U'}{z}})}{V_1} \Par \newsp{s}{\bout{t'}{s} \inact}}}
 							\]
-							to imply from the up-to determinate (\lemref{lem:up_to_deterministic_transition}) that
+							to imply from the up-to 
+							 technique for deterministic transitions  (\lemref{lem:up_to_deterministic_transition}) that
 							\[
 							\begin{array}{c}
 								\horel{\Gamma}{\Delta_1'}{\newsp{\widetilde{m_1}'}{P \Par \appl{(\abs{z}{\mapchar{U'}{z}})}{V_1} \Par \newsp{s}{\bout{t'}{s} \inact}}}
@@ -1132,7 +1138,7 @@ We analyze each of the three parts:
 				\end{eqnarray*}
 				We show that $\Re\ \subseteq\ \hwb$, with a case analysis on the defining requirements
 				of higher-order bisimulation.
-				We concentrate on the cases of an input action on a fresh name $t$; 
+				We concentrate on the cases of an input action on the fresh name $t$; 
 				other cases are similar.
 				\begin{enumerate}
 					\item	Value $V_1$ is a higher-order value: This implies that there exist $U$ and $\Delta'_1$
@@ -1311,7 +1317,7 @@ We analyse both parts separately:
 						%
 							with $C_1$ (resp., $C_2$) being the higher-order trigger process
 							in the cases where $\ell = \news{\widetilde{m}} \bactout{n}{V_1'}$ (resp., $\mact{\ell} = \news{\widetilde{m}'} \bactout{n}{V_2'}$)
-							and $C_1 = C_2 = \inact$ otherwise.
+							and $C_1 = C_2 = \inact$, otherwise.
 						%
 							From \eqref{proof:trig_equiv00} and the definition of $\Re$
 							we can conclude that there exists a $ \Delta_4$ such that
@@ -1925,7 +1931,7 @@ We analyse each part separately:
 				\]
 				which concludes the case.
 				
-		\item	Part 4. Let $\Re$ be the typed relation
+		\item	For the proof of Part 4, let $\Re$ be the typed relation
 				\begin{eqnarray*}
 					\Re &=& \set{	\horel{\Gamma}{\Delta_1}{ \newsp{\widetilde{m_1}}{P \subst{n_1}{x} }}
 									{\hwb}
@@ -1943,8 +1949,9 @@ We analyse each part separately:
 					{\Delta_1'}{\newsp{\widetilde{m_1}'}{P' \subst{n_1}{x}}}
 				\]
 				We need to show a matching action from $\newsp{\widetilde{m_2}}{Q \subst{m_1}{x}}$;
-				we proceed to show that $\Re$ is a higher-order bisimulation by a case analysis on the subject of action $\ell$.
-				\begin{itemize}
+				we proceed to show that $\Re$ is a higher-order bisimulation by a case analysis on the subject/shape of action $\ell$.
+				There are three cases:
+				\begin{enumerate}[(a)]
 					\item	If $\subj{\ell} \not= n_1$ then the proof is straightforward from the premise of the proposition.
 							First observe that
 							\[
@@ -2127,7 +2134,7 @@ We analyse each part separately:
 											{\Delta_2'}{\newsp{\widetilde{m_2}'''}{Q'' \subst{m_1}{x}}}
 										\end{eqnarray*}
 							\end{itemize}
-					\end{itemize}
+					\end{enumerate}
 	\end{enumerate}
 	\qed
 \end{proof}
@@ -2594,7 +2601,7 @@ substitution, we can generalise for any value substitution.
 	Our analysis distinguishes two cases, depending on whether the
 	substitution $\subst{{\abs{x}{R}}}{z}$ has an effect on the action denoted by $\ell$:
 	\begin{enumerate}
-		\item	Case $P_1 \not\scong Q \Par \appl{z}{n}$ that is,
+		\item	Case $P_1 \not\scong Q \Par \appl{z}{n}$: That is,
 				the substitution does not affect top-level processes. 
 
 				In other words, we can infer from the freshness of $t$ that $\subj{\ell} \not= t$.
@@ -2650,7 +2657,7 @@ substitution, we can generalise for any value substitution.
 %				\jasks{There is a problem with equation labels above!}
 
 
-		\item	Case $P_1 \scong P \Par \prod_{i \in I} \appl{z}{n_i} \Par \appl{z}{n_1}$ such that
+		\item	Case $P_1 \scong P \Par \prod_{i \in I} \appl{z}{n_i} \Par \appl{z}{n_1}$, such that
 				$P \not\scong P' \Par \appl{z}{n'}$. This is the case where action $\ell$ might
 				happen on the process that is being substituted (note that a substituted process
 				needs to be applied first).
@@ -2957,7 +2964,7 @@ substitution, we can generalise for any value substitution.
 
 \begin{proof}
 	\noi We prove that $\wbc$ (cf. \mydefref{def:wbc}) satisfies the three defining properties of $\cong$:
-	reduction closure, barb preservation, congruence (cf. \mydefref{def:rc}).
+	reduction closure, barb preservation, and congruence (cf. \mydefref{def:rc}).
 %
 \begin{enumerate}[I.]
 
@@ -3485,26 +3492,36 @@ We first show that every visible action $\ell$ is definable.
 \end{lemma}
 
 \begin{proof}
-	Let $\suc$ be a fresh name. We define $T\lrangle{\ell, \suc}$ as follows:
-	\begin{eqnarray*}
-		T\lrangle{\bactinp{n}{V}, \suc} &=&
-		\bout{\dual{n}}{V} \bout{\suc}{\dual{n}} \inact
-		\\
-		T\lrangle{\bactbra{n}{l}, \suc} &=&
-		\bsel{\dual{n}}{l} \bout{\suc}{\dual{n}} \inact
-		\\
-%		T\lrangle{\news{\widetilde{m}} \bactout{n}{\widetilde{m}}, \suc} &=&
-%		\binp{\dual{n}}{\widetilde{y}} (\hotrigger{t}{x}{s}{\widetilde{y}} \Par \bout{\suc}{\dual{n}, \widetilde{y}} \inact)
+	Let $\suc$ be a fresh name. We define:
+%	 $T\lrangle{\ell, \suc}$ as follows:
+%	\begin{eqnarray*}
+%		T\lrangle{\bactinp{n}{V}, \suc} &=&
+%		\bout{\dual{n}}{V} \bout{\suc}{\dual{n}} \inact
 %		\\
-%		T\lrangle{\news{\widetilde{m}} \bactout{n}{\abs{\widetilde{x}}{Q}}, \suc} &=&
-%		\binp{\dual{n}}{y} (\hotrigger{t}{x}{s}{\abs{\widetilde{x}}{(\appl{y}{\widetilde{x}}})} \Par \bout{\suc}{\dual{n}, y} \inact)
+%		T\lrangle{\bactbra{n}{l}, \suc} &=&
+%		\bsel{\dual{n}}{l} \bout{\suc}{\dual{n}} \inact
 %		\\
-		T\lrangle{\news{\widetilde{m}} \bactout{n}{V}, \suc} &=&
-		\binp{\dual{n}}{y} (\htrigger{t}{y} \Par \bout{\suc}{\dual{n}, y} \inact)
-		\\
-		T\lrangle{\bactsel{n}{l}, \suc} &=&
-		\bbra{\dual{n}}{l: \bout{\suc}{\dual{n}} \inact), l_i: \newsp{a}{\binp{a}{y} \bout{\suc}{\dual{n}} \inact}}_{i \in I}
-	\end{eqnarray*}
+%%		T\lrangle{\news{\widetilde{m}} \bactout{n}{\widetilde{m}}, \suc} &=&
+%%		\binp{\dual{n}}{\widetilde{y}} (\hotrigger{t}{x}{s}{\widetilde{y}} \Par \bout{\suc}{\dual{n}, \widetilde{y}} \inact)
+%%		\\
+%%		T\lrangle{\news{\widetilde{m}} \bactout{n}{\abs{\widetilde{x}}{Q}}, \suc} &=&
+%%		\binp{\dual{n}}{y} (\hotrigger{t}{x}{s}{\abs{\widetilde{x}}{(\appl{y}{\widetilde{x}}})} \Par \bout{\suc}{\dual{n}, y} \inact)
+%%		\\
+%		T\lrangle{\news{\widetilde{m}} \bactout{n}{V}, \suc} &=&
+%		\binp{\dual{n}}{y} (\htrigger{t}{y} \Par \bout{\suc}{\dual{n}, y} \inact)
+%		\\
+%		T\lrangle{\bactsel{n}{l}, \suc} &=&
+%		\bbra{\dual{n}}{l: \bout{\suc}{\dual{n}} \inact), l_i: \newsp{a}{\binp{a}{y} \bout{\suc}{\dual{n}} \inact}}_{i \in I}
+%	\end{eqnarray*}
+		\[
+		T\lrangle{\ell, \suc} =
+		\begin{cases}
+		\bout{\dual{n}}{V} \bout{\suc}{\dual{n}} \inact & \text{if $\ell = \bactinp{n}{V}$} \\
+		\bsel{\dual{n}}{l} \bout{\suc}{\dual{n}} \inact & \text{if $\ell = \bactbra{n}{l}$} \\
+		\binp{\dual{n}}{y} (\htrigger{t}{y} \Par \bout{\suc}{\dual{n}, y} \inact) & \text{if $\ell = \news{\widetilde{m}} \bactout{n}{V}$} \\
+		\bbra{\dual{n}}{l: \bout{\suc}{\dual{n}} \inact), l_i: \newsp{a}{\binp{a}{y} \bout{\suc}{\dual{n}} \inact}}_{i \in I} & \text{if $\ell = \bactsel{n}{l}$} 
+		\end{cases}
+	\]
 Consider the process 
 	\[
 		\Gamma; \emptyset; \Delta \proves P \hastype \Proc
