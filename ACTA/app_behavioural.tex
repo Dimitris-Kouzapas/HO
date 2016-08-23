@@ -697,8 +697,17 @@ The alternative trigger process has a simpler formulation
 from the higher-order trigger process which is useful to proofs.
 However, the input of characteristic values on name $t$
 results in the creation of redundant parallel components
-of the form $\news{s}{\bout{t}{s}}$ which need to
-be treated in a bisimulation closure. The next
+\begin{eqnarray*}
+	&&\newtrigger{t}{V}\\
+	&\hby{\bactinp{t}{ \abs{x}{\binp{x}{y} (\bout{t'}{x} \inact \Par \mapchar{U'}{y} )  }} }&
+	\newsp{s}{\appl{(\abs{x}{\binp{x}{y} (\bout{t'}{x} \inact \Par \mapchar{U'}{y} ))}}{s} \Par \bout{\dual{s}}{V} \inact}\\
+	&\Hby{\tau}
+	&\newsp{s}{\mapchar{U}{y} \subst{V}{y} \Par \bout{t'}{s} \inact } \\
+	&\scong&
+	\mapchar{U}{y} \subst{V}{y} \newsp{s}{\bout{t'}{s} \inact}
+\end{eqnarray*}
+of the form $\news{s}{\bout{t'}{s} \inact}$ which need to
+be treated in a bisimulation closure. They are redundant because restricted name $s$ has no interactions. The next
 lemma shows how we can ignore these parallel components. 
 
 \noindent
@@ -1952,31 +1961,31 @@ We analyse each part separately:
 							for some $\Delta'_2$
 							and
 							\[
-								\horel{\Gamma}{\Delta_2}{\newsp{\widetilde{m_1}'}{P' \subst{n}{x}} \Par \bout{t}{n_2} \inact \Par C_1}
+								\horel{\Gamma}{\Delta_2}{\newsp{\widetilde{m_1}'}{P' \subst{n}{x}} \Par \bout{t}{n_1} \inact \Par C_1}
 								{\hwb}
-								{\Delta_2'}{\newsp{\widetilde{m_2}'}{Q' \subst{n}{x}} \Par \bout{t}{n_2} \inact \Par C_2}
+								{\Delta_2'}{\newsp{\widetilde{m_2}'}{Q' \subst{n}{x}} \Par \bout{t}{n_1} \inact \Par C_2}
 							\]
-							with $C_1 = \htrigger{t}{n_1}$ and $C_2 = \htrigger{t}{n_2}$ if $\ell$ and $\mact{\ell}$ are output actions,
+							with $C_1 = \htrigger{t}{n_1}$ and $C_2 = \htrigger{t}{m_1}$ if $\ell$ and $\mact{\ell}$ are output actions,
 							$C_1 = \inact$ and $C_2 = \inact$ otherwise.
 							From here we can deduce that 
 							\[
-								\horel{\Gamma}{\Delta_2}{\newsp{\widetilde{m_1}}{Q \subst{n_2}{x}}}
+								\horel{\Gamma}{\Delta_2}{\newsp{\widetilde{m_1}}{Q \subst{m_1}{x}}}
 								{\Hby{\mact{\ell}}}
-								{\Delta_2'}{\newsp{\widetilde{m_2}'}{Q' \subst{n_2}{x}}}
+								{\Delta_2'}{\newsp{\widetilde{m_2}'}{Q' \subst{m_1}{x}}}
 							\]
 							Furthermore, we can easily see that
 							\[
 								\horel{\Gamma}{\Delta_2}{\newsp{\widetilde{m_1}'}{P \subst{n_1}{x}} \Par C_1}
 								{\ \Re\ }
-								{\Delta_2'}{\newsp{\widetilde{m_2}'}{Q' \subst{n_2}{x}} \Par C_2}
+								{\Delta_2'}{\newsp{\widetilde{m_2}'}{Q' \subst{m_1}{x}} \Par C_2}
 							\]
 
 					\item	$\subj{\ell} = n_1$. We distinguish two subcases
 							\begin{itemize}
-								\item	$n_1 = n_2$. The case is similar to the previous case.
-								\item	$n_1 \not= n_2$.
+								\item	$n_1 = m_1$. The case is similar to the previous case.
+								\item	$n_1 \not= m_1$.
 										From the premise and Part 1 of this lemma we get
-										that $\dual{n_1} \in \fn{P}$ and $\dual{n_2} \in \fn{Q}$.
+										that $\dual{n_1} \in \fn{P}$ and $\dual{m_1} \in \fn{Q}$.
 										The latter implies that this case is not possible, since
 										no external action $\ell$ would be observed, because
 										of the typed transition requirement.
@@ -2004,37 +2013,57 @@ We analyse each part separately:
 										with $\ell_{11}'' \subst{n_1}{n}  = \ell_{11}' $,
 										which implies
 										\[
-											\horel{\Gamma}{\Delta_2}{\newsp{\widetilde{m_2}}{Q \subst{n}{x} \Par \bout{t}{n_2} \inact}}
+											\horel{\Gamma}{\Delta_2}{\newsp{\widetilde{m_2}}{Q \subst{n}{x} \Par \bout{t}{m_1} \inact}}
 											{ \Hby{\ell_{21}''} }
-											{\Delta_2'}{\newsp{\widetilde{m_2}'}{Q_1 \subst{n}{x} \Par \bout{t}{n_2} \inact}}
+											{\Delta_2'}{\newsp{\widetilde{m_2}'}{Q_1 \subst{n}{x} \Par \bout{t}{m_1} \inact}}
 										\]
-										with $\ell_{21}'' \subst{n_2}{n}  = \ell_{21}' $,
+										with $\ell_{21}'' \subst{m_1}{n}  = \ell_{21}' $,
 										which in turn implies
 										\begin{eqnarray}
-											\newsp{\widetilde{m_2}}{Q \subst{n_2}{x}} &\hby{\ell_{22}'}& \newsp{\widetilde{m_{21}}}{Q_1 \subst{n_2}{x}}
+											\newsp{\widetilde{m_2}}{Q \subst{m_1}{x}} &\hby{\ell_{22}'}& \newsp{\widetilde{m_{21}}}{Q_1 \subst{m_1}{x}}
 											\label{lem:tr_app_43}
 										\end{eqnarray}
-										Also observe that for $U = \Delta(n_1)$
+										Also observe that %for $U = \Delta(n_1)$
 										\[
 											\mhorel{\Gamma}{\Delta_1}{\newsp{\widetilde{m_1}}{P \subst{n}{x} \Par \bout{t}{n_1} \inact}}
-											{ \hby{\bactout{t}{n_1}} \hby{\bactinp{t}{\omapchar{U}}} \Hby{\dtau} }
-											{\Delta_1''}{}{\newsp{\widetilde{m_1}''}{P \subst{n}{x} \Par \omapchar{U} \subst{n_1}{x}}}
+											{ \hby{\bactout{t}{n_1}} }
+											{\Delta_1''''}{}{\newsp{\widetilde{m_1}''}{P \subst{n}{x} \Par \omapchar{U} \subst{n_1}{x}}}
+										\]
+										for some $\Delta''''_1$
+										which implies
+										\[
+											\mhorel{\Gamma}{\Delta_2}{\newsp{\widetilde{m_2}}{Q \subst{n}{x} \Par \bout{t}{m_1} \inact}}
+											{ \Hby{\bactout{t}{m_1}} }
+											{\Delta_2''''}{}{\newsp{\widetilde{m_2}''}{Q' \subst{n}{x} \Par \omapchar{U} \subst{m_1}{x}}}
+										\]
+										for some $\Delta''''_2$
+										with
+										\[
+										\mhorel{\Gamma}{\Delta_1''''}{\newsp{\widetilde{m_1}''}{P \subst{n}{x} \Par \htrigger{t'}{n_1}}}
+										{\hwb}
+										{\Delta_2''''}{}{\newsp{\widetilde{m_2}''}{Q' \subst{n}{x} \Par \htrigger{t'}{m_1}}}
+										\]
+										From here observe that for $U = \Delta'''(n_1)$
+										\[
+										\mhorel{\Gamma}{\Delta_1''''}{\newsp{\widetilde{m_1}}{P \subst{n}{x} \Par \htrigger{t'}{n_1}}}
+										{  \hby{\bactinp{t'}{\omapchar{U}}} \Hby{\dtau} }
+										{\Delta_1''}{}{\newsp{\widetilde{m_1}''}{P \subst{n}{x} \Par \omapchar{U} \subst{n_1}{x}}}
 										\]
 										for some $\Delta''_1$
 										which implies
 										\[
-											\mhorel{\Gamma}{\Delta_2}{\newsp{\widetilde{m_2}}{Q \subst{n}{x} \Par \bout{t}{n_2} \inact}}
-											{ \Hby{\bactout{t}{n_2}} \Hby{\bactinp{t}{\omapchar{U}}} \Hby{\dtau} }
-											{\Delta_2''}{}{\newsp{\widetilde{m_2}''}{Q' \subst{n}{x} \Par \omapchar{U} \subst{n_2}{x}}}
+										\mhorel{\Gamma}{\Delta_2''''}{\newsp{\widetilde{m_2}}{Q \subst{n}{x} \Par \htrigger{t'}{m_1}}}
+										{ \Hby{\bactinp{t'}{\omapchar{U}}} \Hby{\dtau} }
+										{\Delta_2''}{}{\newsp{\widetilde{m_2}''}{Q' \subst{n}{x} \Par \omapchar{U} \subst{m_1}{x}}}
 										\]
 										for some $\Delta''_2$
 										with
 										\[
 											\mhorel{\Gamma}{\Delta_1''}{\newsp{\widetilde{m_1}''}{P \subst{n}{x} \Par \omapchar{U} \subst{n_1}{x}}}
 											{\hwb}
-											{\Delta_2''}{}{\newsp{\widetilde{m_2}''}{Q' \subst{n}{x} \Par \omapchar{U} \subst{n_2}{x}}}
+											{\Delta_2''}{}{\newsp{\widetilde{m_2}''}{Q' \subst{n}{x} \Par \omapchar{U} \subst{m_1}{x}}}
 										\]
-										From \eqref{lem:tr_app_42} we can see that, for some $\Delta'''_1$
+										From \eqref{lem:tr_app_42}, i.e., the fact that the two parallel components of the process interact on name $n_1$, we can see that, for some $\Delta'''_1$
 										\[
 											\mhorel{\Gamma}{\Delta_1''}{\newsp{\widetilde{m_1}''}{P \subst{n}{x} \Par \omapchar{U} \subst{n_1}{x}}}
 											{ \hby{\tau} }
@@ -2042,7 +2071,7 @@ We analyse each part separately:
 										\]
 										which implies from Part 2 of this lemma
 										\begin{eqnarray}
-											\mhorel{\Gamma}{\Delta_2''}{\newsp{\widetilde{m_2}''}{Q' \subst{n}{x} \Par \omapchar{U} \subst{n_2}{x}}}
+											\mhorel{\Gamma}{\Delta_2''}{\newsp{\widetilde{m_2}''}{Q' \subst{n}{x} \Par \omapchar{U} \subst{m_1}{x}}}
 											{\Hby{\tau}}
 											{\Delta_2'''}{}{\newsp{\widetilde{m_2}''}{Q_2 \subst{n}{x} \Par \bout{t'}{n_1} \inact}}
 											\label{lem:tr_app_44}
@@ -2057,22 +2086,22 @@ We analyse each part separately:
 										\end{eqnarray}
 										where \eqref{lem:tr_app_44} implies the untyped transition
 										\[
-											\newsp{\widetilde{m_2}''}{Q' \subst{n}{x} \Par \omapchar{U} \subst{n_2}{x}}
+											\newsp{\widetilde{m_2}''}{Q' \subst{n}{x} \Par \omapchar{U} \subst{m_1}{x}}
 											\Hby{ \ell_{22}'' }
-											\newsp{\widetilde{m_2}''}{Q_2 \subst{n}{x} \Par \omapchar{U} \subst{n_2}{x}}
+											\newsp{\widetilde{m_2}''}{Q_2 \subst{n}{x} \Par \omapchar{U} \subst{m_1}{x}}
 										\]
 										and furthermore,
 										\[
-											\newsp{\widetilde{m_2}''}{Q' \subst{n_2}{x}}
+											\newsp{\widetilde{m_2}''}{Q' \subst{m_1}{x}}
 											\Hby{ \ell_{22}' }
-											\newsp{\widetilde{m_2}''}{Q_2 \subst{n_2}{x}}
+											\newsp{\widetilde{m_2}''}{Q_2 \subst{m_1}{x}}
 										\]
-										with $\ell_{22}'' \subst{n_2}{n} = \ell_{22}'$.
+										with $\ell_{22}'' \subst{m_1}{n} = \ell_{22}'$.
 										From the last result and \eqref{lem:tr_app_43} we get
 										\[
-											\mhorel{\Gamma}{\Delta_2}{\newsp{\widetilde{m_2}}{ Q \subst{n_2}{x}   }  }
+											\mhorel{\Gamma}{\Delta_2}{\newsp{\widetilde{m_2}}{ Q \subst{m_1}{x}   }  }
 											{\Hby{\tau}}
-											{\Delta_2'}{}{\newsp{\widetilde{m_2}''}{ Q'' \subst{n_2}{x}   }  }
+											{\Delta_2'}{}{\newsp{\widetilde{m_2}''}{ Q'' \subst{m_1}{x}   }  }
 										\]
 										Furthermore, from \eqref{lem:tr_app_45} we can get that, for some $\Delta_3$,
 										\[
@@ -2082,9 +2111,9 @@ We analyse each part separately:
 										\]
 										which implies
 										\[
-											\horel{\Gamma}{\Delta_2'''}{\newsp{\widetilde{m_2}''}{Q_2 \subst{n}{x} \Par \bout{t'}{n_2} \inact}}
+											\horel{\Gamma}{\Delta_2'''}{\newsp{\widetilde{m_2}''}{Q_2 \subst{n}{x} \Par \bout{t'}{m_1} \inact}}
 											{\hby{\ell_{22}''}}
-											{\Delta_4}{\newsp{\widetilde{m_2}'''}{Q'' \subst{n}{x} \Par \bout{t'}{n_2} \inact}}
+											{\Delta_4}{\newsp{\widetilde{m_2}'''}{Q'' \subst{n}{x} \Par \bout{t'}{m_1} \inact}}
 										\]
 										and
 										\begin{eqnarray*}
@@ -2095,7 +2124,7 @@ We analyse each part separately:
 										which in turn implies the required conclusion:
 										\begin{eqnarray*}											\horel{\Gamma}{\Delta_1'}{\newsp{\widetilde{m_1}'''}{P' \subst{n_1}{x}}}
 											{\ \Re\ }
-											{\Delta_2'}{\newsp{\widetilde{m_2}'''}{Q'' \subst{n_2}{x}}}
+											{\Delta_2'}{\newsp{\widetilde{m_2}'''}{Q'' \subst{m_1}{x}}}
 										\end{eqnarray*}
 							\end{itemize}
 					\end{itemize}
@@ -2695,7 +2724,7 @@ substitution, we can generalise for any value substitution.
 								{\Delta_2'''}{}{\newsp{\widetilde{m_2}}{P_2'' \subst{\trvalx{t}}{z} \Par \appl{(\trvalx{t'})}{n_2}}}
 							\end{eqnarray*}
 							%
-							From \lemref{lem:trigger_subst} we can deduce that, for all $\abs{x}{R}$, if there exist $\Delta_5$ and $ \Delta_6$ then
+							From \lemref{lem:trigger_subst} we can deduce that, for all $\abs{x}{R}$, there exist $\Delta_5$ and $ \Delta_6$ such that
 							\begin{eqnarray*}
 								\mhorel{\Gamma}{\Delta_5}{\newsp{\widetilde{m_1}}{Q \subst{\trvalx{t}}{z} \Par \appl{(\abs{x}{R})}{n_1}}}
 								{\hwb}
