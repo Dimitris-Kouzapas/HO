@@ -697,26 +697,26 @@ that is used to simplify the proofs. Let
 	\label{eq:ntrig}
 \end{equation}
 
-\textcolor{blue}{JP - This new paragraph is not clear:}
-The alternative trigger process has a simpler formulation
-from the higher-order trigger process (cf.~\eqref{eqb:0}) which is useful to proofs.
+%\textcolor{blue}{JP - This new paragraph is not clear:}
+The simpler formulation of alternative trigger process (with respect to the higher-order trigger process, cf.~\eqref{eqb:0}) 
+is useful in proofs.
 However, the input of characteristic values on name $t$
-results in the creation of redundant parallel components
+results in the creation of redundant parallel components:
 \begin{eqnarray*}
 	&&\newtrigger{t}{V}\\
 	&\hby{\bactinp{t}{ \abs{x}{\binp{x}{y} (\bout{t'}{x} \inact \Par \mapchar{U'}{y} )  }} }&
 	\newsp{s}{\appl{(\abs{x}{\binp{x}{y} (\bout{t'}{x} \inact \Par \mapchar{U'}{y} ))}}{s} \Par \bout{\dual{s}}{V} \inact}\\
-	&\Hby{\tau}
+	&\hby{\dtau}\hby{\dtau}
 	&\newsp{s}{\mapchar{U}{y} \subst{V}{y} \Par \bout{t'}{s} \inact } \\
 	&\scong&
-	\mapchar{U}{y} \subst{V}{y} \newsp{s}{\bout{t'}{s} \inact}
+	\mapchar{U}{y} \subst{V}{y} \Par \newsp{s}{\bout{t'}{s} \inact}
 \end{eqnarray*}
-of the form $\news{s}{\bout{t'}{s} \inact}$ which need to
-be treated in a bisimulation closure. They are redundant because restricted name $s$ has no interactions. The next
-lemma shows how we can ignore these parallel components. 
-
-\noindent
-The first auxiliary lemma states the equivalence (up to $\hwb$) between
+Indeed, processes 
+of the form $\news{s}{\bout{t'}{s} \inact}$ 
+are redundant because restricted name $s$ has no interactions.
+The following  
+lemma shows that we can ignore these processes. 
+It also states the equivalence (up to $\hwb$) between
 higher-order trigger processes $\htrigger{t}{V}$ (cf.~\eqref{eqb:0}) and $\ntrigger{t}{V}$.
 \begin{lemma}[Auxiliary Results for Trigger Processes]
 \label{l:altrig}
@@ -1431,7 +1431,7 @@ We analyse both parts separately:
 %			\JP{How does this new relation help? This is not clear.}
 Suppose that $\newsp{\widetilde{m_1}}{P \Par \ntrigger{t}{V_1}}$ moves; we must exhibit a matching move from
 $\newsp{\widetilde{m_2}}{Q \Par \ntrigger{t}{V_2}}$.
-			We distinguish three cases, depending on the source/kind of visible action: 
+			We distinguish four cases, depending on the source/kind of visible action: 
 				\begin{enumerate}
 					\item $P$ moves autonomously, i.e., for some $\Delta_3$ we have:
 						%
@@ -1485,7 +1485,7 @@ $\newsp{\widetilde{m_2}}{Q \Par \ntrigger{t}{V_2}}$.
 						\]
 
 					\item	%\jasks{I would probably put cases 2 and 3 within a single case, which is the case when the right-hand side process moves. }
-						$\ntrigger{t}{V_1}$ moves autonomously, i.e., for some $\Delta_3$ we have:
+						$\ntrigger{t}{V_1}$ moves autonomously due to the input of characteristic value, i.e., for some $\Delta_3$ we have:
 						\[
 							\horel{\Gamma}{\Delta_1'}{\newsp{\widetilde{m_1}}{P \Par \ntrigger{t}{V_1}}}
 							{\hby{\bactinp{t}{\omapchar{\shot{\btinp{U} \tinact~}}}}}
@@ -1565,7 +1565,7 @@ $\newsp{\widetilde{m_2}}{Q \Par \ntrigger{t}{V_2}}$.
 							\]
 							The conclusion is immediate from \eqref{proof:trig_equiv3}.
 
-					\item	$\ntrigger{t}{V_1}$ moves autonomously, i.e., for some $\Delta_3$ we have:
+					\item	$\ntrigger{t}{V_1}$ moves autonomously due to the input of a trigger process, i.e., for some $\Delta_3$ we have:
 						\[
 							\mhorel{\Gamma}{\Delta_1'}{\newsp{\widetilde{m_1}}{P \Par \ntrigger{t}{V_1}}}
 							{\hby{\bactinp{t}{ \abs{x}{\binp{t'}{y}{(\appl{y}{x})}  }}}}
@@ -2238,7 +2238,6 @@ we give an intermediate result.
 					{\ \Re\ }
 					{\Delta_2''}{\newsp{\widetilde{m_2}'}{Q' \Par R \subst{\widetilde{m}}{\widetilde{x}} \Par C_2 }}
 				\end{eqnarray*}
-
 		\item	Suppose an action from $R$:
 		\[
 					\horel{\Gamma}{\Delta_1'}{\newsp{\widetilde{m_1}}{P \Par R \subst{\widetilde{n}}{\widetilde{x}}  }}
@@ -2946,7 +2945,7 @@ substitution, we can generalise for any value substitution.
 %			\newc{JP - I have modified here, pls check}
 			
 
-		\item	Case $\ell = \news{\widetilde{m_1}'} \bactout{n}{\widetilde{m_1}}$: This case is similar to the previous one.
+%		\item	Case $\ell = \news{\widetilde{m_1}'} \bactout{n}{\widetilde{m_1}}$: This case is similar to the previous one.
 	\end{enumerate}
 	\qed
 \end{proof}
@@ -3406,7 +3405,7 @@ refined for session types in~\cite{KYHH2015,KY2015}.
 	Let $\Gamma; \emptyset; \Delta_1 \proves P \hastype \Proc$.
 	A visible action $\ell$ is \emph{definable} whenever, given a fresh name $\suc$,
 	there exists a (testing) process
-	$$\Gamma; \emptyset; \Delta_2 \proves T\lrangle{\ell, \suc} \hastype \Proc$$
+	$\Gamma; \emptyset; \Delta_2 \proves T\lrangle{\ell, \suc} \hastype \Proc$
 	such that:
 	\begin{enumerate}[1.]
 					\item	If $\horel{\Gamma}{\Delta_1}{P}{\hby{\ell}}{\Delta_1'}{P'}$
