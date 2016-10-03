@@ -1,0 +1,3635 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%% Journal Version of ESOP16 Paper
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\documentclass[runningheads]{llncs} 
+\usepackage[dvipsnames]{xcolor}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{xspace}
+\usepackage{graphicx}
+\usepackage{latexsym}
+\usepackage{listings}
+\usepackage{multirow}
+\usepackage{suffix}
+\usepackage{url}
+\usepackage{mathptmx}
+\usepackage{mathrsfs}
+\usepackage{comment}
+\usepackage{enumerate}
+\usepackage{txfonts}
+\usepackage{hyperref}
+\usepackage{fancybox}
+%\usepackage{space}
+\usepackage{color}      % use if color is used in text
+
+\usepackage{mathpartir}
+
+%\usepackage{tikz}	% for drawing figures
+
+\usepackage{caption}	% for subfigures
+\usepackage{subcaption}	% for subfigures
+
+\begin{document}
+
+
+\title{On the Relative Expressiveness of\\ 
+Higher-Order Session Processes
+}
+
+\author{
+	Dimitrios Kouzapas\inst{1}
+	\and
+	Jorge A. P\'{e}rez\inst{2}
+	\and Nobuko Yoshida\inst{3}
+}
+\authorrunning{Dimitrios Kouzapas, Jorge A. P\'{e}rez, and Nobuko Yoshida}
+\institute{University of Glasgow, UK
+ \and University of Groningen, The Netherlands 
+ \and Imperial College London, UK}
+\maketitle
+
+
+\input{macros}
+
+%\pagestyle{plain}
+
+%\input{abstract}
+
+\begin{abstract}
+By integrating
+constructs from the $\lambda$-calculus and 
+the $\pi$-calculus,
+in \emph{higher-order process calculi} exchanged values may contain processes.
+This paper studies the relative expressiveness of \HOp, 
+the higher-order $\pi$-calculus in
+which communications are governed by \emph{session types}. 
+Our main discovery is that \HO, a subcalculus of \HOp which lacks name-passing and recursion, 
+can serve as a new core calculus for session-typed higher-order
+concurrency. By exploring a new bisimulation for \HO, we show that
+ \HO can encode \HOp fully abstractly 
+(up to typed contextual \newj{equivalence})
+more precisely and efficiently than the first-order 
+session $\pi$-calculus (\sessp).
+Overall, under session types, 
+$\HOp$, $\HO$, and $\sessp$ 
+are equally expressive; \newjb{however},  
+$\HOp$ and $\HO$ are more tightly related than 
+$\HOp$ and $\sessp$.
+\end{abstract}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Introduction}
+\label{sec:intro}
+%\input{introesop}
+
+
+\emph{Type-preserving compilations} are important in the design of
+functional and object-oriented languages: type information has been
+used to, e.g., justify code optimizations and reason about programs~\cite{DBLP:journals/toplas/MorrisettWCG99,DBLP:conf/pldi/ShaoA95,DBLP:journals/toplas/LeagueST02}.
+A vast literature on 
+{\em expressiveness} 
+in concurrency theory
+also studies compilations (or \emph{encodings})~\cite{Palamidessi03,DBLP:journals/iandc/Gorla10,DBLP:journals/tcs/FuL10,DBLP:conf/icalp/LanesePSS10,DBLP:journals/corr/PetersG15}:
+they are used to transfer reasoning techniques 
+%from one calculus to another, 
+across calculi,
+and to 
+%identify constructs which may be implemented using simpler ones. 
+implement process constructs using simpler ones.
+%To a large extent, however, this kind of \emph{expressiveness studies} concern only \emph{untyped process languages}.
+In this work, we study 
+{\em relative expressiveness} 
+via \emph{type-preserving encodings} for \HOp, a \emph{higher-order} 
+process language that integrates message-passing concurrency with functional features.
+We consider source and target calculi coupled with \emph{session types}~\cite{honda.vasconcelos.kubo:language-primitives} denoting interaction protocols. 
+Building on untyped frameworks for relative expressiveness
+\cite{DBLP:journals/iandc/Gorla10}, 
+we propose type preservation as a {new criterion} for \emph{precise encodings}.
+We identify \HO, a new core calculus for higher-order session concurrency without
+name passing. 
+We show that \HO can encode \HOp precisely and efficiently. 
+Requiring  
+type preservation makes
+this encoding far from trivial: we crucially exploit advances on
+session type duality~\cite{TGC14,DBLP:journals/corr/abs-1202-2086} and recent
+characterisations of typed contextual equivalence \cite{characteristic_bis}.
+We develop a full hierarchy of variants of \HOp based on 
+precise encodings: % (see \figref{fig:express}):
+our encodings are
+type-preserving and fully abstract up to typed
+behavioural equalities. 
+\newj{\figref{fig:express} illustrates this hierarchy; the variants of \HOp are explained next.}
+
+\begin{figure}[t]
+\centering
+\includegraphics[scale=1]{./figures/diag.pdf}
+
+	\caption{Encodability in Higher-Order Sessions. 
+	Precise encodings are defined in \defref{def:goodenc}.
+	\label{fig:express}}
+%\vspace{-5mm}
+%\Hlinefig
+\end{figure}
+
+\paragraph{Context.}
+In \emph{session-based concurrency}, interactions are organised into \emph{sessions}, basic communication units.
+Interaction patterns can then be abstracted as \emph{session types}~\cite{honda.vasconcelos.kubo:language-primitives}, against which  specifications may be checked. 
+%These patterns are defined as %(possibly recursive) 
+%sequences of communication actions: % (send/receive a value, offer/select a behavior).
+%For instance, 
+%session type $T_1 = \btinp{\mathsf{str}} \btout{\mathsf{int}}  \tinact$ may be intuitively read as: receive (?) a value of type $\mathsf{str}$,then output (!) a value of type $\mathsf{int}$, finally close the protocol.
+Session type $\btinp{U} S$ (resp.  $\btout{U} S$)
+describes a protocol that first receives (resp. sends) a value of type $U$ and then continues as protocol $S$.
+Also, given an index set $I$, types $\btbra{l_i:S_i}_{i \in I}$ 
+and $\btsel{l_i:S_i}_{i \in I}$ 
+define, %, respectively,
+%a branching and selection constructs for  
+\newj{respectively, external and internal choice constructs for}
+ a labelled choice mechanism; types 
+$\trec{t}{S}$ 
+and 
+$\tinact$ denote recursive and completed protocols, respectively.
+%describes a protocol that offers
+%(resp. ) 
+%Type $\tinact$ denotes the completed protocol.
+In the %(first-order) 
+$\pi$-calculus, %~\cite{MilnerR:calmp1}, 
+session types describe the intended interactive behaviour of the names %/channels 
+in a process~\cite{honda.vasconcelos.kubo:language-primitives}.
+%names/channels are endowed with session types (such as $T_1$) representing their intended interactive behavior.
+
+Session-based concurrency has also been casted in {higher-order} process
+calculi which, by combining features from the $\lambda$-calculus and the $\pi$-calculus, 
+enable the exchange of values 
+that may contain processes~\cite{tlca07,DBLP:journals/jfp/GayV10}. 
+%Higher-order calculi with sessions 
+%naturally bridges concurrent and functional computation, 
+%and enable the specification of protocols involving \emph{code mobility}, 
+%commonplace in practice.
+%The \HOp calculus enables 
+%the specification of protocols involving \emph{code mobility}, 
+%and includes
+%Higher-order calculi with sessions 
+The higher-order calculus with sessions studied here, called \HOp,
+can specify protocols involving \emph{code mobility}: it includes
+%equiped ping with 
+constructs for 
+synchronisation along shared names, 
+session communication (value passing, labelled choice) along linear names,
+recursion, 
+ (first-order) abstractions 
+ and applications.
+ That is, 
+ values in communications include names but also (first-order) abstractions---functions from name identifiers to processes. 
+ %(In contrast, higher-order abstractions---functions from processes to processes---are disallowed.)
+ (In contrast, we rule out \emph{higher-order} abstractions---functions from processes to processes.)
+Abstractions can be linear or shared; their types are  denoted $\lhot{C}$ and $\shot{C}$, respectively ($C$ 
+%is a first-order type $C$ (say, a session name).
+denotes a name). In \HOp we may have processes with a 
+session type such as, e.g.,
+%$T_2 = \btbra{upload:\btinp{\lhot{\mathsf{int}}}\tinact ~ , ~ sha:\btinp{\shot{\mathsf{int}}}\tinact}_{}$
+$$S = \btbra{{up}:\btinp{\lhot{C}}\btout{\mathsf{ok}}\tinact ~ , ~ {down}:\btout{\shot{C}}\btout{\mathsf{ok}}\tinact ~ , ~{quit}:\btout{\mathsf{bye}}\tinact}_{}\,.$$
+%that 
+$S$ is the type of 
+a server that offers ($\&$) \newj{three} different behaviours to a client: 
+%  clients to select among distinct  behaviors: %namely, 
+  to \emph{upload} a linear function, % (to be received by the server), 
+  to \emph{download} a shared function, % (to be sent by the server),
+   or to \emph{quit} the protocol. 
+   %Subsequently, 
+   \newj{Following a client's  selection ($\oplus$),}
+  the server sends a message ($\mathsf{ok}$ or $\mathsf{bye}$) before closing the session.
+
+
+
+
+
+\paragraph{Expressiveness of \HOp.}
+%In this paper 
+We study the type-preserving, 
+relative expressivity of \HOp. % in relation. 
+%to two 
+%sub-calculi
+%that distill first- and higher-order session-based concurrency. 
+%\begin{enumerate}[-]
+%\item 
+As expected from 
+known literature in the untyped setting \cite{SangiorgiD:expmpa}, 
+the first-order session \sessp-calculus~\cite{honda.vasconcelos.kubo:language-primitives} {(here denoted~\sessp)} 
+can encode  
+\HOp preserving session types. 
+%(\HOp without
+%abstractions and applications) 
+%\item 
+In this paper, 
+our \emph{main discovery} is 
+that 
+\HOp 
+without
+name-passing and recursion
+%is a new 
+can serve as a 
+core calculus    
+for higher-order session concurrency.  
+We call this core calculus \HO. 
+We show that \HO can encode \HOp more efficiently 
+than \sessp. In addition, in the higher-order session typed setting, 
+\HO offers more tractable bisimulation techniques 
+than \sessp (cf. \secref{ss:equiv}).
+
+
+
+\paragraph{Challenges and Contributions.}
+
+We assess the expressivity  of \HOp, \HO, and \sessp as delineated by session types. 
+We introduce \emph{type-preserving encodings}:
+type information is used to define encodings
+and to retain the semantics of session protocols. 
+Indeed,  not only we require 
+well-typed source processes are encoded into 
+well-typed target processes: 
+we demand that session type constructs (input, output, branching, select) used to type the source process
+are preserved by the typing of the target process.
+This criterion is included in 
+our notion of \emph{precise encoding} (\defref{def:goodenc}), which 
+extends encodability criteria for untyped processes with 
+\emph{full abstraction}.
+{Full abstraction results are stated
+up to two
+behavioural equalities that characterise barbed congruence:
+\emph{characteristic bisimilarity} ($\fwb$, defined in~\cite{characteristic_bis})
+and 
+\emph{higher-order bisimilarity} ($\hwb$), introduced in this
+work.
+It turns out that $\hwb$ offers more direct  reasoning than $\fwb$. }
+Using precise encodings we establish strong correspondences between 
+\HOp and its variants---see 
+%\figref{fig:express}. 
+below.
+
+
+One main contribution is 
+an encoding of \HOp into \HO (\secref{subsec:HOpi_to_HO}).  
+Since \HO lacks 
+both name-passing and recursion, this encoding involves two \emph{key challenges}:
+\begin{enumerate}[a.]
+\item In known (typed) 
+encodings of name-passing into process-passing~\cite{SaWabook} %are limited: % in that 
+%they come with restrictions on name usages;  
+%they 
+%work for %name-passing 
+%calculi 
+%with \emph{capability types} 
+%in which 
+only the output capability of names can be sent---a received name cannot be used in later inputs.
+This is far too limiting in \HOp, where 
+ session names %denoting arbitrary protocols 
+ may be passed around (\emph{delegation})
+and types describe interaction  \emph{structures}, rather than ``loose'' name capabilities. % at a given time.
+
+
+
+\item %As mentioned above, recursion % and replication)
+%can be encoded in untyped higher-order calculi using process duplication. Unfortunately, this kind of encodings 
+Known encodings of recursion in untyped higher-order calculi
+do not carry over to session typed calculi such as \HOp,
+because linear abstractions cannot be copied/duplicated. Hence, the discipline of session types  limits 
+the possibilities for representing infinite behaviours---even simple forms, such as input-guarded replication.
+\end{enumerate}
+
+
+
+
+%MOTIVATION FIRST ENCODING (). \emph{Still to highlight: recursive type required, no recursion, small example.
+
+%--- 
+%\noi
+%We illustrate our approach. % to these challenges.
+Our encoding overcomes these two obstacles, as we discuss in \secref{sec:overview}.
+
+Additional technical contributions include: 
+(i)~the encodability of \HO into \sessp (\secref{subsec:HOp_to_sessp}); 
+(ii)~extensions of our encodability results to richer settings (\secref{sec:extension});
+(iii)~a non encodability result showing that shared names strictly add expressive power to session calculi (\secref{ss:negative}).
+In essence, (i) extends known  results for untyped processes~\cite{SangiorgiD:expmpa} to the session typed setting.
+Concerning (ii), we develop extensions of our encodings to 
+\begin{enumerate}[-]
+\item The extension of \HOp with \emph{higher-order} abstractions (\HOpp); 
+\item The extension of \HOp with polyadic name passing and abstraction (\PHOp); 
+\item The super-calculus of \HOpp and \PHOp (\PHOpp), equivalent to the calculus in~\cite{tlca07}.
+\end{enumerate}
+%\figref{fig:express} summarises %our expressivity 
+%our encodability results. 
+%From a global standpoint, our 
+
+\newj{\figref{fig:express} summarises our encodability results: they}
+%These encodability results 
+connect \HOp with existing higher-order process calculi~\cite{tlca07}, and  
+ highlight the status of \HO as the core calculus for session concurrency.
+Finally, %although (iii) may be somewhat expected, 
+to our knowledge we are the first to prove 
+%this separation result, 
+the non encodability result (iii),
+exploiting session determinacy and typed equivalences.
+
+
+
+
+\paragraph{Outline.} 
+%This paper  is structured as follows.
+%\begin{enumerate}[$\bullet$]
+\secref{sec:overview} overviews key ideas of the precise encoding of \HOp into \sessp.
+%\item 
+\secref{sec:calculus} presents \HOp and its 
+subcalculi (\HO and \sessp); %, and extensions (\HOpp and \PHOp).  
+\secref{sec:types} summarises their session type system.
+\secref{sec:bt}~pres\-ents  behavioural equalities for \HOp:
+we recall definitions of barbed congruence and characteristic bisimilarity~\cite{characteristic_bis}, 
+and introduce higher-order bisimilarity.
+We show that these three typed relations coincide (\thmref{t:coincide}).
+%and states type soundness 
+%for \HOp and its variants.
+\secref{s:expr} defines \emph{precise %(typed) 
+encodings} by extending encodability criteria  for untyped processes. %~(e.g.,~\cite{DBLP:journals/iandc/Gorla10}).
+%\item 
+\secref{sec:positive} %and \S\,\ref{sec:negative}
+gives {precise encodings} of \HOp into \HO and of \HOp into~\sessp (Thms.~\ref{f:enc:hopitoho} and~\ref{f:enc:hotopi}).
+Mutual encodings between \sessp and \HO are derivable; 
+all these calculi are thus equally expressive.
+%By means of 
+Via
+empirical and formal comparisons between these two precise encodings, in \secref{ss:compare} we establish that
+\HOp and \HO are more tightly related than \HOp and \sessp (\thmref{t:tight}).
+Moreover, we prove the impossibility of encoding communication along shared names
+using linear names (\thmref{t:negative}).
+%Exploiting determinacy and typed equivalences,
+%\item
+In \secref{sec:extension} %studies extensions of \HOp: 
+we show 
+%that both \HOpp 
+%(the extension with higher-order applications) 
+%and \PHOp 
+%(the extension with polyadicity) 
+%are encodable 
+encodings of \HOpp and \PHOp 
+into \HOp
+(Thms.~\ref{f:enc:hopiptohopi} and \ref{f:enc:phopiptohopi}).
+%This connects our work to the existing higher-order session calculus in~\cite{tlca07} (here denoted  $\PHOpp$).
+%\item 
+\secref{sec:relwork} collects concluding remarks and reviews related works.
+%\secref{sec:concl} concludes.
+%The paper is self-contained. 
+{Omitted definitions and  proofs are  in the Appendix and 
+in~\cite{KouzapasPY15}.} 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Overview: Encoding Name Passing Into Process Passing}
+\label{sec:overview}
+%\input{overviewesop}
+\paragraph{A Precise Encoding of Name-Passing into Process-Passing.}
+As mentioned above, 
+our encoding of \HOp into \HO (\secref{subsec:HOpi_to_HO}) should 
+%overcome two key challenges. First, it should 
+(a)~enable the communication of arbitrary names, as required to represent delegation,
+and 
+%Second, it should 
+(b)~address the fact that linearity of session types limits the 
+possibilities for representing infinite behaviour. 
+To encode name passing into \HO 
+%to encode name output, 
+we ``pack''
+the name to be sent into an abstraction; 
+upon reception, the receiver ``unpacks'' this object following a precise protocol on a fresh  session:
+%More precisely, our encoding \jpc{of name passing} in \HO is given as:
+\begin{center}
+\begin{tabular}{rcll}
+  $\map{\bout{a}{b} P}$	&$=$&	$\bout{a}{ \abs{z}{\,\binp{z}{x} (\appl{x}{b})} } \map{P}$ \\
+  $\map{\binp{a}{x} Q}$	&$=$&	$\binp{a}{y} \newsp{s}{\appl{y}{s} \Par \bout{\dual{s}}{\abs{x}{\map{Q}}} \inact}$
+\end{tabular}
+\end{center}
+%and as a homomorphism for the other operators.
+Above, 
+%where
+$a,b$ are names and $s$ and $\dual{s}$ are 
+linear session names (\emph{endpoints}).
+%$\lambda x.P$ is a name abstraction of $P$; $\appl{x}{a}$ is a name application; 
+Processes $\bout{a}{V} P$ and 
+$\binp{a}{x} P$ denote output and input at~$a$;   
+abstractions and applications are denoted
+$\lambda x.P$ and $(\lambda x.P)a$. Processes %, respectively;
+$\newsp{s}P$ and $\inact$ represent hiding and inaction. %, respectively.
+%Intuitively, the output of a name $b$ along name $a$ is encoded by
+%the output of an abstraction containing $b$; the input of a name is encoded 
+%by the input of an abstraction
+Thus, following a communication on $a$, %our encoding features 
+a (deterministic) reduction between  
+$s$ and $\dual{s}$ guarantees that $b$ is properly unpacked by means of abstraction passing
+and appropriate applications.
+Notice that 
+%\HO 
+\newjb{the above encoding}
+requires %two 
+\newjb{three}
+extra reduction steps to mimic a name communication step in \HOp.
+Also, an output action in the source process is translated into an output action in the encoded process (and similarly for input).
+This is key to ensure the preservation of session type operators mentioned above (cf. \defref{def:tp}).
+
+\newj{As hinted at above, 
+a challenge in 
+ encoding $\recp{X}{P}$ is  
+preserving linearity  of session names.
+Intuitively, we encode the recursion body $P$ as an abstraction 
+$\abs{\tilde{x}}{\auxmapp{P}{{}}{\sigma}}$
+in which each session name of $P$ (included in 
+set $\sigma$)
+is converted into a name variable in $\tilde{x}$.
+Since  
+$\abs{\tilde{x}}{\auxmapp{P}{{}}{\sigma}}$
+does not mention (linear) session names,
+we may embed it into a 
+``duplicator'' process
+which implements recursion using higher-order communication~\cite{ThomsenB:plachoasgcfhop}. 
+The encoding of the recursion variable $X$
+invokes this duplicator in a by-need fashion:
+it receives 
+$\abs{\tilde{x}}{\auxmapp{P}{{}}{\sigma}}$ and uses two copies of it:
+one copy allows us to obtain $P$
+through the application of the session names of $P$; 
+the other allows us
+to invoke the duplicator when needed. 
+Interestingly, for this encoding to work 
+we require non-tail recursive session types; 
+this exploits recent advances on the theory of duality for session types~\cite{TGC14,DBLP:journals/corr/abs-1202-2086}.}
+
+
+%To preserve session linearity, we proceed as follows.
+%Given $\recp{X}{P}$, 
+%we encode the recursion body $P$ as an abstraction
+%in which free names of $P$ are converted into name variables.
+%The resulting higher-order value is embedded in an input-guarded 
+%``duplicator'' process~\cite{ThomsenB:plachoasgcfhop}.
+%The recursion variable $X$ is then encoded 
+%in such a way that it
+%simulates recursion unfolding by 
+%invoking the duplicator in a by-need fashion.
+%That is, upon reception, the abstraction representing the 
+%recursion body $P$
+%is duplicated: 
+%one copy is used to reconstitute the original recursion body $P$ (through
+%the application of the free names of $P$); 
+%another copy is used to re-invoke the duplicator when needed. 
+%Interestingly, for this encoding to work 
+%we require non-tail recursive session types; to this end, 
+%we apply recent advances on the theory of duality for session types~\cite{TGC14,DBLP:journals/corr/abs-1202-2086}.
+
+%To this end, we
+%first record a mapping from recursive variable $X$ to process variable $z_X$.
+%Then, we encode the recursion body $P$ as a name abstraction
+%in which free names of $P$ are converted into name variables, using \defref{d:auxmap}.
+%(Notice that $P$ is first encoded into \HO and then transformed using mapping
+%$\auxmapp{\cdot}{{}}{\sigma}$.)
+%Subsequently, this higher-order value is embedded in an input-guarded 
+%``duplicator'' process~\cite{ThomsenB:plachoasgcfhop}. Finally, we define the encoding of $X$ 
+%in such a way that it
+%simulates recursion unfolding by 
+%invoking the duplicator in a by-need fashion.
+%That is, upon reception, the \HO abstraction which encodes  the 
+%recursion body $P$
+%%containing $\auxmapp{P}{{}}{\sigma}$ 
+%is duplicated: 
+%one copy is used to reconstitute the original recursion body $P$ (through
+%the application of $\fn{P}$); another copy is used to re-invoke
+%the duplicator when needed. 
+%
+%We encode recursion with non-tail recursive session types; for this 
+%we apply recent advances on the theory of session duality~\cite{TGC14,DBLP:journals/corr/abs-1202-2086}.
+
+\paragraph{A Plausible Encoding That is Not Precise.}
+Our notion of \emph{precise encoding} (\defref{def:goodenc}) 
+requires the translation of both process and types; it  
+admits only process mappings that preserve session types
+\emph{and} are fully abstract. Thus, our encodings 
+not only exhibit  strong behavioural correspondences, but also 
+ relate source and target processes with consistent 
+communication structures described by session types.
+%Moreover, the notion of encoding includes full abstraction as encodability criteria.
+These requirements are demanding and make our developments far from trivial.
+In particular, requiring type preservation may rule out other plausible encoding strategies.
+To illustrate this point,
+consider the  following \newjb{alternative} encoding of %$\sessp$ 
+name-passing 
+into $\HO$:\footnote{This encoding was suggested by a reviewer of a previous version of this paper.} %defined as
+\begin{center}
+\begin{tabular}{rcll}
+  $\umap{\binp{a}{x} Q}$	&$=$&	$\bout{a}{\abs{x}{\umap{Q}}} \inact$ \\
+    $\umap{\bout{a}{b} P}$	&$=$&	$\binp{a}{x}( \appl{x}{b} \Par \umap{P})$ 
+\end{tabular}
+\end{center}
+%and as a homomorphism for the other operators.
+{Intuitively, 
+the encoding of input takes the initiative by sending an abstraction containing the encoding of its continuation $Q$;
+the encoding of output applies this received value to name $b$.}
+%rather than sending a package with name $b$, this encoding sends the continuation of the input. 
+Hence, this mapping entails  a 
+``role inversion'': outputs are translated into inputs, and inputs are translated into outputs. 
+Although fairly reasonable, we will see that the encoding $\umap{\cdot}$  
+%is far from desirable in a session typed setting: 
+is \emph{not type preserving}. Consequently, it is also not \emph{precise}.
+%Type preservation is intended to preserve the overall semantics of session types:
+Since individual prefixes (input, output, branching, select) 
+represent actions in a structured communication sequence (i.e., a protocol abstracted by a session type),
+the encoding~$\umap{\cdot}$ would simply alter the meaning of the session protocol in the source language.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%\input{calculusdk}
+
+\section{Higher-Order Session $\pi$-Calculi}
+\label{sec:calculus}
+
+We introduce 
+the \emph{higher-order session $\pi$-calculus} (\HOp).
+We define 
+syntax, operational semantics, and 
+its sub-calculi (\sessp and \HO).
+A type system and behavioural equivalences are introduced in 
+\secref{sec:types} and \secref{sec:bt}. 
+Extensions of \HOp 
+with higher-order abstractions and polyadicity (noted \HOpp and \PHOp, respectively) 
+are discussed in \secref{sec:extension}.
+
+
+%We also introduce two subcalculi of \HOp. In particular, we define the 
+%core higher-order session
+%calculus (\HO), which 
+%%. The \HO calculus is  minimal: it 
+%includes constructs for shared name synchronisation and 
+%%constructs for session establish\-ment/communication and 
+%(monadic) name-abstraction, but lacks name-passing and recursion.
+
+%Although minimal, in \secref{s:expr}
+%the abstraction-passing capabilities of \HOp will prove 
+%expressive enough to capture key features of session communication, 
+%such as delegation and recursion.
+
+\subsection{\HOp: Syntax, Operational Semantics, and Subcalculi}
+\label{subsec:syntax}
+
+\paragraph{Syntax.}
+The syntax of \HOp is defined in \figref{fig:syntax}.
+\HOp it is a subcalculus of the language studied 
+in~\cite{tlca07}. It is also a variant of the language that we investigated in~\cite{characteristic_bis}, 
+which includes higher-order value applications. 
+
+
+\input{figures/syntax}
+
+%\myparagraph{Values}
+\emph{Names} $a,b,c, \dots$ (resp.~$s, \dual{s}, \dots$) 
+range over shared (resp. session) names. 
+Names $m, n, t, \dots$ are session or shared names.
+Dual endpoints are $\dual{n}$ with
+$\dual{\dual{s}} = s$ and $\dual{a} = a$.
+%We define the dual operation over names $n$ as $\dual{n}$ with
+%$\dual{\dual{s}} = s$ and $\dual{a} = a$.
+%Intuitively, names $s$ and $\dual{s}$ are dual (two) \emph{endpoints} while 
+%shared names represent shared (non-deterministic) points. 
+Variables are denoted with $x, y, z, \dots$, 
+and recursive variables are denoted with $\varp{X}, \varp{Y} \dots$.
+An abstraction %(or higher-order value) 
+$\abs{x}{P}$ is a process $P$ with name parameter $x$.
+%Symbols $u, v, \dots$ range over identifiers; and  $V, W, \dots$ to denote values. 
+\emph{Values} $V,W$ include 
+identifiers $u, v, \ldots$ %(first-order values) 
+and 
+abstractions $\abs{x}{P}$ (first- and higher-order values, resp.). 
+
+%\myparagraph{Terms} 
+
+Process terms $P, Q, \ldots$ 
+include usual %$\pi$-calculus 
+prefixes for sending/receiving values $V$.
+%Process $\bout{u}{V} P$ denotes the output of value $V$
+%over name $u$, with continuation $P$;
+%process $\binp{u}{x} P$ denotes the input prefix on name $u$ of a value
+%that 
+%will substitute variable $x$ in continuation $P$. 
+Processes $\bsel{u}{l} P$ and $\bbra{u}{l_i: P_i}_{i \in I}$ are the
+usual session processes for selecting and branching~\cite{honda.vasconcelos.kubo:language-primitives}.
+Process 
+%ny
+%$\appl{x}{u}$ 
+$\appl{V}{u}$ 
+is the application
+which substitutes name $u$ on the abstraction~$V$. 
+Typing  ensures that $V$ is not a name.
+Recursion   $\recp{X}{P}$ binds the recursive variable $\varp{X}$ in   $P$.
+%Prefix $\bsel{u}{l} P$ selects label $l$ on name $u$ and then behaves as $P$.
+%Given $i \in I$ 
+%Process $\bbra{u}{l_i: P_i}_{i \in I}$ offers a choice on labels $l_i$ with
+%continuation $P_i$, given that $i \in I$.
+%Others are standard c
+Constructs for 
+inaction $\inact$,  parallel composition $P_1 \Par P_2$, and 
+name restriction $\news{n} P$ are standard.
+Session name restriction $\news{s} P$ simultaneously binds endpoints $s$ and $\dual{s}$ in $P$.
+%A well-formed process relies on assumptions for
+%guarded recursive processes.
+Functions $\fv{P}$ and $\fn{P}$ denote the sets of free 
+%\jpc{recursion}
+variables and names.
+We assume $V$ in $\bout{u}{V}{P}$ does not include free recursive 
+variables $\rvar{X}$.
+If $\fv{P} = \emptyset$, we call $P$ {\em closed}.
+%; and closed $P$ without 
+%free session names a {\em program}. 
+
+
+
+
+%\subsection{Operational Semantics}
+%\label{subsec:semantics}
+
+
+\paragraph{Operational Semantics.}
+The \emph{operational semantics} of \HOp is defined in terms of a reduction relation, 
+denoted $\red$ and 
+given in 
+ \figref{fig:reduction} (top).
+ We briefly describe the rules. 
+Rule $\orule{App}$ defines  name application.
+Rule $\orule{Pass}$ defines a shared interaction at $n$ 
+(with $\dual{n}=n$) or a session interaction.
+Rule $\orule{Sel}$ is the standard rule for labelled choice/selection.%:
+%given an index set $I$, 
+%a process selects label $l_j$ on name $n$ over a set of
+%labels $\set{l_i}_{i \in I}$ offered by a branching 
+%on the dual endpoint $\dual{n}$;
+Other rules are standard $\pi$-calculus rules.
+Reduction is closed under \emph{structural congruence}, 
+noted $\scong$ (cf. \figref{fig:reduction}, bottom). 
+We assume the expected extension of $\scong$ to values $V$.
+We write $\red^\ast$ for a multi-step reduction.
+
+\input{figures/semantics}
+
+\paragraph{Subcalculi.}
+%\label{subsec:subcalculi}
+%\noi 
+As motivated in the introduction, 
+we define two \emph{subcalculi} of \HOp: 
+%We now define several sub-calculi of \HOp. 
+\begin{enumerate}[$\bullet$]
+	\item	The  
+		{\em core higher-order session calculus}, denoted \HO,
+		 lacks recursion and name passing; its 
+		formal syntax is obtained from \figref{fig:syntax} by excluding 
+		constructs in \nonhosyntax{\text{grey}}.
+
+	\item	\newjb{The   
+		 {\em session $\pi$-calculus}, 
+		denoted $\sessp$, 
+		lacks  
+		higher-order communication but includes recursion;
+		its 
+		formal syntax is obtained from \figref{fig:syntax} by excluding 
+		constructs in \nonpisyntax{\text{boxes}}}.
+
+%	\item	The third sub-calculus, denoted \haskp, represents cloud Haskell:
+%		\[
+%			\begin{array}{rclllll}
+%				V,W	& ::= &		u \bnfbar  \abs{x}{P}
+%				\\
+%				P,Q	& ::= &		\bout{u}{m}{P}  \bnfbar  \binp{u}{x}{P} \bnfbar
+%							\bsel{u}{l} P \bnfbar \bbra{u}{l_i:P_i}_{i \in I}
+%				\\[1mm]
+%					& \bnfbar &	\appl{V}{V} \bnfbar P\Par Q \bnfbar \news{n} P \bnfbar \inact
+%		\end{array}
+%		\]
+\end{enumerate}
+%
+Let $\CAL \in \{\HOp, \HO, \sessp\}$. We write 
+$\CAL^{-\mathsf{sh}}$ to denote the calculus $\CAL$ without shared names:
+we delete $a,b$ from $n$. 
+In \secref{sec:positive}
+we shall demonstrate that 
+$\HOp$, $\HO$, and $\sessp$ have the same expressivity,
+and that $\CAL$ is strictly more expressive than $\CAL^{-\mathsf{sh}}$.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Session Types for \HOp}
+\label{sec:types}
+
+We define a session type system for \HOp and state
+\emph{type soundness} (\thmref{t:sr}), 
+its main property.
+Our system distills the key features of~\cite{tlca07,MostrousY15} and so it is simpler.
+
+
+%The system almost identical with the system developed in~\cite{characteristic_bis}
+%and we describe it in brief.
+%Our system is simpler than that in~\cite{tlca07,MostrousY15}, thus distilling the key
+%features of higher-order sessions. %communications. %in a session-typed setting.
+
+%\smallskip 
+
+%\subsection{Types}
+%\label{subsec:types}
+%\paragraph{Types.}
+The syntax of types of \HOp follows. We write $\Proc$ to denote the process type.
+\[
+	\begin{array}{rcl}
+%		\text{(value)} &
+		U & \bnfis &	\nonhosyntax{C} \bnfbar \nonpisyntax{L}
+%		\\[1mm]  % \bnfbar \Proc
+		\qquad \quad
+%		\text{(name)} 
+		C  \bnfis		S \bnfbar \chtype{S} \bnfbar \nonpisyntax{\chtype{L}}
+%		\\[1mm]
+		\qquad \quad
+%		\text{(abstr)}
+		L \bnfis		\shot{C} \bnfbar \lhot{C}
+		\\[1mm]
+
+%		\text{(session)} 
+		S & \bnfis &	\btout{U} S \bnfbar \btinp{U} S \bnfbar \btsel{l_i:S_i}_{i \in I}
+%		\\ 
+%						& \bnfbar & 
+						\bnfbar \btbra{l_i:S_i}_{i \in I} \bnfbar  \trec{t}{S} \bnfbar \vart{t}  \bnfbar \tinact
+	\end{array}
+\]
+Value type $U$ includes
+  first-order types $C$ and  higher-order
+types $L$.
+%Note that we dissallow type $\chtype{U}$, thus
+%in the type discipline shared names cannot carry shared names.
+%In name types, $\chtype{U}$ is shared name types 
+%which are sent via shared names. 
+Types $\shot{C}$ and $\lhot{C}$ denote
+{\em shared} and {\em linear} higher-order 
+%\jpc{functional}
+types, respectively.
+Session types, denoted by $S$, follow the standard binary session type syntax~\cite{honda.vasconcelos.kubo:language-primitives}, with
+the extension that carried types $U$ may be higher-order.
+Shared channel types are denoted $\chtype{S}$ and $\chtype{L}$.
+%,
+%used to type abstraction values.
+%$\lhot{C}$ \cite{tlca07,mostrous_phd} ensures values which contain free 
+%session names used once. 
+ %We write $S$ to denote %binary 
+%session types.  {\em Output type}
+%$\btout{U} S$ %is assigned to a name that 
+%first sends a value of
+%type $U$ and then follows the type described by $S$.  Dually,
+%$\btinp{U} S$ denotes an {\em input type}. The {\em branching type}
+%$\btbra{l_i:S_i}_{i \in I}$ and the {\em selection type}
+%$\btsel{l_i:S_i}_{i \in I}$ define the labelled choice. 
+%We assume the {\em recursive type} $\trec{t}{S}$ is guarded,
+%i.e.,  $\trec{t}{\vart{t}}$ is not allowed. 
+%%We stress that carried type $U$ in $\btout{U} S$ and
+%%$\btinp{U} S$ can contain free type variables, which is crucial
+%%to encode $\HOp$ into $\HO$.
+%Type $\tinact$ is the termination type. 
+\newjb{Types of \HO exclude $\nonhosyntax{C}$ from 
+value types $U$; the types of \sessp exclude $\nonpisyntax{L}$ and $\nonpisyntax{\chtype{L}}$.}
+From each $\CAL \in \{\HOp, \HO, \pi \}$, $\CAL^{-\mathsf{sh}}$ 
+excludes shared name types ($\chtype{S}$ and $\chtype{L}$), 
+from name type $C$.
+
+\newj{We write $S \dualof S'$ if $S$ is the \emph{dual} of $S'$.   
+Intuitively, session type duality is  obtained by 
+dualising $!$ by $?$, $?$ by $!$, $\oplus$ by $\&$, and $\&$ by $\oplus$,  
+including the fixed point construction.
+We use the \emph{co-inductive} definition of duality given in \cite{TGC14}.}
+%(see \defref{def:dual} in the Appendix). 
+
+%\smallskip 
+
+%\subsection{Typing System of \HOp}
+%\label{subsec:typing}
+%\paragraph{Typing Environments / Judgements}
+We consider 
+\newjb{shared, linear, and session}
+\emph{environments}, denoted $\Gamma$, $\Lambda$, and $\Delta$, \newjb{resp.}:
+\[
+	\begin{array}{l}
+		\Gamma  \bnfis  \emptyset \bnfbar \Gamma \cat \varp{x}: \shot{C} \bnfbar \Gamma \cat u: \chtype{S} \bnfbar \Gamma \cat u: \chtype{L} 
+		\bnfbar \Gamma \cat \rvar{X}: \Delta
+\\
+		\Lambda \bnfis  \emptyset \bnfbar \Lambda \cat \AT{x}{\lhot{C}}
+		 \\
+		\Delta   \bnfis   \emptyset \bnfbar \Delta \cat \AT{u}{S}
+	\end{array}
+\]
+%Environment 
+$\Gamma$ maps variables and shared names to value types, and recursive 
+variables to session environments; % (see below);  
+it admits weakening, contraction, and exchange principles.
+$\Lambda$ maps variables to 
+%the
+linear
+%functional 
+higher-order
+types;   $\Delta$  maps   
+session names to session types. 
+Both $\Lambda$ and $\Delta$
+%behave linearly: they 
+are
+only subject to exchange.  
+Domains of $\Gamma,
+\Lambda$ and $\Delta$ are assumed pairwise distinct. 
+$\Delta_1\cdot \Delta_2$ is the disjoint union of $\Delta_1$ and $\Delta_2$.  
+We focus on \emph{balanced} session environments: 
+%that contain dual endpoints typed with dual types.
+%The following definition ensures two session endpoints 
+%are dual each other. 
+
+%\smallskip
+
+\begin{definition}[Balanced]\label{d:wtenv}%\rm
+	%Let $\Delta$ be a session environment.
+	We say that a session environment $\Delta$ is {\em balanced} if whenever
+	$s: S_1, \dual{s}: S_2 \in \Delta$ then $S_1 \dualof S_2$.
+\end{definition}
+
+Given the above intuitions for environments, 
+the typing judgements for values $V$ and processes $P$ are self-explanatory.
+They are denoted 
+$\Gamma; \Lambda; \Delta \proves V \hastype U$ and $\Gamma; \Lambda; \Delta \proves P \hastype \Proc$.
+%
+%\begin{center}
+%	\begin{tabular}{c}
+%		$\Gamma; \Lambda; \Delta \proves V \hastype U \qquad \qquad \qquad \qquad \Gamma; \Lambda; \Delta \proves P \hastype \Proc$
+%	\end{tabular}
+%\end{center}
+%%
+%\noi The first judgement states that under environments $\Gamma; \Lambda; \Delta$ value $V$
+%has type $U$, whereas the second judgement states that under
+%environments $\Gamma; \Lambda; \Delta$ process $P$ has the process type~$\Proc$. %
+ 
+%\smallskip
+
+\input{figures/type_system_selected}
+%\paragraph{Typing Rules} 
+
+\figref{fig:typerulesmys} gives
+selected typing rules; 
+%see \appref{app:typrules} 
+see \cite{KouzapasPY15} for a full account.
+%Types for session names/variables $u$ and
+%directly derived from the linear part of the typing
+%environment, i.e.~type maps $\Delta$ and $\Lambda$.
+%Rules $\trule{Sess, Sh, LVar}$ are name and variable introduction rules. 
+The shared type $\shot{C}$ %for shared higher order values $V$
+is derived using rule \textsc{(Prom)} only  
+if the value has a linear type with an empty linear
+environment.
+Rule~\textsc{(EProm)} allows us to freely use a \newj{shared
+type variable as linear}.
+%
+Abstraction values are typed with rule~\textsc{(Abs)}.
+%The key type for an abstraction is the type for
+%the bound variables of the abstraction, i.e.~for
+%bound variable type $C$ the abstraction
+%has type $\lhot{C}$.
+Application typing
+is governed by rule~\textsc{(App)}: we expect
+the type $C$ of an application name $u$ 
+to match the type of the application variable $x$ (i.e., $\lhot{C}$ or $\shot{C}$).
+%
+%A process prefixed with a session send operator $\bout{k}{V} P$
+%is typed using rule $\trule{Send}$.
+In rule~\textsc{(Send)}, 
+the type $U$ of value $V$ should appear as a prefix in the session type $\btout{U} S$ of $u$.
+Rule~\textsc{(Rcv)} is its dual.  
+%defined the typing for the 
+%reception of values $\binp{u}{V} P$.
+%the type $U$ of a receive value should 
+%appear as a prefix on the session type $\btinp{U} S$ of $u$.
+Rules~\textsc{(Req)} and~\textsc{(Acc)} type interaction along shared names;
+the type of the sent/received object 
+($S$ and $L$, resp.) should
+match the type of the sent/received subject
+($\chtype{S}$ and $\chtype{L}$, resp.).
+
+
+\begin{definition}%[Reduction of Session Environments]%\rm
+	\label{def:ses_red}
+	We define the relation $\red$ on session environments as:
+	\begin{eqnarray*}
+			\Delta \cat s: \btout{U} S_1 \cat \dual{s}: \btinp{U} S_2 & \red &
+			\Delta \cat s: S_1 \cat \dual{s}: S_2\\%[1mm]
+			\Delta \cat s: \btsel{l_i: S_i}_{i \in I} \cat \dual{s}: \btbra{l_i: S_i'}_{i \in I} &\red& 
+			 \Delta \cat s: S_k \cat \dual{s}: S_k' \ (k \in I)
+		\end{eqnarray*}
+	%\end{center}
+%\begin{tabular}{rcl}
+%	\setlength{\tabcolsep}{0pt}
+%	$\Delta \cat s: \btout{U} S_1 \cat \dual{s}: \btinp{U} S_2$ & $\red$ & 
+%	$\Delta \cat s: S_1 \cat \dual{s}: S_2$\\[1mm]
+%	$\Delta \cat s: \btsel{l_i: S_i}_{i \in I} \cat \dual{s}: \btbra{l_i: S_i'}_{i \in I}$ & $\red$ & $\Delta \cat s: S_k \cat \dual{s}: S_k' \ (k \in I)$
+%\end{tabular}
+%\[
+%\begin{array}{rcl}
+%\Delta \cat s: \btout{U} S_1 \cat \dual{s}: \btinp{U} S_2 & \red & 
+%\Delta \cat s: S_1 \cat \dual{s}: S_2\\[1mm]
+%\Delta \cat s: \btsel{l_i: S_i}_{i \in I} \cat \dual{s}: \btbra{l_i: S_i'}_{i \in I} & \red & \Delta \cat s: S_k \cat \dual{s}: S_k' \ (k \in I)
+%\end{array}
+%\]
+\end{definition}
+
+%\smallskip
+
+%The following result %Theorem 7.3 in M\&Y
+%\noi 
+We state  type soundness for \HOp; it implies 
+type soundness for \HO, \sessp, and $\CAL^{-\mathsf{sh}}$. 
+
+%\smallskip
+
+\begin{theorem}[Type Soundness]\label{t:sr}\rm
+%	\begin{enumerate}[1.]
+%		\item	(Subject Congruence) Suppose $\Gamma; \es; \Delta \proves P \hastype \Proc$.
+%			Then $P \scong P'$ implies $\Gamma; \es; \Delta \proves P' \hastype \Proc$.
+%
+%		\item
+%			(Subject Reduction)
+			Suppose $\Gamma; \es; \Delta \proves P \hastype \Proc$
+			with
+			$\Delta$ balanced. 
+			Then $P \red P'$ implies $\Gamma; \es; \Delta'  \proves P' \hastype \Proc$
+			and $\Delta = \Delta'$ or $\Delta \red \Delta'$
+			with $\Delta'$ balanced. 
+%	\end{enumerate}
+\end{theorem}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Behavioural Theory for \HOp}\label{sec:bt}
+%\input{congruence}
+
+We first define reduction-closed, barbed congruence ($\cong$, \defref{def:rc}) as the
+reference equivalence relation for \HOp processes.
+We then define two characterisations of $\cong$:
+\emph{characteristic} and
+\emph{higher-order bisimilarities}   
+ (denoted $\fwb$ and $\hwb$, cf. \defsref{d:fwb} and \ref{d:hbw}). 
+%Here we focus on collecting intuitions; omitted details are in the Appendix and in~\cite{KouzapasPY15}.
+
+\subsection{Reduction-Closed, Barbed Congruence ($\cong$)}
+\label{subsec:rc}
+%We first define \emph{confluence} over session environments $\Delta$:
+
+We consider \emph{typed relations} $\Re$ that relate  closed terms whose
+session environments %and the two session environments
+are balanced  and \emph{confluent}:
+
+\begin{definition}[Session Environment Confluence]
+Let $\red^\ast$ denote multi-step reduction as in \defref{def:ses_red}.
+	We denote $\Delta_1 \bistyp \Delta_2$ if there exists $\Delta$ such that
+	$\Delta_1 \red^\ast \Delta$ and $\Delta_2 \red^\ast \Delta$.
+\end{definition}
+
+%\smallskip 
+%\noi Reduction-closed, barbed congruence is defined over typed
+%processes:
+
+
+\begin{definition}[Typed Relation]
+	We say that
+	$\Gamma; \emptyset; \Delta_1 \proves P \hastype \Proc\ \Re \ \Gamma; \emptyset; \Delta_2 \proves Q \hastype \Proc$
+	is a {\em typed relation} whenever
+	$P$ and $Q$ are closed;
+	$\Delta_1$ and $\Delta_2$ are balanced; and 
+	$\Delta_1 \bistyp \Delta_2$.
+	We write $\horel{\Gamma}{\Delta_1}{P}{\ \Re \ }{\Delta_2}{Q}$
+	for the typed relation $\Gamma; \emptyset; \Delta_1 \proves P \hastype \Proc\ \Re \ \Gamma; \emptyset; \Delta_2 \proves Q \hastype \Proc$.
+\end{definition}
+
+%\smallskip 
+
+%\noi Next we define  {\em barbs}with respect to types. 
+%\noi 
+As usual, a \emph{barb} $\barb{n}$ is an observable on an output prefix with subject $n$~\cite{MiSa92}.
+A \emph{weak barb} $\Barb{n}$ is a barb after zero or more reduction steps.
+Typed barbs $\barb{n}$ (resp.\ $\Barb{n}$)
+occur on typed processes $\Gamma; \emptyset; \Delta \proves P \hastype \Proc$.
+When $n$ is a session name we require that its dual endpoint $\dual{n}$ is not present
+in the session environment $\Delta$:
+%\smallskip 
+
+\begin{definition}[Barbs]%\rm
+	Let $P$ be a closed process. We define:
+	\begin{enumerate}[1.]
+		\item	
+		$P \barb{n}$ if $P \scong \newsp{\tilde{m}}{\bout{n}{V} P_2 \Par P_3}, n \notin \tilde{m}$. %; $P \Barb{n}$ if $P \red^* \barb{n}$.
+
+		\item	$\Gamma; \Delta \proves P \barb{n}$ if
+			$\Gamma; \emptyset; \Delta \proves P \hastype \Proc$ with $P \barb{n}$ and $\dual{n} \notin \dom{\Delta}$.
+
+			$\Gamma; \Delta \proves P \Barb{n}$ if $P \red^* P'$ and
+			$\Gamma; \Delta' \proves P' \barb{n}$.			
+	\end{enumerate}
+\end{definition}
+
+%\smallskip 
+
+%\noi 
+
+To define a congruence relation, we introduce the family $\C$ of contexts:
+
+\begin{definition}[Context]
+	A context $\C$ is defined as:
+\begin{eqnarray*}
+		\C & \bnfis &  \hole \bnfbar \bout{u}{V} \C \bnfbar \binp{u}{x} \C \bnfbar \bout{u}{\lambda x.\C} P \bnfbar \news{n} \C
+		\bnfbar (\lambda x.\C)u \bnfbar \recp{X}{\C}  
+		\\
+		& \bnfbar &  \C \Par P \bnfbar P \Par \C \bnfbar \bsel{u}{l} \C \bnfbar \bbra{u}{l_1:P_1,\cdots,l_i:\C,\cdots,l_n:P_n} 
+	\end{eqnarray*}
+	%	\begin{tabular}{rcl}
+%		$\C$ & $\bnfis$ & $\hole \bnfbar \bout{u}{V} \C \bnfbar \binp{u}{x} \C \bnfbar \bout{u}{\lambda x.\C} P \bnfbar \news{n} \C
+%		\bnfbar (\lambda x.\C)u \bnfbar \recp{X}{\C}$ 
+%		\\
+%		&$\bnfbar$& $\C \Par P \bnfbar P \Par \C
+%		\bnfbar \bsel{u}{l} \C \bnfbar \bbra{u}{l_1:P_1,\cdots,l_i:\C,\cdots,l_n:P_n}$
+%	\end{tabular}
+%\smallskip 
+%\noi 
+Notation $\context{\C}{P}$ replaces 
+the hole $\hole$ in $\C$ with $P$.
+\end{definition}
+
+%\smallskip 
+
+%\noi 
+We define reduction-closed, barbed congruence \cite{HondaKYoshida95}. 
+
+%\smallskip 
+
+\begin{definition}[Barbed Congruence]
+\label{def:rc}
+	Typed relation
+	$\horel{\Gamma}{\Delta_1}{P}{\ \Re\ }{\Delta_2}{Q}$
+	is a {\em reduction-closed, barbed congruence} whenever:
+	\begin{enumerate}[1.]
+		\item	If $P \red P'$ then there exist $Q', \Delta_1'$,  $\Delta_2'$ such that $Q \red^* Q'$ and
+			$\horel{\Gamma}{\Delta_1'}{P'}{\ \Re\ }{\Delta_2'}{Q'}$; 
+			%and its symmetric case;
+%		\item	If $Q \red P_2'$ then $\exists P_1', P_1 \red^* P_1'$ and
+%		$\horel{\Gamma}{\Delta_1'}{P_1'}{\ \Re\ }{\Delta_2'}{P_2'}$
+%		\end{itemize}
+
+%		\item
+%		\begin{itemize}
+			\item	If $\Gamma;\Delta_1 \proves P \barb{n}$ then $\Gamma;\Delta_2 \proves Q \Barb{n}$; %and its symmetric case; 
+
+%			\item	If $\Gamma;\emptyset;\Delta \proves P_2 \barb{s}$ then $\Gamma;\emptyset;\Delta \proves P_1 \Barb{s}$.
+%		\end{itemize}
+
+		\item	For all $\C$, there exist $\Delta_1'',\Delta_2''$ such that  $\horel{\Gamma}{\Delta_1''}{\context{\C}{P}}{\ \Re\ }{\Delta_2''}{\context{\C}{Q}}$;
+		                      \item	The symmetric cases of 1 and 2.                
+	\end{enumerate}
+	The largest such relation is denoted with $\cong$.
+\end{definition}
+
+{
+\subsection{Two Equivalence Relations: $\fwb$ and $\hwb$}\label{ss:equiv}
+
+\paragraph{A Typed Labelled Transition System.}
+In~\cite{characteristic_bis} we have characterised
+reduction-closed, barbed congruence for \HOp
+via a typed relation called
+{\em characteristic bisimilarity}.
+%The definition of characteristic bisimilarity 
+Its definition 
+uses a \emph{typed}
+labelled transition system (LTS) informed by session
+types. 
+\newjb{Given a label $\ell$ (a visible action or $\tau$),
+we write $\Gamma; \es; \Delta \proves P \hby{\ell} \Delta' \proves P'$ to denote 
+(strong) transitions. % in this LTS. 
+Weak transitions are as expected: we write $\Hby{}$ for the reflexive,
+transitive closure of $\hby{\tau}$,
+$\Hby{\ell}$ for %transitions
+$\Hby{}\hby{\ell}\Hby{}$, and 
+$\Hby{\hat{\ell}}$ for $\Hby{\ell}$ if
+$\ell\not = \tau$ and $\Hby{}$ otherwise.
+%We thus write $\Gamma; \es; \Delta \proves P \Hby{\hat{\ell}} \Delta' \proves P'$.
+}
+%The main intuition %for its definition  
+Intuitively, the transitions 
+of a typed process should be enabled by its associated typing: % environment:
+%
+%\[
+%	\tree {
+%		P \hby{\ell} P' \qquad (\Gamma, \Delta) \hby{\ell} (\Gamma, \Delta')
+%	}{
+%		\Gamma; \es; \Delta \proves P \hby{\ell} \Delta' \proves P' \hastype \Delta'
+%	}
+%\]
+$$
+\text{if } P \hby{\ell} P' \text{ and } (\Gamma, \Delta) \hby{\ell} (\Gamma, \Delta') \text{ then }
+\Gamma; \es; \Delta \proves P \hby{\ell} \Delta' \proves P'.
+$$
+%
+%\noi 
+As an example of how types enable transitions, consider the rule for input:
+%
+\[
+	\tree{
+		\dual{s} \notin \dom{\Delta} 
+		\quad~~ 
+		\Gamma; \Lambda'; \Delta' \proves V \hastype U
+		\quad~~
+		V = m \vee  V \scong \omapchar{U} \vee V \scong \abs{{x}}{\binp{t}{y} (\appl{y}{{x}})}
+					\textrm{ with } t \textrm{ fresh} 
+	}{
+		(\Gamma; \Lambda; \Delta \cat s: \btinp{U} S) \hby{\bactinp{s}{V}} (\Gamma; \Lambda\cat\Lambda'; \Delta\cat\Delta' \cat s: S)
+	}
+\]
+%\noi
+This rule states that a session environment can input a value
+if such a value is typed with an input prefix and is either
+a name $m$, a \emph{characteristic value} $\omapchar{U}$,  or a \emph{trigger value} (the abstraction
+$\abs{{x}}{\binp{t}{y} (\appl{y}{{x}})}$). 
+A characteristic value
+is the {simplest} process that  inhabits a type (here, the
+type $U$ carried by the input prefix). The above rule is used to limit
+the input actions that can be observed from a session input prefix.
+For more details on the typed LTS and the characteristic process definition
+see% \appref{app:behavioural} and
+~\cite{characteristic_bis}.
+Moreover, we define a \emph{(first-order) trigger process}:
+%
+\begin{eqnarray}
+%	\htrigger{t}{V}  & \defeq &  \hotrigger{t}{V} \label{eqb:0} \\
+	\ftrigger{t}{V}{U} & \defeq &  \fotrigger{t}{x}{s}{\btinp{U} \tinact}{V} 	\label{eq:fot}
+\end{eqnarray}
+%
+%\noi
+The trigger process $\ftrigger{t}{V}{U}$ is 
+is defined as a process input prefixed on
+a fresh name $t$: it
+%The   trigger process $\htrigger{t}{V}$ above applies a value $V$
+%on the receiving (characteristic) process.
+applies a value
+on the %(hard coded) 
+\emph{characteristic process} $\map{\btinp{U} \tinact}^{s}$ (see~\cite{characteristic_bis} for details). 
+
+\paragraph{Characterising $\cong$.}
+We define \emph{characteristic} and \emph{higher-order} bisimilarities.
+While higher-order bisimilarity is a new equality, 
+characteristic bisimilarity was introduced in~\cite{characteristic_bis}. % (Def.~14).
+
+\begin{definition}[Characteristic Bisimilarity]%\rm
+	\label{d:fwb}
+	A typed relation $\Re$ is called a {\em  characteristic bisimulation} if 
+	for all $\horel{\Gamma}{\Delta_1}{P_1}{\ \Re \ }{\Delta_2}{Q_1}$ 
+	\begin{enumerate}[1.]
+		\item 
+				Whenever 
+				$\horel{\Gamma}{\Delta_1}{P_1}{\hby{\news{\tilde{m_1}} \bactout{n}{V_1: U}}}{\Delta_1'}{P_2}$,
+				there exist 
+				$Q_2$, $V_2$, $\Delta'_2$
+				such that \\
+				$\horel{\Gamma}{\Delta_2}{Q_1}{\Hby{\news{\tilde{m_2}} \bactout{n}{V_2: U}}}{\Delta_2'}{Q_2}$ and, for fresh $t$, 
+%
+				\[
+				%	\begin{array}{lrlll}
+						\Gamma; \Delta''_1  \proves  {\newsp{\tilde{m_1}}{P_2 \Par \ftrigger{t}{V_1}{U_1}}}
+						\ \Re \
+						\Delta''_2 \proves {\newsp{\tilde{m_2}}{Q_2 \Par \ftrigger{t}{V_2}{U_2}}}
+				%	\end{array}
+				\]
+
+		\item	
+				For all $\horel{\Gamma}{\Delta_1}{P_1}{\hby{\ell}}{\Delta_1'}{P_2}$ such that 
+				$\ell$ is not an output, 
+				there exist $Q_2$, $\Delta'_2$ such that 
+				$\horel{\Gamma}{\Delta_2}{Q_1}{\Hby{\hat{\ell}}}{\Delta_2'}{Q_2}$
+				and
+				$\horel{\Gamma}{\Delta_1'}{P_2}{\ \Re \ }{\Delta_2'}{Q_2}$; and 
+
+		\item	The symmetric cases of 1 and 2.                
+	\end{enumerate}
+	The largest such bisimulation
+	is called \emph{characteristic bisimilarity} {and} denoted by $\fwb$.
+\end{definition}
+ 
+
+%\noi 
+%We define characteristic bisimilarity
+%(cf.~Def.~14~in~\cite{characteristic_bis}):
+% is given using characteristic trigger processes. 
+
+\newj{Interestingly, for reasoning about \HOp processes %not in \sessp 
+we can also exploit the simpler \emph{higher-order bisimilarity}.}
+We replace triggers as in \eqref{eq:fot}
+with \emph{higher-order triggers}:
+{\begin{eqnarray}
+	\htrigger{t}{V}  & \defeq &  \hotrigger{t}{V} \label{eq:hot} 
+%	\ftrigger{t}{V}{U} & \defeq &  \fotrigger{t}{x}{s}{\btinp{U} \tinact}{V} 	\label{eq:fot}
+\end{eqnarray}}
+We may then define:
+\begin{definition}[Higher-Order Bisimilarity]%\rm
+	\label{d:hbw}
+	Higher-order bisimilarity, denoted by $\hwb$, is defined {by} replacing 
+	Clause (1) in \defref{d:fwb} with the following clause:\\[1mm]
+	%\begin{enumerate}[1.]
+	%	\item 
+		Whenever 
+	$\horel{\Gamma}{\Delta_1}{P_1}{\hby{\news{\tilde{m_1}} \bactout{n}{V_1}}}{\Delta_1'}{P_2}$ %with $\Gamma; \es; \Delta \proves V_1 \hastype U$,  
+	then there exist 
+	$Q_2$, $V_2$, $\Delta'_2$
+	such that \\
+	$\horel{\Gamma}{\Delta_2}{Q_1}{\Hby{\news{\tilde{m_2}}\bactout{n}{V_2}}}{\Delta_2'}{Q_2}$ %with $\Gamma; \es; \Delta' \proves V_2 \hastype U$,  
+	and, for fresh $t$, \\[1mm]
+	$
+	\begin{array}{lrlll}
+		\!\!\Gamma; \Delta''_1  \proves  {\newsp{\tilde{m_1}}{P_2 \Par 
+		\htrigger{t}{V_1}}}
+		\ \Re\ \Delta''_2
+		\proves {\newsp{\tilde{m_2}}{Q_2 \Par \htrigger{t}{V_2}}}
+	\end{array}
+	$
+	%\end{enumerate}
+\end{definition}
+
+We state the following important result, which attests the significance of $\hwb$:
+\begin{theorem}\label{t:coincide}
+	Typed relations $\cong$, $\hwb$, and $\fwb$ coincide for \HOp processes.
+\end{theorem}
+\begin{proof}
+Coincidence of $\cong$ and $\fwb$ was established in~\cite{characteristic_bis}.
+Coincidence of $\hwb$ with $\cong$ and $\fwb$ is a new result: see \cite{KouzapasPY15}
+for details. \qed
+\end{proof}
+
+\begin{remark}[Comparison between $\hwb$ and $\fwb$]
+The key difference between $\hwb$ and $\fwb$ is in the trigger process considered. 
+Because of the application in \eqref{eq:hot}, $\hwb$ 
+%is only defined for processes in \HO; it 
+cannot be used to reason about processes in \sessp. In contrast, $\fwb$ is more general:
+it can uniformly input characteristic, first- or higher-order values.
+This convenience comes at a price: the definition of \eqref{eq:fot} requires information on the 
+type of $V$; in contrast, the higher-order trigger \eqref{eq:hot} is more generic and simple,
+as it works independently of the given type.
+%
+%	The difference between higher order bisimilarity
+%	lies in the definition of the process trigger.
+%	\begin{enumerate}[(a)]
+%		\item
+%				The higher-order bisimilarity \eqref{eq:hot}
+%%				\[
+%%					\htrigger{t}{V}  \defeq  \hotrigger{t}{V}
+%%				\]
+%				allows for the application of bound variable $x$,
+%				making $\hwb$ not defined in the \sessp sub-calculus
+%				of \HOp, but defined inside the \HO sub-calculus. 
+%
+%		\item	The Characteristic bisimilarity trigger \eqref{eq:fot} 
+%%				\[
+%%					\ftrigger{t}{V}{U} \defeq  \fotrigger{t}{x}{s}{\btinp{U} \tinact}{V}
+%%				\]
+%				solves the problem in (a) by not using $x$ in the continuation
+%				of fresh name input. This allows to input characteristic, first- or
+%				higher-order value on bound variable $x$.
+%
+%
+%		\item	Higher-order trigger lifts the need of observing
+%				types on the lts and including them in bisimulation
+%				closures. Higher-order bisimilarity adds to
+%				the simplicity and elegance of the \HO subcalculus
+%				over the \sessp subcalculus of \HOp.
+%	\end{enumerate}
+\end{remark}
+
+%\begin{definition}[Characteristic Bisimilarity]\rm
+%	\label{d:fwb}
+%
+%	A typed relation $\Re$ is a {\em characteristic bisimulation} if 
+%	for all $\horel{\Gamma}{\Delta_1}{P_1}{\ \Re \ }{\Delta_2}{Q_1}$ 
+%	if whenever:
+%	\begin{enumerate}[1)]
+%		\item	$\horel{\Gamma}{\Delta_1}{P_1}{\hby{\news{\tilde{m_1}} \bactout{n}{V_1: U}}}{\Delta_1'}{P_2}$
+%				then there exist  $Q_2$, $V_2$, $\Delta'_2$ such that 
+%				$\horel{\Gamma}{\Delta_2}{Q_1}{\Hby{\news{\tilde{m_2}}\bactout{n}{V_2: U}}}{\Delta_2'}{Q_2}$
+%				and, for fresh $t$,
+%				$
+%				\begin{array}{lrlll}
+%					\Gamma; \Delta''_1 \proves {\newsp{\tilde{m_1}}{P_2 \Par  \ftrigger{t}{V_1}{U_1}}}
+%					\ \Re\ \Delta''_2 \proves {\newsp{\tilde{m_2}}{Q_2 \Par \ftrigger{t}{V_2}{U_2}}}
+%				\end{array}
+%				$
+%
+%			\item	For all $\horel{\Gamma}{\Delta_1}{P_1}{\hby{\ell}}{\Delta_1'}{P_2}$ such that 
+%					$\ell$ is not an output, there exist $Q_2$, $\Delta'_2$ such that 
+%					$\horel{\Gamma}{\Delta_2}{Q_1}{\Hby{\hat{\ell}}}{\Delta_2'}{Q_2}$
+%					and $\horel{\Gamma}{\Delta_1'}{P_2}{\ \Re \ }{\Delta_2'}{Q_2}$; and 
+%
+%			\item	The symmetric cases of 1 and 2.
+%	\end{enumerate}
+%	The largest such bisimulation is called \emph{characteristic bisimilarity} and denoted by $\fwb$.
+%\end{definition}
+
+
+\paragraph{An up-to technique.}
+Processes that do not use shared names are deterministic. 
+The following up-to technique, based on determinacy properties, will be useful in proofs~(\secref{sec:positive}).
+Recall that $\horel{\Gamma}{\Delta}{P}{\hby{\tau}}{\Delta'}{P'}$ denotes an internal (typed) transition.
+ 
+ \begin{notation}[Deterministic Transitions]
+ \label{not:dettrans}
+We distinguish two kinds of  $\tau$-transitions:
+\emph{session transitions}, noted 
+$\horel{\Gamma}{\Delta}{P}{\hby{\stau}}{\Delta'}{P'}$,
+and 
+\emph{$\beta$-transitions}, noted $\horel{\Gamma}{\Delta}{P}{\hby{\btau}}{\Delta'}{P'}$.
+Intuitively, $\hby{\stau}$  results from a session communication (i.e., synchronization between
+two dual endpoints), while 
+  $\hby{\btau}$ results from an application. 
+ We write  $\horel{\Gamma}{\Delta}{P}{\hby{\dtau}}{\Delta'}{P'}$ to denote
+	 a session transition or a $\beta$-transition.
+	See~\cite{KouzapasPY15} for definitions of $\hby{\btau}$  and $\hby{\stau}$. % rely on an LTS for \HOp;  for details.
+ \end{notation}
+ 
+%The auxiliary definition below allows us to distinguish two kinds of  internal transitions:
+%\emph{session transitions} and \emph{$\beta$-transitions} (denoted 
+%$\horel{\Gamma}{\Delta}{P}{\hby{\stau}}{\Delta'}{P'}$
+%and $\horel{\Gamma}{\Delta}{P}{\hby{\btau}}{\Delta'}{P'}$, respectively).
+%
+%\begin{definition}[Deterministic Transition]
+%\label{def:dettrans}
+%	Let  $\Gamma; \es; \Delta \proves P \hastype \Proc$ be a balanced \HOp process. 
+%	Transition $\horel{\Gamma}{\Delta}{P}{\hby{\tau}}{\Delta'}{P'}$ is called:
+%	\begin{enumerate}[$-$]
+%		\item	{\em Session transition}
+%				whenever the untyped transition $P \by{\tau} P'$ 
+%				is derived using  rule~$\ltsrule{Tau}$ 
+%				(where $\subj{\ell_1}$ and $\subj{\ell_2}$ in the premise are dual endpoints), 
+%				possibly followed by uses of
+%				$\ltsrule{Alpha}$, $\ltsrule{Res}$, $\ltsrule{Rec}$, or $\ltsrule{Par${}_L$}/
+%				\ltsrule{Par${}_R$}$.
+%		
+%		\item	{\em $\beta$-transition}
+%				whenever the untyped transition $P \by{\tau} P'$
+%				is derived using rule $\ltsrule{App}$,
+%				possibly followed by uses of  $\ltsrule{Alpha}$, $\ltsrule{Res}$, $\ltsrule{Rec}$, or $\ltsrule{Par${}_L$}/
+%				\ltsrule{Par${}_R$}$.
+%	\end{enumerate}
+%%
+%	We write
+%	$\horel{\Gamma}{\Delta}{P}{\hby{\stau}}{\Delta'}{P'}$
+%	and 
+%	$\horel{\Gamma}{\Delta}{P}{\hby{\btau}}{\Delta'}{P'}$
+%	to denote session and $\beta$-transitions, resp. Also, 
+%	 $\horel{\Gamma}{\Delta}{P}{\hby{\dtau}}{\Delta'}{P'}$ denotes
+%	either a session transition or a $\beta$-transition.
+%\end{definition}
+%
+%A transition $\horel{\Gamma}{\Delta}{P}{\hby{\tau}}{\Delta'}{P'}$ is said
+%{\em deterministic} if it is derived using~$\ltsrule{App}$ or~$\ltsrule{Tau}$ 
+%(where $\subj{\ell_1}$ and $\subj{\ell_2}$ in the premise  are dual endpoints), 
+%possibly followed by uses of  $\ltsrule{Alpha}$, $\ltsrule{Res}$, $\ltsrule{Rec}$, or $\ltsrule{Par${}_L$}/\ltsrule{Par${}_R$}$.
+
+We have the following determinacy property;
+%see  \appref{app:sub_tau_inert} 
+see~\cite{KouzapasPY15} for details. 
+
+
+\begin{lemma}[$\tau$-Inertness]%\rm
+	\label{lem:tau_inert}
+	(1)
+%	\begin{enumerate}[1)]
+%		\item
+				Let $\horel{\Gamma}{\Delta}{P}{\hby{\dtau}}{\Delta'}{P'}$ be a deterministic transition,
+				with balanced $\Delta$. Then 
+				$\Gamma; \Delta \proves P \cong \Delta'\proves P'$ 
+				with $\Delta \red^\ast \Delta'$ balanced.
+%		\item 
+				(2) Let $P$ be an $\HOp^{-\mathsf{sh}}$ process. 
+				Assume $\Gamma; \emptyset; \Delta \proves P \hastype \Proc$. Then 
+				$P \red^\ast P'$ implies $\Gamma; \Delta \proves 
+				P \cong \Delta'\proves P'$ with $\Delta \red^\ast \Delta'$. 
+%	\end{enumerate}
+\end{lemma}
+
+
+%\begin{proof}
+%	The proof uses the fact that processes of the
+%	form $\Gamma; \es; \Delta \proves_s \bout{s}{V} P_1 \Par \binp{k}{x} P_2$
+%	cannot have any typed transition observables and the fact
+%	that bisimulation is a congruence.
+%	See  \appref{app:sub_tau_inert} for details.
+%	The proof for Part 2 follows from Part 1.
+%	\qed
+%\end{proof}
+
+\newj{We use 
+\lemref{lem:tau_inert}
+to prove \thmref{t:negative}, the negative result stated in
+\secref{ss:negative}.
+This property also enables us to define the following up-to technique, useful in full abstraction proofs.
+We write $\Hby{\dtau}$ to denote a (possibly empty) sequence of deterministic steps 
+$\hby{\dtau}$.}
+
+
+\begin{lemma}[Up-to Deterministic Transition]%\myrm
+	\label{lem:up_to_deterministic_transition}
+	Let $\horel{\Gamma}{\Delta_1}{P_1}{\ \Re\ }{\Delta_2}{Q_1}$ such
+	that if whenever:
+%
+	\begin{enumerate}[1.]
+		\item	$\forall \news{\tilde{m_1}} \bactout{n}{V_1}$ such that
+			$
+				\horel{\Gamma}{\Delta_1}{P_1}{\hby{\news{\tilde{m_1}} \bactout{n}{V_1}}}{\Delta_3}{P_3}
+			$
+			implies that $\exists Q_2, V_2$ such that
+			$
+				\horel{\Gamma}{\Delta_2}{Q_1}{\Hby{\news{\tilde{m_2}} \bactout{n}{V_2}}}{\Delta_2'}{Q_2}
+			$
+			and
+			$
+				\horel{\Gamma}{\Delta_3}{P_3}{\Hby{\dtau}}{\Delta_1'}{P_2}
+			$
+			and for fresh $t$:\\
+			$
+				\horel{\Gamma}{\Delta_1''}{\newsp{\tilde{m_1}}{P_2 \Par \htrigger{t}{V_1}}}
+				{\ \Re\ }
+				{\Delta_2''}{}{\newsp{\tilde{m_2}}{Q_2 \Par \htrigger{t}{V_2}}}
+%				\mhorel{\Gamma}{\Delta_1''}{\newsp{\tilde{m_1}}{P_2 \Par \hotrigger{t}{x}{s}{V_1}}}
+%				{\ \Re\ }
+%				{\Delta_2''}{}{\newsp{\tilde{m_2}}{Q_2 \Par \hotrigger{t}{x}{s}{V_2}}}
+			$.
+%
+		\item	$\forall \ell \not= \news{\tilde{m}} \bactout{n}{V}$ such that
+			$
+				\horel{\Gamma}{\Delta_1}{P_1}{\hby{\ell}}{\Delta_3}{P_3}
+			$
+			implies that $\exists Q_2$  \\ such that 
+			$
+				\horel{\Gamma}{\Delta_1}{Q_1}{\hat{\Hby{\ell}}}{\Delta_2'}{Q_2}
+			$
+			and
+			$
+				\horel{\Gamma}{\Delta_3}{P_3}{\Hby{\dtau}}{\Delta_1'}{P_2}
+			$
+			and
+			$\horel{\Gamma}{\Delta_1'}{P_2}{\ \Re\ }{\Delta_2'}{Q_2}$.
+
+		\item	The symmetric cases of 1 and 2.
+	\end{enumerate}
+	Then $\Re\ \subseteq\ \hwb$.
+\end{lemma}
+
+
+%\begin{proof}
+%	The proof is easy by considering the closure
+%	\[
+%		\Re^{\Hby{\dtau}} = \set{ \horel{\Gamma}{\Delta_1'}{P_2}{,}{\Delta_2'}{Q_1} \setbar \horel{\Gamma}{\Delta_1}{P_1}{\ \Re\ }{\Delta_2'}{Q_1},
+%		\horel{\Gamma}{\Delta_1}{P_1}{\Hby{\dtau}}{\Delta_1'}{P_2} }
+%	\]
+%	We verify that $\Re^{\Hby{\dtau}}$ is a bisimulation with
+%	the use of \propref{lem:tau_inert}.
+%	\qed
+%\end{proof}
+%
+%\begin{example}[Up-to Deterministic Transition]
+%	Typed processes:
+%	\begin{eqnarray*}
+%		\Gamma; \es; \Delta, s': \tinact \proves P &=& \binp{n}{z_1} \newsp{s}{\binp{s}{x} \appl{(\abs{y}{\bout{n}{z_1} \inact})}{m} \Par \bout{\dual{s}}{s'} \inact} \hastype \Proc
+%		\\
+%		\Gamma; \es; \Delta \proves Q &=& \binp{n}{z_1} \binp{n}{z_2} \inact \hastype \Proc
+%	\end{eqnarray*}
+%	are bisimilar up-to deterministic transition because
+%	we can observe:
+%	\begin{eqnarray*}
+%		\Gamma; \Delta, s': \tinact \proves P &\hby{\bactinp{n}{m_1}}& \Delta', s: \tinact \proves \newsp{s}{\binp{s}{x} \appl{(\abs{y}{\bout{n}{z_2} \inact})}{m} \Par \bout{\dual{s}}{s'} \inact} \Hby{\dtau} \Delta' \proves \binp{n}{z_2} \inact
+%		\\
+%		\text{and}
+%		\\
+%		\Gamma; \es; \Delta \proves Q &\hby{\bactinp{n}{m_1}}& \Delta' \proves \binp{n}{z_2} \inact
+%	\end{eqnarray*}
+
+
+%	Relation 
+%	\[
+%		\Re = \set{(\Gamma; \Delta, s': \tinact \proves P , \Delta \proves Q), (\Gamma; \Delta' \proves \binp{n}{z_2}, \Delta' \proves  \binp{n}{z_2})}
+%	\]
+%	is bisimulation up-to deterministic transition because
+%	\begin{eqnarray*}
+%		\Gamma; \Delta, s': \tinact \proves P &\hby{\bactinp{n}{s_1}}& \Delta', s: \tinact \proves \newsp{s}{\binp{s}{x} \appl{(\abs{y}{\bout{n}{y} \inact})}{s_1} \Par \bout{\dual{s}}{s'} \inact}
+%		\\
+%		\text{implies}&
+%		\\
+%		\Gamma; \es; \Delta \proves Q &\hby{\bactinp{n}{x}}& \Delta' \proves \binp{n}{z_2} \inact
+%		\\
+%		\text{and}&
+%		\\
+%		\Delta', s: \tinact \proves \newsp{s}{\binp{s}{x} \appl{(\abs{y}{\bout{n}{y} \inact})}{s_1} \Par \bout{\dual{s}}{s'} \inact}  \in \Re
+%	\end{eqnarray*}
+%\end{example}
+
+%\noi Precise encodings offer more detailed criteria and used for positive 
+%encodability results (\secref{sec:positive}).
+%In contrast, minimal encodings contains only 
+%some of the criteria of precise encodings:    
+%this reduced notion will be used 
+%for the negative result in \secref{sec:negative}.
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\section{Criteria for Typed Encodings}
+\label{s:expr}
+%\input{encoding}
+We define the formal notion of \emph{encoding} by 
+extending to a typed setting existing criteria for untyped processes (as in, e.g.,
+\cite{Nestmann00,Palamidessi03,DBLP:conf/lics/PalamidessiSVV06,DBLP:journals/iandc/Gorla10,DBLP:conf/icalp/LanesePSS10,DBLP:journals/tcs/FuL10,DBLP:journals/corr/abs-1208-2750,DBLP:conf/esop/PetersNG13}). 
+We first define a typed calculus parametrised by a syntax, operational semantics, and typing.
+Based on this definition, in  
+\secref{sec:positive} and \secref{sec:extension}
+we define concrete instances of (higher-order) typed calculi.
+
+%\smallskip 
+
+\begin{definition}[Typed Calculus]\label{d:tcalculus}%\rm
+	A \emph{typed calculus} $\tyl{L}$ is a tuple
+	$\calc{\CAL}{\cal{T}}{\hby{\tau}}{\wb}{\proves}$
+	where $\CAL$ and $\cal{T}$ are sets of processes and types, 
+	respectively; also, $\hby{\tau}$, $\wb$, and $\proves$ 
+	denote a transition system, a typed equivalence,
+	and a typing system for $\CAL$, respectively. 
+\end{definition}
+
+%\smallskip 
+%
+%\begin{definition}[Typed Calculus]\label{d:tcalculus}\rm
+%A \emph{typed calculus} $\tyl{L}$ is a tuple
+%          $\calc{\CAL}{\cal{T}}{\cal{A}}{\wb}{\proves}$
+%	where $\CAL$,  $\cal{T}$, $\cal{A}$ are sets of processes, types, and action labels (of an underlying transition system),
+%respectively; and $\wb$ and $\proves$ 
+%	denote %a transition system (with set of labels $\mathcal{A}$), 
+%	a typed equivalence and type system for~$\CAL$. 
+%\end{definition}
+%
+%
+%\smallskip 
+%
+%\begin{definition}[Typed Calculus]\label{d:tcalculus}\rm
+%A \emph{typed calculus} $\tyl{L}$ is a tuple
+%          $\calc{\CAL}{\cal{T}}{\hby{\ell}}{\wb}{\proves}$
+%	where $\CAL$ and $\cal{T}$ are sets of processes and types, 
+%respectively; and $\hby{\mathcal{A}}$, $\wb$, and $\proves$ 
+%	denote a transition system (with set of labels $\mathcal{A}$), 
+%	a typed equivalence, and type system for $\CAL$, resp. 
+%	We write $\mathcal{A}$ is t`he set of labels used in relation $\hby{\ell}$.
+%\end{definition}
+
+%\smallskip 
+
+%\noi 
+As we explain later, we write $\hby{\tau}$ to denote an operational semantics defined in terms of
+$\tau$-transitions (to characterise reductions).
+Our notion of encoding considers mappings on both processes 
+and types; these are denoted $\map{\cdot}$ and $\mapt{\cdot}$, respectively: %, and transition labels: 
+
+\begin{definition}[Typed Encoding]%\rm
+\label{def:tenc}
+        Consider typed calculi
+        $\tyl{L}_1=\!\calc{\CAL_1}{{\cal{T}}_1}{\hby{\tau}_1}{\wb_1}{\proves_1}$
+        and
+        $\tyl{L}_2=\calc{\CAL_2}{{\cal{T}}_2}{\hby{\tau}_2}{\wb_2}{\proves_2}$.
+        %Let $\mathcal{A}_{i}$ be the set of labels in $\hby{\ell}_i$ ($i=1,2$).
+	Given mappings $\map{\cdot}: \CAL_1 \to \CAL_2$ and
+	$\mapt{\cdot}: {\cal{T}}_1 \to {\cal{T}}_2$, 
+%	and $\mapa{\cdot}: \mathcal{A}_1 \to \mathcal{A}_2$, 
+	we write 
+%	$\enco{\map{\cdot}, \mapt{\cdot}, \mapa{\cdot}} : 
+		$\enco{\map{\cdot}, \mapt{\cdot}} : 
+	\tyl{L}_1 \to \tyl{L}_2$ to denote the \emph{typed encoding} of $\tyl{L}_1$ into $\tyl{L}_2$.
+\end{definition}
+
+%\smallskip 
+
+%\noi 
+Mapping $\mapt{\cdot}$ extends to typing
+environments, e.g., $\mapt{\Delta \cat u:S} = \mapt{\Delta} \cat u:\mapt{S}$.
+We introduce syntactic criteria for typed encodings.
+Let $\sigma$ denote a substitution of names for names (a renaming, as usual). Given environments $\Delta$ and $\Gamma$,
+we write $\sigma(\Delta)$ and $\sigma(\Gamma)$ to denote the effect of applying $\sigma$ on the 
+domains of $\Delta$ and $\Gamma$
+(clearly, $\sigma(\Gamma)$ concerns only shared names in $\Gamma$: process and recursive variables in $\Gamma$ are not affected by $\sigma$). 
+
+%\smallskip 
+
+\begin{definition}[Syntax Preservation]%\rm
+	\label{def:sep}
+	We say that 
+	typed encoding 
+	$\enco{\map{\cdot}, \mapt{\cdot}}: \tyl{L}_1 \to \tyl{L}_2$ is \emph{syntax preserving}
+	if it is:
+	
+	\begin{enumerate}[1.]
+		\item	\emph{Homomorphic wrt parallel},   if 
+		$\mapt{\Gamma}; \emptyset; \mapt{\Delta_1 \cat \Delta_2} \proves_2 \map{P_1 \Par P_2} \hastype \Proc$ \\
+		then 
+		$\mapt{\Gamma}; \emptyset; \mapt{\Delta_1} \cat \mapt{\Delta_2} \proves_2 \map{P_1} \Par \map{P_2} \hastype \Proc$.
+
+		\item	\emph{Compositional wrt restriction},  if 
+		$\mapt{\Gamma}; \emptyset; \mapt{\Delta} \proves_2 \map{\news{n}P} \hastype \Proc$ \\
+		then 
+		$\mapt{\Gamma}; \emptyset; \mapt{\Delta} \proves_2 \news{n}\map{P} \hastype \Proc$.
+		
+		\item \emph{Name invariant},   if
+		$\mapt{\sigma(\Gamma)}; \emptyset; \mapt{\sigma(\Delta)} \proves_2 \map{\sigma(P)} \hastype \Proc$
+		then \\
+		$\sigma(\mapt{\Gamma}); \emptyset; \sigma(\mapt{\Delta}) \proves_2 \sigma(\map{P}) \hastype \Proc$, 
+		for any injective renaming  of names $\sigma$.
+	\end{enumerate}
+\end{definition}
+
+%\smallskip 
+
+%\noi 
+Homomorphism wrt parallel (used in, e.g.,~\cite{Palamidessi03,DBLP:conf/lics/PalamidessiSVV06})
+expresses that encodings should preserve the distributed topology of source processes. This criterion
+ is appropriate for both encodability and non encodability results; in our setting, it is
+%it admits an elegant formulation, also 
+induced by rules for typed composition.
+Compositionality wrt restriction 
+is also supported by typing and is 
+useful in our encodability results (\secref{sec:positive}).
+The name invariance criterion follows \cite{DBLP:journals/iandc/Gorla10,DBLP:conf/icalp/LanesePSS10}. 
+
+\newj{We now state \emph{type preservation}, a static criterion on the mapping 
+$\mapt{\cdot}: {\cal{T}}_1 \to {\cal{T}}_2$: % of our typed encodings. 
+it ensures that type operators are preserved.
+The source and target languages that we consider here share
+five (session) type operators: input, output, recursion (binary operators); selection and 
+branching ($n$-ary operators). 
+Type preservation enables us to focus on 
+mappings $\mapt{\cdot}$ that always translate a type operator into itself. 
+This is key to retain the meaning of structured protocols:
+as session types operators abstract communication behaviour,
+type preserving encodings help us maintain behaviour %in maintaining behaviour%those abstractions
+across translations.}
+
+\begin{definition}[Type Preservation]
+	\label{def:tp}
+	The typed encoding 
+	$\enco{\map{\cdot}, \mapt{\cdot}}: \tyl{L}_1 \to \tyl{L}_2$ is \emph{type preserving}
+	if for every $k$-ary type operator $\mathtt{op}$ in ${\cal{T}}_1$ it holds that 
+	 $$\mapt{\mathtt{op}(T_1, \cdots, T_k)} = \mathtt{op}(\mapt{T_1}, \cdots, \mapt{T_k})$$
+	\end{definition}
+
+
+\begin{example}
+\newj{
+Following the discussion in \secref{sec:overview}, let 
+$\mapt{\cdot}_u$ 
+be a mapping on session types 
+such that 
+$\mapt{\btout{U} S}_u = \btinp{\mapt{U}_u} \mapt{S}_u$ 
+and 
+$\mapt{\btinp{U} S}_u = \btout{\mapt{U}_u} \mapt{S}_u$ (other type operators are translated homomorphically).
+That is,  
+$\mapt{\cdot}_u$  translates the output type operator into an input type operator (and viceversa). 
+%exchanges (inverts) input and output session type operators. % in \defref{def:tp}.
+Therefore, $\mapt{\cdot}_u$ does not satisfy  type preservation. 
+}
+\end{example}
+
+Next we define semantic criteria for typed encodings:
+
+%\smallskip 
+
+\begin{definition}[Semantic Preservation]%\rm
+\label{def:ep}
+       Consider two typed calculi $\tyl{L}_1$ and  $\tyl{L}_2$, defined as 
+        $\tyl{L}_1=\calc{\CAL_1}{{\cal{T}}_1}{\hby{\tau}_1}{\wb_1}{\proves_1}$
+       and $\tyl{L}_2=\calc{\CAL_2}{{\cal{T}}_2}{\hby{\tau}_2}{\wb_2}{\proves_2}$.
+%       ($i=1,2$) be typed calculi. 
+We say that the encoding $\enco{\map{\cdot}, \mapt{\cdot}}: \tyl{L}_1 \to \tyl{L}_2$ is \emph{semantic preserving}
+if it satisfies the properties below.
+%Given a label $\ell \neq \tau$, we write 
+%$\mathsf{sub}(\ell)$
+%to denote the \emph{subject} of the action.
+	
+	\begin{enumerate}[1.]
+		\item \emph{Type Soundness}:
+	if
+	$\Gamma; \emptyset; \Delta \proves_1 P \hastype \Proc$ then 
+	$\mapt{\Gamma}; \emptyset; \mapt{\Delta} \proves_2 \map{P} \hastype \Proc$,  
+	for any   $P$ in $\CAL_1$.
+			%\item \emph{Subject preserving}: if $\subj{\ell} = u$ then $\subj{\mapa{\ell}} =u$.
+
+			\item \emph{Barb Preserving}: if $\Gamma; \Delta \proves_1 P \barb{n}$
+		then $\mapt{\Gamma}; \mapt{\Delta} \proves_2 \map{P} \Barb{n}$.
+
+	\item \emph{Operational Correspondence}: If $\Gamma; \emptyset; \Delta \proves_1 P \hastype \Proc$ then
+		\begin{enumerate}
+			\item	\NY{Completeness: 
+			   If  
+$\stytraargi{\Gamma}{\tau}{\Delta}{P}{\Delta'}{P'}{1}{1}$
+			   then  $\exists Q, \Delta''$ s.t. \\
+ (i)~$\wtytraargi{\mapt{\Gamma}}{}{\mapt{\Delta}}{\map{P}}{\mapt{\Delta''}}{Q}{2}{2}$
+			    %(ii)~$\ell_2 = \mapa{\ell_1}$, 
+			    and 
+				(ii)~${\mapt{\Gamma}};{\mapt{\Delta''}}\proves_2 {Q}{\wb_2}
+{\mapt{\Delta'}}\proves_2 {\map{P'}}$.}
+				
+			\item	Soundness:   
+				If  $\wtytraargi{\mapt{\Gamma}}{}{\mapt{\Delta}}{\map{P}}{\mapt{\Delta'}}{Q}{2}{2}$
+				then  $\exists P', \Delta''$ s.t.  \\
+				(i)~$\stytraargi{\Gamma}{\tau}{\Delta}{P}{\Delta''}{P'}{1}{1}$
+				%(ii)~$\ell_2 = \mapa{\ell_1}$, 
+				and 
+				(ii)~
+${\mapt{\Gamma}};{\mapt{\Delta''}}\proves_2 {\map{P'}}{\wb_2}
+{\mapt{\Delta'}}\proves_2 {Q}$.
+
+		\end{enumerate}
+		
+		\item \emph{Full Abstraction:} 
+		\wbbarg{\Gamma}{}{\Delta}{P}{\Delta'}{Q}{1}
+		if and only if 
+		\wbbarg{\mapt{\Gamma}}{}{\mapt{\Delta}}{\map{P}}{\mapt{\Delta'}}{\map{Q}}{2}.
+		
+	\end{enumerate}
+\end{definition}
+
+%\smallskip 
+
+%\noi 
+Together with type preservation (\defref{def:tp}), type soundness is a distinguishing criterion in our notion of encoding.
+% it enables us to focus on encodings which retain the communication structures denoted by session types.
+%The other semantic
+%criteria build upon analogous definitions in the untyped setting, as we explain now. 
+\newj{Barb preservation, related to success sensitiveness 
+%(as defined in~\cite{DBLP:journals/iandc/Gorla10}), 
+in~\cite{DBLP:journals/iandc/Gorla10}, is convenient in our developments as all considered calculi have the same notion of barb.}
+Operational correspondence, standardly divided into completeness and soundness, is also based
+%in the formulation given i
+on~\cite{DBLP:journals/iandc/Gorla10};
+it relies on 
+%the typed LTS of \defref{def:rlts}, 
+%labelled transitions rather than on 
+$\tau$-transitions (reductions).
+Completeness ensures that a step of the source process is mimicked
+by a step of its associated encoding; soundness is its converse.
+%Soundness ensures that the source process is mimicked 
+%by its associated encoding; completeness is its converse.
+%Completeness and soundness rely on 
+%the typed LTS of \defref{def:rlts}, 
+%rather than on reductions;
+%Labels are considered up to  mapping $\mapa{\cdot}$, which offers flexibility when comparing different calculi. We require that $\mapa{\cdot}$ preserves  subjects, in accordance with the criteria in~\cite{DBLP:conf/icalp/LanesePSS10}.
+{Above, operational correspondence is stated in generic terms.}
+It is worth stressing that 
+the operational correspondence statements 
+%given in \secref{sec:positive} 
+for our encodings 
+ are tailored to the specifics of each encoding, and so they
+ are actually stronger than the criteria given above
+ {(see \propsref{prop:op_corr_HOp_to_HO}, \ref{prop:op_corr_HOp_to_p}, \ref{prop:op_corr_HOpp_to_HOp}, \ref{prop:op_corr_pHOp_to_HOp}
+ and~\cite{KouzapasPY15} for details).}
+Finally, following~\cite{SangiorgiD:expmpa,DBLP:conf/lics/PalamidessiSVV06,Yoshida96},
+we consider full abstraction as an encodability criterion: this leads to 
+stronger encodability results. 
+%The completeness direction of full abstraction is dropped when we prove the negative result. 
+%From the criteria in \defref{def:sep} and~\ref{def:ep}
+%we have the following derived criterion: 
+
+%\begin{proposition}[Barb Preservation]
+%\label{p:barbpres}
+%Let
+%	$\enco{\map{\cdot}, \mapt{\cdot}, \mapa{\cdot}}: \tyl{L}_1 \to \tyl{L}_2$
+%	be a typed encoding.
+%	Suppose the encoding is both
+% operationally complete (cf.~\defref{def:ep}-3(a)) 
+% and subject preserving (cf.~\defref{def:ep}-2).
+% Then, it is also \emph{barb preserving}, i.e., 
+%$\Gamma; \Delta \proves_1 P \barb{n}$
+%implies
+%$\mapt{\Gamma}; \mapt{\Delta} \proves_2 \map{P} \Barb{n}$.
+%\end{proposition}
+%
+%%\smallskip 
+%
+%\begin{proof}
+%The proof
+%follows from the definition of barbs, operational completeness, and subject preservation.
+%\qed
+%\end{proof}
+
+We introduce 
+\emph{precise} and \emph{minimal}
+ encodings.
+While we state strong positive encodability results % in \secref{sec:positive}, 
+in terms of {\em precise} encodings,
+to prove the non-encodability result in \secref{ss:negative}, 
+we appeal to the weaker {\em minimal} encodings.  
+%Building upon precise encodings in \defref{def:lopco} we define \emph{tight} encodings.
+
+\begin{definition}[Typed Encodings: Precise and Minimal]%\rm
+\label{def:goodenc}
+We say that 
+	the typed encoding 
+	$\enco{\map{\cdot}, \mapt{\cdot} %, \mapa{\cdot}
+	}: \tyl{L}_1 \to \tyl{L}_2$ is 
+	%\begin{enumerate}[$\bullet$]
+	%\item 
+	\emph{precise}, if it is syntax, type, and semantic preserving (\defsref{def:sep}, \ref{def:tp}, \ref{def:ep}).
+	%\item 
+	We say that the encoding is
+	\emph{minimal}, if it is syntax preserving 
+	(\defref{def:sep}),
+	barb preserving (\defref{def:ep}-2), 
+	and operationally complete (\defref{def:ep}-3(a)).
+%	\end{enumerate}
+\end{definition}
+
+%\smallskip 
+
+%\noi %As explained earlier, o
+%Our encodability results %presented next 
+%rely on precise encodings; 
+%our non encodability result %, presented in \secref{sec:negative}, 
+%uses minimal encodings.
+%Further we have:
+
+%\smallskip 
+
+The following property will come in handy in \secref{sec:extension}:
+
+\begin{proposition}%[Composability of Precise Encodings]%\rm
+	\label{pro:composition}
+	Let %encodings 
+	$\enco{\map{\cdot}^{1}, \mapt{\cdot}^{1}%, \mapa{\cdot}^{1}
+	}: \tyl{L}_1 \to \tyl{L}_2$
+	and 
+	$\enco{\map{\cdot}^{2}, \mapt{\cdot}^{2}%, \mapa{\cdot}^{2}
+	}: \tyl{L}_2 \to \tyl{L}_3$
+	be two precise %typed 
+	encodings.
+	Then their composition, denoted 
+	$\enco{\map{\cdot}^{2} \circ \map{\cdot}^{1}, \mapt{\cdot}^{2} \circ \mapt{\cdot}^{1} %, \mapa{\cdot}^{2}\circ \mapa{\cdot}^{1}
+	}: \tyl{L}_1 \to \tyl{L}_3$,
+	is precise. 
+\end{proposition}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Expressiveness Results}
+\label{sec:positive}
+%\input{positive}
+ We first present two %encodability results:
+ precise encodings: 
+(1)~higher-order communication with recursion and name-passing   (\HOp) into 
+higher-order communication without name-passing nor recursion (\HO) (\secref{subsec:HOpi_to_HO}); and 
+(2)~\HOp into the first-order calculus with name-passing  
+with recursion (\sessp) (\secref{subsec:HOp_to_sessp}).
+We then compare these  encodings (\secref{ss:compare}). 
+Moreover, in \secref{ss:negative} we state our impossibility result for shared/linear names.
+We consider the typed calculi (cf.~\defref{d:tcalculus}):
+%\begin{enumerate}[-]
+%	\item
+%	$\tyl{L}_{\HOp}=\calc{\HOp}{{\cal{T}}_1}{\hby{\tau}}{\hwb}{\proves}$,
+%	\item
+%	$\tyl{L}_{\HO}=\calc{\HO}{{\cal{T}}_2}{\hby{\tau}}{\hwb}{\proves}$,
+%	\item
+%	$\tyl{L}_{\sessp}=\calc{\sessp}{{\cal{T}}_3}{\hby{\tau}}{\fwb}{\proves}$ 
+%\end{enumerate}
+	$$\tyl{L}_{\HOp}=\calc{\HOp}{{\cal{T}}_1}{\hby{\tau}}{\hwb}{\proves}
+	\quad
+	\tyl{L}_{\HO}=\calc{\HO}{{\cal{T}}_2}{\hby{\tau}}{\hwb}{\proves}
+	\quad
+	\tyl{L}_{\sessp}=\calc{\sessp}{{\cal{T}}_3}{\hby{\tau}}{\fwb}{\proves}$$
+where: 
+${\cal{T}}_1$, ${\cal{T}}_2$, 
+and ${\cal{T}}_3$
+are sets of types of $\HOp$, $\HO$, and $\sessp$, respectively. 
+The typing $\proves$ is defined in 
+%\figref{fig:typerulesmy}.
+\secref{sec:types}.
+The LTSs follow the intuitions given in \secref{ss:equiv}.
+%are as in \defref{def:rlts}, 
+Moreover, 
+$\hwb$ is as in \defref{d:hbw}, and 
+$\fwb$ is as in \defref{d:fwb}.
+
+
+\begin{comment}
+\dk{
+We further prove that the two encodings are precise.
+An important issue to adress on the precissenes of
+the encoding is that of type preservation. In the
+context of types it is not enough to check that
+the reduction semantics and the behavioural equivalences
+correspond. Type preservation gives a corresponding result on the
+type derivation of the encoded process, thus we can
+see that the encoding is preserving a specific type
+behaviour. For example consider the followin encoding
+of first-order passing into higher-order passing:
+\[
+	\begin{array}{rcl}
+		\map{\bout{n}{m} P} &=& \binp{n}{x} (\map{P} \Par \appl{x}{m})\\
+		\map{\binp{n}{x} P} &=& \bout{n}{\abs{x} P} \inact
+	\end{array}
+\]
+%
+Using the above encoding we could simulate name passing, e.g:
+\[
+	\begin{array}{rcl}
+		\bout{n}{m} P \Par \binp{\dual{n}}{x} Q &\red& P \Par Q \subst{m}{x}\\
+		\map{\bout{n}{m} P \Par \binp{\dual{n}}{x} Q} &=&\\
+		\binp{n}{x} (\map{P} \Par \appl{x}{m}) \Par \bout{\dual{n}}{\abs{x} \map{Q}} \inact &\red&
+		\map{P} \Par \appl{\abs{x}{\map{Q}}}{m}\\
+		&\red&
+		\map{P} \Par \map{Q}\subst{m}{x}
+	\end{array}
+\]
+The distinctive characteristic of this encoding is that
+it encodes the output prefix into an input prefix, and the
+input prefix into an output prefix which in turn has
+an impact on the relation on the session type of the encoding.
+The interaction structure of the session is not preserved by the
+above encoding.
+The mapping on types gives an insight on the behaviour of processes.
+}
+\end{comment}
+
+
+\subsection{From \HOp to \HO}
+\label{subsec:HOpi_to_HO}
+$\HO$ is expressive enough to
+precisely encode \HOp.
+%the full \HOp-calculus.
+As discussed above, the main challenges are to encode (1) name passing 
+and (2) recursion, 
+for which 
+we only use  abstraction passing. 
+ As explained in \secref{sec:overview}, for (1), we pass  
+an % simple 
+abstraction which enables to use the name upon application. 
+For~(2), we 
+copy a process upon reception; passing around linear abstractions
+%presents a limitation 
+is \NY{delicate} 
+because 
+they cannot be copied.
+To handle linearity, we define the following auxiliary 
+%a preliminary tool which is a mapping from
+ mapping 
+$\auxmapp{\cdot}{{}}{\sigma}$
+from processes with free names to processes without free
+names (but with free variables instead):
+%from processes \jpc{with free names} to processes without free names (but with free variables) (\defref{d:auxmap}). 
+%We require two auxiliary definitions.
+
+%\smallskip 
+
+%\begin{definition}\rm 
+%%\label{def:hop_to_ho}
+%	Let $\vmap{\cdot}: 2^{\mathcal{N}} \longrightarrow \mathcal{V}^\omega$
+%	be a map of sequences of lexicographically ordered names to sequences of variables, defined
+%	inductively as: 
+%	$\vmap{\epsilon} = \epsilon$ and $\vmap{n \cat \tilde{m}} = x_n \cat \vmap{\tilde{m}}$. 
+%\end{definition}
+%
+%\smallskip 
+
+%\noi The following auxiliary mapping transforms processes
+%with free names into abstractions and it is
+%used in \defref{d:enc:hopitoho}.
+%
+%\smallskip 
+
+
+
+
+\begin{definition}[Auxiliary Mapping] \label{d:trabs}\label{d:auxmap}
+	Let $\vmap{\cdot}: 2^{\mathcal{N}} \longrightarrow \mathcal{V}^\omega$
+	denote a map of sequences of lexicographically ordered names to sequences of variables, defined
+	inductively 
+	as: 
+	$\vmap{\epsilon} = \epsilon$ and $\vmap{n \cat \tilde{m}} = x_n \cat \vmap{\tilde{m}}$. 
+	Also, let $\sigma$ be a set of session names.
+	\figref{f:auxmap} defines an auxiliary mapping
+	$\auxmapp{\cdot}{{}}{\sigma}: \HO \to \HO$.
+\end{definition}
+\input{figures/aux_map}
+%
+
+\newj{Let $P$ be an \HOp process with $\fn{P} = \{n_1, \cdots, n_k\}$.
+Intuitively, 
+our encoding 
+$\pmapp{\cdot}{1}{f}$ %: \HOp \to \HO$
+%of \HOp into \HO %, givenin \figref{f:enc:hopi_to_ho}, 
+%exploits 
+% we are interested in 
+%$P$ into \HO we 
+exploits  
+  the %\HO 
+ abstraction
+%defined as
+$\abs{x_1,\cdots, x_k}{\auxmapp{\pmapp{P}{1}{f}}{{}}{\emptyset} }$, where $\vmap{n_j} = x_j$, for all $j \in \{1, \ldots, k\}$: }
+%In the following we make this intuition precise.
+
+%This transformation from processes into abstractions can be reverted by
+%using abstraction and application with an appropriate sequence of session names:
+%%
+%\begin{proposition}\rm
+%	Let $P$ be a \HOp process and 
+%	suppose $\tilde{x} = \vmap{\tilde{n}}$ where 
+%$\tilde{n} = \fn{P}$.
+%	Then $P \scong \appl{(\abs{\tilde{x}}{\auxmapp{P}{{}}{\emptyset}})}{\tilde{n}}$.
+%%	$\appl{X}{\smap{\fn{P}}} \subst{(\vmap{\fn{P}}) \map{P}^{\emptyset}}{X} \scong P$
+%\end{proposition}
+
+
+
+%\smallskip 
+
+\begin{definition}[Typed Encoding of \HOp into \HO]
+\label{d:enc:hopitoho}
+Let $f$ be a map from process variables to sequences of name variables.
+%
+%Let $\tyl{L}_{\HOp}=\calc{\HOp}{{\cal{T}}_1}{\hby{\ell}}{\wb_H}{\proves}$
+%and 
+%$\tyl{L}_{\HO}=\calc{\HO}{{\cal{T}}_2}{\hby{\ell}}{\wb_H}{\proves}$. 
+%where 
+%${\cal{T}}_1$ and ${\cal{T}}_2$ are sets of types of $\HOp$ 
+%and $\HO$, respectively, 
+%the typing $\proves$ is defined in 
+%\figref{fig:typerulesmy} 
+%and $\hwb$ is defined in \defref{d:hbw}. 
+The typed encoding 
+$\enco{\map{\cdot}^{1}_f, \mapt{\cdot}^{1} %, \mapa{\cdot}^{1}
+}: \tyl{L}_{\HOp} \to \tyl{L}_{\HO}$ is given in 
+\figref{f:enc:hopi_to_ho}. 
+Mapping $\mapt{\cdot}^{1}$ on types homomorphically extends to 
+environments $\Delta$
+and
+$\Gamma$, with
+$
+\tmap{\Gamma \cat \varp{X}:\Delta_1}{1}  =  \tmap{\Gamma}{1} \cat z_X:\shot{(S_1,\ldots,S_m,S^*)}
+$
+%\[
+%	\begin{array}{l}
+%%	    \mapt{\Delta \cat s: S}^{1} & =  & \mapt{\Delta}^{1} \cat s:\mapt{S}^{1} & \\
+%%		\mapt{\Gamma \cat u: \chtype{S}}^{1} & =  & \mapt{\Gamma}^{1} \cat u:\chtype{\mapt{S}^{1}} & \\
+%%		\mapt{\Gamma \cat u: \chtype{L}}^{1} & = &  \mapt{\Gamma}^{1} \cat u:\chtype{\mapt{L}^{1}} & \\
+%		\tmap{\Gamma \cat \varp{X}:\Delta}{1}  =  \tmap{\Gamma}{1} \cat z_X:\shot{(S_1,\ldots,S_m,S^*)} \ 
+%	\end{array}
+%\]
+where  
+$S^*$ is defined as $\trec{t}{\btinp{\shot{(S_1,\ldots,S_m,\vart{t})}} \tinact}$
+provided that $\Delta_1 = \{n_i:S_i\}_{1\leq i\leq m}$.
+%and $\Delta = \{n_1:S_1, \ldots, n_m:S_m\}$. 
+\end{definition}
+
+\input{figures/HOp_to_HO}
+
+%\noi 
+Note that $\Delta$ in $\varp{X}:\Delta$ is mapped to a non-tail
+recursive session type with variable $z_X$. % (see \figref{f:enc:hopi_to_ho}).
+Non-tail
+recursive session types {were} studied in~\cite{DBLP:journals/corr/abs-1202-2086,TGC14};
+{to our knowledge,}
+this is the first application in the
+context of higher-order session types.
+%which carries type variable as the last argument.  
+For simplicity,  % of the presentation, %we use the polyadic name abstraction and passing.
+we use polyadic name abstractions.
+A precise encoding of polyadicity into \HO is given in~\secref{sec:extension}.
+
+{Key elements in 
+\figref{f:enc:hopi_to_ho} are encodings of 
+{\em name passing} ($\pmapp{\bout{u}{w} P}{1}{f}$ and $\pmapp{\binp{u}{x} P}{1}{f}$)  and  
+{\em recursion} ($\pmapp{\recp{X}{P}}{1}{f}$ and $\pmapp{\rvar{X}}{1}{f}$).
+As motivated in \secref{sec:overview}, % we encode passing of name $w$  
+a name $w$ is passed as an input-guarded abstraction;
+on the receiver side,
+the encoding %realises a mechanism that 
+i) receives
+the abstraction; ii) applies to it a fresh  endpoint $s$;
+iii)~uses the dual endpoint $\dual{s}$ to send the continuation $P$ as an abstraction.
+%$\abs{x}{P}$. 
+Thus, name substitution is achieved via name application.
+As for recursion, to encode $\recp{X}{P}$ we
+first record a mapping from recursive variable $X$ to process variable $z_X$.
+Then, using 
+$\auxmapp{\cdot}{{}}{\sigma}$ in 
+\defref{d:auxmap}, we encode the recursion body $P$ as a name abstraction
+in which free names of $P$ are converted into name variables.
+(Notice that $P$ is first encoded into \HO and then transformed using mapping
+$\auxmapp{\cdot}{{}}{\sigma}$.)
+Subsequently, this higher-order value is embedded in an input-guarded 
+``duplicator'' process. We encode $X$ 
+in such a way that it
+simulates recursion unfolding by 
+invoking the duplicator in a by-need fashion.
+That is, upon reception, the \HO abstraction encoding  
+%recursion body 
+$P$
+%containing $\auxmapp{P}{{}}{\sigma}$ 
+is duplicated: 
+one copy is used to reconstitute the original recursion body $P$ (through
+the application of $\fn{P}$); another copy is used to re-invoke
+the duplicator when needed. % to simulate recursion unfolding.
+%An example of this typed encoding is detailed in~\cite{KouzapasPY15}.
+We illustrate the encoding by means of an example.}
+%\end{description}
+
+
+ 
+
+
+%\input{encoding_example}
+\begin{example}[The Encoding 
+$\pmapp{\cdot}{1}{f}$ At Work]
+Let $P = \recp{X}{\bout{a}{m} \varp{X}}$ be an \HOp process.
+Its encoding into \HO is given next; notice that $f = \emptyset$ and $f' = \varp{X} \rightarrow x_ax_m$.
+\begin{eqnarray*}
+	\pmapp{P}{1}{f} &=&
+	\newsp{s_1}{ \binp{s_1}{x} \pmapp{\bout{a}{m} \varp{X}}{1}{{f'}} \Par \bout{\dual{s_1}}{ \abs{(x_a, x_m, z)} \binp{z}{x} \auxmapp{\pmapp{\bout{a}{m} \varp{X}}{1}{{f'}}}{{}}{\es} } \inact} \\
+%	&&\bout{\dual{s_1}}{ \abs{(x_a, x_m, z)} \binp{z}{x} \auxmapp{\pmapp{\bout{a}{m} \varp{X}}{1}{{\varp{X} \rightarrow x_ax_m}}}{{}}{\es} } \inact}
+%\end{eqnarray*}
+%\begin{eqnarray*}	
+\pmapp{\bout{a}{m} \varp{X}}{1}{{ f'}} &=&
+%	\bout{a}{\abs{z}{\binp{z}{x} (\appl{x}{m})}} \pmapp{\varp{X}}{1}{{f'}}
+%	\\
+%	&=& 
+	\bout{a}{\abs{z}{\binp{z}{x} (\appl{x}{m})}} \newsp{s_2}{\appl{x}{(a,m, s_2)}  \Par \bout{\dual{s_2}}{\abs{(x_a, x_m, z)}{\appl{x}{(x_a, x_m, z)}}} \inact} \\
+	\auxmapp{\pmapp{\bout{a}{m} \varp{X}}{1}{{f'}}}{{}}{\es}
+	  & = & 
+%	  \auxmapp{\bout{a}{\abs{z}{\binp{z}{x} (\appl{x}{m})}} \newsp{s_2}{\appl{x}{(a,m, s_2)}  \Par \bout{\dual{s_2}}{\abs{(x_a, x_m, z)}{\appl{x}{(x_a, x_m, z)}}} \inact}}{{}}{\es}
+%	\\
+%	 & = & 
+%	 \bout{x_a}{\abs{z}{\binp{z}{x} (\appl{x}{x_m})}} \auxmapp{\newsp{s_2}{\appl{x}{(a,m, s_2)}  \Par \bout{\dual{s_2}}{\abs{(x_a, x_m, z)}{\appl{x}{(x_a, x_m, z)}}} \inact}}{{}}{\es}
+%	\\
+%	& = & 
+	\bout{x_a}{\abs{z}{\binp{z}{x} (\appl{x}{x_m})}} \newsp{s_2}{\appl{x}{(x_a,x_m, s_2)}  \Par \\
+	& & \qquad \qquad \qquad \qquad \qquad \qquad \qquad \bout{\dual{s_2}}{\abs{(x_a, x_m, z)}{\appl{x}{(x_a, x_m, z)}}} \inact}
+\end{eqnarray*}
+That is, by writing $V$ to denote the process
+$$
+\abs{(x_a, x_m, z)} \binp{z}{x} \bout{x_a}{\abs{z}{\binp{z}{x} (\appl{x}{x_m})}} \newsp{s_2}{\appl{x}{(x_a,x_m, s_2)}  \!\Par\! \bout{\dual{s_2}}{\abs{(x_a, x_m, z)}{\appl{x}{(x_a, x_m, z)}}} \inact}
+$$
+we would have %that $P = \recp{X}{\bout{a}{m} \varp{X}}$ is mapped into the \HO process
+\begin{eqnarray*}
+\pmapp{P}{1}{f} & = & \newsp{s_1}{\binp{s_1}{x}  \bout{a}{\abs{z}{\binp{z}{x} (\appl{x}{m})}} \newsp{s_2}{\appl{x}{(a,m, s_2)}  \Par \\
+& & \qquad \qquad \qquad \bout{\dual{s_2}}{\abs{(x_a, x_m, z)}{\appl{x}{(x_a, x_m, z)}}} \inact}\Par \bout{\dual{s_1}}{V} \inact}
+\end{eqnarray*}
+Next we illustrate the behaviour of $\pmapp{P}{1}{f}$; below $\ell$ stands for $\bactout{a}{\abs{z}{\binp{z}{x} (\appl{x}{m})}}$.
+\begin{eqnarray*}
+\pmapp{P}{1}{f} & \scong & \newsp{s_1}{\bout{\dual{s_1}}{V} \inact \Par \binp{s_1}{x} \bout{a}{\abs{z}{\binp{z}{x} (\appl{x}{m})}} \newsp{s_2}{\bout{\dual{s_2}}{\abs{(x_a, x_m, z)}{\\
+& & \qquad \qquad \qquad \qquad \quad \quad  \appl{x}{(x_a, x_m, z)}}} \inact} 
+\Par \appl{x}{(a,m, s_2)}} \\
+& \hby{\tau} & \bout{a}{\abs{z}{\binp{z}{x} (\appl{x}{m})}} \newsp{s_2}{\bout{\dual{s_2}}{V} \inact \Par \binp{s_2}{x} \bout{a}{\abs{z}{\binp{z}{x} (\appl{x}{m})}} \\
+& & \qquad \qquad \quad \qquad \qquad \quad \newsp{s_3}{\bout{\dual{s_3}}{\abs{(x_a, x_m, z)}{\appl{x}{(x_a, x_m, z)}}} \inact} \Par \appl{x}{(a,m, s_3)}} \\
+& \scong_{\alpha} & \bout{a}{\abs{z}{\binp{z}{x} (\appl{x}{m})}} \newsp{s_1}{\bout{\dual{s_1}}{V} \inact \Par \binp{s_1}{x} \bout{a}{\abs{z}{\binp{z}{x} (\appl{x}{m})}} \\
+& & \qquad \qquad \qquad \qquad \quad \quad \newsp{s_2}{\bout{\dual{s_2}}{\abs{(x_a, x_m, z)}{\appl{x}{(x_a, x_m, z)}}} \inact} \Par \appl{x}{(a,m, s_2)}} \\
+& \scong & 
+		\bout{a}{\abs{z}{\binp{z}{x} (\appl{x}{m})}} \pmapp{\recp{X}{\bout{a}{m} \varp{X}}}{1}{f} \hby{\ell} 
+		\pmapp{\recp{X}{\bout{a}{m} \varp{X}}}{1}{f}.
+%& \by{\lambda} & 
+%		\pmapp{\recp{X}{\bout{a}{m} \varp{X}}}{1}{f}
+\end{eqnarray*}
+%where $\ell = \bactout{a}{\abs{z}{\binp{z}{x} (\appl{x}{m})}}$ is an output action.
+%For type preservation/soundness see~\cite{KouzapasPY15}.
+%\qed
+\end{example}
+
+
+We now describe the properties of the encoding. 
+{Directly from \figref{f:enc:hopi_to_ho} we may state:
+\begin{proposition}[\HOp into \HO: Type Preservation]
+The encoding from $\tyl{L}_{\HOp}$ into $\tyl{L}_{\HO}$ (cf.~\defref{d:enc:hopitoho})
+is type preserving.
+\end{proposition}}
+
+Now, we state operational correspondence with respect to reductions; 
+the full statement (and proof) can be found in~\cite{KouzapasPY15}.
+%Recall that $\hby{\stau}$ and $\hby{\btau}$ were defined in \notref{not:dettrans}.
+
+\begin{proposition}[\HOp into \HO: Operational Correspondence - Excerpt]%\myrm
+	\label{prop:op_corr_HOp_to_HO}
+	Let $P$ be an \HOp process such that $\Gamma; \emptyset; \Delta \proves P \hastype \Proc$.
+	\begin{enumerate}[1.]
+		\item Completeness: 
+			Suppose $\horel{\Gamma}{\Delta}{P}{\hby{\tau}}{\Delta'}{P'}$. Then we have:
+%
+			\begin{enumerate}[a)]
+				\item
+					If  $P' \scong \newsp{\tilde{m}}{P_1 \Par P_2\subst{m}{x}}$
+					then $\exists R$ s.t. \\
+					$\horel{\tmap{\Gamma}{1}}{\tmap{\Delta}{1}}{\pmapp{P}{1}{f}}{\hby{\tau}}{\mapt{\Delta}^{1}}{\newsp{\tilde{m}}{\pmapp{P_1}{1}{f} \Par R}}$,
+					and\\ 
+					$\horel{\tmap{\Gamma}{1}}{\tmap{\Delta}{1}}{\newsp{\tilde{m}}{\pmapp{P_1}{1}{f} \Par R}}{\hby{\btau} \hby{\stau} \hby{\btau}}
+					{\mapt{\Delta}^{1}}{\newsp{\tilde{m}}{\pmapp{P_1}{1}{f} \Par \pmapp{P_2}{1}{f}\subst{m}{x}}}$.
+			
+				\item
+					If  $P' \scong \newsp{\tilde{m}}{P_1 \Par P_2 \subst{\abs{y}Q}{x}}$
+					then \\
+					$\horel{\tmap{\Gamma}{1}}{\tmap{\Delta}{1}}{\pmapp{P}{1}{f}}{\hby{\tau}}
+					{\tmap{\Delta_1}{1}}{\newsp{\tilde{m}}{\pmapp{P_1}{1}{f}\Par \pmapp{P_2}{1}{f}\subst{\abs{y}\pmapp{Q}{1}{\emptyset}}{x}}}$.
+			
+				\item
+					If   $P' \not\scong \newsp{\tilde{m}}{P_1 \Par P_2 \subst{m}{x}} \land P' \not\scong \newsp{\tilde{m}}{P_1 \Par P_2\subst{\abs{y}Q}{x}}$
+					then \\
+					$\horel{\tmap{\Gamma}{1}}{\tmap{\Delta}{1}}{\pmapp{P}{1}{f}}{\hby{\tau}}{\tmap{\Delta'_1}{1}}{ \pmapp{P'}{1}{f}}$.
+			\end{enumerate}
+			
+		\item Soundness:	Suppose $\horel{\tmap{\Gamma}{1}}{\tmap{\Delta}{1}}{\pmapp{P}{1}{f}}{\hby{\tau}}{\tmap{\Delta'}{1}}{Q}$.
+			Then $\Delta' = \Delta$ and 
+					either
+%
+					\begin{enumerate}[a)]
+						\item	$\exists P'$ s.t. 
+							$\horel{\Gamma}{\Delta}{P}{\hby{\tau}}{\Delta}{P'}$,
+							and $Q = \map{P'}^{1}_f$.	
+
+						\item
+							$\exists P_1, P_2, x, m, Q'$ s.t. 
+							$\horel{\Gamma}{\Delta}{P}{\hby{\tau}}{\Delta}{\newsp{\tilde{m}}{P_1 \Par P_2\subst{m}{x}} }$, and\\
+							$\horel{\tmap{\Gamma}{1}}{\tmap{\Delta}{1}}{Q}{\hby{\btau} \hby{\stau} \hby{\btau}}{\tmap{\Delta}{1}}{\pmapp{P_1}{1}{f} \Par \pmapp{P_2\subst{m}{x}}{1}{f}}$ 
+%							$Q = \map{P_1}^{1}_f \Par Q'$, where $Q'  \Hby{} $.
+
+%						\item $\exists P_1, P_2, x, R$ s.t. 
+%						$\stytra{ \Gamma }{\tau}{ \Delta }{ P}{ \Delta}{ \news{\tilde{m}}(P_1 \Par P_2\subst{\abs{y}R}{x}) }$, and 
+%						$Q = \map{\news{\tilde{m}}(P_1 \Par P_2\subst{\abs{y}R}{x})}^{1}_f$.
+			\end{enumerate}
+		    %\end{enumerate}
+		    
+%		\item   
+%			If  $\wtytra{\mapt{\Gamma}^{1}}{\ell_2}{\mapt{\Delta}^{1}}{\pmapp{P}{1}{f}}{\mapt{\Delta'}^{1}}{Q}$
+%			then $\exists \ell_1, P'$ s.t.  \\
+%			(i)~$\stytra{\Gamma}{\ell_1}{\Delta}{P}{\Delta'}{P'}$,
+%			(ii)~$\ell_2 = \mapa{\ell_1}^{1}$, 
+%			(iii)~$\wbb{\mapt{\Gamma}^{1}}{\ell}{\mapt{\Delta'}^{1}}{\pmapp{P'}{1}{f}}{\mapt{\Delta'}^{1}}{Q}$.
+	\end{enumerate}
+\end{proposition}
+
+%\noi 
+Observe how we can explicitly distinguish the role of finite, deterministic reductions 
+($\hby{\stau}$ and $\hby{\btau}$, defined in \notref{not:dettrans}) in both soundness and completeness statements.
+
+%Using operational correspondence, we can show \emph{full abstraction}:
+\newj{The typed operational correspondence given above is an important component in the 
+proof of \emph{full abstraction}, which we state next.}
+\begin{proposition}[\HOp into \HO: Full Abstraction]%\myrm
+	\label{prop:fulla_HOp_to_HO}
+	Let $P_1, Q_1$ be \HOp processes. \\
+	$\horel{\Gamma}{\Delta_1}{P_1}{\hwb}{\Delta_2}{Q_1}$
+	if and only if
+	$\horel{\tmap{\Gamma}{1}}{\tmap{\Delta_1}{1}}{\pmapp{P_1}{1}{f}}{\hwb}{\tmap{\Delta_2}{1}}{\pmapp{Q_1}{1}{f}}$.
+\end{proposition}
+
+
+
+
+%Based on these propositions, w
+We may state the main result of this section. See~\cite{KouzapasPY15} for details. 
+
+\begin{theorem}[Precise Encoding of \HOp into \HO]
+\label{f:enc:hopitoho}
+The encoding from $\tyl{L}_{\HOp}$ into $\tyl{L}_{\HO}$ (cf.~\defref{d:enc:hopitoho})
+is precise. 
+\end{theorem}
+
+
+\subsection{From \HOp to \sessp}
+\label{subsec:HOp_to_sessp}
+\newj{We now discuss the precise encodability of  $\HOp$ into $\sessp$;
+the non trivial issue is encoding higher-order communication, which is present in $\HOp$ but not in 
+$\sessp$.}
+We closely follow Sangiorgi's encoding~\cite{San92,SaWabook}, which represents 
+%Intuitively, such an encoding  represents 
+the exchange of a process with the exchange of a fresh \emph{trigger name}. 
+Trigger names may then be used to activate copies of the process, which becomes a persistent resource represented by an input-guarded replication.
+%Consider the following (naive) adaptation of \cite{San92,SaWabook} 
+%in which session names are used are triggers and 
+%exchanged processes would be have to used exactly once:
+%%
+%\[
+%\begin{array}{l}
+%		\pmap{\bout{u}{\abs{x}{Q}} P}{n}  \defeq   \newsp{s}{\bout{u}{s} (\pmap{P}{n} \Par \binp{\dual{s}}{x} \pmap{Q}{n})} \\
+%		\pmap{\binp{u}{x} P}{n}  \defeq \binp{u}{x} \pmap{P}{n}
+%		\quad 
+%		\pmap{\appl{x}{u}}{n}  \defeq  \bout{x}{u} \inact
+%	\end{array}
+%\]
+%%
+%with the remaining \HOp constructs being mapped homomorphically.
+%Although $\pmap{\cdot}{n}$ captures the correct semantics when
+%dealing with systems that allow only linear abstractions,
+%it suffers from untypability in the presence
+%of shared abstractions. For instance,
+%mapping for $P = \bout{n}{\abs{x}{\bout{x}{m}\inact}} \inact \Par \binp{\dual{n}}{x} (\appl{x}{s_1} \Par \appl{x}{s_2})$
+%would be:
+%%
+%\[
+%	\pmap{P}{n} \defeq
+%	\newsp{s}{\bout{n}{s} \binp{\dual{s}}{x} \bout{x}{m} \inact \Par \binp{\dual{n}}{x} (\bout{x}{s_1} \inact \Par \bout{x}{s_2} \inact)}
+%\]
+%%
+%The above process is untypable since processes $(\bout{x}{s_1} \inact$ and $\bout{x}{s_2} \inact)$
+%cannot be put in parallel because they do not have disjoint session environments.
+We cast this strategy in the setting of session-typed communications. 
+In the presence of session names (which are linear  and cannot be replicated),
+%The correct 
+our
+approach %would be to 
+ uses replicated names
+as triggers for shared resources and non-replicated names
+for linear resources (cf. $\pmap{\bout{u}{\abs{x}{Q}} P}{2}$).
+%as triggers instead of session names, when dealing with shared abstractions. 
+
+%\smallskip 
+
+\begin{definition}[Typed Encoding of \HOp into \sessp]
+\label{d:enc:hopitopi}
+%Let $\tyl{L}_{\sessp}=\calc{\sessp}{{\cal{T}}_3}{\hby{\ell}}{\fwb}{\proves}$ 
+%where the typing is defined in 
+%\figref{fig:typerulesmy} 
+%and the equivalence $\fwb$ is defined in \defref{d:fwb}.
+%${\cal{T}}_3$ is a set of types of $\sessp$.  
+%%
+The typed encoding 
+$\enco{\map{\cdot}^{2}, \mapt{\cdot}^{2} %, \mapa{\cdot}^{2}
+}: \tyl{L}_{\HOp} \to \tyl{L}_{\sessp}$  
+%We define the mappings $\map{\cdot}^{2}$, $\mapt{\cdot}^{2}$, $\mapa{\cdot}^{2}$
+is defined
+in \figref{f:enc:ho_to_sessp}. 
+\end{definition}
+
+%\smallskip 
+\input{figures/HOp_to_pi}
+%\noi 
+%Notice that $\mapa{\bactinp{n}{\abs{ x}{P}} }^2$ involves a fresh trigger name (linear or shared),  which denotes the location of $\pmap{P}{2}$. 
+%(a $\sessp$ process).
+Observe how $\pmap{\appl{(\abs{x}{P})}{u}}{2}$ naturally induces a name substitution.
+We describe key properties of this encoding. First, type preservation and operational correspondence:
+
+\begin{proposition}[\HOp into \sessp: Type Preservation]
+The encoding from $\tyl{L}_{\HOp}$ into $\tyl{L}_{\sessp}$ (cf.~\defref{d:enc:hopitopi})
+is type preserving.
+\end{proposition}
+
+\begin{proposition}[\HOp into \sessp: Operational Correspondence - Excerpt]%\myrm
+	\label{prop:op_corr_HOp_to_p}
+	Let $P$ be an  $\HOp$ process such that  $\Gamma; \emptyset; \Delta \proves P \hastype \Proc$.
+	
+\begin{enumerate}[1.]
+\item Completeness: Suppose $\horel{\Gamma}{\Delta}{P}{\hby{\ell}}{\Delta'}{P'}$. Then either:
+				\begin{enumerate}[a)]
+				\item If $\ell = \tau$ then one of the following holds:
+				\begin{enumerate}[-]
+					\item	 %such that
+						$
+						\horel{\tmap{\Gamma}{2}}{\tmap{\Delta}{2}}{\pmap{P}{2}}
+						{\hby{\tau}} \\
+						{\tmap{\Delta'}{2}}{}{\newsp{\tilde{m}}{\pmap{P_1}{2} \!\Par\! \newsp{a}
+						{\pmap{P_2}{2}\subst{a}{x} \!\Par\!\! \repl{} \binp{a}{y} \binp{y}{x} \pmap{Q}{2}}}}
+						$, for some  $P_1, P_2, Q$;
+
+					\item	%$\exists R$ such that
+						$
+						\horel{\tmap{\Gamma}{2}}{\tmap{\Delta}{2}}{\pmap{P}{2}}
+						{\hby{\tau}}
+						{\tmap{\Delta'}{2}}{}{\newsp{\tilde{m}}{\pmap{P_1}{2} \Par \newsp{s}
+						{\pmap{P_2}{2}\subst{\dual{s}}{x} \!\Par\! \binp{s}{y} \binp{y}{x} \pmap{Q}{2}}}}
+						$, for some  $P_1, P_2, Q$;
+
+					\item	%$\ell_1 = \btau$ and
+						$\horel{\tmap{\Gamma}{2}}{\tmap{\Delta}{2}}{\pmap{P}{2}}
+						{\hby{\tau}}
+						{\tmap{\Delta'}{2}}{}{{\pmap{P'}{2} }}
+						$
+
+				\end{enumerate}
+				\item 	If $\ell = \btau$ then 
+						$\horel{\tmap{\Gamma}{2}}{\tmap{\Delta}{2}}{\pmap{P}{2}}
+						{\hby{\stau}}
+						{\tmap{\Delta'}{2}}{}{{\pmap{P'}{2} }}
+						$.
+				\end{enumerate}
+		
+		%%%%%%% SOUNDNESSS
+		\item Suppose 
+		$\stytra{\mapt{\Gamma}^{2}}{\tau}{\mapt{\Delta}^{2}}{\map{P}^{2}}{\mapt{\Delta'}^{2}}{R}$.  \\
+		Then $\exists P'$ such that
+					$P \hby{\tau} P'$
+					and $\horel{\mapt{\Gamma}^{2}}{\mapt{\Delta'}^{2}}{\map{P'}^{2}}{\hwb}{\mapt{\Delta'}^{2}}{R}$.
+	\end{enumerate}
+\end{proposition}
+
+\newj{Exploiting the above properties (type preservation, typed operational correspondence), 
+we can show that our typed encoding is fully abstract  and precise. }
+
+\begin{proposition}[\HOp to \sessp: Full Abstraction]%\myrm
+	\label{prop:fulla_HOp_to_p}
+	Let $P_1, Q_1$ be \HOp processes.
+	$\horel{\Gamma}{\Delta_1}{P_1}{\hwb}{\Delta_2}{Q_1}$
+	if and only if
+	$\horel{\tmap{\Gamma}{2}}{\tmap{\Delta_1}{2}}{\pmap{P_1}{2}}{\fwb}{\tmap{\Delta_2}{2}}{\pmap{Q_1}{2}}$.
+\end{proposition}
+
+
+
+
+\begin{theorem}[Precise Encoding of \HOp into \sessp]
+\label{f:enc:hotopi}
+The encoding from $\tyl{L}_{\HOp}$ into $\tyl{L}_{\sessp}$ (cf.~\defref{d:enc:hopitopi})
+is precise. 
+\end{theorem}
+
+%\smallskip 
+%
+%\begin{remark}
+%As stated in  \cite[Lem.\,5.2.2]{SangiorgiD:expmpa}, 
+%due to the replicated trigger,  
+%operational correspondence in \defref{def:ep} is refined to prove  
+%full abstraction: 
+%e.g., completeness of the case $\ell_1 \neq \tau$, is changed as follows.
+%Suppose   
+%$\stytraarg{\Gamma}{\ell_1}{\Delta}{P}{\Delta'}{P'}{}$:
+%if $\ell_1 = (\nu \tilde{m})\bactout{n}{\abs{ x}{R}}$, 
+%then %$\exists \ell_2, Q$ s.t. 
+%$\stytraarg{\mapt{\Gamma}^2}{\ell_2}{\mapt{\Delta}^2}{\map{P}^2}{\mapt{\Delta'}^2}{Q}{}$,
+%where 
+%$\ell_2 = (\nu a)\bactout{n}{a}$ and
+%$Q = \pmap{P' \Par  \repl{} \binp{a}{y} \binp{y}{x} R}{2}$.
+%Similarly,
+%if  
+%%$\stytraarg{\Gamma}{\ell_1}{\Delta}{P}{\Delta'}{P'}{}$
+%%with 
+%$\ell_1 = \bactinp{n}{\abs{ x}{R}}$, 
+%then %$\exists \ell_2, Q$ s.t. 
+%$\stytraarg{\mapt{\Gamma}^2}{\ell_2}{\mapt{\Delta}^2}{\map{P}^2}{\mapt{\Delta'}^2}{Q}{}$,
+%where 
+%$\ell_2 = \bactout{n}{a}$ and
+%$\pmap{P'}{2} \wb \news{a}(Q \Par  \repl{} \binp{a}{y} \binp{y}{x} \pmap{R}{2})$.
+%Soundness is stated in a symmetric way; see \cite{KouzapasPY15}. 
+%%Operational correspondence for the encoding in~\defref{d:enc:hopitopi}
+%%is different from that in~\defref{def:ep}, due to triggers. 
+%%In particular,  completeness differs when $\ell_1 \neq \tau$.
+%%This way, e.g., if  
+%%$\stytraarg{\Gamma}{\ell_1}{\Delta}{P}{\Delta'}{P'}{}$
+%%with $\ell_1 = (\nu \tilde{m})\bactout{n}{\abs{ x}{R}}$, 
+%%then %$\exists \ell_2, Q$ s.t. 
+%%$\stytraarg{\mapt{\Gamma}^2}{\ell_2}{\mapt{\Delta}^2}{\map{P}^2}{\mapt{\Delta'}^2}{Q}{}$,
+%%where 
+%%$\ell_2 = (\nu a)\bactout{n}{a}$ and
+%%$Q = \pmap{P' \Par  \repl{} \binp{a}{y} \binp{y}{x} R}{2}$.
+%%This 
+%%statement, essential in proofs of full abstraction,
+%%is the same given by Sangiorgi~\cite{SangiorgiD:expmpa}.
+%%Completeness is as in~\defref{def:ep} when  $\ell_1 = \tau$.
+%%See~\cite{KouzapasPY15} for details.
+%\end{remark}
+
+
+%\input{HO_Vs_p}
+
+\subsection{Comparing Precise Encodings}\label{ss:compare}
+The precise encodings  in  \secref{subsec:HOpi_to_HO} and \secref{subsec:HOp_to_sessp}
+confirm that \HO and \sessp constitute two important sources of expressiveness in \HOp.
+This naturally begs the question: which of the two sub-calculi is more tightly related to \HOp?
+We argue, both empirically and formally, that when compared to \sessp, \HO   is more economical and satisfies tighter correspondences.
+
+\paragraph{Empirical Comparison: Reduction Steps.}
+We first contrast the way in which 
+%\begin{enumerate}[a)]
+%\item 
+(a)~the encoding from \HOp to \HO (\secref{subsec:HOpi_to_HO}) translates processes with name passing;
+%\item 
+(b)~the encoding from \HOp to \sessp (\secref{subsec:HOp_to_sessp}) translates processes with abstraction passing.
+%\end{enumerate}
+Consider the \HOp processes:
+$$
+P_1  =  \bout{s}{a} \inact \Par \binp{\dual{s}}{x} (\bout{x}{s_1} \inact \Par \dots \Par \bout{x}{s_n} \inact) \qquad
+P_2  =  \bout{s}{\abs{x}{P}} \inact \Par \binp{\dual{s}}{x} (\appl{x}{s_1} \Par \dots \Par \appl{x}{s_n})
+$$
+
+%\begin{eqnarray*}
+%P_1 & = & \bout{s}{a} \inact \Par \binp{\dual{s}}{x} (\bout{x}{s_1} \inact \Par \dots \Par \bout{x}{s_n} \inact) \\
+%P_2 & = & \bout{s}{\abs{x}{P}} \inact \Par \binp{\dual{s}}{x} (\appl{x}{s_1} \Par \dots \Par \appl{x}{s_n})
+%\end{eqnarray*}
+%\noi 
+ $P_1$ features \emph{pure} name passing (no abstraction-passing), whereas 
+$P_2$ involves \emph{pure} abstraction passing (no name passing). In both cases, 
+the intended communication on $s$ leads to $n$ usages of the communication object (name $a$ in $P_1$, abstraction $\abs{x}{P}$ in $P_2$).
+Consider now the reduction steps from $P_1$ and $P_2$:
+\begin{eqnarray*}
+P_1 & \hby{\tau} & \bout{a}{s_1} \inact \Par \dots \Par \bout{a}{s_n} \inact \\
+P_2 & \hby{\tau}& \appl{(\abs{x}{P})}{s_1} \Par \dots \Par \appl{(\abs{x}{P})}{s_n} \quad 
+\underbrace{\hby{\btau}\hby{\btau} \cdots \hby{\btau}}_{n} 
+%\hby{}}^{n}
+%\stackrel{\btau}{\longmapsto^n}
+\quad P \subst{s_1}{x} \Par \dots \Par P \subst{s_1}{x} 
+\end{eqnarray*}
+
+%Let reduction on \sessp process:
+%\begin{eqnarray*}
+%	\bout{s}{a} \inact \Par \binp{\dual{s}}{x} (\bout{x}{s_1} \inact \Par \dots \Par \bout{x}{s_n} \inact)
+%	\hby{\tau}
+%	\bout{a}{s_1} \inact \Par \dots \Par \bout{a}{s_n} \inact
+%\end{eqnarray*}
+%and \HO process
+%\begin{eqnarray*}
+%	\bout{s}{\abs{x}{P}} \inact \Par \binp{\dual{s}}{x} (\appl{x}{s_1} \Par \dots \Par \appl{x}{s_n})
+%	&\hby{\tau}&
+%	\appl{(\abs{x}{P})}{s_1} \Par \dots \Par \appl{(\abs{x}{P})}{s_n}\\
+%	&\Hby{\tau}_{n}&
+%	P \subst{s_1}{x} \Par \dots \Par P \subst{s_1}{x}
+%\end{eqnarray*}
+%\noi 
+%$P_1$ and $P_2$ follow the same communication pattern; they both
+%reduce on a message passing action, with the
+%message being substituted $n$ times on the receing side.
+%Both $P_1$ and $P_2$ are \HOp processes.
+By considering the encoding of $P_1$ into \HO   
+we obtain:
+\begin{eqnarray*}
+\map{P_1}^{1}_f & = &  	\bout{s}{\abs{z}{\binp{z}{y} \appl{y}{a}}} \inact \Par \\
+& & \quad  \binp{\dual{s}}{x} \newsp{t}{\appl{x}{t} \Par \bout{\dual{t}}{\abs{x}{(\bout{x}{\abs{z}{\binp{z}{y} \appl{y}{s_1}}} \inact \Par \dots \Par \bout{x}{\abs{z}{\binp{z}{y} \appl{y}{s_n}}} \inact)}} \inact}\\
+	& \hby{\stau} \hby{\btau} & 
+%	\newsp{t}{\appl{(\abs{z}{\binp{z}{y} \appl{y}{a}})}{t} \Par \bout{\dual{t}}{\abs{x}{(\bout{x}{\abs{z}{\binp{z}{y} \appl{y}{s_1}}} \inact \Par \dots \Par \bout{x}{\abs{z}{\binp{z}{y} \appl{y}{s_n}}} \inact)}} \inact}\\
+%	& \hby{\btau} & 
+	\newsp{t}{\binp{t}{y} \appl{y}{a} \Par \bout{\dual{t}}{\abs{x}{(\bout{x}{\abs{z}{\binp{z}{y} \appl{y}{s_1}}} \inact \Par \dots \Par \bout{x}{\abs{z}{\binp{z}{y} \appl{y}{s_n}}} \inact)}} \inact}\\
+	& \hby{\stau}\hby{\btau}  & 
+%	\appl{\abs{x}{(\bout{x}{\abs{z}{\binp{z}{y} \appl{y}{s_1}}} \inact \Par \dots \Par \bout{x}{\abs{z}{\binp{z}{y} \appl{y}{s_n}}} \inact)}}{a}
+%	\\
+%	& \hby{\btau} & 
+	\bout{a}{\abs{z}{\binp{z}{y} \appl{y}{s_1}}} \inact \Par \dots \Par \bout{a}{\abs{z}{\binp{z}{y} \appl{y}{s_n}}} \inact
+\end{eqnarray*}
+Now, we encode $P_2$ into \sessp:
+\begin{eqnarray*}
+\pmap{P_2}{2} & = & 	\newsp{b}{\bout{s}{b} \inact \Par \repl \binp{b}{y} \binp{y}{x} P} \Par \\
+& & \qquad \qquad \binp{\dual{s}}{x} (\newsp{s}{\bout{x}{s} \bout{\dual{s}}{s_1} \inact} \Par \dots \Par \newsp{s}{\bout{x}{s} \bout{\dual{s}}{s_n}\inact})
+	\\
+%	& \hby{\stau} & 
+%	\newsp{b}{\repl \binp{b}{y} \binp{y}{x} P \Par \newsp{s}{\bout{b}{s} \bout{\dual{s}}{s_1} \inact} \Par \dots \Par \newsp{s}{\bout{b}{s} \bout{\dual{s}}{s_n} \inact}}
+%	\\
+	& \hby{\stau}  \hby{\stau} \hby{\stau} & 
+%	\newsp{b}{\repl \binp{b}{y} \binp{y}{x} P \Par \newsp{s}{\binp{s}{x} P \Par \bout{\dual{s}}{s_1} \inact} \Par \dots \Par \newsp{s}{\bout{b}{s} \bout{\dual{s}}{s_n} \inact}}
+%	\\
+%	& \hby{\stau} & 
+	\newsp{b}{\repl \binp{b}{y} \binp{y}{x} P \Par P\subst{s_1}{x} \Par \dots \Par \newsp{s}{\bout{b}{s} \bout{\dual{s}}{s_n} \inact}}
+	\\
+	& \Hby{}_{2*(n - 1)} & 
+	\newsp{b}{\repl \binp{b}{y} \binp{y}{x} P \Par P\subst{s_1}{x} \Par \dots \Par P\subst{s_n}{x}}
+%	\red
+%	\appl{V}{s_1} \Par \dots \Par \appl{V}{s_n}
+\end{eqnarray*}
+%\noi 
+Clearly, encoding $P_1$ into \HO is more economical than 
+encoding $P_2$ into \sessp. Not only moving to a pure higher-order setting requires less reduction steps than in the first-order concurrency of \sessp; in the presence of shared names, moving to a first-order setting brings the need of setting up and handling replicated processes which will eventually lead to garbage (stuck) processes (cf. $\repl \binp{b}{y} \binp{y}{x} P$ above). In contrast, the mechanism present in \HO works efficiently regardless of the linear or shared properties of the name that is ``packed'' into the abstraction. 
+The use of $\beta$-transitions guarantees local synchronizations, which are arguably more economical than point-to-point, session synchronizations.
+
+It is useful to move our comparison 
+to a purely linear setting. % and to see what occurs. 
+Consider processes:
+%In the case of linear values we have:
+\begin{eqnarray*}
+	Q_1  =  \bout{s'}{s} \inact \Par \binp{\dual{s'}}{x} \bout{x}{a} \inact
+	\hby{\tau}
+	\bout{s}{a} \inact \quad~~
+	Q_2  =  \bout{s}{\abs{x}{P}} \inact \Par \binp{\dual{s}}{x} \appl{x}{a}
+	\hby{\tau}
+%	\appl{(\abs{x}{P})}{a}
+	\hby{\tau}
+	P \subst{a}{x}
+\end{eqnarray*}
+$Q_1$ is a \sessp process; $Q_2$ is an \HO processs.
+If we consider their encodings into \HO and \sessp, respectively,
+we obtain:
+\begin{eqnarray*}
+	\map{Q_1}_f^{1} & = & \bout{s'}{\abs{z}{\binp{z}{y} \appl{y}{s}}} \inact \Par \binp{\dual{s'}}{x} \newsp{t}{\appl{x}{t} \Par \bout{\dual{t}}{\abs{x}{\bout{x}{\abs{z}{\binp{z}{y} \appl{y}{a}}} \inact}} \inact}\\
+	& \hby{\stau} \hby{\btau}& 
+%	\newsp{t}{\appl{(\abs{z}{\binp{z}{y} \appl{y}{s}})}{t} \Par \bout{\dual{t}}{\abs{x}{\bout{x}{\abs{z}{\binp{z}{y} \appl{y}{a}}} \inact)}} \inact}\\
+%	& \hby{\btau} & 
+	\newsp{t}{\binp{t}{y} \appl{y}{s} \Par \bout{\dual{t}}{\abs{x}{\bout{x}{\abs{z}{\binp{z}{y} \appl{y}{a}}} \inact}} \inact}\\
+	& \hby{\stau} & 
+	\appl{\abs{x}{\bout{x}{\abs{z}{\binp{z}{y} \appl{y}{a}}} \inact}}{s}
+	~~\hby{\btau}~~
+	\bout{s}{\abs{z}{\binp{z}{y} \appl{y}{a}}} \inact \\
+%\end{eqnarray*}
+%\begin{eqnarray*}
+	\pmap{Q_2}{2} & = & \newsp{t}{\bout{s}{t} \inact \Par \binp{\dual{t}}{y} \binp{y}{x} P} \Par \binp{\dual{s}}{x} \newsp{s}{\bout{x}{s} \bout{\dual{s}}{a} \inact}
+	\\
+	& \hby{\stau} \hby{\stau} & 
+%	\newsp{t}{\binp{\dual{t}}{y} \binp{y}{x} P \Par \newsp{s}{\bout{t}{s} \bout{\dual{s}}{a} \inact}}
+%	\\
+%	& \hby{\stau} & 
+	\newsp{s}{\binp{s}{x} P \Par \bout{\dual{s}}{a} \inact}
+	~~
+	\hby{\stau} ~~
+	P\subst{a}{x}
+\end{eqnarray*}
+%\noi 
+In this case, the encoding $\pmap{\cdot}{2}$ is more efficient, as it induces less reduction steps.
+Therefore, considering a fragment of \HOp without shared communications (linearity only)
+has consequences in terms of reduction steps. Notice that we prove that linear communications do 
+not suffice to encode shared communications (\secref{ss:negative}).
+
+\paragraph{Formal Comparison: Labelled Transition Correspondence.}
+%In addition to preciseness we can develop one more encodability
+%result for the translation of \HOp into \HO, which is
+%the correspondence of the labelled transition reduction
+%system. As we will show such a correspondence does not
+%hold for the \HOp to \sessp translation.
+We now formally establish differences between $\map{\cdot}_f^1$ and $\pmap{\cdot}{2}$.
+To this end, 
+we introduce an extra encodability criterion: a form of operational correspondence 
+for \emph{visible actions}. 
+Below we write $\ell_1, \ell_2$ to denote  
+actions different from $\tau$
+and  $\hby{\ell}$ to denote an LTS.
+%with both visible and observable actions, denoted. % and $\hby{}_2$.
+As actions from different calculi may be different, we also consider a mapping 
+on action labels, denoted $\mapa{\cdot}$: 
+
+\begin{definition}[Labelled Correspondence / Tight Encodings]%\rm
+\label{def:lopco}
+       Consider typed calculi $\tyl{L}_1$ and  $\tyl{L}_2$, defined as 
+        $\tyl{L}_1=\calc{\CAL_1}{{\cal{T}}_1}{\hby{{\ell_1}}_1}{\wb_1}{\proves_1}$
+       and $\tyl{L}_2=\calc{\CAL_2}{{\cal{T}}_2}{\hby{{\ell_2}}_2}{\wb_2}{\proves_2}$.
+%       ($i=1,2$) be typed calculi. 
+The encoding $\enco{\map{\cdot}, \mapt{\cdot}}: \tyl{L}_1 \to \tyl{L}_2$ satisfies
+\emph{labelled operational correspondence}
+if it satisfies:
+	\begin{enumerate}[1.]
+			\item
+					If		$\stytraargi{\Gamma}{\ell_1}{\Delta}{P}{\Delta'}{P'}{1}{1}$
+					then	$\exists Q$, $\Delta''$, $\ell_2$ s.t. 
+							(i)~$\wtytraargi{\mapt{\Gamma}}{\ell_2}{\mapt{\Delta}}{\map{P}}{\mapt{\Delta''}}{Q}{2}{2}$;  \\
+							(ii)~$\ell_2 = \mapa{\ell_1}$; 
+							(iii)~${\mapt{\Gamma}};{\mapt{\Delta''}}\proves_2 {Q}{\wb_2}{\mapt{\Delta'}}\proves_2 {\map{P'}}$.
+				
+			\item
+					If		$\wtytraargi{\mapt{\Gamma}}{\ell_2}{\mapt{\Delta}}{\map{P}}{\mapt{\Delta'}}{Q}{2}{2}$
+					then	$\exists P'$, $\Delta''$, $\ell_1$ s.t. 
+							(i)~$\stytraargi{\Gamma}{\ell_1}{\Delta}{P}{\Delta''}{P'}{1}{1}$;
+							(ii)~$\ell_2 = \mapa{\ell_1}$;
+							(iii)~${\mapt{\Gamma}};{\mapt{\Delta''}}\proves_2 {\map{P'}}{\wb_2}{\mapt{\Delta'}}\proves_2 {Q}$.
+	\end{enumerate}
+A \emph{tight encoding} is a typed 
+encoding 
+which is precise (\defref{def:goodenc}) and that also satisfies 
+labelled operational correspondence as above.
+\end{definition}
+
+We may formally state that 
+\HOp and \HO are more closely related than \HOp and~\sessp:
+\begin{theorem}[\HO Tightly Encodes \HOp]\label{t:tight}
+While the encoding of \HOp into \HO (\defref{d:enc:hopitoho}) is tight, the encoding of \HOp into \sessp (\defref{d:enc:hopitopi}) is not tight.
+\end{theorem}
+
+%\noi 
+To substantiate the above claim, we show that the encoding $\map{\cdot}^1_f$ enjoys 
+labelled operational correspondence, whereas $\pmap{\cdot}{2}$ does not. 
+Consider the following mapping:
+\[
+	\begin{array}{rclcrcl}
+		\mapa{\news{\tilde{m_1}}\bactout{n}{m}}^{1}	&\defeq&	\news{\tilde{m_1}}\bactout{n}{\abs{z}{\,\binp{z}{x} \appl{x}{m}} }
+		& &
+		\mapa{\bactinp{n}{m}}^{1}			&\defeq&	\bactinp{n}{\abs{z}{\,\binp{z}{x} \appl{x}{m}} }
+		\\
+		\mapa{\news{\tilde{m}}\bactout{n}{\abs{x}{P}}}^{1} &\defeq& \news{\tilde{m}}\bactout{n}{\abs{x}{\pmapp{P}{1}{\es}}}
+		& &
+		\mapa{\bactinp{n}{\abs{x}{P}}}^{1} &\defeq& \bactinp{n}{\abs{x}{\pmapp{P}{1}{\es}}}
+		\\
+		\mapa{\bactsel{n}{l} }^{1} &\defeq& \bactsel{n}{l} 
+		& &
+		\mapa{\bactbra{n}{l} }^{1} &\defeq& \bactbra{n}{l} 
+%		\\
+%		\mapa{\tau}^{1} &\defeq& \tau
+	\end{array}
+\]
+
+
+
+Then the following result, a complement of \propref{prop:op_corr_HOp_to_HO}, holds:
+
+\begin{proposition}[Labelled Transition Correspondence, \HOp into \HO]
+	\label{prop:lts_corr_HOp_to_HO}
+	Let $P$ be an \HOp process.
+	If $\Gamma; \emptyset; \Delta \proves P \hastype \Proc$ then:
+%
+	\begin{enumerate}[1.]
+		\item
+			Suppose $\horel{\Gamma}{\Delta}{P}{\hby{\ell_1}}{\Delta'}{P'}$. Then we have:
+%
+			\begin{enumerate}[a)]
+				\item
+					If $\ell_1 \in \set{\news{\tilde{m}}\bactout{n}{m}, \,\news{\tilde{m}}\bactout{n}{\abs{x}Q}, \,\bactsel{s}{l}, \,\bactbra{s}{l}}$
+					then $\exists \ell_2$ s.t. \\
+					$\horel{\tmap{\Gamma}{1}}{\tmap{\Delta}{1}}{\pmapp{P}{1}{f}}{\hby{\ell_2}}{\tmap{\Delta'}{1}}{\pmapp{P'}{1}{f}}$
+					and $\ell_2 = \mapa{\ell_1}^{1}$.
+			
+				\item
+					If $\ell_1 = \bactinp{n}{\abs{y}Q}$ and
+					$P' = P_0 \subst{\abs{y}Q}{x}$
+					then $\exists \ell_2$ s.t. \\
+					$\horel{\tmap{\Gamma}{1}}{\tmap{\Delta}{1}}{\pmapp{P}{1}{f}}{\hby{\ell_2}}{\tmap{\Delta'}{1}}{\pmapp{P_0}{1}{f}\subst{\abs{y}\pmapp{Q}{1}{\emptyset}}{x}}$
+					and $\ell_2 = \mapa{\ell_1}^{1}$.
+			
+				\item
+					If $\ell_1 = \bactinp{n}{m}$
+					and 
+					$P' = P_0 \subst{m}{x}$
+					then $\exists \ell_2$, $R$ s.t. 
+					$\horel{\tmap{\Gamma}{1}}{\tmap{\Delta}{1}}{\pmapp{P}{1}{f}}{\hby{\ell_2}}{\tmap{\Delta'}{1}}{R}$, \\
+					with $\ell_2 = \mapa{\ell_1}^{1}$, 
+					and
+					$\horel{\tmap{\Gamma}{1}}{\tmap{\Delta'}{1}}{R}{\hby{\btau} \hby{\stau} \hby{\btau}}
+					{\tmap{\Delta'}{1}}{\pmapp{P_0}{1}{f}\subst{m}{x}}$.
+						
+%				\item
+%					If $\ell_1 = \tau$
+%					and $P' \scong \newsp{\tilde{m}}{P_1 \Par P_2\subst{m}{x}}$
+%					then $\exists R$ s.t. \\
+%					$\horel{\tmap{\Gamma}{1}}{\tmap{\Delta}{1}}{\pmapp{P}{1}{f}}{\hby{\tau}}{\mapt{\Delta}^{1}}{\newsp{\tilde{m}}{\pmapp{P_1}{1}{f} \Par R}}$,
+%					and\\ 
+%					$\horel{\tmap{\Gamma}{1}}{\tmap{\Delta}{1}}{\newsp{\tilde{m}}{\pmapp{P_1}{1}{f} \Par R}}{\hby{\btau} \hby{\stau} \hby{\btau}}
+%					{\mapt{\Delta}^{1}}{\newsp{\tilde{m}}{\pmapp{P_1}{1}{f} \Par \pmapp{P_2}{1}{f}\subst{m}{x}}}$.
+%			
+%				\item
+%					If $\ell_1 = \tau$
+%					and $P' \scong \newsp{\tilde{m}}{P_1 \Par P_2 \subst{\abs{y}Q}{x}}$
+%					then \\
+%					$\horel{\tmap{\Gamma}{1}}{\tmap{\Delta}{1}}{\pmapp{P}{1}{f}}{\hby{\tau}}
+%					{\tmap{\Delta_1}{1}}{\newsp{\tilde{m}}{\pmapp{P_1}{1}{f}\Par \pmapp{P_2}{1}{f}\subst{\abs{y}\pmapp{Q}{1}{\emptyset}}{x}}}$.
+%			
+%				\item
+%					If $\ell_1 = \tau$
+%					and $P' \not\scong \newsp{\tilde{m}}{P_1 \Par P_2 \subst{m}{x}} \land P' \not\scong \newsp{\tilde{m}}{P_1 \Par P_2\subst{\abs{y}Q}{x}}$
+%					then \\
+%					$\horel{\tmap{\Gamma}{1}}{\tmap{\Delta}{1}}{\pmapp{P}{1}{f}}{\hby{\tau}}{\tmap{\Delta'_1}{1}}{ \pmapp{P'}{1}{f}}$.
+			\end{enumerate}
+			
+		\item	Suppose $\horel{\tmap{\Gamma}{1}}{\tmap{\Delta}{1}}{\pmapp{P}{1}{f}}{\hby{\ell_2}}{\tmap{\Delta'}{1}}{Q}$.
+			Then we have:
+%
+			\begin{enumerate}[a)]
+				\item 
+					If $\ell_2 \in
+					\set{\news{\tilde{m}}\bactout{n}{\abs{z}{\,\binp{z}{x} (\appl{x}{m})}}, \,\news{\tilde{m}} \bactout{n}{\abs{x}{R}}, \,\bactsel{s}{l}, \,\bactbra{s}{l}}$
+					then $\exists \ell_1, P'$ s.t. \\
+					$\horel{\Gamma}{\Delta}{P}{\hby{\ell_1}}{\Delta'}{P'}$, 
+					$\ell_1 = \mapa{\ell_2}^{1}$, 
+					and
+					$Q = \pmapp{P'}{1}{f}$.
+			
+				\item 
+					If $\ell_2 = \bactinp{n}{\abs{y} R}$ %(with $R \neq \binp{y}{x} \appl{x}{m}$)
+					then either:
+%
+					\begin{enumerate}[(i)]
+						\item	$\exists \ell_1, x, P', P''$ s.t. \\
+							$\horel{\Gamma}{\Delta}{P}{\hby{\ell_1}}{\Delta'}{P' \subst{\abs{y}P''}{x}}$, 
+							$\ell_1 = \mapa{\ell_2}^{1}$, $\pmapp{P''}{1}{\es} = R$, and $Q = \pmapp{P'}{1}{f}$.
+
+						\item	$R \scong \binp{y}{x} (\appl{x}{m})$ and 
+							$\exists \ell_1, z, P'$ s.t. 
+							$\horel{\Gamma}{\Delta}{P}{\hby{\ell_1}}{\Delta'}{P' \subst{m}{z}}$, \\
+							$\ell_1 = \mapa{\ell_2}^{1}$,
+							and 
+							$\horel{\tmap{\Gamma}{1}}{\tmap{\Delta'}{1}}{Q}{\hby{\btau} \hby{\stau} \hby{\btau}}{\tmap{\Delta''}{1}}{\pmapp{P'\subst{m}{z}}{1}{f}}$
+					\end{enumerate}
+			
+%				\item 
+%					If $\ell_2 = \tau$ 
+%					then $\Delta' = \Delta$ and 
+%					either
+%%
+%					\begin{enumerate}[(i)]
+%						\item	$\exists P'$ s.t. 
+%							$\horel{\Gamma}{\Delta}{P}{\hby{\tau}}{\Delta}{P'}$,
+%							and $Q = \map{P'}^{1}_f$.	
+%
+%						\item
+%							$\exists P_1, P_2, x, m, Q'$ s.t. 
+%							$\horel{\Gamma}{\Delta}{P}{\hby{\tau}}{\Delta}{\newsp{\tilde{m}}{P_1 \Par P_2\subst{m}{x}} }$, and\\
+%							$\horel{\tmap{\Gamma}{1}}{\tmap{\Delta}{1}}{Q}{\hby{\btau} \hby{\stau} \hby{\btau}}{\tmap{\Delta}{1}}{\pmapp{P_1}{1}{f} \Par \pmapp{P_2\subst{m}{x}}{1}{f}}$ 
+%%							$Q = \map{P_1}^{1}_f \Par Q'$, where $Q'  \Hby{} $.
+%
+%%						\item $\exists P_1, P_2, x, R$ s.t. 
+%%						$\stytra{ \Gamma }{\tau}{ \Delta }{ P}{ \Delta}{ \news{\tilde{m}}(P_1 \Par P_2\subst{\abs{y}R}{x}) }$, and 
+%%						$Q = \map{\news{\tilde{m}}(P_1 \Par P_2\subst{\abs{y}R}{x})}^{1}_f$.
+%			\end{enumerate}
+		    \end{enumerate}
+		    
+%		\item   
+%			If  $\wtytra{\mapt{\Gamma}^{1}}{\ell_2}{\mapt{\Delta}^{1}}{\pmapp{P}{1}{f}}{\mapt{\Delta'}^{1}}{Q}$
+%			then $\exists \ell_1, P'$ s.t.  \\
+%			(i)~$\stytra{\Gamma}{\ell_1}{\Delta}{P}{\Delta'}{P'}$,
+%			(ii)~$\ell_2 = \mapa{\ell_1}^{1}$, 
+%			(iii)~$\wbb{\mapt{\Gamma}^{1}}{\ell}{\mapt{\Delta'}^{1}}{\pmapp{P'}{1}{f}}{\mapt{\Delta'}^{1}}{Q}$.
+	\end{enumerate}
+\end{proposition}
+
+The analog of \propref{prop:lts_corr_HOp_to_HO} does not hold for the encoding of \HOp into \sessp.
+Consider the \HOp process:
+\[
+	\Gamma; \es; \Delta \proves \bout{s}{\abs{x}{P}} \inact \hastype \Proc \hby{\bactout{s}{\abs{x} P}} \es \proves \inact \not \hby{}
+\]
+with $\abs{x}{P}$ being a linear value.
+We translate it into a \sessp process:
+\[\tmap{\Gamma}{2}; \es; \tmap{\Delta}{2} \proves \newsp{a}{\bout{s}{a} \inact \Par \binp{a}{y} \binp{y}{x} P} \hastype \Proc
+	 \hby{\bactout{s}{a}} \Delta' \proves \binp{a}{y} \binp{y}{x} P \hastype \Proc
+\hby{\bactinp{a}{V}} \dots
+\]
+
+%\begin{eqnarray*}
+%	&&\tmap{\Gamma}{2}; \es; \tmap{\Delta}{2} \proves \newsp{a}{\bout{s}{a} \inact \Par \binp{a}{y} \binp{y}{x} P} \hastype \Proc\\
+%	&&\hby{\bactout{s}{a}}\\
+%	&&\Delta' \proves \binp{a}{y} \binp{y}{x} P \hastype \Proc\\
+%	&&\hby{\bactinp{a}{V}} \dots
+%\end{eqnarray*}
+
+%\noi 
+The resulting processes have a mismatch both in the typing
+environment ($\Delta' \not= \tmap{\es}{2}$)
+and in the actions that they can %the two processes can
+subsequently observe: the first process
+cannot perform any action, while the second process
+can perform actions of the encoding of $\abs{x}{P}$.
+
+
+
+\subsection{A Negative Result}
+\label{ss:negative}
+%\input{negative}
+
+As most session calculi, 
+\HOp includes communication on both shared and linear names.
+The former enables non determinism, unrestricted behaviour; the latter allows to represent
+deterministic, linear communication structures.
+The expressiveness of shared names is also illustrated by our 
+encoding from \HOp into \sessp (\figref{f:enc:ho_to_sessp}).
+%Shared and linear names are fundamentally different; still, to the best of our knowledge,
+%the status of shared communication, in terms of expressiveness, has not been formalized for session calculi.
+This result begs the question: 
+%\dk{can we further encode the replicated triggers in the encoding from \HOp to \HO using only session names?}
+can we represent shared name interaction using session name interaction?
+%are shared names truly indispensable for communication, or could they
+%be encoded using linear communication?
+It turns out that shared names  add expressiveness to \HOp:
+we prove
+the non existence of a minimal encoding 
+(cf.~\defref{def:goodenc})
+of shared name 
+interaction into linear interaction. % (see \appref{app:neg} for details of the proof).
+%for their behavior cannot be represented using purely deterministic processes.
+%To this end, we show the non existence of a minimal encoding 
+%(cf.~\defref{def:goodenc}(ii))
+%of shared name communication into linear 
+%communication. 
+
+%\smallskip 
+
+\begin{theorem}%\rm
+	\label{t:negative}
+	There is no minimal encoding from
+		$\sessp$ to $\HOp^{\minussh}$.
+	Hence, for any
+		$\CAL_1,\CAL_2\in \{ \HOp, \HO, \sessp\}$, 
+	there is no minimal encoding from  
+	$\tyl{L}_{\CAL_1}$ 
+	into
+		$\tyl{L}_{\CAL_2^{-\mathsf{sh}}}$.
+\end{theorem}
+
+%\begin{proof}
+%	The proof of \thmref{t:negative} relies on
+%	%As described next, 
+%	$\tau$-inertness (\lemref{lem:tau_inert})
+%	%is critical in the proof.
+%	%Recall that minimal encodings preserve barbs 
+%	and barb preservation~(\propref{p:barbpres}).
+%	See details in \appref{app:neg}.
+%\end{proof}
+
+By 
+	\defref{d:enc:hopitoho} and~\ref{d:enc:hopitopi} 
+	and \propref{f:enc:hopitoho} and~\ref{f:enc:hotopi}, 
+we have:
+\smallskip 
+\NY{
+\begin{corollary}
+Let $\CAL_1,\CAL_2\in \{ \HOp, \HO, \sessp\}$.  
+There is a precise encoding 
+of
+$\tyl{L}_{\CAL_1^{-\mathsf{sh}}}$ 
+in $\tyl{L}_{\CAL_2^{-\mathsf{sh}}}$.
+\end{corollary}
+}
+
+
+\begin{comment}
+\begin{IEEEproof}[Proof]
+	Let $\horel{\Gamma_1}{\Delta_1}{P_1}{\not\wb}{\Delta_2}{P_2}$
+	with $P = \breq{a}{s} \inact \Par \bacc{a}{x} P_1 \Par \bacc{a}{x} P_2$ and	let $\Gamma; \emptyset; \Delta \proves P \hastype \Proc$.
+	Assume also a encoding
+	$\enc{\cdot}{\cdot}: \sessp \longrightarrow \HOp^{\minussh}$
+is minimum. 
+	From operational correspondence we obtain:
+\[
+\begin{array}{rcl}
+		P \red P_1 \Par \bacc{a}{x} P_2 &\textrm{implies}& \map{P} \red \map{P_1 \Par \bacc{a}{x} P_2}\\
+		P \red P_2 \Par \bacc{a}{x} P_1 &\textrm{implies}& \map{P} \red \map{P_2 \Par \bacc{a}{x} P_1}
+\end{array}
+\]
+	From the fact that
+	$\horel{\Gamma_1}{\Delta_1}{P_1}{\not\wb}{\Delta_2}{P_2}$
+	we can derive that
+%
+	\[
+		\horel{\Gamma_1'}{\Delta_1'}{P_1 \Par \bacc{a}{x} P_2}{\not\wb}{\Delta_2'}{P_2 \Par \bacc{a}{x} P_1}
+	\]
+%
+	From \lemref{lem:tau_inert}(2) we know that
+%
+\[
+\begin{array}{rcl}
+		\horel{\mapt{\Gamma}}{\mapt{\Delta}}{\map{P}}{\wb}{\mapt{\Delta_1'}}{\map{P_1 \Par \bacc{a}{x} P_2}}\wb 
+{\mapt{\Delta_2'}}\proves {\map{P_2 \Par \bacc{a}{x} P_1}}
+\end{array}
+\]
+%
+	%\noi 
+	thus
+$\horel{\mapt{\Gamma}}{\mapt{\Delta_1'}}{\map{P_1 \Par \bacc{a}{x} P_2}}{\wb}{\mapt{\Delta_2'}}{\map{P_2 \Par \bacc{a}{x} P_1}}$, 
+%
+	which contradicts the assumption. 
+%	so there is no mapping $\map{\cdot}: \pHO \longrightarrow \spi$ that enjoys
+%	the operational correspondence and full abstraction properties.
+\end{IEEEproof}
+\end{comment}
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Extensions: Higher-Order Abstractions and Polyadicity}
+\label{sec:extension}
+%\input{HOp_extensions}
+
+Here we extend \HOp in two directions: %to define two more higher-order
+%process calculi:
+(i)~\HOpp  extends   \HOp with higher-order applications/abstractions;
+(ii)~\PHOp   extends  \HOp
+with polyadicity.
+In both cases, we detail the
+required modifications in syntax and types.
+Using encoding composability (\propref{pro:composition}), 
+the two extensions may be combined into \PHOpp: the polyadic extension of \HOpp.
+
+
+\paragraph{\HOp with Higher-Order Abstractions ($\HOpp$) and 
+with Polyadicity (\PHOp).
+}
+%\label{subsec:hop}
+We first introduce \HOpp, the  extension of \HOp with higher-order abstractions and applications.
+This is the calculus that we studied in~\cite{characteristic_bis}. The syntax of \HOpp is obtained 
+from  \figref{fig:syntax} by extending
+$\appl{V}{u}$ to $\appl{V}{W}$, where  $W$ is a higher-order value. 
+As for the reduction semantics, we keep the rules in \figref{fig:reduction}, except for 
+ $\orule{App}$ which is replaced by 
+$$
+	\appl{(\abs{x}{P})}{V} \red P \subst{V}{x}
+$$
+The syntax of types is modified as follows: %changes to include: 
+$
+		L \bnfis \shot{U} \bnfbar \lhot{U}.
+$
+These types can be easily accommodated in the type system 
+%in \figref{fig:typerulesmy}: 
+in \secref{sec:types}:
+we replace $C$ by $U$ in \trule{Abs} and $C$ by $U'$ in \trule{App}. Subject
+reduction~(\thmref{t:sr}) holds for \HOpp (cf.~\cite{characteristic_bis})
+
+%\subsection{\HOp with Polyadic Communication: \PHOp}
+%
+%\noi Embeddings of polyadic name passing into monadic name passing are
+%well-studied. % in the literature. 
+%Using a linear typing, precise
+%encodings (including full abstraction) can be obtained~\cite{Yoshida96}.
+The calculus  
+$\PHOp$ 
+extends $\HOp$ 
+with polyadic name passing $\tilde{n}$ and $\abs{\tilde{x}}{Q}$ in the syntax 
+of values $V$. 
+The operational semantics is kept unchanged, with the expected use of the simultaneous substitution $\subst{\tilde{V}}{\tilde{x}}$.
+The type syntax is extended to: 
+%
+\begin{center}
+	\begin{tabular}{c}
+	$	L \bnfis \shot{\tilde{C}} \bnfbar \lhot{\tilde{C}}
+		\quad\quad
+		S \bnfis  \btout{\tilde{U}} S \bnfbar \btinp{\tilde{U}} S \bnfbar \cdots$
+	\end{tabular}
+\end{center}
+%
+As in \cite{tlca07,MostrousY15},
+the type system for \PHOp 
+disallows a shared name that directly carries polyadic
+shared names.
+
+By combining \HOpp and \PHOp into a single calculus we obtain \PHOpp:
+the extension of \HOp allows \emph{both} higher-order
+abstractions/aplications and polyadicity.
+
+
+%\input{extension}
+\paragraph{Precise Encodings of $\HOpp$ and $\PHOp$ into $\HOp$.}
+%\noi 
+We give  %two extensions of \HOp: 
+encodings of \HOpp into \HOp
+and into \PHOp, and show that they are precise. 
+We use encoding composition (\propref{pro:composition}) to encode
+\PHOpp into \HO and \sessp.
+We consider the following 
+typed calculi (cf.~\defref{d:tcalculus}):
+\begin{enumerate}[-]
+\item $\tyl{L}_{\HOpp}=\calc{\HOpp}{{\cal{T}}_4}{\hby{\ell}}{\hwb}{\proves}$,
+where 
+	${\cal{T}}_4$ is a set of types of $\HOpp$;  
+the typing $\proves$ is defined in 
+%\figref{fig:typerulesmy} 
+\secref{sec:types}
+with extended rules \trule{Abs} and \trule{App}.
+
+\item 
+	$\tyl{L}_{\PHOp}=\calc{\PHOp}{{\cal{T}}_5}{\hby{\ell}}{\hwb}{\proves}$,
+where 
+	${\cal{T}}_5$ is the set of types of $\PHOp$;  
+the typing $\proves$ is defined in
+%\figref{fig:typerulesmy} 
+in \secref{sec:types}
+with polyadic types.
+\end{enumerate}
+
+%\myparagraph{Syntax, Operational Semantics and Types.}
+%\noi First, the syntax of \figref{fig:syntax} extends 
+%$\appl{V}{u}$ to 
+% $\appl{V}{W}$, including higher-order value $W$. 
+%The rule $\appl{(\abs{x}{P})}{V} \red P \subst{V}{x}$
+%replaces
+%rule $\orule{App}$ in \figref{fig:reduction}.
+%The syntax of types is modified as follows: %changes to include: 
+%\begin{center}
+%\begin{tabular}{c}
+%$L \bnfis \shot{U} \bnfbar \lhot{U}$
+%\end{tabular}
+%\end{center}
+%These types can be easily accommodated in the type system:
+% in \figref{fig:typerulesmy}, 
+%we replace $C$ by $U$ in \trule{Abs} and $C$ by $U'$ in \trule{App}.
+%\smallskip 
+%
+%\myparagraph{Behavioural Semantics.}
+%Labels remain the same. Rule $\ltsrule{App}$ in the untyped LTS
+%(\figref{fig:untyped_LTS}) 
+%is replaced with rule $\appl{(\abs{x}{P})}{V} \by{\tau} P \subst{V}{x}$.
+%\defref{def:char} (characteristic processes) is extended with  
+%${\mapchar{\shot{U}}{x}} \defeq\! \mapchar{\lhot{U}}{x} \defeq\! {\appl{x}{\omapchar{U}}}$ and 
+%${\omapchar{\shot{U}}} \defeq {\omapchar{\lhot{U}}} \!\!\defeq\!\! \abs{x}{\mapchar{U}{x}}$. 
+%We can then use the same definitions for $\cong$, $\wbc$, $\hwb$ and $\fwb$. 
+%\smallskip 
+
+%\paragraph{Encoding \HOpp into \HOp} 
+First, the typed encoding
+$\enco{\map{\cdot}^{3}, \mapt{\cdot}^{3}}: \HOpp \to \HOp$ is defined
+in \figref{f:enc:hopip_to_hopi}.
+It satisfies the following properties:
+{
+\begin{proposition}[\HOpp into \HOp: Type Preservation]
+The encoding from $\tyl{L}_{\HOpp}$ into $\tyl{L}_{\HOp}$ (cf. \figref{f:enc:hopip_to_hopi})
+is type preserving.
+\end{proposition}}
+
+%HERE WE NEED TO ADD AN EXCERPT OF \propref{app:prop:op_corr_HOpp_to_HOp}, BUT WE NEED TO FIX MACROS FIRST.
+
+\begin{proposition}[Operational Correspondence: From \HOpp to \HOp - Excerpt] %\myrm
+	\label{prop:op_corr_HOpp_to_HOp}
+	Let $P$ be an \HOpp process such that $\Gamma; \es; \Delta \proves P$.
+	\begin{enumerate}[1.]
+		\item	Completeness: 
+			$\horel{\Gamma}{\Delta}{P}{\hby{\ell}}{\Delta'}{P'}$ implies
+			\begin{enumerate}[a)]
+%				\item	If $\ell \in \set{\news{\tilde{m}} \bactout{n}{\abs{x}{Q}}, \bactinp{n}{\abs{x}{Q}}}$ then
+%%					$\exists l' $ such that
+%					$\horel{\tmap{\Gamma}{3}}{\tmap{\Delta}{3}}{\pmap{P}{3}}{\hby{\ell'}}
+%					{\tmap{\Delta'}{3}}{\pmap{P'}{3}}$ with $\mapa{\ell}^{3} = \ell'$.
+%				\item	If $\ell \notin \set{\news{\tilde{m}} \bactout{n}{\abs{x}{Q}}, \bactinp{n}{\abs{x}{Q}}, \tau}$ then
+%					$\horel{\tmap{\Gamma}{3}}{\tmap{\Delta}{3}}{\pmap{P}{3}}{\hby{\ell}}
+%					{\tmap{\Delta'}{3}}{\pmap{P'}{3}}$.
+%
+				\item	If $\ell = \btau$ then
+					$\horel{\tmap{\Gamma}{3}}{\tmap{\Delta}{3}}{\pmap{P}{3}}{\hby{\tau}}
+					{\Delta''}{R}$ and
+					$\horel{\tmap{\Gamma}{3}}{\tmap{\Delta'}{3}}{\pmap{P'}{3}}{\hwb}{\Delta''}{R}$, for some $R$;
+
+				\item	If $\ell = \tau$ and $\ell \not= \btau$ then %and $\hby{\ell}$ is not a \betatran then
+					$\horel{\tmap{\Gamma}{3}}{\tmap{\Delta}{3}}{\pmap{P}{3}}{\hby{\tau}}
+					{\tmap{\Delta'}{3}}{\pmap{P'}{3}}$.
+			\end{enumerate}
+
+		\item Soundness: $\horel{\tmap{\Gamma}{3}}{\tmap{\Delta}{3}}{\pmap{P}{3}}{\hby{\tau}}
+			{\tmap{\Delta''}{3}}{Q}$ implies either 
+%
+			\begin{enumerate}[a)]
+%				\item	If $\ell \in \set{\news{\tilde{m}} \bactout{n}{\abs{x}{Q}}, \bactinp{n}{\abs{x}{Q}}, \tau}$
+%					then
+%					$\horel{\Gamma}{\Delta}{P}{\hby{\ell'}}{\Delta'}{P'}$
+%%					and $\horel{\tmap{\Gamma}{3}}{\tmap{\Delta''}{3}}{Q}{\hby{\hat{\ell}}}{\tmap{\Delta'}{3}}{\pmap{P'}{3}}$
+%					with $\mapa{\ell'}^{3} = \ell$ and $Q \scong \pmap{P'}{3}$.
+%
+%				\item	If $\ell \notin \set{\news{\tilde{m}} \bactout{n}{\abs{x}{R}}, \bactinp{n}{\abs{x}{R}}, \tau}$
+%					then
+%					$\horel{\Gamma}{\Delta}{P}{\hby{\ell}}{\Delta'}{P'}$ and $Q \scong \pmap{P'}{3}$.
+%%					and $\horel{\tmap{\Gamma}{3}}{\tmap{\Delta''}{3}}{Q}{\hby{\hat{\ell}}}{\tmap{\Delta'}{3}}{\pmap{P'}{3}}$.
+%
+				\item	
+					$\horel{\Gamma}{\Delta}{P}{\hby{\tau}}{\Delta'}{P'}$ with $Q \scong \pmap{P'}{3}$
+				\item 
+					$\horel{\Gamma}{\Delta}{P}{\hby{\btau}}{\Delta'}{P'}$ and
+					$\horel{\tmap{\Gamma}{3}}{\tmap{\Delta''}{3}}{Q}{\hby{\btau}}
+					{\tmap{\Delta''}{3}}{\pmap{P'}{3}}$.
+			\end{enumerate}
+	\end{enumerate}
+\end{proposition}
+
+
+
+
+\begin{proposition}[Full Abstraction. From \HOpp to \HOp]%\myrm
+	%\label{app:prop:fulla_HOpp_to_HOp}
+	Let $P, Q$ be \HOpp processes with $\Gamma; \es; \Delta_1 \proves P \hastype \Proc$ and 
+	$\Gamma; \es; \Delta_2 \proves Q \hastype \Proc$. \\
+	Then 
+	$\horel{\Gamma}{\Delta_1}{P}{\hwb}{\Delta_2}{Q}$ if and only if $\horel{\tmap{\Gamma}{3}}{\tmap{\Delta_1}{3}}{\pmap{P}{3}}{\hwb}{\tmap{\Delta_2}{3}}{\pmap{Q}{3}}$
+\end{proposition}
+
+\input{figures/HOpp_to_HOp}
+
+Using the above propositions,  
+\thmsref{f:enc:hopitoho}
+and 
+\ref{f:enc:hotopi},
+and \propref{pro:composition}, 
+we derive the following: % theorem:
+
+%\smallskip 
+
+\begin{theorem}[Encoding \HOpp into~\HOp]
+	\label{f:enc:hopiptohopi}
+	The encoding from $\tyl{L}_{\HOpp}$ into $\tyl{L}_{\HOp}$ (cf. \figref{f:enc:hopip_to_hopi})
+	is precise. Hence, the encodings 
+	from $\tyl{L}_{\HOpp}$ to $\tyl{L}_{\HO}$ 
+	and $\tyl{L}_{\sessp}$ 
+	are also precise. 
+\end{theorem}
+%\smallskip 
+
+
+
+%\noi Embeddings of polyadic name passing into monadic name passing are
+%well-studied. % in the literature. 
+%Using a linear typing, precise
+%encodings (including full abstraction) can be obtained~\cite{Yoshida96}.
+%Here we summarise how $\PHOp$ can be encoded into $\HOp$. 
+%The syntax of 
+%$\HOp$ is extended %from \HOp by including 
+%with
+%polyadic name passing $\tilde{n}$ and $\abs{\tilde{x}}{Q}$ in the syntax 
+%of value $V$. The type syntax is extended to: 
+%
+%\begin{center}
+%\begin{tabular}{c}
+%$
+%L ::= \shot{\tilde{C}} \ | \ \lhot{\tilde{C}}
+%\quad\quad S \ ::= \  \btout{\tilde{U}} S \bnfbar \btinp{\tilde{U}} S \bnfbar \cdots 
+%$
+%\end{tabular}
+%\end{center}
+%%
+%The type system disallows a shared name that directly carries polyadic
+%shared names as in \cite{tlca07,MostrousY15}.
+%i.e. $\chtype{\tilde{\chtype{S}}}$ 
+%and $\chtype{\tilde{\chtype{L}}}$ 
+%are disallowed.
+%Other definitions are straightforwardly extended. 
+%\jpc{We slightly modify \defref{def:tenc} to capture that a 
+%label $\ell$ may be mapped into a sequence of labels~$\tilde{\ell}$.}
+%We extend the mapping for labels 
+%($\mapa{\cdot}: \ell \to \tilde{\ell}$ in  
+%\defref{def:tenc}) to capture 
+%a sequence of labels  and 
+%Also, \defref{def:ep} is kept unchanged, 
+%assuming that if 
+%$P \hby{\ell} P'$ and $\mapa{\ell} = \ell_1, \ell_2,  \cdots, \ell_m$ then
+%$\map{P} \Hby{\mapa{\ell}} \map{P'}$
+%should be understood as
+%$\map{P} \Hby{\ell_1} P_1 \Hby{\ell_2} P_2 \cdots \Hby{\ell_m} P_m =  \map{P'}$,
+%for some
+%$P_1, P_2, \ldots, P_m$.
+
+%\paragraph{Encoding $\PHOp$ into $\HOp$}
+%\label{subsec:pho}
+Second, we define the typed encoding
+	$\enco{\map{\cdot}^{4}, \mapt{\cdot}^{4}}: \PHOp \to \HOp$ 
+in \figref{f:enc:poltomon}.
+For simplicity, we give the dyadic case (tuples of length 2);
+the general case is as expected.
+The encoding of $\PHOp$  satisfies the following properties:
+
+%HERE WE NEED TO ADD AN EXCERPT OF \propref{app:prop:op_corr_pHOp_to_HOp}, BUT WE NEED TO FIX MACROS FIRST.
+
+{
+\begin{proposition}[\PHOp into \HOp: Type Preservation]
+The encoding from
+		$\tyl{L}_{\PHOp}$ into $\tyl{L}_{\HOp}$ (cf. \figref{f:enc:poltomon})
+is type preserving.
+\end{proposition}}
+
+\begin{proposition}[Operational Correspondence: From \PHOp to \HOp - Excerpt]\myrm
+	\label{prop:op_corr_pHOp_to_HOp}
+Let $\Gamma; \es; \Delta \proves P$.
+	\begin{enumerate}[1.]
+		\item	Completeness: 
+			$\horel{\Gamma}{\Delta}{P}{\hby{\ell}}{\Delta'}{P'}$ implies
+%
+			\begin{enumerate}[a)]
+%				\item	If $\ell = \news{\tilde{m}'} \bactout{n}{\tilde{m}}$ then
+%					$\horel{\tmap{\Gamma}{4}}{\tmap{\Delta}{4}}{\pmap{P}{4}}{\hby{\ell_1} \dots \hby{\ell_n}}{\tmap{\Delta'}{4}}{\pmap{P}{4}}$
+%					with $\mapa{\ell}^{4} = \ell_1 \dots \ell_n$.
+%
+%				\item	If $\ell = \bactinp{n}{\tilde{m}}$ then
+%					$\horel{\tmap{\Gamma}{4}}{\tmap{\Delta}{4}}{\pmap{P}{4}}{\hby{\ell_1} \dots \hby{\ell_n}}{\tmap{\Delta'}{4}}{\pmap{P}{4}}$
+%					with $\mapa{\ell}^{4} = \ell_1 \dots \ell_n$.
+%
+%				\item	If $\ell \in \set{\news{\tilde{m}} \bactout{n}{\abs{\tilde{x}}{R}}, \bactinp{n}{\abs{\tilde{x}}{R}}}$ then
+%%					$\exists l' $ such that
+%					$\horel{\tmap{\Gamma}{4}}{\tmap{\Delta}{4}}{\pmap{P}{4}}{\hby{\ell'}}
+%					{\tmap{\Delta'}{4}}{\pmap{P'}{4}}$ with $\mapa{\ell}^{4} = \ell'$.
+%
+%				\item	If $\ell \in \set{\bactsel{n}{l}, \bactbra{n}{l}}$ then
+%					$\horel{\tmap{\Gamma}{4}}{\tmap{\Delta}{4}}{\pmap{P}{4}}{\hby{\ell}}
+%					{\tmap{\Delta'}{4}}{\pmap{P'}{4}}$.
+
+				\item	If $\ell = \btau$ then %either
+					$\horel{\tmap{\Gamma}{4}}{\tmap{\Delta}{4}}{\pmap{P}{4}}{\hby{\btau} \hby{\stau}  \hby{\stau}}
+					{\tmap{\Delta'}{4}}{\pmap{P'}{4}}$ %with $\mapa{\ell} = \btau, \stau \dots \stau$.
+
+				\item	If $\ell = \tau$ then %and $\hby{\ell}$ is not a \betatran then
+					$\horel{\tmap{\Gamma}{4}}{\tmap{\Delta}{4}}{\pmap{P}{4}}{\hby{\tau}\hby{\tau} \hby{\tau}}
+					{\tmap{\Delta'}{4}}{\pmap{P'}{4}}$ %with $\mapa{\ell}^{4} = \tau \dots \tau$.
+			\end{enumerate}
+
+		\item	%Let $\Gamma; \es; \Delta \proves P$.
+		Soundness: 
+			$\horel{\tmap{\Gamma}{4}}{\tmap{\Delta}{4}}{\pmap{P}{4}}{\hby{\ell}}
+			{\tmap{\Delta_1}{4}}{P_1}$ implies
+%
+			\begin{enumerate}[a)]
+%				\item	If $\ell \in \set{\bactinp{n}{m}, \bactout{n}{m}, \news{m} \bactout{n}{m}}$ then
+%					$\horel{\Gamma}{\Delta}{P}{\hby{\ell}}{\Delta'}{P'}$ and\\
+%					$\horel{\tmap{\Gamma}{4}}{\tmap{\Delta_1}{4}}{P_1}{\hby{\ell_2} \dots \hby{\ell_n}}
+%					{\tmap{\Delta'}{4}}{\tmap{P'}{4}}$ with $\mapa{\ell}^{4} = \ell_1 \dots \ell_n$.
+%
+%				\item	If $\ell \in \set{\news{\tilde{m}} \bactout{n}{\abs{x}{R}}, \bactinp{n}{\abs{x}{R}}}$
+%					then
+%					$\horel{\Gamma}{\Delta}{P}{\hby{\ell'}}{\Delta'}{P'}$
+%					with $\mapa{\ell'}^{4} = \ell$ and $P_1 \scong \pmap{P'}{4}$.
+%
+%				\item	If $\ell \in \set{\bactsel{n}{l}, \bactbra{n}{l}}$
+%					then
+%					$\horel{\Gamma}{\Delta}{P}{\hby{\ell}}{\Delta'}{P'}$ and $P_1 \scong \pmap{P'}{4}$.
+%%					and $\horel{\tmap{\Gamma}{3}}{\tmap{\Delta''}{3}}{Q}{\hby{\hat{\ell}}}{\tmap{\Delta'}{3}}{\pmap{P'}{3}}$.
+%
+				\item	If $\ell = \btau$ then
+					$\horel{\Gamma}{\Delta}{P}{\hby{\btau}}{\Delta'}{P'}$ and
+					$\horel{\tmap{\Gamma}{4}}{\tmap{\Delta_1}{4}}{P_1}{\hby{\stau} \hby{\stau}}
+					{\tmap{\Delta'}{4}}{\tmap{P'}{4}}$ %with $\mapa{\ell}^{4} = \btau, \stau \dots \stau$.
+
+				\item	If $\ell = \tau$ then
+					$\horel{\Gamma}{\Delta}{P}{\hby{\tau}}{\Delta'}{P'}$ and
+					$\horel{\tmap{\Gamma}{4}}{\tmap{\Delta_1}{4}}{P_1}{\hby{\tau} \hby{\tau} \hby{\tau}}
+					{\tmap{\Delta'}{4}}{\tmap{P'}{4}}$ %with $\mapa{\ell}^{4} = \tau \dots \tau$.
+			\end{enumerate}
+	\end{enumerate}
+\end{proposition}
+
+
+
+
+\begin{proposition}[Full Abstraction: From \PHOp to \HOp]%\myrm
+	%\label{app:prop:fulla_pHOp_to_HOp}
+	Let $P, Q$ be \PHOp processes with $\Gamma; \es; \Delta_1 \proves P \hastype \Proc$ and 
+	$\Gamma; \es; \Delta_2 \proves Q \hastype \Proc$. Then we have: \\
+	$\horel{\Gamma}{\Delta_1}{P}{\hwb}{\Delta_2}{Q}$ if and only if $\horel{\tmap{\Gamma}{4}}{\tmap{\Delta_1}{4}}{\pmap{P}{4}}{\hwb}{\tmap{\Delta_2}{4}}{\pmap{Q}{4}}$.
+\end{proposition}
+
+%Based on these propositions,we have:
+Using the above propositions,  
+\thmsref{f:enc:hopitoho}
+and 
+\ref{f:enc:hotopi},
+and \propref{pro:composition}, 
+we derive the following: 
+\begin{theorem}[Encoding of \PHOp into \HOp]
+	\label{f:enc:phopiptohopi}
+	The encoding from
+		$\tyl{L}_{\PHOp}$ into $\tyl{L}_{\HOp}$ (cf. \figref{f:enc:poltomon})
+	is precise. 
+	Hence, the encodings 
+	from
+	$\tyl{L}_{\PHOp}$ to $\tyl{L}_{\HO}$ 
+	and $\tyl{L}_{\sessp}$ 
+	are also precise. 
+\end{theorem}
+By combining Thms.~\ref{f:enc:hopiptohopi} and~\ref{f:enc:phopiptohopi},
+we can extend preciseness to the super-calculus
+$\PHOpp$.
+% (denoted by   in Fig.~\ref{fig:express}) 
+
+
+\input{figures/polHOp_to_HOp}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\section{Concluding Remarks and Related Work}
+\label{sec:relwork}
+%\input{relworkshort}
+
+We have thoroughly studied the expressivity of the higher-order $\pi$-calculus with sessions,
+here denoted $\HOp$.
+Unlike most previous works, 
+%on the expressivity of (higher-order) process calculi, 
+we have carried out our study in the setting of \emph{session types}. % for structured communications.
+Types not only delineate and enable encodings; they 
+inform the techniques required to reason about such encodings.
+Our results cover a wide spectrum of features intrinsic to higher-order concurrency:
+pure process-passing (first- and higher-order abstractions), name-passing, polyadicity, 
+linear/shared communication (cf.~\figref{fig:express}). 
+Remarkably, the discipline embodied by 
+session types turns out to be fundamental to show that all these languages are equally expressive, up to 
+ strong typed bisimilarities. Indeed, although our encodings may be used in an untyped setting,
+session type information is critical to establish key properties for preciseness, in particular full abstraction.
+
+\paragraph{Related Work.}
+There is a vast literature on expressiveness for process calculi; we refer to~\cite{DBLP:journals/entcs/Parrow08} 
+and \cite[\S\,2.3]{PerezPhD10} for surveys.
+%, both first- and higher-order. 
+%For space reasons here 
+%Below we concentrate on closely related work.
+%In the untyped setting, the relative expressiveness of name-passing calculi with respect to 
+%higher-order languages %(process- and abstraction-passing) 
+%is well-known. 
+Our study casts known results~\cite{SangiorgiD:expmpa} into a session typed setting, and
+offers new encodability results.
+Our work stresses the 
+view of ``encodings as protocols'', namely session protocols which
+enforce linear and shared disciplines for names, a distinction
+little explored in %~\cite{SangiorgiD:expmpa,DBLP:journals/tcs/Sangiorgi01}. 
+previous works.
+This distinction %is key, as  
+%in proper definitions of trigger processes, which are key to encodings (\defref{d:enc:hopitopi}). % and behavioural equivalences (\defref{d:hbw} and~\ref{d:fwb}).  
+%in our technical developments: % in particular, 
+%it 
+enables us to obtain 
+ refined 
+operational correspondence results (cf. \propsref{prop:op_corr_HOp_to_HO}, \ref{prop:op_corr_HOp_to_p}, \ref{prop:op_corr_HOpp_to_HOp}, \ref{prop:op_corr_pHOp_to_HOp}).
+We showed that
+$\HO$ suffices to encode   the first-order session
+calculus~\cite{honda.vasconcelos.kubo:language-primitives}, here denoted~\sessp. % with name passing ($\sessp$).
+To our knowledge, this is a new result; %for session typed calculi: 
+its significance is stressed by the demanding encodability criteria  considered, in particular full abstraction up to typed bisimilarities
+($\hwb$/$\fwb$, cf. \propsref{prop:fulla_HOp_to_HO} and~\ref{prop:fulla_HOp_to_p}).
+This encoding is relevant in a broader setting, as known encodings 
+of name-passing into higher-order calculi~\cite{SaWabook,BundgaardHG06,DBLP:journals/entcs/MeredithR05,XuActa2012,DBLP:journals/corr/XuYL15}  require limitations
+in source/target languages,
+do not consider types,
+ and/or fail to satisfy strong encodability criteria (see below). 
+We also showed that $\HO$ can encode $\HOp$ and its extension with
+higher-order applications ($\HOpp$). 
+Thus, %using session types
+all these  calculi are equally expressive with fully
+abstract encodings (up to $\hwb$/$\fwb$).  
+These appear to be the first results of this kind.
+
+Early works on (relative) expressiveness appealed to different notions of encoding.
+Later on, 
+proposals of abstract 
+frameworks which formalise the notion of encoding 
+and state associated syntactic/semantic criteria 
+were put forward; 
+recent proposals include~\cite{DBLP:journals/iandc/Gorla10,DBLP:journals/tcs/FuL10,DBLP:journals/corr/abs-1208-2750,DBLP:conf/esop/PetersNG13,DBLP:journals/corr/PetersG15}. 
+%These frameworks %are applicable to different calculi, and 
+%have been used to clarify known results and to derive new ones.
+Our formulation of precise encoding (\defref{def:goodenc}) 
+builds upon existing proposals (e.g.,~\cite{Palamidessi03,DBLP:journals/iandc/Gorla10,DBLP:conf/icalp/LanesePSS10})
+ to account for the session types
+associated to \HOp. % and its variants.
+
+
+Early expressiveness studies for higher-order calculi are~\cite{Tho90,SangiorgiD:expmpa}; 
+recent works include~\cite{BundgaardHG06,DBLP:conf/icalp/LanesePSS10,DBLP:journals/iandc/LanesePSS11,XuActa2012,DBLP:conf/wsfm/XuYL13}.
+Due to the close relationship between higher-order process calculi and functional calculi, 
+%works devoted to 
+encodings of (variants of) the $\lambda$-calculus into the $\pi$-calculus (see, e.g.,~\cite{San92,DBLP:journals/tcs/Fu99,DBLP:journals/iandc/YoshidaBH04,BHY,DBLP:conf/concur/SangiorgiX14}) are also related.
+Sangiorgi's encoding of the higher-order $\pi$-calculus
+into the  $\pi$-calculus~\cite{SangiorgiD:expmpa} 
+is fully abstract with respect to reduction-closed, barbed congruence. 
+We have shown in \secref{subsec:HOp_to_sessp} that the analogue of Sangiorgi's encoding for the session typed setting also satisfies full abstraction (up to $\hwb$/$\fwb$, cf. \propref{prop:op_corr_HOp_to_p}).
+A basic form of input/output types is used in~\cite{DBLP:journals/tcs/Sangiorgi01}, where the encoding in~\cite{SangiorgiD:expmpa} is casted in the asynchronous setting, with output and applications coalesced in a single construct. Building upon~\cite{DBLP:journals/tcs/Sangiorgi01}, 
+a simply typed encoding for synchronous processes is given in~\cite{SaWabook}; the reverse encoding (i.e.,  first-order communication into higher-order processes) is also studied  for an asynchronous, localised $\pi$-calculus (only the output capability of names can be sent around).
+The work~\cite{San96int} studies hierarchies for calculi with \emph{internal} first-order mobility and 
+with higher-order mobility without name-passing (similarly as the subcalculus \HO). 
+The hierarchies are
+defined according to the order of types needed in typing.
+Via fully abstract encodings, it is shown that that name- and process-passing calculi with equal order of types have the same expressiveness.
+
+%With respect to these previous results, our approach based on session types 
+%has several important consequences and allows us to derive new results.  Our study reinforces the intuitive view of ``encodings as protocols'', namely session protocols which enforce precise linear and shared disciplines for names, a distinction not investigated in~\cite{SangiorgiD:expmpa,DBLP:journals/tcs/Sangiorgi01}. 
+%In turn, the linear/shared distinctionbs central in proper definitions of trigger processes, which are essential to encodings and behavioural equivalences.
+%More interestingly, we showed that $\HO$, a  minimal higher-order session calculus (no name passing, only first-order application) suffices to encode $\sessp$ (the session calculus with name passing) but also 
+%$\HOp$  and 
+%its extension  with higher-order applications (denoted $\HOpp$). 
+%Thus, using session types all these calculi are shown to be equally expressive with fully abstract encodings.
+%To our knowledge, these are the first expressiveness results of this kind.
+
+Other related works are~\cite{BundgaardHG06,DBLP:journals/entcs/MeredithR05,XuActa2012,DBLP:journals/iandc/LanesePSS11}.
+The paper~\cite{BundgaardHG06} gives a fully abstract %, contin\-u\-a\-tion-passing style 
+encoding of the 
+$\pi$-calculus into Homer, a higher-order  calculus with explicit locations, local names, and nested locations.
+The paper~\cite{DBLP:journals/entcs/MeredithR05}
+presents a \emph{reflective}  calculus with a ``quoting'' operator: names are quoted processes and represent the code 
+of a process; name-passing is then a way of passing the code of a process. This reflective calculus 
+can encode both first- and higher-order $\pi$-calculus.
+Building upon~\cite{ThomsenB:plachoasgcfhop},
+the work~\cite{XuActa2012} studies 
+the (non)en\-co\-da\-bi\-lity of the untyped $\pi$-calculus into 
+a higher-order $\pi$-calculus with a powerful 
+name relabelling operator, which is 
+%shown to be 
+essential to encode name-passing. 
+The paper~\cite{DBLP:journals/corr/XuYL15} defines an encoding of the (untyped) $\pi$-calculus 
+without relabeling. 
+This encoding is quite different from the one in~\secref{subsec:HOpi_to_HO}:
+in~\cite{DBLP:journals/corr/XuYL15} names are encoded using polyadic name abstractions (called \emph{pipes}); 
+guarded replication %(rather than recursion) 
+enables infinite behaviours.
+While our encoding satisfies full abstraction, % (\propref{prop:fulla_HOp_to_HO}), 
+the encoding in~\cite{DBLP:journals/corr/XuYL15} does not: only 
+divergence-reflection
+and 
+operational correspondence (soundness and completeness) properties 
+are established.
+Soundness is stated up-to \emph{pipe-bisimilarity}, an equivalence tailored to the encoding strategy;
+the authors of~\cite{DBLP:journals/corr/XuYL15} describe this result as ``weak''.
+%this result is described by the authors of~\cite{DBLP:journals/corr/XuYL15} as ``weak''.
+
+
+A core higher-order calculus is studied in~\cite{DBLP:journals/iandc/LanesePSS11}: it lacks restriction,  name passing, output prefix, % (asynchronous communication), 
+and %constructs for infinite behaviour.
+replication/recursion. 
+Still, this  subcalculus of \HO is Turing equivalent.
+The work~\cite{DBLP:conf/icalp/LanesePSS10}
+extends this core calculus with restriction,
+output prefix, and polyadicity; it shows that 
+synchronous communication can encode asynchronous communication, % (as in the first-order setting),
+and that process passing polyadicity induces an expressiveness  hierarchy. % (unlike the first-order setting).
+%A further extension with process abstractions of order one
+%(functions from processes to processes)
+% is shown to strictly add expressive power with respect to passing of processes only.
+The paper~\cite{DBLP:conf/wsfm/XuYL13} 
+complements~\cite{DBLP:conf/icalp/LanesePSS10} 
+by studying the expressivity %of second-order abstractions.
+%with replication ($!P$).  
+%The work \cite{DBLP:conf/wsfm/XuYL13} focuses  
+%%name and process abstractions are distinguished and contrasted, also 
+%on expressiveness of the hirarchy of polyadic abstraction parameters. 
+%(the same kind of polyadicity present in \pHOp)
+%By adapting the encodings in~\cite{DBLP:conf/icalp/LanesePSS10} 
+%Polyadicity 
+of 
+second-order process abstractions.
+Polyadicity is shown to induce an expressiveness hierarchy; 
+also,
+by adapting the encoding in~\cite{SangiorgiD:expmpa},
+process abstractions are encoded into name abstractions.
+In contrast, here we 
+give a fully abstract encoding of
+ \PHOpp into \HO that preserves session types; this improves~\cite{DBLP:conf/icalp/LanesePSS10,DBLP:conf/wsfm/XuYL13}   
+by enforcing linearity disciplines on process behaviour.
+The focus of~\cite{DBLP:conf/icalp/LanesePSS10,XuActa2012,DBLP:conf/wsfm/XuYL13,DBLP:journals/corr/XuYL15} is on 
+untyped, higher-order processes; they
+%Moreover,~\cite{DBLP:conf/icalp/LanesePSS10,DBLP:conf/wsfm/XuYL13}
+do not address communication disciplined by 
+(session) type systems.
+%therefore, our work complements their  results. 
+% by clarifying the status of typeful %, resource-aware 
+%structured communications. % in trigger-based representations of process passing, both in encodings and  equivalences.
+
+
+
+Within session types, the works~\cite{DemangeonH11,Dardha:2012:STR:2370776.2370794} 
+encode binary sessions into a linearly typed $\pi$-calculus. 
+While~\cite{DemangeonH11}~gives an encoding of \sessp into a linear calculus 
+(an extension of \cite{BHY}),  
+the work~\cite{Dardha:2012:STR:2370776.2370794} 
+gives  operational correspondence (without full abstraction)
+for the first- and higher-order 
+$\pi$-calculi into \cite{LinearPi}. 
+%They investigate an embeddability of two different typing systems;
+By the result of \cite{DemangeonH11}, 
+\HOpp is encodable  into the linearly typed $\pi$-calculi.     
+The syntax of $\HOp$ is a subset of that in~\cite{tlca07,MostrousY15}.
+The work~\cite{tlca07} develops a higher-order session calculus
+with process abstractions and applications; it admits the type 
+$U=U_1 \rightarrow U_2 \dots U_n \rightarrow \Proc$ and its linear type 
+$U^1$
+which corresponds to $\shot{\tilde{U}}$ and $\lhot{\tilde{U}}$ in 
+a super-calculus of $\HOpp$ and $\PHOp$. 
+%in~\cite{MostrousY15} in the asynchronous setting.
+%The session type
+%system considered is influenced by the type systems for $\lambda$-calculi and
+%uses type syntax of the form $U_1 \rightarrow U_2 \dots U_n \rightarrow \Proc$
+%for shared values and $(U_1 \rightarrow U_2 \dots U_n \rightarrow \Proc)^{1}$
+%for linear values.
+%Such a type is expressed in $\HOpp$
+%terms using the type $\shot{U}$ (respectively, $\lhot{U}$)
+%with $U$ being a nested higher-order type; and 
+%the $\HOp$ uses only types of the form
+%$\shot{C}$ and $\lhot{C}$ with $C$ being a first-order channel type.
+Our results show that
+the calculus in~\cite{tlca07} is not only expressed but 
+also reasoned in 
+$\HO$ via precise encodings (with a limited form of arrow types: $\shot{C}$ and $\lhot{C}$). 
+\newj{The recent work \cite{OY2016} studies two encodings:
+from PCF with an effect system into a session-typed $\pi$-calculus, 
+and its reverse. The reverse encoding is used to implement session channel passing in Concurrent Haskell. 
+In future work we plan to use the core calculi 
+studied in this paper 
+to implement higher-order communication efficiently into Concurrent Haskell without losing its expressiveness.
+}
+
+\paragraph{Acknowledgments.}
+We have benefited from feedback from the users of the Moca mailing list, in particular Greg Meredith and Xu Xian.
+We are grateful to the anonymous reviewers for their useful remarks and suggestions.
+This work has been partially sponsored by the Doctoral Prize Fellowship, EPSRC EP/K011715/1, EPSRC EP/K034413/1, and EPSRC EP/L00058X/1, EU project FP7-612985 UpScale, and EU COST Action IC1201 BETTY. P\'{e}rez is also affiliated to the NOVA Laboratory for Computer Science and Informatics (NOVA LINCS), Universidade Nova de Lisboa, Portugal.
+ 
+%\newpage
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Bibliography.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\bibliographystyle{abbrv}
+{\bibliography{session}}
+
+\newpage
+\onecolumn
+\setcounter{tocdepth}{4}
+\tableofcontents
+
+\appendix 
+\section{Appendix: the Typing System of \HOp}
+\input{appendix/app-types}
+\input{appendix/app-behavioural}
+\input{appendix/app-encoding}
+\input{appendix/app-negative}
+
+\end{document}
+
+
