@@ -1,0 +1,209 @@
+In this appendix we formally define 
+\emph{type equivalence} and 
+\emph{duality}. 
+We also present and describe our typing rules, given in~\figref{fig:typerulesmy}.
+
+\smallskip
+
+\subsection{Type Equivalence and Duality}
+
+\begin{definition}[Type Equivalence]
+\label{def:iso}
+Let $\mathsf{ST}$ a set of closed session types. 
+Two types $S$ and $S'$ are said to be {\em isomorphic} if a pair $(S,S')$ is 
+in the largest fixed point of the monotone function
+$F:\mathcal{P}(\mathsf{ST}\times \mathsf{ST}) \to 
+\mathcal{P}(\mathsf{ST}\times \mathsf{ST})$ defined by:
+
+\hspace{-0.5cm}\begin{tabular}{rcl}
+$F(\Re)$ &$\!\!=\!\!$&	$\set{(\tinact, \tinact)}$\\
+         &$\!\!\cup\!\!$&	$\set{(\btout{U_1} S_1, \btout{U_2} S_2)
+\bnfbar (S_1, S_2),(U_1, U_2)\in \Re}$\\ 
+       &$\!\!\cup\!\!$&	$\set{(\btinp{U_1} S_1, \btinp{U_2} S_2)
+\bnfbar(S_1, S_2),(U_1, U_2)\in \Re}$\\ 
+	&$\!\!\cup\!\!$&	$\set{(\btbra{l_i: S_i}_{i \in I} \,,\, \btbra{l_i: S_i'}_{i \in I}) \bnfbar \forall i\in I. (S_i, S_i')\in \Re}$\\
+	&$\!\!\cup\!\!$&	$\set{(\btsel{l_i: S_i}_{i \in I}\,,\, \btsel{l_i: S_i'}_{i \in I}) \bnfbar \forall i\in I. (S_i, S_i')\in \Re}$\\
+	&$\!\!\cup\!\!$&	$\set{(\trec{t}{S}, S')
+\bnfbar (S\subst{\trec{t}{S}}{\vart{t}},S')\in \Re}$\\
+	&$\!\!\cup\!\!$&	$\set{(S,\trec{t}{S'})
+\bnfbar (S,S'\subst{\trec{t}{S'}}{\vart{t}})\in \Re}$
+\end{tabular}
+	
+\noindent
+Standard arguments ensure that $F$ is monotone, thus the greatest fixed point
+of $F$ exists. We write $S_1 \sim S_2$ if  $(S_1,S_2)\in \Re$. 
+\end{definition}
+
+\smallskip 
+
+\begin{definition}[Duality]
+\label{def:dual}
+Let $\mathsf{ST}$ a set of closed session types. 
+Two types $S$ and $S'$ are said to be {\em dual} if a pair $(S,S')$ is 
+in the largest fixed point of the monotone function
+$F:\mathcal{P}(\mathsf{ST}\times \mathsf{ST}) \to 
+\mathcal{P}(\mathsf{ST}\times \mathsf{ST})$ defined by:\\[1mm]
+\begin{tabular}{rcl}
+$F(\Re)$ &$\!\!=\!\!$&	$\set{(\tinact, \tinact)}$\\
+         &$\!\!\cup\!\!$&	$\set{(\btout{U_1} S_1, \btinp{U_2} S_2)
+\bnfbar(S_1, S_2)\in \Re, \  U_1 \sim U_2 }$\\ 
+       &$\!\!\cup\!\!$&	$\set{(\btinp{U_1} S_1, \btout{U_2} S_2)
+\bnfbar(S_1, S_2)\in \Re, \ U_1 \sim U_2}$\\ 
+	&$\!\!\cup\!\!$&	$\set{(\btsel{l_i: S_i}_{i \in I} \,,\, \btbra{l_i: S_i'}_{i \in I}) \bnfbar \forall i\in I. (S_i, S_i')\in \Re}$\\
+	&$\!\!\cup\!\!$&	$\set{(\btbra{l_i: S_i}_{i \in I}\,,\, \btsel{l_i: S_i'}_{i \in I}) \bnfbar \forall i\in I. (S_i, S_i')\in \Re}$\\
+	&$\!\!\cup\!\!$&	$\set{(\trec{t}{S}, S')
+\bnfbar (S\subst{\trec{t}{S}}{\vart{t}},S')\in \Re}$\\
+	&$\!\!\cup\!\!$&	$\set{(S,\trec{t}{S'})
+\bnfbar (S,S'\subst{\trec{t}{S'}}{\vart{t}})\in \Re}$\\[1mm]
+\end{tabular}
+\noindent
+%where $U_1 \sim U_2$ means $U_1$ is type equivalent to $U_2$ \cite{yoshida.vasconcelos:language-primitives}.
+Standard arguments ensure that $F$ is monotone, thus the greatest fixed point
+of $F$ exists. We write $S_1 \dualof S_2$ if  $(S_1,S_2)\in \Re$. 
+\end{definition}
+
+%\smallskip 
+
+%\input{type_system}
+
+\subsection{Typing Rules}\label{app:typrules}
+\input{figures/type_system}
+The typing system is defined in \figref{fig:typerulesmy}.
+%Types for session names/variables $u$ and
+%directly derived from the linear part of the typing
+%environment, i.e.~type maps $\Delta$ and $\Lambda$.
+Rules $\trule{Sess, Sh, LVar}$ are name and variable introduction rules. 
+The shared type $\shot{C}$ %for shared higher order values $V$
+is derived using rule $\trule{Prom}$ only  
+if the value has a linear type with an empty linear
+environment.
+Rule~$\trule{EProm}$ allows us to freely use a linear
+type variable as shared.
+%
+Abstraction values are typed with rule~$\trule{Abs}$.
+%The key type for an abstraction is the type for
+%the bound variables of the abstraction, i.e.~for
+%bound variable type $C$ the abstraction
+%has type $\lhot{C}$.
+Application typing
+is governed by rule $\trule{App}$: we expect
+the type $C$ of an application name $u$ 
+to match the type $\lhot{C}$ or $\shot{C}$
+of the application variable $x$.
+%
+%A process prefixed with a session send operator $\bout{k}{V} P$
+%is typed using rule $\trule{Send}$.
+
+In rule $\trule{Send}$, 
+the type $U$ of a send value $V$ should appear as a prefix
+on the session type $\btout{U} S$ of $u$.
+Rule $\trule{Rcv}$ is its dual.  
+%defined the typing for the 
+%reception of values $\binp{u}{V} P$.
+%the type $U$ of a receive value should 
+%appear as a prefix on the session type $\btinp{U} S$ of $u$.
+We use a similar approach with session prefixes
+to type interaction between shared names as defined 
+in rules $\trule{Req}$ and $\trule{Acc}$,
+where the type of the sent/received object 
+($S$ and $L$, respectively) should
+match the type of the sent/received subject
+($\chtype{S}$ and $\chtype{L}$, respectively).
+Rules for selection and branching, denoted
+$\trule{Sel}$ and $\trule{Bra}$, are standard. 
+%Both
+%rules prefix the session type with the selection
+%type $\btsel{l_i: S_i}_{i \in I}$ and
+%$\btbra{l_i:S_i}_{i \in I}$.
+%
+
+A
+shared name creation $a$ creates and restricts
+$a$ in environment $\Gamma$ as defined in 
+rule~\trule{Res}. 
+Creation of a session name $s$
+creates and restricts two endpoints with dual types 
+%and restricts
+%them by removing them from the session environment
+%$\Delta$ as defined 
+in rule \trule{ResS}. 
+Rule \trule{Par} 
+combines the environments
+$\Lambda$ and $\Delta$ of
+the components of a parallel process;
+%to create a type for the entire parallel process.
+the disjointness of environments $\Lambda$ and $\Delta$
+is implied. Rule \trule{End} adds 
+the names with type $\tinact$ in $\Delta$.  
+The recursion requires that the body process 
+matches the type of the recursive
+variable as in rule \trule{Rec}.
+The recursive variable is typed
+directly from the shared environment $\Gamma$ as
+in rule \trule{RVar}.
+The inactive process $\inact$ is typed with no
+linear environments as in rule~\trule{Nil}. 
+%We are ready to present the typing system for the \HOp,
+%which is similar to~\cite{tlca07,MostrousY15}.
+
+
+
+%%Since the typing system is similar to~\cite{tlca07,MostrousY15}, 
+%%we fully describe it  in \appref{app:types}.  The %rest of the 
+%%paper can
+%%be read without knowing the details of the typing system. 
+%%\jpc{Type soundness relies on the following auxiliary notion}.
+%%%We list the key properties.
+%
+%\smallskip
+%
+%\begin{definition}[Reduction of Session Environments]%\rm
+%	\label{def:ses_red}
+%	We define the relation $\red$ on session environments as:
+%	\begin{eqnarray*}
+%			\Delta \cat s: \btout{U} S_1 \cat \dual{s}: \btinp{U} S_2 & \red &
+%			\Delta \cat s: S_1 \cat \dual{s}: S_2\\%[1mm]
+%			\Delta \cat s: \btsel{l_i: S_i}_{i \in I} \cat \dual{s}: \btbra{l_i: S_i'}_{i \in I} &\red& 
+%			 \Delta \cat s: S_k \cat \dual{s}: S_k' \ (k \in I)
+%		\end{eqnarray*}
+%	%\end{center}
+%%\begin{tabular}{rcl}
+%%	\setlength{\tabcolsep}{0pt}
+%%	$\Delta \cat s: \btout{U} S_1 \cat \dual{s}: \btinp{U} S_2$ & $\red$ & 
+%%	$\Delta \cat s: S_1 \cat \dual{s}: S_2$\\[1mm]
+%%	$\Delta \cat s: \btsel{l_i: S_i}_{i \in I} \cat \dual{s}: \btbra{l_i: S_i'}_{i \in I}$ & $\red$ & $\Delta \cat s: S_k \cat \dual{s}: S_k' \ (k \in I)$
+%%\end{tabular}
+%%\[
+%%\begin{array}{rcl}
+%%\Delta \cat s: \btout{U} S_1 \cat \dual{s}: \btinp{U} S_2 & \red & 
+%%\Delta \cat s: S_1 \cat \dual{s}: S_2\\[1mm]
+%%\Delta \cat s: \btsel{l_i: S_i}_{i \in I} \cat \dual{s}: \btbra{l_i: S_i'}_{i \in I} & \red & \Delta \cat s: S_k \cat \dual{s}: S_k' \ (k \in I)
+%%\end{array}
+%%\]
+%\end{definition}
+%
+%%\smallskip
+%
+%%The following result %Theorem 7.3 in M\&Y
+%\noi We state the type soundness result for \HOp; it implies 
+%the type soundness of the sub-calculi \HO, \sessp, and $\CAL^{-\mathsf{sh}}$. 
+%
+%%\smallskip
+%
+%\begin{theorem}[Type Soundness]\label{t:sr}\rm
+%%	\begin{enumerate}[1.]
+%%		\item	(Subject Congruence) Suppose $\Gamma; \es; \Delta \proves P \hastype \Proc$.
+%%			Then $P \scong P'$ implies $\Gamma; \es; \Delta \proves P' \hastype \Proc$.
+%%
+%%		\item
+%%			(Subject Reduction)
+%			Suppose $\Gamma; \es; \Delta \proves P \hastype \Proc$
+%			with
+%			$\Delta$ balanced. 
+%			Then $P \red P'$ implies $\Gamma; \es; \Delta'  \proves P' \hastype \Proc$
+%			and $\Delta = \Delta'$ or $\Delta \red \Delta'$
+%			with $\Delta'$ balanced. 
+%%	\end{enumerate}
+%\end{theorem}
+%
+
