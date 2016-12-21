@@ -53,7 +53,7 @@ Higher-Order Session Processes\thanks{Version of \today}
 }
 \authorrunning{Dimitrios Kouzapas, Jorge A. P\'{e}rez, and Nobuko Yoshida}
 \institute{University of Glasgow, UK
- \and University of Groningen, The Netherlands 
+ \and University of Groningen and CWI, Amsterdam, The Netherlands 
  \and Imperial College London, UK}
 \maketitle
 
@@ -1127,7 +1127,7 @@ We define reduction-closed, barbed congruence \cite{HondaKYoshida95}.
 \end{definition}
 
 {
-\subsection{Two Equivalence Relations: $\fwb$ and $\hwb$}\label{ss:equiv}
+\subsection{Two Equivalence Relations: $\hwb$ and $\fwb$}\label{ss:equiv}
 In~\cite{characteristic_bis,KouzapasPY17} we have characterised
 reduction-closed, barbed congruence for \HOp
 via two typed relations, called
@@ -1197,49 +1197,49 @@ the input actions that can be observed from a session input prefix.
 For more details on the typed LTS and the characteristic process definition
 see% \appref{app:behavioural} and
 ~\cite{characteristic_bis,KouzapasPY17}.
-Moreover, we define a \emph{(first-order) trigger process}:
-%
-\begin{eqnarray}
-%	\htrigger{t}{V}  & \defeq &  \hotrigger{t}{V} \label{eqb:0} \\
-	\ftrigger{t}{V}{U} & \defeq &  \fotrigger{t}{x}{s}{\btinp{U} \tinact}{V} 	\label{eq:fot}
-\end{eqnarray}
-%
-%\noi
-The trigger process $\ftrigger{t}{V}{U}$ is 
-is defined as a process input prefixed on
-a fresh name $t$: it
-%The   trigger process $\htrigger{t}{V}$ above applies a value $V$
-%on the receiving (characteristic) process.
-applies a value
-on the %(hard coded) 
-\emph{characteristic process} $\map{\btinp{U} \tinact}^{s}$ (see~\cite{characteristic_bis} for details). 
 
 \paragraph{Characterising $\cong$.}
-We define \emph{characteristic} and \emph{higher-order} bisimilarities,
-%While higher-order bisimilarity is a new equality, 
-as jointly introduced in~\cite{KouzapasPY17}. % (Def.~14).
+We now recall the definition of \emph{higher-order bisimilarity} and 
+\emph{characteristic bisimilarity}, as jointly introduced in~\cite{KouzapasPY17}.
+These bisimilarity relations
+use two different \emph{trigger processes}:
+%
+\begin{eqnarray}
+	\htrigger{t}{V}	& \defeq &
+	\begin{cases}
+		\hotrigger{t}{x}{s}{V} & {\text{if $V$ is a first-order value}}\\
+		\binp{t}{x} \newsp{s}{\binp{s}{y} (\appl{y}{x}) \Par \bout{\dual{s}}{V} \inact} & \text{if $V$ is a higher-order value}
+		\end{cases}
+	\label{eqb:0} \\
+	\ftrigger{t}{V}{U}	& \defeq &	\fotrigger{t}{x}{s}{U}{V}	
+	\label{eqb:4}
+\end{eqnarray}
+%
+The process in \eqref{eqb:0} is called \emph{higher-order trigger process},
+while process in \eqref{eqb:4} is called \emph{characteristic trigger process}.
+Notice that while 
+in \eqref{eqb:0} there is a higher-order input on $t$, 
+in \eqref{eqb:4} the variable $x$ does not play any r\^{o}le.
+We use higher-order trigger processes to define \emph{higher-order bisimilarity}:
 
-\begin{definition}[Characteristic Bisimilarity]%\rm
-	\label{d:fwb}
-	A typed relation $\Re$ is called a {\em  characteristic bisimulation} if 
+\begin{definition}[Higher-Order Bisimilarity]
+	\label{d:hwb}
+	A typed relation $\Re$ is a {\em  higher-order bisimulation} if 
 	for all $\horel{\Gamma}{\Delta_1}{P_1}{\ \Re \ }{\Delta_2}{Q_1}$ 
-	\begin{enumerate}[1.]
+%
+	\begin{enumerate}[1)]
 		\item 
 				Whenever 
-				$\horel{\Gamma}{\Delta_1}{P_1}{\hby{\news{\tilde{m_1}} \bactout{n}{V_1: U}}}{\Delta_1'}{P_2}$,
-				there exist 
-				$Q_2$, $V_2$, $\Delta'_2$
-				such that \\
-				$\horel{\Gamma}{\Delta_2}{Q_1}{\Hby{\news{\tilde{m_2}} \bactout{n}{V_2: U}}}{\Delta_2'}{Q_2}$ and, for fresh $t$, 
-%
+				$\horel{\Gamma}{\Delta_1}{P_1}{\hby{\news{\widetilde{m_1}} \bactout{n}{V_1}}}{\Delta_1'}{P_2}$, there exist 
+				$Q_2$, $V_2$, $\Delta'_2$ such that 
+				$\horel{\Gamma}{\Delta_2}{Q_1}{\Hby{\news{\widetilde{m_2}} \bactout{n}{V_2}}}{\Delta_2'}{Q_2}$ and, for a fresh $t$, 
 				\[
-				%	\begin{array}{lrlll}
-						\Gamma; \Delta''_1  \proves  {\newsp{\tilde{m_1}}{P_2 \Par \ftrigger{t}{V_1}{U_1}}}
-						\ \Re \
-						\Delta''_2 \proves {\newsp{\tilde{m_2}}{Q_2 \Par \ftrigger{t}{V_2}{U_2}}}
-				%	\end{array}
+					\begin{array}{lrlll}
+						\Gamma; \Delta''_1  \proves  {\newsp{\widetilde{m_1}}{P_2 \Par \htrigger{t}{V_1}}}
+						\ \Re\ 
+						\Delta''_2 \proves {\newsp{\widetilde{m_2}}{Q_2 \Par \htrigger{t}{V_2}}}
+					\end{array}
 				\]
-
 		\item	
 				For all $\horel{\Gamma}{\Delta_1}{P_1}{\hby{\ell}}{\Delta_1'}{P_2}$ such that 
 				$\ell$ is not an output, 
@@ -1250,48 +1250,48 @@ as jointly introduced in~\cite{KouzapasPY17}. % (Def.~14).
 
 		\item	The symmetric cases of 1 and 2.                
 	\end{enumerate}
-	The largest such bisimulation
-	is called \emph{characteristic bisimilarity} {and} denoted by $\fwb$.
+%
+	The largest such bisimulation is called \emph{higher-order bisimilarity}, denoted by $\hwb$.
 \end{definition}
- 
 
-%\noi 
-%We define characteristic bisimilarity
-%(cf.~Def.~14~in~\cite{characteristic_bis}):
-% is given using characteristic trigger processes. 
 
-\newj{Interestingly, for reasoning about \HOp processes %not in \sessp 
-we can also exploit the simpler \emph{higher-order bisimilarity}.}
-We replace triggers as in \eqref{eq:fot}
-with \emph{higher-order triggers}:
-{\begin{eqnarray}
-	\htrigger{t}{V}  & \defeq &  \hotrigger{t}{V} \label{eq:hot} 
-%	\ftrigger{t}{V}{U} & \defeq &  \fotrigger{t}{x}{s}{\btinp{U} \tinact}{V} 	\label{eq:fot}
-\end{eqnarray}}
-We may then define:
-\begin{definition}[Higher-Order Bisimilarity]%\rm
-	\label{d:hbw}
-	Higher-order bisimilarity, denoted by $\hwb$, is defined {by} replacing 
-	Clause (1) in \defref{d:fwb} with the following clause:\\[1mm]
-	%\begin{enumerate}[1.]
-	%	\item 
-		Whenever 
-	$\horel{\Gamma}{\Delta_1}{P_1}{\hby{\news{\tilde{m_1}} \bactout{n}{V_1}}}{\Delta_1'}{P_2}$ %with $\Gamma; \es; \Delta \proves V_1 \hastype U$,  
-	then there exist 
-	$Q_2$, $V_2$, $\Delta'_2$
-	such that \\
-	$\horel{\Gamma}{\Delta_2}{Q_1}{\Hby{\news{\tilde{m_2}}\bactout{n}{V_2}}}{\Delta_2'}{Q_2}$ %with $\Gamma; \es; \Delta' \proves V_2 \hastype U$,  
-	and, for fresh $t$, \\[1mm]
-	$
-	\begin{array}{lrlll}
-		\!\!\Gamma; \Delta''_1  \proves  {\newsp{\tilde{m_1}}{P_2 \Par 
-		\htrigger{t}{V_1}}}
-		\ \Re\ \Delta''_2
-		\proves {\newsp{\tilde{m_2}}{Q_2 \Par \htrigger{t}{V_2}}}
-	\end{array}
-	$
-	%\end{enumerate}
+We exploit characteristic trigger processes to define \emph{characteristic bisimilarity}: 
+
+\begin{definition}[Characteristic Bisimilarity]
+\label{d:fwb}
+	A typed relation $\Re$ is a {\em  characteristic bisimulation} if 
+	for all $\horel{\Gamma}{\Delta_1}{P_1}{\ \Re \ }{\Delta_2}{Q_1}$, 
+%
+	\begin{enumerate}[1)]
+		\item 
+				Whenever 
+				$\horel{\Gamma}{\Delta_1}{P_1}{\hby{\news{\widetilde{m_1}} \bactout{n}{V_1: U_1}}}{\Delta_1'}{P_2}$ 
+				then there exist 
+				$Q_2$, $V_2$, $\Delta'_2$ such that 
+				$\horel{\Gamma}{\Delta_2}{Q_1}{\Hby{\news{\widetilde{m_2}}\bactout{n}{V_2: U_2}}}{\Delta_2'}{Q_2}$
+				and, for a fresh $t$,
+%
+				\[
+					\Gamma; \Delta''_1  \proves  {\newsp{\widetilde{m_1}}{P_2 \Par \ftrigger{t}{V_1}{U_1}}}
+	 				\ \Re\ 
+					\Delta''_2 \proves {\newsp{\widetilde{m_2}}{Q_2 \Par \ftrigger{t}{V_2}{U_2}}}
+				\]
+
+		\item	
+				For all $\horel{\Gamma}{\Delta_1}{P_1}{\hby{\ell}}{\Delta_1'}{P_2}$ such that 
+				$\ell$ is not an output, there exist $Q_2$, $\Delta'_2$ such that 
+				$\horel{\Gamma}{\Delta_2}{Q_1}{\Hby{\hat{\ell}}}{\Delta_2'}{Q_2}$
+				and
+				$\horel{\Gamma}{\Delta_1'}{P_2}{\ \Re \ }{\Delta_2'}{Q_2}$; and 
+
+		\item	The symmetric cases of 1 and 2.                
+	\end{enumerate}
+%
+	The largest such bisimulation is called \emph{characteristic bisimilarity}, denoted by $\fwb$.
 \end{definition}
+
+
+
 
 We state the following important coincidence result: %, which attests the significance of $\hwb$:
 \begin{theorem}[\cite{KouzapasPY17}]\label{t:coincide}
@@ -1304,43 +1304,10 @@ We state the following important coincidence result: %, which attests the signif
 %for details. \qed
 %\end{proof}
 
-\begin{remark}[Comparison between $\hwb$ and $\fwb$]
-The key difference between $\hwb$ and $\fwb$ is in the trigger process considered. 
-Because of the application in \eqref{eq:hot}, $\hwb$ 
-%is only defined for processes in \HO; it 
-cannot be used to reason about processes in \sessp. In contrast, $\fwb$ is more general:
-it can uniformly input characteristic, first- or higher-order values.
-This convenience comes at a price: the definition of \eqref{eq:fot} requires information on the 
-type of $V$; in contrast, the higher-order trigger \eqref{eq:hot} is more generic and simple,
-as it works independently of the given type.
-%
-%	The difference between higher order bisimilarity
-%	lies in the definition of the process trigger.
-%	\begin{enumerate}[(a)]
-%		\item
-%				The higher-order bisimilarity \eqref{eq:hot}
-%%				\[
-%%					\htrigger{t}{V}  \defeq  \hotrigger{t}{V}
-%%				\]
-%				allows for the application of bound variable $x$,
-%				making $\hwb$ not defined in the \sessp sub-calculus
-%				of \HOp, but defined inside the \HO sub-calculus. 
-%
-%		\item	The Characteristic bisimilarity trigger \eqref{eq:fot} 
-%%				\[
-%%					\ftrigger{t}{V}{U} \defeq  \fotrigger{t}{x}{s}{\btinp{U} \tinact}{V}
-%%				\]
-%				solves the problem in (a) by not using $x$ in the continuation
-%				of fresh name input. This allows to input characteristic, first- or
-%				higher-order value on bound variable $x$.
-%
-%
-%		\item	Higher-order trigger lifts the need of observing
-%				types on the lts and including them in bisimulation
-%				closures. Higher-order bisimilarity adds to
-%				the simplicity and elegance of the \HO subcalculus
-%				over the \sessp subcalculus of \HOp.
-%	\end{enumerate}
+\begin{remark}[Differences between $\hwb$ and $\fwb$]
+Although $\hwb$ and $\fwb$ are conceptually similar, they differ in the kind of 
+trigger process considered. Because of the application in 
+$\htrigger{t}{V}$ (cf. \eqref{eqb:0}), $\hwb$ cannot be used to reason about first-order session processes (i.e., processes without higher-order features). In contrast, $\fwb$ is more general: it can uniformly input characteristic, first- or higher-order values. 
 \end{remark}
 
 %\begin{definition}[Characteristic Bisimilarity]\rm
@@ -1374,8 +1341,34 @@ as it works independently of the given type.
 
 \paragraph{An up-to technique.}
 Processes that do not use shared names are deterministic. 
-The following up-to technique, based on determinacy properties, will be useful in proofs~(\secref{sec:positive}).
+Internal transitions associated to session interactions or  
+$\beta$-reductions are deterministic.  
+To define an auxiliary proof technique that exploits determinacy we require some auxiliary definitions.
 Recall that $\horel{\Gamma}{\Delta}{P}{\hby{\tau}}{\Delta'}{P'}$ denotes an internal (typed) transition.
+		
+%\begin{definition}[Deterministic Transitions]
+%\label{def:dettrans}
+%	Suppose $\Gamma; \es; \Delta \proves P \hastype \Proc$ \newc{with balanced~$\Delta$}.
+%	Transition $\horel{\Gamma}{\Delta}{P}{\hby{\tau}}{\Delta'}{P'}$ is called:
+%	\begin{enumerate}[$-$]
+%		\item 
+%				a {\em \sesstran} whenever transition $P \by{\tau} P'$ 
+%				is derived using Rule~$\ltsrule{Tau}$ 
+%				(where $\subj{\ell_1}$ and $\subj{\ell_2}$ in the premise are dual endpoints), 
+%				possibly followed by uses of Rules~$\ltsrule{Alpha}$, $\ltsrule{Res}$, $\ltsrule{Rec}$, or $\ltsrule{Par${}_L$}/
+%				\ltsrule{Par${}_R$}$ (cf. \figref{fig:untyped_LTS}).
+%		\item
+%				a {\em \betatran} whenever transition $P \by{\tau} P'$
+%				is derived using Rule $\ltsrule{App}$,
+%				possibly followed by uses of Rules~$\ltsrule{Alpha}$, $\ltsrule{Res}$, $\ltsrule{Rec}$, or $\ltsrule{Par${}_L$}/
+%				\ltsrule{Par${}_R$}$ (cf. \figref{fig:untyped_LTS}).
+%	\end{enumerate}
+%\end{definition}
+%
+
+
+The following up-to technique, based on determinacy properties, will be useful in proofs~(\secref{sec:positive}).
+
  
  \begin{notation}[Deterministic Transitions]
  \label{not:dettrans}
@@ -1389,7 +1382,7 @@ two dual endpoints), while
   $\hby{\btau}$ results from an application. 
  We write  $\horel{\Gamma}{\Delta}{P}{\hby{\dtau}}{\Delta'}{P'}$ to denote
 	 a session transition or a $\beta$-transition.
-	See~\cite{KouzapasPY15} for definitions of $\hby{\btau}$  and $\hby{\stau}$. % rely on an LTS for \HOp;  for details.
+	See~\cite{KouzapasPY17} for definitions of $\hby{\btau}$  and $\hby{\stau}$. % rely on an LTS for \HOp;  for details.
  \end{notation}
  
 %The auxiliary definition below allows us to distinguish two kinds of  internal transitions:
@@ -1436,33 +1429,43 @@ We have the following determinacy property:
 %see~\cite{KouzapasPY15} for details. 
 
 
-\begin{lemma}[$\tau$-Inertness]%\rm
+\begin{lemma}[$\tau$-Inertness~\cite{KouzapasPY17}]%\rm
 	\label{lem:tau_inert}
-	(1)
-%	\begin{enumerate}[1)]
+		Suppose $\Gamma; \es; \Delta \proves P \hastype \Proc$ \newc{with balanced $\Delta$}.
+	%(1)
+	\begin{enumerate}[1)]
 %		\item
-				Let $\horel{\Gamma}{\Delta}{P}{\hby{\dtau}}{\Delta'}{P'}$ be a deterministic transition,
-				with balanced $\Delta$. Then 
-				$\Gamma; \Delta \proves P \cong \Delta'\proves P'$ 
-				with $\Delta \red^\ast \Delta'$ balanced.
+%				Let $\horel{\Gamma}{\Delta}{P}{\hby{\dtau}}{\Delta'}{P'}$ be a deterministic transition,
+%				with balanced $\Delta$. Then 
+%				$\Gamma; \Delta \proves P \cong \Delta'\proves P'$ 
+%				with $\Delta \red^\ast \Delta'$ balanced.
+		\item	If	$\horel{\Gamma}{\Delta}{P}{\hby{\dtau}}{\Delta'}{P'}$ then
+				$\horel{\Gamma}{\Delta}{P}{\hwb}{\Delta'}{P'}$, with $\Delta \red^\ast \Delta'$. 
 %		\item 
-				(2) Let $P$ be an $\HOp^{-\mathsf{sh}}$ process. 
-				Assume $\Gamma; \emptyset; \Delta \proves P \hastype \Proc$. Then 
-				$P \red^\ast P'$ implies $\Gamma; \Delta \proves 
-				P \cong \Delta'\proves P'$ with $\Delta \red^\ast \Delta'$. 
-%	\end{enumerate}
+%				%(2) 
+%				Let $P$ be an $\HOp^{-\mathsf{sh}}$ process. 
+%				Assume $\Gamma; \emptyset; \Delta \proves P \hastype \Proc$. Then 
+%				$P \red^\ast P'$ implies $\Gamma; \Delta \proves 
+%				P \cong \Delta'\proves P'$ with $\Delta \red^\ast \Delta'$. 
+		\item 
+				%(2) 
+				If $P$ is an $\HOp^{-\mathsf{sh}}$ process, and 
+%				Assume $\Gamma; \emptyset; \Delta \proves P \hastype \Proc$. Then 
+				$P \red^\ast P'$ then 
+				$\Gamma; \Delta \proves P \cong \Delta'\proves P'$, with $\Delta \red^\ast \Delta'$. 
+	\end{enumerate}
 \end{lemma}
 
 
-\begin{proof}[Sketch]
-	The proof uses the fact that processes of the
-	form $$\Gamma; \es; \Delta \proves_s \bout{s}{V} P_1 \Par \binp{k}{x} P_2$$
-	cannot have any typed transition observables and the fact
-	that bisimulation is a congruence.
-	See  \appref{app:sub_tau_inert} for details.
-	The proof for Part 2 follows from Part 1.
-	\qed
-\end{proof}
+%\begin{proof}[Sketch]
+%	The proof uses the fact that processes of the
+%	form $$\Gamma; \es; \Delta \proves_s \bout{s}{V} P_1 \Par \binp{k}{x} P_2$$
+%	cannot have any typed transition observables and the fact
+%	that bisimulation is a congruence.
+%	See  \appref{app:sub_tau_inert} for details.
+%	The proof for Part 2 follows from Part 1.
+%	\qed
+%\end{proof}
 
 \newj{We use 
 \lemref{lem:tau_inert}
@@ -1471,9 +1474,9 @@ to prove \thmref{t:negative}, the negative result stated in
 This property also enables us to define the following up-to technique, useful in full abstraction proofs.
 We write $\Hby{\dtau}$ to denote a (possibly empty) sequence of deterministic steps 
 $\hby{\dtau}$.}
+We can finally state:
 
-
-\begin{lemma}[Up-to Deterministic Transition]%\myrm
+\begin{lemma}[Up-to Deterministic Transition~\cite{KouzapasPY17}]%\myrm
 	\label{lem:up_to_deterministic_transition}
 	Let $\horel{\Gamma}{\Delta_1}{P_1}{\ \Re\ }{\Delta_2}{Q_1}$ such
 	that if whenever:
@@ -1522,16 +1525,16 @@ $\hby{\dtau}$.}
 \end{lemma}
 
 
-\begin{proof}
-	The proof is easy by considering the closure
-	\[
-		\Re^{\Hby{\dtau}} = \set{ \horel{\Gamma}{\Delta_1'}{P_2}{,}{\Delta_2'}{Q_1} \setbar \horel{\Gamma}{\Delta_1}{P_1}{\ \Re\ }{\Delta_2'}{Q_1},
-		\horel{\Gamma}{\Delta_1}{P_1}{\Hby{\dtau}}{\Delta_1'}{P_2} }
-	\]
-	We verify that $\Re^{\Hby{\dtau}}$ is a bisimulation with
-	the use of \propref{lem:tau_inert}.
-	\qed
-\end{proof}
+%\begin{proof}
+%	The proof is easy by considering the closure
+%	\[
+%		\Re^{\Hby{\dtau}} = \set{ \horel{\Gamma}{\Delta_1'}{P_2}{,}{\Delta_2'}{Q_1} \setbar \horel{\Gamma}{\Delta_1}{P_1}{\ \Re\ }{\Delta_2'}{Q_1},
+%		\horel{\Gamma}{\Delta_1}{P_1}{\Hby{\dtau}}{\Delta_1'}{P_2} }
+%	\]
+%	We verify that $\Re^{\Hby{\dtau}}$ is a bisimulation with
+%	the use of \propref{lem:tau_inert}.
+%	\qed
+%\end{proof}
 
 %\begin{example}[Up-to Deterministic Transition]
 %	Typed processes:
@@ -3677,7 +3680,7 @@ This work has been partially sponsored by the Doctoral Prize Fellowship, EPSRC E
 \section{Appendix: the Typing System of \HOp}
 \label{app:types}
 \input{appendix/app-types}
-\input{appendix/app-behavioural}
+%\input{appendix/app-behavioural}
 \input{appendix/app-encoding}
 \input{appendix/app-negative}
 
