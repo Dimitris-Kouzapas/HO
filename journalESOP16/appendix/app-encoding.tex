@@ -2549,11 +2549,11 @@ A precise encoding requires to prove three independent results:
 %
 			\begin{enumerate}[a)]
 				\item	If $\ell = \news{\tilde{m}'} \bactout{n}{\tilde{m}}$ then
-					$\horel{\tmap{\Gamma}{4}}{\tmap{\Delta}{4}}{\pmap{P}{4}}{\hby{\ell_1} \dots \hby{\ell_n}}{\tmap{\Delta'}{4}}{\pmap{P}{4}}$
+					$\horel{\tmap{\Gamma}{4}}{\tmap{\Delta}{4}}{\pmap{P}{4}}{\hby{\ell_1} \dots \hby{\ell_n}}{\tmap{\Delta'}{4}}{\pmap{P'}{4}}$
 					with $\mapa{\ell}^{4} = \ell_1 \dots \ell_n$.
 
 				\item	If $\ell = \bactinp{n}{\tilde{m}}$ then
-					$\horel{\tmap{\Gamma}{4}}{\tmap{\Delta}{4}}{\pmap{P}{4}}{\hby{\ell_1} \dots \hby{\ell_n}}{\tmap{\Delta'}{4}}{\pmap{P}{4}}$
+					$\horel{\tmap{\Gamma}{4}}{\tmap{\Delta}{4}}{\pmap{P}{4}}{\hby{\ell_1} \dots \hby{\ell_n}}{\tmap{\Delta'}{4}}{\pmap{P'}{4}}$
 					with $\mapa{\ell}^{4} = \ell_1 \dots \ell_n$.
 
 				\item	If $\ell \in \set{\news{\tilde{m}} \bactout{n}{\abs{\tilde{x}}{R}}, \bactinp{n}{\abs{\tilde{x}}{R}}}$ then
@@ -2574,7 +2574,7 @@ A precise encoding requires to prove three independent results:
 					{\tmap{\Delta'}{4}}{\pmap{P'}{4}}$ with $\mapa{\ell}^{4} = \tau \dots \tau$.
 			\end{enumerate}
 
-		\item	Let $\Gamma; \es; \Delta \proves P$.
+		\item	Let $\Gamma; \es; \Delta \proves P$. Then
 			$\horel{\tmap{\Gamma}{4}}{\tmap{\Delta}{4}}{\pmap{P}{4}}{\hby{\ell}}
 			{\tmap{\Delta_1}{4}}{P_1}$ implies
 %
@@ -2582,7 +2582,7 @@ A precise encoding requires to prove three independent results:
 				\item	If $\ell \in \set{\bactinp{n}{m}, \bactout{n}{m}, \news{m} \bactout{n}{m}}$ then
 					$\horel{\Gamma}{\Delta}{P}{\hby{\ell}}{\Delta'}{P'}$ and\\
 					$\horel{\tmap{\Gamma}{4}}{\tmap{\Delta_1}{4}}{P_1}{\hby{\ell_2} \dots \hby{\ell_n}}
-					{\tmap{\Delta'}{4}}{\tmap{P'}{4}}$ with $\mapa{\ell}^{4} = \ell_1 \dots \ell_n$.
+					{\tmap{\Delta'}{4}}{\pmap{P'}{4}}$ with $\mapa{\ell}^{4} = \ell_1 \dots \ell_n$.
 
 				\item	If $\ell \in \set{\news{\tilde{m}} \bactout{n}{\abs{x}{R}}, \bactinp{n}{\abs{x}{R}}}$
 					then
@@ -2686,7 +2686,7 @@ We may have the following typed transition:
 $$
 \stytra{\Gamma}{\ell_1}{\Delta_0 \cat \Delta_1 \cat n:\bbtout{\lhot{(C_1, C_2)}}S}{\bbout{n}{\abs{(x_1, x_2)} Q} P' }{\Delta_0 \cat n{:}S}{P'}
 $$
-The encoding of the source judgment is
+The encoding of the source judgement is
 $$
 \mapt{\Gamma}^{4}; \emptyset; \mapt{\Delta_0 \cat \Delta_1 \cat n:\bbtout{\lhot{(C_1, C_2)}}S}^{4} \proves \map{\bbout{n}{\abs{(x_1, x_2)} Q} P' }^{4} \hastype \Proc
 $$
@@ -2814,7 +2814,8 @@ which concludes the proof for this case.
 	The proof for both direction is a consequence of Operational Correspondence,
 	\propref{app:prop:op_corr_pHOp_to_HOp}.
 
-	\noi {\bf Soundness Direction.}
+	\begin{itemize}
+	\item	Soundness Direction.
 
 	\noi We create the closure
 %
@@ -2822,12 +2823,98 @@ which concludes the proof for this case.
 		\Re = \set{\horel{\Gamma}{\Delta_1}{P}{\ ,\ }{\Delta_2}{Q} \setbar \horel{\tmap{\Gamma}{4}}{\tmap{\Delta_1}{4}}{\pmap{P}{4}}{\wb}{\tmap{\Delta_2}{4}}{\pmap{Q}{4}}}
 	\]
 %
-	\noi	It is straightforward to show that $\Re$ is a bisimulation if we follow Part 2 of
-		\propref{app:prop:op_corr_pHOp_to_HOp}.
+	\noi	It is straightforward to show that $\Re$ is a bisimulation if we follow Part 2 of \propref{app:prop:op_corr_pHOp_to_HOp}. We
+	present some cases:
+	\begin{enumerate}
+		\item	If $\ell \in \set{\bactinp{n}{m}, \bactout{n}{m}, \news{m} \bactout{n}{m}}$ then
+		\[
+		\horel{\tmap{\Gamma}{4}}{\tmap{\Delta_1}{4}}{\pmap{P}{4}}{\hby{\ell}}{\tmap{\Delta_1'}{4}}{P_1}
+		\]
+		implies
+		\[
+		\horel{\tmap{\Gamma}{4}}{\tmap{\Delta_2}{4}}{\pmap{Q}{4}}{\Hby{\ell}}{\tmap{\Delta_2'}{4}}{Q_1}
+		\]
+		From Part 2(a) of \propref{app:prop:op_corr_pHOp_to_HOp} we conclude that
+		\[
+		\horel{\Gamma}{\Delta_1}{P}{\hby{\ell}}{\Delta_1''}{P'}
+		\]
+		and
+		\[
+		\horel{\tmap{\Gamma}{4}}{\tmap{\Delta_1'}{4}}{P_1}{\hby{\ell_2} \dots \hby{\ell_n}}
+		{\tmap{\Delta_1''}{4}}{\pmap{P'}{4}}
+		\]
+		with $\mapa{\ell}^{4} = \ell_1 \dots \ell_n$.
+		
+		Moreover 
+		\[
+			\horel{\Gamma}{\Delta_2}{Q}{\hby{\ell}}{\Delta_2''}{Q'}
+		\]
+		and
+		\[
+		\horel{\tmap{\Gamma}{4}}{\tmap{\Delta_2'}{4}}{Q_1}{\Hby{\ell_2} \dots \Hby{\ell_n}}
+		{\tmap{\Delta_2''}{4}}{\pmap{Q'}{4}}
+		\]
+		
+		If we follow the bisimulation game we conclude that
+		\[
+		\horel{\tmap{\Gamma}{4}}{\tmap{\Delta_1''}{4}}{\pmap{P'}{4}}{\wb}{\tmap{\Delta_2''}{4}}{\pmap{Q'}{4}}
+		\]
+		and
+		\[
+		\horel{\Gamma}{\Delta_1''}{P'}{\ \Re\ }{\Delta_2''}{Q'}
+		\]
+		\item	If $\ell \in \set{\news{\tilde{m}} \bactout{n}{\abs{x}{R}}, \bactinp{n}{\abs{x}{R}}}$
+				then
+				\[
+				\horel{\tmap{\Gamma}{4}}{\tmap{\Delta_1}{4}}{\pmap{P}{4}}{\hby{\ell}}{\tmap{\Delta_1'}{4}}{P_1}
+				\]
+				implies
+				\[
+				\horel{\tmap{\Gamma}{4}}{\tmap{\Delta_2}{4}}{\pmap{Q}{4}}{\Hby{\ell}}{\tmap{\Delta_2'}{4}}{Q_1}
+				\]
+				and
+				\[
+				\horel{\tmap{\Gamma}{4}}{\tmap{\Delta_1'}{4}}{P_1 \Par C}{\wb}{\tmap{\Delta_2' \Par C}{4}}{Q_1}
+				\]
+				with $C$ corresponding to the characteristic process if $\ell$ is an output action and $C = \inact$ otherwise.
+				From Part 2(b) of \propref{app:prop:op_corr_pHOp_to_HOp} we conclude that
+				$\horel{\Gamma}{\Delta_1}{P}{\hby{\ell'}}{\Delta_1'}{P'}$
+				with $\mapa{\ell'}^{4} = \ell$ and $P_1 \scong \pmap{P'}{4}$
+				and
+				$\horel{\Gamma}{\Delta_2}{Q}{\hby{\ell'}}{\Delta_2'}{Q'}$
+				and $P_1 \scong \pmap{P'}{4}$.
+				\dk{we need an auxiliary result here}
+				
+		\item	If $\ell \in \set{\bactsel{n}{l}, \bactbra{n}{l}}$
+				then
+				\[
+				\horel{\tmap{\Gamma}{4}}{\tmap{\Delta_1}{4}}{\pmap{P}{4}}{\hby{\ell}}{\tmap{\Delta_1'}{4}}{P_1}
+				\]
+				implies
+				\[
+				\horel{\tmap{\Gamma}{4}}{\tmap{\Delta_2}{4}}{\pmap{Q}{4}}{\Hby{\ell}}{\tmap{\Delta_2'}{4}}{Q_1}
+				\]
+				From Part 2(c) of \propref{app:prop:op_corr_pHOp_to_HOp} we conclude that
+				\[	
+				\horel{\Gamma}{\Delta_1}{P}{\hby{\ell}}{\Delta_1'}{P'}
+				\]
+				with $P_1 \cong \pmap{P'}{4}$
+				and
+				\[	
+				\horel{\Gamma}{\Delta_2}{Q}{\hby{\ell}}{\Delta_2'}{Q'}
+				\]
+				with $Q_1 \cong \pmap{Q'}{4}$
+				which concludes the case.
+
+		\item	The cases for $\ell = \tau$ are similar
+				and correspond to Part 2(d, e) of \propref{app:prop:op_corr_pHOp_to_HOp} 
+	\end{enumerate}
+			
+			
 %		for subcases a and b.
 %		In subcase c we make use of \propref{lem:tau_inert}.
 
-	\noi {\bf Completeness Direction.}
+	\item	Completeness Direction.
 
 	\noi We create the closure
 %
@@ -2836,10 +2923,62 @@ which concludes the proof for this case.
 	\]
 %
 %	\dk{Is the proof easy? do the proof}
-	\noi	We show that $\Re$ is a bisimulation up to deterministic transitions
-		by following Part 1 of \propref{app:prop:op_corr_pHOp_to_HOp}.
+	\noi	We show that $\Re$ is a bisimulation up to deterministic transitions by following Part 1 of \propref{app:prop:op_corr_pHOp_to_HOp}.
+	\begin{enumerate}
+		\item
+		If $\ell = \news{\tilde{m}'} \bactout{n}{\tilde{m}}$ then
+		\[
+		\horel{\Gamma}{\Delta_1}{P}{\hby{\ell}}{\Delta_1'}{P'}
+		\]
+		implies
+		\[
+		\horel{\Gamma}{\Delta_2}{Q}{\Hby{\ell}}{\Delta_2'}{Q'}
+		\]
+		and
+		\[
+		\horel{\Gamma}{\Delta_1'}{P' \Par C}{\wb}{\Delta_2'}{Q' \Par C}
+		\]
+		with $C$ corresponding to the trigger process.
+		Furthermore, from Part 1 (a) of \propref{app:prop:op_corr_pHOp_to_HOp} we have that
+		$\horel{\tmap{\Gamma}{4}}{\tmap{\Delta_1}{4}}{\pmap{P}{4}}{\hby{\ell_1} \dots \hby{\ell_n}}{\tmap{\Delta_1'}{4}}{\pmap{P'}{4}}$
+		with $\mapa{\ell}^{4} = \ell_1 \dots \ell_n$
+		and
+		$\horel{\tmap{\Gamma}{4}}{\tmap{\Delta_2}{4}}{\pmap{Q}{4}}{\Hby{\ell_1} \dots \Hby{\ell_n}}{\tmap{\Delta_2'}{4}}{\pmap{Q'}{4}}$
+		\dk{we need an auxiliary result}.
+						
+		\item	If $\ell = \bactinp{n}{\tilde{m}}$ then
+				If $\ell = \news{\tilde{m}'} \bactout{n}{\tilde{m}}$ then
+				\[
+				\horel{\Gamma}{\Delta_1}{P}{\hby{\ell}}{\Delta_1'}{P'}
+				\]
+				implies
+				\[
+				\horel{\Gamma}{\Delta_2}{Q}{\Hby{\ell}}{\Delta_2'}{Q'}
+				\]
+				and
+				\[
+				\horel{\Gamma}{\Delta_1'}{P'}{\wb}{\Delta_2'}{Q'}
+				\]
+				Furthermore, from Part 1 (b) of \propref{app:prop:op_corr_pHOp_to_HOp} we have that
+				$\horel{\tmap{\Gamma}{4}}{\tmap{\Delta_1}{4}}{\pmap{P}{4}}{\hby{\ell_1} \dots \hby{\ell_n}}{\tmap{\Delta_1'}{4}}{\pmap{P'}{4}}$
+				with $\mapa{\ell}^{4} = \ell_1 \dots \ell_n$
+				and
+				$\horel{\tmap{\Gamma}{4}}{\tmap{\Delta_2}{4}}{\pmap{Q}{4}}{\Hby{\ell_1} \dots \Hby{\ell_n}}{\tmap{\Delta_2'}{4}}{\pmap{Q'}{4}}$
+				as required.
+		\item	The case for $\ell = \news{\tilde{m} \bactout{n}{\abs{\tilde{x}}{R}}$
+		is similar to the first case.
+		
+		\item	The case for $\ell = \bactinp{n}{\abs{\tilde{x}}{R}}}$
+		is similar to the second case.
+		
+		\item	The case for $\ell \in \set{\bactsel{n}{l}, \bactbra{n}{l}}$ is similar to the second case.
+		
+		\item	The case for $\ell = \tau$ is similar to the second case.
+		
+	\end{enumerate}
 %		The proof is straightforward for subcases a), b) and d).
 %		In subcase c) we make use of \lemref{lem:up_to_deterministic_transition}.
+	\end{itemize}
 	\qed
 \end{proof}
 
