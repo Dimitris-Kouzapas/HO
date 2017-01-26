@@ -42,14 +42,14 @@
 \usepackage{subcaption}	% for subfigures
 
 \input{macros}
-\newtheorem{definition}{Definition}
-\newtheorem{proposition}{Proposition}
-\newtheorem{lemma}{Lemma}
-\newtheorem{remark}{Remark}
-\newtheorem{example}{Example}
-\newtheorem{corollary}{Corollary}
-\newtheorem{theorem}{Theorem}
-\newtheorem{property}{Property}
+\newtheorem{definition}{Definition}[section]
+\newtheorem{proposition}{Proposition}[section]
+\newtheorem{lemma}{Lemma}[section]
+\newtheorem{remark}{Remark}[section]
+\newtheorem{example}{Example}[section]
+\newtheorem{corollary}{Corollary}[section]
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{property}{Property}[section]
 
 \begin{document}
 \begin{frontmatter}
@@ -278,7 +278,7 @@ can encode
 %abstractions and applications) 
 %\item 
 In this paper, 
-our \emph{main discovery} is 
+our {main discovery} is 
 that 
 \HOp 
 without
@@ -323,7 +323,8 @@ Using precise encodings we establish strong correspondences between
 below.
 
 
-One main contribution is 
+Our contributions can be divided in two parts. 
+First, we develop 
 an encoding of \HOp into \HO (\secref{subsec:HOpi_to_HO}).  
 Since \HO lacks 
 both name-passing and recursion, this encoding involves two \emph{key challenges}:
@@ -351,18 +352,10 @@ do not carry over to session typed calculi such as \HOp,
 because linear abstractions cannot be copied/duplicated. Hence, the discipline of session types  limits 
 the possibilities for representing infinite behaviours---even simple forms, such as input-guarded replication.
 \end{enumerate}
+\noindent Our encoding overcomes these two obstacles, as we discuss in \secref{sec:overview}.
 
 
-
-
-%MOTIVATION FIRST ENCODING (). \emph{Still to highlight: recursive type required, no recursion, small example.
-
-%--- 
-%\noi
-%We illustrate our approach. % to these challenges.
-Our encoding overcomes these two obstacles, as we discuss in \secref{sec:overview}.
-
-Additional technical contributions include: 
+In the second part, we offer additional technical contributions, which include: 
 (i)~the encodability of \HO into \sessp (\secref{subsec:HOp_to_sessp}); 
 (ii)~extensions of our encodability results to richer settings (\secref{sec:extension});
 (iii)~a non encodability result showing that shared names strictly add expressive power to session calculi (\secref{ss:negative}).
@@ -441,10 +434,10 @@ into \HOp
 % and  in~\cite{KouzapasPY15}.
 } 
 
-This paper is an extended, revised version of the conference paper~\cite{DBLP:conf/esop/KouzapasPY16}, which appeared in the Proceedings of ESOP'16.
+This paper is an extended, revised version of the homonymous conference paper that appeared in the Proceedings of ESOP'16~\cite{DBLP:conf/esop/KouzapasPY16}.
 With respect to~\cite{DBLP:conf/esop/KouzapasPY16}, the current paper 
-provides extended discussions and full technical details. Moreover, it 
-offers a sharper focus on relative expressiveness:
+provides extended discussions, additional examples, and full technical details. 
+Moreover, it offers a sharper focus on relative expressiveness:
 a detailed treatment of higher-order bisimilarity
 (first introduced in~\cite{DBLP:conf/esop/KouzapasPY16}) can now be found in the journal paper~\cite{KouzapasPY17} (which corresponds to the journal version of~\cite{characteristic_bis}).
 
@@ -463,18 +456,17 @@ and
 %Second, it should 
 (b)~address the fact that linearity of session types limits the 
 possibilities for representing infinite behaviour. 
+
 To encode name passing into \HO 
 %to encode name output, 
 we ``pack''
 the name to be sent into an abstraction; 
 upon reception, the receiver ``unpacks'' this object following a precise protocol on a fresh  session:
 %More precisely, our encoding \jpc{of name passing} in \HO is given as:
-\begin{center}
-\begin{tabular}{rcll}
-  $\map{\bout{a}{b} P}$	&$=$&	$\bout{a}{ \abs{z}{\,\binp{z}{x} (\appl{x}{b})} } \map{P}$ \\
-  $\map{\binp{a}{x} Q}$	&$=$&	$\binp{a}{y} \newsp{s}{\appl{y}{s} \Par \bout{\dual{s}}{\abs{x}{\map{Q}}} \inact}$
-\end{tabular}
-\end{center}
+\begin{align*}
+  \map{\bout{a}{b} P}	&= \bout{a}{ \abs{z}{\,\binp{z}{x} (\appl{x}{b})} } \map{P} \\
+  \map{\binp{a}{x} Q}	&=	 \binp{a}{y} \newsp{s}{\appl{y}{s} \Par \bout{\dual{s}}{\abs{x}{\map{Q}}} \inact}
+\end{align*}
 %and as a homomorphism for the other operators.
 Above, 
 %where
@@ -587,12 +579,10 @@ To illustrate this point,
 consider the  following \newjb{alternative} encoding of %$\sessp$ 
 name-passing 
 into $\HO$:\footnote{This encoding was suggested by a reviewer of a previous version of this paper.} %defined as
-\begin{center}
-\begin{tabular}{rcll}
-  $\umap{\binp{a}{x} Q}$	&$=$&	$\bout{a}{\abs{x}{\umap{Q}}} \inact$ \\
-    $\umap{\bout{a}{b} P}$	&$=$&	$\binp{a}{x}( \appl{x}{b} \Par \umap{P})$ 
-\end{tabular}
-\end{center}
+\begin{align*}
+   \umap{\binp{a}{x} Q} & = \bout{a}{\abs{x}{\umap{Q}}} \inact \\
+     \umap{\bout{a}{b} P} 	&= \binp{a}{x}( \appl{x}{b} \Par \umap{P})
+\end{align*}
 %and as a homomorphism for the other operators.
 {Intuitively, 
 the encoding of input takes the initiative by sending an abstraction containing the encoding of its continuation $Q$;
@@ -678,7 +668,7 @@ abstractions $\abs{x}{P}$ (first- and higher-order values, resp.).
 
 Process terms $P, Q, \ldots$ 
 include usual %$\pi$-calculus 
-prefixes for sending/receiving values $V$.
+prefixes for sending and receiving values $V$.
 %Process $\bout{u}{V} P$ denotes the output of value $V$
 %over name $u$, with continuation $P$;
 %process $\binp{u}{x} P$ denotes the input prefix on name $u$ of a value
@@ -722,8 +712,8 @@ If $\fv{P} = \emptyset$, we call $P$ {\em closed}.
 
 
 \paragraph{Operational Semantics}
-The \emph{operational semantics} of \HOp is defined in terms of a reduction relation, 
-denoted $\red$ and 
+The  operational semantics of \HOp is defined in terms of a \emph{reduction relation}, 
+denoted $\red$, whose rules are
 given in 
  \figref{fig:reduction} (top).
  We briefly describe the rules. 
@@ -812,28 +802,23 @@ for a complete account of the typing rules.
 %\subsection{Types}
 %\label{subsec:types}
 %\paragraph{Types.}
-The syntax of types of \HOp follows. We write $\Proc$ to denote the process type.
-\[
-	\begin{array}{rcl}
-%		\text{(value)} &
-		U & \bnfis &	\nonhosyntax{C} \bnfbar \nonpisyntax{L}
-%		\\[1mm]  % \bnfbar \Proc
-		\qquad \quad
-%		\text{(name)} 
-		C  \bnfis		S \bnfbar \chtype{S} \bnfbar \nonpisyntax{\chtype{L}}
-%		\\[1mm]
-		\qquad \quad
-%		\text{(abstr)}
-		L \bnfis		\shot{C} \bnfbar \lhot{C}
-		\\[1mm]
-
-%		\text{(session)} 
-		S & \bnfis &	\btout{U} S \bnfbar \btinp{U} S \bnfbar \btsel{l_i:S_i}_{i \in I}
+\begin{figure}[t!]
+	\begin{align*}
+		U & \bnfis 	\nonhosyntax{C} \bnfbar \nonpisyntax{L}
+		\\
+		C  & \bnfis		S \bnfbar \chtype{S} \bnfbar \nonpisyntax{\chtype{L}}
+\\		
+L & \bnfis		\shot{C} \bnfbar \lhot{C}
+		\\ 
+		S & \bnfis 	\btout{U} S \bnfbar \btinp{U} S \bnfbar \btsel{l_i:S_i}_{i \in I}
 %		\\ 
 %						& \bnfbar & 
 						\bnfbar \btbra{l_i:S_i}_{i \in I} \bnfbar  \trec{t}{S} \bnfbar \vart{t}  \bnfbar \tinact
-	\end{array}
-\]
+	\end{align*}
+	\caption{Syntax of session types for $\HOp$.\label{f:types}}
+\end{figure}
+
+The syntax of types for \HOp is given in \figref{f:types}. We write $\Proc$ to denote the process type.
 Value type $U$ includes
   first-order types $C$ and  higher-order
 types $L$.
@@ -880,6 +865,7 @@ We use the \emph{co-inductive} definition of duality given in \cite{TGC14}.}
 %(see \defref{def:dual} in the Appendix). 
 See~\appref{app:duality} for details.
 
+
 %\smallskip 
 
 %\subsection{Typing System of \HOp}
@@ -916,18 +902,6 @@ only subject to exchange.
 Domains of $\Gamma,
 \Lambda$ and $\Delta$ are assumed pairwise distinct. 
 $\Delta_1\cdot \Delta_2$ is the disjoint union of $\Delta_1$ and $\Delta_2$.  
-We focus on \emph{balanced} session environments: 
-%that contain dual endpoints typed with dual types.
-%The following definition ensures two session endpoints 
-%are dual each other. 
-
-%\smallskip
-
-\begin{definition}[Balanced]\label{d:wtenv}%\rm
-	%Let $\Delta$ be a session environment.
-	We say that a session environment $\Delta$ is {\em balanced} if whenever
-	$s: S_1, \dual{s}: S_2 \in \Delta$ then $S_1 \dualof S_2$.
-\end{definition}
 
 Given the above intuitions for environments, 
 the typing judgements for values $V$ and processes $P$ are self-explanatory.
@@ -990,6 +964,52 @@ the type of the sent/received object
 match the type of the sent/received subject
 ($\chtype{S}$ and $\chtype{L}$, resp.).
 
+\begin{example}
+Recall the session type $S$, given in the introduction:
+$$
+S = \btbra{{up}:\btinp{\lhot{C}}\btout{\mathsf{ok}}\tinact ~ , ~ {down}:\btout{\shot{C}}\btout{\mathsf{ok}}\tinact ~ , ~{quit}:\btout{\mathsf{bye}}\tinact}_{}\,.
+$$
+It is easy to see that, assuming  that $\abs{y}{R}$ is of type $\lhot{{C}}$, 
+ the following process $P_s$
+implements $S$:
+\begin{align*}
+P_s = \bbra{s}{~& up: \binp{s}{x}\news{a} ( \appl{x}{a} \Par \bout{s}{\mathsf{ok}} \inact) 
+\\
+& down: \bout{s}{\abs{y}{R}}\news{a} ( \appl{x}{a} \Par \bout{s}{\mathsf{ok}} \inact) 
+\\
+& quit: \bout{s}{\mathsf{bye}} \inact
+~}
+\end{align*}
+The dual of $S$, denoted $\dual{S}$, is as follows:
+$$
+\dual{S} = \btsel{{up}:\btout{\lhot{C}}\btinp{\mathsf{ok}}\tinact ~ , ~ {down}:\btinp{\shot{C}}\btinp{\mathsf{ok}}\tinact ~ , ~{quit}:\btinp{\mathsf{bye}}\tinact}_{}\,.
+$$
+and so the following processes can be seen as two different implementations of $\dual{S}$:
+$$
+Q_s = \bsel{s}{down}\binp{s}{x}(\appl{x}{b} \Par \binp{s}{n}\inact)
+\qquad
+Q'_s = \bsel{s}{up}\bout{s}{\abs{z}{R'}}\binp{s}{n}\inact
+$$
+\qed
+\end{example}
+
+\noindent We close this section  by stating  type soundness for \HOp, as established in~\cite{KouzapasPY17}; it implies 
+type soundness for \HO, \sessp, and $\CAL^{-\mathsf{sh}}$. 
+We require two auxiliary definitions. First, 
+we focus on \emph{balanced} session environments: 
+%that contain dual endpoints typed with dual types.
+%The following definition ensures two session endpoints 
+%are dual each other. 
+
+%\smallskip
+
+\begin{definition}[Balanced]\label{d:wtenv}%\rm
+	%Let $\Delta$ be a session environment.
+	We say that a session environment $\Delta$ is {\em balanced} if whenever
+	$s: S_1, \dual{s}: S_2 \in \Delta$ then $S_1 \dualof S_2$.
+\end{definition}
+
+Second, we define a notion of reduction for session environments:
 
 \begin{definition}%[Reduction of Session Environments]%\rm
 	\label{def:ses_red}
@@ -1020,10 +1040,10 @@ match the type of the sent/received subject
 
 %The following result %Theorem 7.3 in M\&Y
 %\noi 
-We state  type soundness for \HOp; it implies 
-type soundness for \HO, \sessp, and $\CAL^{-\mathsf{sh}}$. 
 
 %\smallskip
+
+We then have:
 
 \begin{theorem}[Type Soundness~\cite{KouzapasPY17}]\label{t:sr}\rm
 %	\begin{enumerate}[1.]
@@ -1040,6 +1060,7 @@ type soundness for \HO, \sessp, and $\CAL^{-\mathsf{sh}}$.
 			with $\Delta'$ balanced. 
 %	\end{enumerate}
 \end{theorem}
+
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
