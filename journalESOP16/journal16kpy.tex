@@ -109,7 +109,7 @@ more precisely and efficiently than the first-order
 session $\pi$-calculus (\sessp).
 Overall, under the discipline of session types, 
 $\HOp$, $\HO$, and $\sessp$ 
-are equally expressive; \newjb{however},  
+are equally expressive; \newjb{however},  we show that
 $\HOp$ is more tightly related 
 to $\HO$
 than to $\sessp$.
@@ -471,7 +471,7 @@ $\binp{a}{x} P$ denote output and input at~$a$, respectively;
 abstractions and applications are denoted
 $\lambda x.P$ and $(\lambda x.P)a$, respectively. 
 Processes %, respectively;
-$\newsp{s}P$, $P \Par Q$, and $\inact$ represent usual forms of hiding, parallel composition, and inaction. 
+$\newsp{s}P$, $P \Par Q$, and $\inact$ represent usual forms of name restriction/hiding, parallel composition, and inaction. 
 
 In our encoding, 
 %to encode name output, 
@@ -488,17 +488,19 @@ upon reception, the receiver ``unpacks'' this object following a precise protoco
 %Intuitively, the output of a name $b$ along name $a$ is encoded by
 %the output of an abstraction containing $b$; the input of a name is encoded 
 %by the input of an abstraction
-Thus, following a communication on $a$, %our encoding features 
-a (deterministic) reduction between  
+Thus, 
+an abstraction containing the name $b$ is first passed around along $a$.
+Following this communication, %our encoding features 
+a sequence of (deterministic) reductions between  
 $s$ and $\dual{s}$ guarantees that $b$ is properly unpacked by means of abstraction passing
 and appropriate applications.
-Notice that 
+Indeed, 
 %\HO 
 \newjb{the above encoding}
 requires %two 
 \newjb{three}
 extra reduction steps to mimic a single name communication step in \HOp.
-Also, an output action in the source process is translated into an output action in the encoded process (and similarly for input).
+Also, notice that an output action in the source process is translated into an output action in the encoded process (and similarly for input).
 This is key to ensure the preservation of session type operators mentioned above (cf. \defref{def:tp}).
 
 \newj{As hinted at above, 
@@ -614,14 +616,14 @@ the encoding~$\umap{\cdot}$ would simply alter the meaning of the session protoc
 \section{Preliminaries}
 \label{sec:prelim}
 
-We first introduce 
+We introduce 
 the \emph{higher-order session $\pi$-calculus} (\HOp).
-We define 
+We first define 
 syntax, operational semantics, and 
 its sub-calculi (\sessp and \HO).
-A type system and behavioural equivalences are introduced in 
+Then, a type system and behavioural equivalences for \HOp are recalled in 
 \secref{sec:types} and \secref{sec:bt}. 
-Extensions of \HOp 
+\HOp features first-order abstractions and monadic communication; extensions 
 with higher-order abstractions and polyadicity (noted \HOpp and \PHOp, respectively) 
 are discussed in \secref{sec:extension}.
 
@@ -644,7 +646,7 @@ are discussed in \secref{sec:extension}.
 
 \paragraph{Syntax}
 The syntax of \HOp is defined in \figref{fig:syntax}.
-\HOp it is a subcalculus of the language studied 
+\HOp  is a subcalculus of the language studied 
 in~\cite{tlca07}. It is also a variant of the language that we investigated in~\cite{characteristic_bis}, 
 which includes higher-order value applications. 
 
@@ -666,7 +668,7 @@ and recursive variables are denoted with $\varp{X}, \varp{Y} \dots$.
 An abstraction %(or higher-order value) 
 $\abs{x}{P}$ is a process $P$ with name parameter $x$.
 %Symbols $u, v, \dots$ range over identifiers; and  $V, W, \dots$ to denote values. 
-\emph{Values} $V,W$ include 
+\emph{Values} $V,W, \ldots$ include 
 identifiers $u, v, \ldots$ %(first-order values) 
 and 
 abstractions $\abs{x}{P}$ (first- and higher-order values, resp.). 
@@ -727,7 +729,7 @@ given in
 Rule $\orule{App}$ defines  name application.
 Rule $\orule{Pass}$ defines a shared interaction at $n$ 
 (with $\dual{n}=n$) or a session interaction.
-Rule $\orule{Sel}$ is the standard rule for labelled choice/selection.%:
+Rule $\orule{Sel}$ is the standard rule for labelled choice/selection. %:
 %given an index set $I$, 
 %a process selects label $l_j$ on name $n$ over a set of
 %labels $\set{l_i}_{i \in I}$ offered by a branching 
@@ -778,6 +780,7 @@ we define two \emph{subcalculi} of \HOp:
 Let $\CAL \in \{\HOp, \HO, \sessp\}$. We write 
 $\CAL^{-\mathsf{sh}}$ to denote the calculus $\CAL$ without shared names:
 we delete $a,b$ from $n$. 
+Thus, languages in $\CAL^{-\mathsf{sh}}$ feature linear, deterministic behaviour only.
 In \secref{sec:positive}
 we shall demonstrate that 
 $\HOp$, $\HO$, and $\sessp$ have the same expressivity,
@@ -868,9 +871,9 @@ from name type $C$.
 Intuitively, session type duality is  obtained by 
 dualising $!$ by $?$, $?$ by $!$, $\oplus$ by $\&$, and $\&$ by $\oplus$,  
 including the fixed point construction.
-We use the \emph{co-inductive} definition of duality given in \cite{TGC14}.}
+We use the \emph{co-inductive} definition of duality given in \cite{TGC14};}
 %(see \defref{def:dual} in the Appendix). 
-See~\appref{app:duality} for details.
+see~\appref{app:duality} for details.
 
 
 %\smallskip 
@@ -881,16 +884,14 @@ See~\appref{app:duality} for details.
 We consider 
 \newjb{shared, linear, and session}
 \emph{environments}, denoted $\Gamma$, $\Lambda$, and $\Delta$, \newjb{resp.}:
-\[
-	\begin{array}{l}
-		\Gamma  \bnfis  \emptyset \bnfbar \Gamma \cat \varp{x}: \shot{C} \bnfbar \Gamma \cat u: \chtype{S} \bnfbar \Gamma \cat u: \chtype{L} 
+\begin{align*}
+		\Gamma  & \bnfis  \emptyset \bnfbar \Gamma \cat \varp{x}: \shot{C} \bnfbar \Gamma \cat u: \chtype{S} \bnfbar \Gamma \cat u: \chtype{L} 
 		\bnfbar \Gamma \cat \rvar{X}: \Delta
 \\
-		\Lambda \bnfis  \emptyset \bnfbar \Lambda \cat \AT{x}{\lhot{C}}
+		\Lambda & \bnfis  \emptyset \bnfbar \Lambda \cat \AT{x}{\lhot{C}}
 		 \\
-		\Delta   \bnfis   \emptyset \bnfbar \Delta \cat \AT{u}{S}
-	\end{array}
-\]
+		\Delta   & \bnfis   \emptyset \bnfbar \Delta \cat \AT{u}{S}
+\end{align*}
 %Environment 
 $\Gamma$ maps variables and shared names to value types, and recursive 
 variables to session environments; % (see below);  
@@ -971,34 +972,34 @@ the type of the sent/received object
 match the type of the sent/received subject
 ($\chtype{S}$ and $\chtype{L}$, resp.).
 
-\begin{example}
-Recall the session type $S$, given in the introduction:
-$$
-S = \btbra{{up}:\btinp{\lhot{C}}\btout{\mathsf{ok}}\tinact ~ , ~ {down}:\btout{\shot{C}}\btout{\mathsf{ok}}\tinact ~ , ~{quit}:\btout{\mathsf{bye}}\tinact}_{}\,.
-$$
-It is easy to see that, assuming  that $\abs{y}{R}$ is of type $\lhot{{C}}$, 
- the following process $P_s$
-implements $S$:
-\begin{align*}
-P_s = \bbra{s}{~& up: \binp{s}{x}\news{a} ( \appl{x}{a} \Par \bout{s}{\mathsf{ok}} \inact) 
-\\
-& down: \bout{s}{\abs{y}{R}}\news{a} ( \appl{x}{a} \Par \bout{s}{\mathsf{ok}} \inact) 
-\\
-& quit: \bout{s}{\mathsf{bye}} \inact
-~}
-\end{align*}
-The dual of $S$, denoted $\dual{S}$, is as follows:
-$$
-\dual{S} = \btsel{{up}:\btout{\lhot{C}}\btinp{\mathsf{ok}}\tinact ~ , ~ {down}:\btinp{\shot{C}}\btinp{\mathsf{ok}}\tinact ~ , ~{quit}:\btinp{\mathsf{bye}}\tinact}_{}\,.
-$$
-and so the following processes can be seen as two different implementations of $\dual{S}$:
-$$
-Q_s = \bsel{s}{down}\binp{s}{x}(\appl{x}{b} \Par \binp{s}{n}\inact)
-\qquad
-Q'_s = \bsel{s}{up}\bout{s}{\abs{z}{R'}}\binp{s}{n}\inact
-$$
-\qed
-\end{example}
+%\begin{example}
+%Recall the session type $S$, given in the introduction:
+%$$
+%S = \btbra{{up}:\btinp{\lhot{C}}\btout{\mathsf{ok}}\tinact ~ , ~ {down}:\btout{\shot{C}}\btout{\mathsf{ok}}\tinact ~ , ~{quit}:\btout{\mathsf{bye}}\tinact}_{}\,.
+%$$
+%It is easy to see that, assuming  that $\abs{y}{R}$ is of type $\lhot{{C}}$, 
+% the following process $P_s$
+%implements $S$:
+%\begin{align*}
+%P_s = \bbra{s}{~& up: \binp{s}{x}\news{a} ( \appl{x}{a} \Par \bout{s}{\mathsf{ok}} \inact) 
+%\\
+%& down: \bout{s}{\abs{y}{R}}\news{a} ( \appl{x}{a} \Par \bout{s}{\mathsf{ok}} \inact) 
+%\\
+%& quit: \bout{s}{\mathsf{bye}} \inact
+%~}
+%\end{align*}
+%The dual of $S$, denoted $\dual{S}$, is as follows:
+%$$
+%\dual{S} = \btsel{{up}:\btout{\lhot{C}}\btinp{\mathsf{ok}}\tinact ~ , ~ {down}:\btinp{\shot{C}}\btinp{\mathsf{ok}}\tinact ~ , ~{quit}:\btinp{\mathsf{bye}}\tinact}_{}\,.
+%$$
+%and so the following processes can be seen as two different implementations of $\dual{S}$:
+%$$
+%Q_s = \bsel{s}{down}\binp{s}{x}(\appl{x}{b} \Par \binp{s}{n}\inact)
+%\qquad
+%Q'_s = \bsel{s}{up}\bout{s}{\abs{z}{R'}}\binp{s}{n}\inact
+%$$
+%\qed
+%\end{example}
 
 \noindent We close this section  by stating  type soundness for \HOp, as established in~\cite{KouzapasPY17}; it implies 
 type soundness for \HO, \sessp, and $\CAL^{-\mathsf{sh}}$. 
@@ -1121,6 +1122,7 @@ Let $\red^\ast$ denote multi-step reduction as in \defref{def:ses_red}.
 %\noi Next we define  {\em barbs}with respect to types. 
 %\noi 
 As usual, a \emph{barb} $\barb{n}$ is an observable on an output prefix with subject $n$~\cite{MiSa92}.
+Notice that observing output barbs is enough to (indirectly) observe input actions.
 A \emph{weak barb} $\Barb{n}$ is a barb after zero or more reduction steps.
 Typed barbs $\barb{n}$ (resp.\ $\Barb{n}$)
 occur on typed processes $\Gamma; \emptyset; \Delta \proves P \hastype \Proc$.
@@ -1146,7 +1148,7 @@ in the session environment $\Delta$:
 
 %\noi 
 
-To define a congruence relation, we introduce the family $\C$ of contexts:
+To define a congruence relation, we introduce the family $\C$ of process contexts:
 
 \begin{definition}[Context]
 	A context $\C$ is defined as:
@@ -1213,15 +1215,42 @@ and
 %The definition of characteristic bisimilarity 
 Their definition 
 uses a \emph{typed}
-labelled transition system (LTS) informed by session
+labelled transition system (LTS) on processes, informed by session
 types. 
+The interaction of processes with their environment is defined using action labels $\ell$:
+%
+\begin{center}
+	\begin{tabular}{l}
+		$\ell
+			\bnfis  \tau 
+			\bnfbar	\news{\widetilde{m}} \bactout{n}{V}
+			\bnfbar	\bactinp{n}{V} 
+			\bnfbar	\bactsel{n}{l} 
+			\bnfbar	\bactbra{n}{l}$
+	\end{tabular}
+\end{center}
+%
+\noi 
+Label $\tau$ defines internal actions.
+Action
+$\news{\widetilde{m}} \bactout{n}{V}$
+denotes the sending of value $V$
+over channel $n$ with a possible empty set of restricted names
+$\widetilde{m}$ 
+(we may write $\bactout{n}{V}$ when $\widetilde{m}$ is empty).
+Dually, the action for value reception is 
+$\bactinp{n}{V}$.
+Actions for select and branch on
+a label~$l$ are denoted $\bactsel{n}{l}$ and $\bactbra{n}{l}$, respectively.
+We write $\fn{\ell}$ and $\bn{\ell}$ to denote the
+sets of free/bound names in $\ell$, respectively.
 
 %\end{document}
 
 \paragraph{A Typed Labelled Transition System}
-\newjb{Given a label $\ell$ (a visible action or $\tau$),
+\newjb{Given a label $\ell$, % (a visible action or $\tau$),
 we write $\Gamma; \es; \Delta \proves P \hby{\ell} \Delta' \proves P'$ to denote 
-(strong) transitions. % in this LTS. 
+a (strong) transition. % in this LTS. 
 Weak transitions are as expected: we write $\Hby{}$ for the reflexive,
 transitive closure of $\hby{\tau}$,
 $\Hby{\ell}$ for %transitions
@@ -1417,7 +1446,7 @@ $\htrigger{t}{V}$ (cf. \eqref{eqb:0}), $\hwb$ cannot be used to reason about fir
 
 
 \paragraph{An up-to technique}
-Processes that do not use shared names are deterministic. 
+As mentioned above, processes that do not use shared names (e.g., those in languages in $\CAL^{-\mathsf{sh}}$) are deterministic. 
 Internal transitions associated to session interactions or  
 $\beta$-reductions are deterministic.  
 To define an auxiliary proof technique that exploits determinacy we require some auxiliary definitions.
@@ -1459,7 +1488,7 @@ two dual endpoints), while
   $\hby{\btau}$ results from an application. 
  We write  $\horel{\Gamma}{\Delta}{P}{\hby{\dtau}}{\Delta'}{P'}$ to denote
 	 a session transition or a $\beta$-transition.
-	See~\cite{KouzapasPY17} for definitions of $\hby{\btau}$  and $\hby{\stau}$. % rely on an LTS for \HOp;  for details.
+	See~\cite{KouzapasPY17} for formal definitions of $\hby{\btau}$  and $\hby{\stau}$. % rely on an LTS for \HOp;  for details.
  \end{notation}
  
 %The auxiliary definition below allows us to distinguish two kinds of  internal transitions:
@@ -1737,7 +1766,7 @@ and types; these are denoted $\map{\cdot}$ and $\mapt{\cdot}$, respectively: %, 
 
 %\noi 
 Mapping $\mapt{\cdot}$ extends to typing
-environments, e.g., $\mapt{\Delta \cat u:S} = \mapt{\Delta} \cat u:\mapt{S}$.
+environments in the expected way; for instance, $\mapt{\Delta \cat u:S} = \mapt{\Delta} \cat u:\mapt{S}$.
 We introduce syntactic criteria for typed encodings.
 Let $\sigma$ denote a substitution of names for names (a renaming, as usual). Given environments $\Delta$ and $\Gamma$,
 we write $\sigma(\Delta)$ and $\sigma(\Gamma)$ to denote the effect of applying $\sigma$ on the 
@@ -1779,7 +1808,7 @@ Homomorphism wrt parallel (used in, e.g.,~\cite{Palamidessi03,DBLP:conf/lics/Pal
 expresses that encodings should preserve the distributed topology of source processes. This criterion
  is appropriate for both encodability and non encodability results; in our setting, it is
 %it admits an elegant formulation, also 
-induced by rules for typed composition.
+induced by the typing rules for parallel composition.
 Compositionality wrt restriction 
 is also supported by typing and is 
 useful in our encodability results (\secref{sec:positive}).
@@ -1816,10 +1845,10 @@ such that
 $\mapt{\btout{U} S}_u = \btinp{\mapt{U}_u} \mapt{S}_u$ 
 and 
 $\mapt{\btinp{U} S}_u = \btout{\mapt{U}_u} \mapt{S}_u$ (other type operators are translated homomorphically).
-That is,  
-$\mapt{\cdot}_u$  translates the output type operator into an input type operator (and viceversa). 
+Since 
+$\mapt{\cdot}_u$  translates the output type operator into an input type operator (and viceversa), 
 %exchanges (inverts) input and output session type operators. % in \defref{def:tp}.
-Therefore, $\mapt{\cdot}_u$ does not satisfy  type preservation. 
+we conclude that $\mapt{\cdot}_u$ does not satisfy  type preservation. 
 }
 \end{example}
 
@@ -1843,8 +1872,8 @@ if it satisfies the properties below.
 		\item \emph{Type Soundness}:
 	if
 	$\Gamma; \emptyset; \Delta \proves_1 P \hastype \Proc$ then 
-	$\mapt{\Gamma}; \emptyset; \mapt{\Delta} \proves_2 \map{P} \hastype \Proc$,  
-	for any   $P$ in $\CAL_1$.
+	$\mapt{\Gamma}; \emptyset; \mapt{\Delta} \proves_2 \map{P} \hastype \Proc$.
+%	for any   $P$ in $\CAL_1$.
 			%\item \emph{Subject preserving}: if $\subj{\ell} = u$ then $\subj{\mapa{\ell}} =u$.
 
 			\item \emph{Barb Preserving}: if $\Gamma; \Delta \proves_1 P \barb{n}$
@@ -1859,8 +1888,8 @@ $\stytraargi{\Gamma}{\tau}{\Delta}{P}{\Delta'}{P'}{1}{1}$
  (i)~$\wtytraargi{\mapt{\Gamma}}{}{\mapt{\Delta}}{\map{P}}{\mapt{\Delta''}}{Q}{2}{2}$
 			    %(ii)~$\ell_2 = \mapa{\ell_1}$, 
 			    and 
-				(ii)~${\mapt{\Gamma}};{\mapt{\Delta''}}\proves_2 {Q}{\wb_2}
-{\mapt{\Delta'}}\proves_2 {\map{P'}}$.}
+				(ii)~${\mapt{\Gamma}};{\mapt{\Delta'}}\proves_2 {P'}{\,\wb_2\,}
+{\mapt{\Delta''}}\proves_2 {\map{Q}}$.}
 				
 			\item	Soundness:   
 				If  $\wtytraargi{\mapt{\Gamma}}{}{\mapt{\Delta}}{\map{P}}{\mapt{\Delta'}}{Q}{2}{2}$
@@ -1869,7 +1898,7 @@ $\stytraargi{\Gamma}{\tau}{\Delta}{P}{\Delta'}{P'}{1}{1}$
 				%(ii)~$\ell_2 = \mapa{\ell_1}$, 
 				and 
 				(ii)~
-${\mapt{\Gamma}};{\mapt{\Delta''}}\proves_2 {\map{P'}}{\wb_2}
+${\mapt{\Gamma}};{\mapt{\Delta''}}\proves_2 {\map{P'}}{\,\wb_2\,}
 {\mapt{\Delta'}}\proves_2 {Q}$.
 
 		\end{enumerate}
@@ -1885,7 +1914,7 @@ ${\mapt{\Gamma}};{\mapt{\Delta''}}\proves_2 {\map{P'}}{\wb_2}
 %\smallskip 
 
 %\noi 
-Together with type preservation (\defref{def:tp}), type soundness is a distinguishing criterion in our notion of encoding.
+Together with type preservation (\defref{def:tp}), type soundness is a distinguishing encodability criterion.
 % it enables us to focus on encodings which retain the communication structures denoted by session types.
 %The other semantic
 %criteria build upon analogous definitions in the untyped setting, as we explain now. 
@@ -1945,7 +1974,7 @@ stronger encodability results.
 %\qed
 %\end{proof}
 
-We introduce 
+We may now introduce 
 \emph{precise} and \emph{minimal}
  encodings.
 While we state strong positive encodability results % in \secref{sec:positive}, 
@@ -2002,13 +2031,13 @@ The following property will come in handy in \secref{sec:extension}:
 \end{proposition}
 
 \begin{proof}
-TO DO.
+This follows directly from the definitions.
 \end{proof}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\section{Expressiveness Results}
+\section{Expressiveness Results for \HOp, \HO, and \sessp}
 \label{sec:positive}
 %\input{positive}
  We first present two %encodability results:
@@ -2204,7 +2233,7 @@ and
 $\Gamma$, with
 $
 \tmap{\Gamma \cat \varp{X}:\Delta_1}{1}  =  \tmap{\Gamma}{1} \cat z_X:\shot{(S_1,\ldots,S_m,S^*)}
-$
+$, 
 %\[
 %	\begin{array}{l}
 %%	    \mapt{\Delta \cat s: S}^{1} & =  & \mapt{\Delta}^{1} \cat s:\mapt{S}^{1} & \\
@@ -2230,7 +2259,7 @@ recursive session types {were} studied in~\cite{DBLP:journals/corr/abs-1202-2086
 this is the first application in the
 context of higher-order session types.
 %which carries type variable as the last argument.  
-For simplicity,  % of the presentation, %we use the polyadic name abstraction and passing.
+For convenience,  % of the presentation, %we use the polyadic name abstraction and passing.
 we use polyadic name abstractions.
 A precise encoding of polyadicity into \HO is given in~\secref{sec:extension}.
 
@@ -2249,7 +2278,7 @@ iii)~uses the dual endpoint $\dual{s}$ to send the continuation $P$ as an abstra
 Thus, name substitution is achieved via name application.
 As for recursion, to encode $\recp{X}{P}$ we
 first record a mapping from recursive variable $X$ to process variable $z_X$.
-Then, using 
+Then, using the auxiliary mapping
 $\auxmapp{\cdot}{{}}{\sigma}$ in 
 \defref{d:auxmap}, we encode the recursion body $P$ as a name abstraction
 in which free names of $P$ are converted into name variables.
