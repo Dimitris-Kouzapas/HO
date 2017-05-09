@@ -1001,7 +1001,9 @@ match the type of the sent/received subject
 %\qed
 %\end{example}
 
-\noindent We close this section  by stating  type soundness for \HOp, as established in~\cite{KouzapasPY17}; it implies 
+%\noindent 
+
+We close this section  by stating  type soundness for \HOp, as established in~\cite{KouzapasPY17}; it implies 
 type soundness for \HO, \sessp, and $\CAL^{-\mathsf{sh}}$. 
 We require two auxiliary definitions. First, 
 we focus on \emph{balanced} session environments: 
@@ -1692,13 +1694,13 @@ We can finally state:
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-\section{Criteria for Typed Encodings}
+\section{Correctness Criteria for Typed Encodings}
 \label{s:expr}
 %\input{encoding}
 We define the formal notion of \emph{encoding} by 
 extending to a typed setting existing criteria for untyped processes (as in, e.g.,
 \cite{Nestmann00,Palamidessi03,DBLP:conf/lics/PalamidessiSVV06,DBLP:journals/iandc/Gorla10,DBLP:conf/icalp/LanesePSS10,DBLP:journals/tcs/FuL10,DBLP:journals/corr/abs-1208-2750,DBLP:conf/esop/PetersNG13}). 
-We first define a typed calculus parametrised by a syntax, operational semantics, and typing.
+We first define a typed calculus parametrised by a syntax, an operational semantics, and a type system.
 Based on this definition, in  
 \secref{sec:positive} and \secref{sec:extension}
 we define concrete instances of (higher-order) typed calculi.
@@ -1707,10 +1709,10 @@ we define concrete instances of (higher-order) typed calculi.
 
 \begin{definition}[Typed Calculus]\label{d:tcalculus}%\rm
 	A \emph{typed calculus} $\tyl{L}$ is a tuple
-	$\calc{\CAL}{\cal{T}}{\hby{\tau}}{\wb}{\proves}$
+	$\calc{\CAL}{\cal{T}}{\hby{~}}{\wb}{\proves}$
 	where $\CAL$ and $\cal{T}$ are sets of processes and types, 
-	respectively; also, $\hby{\tau}$, $\wb$, and $\proves$ 
-	denote a transition system, a typed equivalence,
+	respectively; also, $\hby{}$, $\wb$, and $\proves$ 
+	denote a transition system (over an underlying set of actions, denoted $\cal{A}$), a typed equivalence,
 	and a typing system for $\CAL$, respectively. 
 \end{definition}
 
@@ -1739,19 +1741,25 @@ we define concrete instances of (higher-order) typed calculi.
 %\end{definition}
 
 %\smallskip 
-
 %\noi 
-As we explain later, we write $\hby{\tau}$ to denote an operational semantics defined in terms of
-$\tau$-transitions (to characterise reductions).
+
+Most elements of the formal notion of typed calculus are self-explanatory. 
+Concerning the operational semantics, we shall assume a notion of transition system in which transitions are labelled with 
+actions from a finite set $\cal{A}$, which contains at least $\tau$. We will often be interested in those $\tau$-transitions, which characterise reductions. 
+We shall write $\hby{\tau}$ to make this choice explicit. Nevertheless, to state more precise forms of operational correspondence, we 
+will sometimes find it convenient to use transitions of 
+the form $\hby{\alpha}$,
+where $\alpha \in \cal{A}$ and $\alpha \neq \tau$ (i.e., visible transitions). 
+
 Our notion of encoding considers mappings on both processes 
 and types; these are denoted $\map{\cdot}$ and $\mapt{\cdot}$, respectively: %, and transition labels: 
 
 \begin{definition}[Typed Encoding]%\rm
 \label{def:tenc}
-        Consider typed calculi
-        $\tyl{L}_1=\!\calc{\CAL_1}{{\cal{T}}_1}{\hby{\tau}_1}{\wb_1}{\proves_1}$
+        Consider two typed calculi
+        $\tyl{L}_1=\!\calc{\CAL_1}{{\cal{T}}_1}{\hby{~}_1}{\wb_1}{\proves_1}$
         and
-        $\tyl{L}_2=\calc{\CAL_2}{{\cal{T}}_2}{\hby{\tau}_2}{\wb_2}{\proves_2}$.
+        $\tyl{L}_2=\calc{\CAL_2}{{\cal{T}}_2}{\hby{~}_2}{\wb_2}{\proves_2}$.
         %Let $\mathcal{A}_{i}$ be the set of labels in $\hby{\ell}_i$ ($i=1,2$).
 	Given mappings $\map{\cdot}: \CAL_1 \to \CAL_2$ and
 	$\mapt{\cdot}: {\cal{T}}_1 \to {\cal{T}}_2$, 
@@ -1759,7 +1767,7 @@ and types; these are denoted $\map{\cdot}$ and $\mapt{\cdot}$, respectively: %, 
 	we write 
 %	$\enco{\map{\cdot}, \mapt{\cdot}, \mapa{\cdot}} : 
 		$\enco{\map{\cdot}, \mapt{\cdot}} : 
-	\tyl{L}_1 \to \tyl{L}_2$ to denote the \emph{typed encoding} of $\tyl{L}_1$ into $\tyl{L}_2$.
+	\tyl{L}_1 \to \tyl{L}_2$ to denote the \emph{typed encoding} of $\tyl{L}_1$ (the \emph{source calculus}) into $\tyl{L}_2$ (the \emph{target  calculus}).
 \end{definition}
 
 %\smallskip 
@@ -1767,7 +1775,12 @@ and types; these are denoted $\map{\cdot}$ and $\mapt{\cdot}$, respectively: %, 
 %\noi 
 Mapping $\mapt{\cdot}$ extends to typing
 environments in the expected way; for instance, $\mapt{\Delta \cat u:S} = \mapt{\Delta} \cat u:\mapt{S}$.
-We introduce syntactic criteria for typed encodings.
+When considering forms of operational correspondence with visible actions, 
+our notion of typed encoding shall include mappings $\map{\cdot}$ and $\mapt{\cdot}$, but also a
+a  mapping  $\mapa{\cdot}:\mathcal{A}_1 \to \mathcal{A}_2$ connecting the sets of actions in source and target typed calculi.
+
+
+We now introduce syntactic criteria for typed encodings.
 Let $\sigma$ denote a substitution of names for names (a renaming, as usual). Given environments $\Delta$ and $\Gamma$,
 we write $\sigma(\Delta)$ and $\sigma(\Gamma)$ to denote the effect of applying $\sigma$ on the 
 domains of $\Delta$ and $\Gamma$
@@ -2369,7 +2382,7 @@ is type preserving.
 \end{proposition}}
 
 \begin{proof}
-By induction on theinference of $\Gamma; \emptyset; \Delta \proves P \hastype \Proc$.
+By induction on the inference of $\Gamma; \emptyset; \Delta \proves P \hastype \Proc$.
 See \propref{app:prop:typepres_HOp_to_HO} in \appref{app:enc_HOp_to_HO}.
 \end{proof}
 
