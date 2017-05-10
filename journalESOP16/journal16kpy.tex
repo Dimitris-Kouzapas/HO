@@ -24,6 +24,10 @@
 \usepackage[margin=1.25in]{geometry}
 \allowdisplaybreaks
 
+\usepackage{float}
+\floatstyle{ruled}
+\restylefloat{figure}
+
 %\usepackage{mathptmx}
 %\usepackage{mathrsfs}
 \usepackage{comment}
@@ -713,9 +717,9 @@ name restriction $\news{n} P$ are standard.
 Session name restriction $\news{s} P$ simultaneously binds endpoints $s$ and $\dual{s}$ in $P$.
 %A well-formed process relies on assumptions for
 %guarded recursive processes.
-Functions $\fv{P}$ and $\fn{P}$ denote the sets of free 
+Functions $\fv{P}$, $\fn{P}$, and $\fs{P}$ denote, respectively, the sets of free 
 %\jpc{recursion}
-variables and names.
+variables, names, and session names in $P$, and are defined as expected.
 We assume $V$ in $\bout{u}{V}{P}$ does not include free recursive 
 variables $\rvar{X}$.
 If $\fv{P} = \emptyset$, we call $P$ {\em closed}.
@@ -1901,7 +1905,7 @@ we define concrete instances of (higher-order) typed calculi.
 
 Most elements of the formal notion of typed calculus are self-explanatory. 
 Concerning the operational semantics, we shall assume a notion of transition system in which transitions are labelled with 
-actions from a finite set $\cal{A}$, which contains at least the unobservable action $\tau$. 
+elements from a finite set of actions $\cal{A}$, which contains at least the unobservable action $\tau$. 
 We will often be interested in $\tau$-transitions, denoted $\hby{\tau}$, which characterise reductions. 
 Nevertheless, to state more precise forms of operational correspondence, we 
 will sometimes find it convenient to use transitions of 
@@ -1935,14 +1939,14 @@ environments in the expected way; for instance, $\mapt{\Delta \cat u:S} = \mapt{
 When considering forms of operational correspondence with visible actions, 
 our notion of typed encoding shall include mappings $\map{\cdot}$ and $\mapt{\cdot}$, but also
 a  mapping  $\mapa{\cdot}:\mathcal{A}_1 \to \mathcal{A}_2$ 
-describing how the actions in the source calculus are mapped in the target typed calculus.
+describing how visible actions in the source calculus $\tyl{L}_1$ are mapped in the target typed calculus $\tyl{L}_2$.
 
 
 We now introduce syntactic criteria for typed encodings.
 Let $\sigma$ denote a substitution of names for names (a renaming, as usual). Given environments $\Delta$ and $\Gamma$,
 we write $\sigma(\Delta)$ and $\sigma(\Gamma)$ to denote the effect of applying $\sigma$ on the 
 domains of $\Delta$ and $\Gamma$.
-In our concrete case,  $\sigma(\Gamma)$ clearly concerns only shared names in $\Gamma$: process and recursive variables in $\Gamma$ are not affected by $\sigma$. 
+In the case of \HOp and its variants,  $\sigma(\Gamma)$ clearly concerns only shared names in $\Gamma$: process and recursive variables in $\Gamma$ are not affected by $\sigma$. 
 
 %\smallskip 
 
@@ -1982,7 +1986,7 @@ expresses that encodings should preserve the distributed topology of source proc
 induced by the typing rules for parallel composition.
 Compositionality wrt restriction 
 is also supported by typing and is 
-useful in our encodability results (\secref{sec:positive}).
+useful in our encodability results~(\secref{sec:positive}).
 The name invariance criterion follows \cite{DBLP:journals/iandc/Gorla10,DBLP:conf/icalp/LanesePSS10}. 
 
 \newj{We now state \emph{type preservation}, a static criterion on the mapping 
@@ -1995,7 +1999,7 @@ always translated into itself.
 The source and target calculi that we consider here share
 five (session) type operators: input, output, recursion (binary operators); selection and 
 branching ($n$-ary operators). 
-Type preservation is key to retain the meaning of structured protocols:
+As such, type preservation is key to retain the meaning of structured protocols:
 as session types operators abstract communication behaviour,
 type preserving encodings help us maintain behaviour %in maintaining behaviour%those abstractions
 across translations.}
@@ -2015,9 +2019,12 @@ Following the discussion in \secref{sec:overview}, let
 $\mapt{\cdot}_u$ 
 be a mapping on session types 
 such that 
-$\mapt{\btout{U} S}_u = \btinp{\mapt{U}_u} \mapt{S}_u$ 
-and 
-$\mapt{\btinp{U} S}_u = \btout{\mapt{U}_u} \mapt{S}_u$ (other type operators are translated homomorphically).
+\begin{align*}
+\mapt{\btout{U} S}_u  = & \btinp{\mapt{U}_u} \mapt{S}_u
+\\
+\mapt{\btinp{U} S}_u   = &\btout{\mapt{U}_u} \mapt{S}_u 
+\end{align*}
+and other type operators are translated homomorphically.
 Since 
 $\mapt{\cdot}_u$  translates the output type operator into an input type operator (and viceversa), 
 %exchanges (inverts) input and output session type operators. % in \defref{def:tp}.
@@ -2776,8 +2783,9 @@ By transition induction. See \propref{app:prop:op_corr_HOp_to_HO} in \appref{app
 \end{proof}
 
 %\noi 
-Observe how we can explicitly distinguish the role of finite, deterministic reductions 
-($\hby{\stau}$ and $\hby{\btau}$, defined in \notref{not:dettrans}) in both soundness and completeness statements.
+In the above proposition, it is worth
+observing how we can explicitly distinguish the role of finite, deterministic reductions 
+($\hby{\stau}$ and $\hby{\btau}$, cf. \notref{not:dettrans}) in both soundness and completeness statements.
 
 %Using operational correspondence, we can show \emph{full abstraction}:
 \newj{The typed operational correspondence given above is an important component in the 
@@ -2821,8 +2829,9 @@ the non trivial issue is encoding higher-order communication, which is present i
 $\sessp$.}
 We closely follow Sangiorgi's encoding~\cite{San92,SaWabook}, which represents 
 %Intuitively, such an encoding  represents 
-the exchange of a process with the exchange of a fresh \emph{trigger name}. 
-Trigger names may then be used to activate copies of the process, which becomes a persistent resource represented by an input-guarded replication.
+the exchange of a process/abstraction by passing around a fresh \emph{trigger name}. 
+Trigger names may then be used to activate copies of the abstraction, which becomes a persistent resource represented by an input-guarded replication.
+
 %Consider the following (naive) adaptation of \cite{San92,SaWabook} 
 %in which session names are used are triggers and 
 %exchanged processes would be have to used exactly once:
@@ -2851,15 +2860,53 @@ Trigger names may then be used to activate copies of the process, which becomes 
 %%
 %The above process is untypable since processes $(\bout{x}{s_1} \inact$ and $\bout{x}{s_2} \inact)$
 %cannot be put in parallel because they do not have disjoint session environments.
-We cast this strategy in the setting of session-typed communications. 
+
+The process mapping $\pmap{\cdot}{2}$, which we now informally discuss,
+casts this strategy in the setting of session-typed communications. 
 In the presence of session names (which are linear  and cannot be replicated),
 %The correct 
 our
 approach %would be to 
  uses replicated names
 as triggers for shared resources and non-replicated names
-for linear resources (cf. $\pmap{\bout{u}{\abs{x}{Q}} P}{2}$).
+for linear resources. The encoding of abstraction sending therefore distinguishes two cases:
+$$
+	\pmap{\bout{u}{\abs{x}{Q}} P}{2}  \defeq  
+	\begin{cases}
+		\newsp{a}{\bout{u}{a} (\pmap{P}{2} \Par \repl{} \binp{a}{y} \binp{y}{x} \pmap{Q}{2})\,}\quad
+		& \text{if $\fs{Q} = \emptyset$}
+		\\
+		\newsp{a}{\bout{u}{a} (\pmap{P}{2} \Par \binp{a}{y} \binp{y}{x} \pmap{Q}{2})\,}\quad
+		& \text{otherwise} %\dk{Q \textrm{ linear}} \\
+	\end{cases}
+	$$
+	where  $\repl{} P$ stands for $\recp{X}{(P \Par \rvar{X})}$.
+	In the first case, if the abstraction body does not contain (linear) session names then it can be safely 
+	represented as a persistent server accessible via a (fresh) trigger name $a$, which is sent in place of the abstraction. The second case covers the case in which the abstraction to be passed around 
+	is linear: the server should be invoked exactly once, and cannot be persistent.
+	In this scheme, the encoding of abstraction reception simply expects the trigger name $a$:
+   $$
+   \pmap{\binp{u}{x} P}{2} \defeq  \binp{u}{x} \pmap{P}{2}
+   $$
+	The mechanism for representing abstraction passing with name passing is completed in the encoding of name application. There are two cases:
+	\begin{align*}
+		\pmap{\appl{x}{u}}{2} &\defeq \newsp{s}{\bout{x}{s} \bout{\dual{s}}{u} \inact}
+	\\
+	\pmap{\appl{(\abs{x}{P})}{u}}{2} & \defeq  %\newsp{s}{\bout{a}{s} \bout{\dual{s}}{u} \inact} \\
+	\newsp{s}{\binp{s}{x} \pmap{P}{2} \Par \bout{\dual{s}}{u} \inact}
+\end{align*}
+Thus,   in both cases we first establish a fresh session $s$   with the server representing the abstraction body;
+the name to be applied ($u$) is then passed around using $s$.
+%(cf. $\pmap{\bout{u}{\abs{x}{Q}} P}{2}$).
 %as triggers instead of session names, when dealing with shared abstractions. 
+%\noi 
+%Notice that $\mapa{\bactinp{n}{\abs{ x}{P}} }^2$ involves a fresh trigger name (linear or shared),  which denotes the location of $\pmap{P}{2}$. 
+%(a $\sessp$ process).
+Observe how %$\pmap{\appl{(\abs{x}{P})}{u}}{2}$ 
+this encoding
+naturally induces the name substitution expected from a name application.
+We may now define:
+
 
 %\smallskip 
 
@@ -2881,11 +2928,8 @@ in \figref{f:enc:ho_to_sessp}.
 
 %\smallskip 
 \input{figures/HOp_to_pi}
-%\noi 
-%Notice that $\mapa{\bactinp{n}{\abs{ x}{P}} }^2$ involves a fresh trigger name (linear or shared),  which denotes the location of $\pmap{P}{2}$. 
-%(a $\sessp$ process).
-Observe how $\pmap{\appl{(\abs{x}{P})}{u}}{2}$ naturally induces a name substitution.
-We describe key properties of this encoding. First, type preservation and operational correspondence:
+
+We describe key properties of this encoding. First, type preservation and operational correspondence, which requires a mapping on action labels.
 
 \begin{proposition}[\HOp into \sessp: Type Preservation]
 \label{prop:typepres_HOp_to_p}
@@ -2900,24 +2944,22 @@ is type preserving.
 	 %\qed
 \end{proof}
 
-Before we prove operational correspondence we
-define mapping from $\mapa{\cdot}^{2}: \mathcal{A} \to \mathcal{A}$
-where $\mathcal{A}$ is the set of labels of the relation
-$\hby{\ell}$:
-\begin{definition}[$\mapa{\cdot}^{2}: \mathcal{A} \to \mathcal{A}$]\rm
-	Let $\mathcal{A}$ is the set of labels of the relation
-	$\hby{\ell}$ then we define:
+%To state operational correspondence we
+%define a mapping on action labels:
+%from $\mapa{\cdot}^{2}: \mathcal{A} \to \mathcal{A}$ 
+%where $\mathcal{A}$ is the set of labels of the relation $\hby{\ell}$:
+\begin{definition}\rm
+The mapping on actions $\mapa{\cdot}^{2}: \mathcal{A}_{\HOp} \to \mathcal{A}_{\sessp}$ is defined as follows:
 	\begin{align*}
 		\mapa{(\nu \tilde{m})\bactout{n}{\abs{ x}{P}} }^{2} & \defeq \news{m} \bactout{n}{m}
-		&
+		\\
 		\mapa{\bactinp{n}{\abs{ x}{P}} }^{2} & \defeq \bactinp{n}{m} \quad \quad m \text{ fresh}
 	\end{align*}
-	and homomorphic for all other cases of $\ell \in \mathcal{A}$.
+	and as an homomorphism for other actions $\ell \in \mathcal{A}_{\HOp}$.
 \end{definition}
 
-We now state and prove a detailed and extended
-version of the operational correspondence
-in \defref{app:def:opc_strong}.
+We now state operational correspondence, covering both internal and visible actions:
+%in \defref{app:def:opc_strong}.
 
 \begin{proposition}[Operational Correspondence, \HOp into \sessp]\myrm
 	\label{prop:op_corr_HOp_to_p}
@@ -3075,13 +3117,27 @@ in \defref{app:def:opc_strong}.
 	\end{enumerate}
 \end{proposition}
 
-
 \begin{proof}
-	\noi The proof is done by transition induction.
+	\noi The proof is by transition induction.
 	See \propref{app:prop:op_corr_HOp_to_p} in 
 	\appref{app:enc:HOp_to_sessp}.
 	 %\qed
 \end{proof}
+
+Some comments on the completeness properties given by \propref{prop:op_corr_HOp_to_p} are in order. Items 1(a), 1(b), and 1(e) describe the way in which 
+the encoding mimicks source visible transitions (output, input, and labelled choice/selection, respectively). 
+As discussed above, the encoding of output 
+sets up a potentially persistent server to represent the body of the abstraction being exchanged. 
+The statement in 1(a) formalises the fact that 
+after an output transition in the source process this server has not been yet invoked/used on the target side, and so it appears as a
+residual context ($\repl{} \binp{a}{y} \binp{y}{x} \pmap{Q}{2}$ or $\binp{s}{y} \binp{y}{x} \pmap{Q}{2}$)
+in parallel to the encoding of the continuation of the output ($\pmap{P'}{2}$).
+Similarly, the statement in 1(b) formalises the fact that after an input transition the resulting process $R$ should be 
+placed in an appropriate context containing the server representing the abstraction body. 
+Together, $R$ and its server are behaviorally equivalent to $\pmap{P'}{2}$.
+Items 1(c) and 1(d) state correspondences for internal actions, in the sense of \defref{def:ep}.
+In particular, the first two sub-items in 1(c) describe the way in which a source reduction due to abstraction passing is matched: in our encoding
+this is mimicked by exchanging the trigger names; the third sub-item covers other possibilities for source reductions. 
 
 %\begin{proposition}[\HOp into \sessp: Operational Correspondence - Excerpt]%\myrm
 %	\label{prop:op_corr_HOp_to_p}
@@ -3231,10 +3287,11 @@ We first contrast the way in which
 (b)~the encoding from \HOp to \sessp (\secref{subsec:HOp_to_sessp}) translates processes with abstraction passing.
 %\end{enumerate}
 Consider the \HOp processes:
-$$
-P_1  =  \bout{s}{a} \inact \Par \binp{\dual{s}}{x} (\bout{x}{s_1} \inact \Par \dots \Par \bout{x}{s_n} \inact) \qquad
-P_2  =  \bout{s}{\abs{x}{P}} \inact \Par \binp{\dual{s}}{x} (\appl{x}{s_1} \Par \dots \Par \appl{x}{s_n})
-$$
+\begin{align*}
+P_1 & =  \bout{s}{a} \inact \Par \binp{\dual{s}}{x} (\bout{x}{s_1} \inact \Par \dots \Par \bout{x}{s_n} \inact) 
+\\
+P_2 & =  \bout{s}{\abs{x}{P}} \inact \Par \binp{\dual{s}}{x} (\appl{x}{s_1} \Par \dots \Par \appl{x}{s_n})
+\end{align*}
 
 %\begin{eqnarray*}
 %P_1 & = & \bout{s}{a} \inact \Par \binp{\dual{s}}{x} (\bout{x}{s_1} \inact \Par \dots \Par \bout{x}{s_n} \inact) \\
@@ -3242,7 +3299,9 @@ $$
 %\end{eqnarray*}
 %\noi 
  $P_1$ features \emph{pure} name passing (no abstraction-passing), whereas 
-$P_2$ involves \emph{pure} abstraction passing (no name passing). In both cases, 
+$P_2$ involves \emph{pure} abstraction passing (no name passing). Intuitively, 
+$P_1$ and $P_2$ have a similar purpose:
+in both cases, 
 the intended communication on $s$ leads to $n$ usages of the communication object (name $a$ in $P_1$, abstraction $\abs{x}{P}$ in $P_2$).
 Consider now the reduction steps from $P_1$ and $P_2$:
 \begin{eqnarray*}
@@ -3251,7 +3310,7 @@ P_2 & \hby{\tau}& \appl{(\abs{x}{P})}{s_1} \Par \dots \Par \appl{(\abs{x}{P})}{s
 \underbrace{\hby{\btau}\hby{\btau} \cdots \hby{\btau}}_{n} 
 %\hby{}}^{n}
 %\stackrel{\btau}{\longmapsto^n}
-\quad P \subst{s_1}{x} \Par \dots \Par P \subst{s_1}{x} 
+\quad P \subst{s_1}{x} \Par \dots \Par P \subst{s_n}{x} 
 \end{eqnarray*}
 
 %Let reduction on \sessp process:
@@ -3273,7 +3332,8 @@ P_2 & \hby{\tau}& \appl{(\abs{x}{P})}{s_1} \Par \dots \Par \appl{(\abs{x}{P})}{s
 %reduce on a message passing action, with the
 %message being substituted $n$ times on the receing side.
 %Both $P_1$ and $P_2$ are \HOp processes.
-By considering the encoding of $P_1$ into \HO   
+We encode $P_1$ into \HO and $P_2$ into \sessp and contrast the results. 
+First, by considering the encoding of $P_1$ into \HO  (following \figref{f:enc:hopi_to_ho})
 we obtain:
 \begin{eqnarray*}
 \map{P_1}^{1}_f & = &  	\bout{s}{\abs{z}{\binp{z}{y} \appl{y}{a}}} \inact \Par \\
@@ -3288,7 +3348,7 @@ we obtain:
 %	& \hby{\btau} & 
 	\bout{a}{\abs{z}{\binp{z}{y} \appl{y}{s_1}}} \inact \Par \dots \Par \bout{a}{\abs{z}{\binp{z}{y} \appl{y}{s_n}}} \inact
 \end{eqnarray*}
-Now, we encode $P_2$ into \sessp:
+Now, we encode $P_2$ into \sessp (following \figref{f:enc:ho_to_sessp}):
 \begin{eqnarray*}
 \pmap{P_2}{2} & = & 	\newsp{b}{\bout{s}{b} \inact \Par \repl \binp{b}{y} \binp{y}{x} P} \Par \\
 & & \qquad \qquad \binp{\dual{s}}{x} (\newsp{s}{\bout{x}{s} \bout{\dual{s}}{s_1} \inact} \Par \dots \Par \newsp{s}{\bout{x}{s} \bout{\dual{s}}{s_n}\inact})
@@ -3314,20 +3374,21 @@ The use of $\beta$-transitions guarantees local synchronizations, which are argu
 
 It is useful to move our comparison 
 to a purely linear setting. % and to see what occurs. 
-Consider processes:
+Consider processes $Q_1$ and $Q_2$:
 %In the case of linear values we have:
-\begin{eqnarray*}
-	Q_1  =  \bout{s'}{s} \inact \Par \binp{\dual{s'}}{x} \bout{x}{a} \inact
+\begin{align*}
+	Q_1  & =  \bout{s'}{s} \inact \Par \binp{\dual{s'}}{x} \bout{x}{a} \inact
 	\hby{\tau}
-	\bout{s}{a} \inact \quad~~
-	Q_2  =  \bout{s}{\abs{x}{P}} \inact \Par \binp{\dual{s}}{x} \appl{x}{a}
+	\bout{s}{a} \inact 
+	\\
+	Q_2 & =  \bout{s}{\abs{x}{P}} \inact \Par \binp{\dual{s}}{x} \appl{x}{a}
 	\hby{\tau}
 %	\appl{(\abs{x}{P})}{a}
 	\hby{\tau}
 	P \subst{a}{x}
-\end{eqnarray*}
-$Q_1$ is a \sessp process; $Q_2$ is an \HO processs.
-If we consider their encodings into \HO and \sessp, respectively,
+\end{align*}
+$Q_1$ is a \sessp process and $Q_2$ is an \HO processs.
+If we consider the encoding of $Q_1$ into \HO and of $Q_2$ into \sessp 
 we obtain:
 \begin{eqnarray*}
 	\map{Q_1}_f^{1} & = & \bout{s'}{\abs{z}{\binp{z}{y} \appl{y}{s}}} \inact \Par \binp{\dual{s'}}{x} \newsp{t}{\appl{x}{t} \Par \bout{\dual{t}}{\abs{x}{\bout{x}{\abs{z}{\binp{z}{y} \appl{y}{a}}} \inact}} \inact}\\
@@ -3353,10 +3414,18 @@ we obtain:
 	P\subst{a}{x}
 \end{eqnarray*}
 %\noi 
-In this case, the encoding $\pmap{\cdot}{2}$ is more efficient, as it induces less reduction steps.
+In this case, the encoding $\pmap{\cdot}{2}$ is more efficient: it induces less reduction steps.
 Therefore, considering a fragment of \HOp without shared communications (linearity only)
-has consequences in terms of reduction steps. Notice that we prove that linear communications do 
-not suffice to encode shared communications (\secref{ss:negative}).
+has consequences in terms of reduction steps. 
+These apparent benefits of encoding  $\pmap{\cdot}{2}$ over 
+encoding  $\pmap{\cdot}{1}$ in the presence of linearity should, however, be considered in a broader setting, for 
+in \secref{ss:negative} we prove that linear resources do 
+not suffice to encode shared communications.
+Therefore, in the general case featuring linear and shared communication not only the benefits of  $\pmap{\cdot}{2}$ over  $\pmap{\cdot}{1}$ could not be obtained,
+but the drawbacks mentioned in the comparison between $\pmap{P_1}{1}$ and $\pmap{P_2}{2}$ (i.e., the garbage processes 
+generated by $\pmap{\cdot}{2}$) 
+could well be more prominent. This observation may be used to informally argue that $\pmap{\cdot}{1}$ is ``better than'' $\pmap{\cdot}{2}$ (or, alternatively, that \HOp is closer to \HO than to \sessp);
+next, we explore a formal argument to substantiate this claim.
 
 \paragraph{Formal Comparison: Labelled Transition Correspondence}
 %In addition to preciseness we can develop one more encodability
@@ -3364,22 +3433,22 @@ not suffice to encode shared communications (\secref{ss:negative}).
 %the correspondence of the labelled transition reduction
 %system. As we will show such a correspondence does not
 %hold for the \HOp to \sessp translation.
-We now formally establish differences between $\map{\cdot}_f^1$ and $\pmap{\cdot}{2}$.
-To this end, 
+To formally  distiguish between $\map{\cdot}_f^1$ and $\pmap{\cdot}{2}$
 we introduce an extra encodability criterion: a form of operational correspondence 
 for \emph{visible actions}. 
-Below we write $\ell_1, \ell_2$ to denote  
-actions different from $\tau$
-and  $\hby{\ell}$ to denote an LTS.
+As already motivated above, 
+we write $\ell_1, \ell_2$ to denote  
+actions different from $\tau$,
+and  $\hby{\ell}$ (resp. $\Hby{\ell}$) to denote a (weak) visible transition;
 %with both visible and observable actions, denoted. % and $\hby{}_2$.
-As actions from different calculi may be different, we also consider a mapping 
-on action labels, denoted $\mapa{\cdot}$: 
+recall that $\mapa{\cdot}$ stands for a mapping 
+on action labels.
 
 \begin{definition}[Labelled Correspondence / Tight Encodings]%\rm
 \label{def:lopco}
        Consider typed calculi $\tyl{L}_1$ and  $\tyl{L}_2$, defined as 
-        $\tyl{L}_1=\calc{\CAL_1}{{\cal{T}}_1}{\hby{{\ell_1}}_1}{\wb_1}{\proves_1}$
-       and $\tyl{L}_2=\calc{\CAL_2}{{\cal{T}}_2}{\hby{{\ell_2}}_2}{\wb_2}{\proves_2}$.
+        $\tyl{L}_1=\calc{\CAL_1}{{\cal{T}}_1}{\hby{{~}}_1}{\wb_1}{\proves_1}$
+       and $\tyl{L}_2=\calc{\CAL_2}{{\cal{T}}_2}{\hby{{~}}_2}{\wb_2}{\proves_2}$.
 %       ($i=1,2$) be typed calculi. 
 The encoding $\enco{\map{\cdot}, \mapt{\cdot}}: \tyl{L}_1 \to \tyl{L}_2$ satisfies
 \emph{labelled operational correspondence}
@@ -3405,21 +3474,23 @@ which is precise (\defref{def:goodenc}) and that also satisfies
 labelled operational correspondence as above.
 \end{definition}
 
+This way, 
+the notion of labelled correspondence complements/generalizes the notion of operational soundness and completeness 
+given in \defref{def:ep}, which restricts to $\tau$-labelled transitions.
 We may formally state that 
 \HOp and \HO are more closely related than \HOp and~\sessp:
 \begin{theorem}[\HO Tightly Encodes \HOp]\label{t:tight}
 While the encoding of \HOp into \HO (\defref{d:enc:hopitoho}) is tight, the encoding of \HOp into \sessp (\defref{d:enc:hopitopi}) is not tight.
 \end{theorem}
 
-\begin{proof}[Sketch]
-Recall that forms of labeled operational correspondence for each encoding have been
-stated in 
-\propref{prop:op_corr_HOp_to_HO}
-and 
-\propref{prop:op_corr_HOp_to_p}.
-Now, to substantiate the above claim, we show that the encoding $\map{\cdot}^1_f$ enjoys 
+\begin{proof}[Proof (Sketch)]
+The proof proceeds by showing that the encoding $\map{\cdot}^1_f$ enjoys 
 labelled operational correspondence, whereas $\pmap{\cdot}{2}$ does not. 
-%The analog of \propref{prop:lts_corr_HOp_to_HO} does not hold for the encoding of \HOp into \sessp.
+Recall that a labeled operational correspondence for  $\pmap{\cdot}{1}$  has been
+already 
+stated in 
+\propref{prop:op_corr_HOp_to_HO}.
+The analog of \propref{prop:op_corr_HOp_to_HO} does not hold for the encoding  $\pmap{\cdot}{1}$  of \HOp into \sessp.
 Consider the \HOp process:
 \[
 	\Gamma; \es; \Delta \proves \bout{s}{\abs{x}{P}} \inact \hastype \Proc \hby{\bactout{s}{\abs{x} P}} \es \proves \inact \not \hby{}
