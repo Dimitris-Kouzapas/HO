@@ -36,7 +36,8 @@
 
 \usepackage{mathpartir}
 
-%\usepackage{tikz}	% for drawing figures
+\usepackage{tikz}	% for drawing figures
+\usetikzlibrary{calc}
 
 \usepackage{caption}	% for subfigures
 \usepackage{subcaption}	% for subfigures
@@ -50,6 +51,14 @@
 \newtheorem{corollary}{Corollary}[section]
 \newtheorem{theorem}{Theorem}[section]
 \newtheorem{property}{Property}[section]
+
+
+\newcommand{\rtype}{\mathsf{room}}
+\newcommand{\Quote}{\mathsf{quote}}
+\newcommand{\accept}{\mathsf{accept}}
+\newcommand{\reject}{\mathsf{reject}}
+\newcommand{\creditc}{\mathsf{credit}}
+\newcommand{\Client}{\mathsf{Client}}
 
 \begin{document}
 \begin{frontmatter}
@@ -1073,6 +1082,7 @@ We then have:
 
 
 
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -1693,13 +1703,159 @@ We can finally state:
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Example (Tentative)}
+We recall the case study that we gave in our previous paper.
+
+The scenario involves a $\Client$ process that wants to book
+a hotel room. % for her holidays. % in a remote island
+%The Client 
+$\Client$
+narrows the choice down to two hotels, and requires 
+ a quote from the two in order to
+decide. The round-trip time (RTT) required for
+taking quotes from the two hotels in not optimal, % (cf.~\cite{MostrousY15}),
+so the client sends mobile processes to both hotels
+to automatically negotiate and book a room. 
+
+We now present two \HOp implementations of this scenario.
+For convenience, we write $\If e\ \Then (P_1\ \Else \ P_2)$ 
+to denote a conditional process that executes $P_1$ or $P_2$ depending on boolean expression $e$ (encodable using labelled choice).
+The \emph{first implementation} is  as follows:
+%
+%\[
+	\begin{eqnarray*}%{rcl}
+		 \Client_1   & \defeq  &  \newsp{h_1, h_2}{\bout{s_1}{\abs{x}{P_{xy} \subst{h_1}{y}}} \bout{s_2}{\abs{x}{P_{xy} \subst{h_2}{y}}} \inact \Par  \\
+		& & 
+		\qquad \qquad\binp{\dual{h_1}}{x} \binp{\dual{h_2}}{y}  \If x \leq y\   \Then\\
+		& & \qquad\qquad \qquad \qquad (\bsel{\dual{h_1}}{\accept} \bsel{\dual{h_2}}{\reject} \inact \ \Else \ \bsel{\dual{h_1}}{\reject} \bsel{\dual{h_2}}{\accept} \inact )
+		}
+		\\
+				 P_{xy}    & \defeq &    \bout{x}{\rtype} \binp{x}{\Quote} \bout{y}{\Quote}
+		y \triangleright \left\{
+				\begin{array}{l}
+					\accept: \bsel{x}{\accept} \bout{x}{\creditc} \inact~,\\
+					\reject: \bsel{x}{\reject} \inact
+				\end{array}
+				\right\}
+	\end{eqnarray*}
+%\]
+%
+Process $\Client_1$ sends two abstractions with body $P_{xy}$, one to each hotel, 
+		using sessions $s_1$ and $s_2$.
+		That is, $P_{xy}$ is the mobile code with free names $x, y$:
+	while
+		name $x$ is meant to be instantiated by the hotel as the negotiating
+		endpoint, name $y$ is used to interact with $\Client_1$.	
+		Intuitively, process $P_{xy}$:
+		\begin{enumerate}[(i)]
+		 \item sends the room requirements to the hotel;
+		\item  receives a quote from the hotel;
+		\item  sends the quote to  $\Client_1$;
+		\item expects a choice from   $\Client_1$ whether to accept or reject the offer;
+		\item if the choice is $\accept$ then it informs the hotel and performs the booking;
+		otherwise, if the choice is $\reject$ then it informs the hotel and ends the session.
+		\end{enumerate}
+				$\Client_1$ instantiates two copies of  $P_{xy}$ as abstractions
+		on session $x$. It uses two
+		fresh endpoints $h_1, h_2$ to substitute channel $y$
+		in $P_{xy}$. This enables communication with the mobile code(s).
+		In fact, 
+		$\Client_1$ uses the dual endpoints $\dual{h_1}$ and $\dual{h_2}$
+		to receive the negotiation
+		result from the two remote instances of $P$ and then inform the two
+		processes for the final booking decision.
+%Notice that	the above implementation does not affect the time needed for the whole protocol to execute, since the two remote processes are used to send/receive data to $\Client_1$.
+
+We present now a \emph{second  implementation}
+%of the same scenario, 
+in which the two mobile processes reach an agreement
+by interacting with each other (rather than with the client):
+%
+\[
+	\begin{array}{rcl}
+		\Client_2 &\defeq& \newsp{h}{\bout{s_1}{\abs{x}{Q_1 \subst{h}{y}}} \bout{s_2}{\abs{x}{Q_2 \subst{\dual{h}}{y}}} \inact}
+\\
+		Q_1 &\defeq&	\bout{x}{\rtype} \binp{x}{\Quote_1} \bout{y}{\Quote_1} \binp{y}{\Quote_2} R_x \\
+		Q_2 &\defeq&	\bout{x}{\rtype} \binp{x}{\Quote_1} \binp{y}{\Quote_2} \bout{y}{\Quote_1} R_x \\
+			    R_x & \defeq & \If\ \Quote_1 \leq \Quote_2 \, \Then  (\bsel{x}{\accept} \bout{x}{\creditc} \inact \  \Else \ \bsel{x}{\reject} \inact)
+	\end{array}
+\]
+%\end{example}
+Processes $Q_1$ and $Q_2$  negotiate a quote from the
+		hotel in the same fashion as process $P_{xy}$ in $\Client_1$.
+		The key difference with respect to $P_{xy}$ is that $y$ is used for
+		interaction between process $Q_1$ and $Q_2$. Both processes send
+		their quotes to each other and then internally follow the same
+		logic to reach to a decision.
+		Process  $\Client_2$ then uses sessions $s_1$ and $s_2$ to send the two
+		instances of $Q_1$ and $Q_2$ to the two hotels, using them 
+	 as abstractions
+		on name $x$. It further substitutes
+		the two endpoints of a fresh channel $h$ to channels $y$ respectively,
+		in order for the two instances to communicate with each other.
+
+
+
+
+\begin{figure}
+\input{./figures/hoteldiag}
+\caption{Sequence diagrams for $\Client_1$ and $\Client_2$\label{fig:exam}.}
+\end{figure}
+
+ 
+The different protocols implemented by $\Client_1$ and $\Client_2$ can be represented by the sequence diagrams of \figref{fig:exam}. 
+
+
+\begin{example}[The Hotel Booking Example, Revisited]\label{exam:type}
+We give types to the client
+processes. % of~\secref{exam:proc}.
+Assume 
+\begin{eqnarray*}
+S & = & \btout{\Quote} \btbra{\accept: \tinact, \reject: \tinact} \\
+U & = & \btout{\rtype} \btinp{\Quote} \btsel{\accept: \btout{\creditc} \tinact, \reject: \tinact }
+\end{eqnarray*}
+While the typing for $\abs{x}{P_{xy}}$ is $\es; \es; y: S \proves \abs{x}{P_{xy}} \hastype \lhot{U}$,
+the typing for $\Client_1$ is
+$~~
+	\es; \es; s_1: \btout{\lhot{U}} \tinact \cat s_2: \btout{\lhot{U}} \tinact \proves \Client_1 \hastype \Proc
+$.
+
+
+The typings for $Q_1$ and $Q_2$ are
+$	\es; \es; y: \btout{\Quote} \btinp{\Quote} \tinact \proves \abs{x}{Q_i} \hastype \lhot{U}
+$ ($i=1,2$)
+and the type for $\Client_2$ is
+$~~
+	\es; \es; s_1: \btout{\lhot{U}} \tinact \cat s_2: \btout{\lhot{U}} \tinact \proves \Client_2 \hastype \Proc
+$.
+\end{example}
+
+
+\begin{proposition}\label{p:examp}
+	Let
+	$S = \btout{\rtype} \btinp{\Quote} \btsel{\accept: \btout{\creditc} \tinact, \reject: \tinact}$
+	and
+	$\Delta = s_1: \btout{\lhot{S}} \tinact \cat s_2: \btout{\lhot{S}} \tinact$.
+%	\begin{eqnarray*}
+%		S &=& \btout{\rtype} \btinp{\Quote} \btsel{\accept: \btout{\creditc} \tinact, \reject: \tinact}\\
+%		\Delta &=& s_1: \btout{\lhot{S}} \tinact \cat s_2: \btout{\lhot{S}} \tinact
+%	\end{eqnarray*}
+	Then
+	$\horel{\es}{\Delta}{\Client_1}
+	{\fwb}
+	{\Delta}{\Client_2}$, where $\Client_1$ and $\Client_2$ are as above.
+	%in \secref{exam:proc}. 
+\end{proposition}
 
 \section{Correctness Criteria for Typed Encodings}
 \label{s:expr}
 %\input{encoding}
 We define the formal notion of \emph{encoding} by 
-extending to a typed setting existing criteria for untyped processes (as in, e.g.,
-\cite{Nestmann00,Palamidessi03,DBLP:conf/lics/PalamidessiSVV06,DBLP:journals/iandc/Gorla10,DBLP:conf/icalp/LanesePSS10,DBLP:journals/tcs/FuL10,DBLP:journals/corr/abs-1208-2750,DBLP:conf/esop/PetersNG13}). 
+extending to a typed setting existing criteria for untyped processes, as put forward in, e.g.,
+\cite{Nestmann00,Palamidessi03,DBLP:conf/lics/PalamidessiSVV06,DBLP:journals/iandc/Gorla10,DBLP:conf/icalp/LanesePSS10,DBLP:journals/tcs/FuL10,DBLP:journals/corr/abs-1208-2750,DBLP:conf/esop/PetersNG13}. 
 We first define a typed calculus parametrised by a syntax, an operational semantics, and a type system.
 Based on this definition, in  
 \secref{sec:positive} and \secref{sec:extension}
@@ -1745,11 +1901,12 @@ we define concrete instances of (higher-order) typed calculi.
 
 Most elements of the formal notion of typed calculus are self-explanatory. 
 Concerning the operational semantics, we shall assume a notion of transition system in which transitions are labelled with 
-actions from a finite set $\cal{A}$, which contains at least $\tau$. We will often be interested in those $\tau$-transitions, which characterise reductions. 
-We shall write $\hby{\tau}$ to make this choice explicit. Nevertheless, to state more precise forms of operational correspondence, we 
+actions from a finite set $\cal{A}$, which contains at least the unobservable action $\tau$. 
+We will often be interested in $\tau$-transitions, denoted $\hby{\tau}$, which characterise reductions. 
+Nevertheless, to state more precise forms of operational correspondence, we 
 will sometimes find it convenient to use transitions of 
-the form $\hby{\alpha}$,
-where $\alpha \in \cal{A}$ and $\alpha \neq \tau$ (i.e., visible transitions). 
+the form $\hby{\ell}$,
+where $\ell \in \cal{A}$ and $\ell \neq \tau$ (i.e., visible transitions). 
 
 Our notion of encoding considers mappings on both processes 
 and types; these are denoted $\map{\cdot}$ and $\mapt{\cdot}$, respectively: %, and transition labels: 
@@ -1776,21 +1933,22 @@ and types; these are denoted $\map{\cdot}$ and $\mapt{\cdot}$, respectively: %, 
 Mapping $\mapt{\cdot}$ extends to typing
 environments in the expected way; for instance, $\mapt{\Delta \cat u:S} = \mapt{\Delta} \cat u:\mapt{S}$.
 When considering forms of operational correspondence with visible actions, 
-our notion of typed encoding shall include mappings $\map{\cdot}$ and $\mapt{\cdot}$, but also a
-a  mapping  $\mapa{\cdot}:\mathcal{A}_1 \to \mathcal{A}_2$ connecting the sets of actions in source and target typed calculi.
+our notion of typed encoding shall include mappings $\map{\cdot}$ and $\mapt{\cdot}$, but also
+a  mapping  $\mapa{\cdot}:\mathcal{A}_1 \to \mathcal{A}_2$ 
+describing how the actions in the source calculus are mapped in the target typed calculus.
 
 
 We now introduce syntactic criteria for typed encodings.
 Let $\sigma$ denote a substitution of names for names (a renaming, as usual). Given environments $\Delta$ and $\Gamma$,
 we write $\sigma(\Delta)$ and $\sigma(\Gamma)$ to denote the effect of applying $\sigma$ on the 
-domains of $\Delta$ and $\Gamma$
-(clearly, $\sigma(\Gamma)$ concerns only shared names in $\Gamma$: process and recursive variables in $\Gamma$ are not affected by $\sigma$). 
+domains of $\Delta$ and $\Gamma$.
+In our concrete case,  $\sigma(\Gamma)$ clearly concerns only shared names in $\Gamma$: process and recursive variables in $\Gamma$ are not affected by $\sigma$. 
 
 %\smallskip 
 
 \begin{definition}[Syntax Preservation]%\rm
 	\label{def:sep}
-	We say that 
+	We say that the
 	typed encoding 
 	$\enco{\map{\cdot}, \mapt{\cdot}}: \tyl{L}_1 \to \tyl{L}_2$ is \emph{syntax preserving}
 	if it is:
@@ -1829,13 +1987,15 @@ The name invariance criterion follows \cite{DBLP:journals/iandc/Gorla10,DBLP:con
 
 \newj{We now state \emph{type preservation}, a static criterion on the mapping 
 $\mapt{\cdot}: {\cal{T}}_1 \to {\cal{T}}_2$: % of our typed encodings. 
-it ensures that type operators are preserved.
-The source and target languages that we consider here share
+it ensures that 
+%Type preservation enables us to focus on 
+%mappings $\mapt{\cdot}$ that 
+a typed operator is 
+always translated into itself. 
+The source and target calculi that we consider here share
 five (session) type operators: input, output, recursion (binary operators); selection and 
 branching ($n$-ary operators). 
-Type preservation enables us to focus on 
-mappings $\mapt{\cdot}$ that always translate a type operator into itself. 
-This is key to retain the meaning of structured protocols:
+Type preservation is key to retain the meaning of structured protocols:
 as session types operators abstract communication behaviour,
 type preserving encodings help us maintain behaviour %in maintaining behaviour%those abstractions
 across translations.}
@@ -1871,11 +2031,11 @@ Next we define semantic criteria for typed encodings:
 
 \begin{definition}[Semantic Preservation]%\rm
 \label{def:ep}
-       Consider typed calculi $\tyl{L}_1$ and  $\tyl{L}_2$, defined as 
-        $\tyl{L}_1=\calc{\CAL_1}{{\cal{T}}_1}{\hby{\tau}_1}{\wb_1}{\proves_1}$
-       and $\tyl{L}_2=\calc{\CAL_2}{{\cal{T}}_2}{\hby{\tau}_2}{\wb_2}{\proves_2}$.
+       Consider typed calculi %$\tyl{L}_1$ and  $\tyl{L}_2$, defined as 
+        $\tyl{L}_1=\calc{\CAL_1}{{\cal{T}}_1}{\hby{~}_1}{\wb_1}{\proves_1}$
+       and $\tyl{L}_2=\calc{\CAL_2}{{\cal{T}}_2}{\hby{~}_2}{\wb_2}{\proves_2}$.
 %       ($i=1,2$) be typed calculi. 
-We say that the encoding $\enco{\map{\cdot}, \mapt{\cdot}}: \tyl{L}_1 \to \tyl{L}_2$ is \emph{semantic preserving}
+We say that the typed encoding $\enco{\map{\cdot}, \mapt{\cdot}}: \tyl{L}_1 \to \tyl{L}_2$ is \emph{semantic preserving}
 if it satisfies the properties below.
 %Given a label $\ell \neq \tau$, we write 
 %$\mathsf{sub}(\ell)$
@@ -1958,6 +2118,8 @@ for our encodings
  are actually stronger than the criteria given above
  {(see \propsref{prop:op_corr_HOp_to_HO}, \ref{prop:op_corr_HOp_to_p}, \ref{prop:op_corr_HOpp_to_HOp}, \ref{prop:op_corr_pHOp_to_HOp}
  and~\cite{KouzapasPY15} for details).}
+ In particular, in some cases we will consider forms of operational correspondence based on visible actions, relying on 
+ mapping $\mapa{\cdot}$ as already explained.
 Finally, following~\cite{SangiorgiD:expmpa,DBLP:conf/lics/PalamidessiSVV06,Yoshida96},
 we consider full abstraction as an encodability criterion: this leads to 
 stronger encodability results. 
@@ -2071,11 +2233,11 @@ We consider the typed calculi (cf.~\defref{d:tcalculus}):
 %	$\tyl{L}_{\sessp}=\calc{\sessp}{{\cal{T}}_3}{\hby{\tau}}{\fwb}{\proves}$ 
 %\end{enumerate}
 \begin{align*}
-	\tyl{L}_{\HOp} & =\calc{\HOp}{{\cal{T}}_1}{\hby{\tau}}{\hwb}{\proves}
+	\tyl{L}_{\HOp} & =\calc{\HOp}{{\cal{T}}_1}{\hby{~}}{\hwb}{\proves}
 	\\
-	\tyl{L}_{\HO} & =\calc{\HO}{{\cal{T}}_2}{\hby{\tau}}{\hwb}{\proves}
+	\tyl{L}_{\HO} & =\calc{\HO}{{\cal{T}}_2}{\hby{~}}{\hwb}{\proves}
 	\\
-	\tyl{L}_{\sessp} & =\calc{\sessp}{{\cal{T}}_3}{\hby{\tau}}{\fwb}{\proves}
+	\tyl{L}_{\sessp} & =\calc{\sessp}{{\cal{T}}_3}{\hby{~}}{\fwb}{\proves}
 \end{align*}
 where: 
 ${\cal{T}}_1$, ${\cal{T}}_2$, 
@@ -2084,7 +2246,7 @@ are sets of types of $\HOp$, $\HO$, and $\sessp$, respectively.
 The typing $\proves$ is defined in 
 %\figref{fig:typerulesmy}.
 \secref{sec:types}.
-The LTSs follow the intuitions given in \secref{ss:equiv}.
+The LTSs follow the intuitions given in \secref{ss:equiv}, with underlying sets of actions $\mathcal{A}_{\HOp}$, $\mathcal{A}_\HO$, and $\mathcal{A}_\sessp$ defined as expected.
 %are as in \defref{def:rlts}, 
 Moreover, 
 $\hwb$ is as in \defref{d:hbw}, and 
@@ -2185,10 +2347,15 @@ names (but with free variables instead):
 	denote a map of sequences of lexicographically ordered names to sequences of variables, defined
 	inductively 
 	as: 
-	$\vmap{\epsilon} = \epsilon$ and $\vmap{n \cat \tilde{m}} = x_n \cat \vmap{\tilde{m}}$. 
+	\begin{align*}
+	\vmap{\epsilon} & = \epsilon 
+	\\
+	\vmap{n \cat \tilde{m}} & = x_n \cat \vmap{\tilde{m}}
+	\end{align*}
 	Also, let $\sigma$ be a set of session names.
-	\figref{f:auxmap} defines an auxiliary mapping
-	$\auxmapp{\cdot}{{}}{\sigma}: \HO \to \HO$.
+	Then, the auxiliary mapping
+	$\auxmapp{\cdot}{{}}{\sigma}: \HO \to \HO$
+	is as in \figref{f:auxmap}.
 \end{definition}
 \input{figures/aux_map}
 %
@@ -2244,9 +2411,9 @@ Mapping $\mapt{\cdot}^{1}$ on types homomorphically extends to
 environments $\Delta$
 and
 $\Gamma$, with
-$
+$$
 \tmap{\Gamma \cat \varp{X}:\Delta_1}{1}  =  \tmap{\Gamma}{1} \cat z_X:\shot{(S_1,\ldots,S_m,S^*)}
-$, 
+$$ 
 %\[
 %	\begin{array}{l}
 %%	    \mapt{\Delta \cat s: S}^{1} & =  & \mapt{\Delta}^{1} \cat s:\mapt{S}^{1} & \\
@@ -2387,19 +2554,18 @@ See \propref{app:prop:typepres_HOp_to_HO} in \appref{app:enc_HOp_to_HO}.
 \end{proof}
 
 %Now, we state operational correspondence with respect to reductions; the full statement (and proof) can be found in~\cite{KouzapasPY15}.
-We now state a generalized form of operational correspondence, which includes reductions ($\tau$-labeled transitions) but also other transitions.
+We now state a generalised form of operational correspondence, which includes $\tau$-labeled transitions (reductions) but also other transitions labelled with visible actions.
 %Before we prove operational correspondence we
-We define mapping from $\mapa{\cdot}^{1}: \mathcal{A} \to \mathcal{A}$
-where $\mathcal{A}$ is the set of labels of the relation
-$\hby{\ell}$:
-\begin{definition}[$\mapa{\cdot}^{1}: \mathcal{A} \to \mathcal{A}$]\rm
-	Let $\mathcal{A}$ is the set of labels of the relation
-	$\hby{\ell}$ then we define:
+To this end, we define a mapping  on action labels: 
+%\mathcal{A} \to \mathcal{A}$, where $\mathcal{A}$ denotes the set of labels of the relation$\hby{~}$:
+\begin{definition}\rm
+ The mapping on actions $\mapa{\cdot}^{1}: \mathcal{A}_{\HOp} \to \mathcal{A}_{\HO}$
+	is defined as follows:
 	\begin{align*}
 		\mapa{(\nu \tilde{m})\bactout{n}{m}}^{1}
 		& \defeq
 		(\nu \tilde{m})\bactout{n}{\abs{z}{\,\binp{z}{x} (\appl{x}{m})} }
-		&
+		\\
 		\mapa{\bactinp{n}{m}}^{1}
 		& \defeq
 		\bactinp{n}{\abs{z}{\,\binp{z}{x} (\appl{x}{m})} }
@@ -2407,20 +2573,22 @@ $\hby{\ell}$:
 		\mapa{(\nu \tilde{m})\bactout{n}{\abs{{x}}{P}}}^{1}
 		& \defeq
 		(\nu \tilde{m})\bactout{n}{\abs{{x}}{\pmapp{P}{1}{\es}}}
-		& 
+		\\ 
 		\mapa{\bactinp{n}{\abs{{x}}{P}}}^{1}
 		& \defeq
 		\bactinp{n}{\abs{{x}}{\pmapp{P}{1}{\es}}}
-		\\
-		\mapa{\bactsel{n}{l} }^{1} & \defeq \bactsel{n}{l} 
-		& 
-		\mapa{\bactbra{n}{l} }^{1} & \defeq \bactbra{n}{l} 
-		\\
-		\mapa{\tau}^{1} & \defeq \tau
+%		\\
+%		\mapa{\bactsel{n}{l} }^{1} & \defeq \bactsel{n}{l} 
+%		\\
+%		\mapa{\bactbra{n}{l} }^{1} & \defeq \bactbra{n}{l} 
+%		\\
+%		\mapa{\tau}^{1} & \defeq \tau
 	\end{align*}
+	and as an homomorphism for other actions $\ell \in \mathcal{A}_{\HOp}$.
 	\end{definition}
 	
-	We may now state:
+	%We may now state a form of operational correspondence that covers both $\tau$-labeled and visible actions:
+	We then have:
 
 %Recall that $\hby{\stau}$ and $\hby{\btau}$ were defined in \notref{not:dettrans}.
 

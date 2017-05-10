@@ -1,0 +1,390 @@
+
+\newcommand{\Hotel}{\mathsf{Hotel}}
+\newcommand{\Code}{\mathsf{Code}}
+
+%\makeatletter
+%\newcommand{\gettikzxy}[3]{%
+%  \tikz@scan@one@point\pgfutil@firstofone#1\relax
+%  \edef#2{\the\pgf@x}%
+%  \edef#3{\the\pgf@y}%
+%}
+%\makeatother
+%	\gettikzxy{(Client1.south)}{\ax}{\ay}
+%	\draw[dashed]			(Client1.south) -- (\ax, 0);
+
+
+%\begin{center}
+
+\begin{tikzpicture}[scale=0.9]
+%	\draw[help lines]		(0, 0) grid (13, 10);
+
+	%%%%%%%%%%%%%%%%%%%%% Scenario 1
+
+	%%%% Nodes
+	\node	(Client1)	at	(0, 10) {\footnotesize $\Client_1$};
+	\node	(Hotel1)	at	(2.5, 10) {\footnotesize $\Hotel_1$};
+	\node	(Hotel2)	at	(5, 10) {\footnotesize $\Hotel_2$};
+
+	\node	(Code1)		at	(1.25, 8.8) {\scriptsize $\Code_1$};
+	\node	(Code2)		at	(3.75, 8.8) {\scriptsize $\Code_2$};
+
+	%%%% Lines for Nodes
+%	\draw[dashed]		(Client1.south west) -- (Client1.south east);
+	\draw
+		let
+			\p1 = (Client1.south),
+			\p2 = (Hotel1.south),
+			\p3 = (Hotel2.south),
+			\p4 = (Code1.south),
+			\p5 = (Code2.south)
+		in
+			(\x1, \y1) -- (\x1, 4.8)
+			(\x2, \y2) -- (\x2, 4.8)
+			(\x3, \y3) -- (\x3, 4.8)
+			(\x4, \y4) -- (\x4, 4.8)
+			(\x5, \y5) -- (\x5, 4.8);
+
+	%%%% Arrows
+	\draw[->]
+		let
+			\p1 = (Client1),
+			\p2 = (Hotel1)
+		in
+			(\x1, 9.6) to node[above] {\scriptsize $\abs{x}{P_{xy}}$} (\x2, 9.6);
+
+	\draw[->]
+		let
+			\p1 = (Client1),
+			\p2 = (Hotel2)
+		in
+			(\x1, 9.2) to node[above] {\qquad \qquad \scriptsize $\abs{x}{P_{xy}}$} (\x2, 9.2);
+
+	\draw[->]
+		let
+			\p1 = (Hotel1)
+		in
+			(\x1, 9.6) -- (Code1.north);
+
+	\draw[->]
+		let
+			\p1 = (Hotel2)
+		in
+			(\x1, 9.2) -- (Code2.north);
+
+
+	\draw[->]
+		let
+			\p1 = (Code1),
+			\p2 = (Hotel1)
+		in
+			(\x1, 8.4) to node[above] {\scriptsize $\rtype$} (\x2, 8.4);
+
+	\draw[->]
+		let
+			\p1 = (Code1),
+			\p2 = (Hotel1)
+		in
+			(\x2, 8) to node[above] {\scriptsize $\Quote$} (\x1, 8);
+
+	\draw[->]
+		let
+			\p1 = (Code2),
+			\p2 = (Hotel2)
+		in
+			(\x1, 8.4) to node[above] {\scriptsize $\rtype$} (\x2, 8.4);
+	\draw[->]
+		let
+			\p1 = (Code2),
+			\p2 = (Hotel2)
+		in
+			(\x2, 8) to node[above] {\scriptsize $\Quote$} (\x1, 8);
+
+	\draw[->]
+		let
+			\p1 = (Code1),
+			\p2 = (Client1)
+		in
+			(\x1, 7.6) to node[above] {\scriptsize $\Quote$} (\x2, 7.6);
+
+	\draw[->]
+		let
+			\p1 = (Code2),
+			\p2 = (Client1)
+		in
+			(\x1, 7.2) to node[above] {\scriptsize $\Quote$} (\x2, 7.2);
+
+
+	%%%% Choice 
+	%% Client1 --> Code1
+	\draw[dashed]
+		let
+			\p1 = (Client1),
+			\p2 = (Code1)
+		in
+			(-0.6, 6.8) to node {$\oplus$} (-0.6, 5.4);
+%			(\x1, 4.8) -- (\x2, 4.8)
+%			(\x1, 2.8) -- (\x2, 2.8);
+
+	\draw[dashed, ->]
+		let
+			\p1 = (Client1),
+			\p2 = (Code1)
+		in
+			(-0.6, 6.8) to node[above] {\scriptsize ~~~$\accept$} (\x2, 6.8);
+
+%	\draw[dashed]
+%		let
+%			\p1 = (Code1),
+%			\p2 = (Hotel1)
+%		in
+%			(\x1, 6.4) -- (\x2, 6.4)
+%			(\x1, 5.2) -- (\x2, 5.2)
+%			(\x1, 4) -- (\x2, 4)
+%			(\x1, 3.2) -- (\x2, 3.2);
+
+	\draw[->,dashed]
+		let
+			\p1 = (Code1),
+			\p2 = (Hotel1)
+		in
+			(\x1, 6.2) to node[above] {\scriptsize $\accept$} (\x2, 6.2);
+
+	\draw[->]
+		let
+			\p1 = (Code1),
+			\p2 = (Hotel1)
+		in
+			(\x1, 5.8) to node[above] {\scriptsize $\creditc$} (\x2, 5.8);
+
+	\draw[dashed, ->]
+		let
+			\p1 = (Client1),
+			\p2 = (Code1)
+		in
+			(-0.6, 5.4) to node[above] {\scriptsize ~~~$\reject$} (\x2, 5.4);
+
+	\draw[dashed, ->]
+		let
+			\p1 = (Code1),
+			\p2 = (Hotel1)
+		in
+			(\x1, 4.8) to node[above] {\scriptsize $\reject$} (\x2, 4.8);
+
+
+	%%%% Choice 
+	%% Client1 --> Code2
+	\draw[dashed]
+		let
+			\p1 = (Client1),
+			\p2 = (Code2)
+		in
+			(-0.2, 6.6) to node {$\oplus$} (-0.2, 5.2);
+%			(\x1, 4.8) -- (\x2, 4.8)
+%			(\x1, 2.8) -- (\x2, 2.8);
+
+	\draw[dashed, ->]
+		let
+			\p1 = (Client1),
+			\p2 = (Code2)
+		in
+			(-0.2, 6.6) to node[above] {\scriptsize $\accept$} (\x2, 6.6);
+
+%	\draw[dashed]
+%		let
+%			\p1 = (Code1),
+%			\p2 = (Hotel1)
+%		in
+%			(\x1, 6.4) -- (\x2, 6.4)
+%			(\x1, 5.2) -- (\x2, 5.2)
+%			(\x1, 4) -- (\x2, 4)
+%			(\x1, 3.2) -- (\x2, 3.2);
+
+	\draw[->,dashed]
+		let
+			\p1 = (Code2),
+			\p2 = (Hotel2)
+		in
+			(\x1, 6.2) to node[above] {\scriptsize $\accept$} (\x2, 6.2);
+
+	\draw[->]
+		let
+			\p1 = (Code2),
+			\p2 = (Hotel2)
+		in
+			(\x1, 5.8) to node[above] {\scriptsize $\creditc$} (\x2, 5.8);
+
+	\draw[dashed, ->]
+		let
+			\p1 = (Client1),
+			\p2 = (Code2)
+		in
+			(-0.2, 5.2) to node[above] {\scriptsize $\reject$} (\x2, 5.2);
+
+	\draw[dashed, ->]
+		let
+			\p1 = (Code2),
+			\p2 = (Hotel2)
+		in
+			(\x1, 4.8) to node[above] {\scriptsize $\reject$} (\x2, 4.8);
+
+
+	%%%%%%%%%%%%%%%%%%%%% Scenario 2
+
+	%%%% Nodes
+	\node	(Client1)	at	(7, 10) {\footnotesize $\Client_2$};
+	\node	(Hotel1)	at	(9.5, 10) {\footnotesize $\Hotel_1$};
+	\node	(Hotel2)	at	(12, 10) {\footnotesize $\Hotel_2$};
+
+	\node	(Code1)		at	(8.25, 8.8) {\scriptsize $\Code_1$};
+	\node	(Code2)		at	(10.75, 8.8) {\scriptsize $\Code_2$};
+
+
+	\draw
+		let
+			\p1 = (Client1.south),
+			\p2 = (Hotel1.south),
+			\p3 = (Hotel2.south),
+			\p4 = (Code1.south),
+			\p5 = (Code2.south)
+		in
+			(\x1, \y1) -- (\x1, 4.8)
+			(\x2, \y2) -- (\x2, 4.8)
+			(\x3, \y3) -- (\x3, 4.8)
+			(\x4, \y4) -- (\x4, 4.8)
+			(\x5, \y5) -- (\x5, 4.8);
+
+	%%%% Arrows
+	\draw[->]
+		let
+			\p1 = (Client1),
+			\p2 = (Hotel1)
+		in
+			(\x1, 9.6) to node[above] {\scriptsize $\abs{x}{Q_1}$} (\x2, 9.6);
+
+	\draw[->]
+		let
+			\p1 = (Client1),
+			\p2 = (Hotel2)
+		in
+			(\x1, 9.2) to node[above] {\qquad \qquad \scriptsize $\abs{x}{Q_2}$} (\x2, 9.2);
+
+	\draw[->]
+		let
+			\p1 = (Hotel1)
+		in
+			(\x1, 9.6) -- (Code1.north);
+
+	\draw[->]
+		let
+			\p1 = (Hotel2)
+		in
+			(\x1, 9.2) -- (Code2.north);
+
+
+	\draw[->]
+		let
+			\p1 = (Code1),
+			\p2 = (Hotel1)
+		in
+			(\x1, 8.4) to node[above] {\scriptsize $\rtype$} (\x2, 8.4);
+
+	\draw[->]
+		let
+			\p1 = (Code1),
+			\p2 = (Hotel1)
+		in
+			(\x2, 8) to node[above] {\scriptsize $\Quote$} (\x1, 8);
+
+	\draw[->]
+		let
+			\p1 = (Code2),
+			\p2 = (Hotel2)
+		in
+			(\x1, 8.4) to node[above] {\scriptsize $\rtype$} (\x2, 8.4);
+	\draw[->]
+		let
+			\p1 = (Code2),
+			\p2 = (Hotel2)
+		in
+			(\x2, 8) to node[above] {\scriptsize $\Quote$} (\x1, 8);
+
+	\draw[->]
+		let
+			\p1 = (Code1),
+			\p2 = (Code2)
+		in
+			(\x1, 7.6) to node[above] {\qquad \qquad \tiny $\Quote$} (\x2, 7.6);
+
+	\draw[->]
+		let
+			\p1 = (Code2),
+			\p2 = (Code1)
+		in
+			(\x1, 7.2) to node[above] {\scriptsize $\Quote$ \qquad \qquad \qquad} (\x2, 7.2);
+
+
+	%%%% Choice
+	% Client1 --> Hotel1
+	\draw[dashed]
+		let
+			\p1 = (Code1),
+			\p2 = (Hotel1)
+		in
+			(7.85, 6.8) to node {$\oplus$} (7.85, 6);
+%			(\x1, 5.6) -- (\x2, 5.6)
+%			(\x1, 4.8) -- (\x2, 4.8);
+
+	\draw[dashed, ->]
+		let
+			\p1 = (Code1),
+			\p2 = (Hotel1)
+		in
+			(7.85, 6.8) to node[above] {\scriptsize ~~$\accept$} (\x2, 6.8);
+
+	\draw[->]
+		let
+			\p1 = (Code1),
+			\p2 = (Hotel1)
+		in
+			(\x1, 6.4) to node[above] {\scriptsize $\creditc$} (\x2, 6.4);
+
+	\draw[dashed, ->]
+		let
+			\p1 = (Code1),
+			\p2 = (Hotel1)
+		in
+			(7.85, 6) to node[above] {\scriptsize ~~$\reject$} (\x2, 6);
+
+	% Client2 --> Hotel2
+	\draw[dashed]
+		let
+			\p1 = (Code2),
+			\p2 = (Hotel2)
+		in
+			(10.35, 6.8) to node {$\oplus$} (10.35, 6);
+%			(\x1, 5.6) -- (\x2, 5.6)
+%			(\x1, 4.8) -- (\x2, 4.8);
+
+	\draw[dashed, ->]
+		let
+			\p1 = (Code2),
+			\p2 = (Hotel2)
+		in
+			(10.35, 6.8) to node[above] {\scriptsize ~~$\accept$} (\x2, 6.8);
+
+	\draw[->]
+		let
+			\p1 = (Code2),
+			\p2 = (Hotel2)
+		in
+			(\x1, 6.4) to node[above] {\scriptsize $\creditc$} (\x2, 6.4);
+
+	\draw[dashed, ->]
+		let
+			\p1 = (Code2),
+			\p2 = (Hotel2)
+		in
+			(10.35, 6) to node[above] {\scriptsize ~~$\reject$} (\x2, 6);
+
+\end{tikzpicture}
+%\end{center}
