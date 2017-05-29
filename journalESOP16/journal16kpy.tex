@@ -1146,7 +1146,7 @@ When $n$ is a session name we require that its dual endpoint $\dual{n}$ is not p
 in the session environment $\Delta$:
 %\smallskip 
 
-\begin{definition}[Barbs]%\rm
+\begin{definition}[Untyped and Typed Barbs]\label{d:barb}%\rm
 	Let $P$ be a closed process. We define:
 	\begin{enumerate}[1.]
 		\item	
@@ -3686,23 +3686,22 @@ can perform actions of the encoding of $\abs{x}{P}$.
 
 As most session calculi, 
 \HOp includes communication on both shared and linear names.
-The former enables non determinism, unrestricted behaviour; the latter allows to represent
-deterministic, linear communication structures.
+Shared names enable non deterministic, unrestricted behaviour; 
+linear names represent deterministic communication structures.
 The expressiveness of shared names is also illustrated by our 
 encoding from \HOp into \sessp (\figref{f:enc:ho_to_sessp}).
 %Shared and linear names are fundamentally different; still, to the best of our knowledge,
 %the status of shared communication, in terms of expressiveness, has not been formalized for session calculi.
 This result begs the question: 
 %\dk{can we further encode the replicated triggers in the encoding from \HOp to \HO using only session names?}
-can we represent shared name interaction using session name interaction?
+can we represent  interaction along shared names using linear names only?
 %are shared names truly indispensable for communication, or could they
 %be encoded using linear communication?
-It turns out that shared names  add expressiveness to \HOp:
-we prove
+It turns out that shared names strictly add expressiveness to \HOp:
+next we prove
 the non existence of a minimal encoding 
-(cf.~\defref{def:goodenc})
-of shared name 
-interaction into linear interaction. % (see \appref{app:neg} for details of the proof).
+of interaction along shared names 
+using linear names. % (see \appref{app:neg} for details of the proof).
 %for their behavior cannot be represented using purely deterministic processes.
 %To this end, we show the non existence of a minimal encoding 
 %(cf.~\defref{def:goodenc}(ii))
@@ -3715,12 +3714,6 @@ interaction into linear interaction. % (see \appref{app:neg} for details of the 
 	\label{t:negative}
 	There is no minimal encoding from
 		$\sessp$ to $\HOp^{\minussh}$.
-	Hence, for any
-		$\CAL_1,\CAL_2\in \{ \HOp, \HO, \sessp\}$, 
-	there is no minimal encoding from  
-	$\tyl{L}_{\CAL_1}$ 
-	into
-		$\tyl{L}_{\CAL_2^{-\mathsf{sh}}}$.
 \end{theorem}
 
 %\begin{proof}
@@ -3734,7 +3727,10 @@ interaction into linear interaction. % (see \appref{app:neg} for details of the 
 %\end{proof}
 
 \begin{proof}
-	Assume, towards a contradiction, that such a typed encoding indeed exists. 
+	Assume, towards a contradiction, that such a typed minimal encoding indeed exists. 
+	Recall that a minimal encoding is syntax preserving,
+	barb preserving, 
+	and operationally complete (cf.~\defref{def:goodenc}).
 	Consider the $\sessp$ process
 	%
 	\[
@@ -3743,20 +3739,21 @@ interaction into linear interaction. % (see \appref{app:neg} for details of the 
 	%
 	\noi such that 
 	$\Gamma; \es; \Delta \proves P \hastype \Proc$.
-	From process $P$ we have: %We then have both
+	From process $P$ we have one of the following: %We then have both
 	%
 	\begin{eqnarray}
 		& & \horel{\Gamma}{\Delta}{P}{\hby{\tau}}{\Delta'}{\bsel{n}{l_1} \inact \Par \bacc{a}{x} \bsel{m}{l_2} \inact = P_1} \label{eq:nn3} \\
 		& & \horel{\Gamma}{\Delta}{P}{\hby{\tau}}{\Delta'}{\bsel{m}{l_2} \inact \Par \bacc{a}{x} \bsel{n}{l_1} \inact = P_2} \label{eq:nn4}
 	\end{eqnarray}
 	%
-	Thus, by definition of typed barb we  have:
+	Thus, by definition of typed barb (cf. \defref{d:barb}) we  have:
 	%
 	\begin{eqnarray}
 		\Gamma; \Delta' \proves P_1 \barb{n} & \land & 
 		\Gamma; \Delta' \proves P_1 \nbarb{m} \label{eq:nn1} \\
-		\Gamma; \Delta' \proves P_2 \barb{m} & \land & 
-		\Gamma; \Delta' \proves P_2 \nbarb{n} \label{eq:nn2}
+		\Gamma; \Delta' \proves P_2 \nbarb{n}  & \land & 
+		 \Gamma; \Delta' \proves P_2 \barb{m}
+		\label{eq:nn2}
 	\end{eqnarray}
 	%
 	Consider now the $\HOp^{\minussh}$ process $\map{P}$.
@@ -3781,8 +3778,8 @@ interaction into linear interaction. % (see \appref{app:neg} for details of the 
 	\begin{eqnarray}
 		\mapt{\Gamma}; \mapt{\Delta'} \proves \map{P_1} \Barb{n} & \land & 
 		\mapt{\Gamma}; \mapt{\Delta'} \proves \map{P_1} \nBarb{m} \label{eq:n3} \\
-		\mapt{\Gamma}; \mapt{\Delta'} \proves \map{P_2} \Barb{m} & \land & 
-		\mapt{\Gamma}; \mapt{\Delta'} \proves \map{P_2} \nBarb{n} \label{eq:n4}
+		\mapt{\Gamma}; \mapt{\Delta'} \proves \map{P_2} \nBarb{n}   & \land & 
+		\mapt{\Gamma}; \mapt{\Delta'} \proves \map{P_2} \Barb{m} \label{eq:n4}
 	\end{eqnarray}
 	%
 	By definition of $\WB$, 
@@ -3799,11 +3796,11 @@ interaction into linear interaction. % (see \appref{app:neg} for details of the 
 	have the same barbs.
 	Now, by $\tau$-inertness (\propref{lem:tau_inert}), we have both 
 	\begin{eqnarray}
-		& & \horel{\mapt{\Gamma}}{\mapt{\Delta}}{S_1}{\WB}{\mapt{\Delta'}}{\map{P}} \label{eq:n7} \\
-		& & \horel{\mapt{\Gamma}}{\mapt{\Delta}}{S_2}{\WB}{\mapt{\Delta'}}{\map{P}} \label{eq:n8}
+		& & \horel{\mapt{\Gamma}}{\mapt{\Delta'}}{S_1}{\WB}{\mapt{\Delta}}{\map{P}} \label{eq:n7} \\
+		& & \horel{\mapt{\Gamma}}{\mapt{\Delta'}}{S_2}{\WB}{\mapt{\Delta}}{\map{P}} \label{eq:n8}
 	\end{eqnarray}
 	Combining~\eqref{eq:n7} with~\eqref{eq:n8}, by transitivity of $\WB$,
-	we have 
+	we infer
 	\begin{equation}
 		\horel{\mapt{\Gamma}}{\mapt{\Delta'}}{S_1}{\WB}{\mapt{\Delta'}}{S_2} \label{eq:n9}
 	\end{equation}
@@ -3813,27 +3810,41 @@ interaction into linear interaction. % (see \appref{app:neg} for details of the 
 	\begin{eqnarray*}
 		\mapt{\Gamma}; \mapt{\Delta'} \proves \map{P_1} \Barb{n} & \land & 
 		\mapt{\Gamma}; \mapt{\Delta'} \proves \map{P_1} \Barb{m} \label{eq:n10} \\
-		\mapt{\Gamma}; \mapt{\Delta'} \proves \map{P_2} \Barb{m} & \land & 
-		\mapt{\Gamma}; \mapt{\Delta'} \proves \map{P_2} \Barb{n} \label{eq:n11}
+		\mapt{\Gamma}; \mapt{\Delta'} \proves \map{P_2} \Barb{n}  & \land & 
+		 \mapt{\Gamma}; \mapt{\Delta'} \proves \map{P_2} \Barb{m} \label{eq:n11}
 	\end{eqnarray*}
-	which clearly contradict \eqref{eq:n3} and \eqref{eq:n4} above.
+	which clearly contradict \eqref{eq:n3} and \eqref{eq:n4} above. 
+	We therefore conclude that a minimal encoding from $\sessp$ to $\HOp^{\minussh}$ does not exist.
 	 %\qed
 \end{proof}
 
-
-By 
-	\defref{d:enc:hopitoho} and~\ref{d:enc:hopitopi} 
-	and \propref{f:enc:hopitoho} and~\ref{f:enc:hotopi}, 
-we have:
+We then have:
 \smallskip 
 \NY{
 \begin{corollary}
 Let $\CAL_1,\CAL_2\in \{ \HOp, \HO, \sessp\}$.  
-There is a precise encoding 
+\begin{enumerate}[(a)]
+\item 
+There is no minimal encoding from  
+	$\tyl{L}_{\CAL_1}$ 
+	into
+		$\tyl{L}_{\CAL_2^{-\mathsf{sh}}}$.
+		
+\item There is a precise encoding 
 of
 $\tyl{L}_{\CAL_1^{-\mathsf{sh}}}$ 
 in $\tyl{L}_{\CAL_2^{-\mathsf{sh}}}$.
+\end{enumerate}
 \end{corollary}
+\begin{proof}
+Part (a) is immediate from~\thmref{t:negative}.
+Part (b) follows from the definitions of the 
+typed encodings of \HOp into \HO and into \sessp
+	(cf. \defref{d:enc:hopitoho} and~\ref{d:enc:hopitopi}) 
+	and 
+	from the preciseness results for such encodings
+	(cf. \propref{f:enc:hopitoho} and~\ref{f:enc:hotopi}).
+\end{proof}
 }
 
 
@@ -3884,86 +3895,133 @@ $\horel{\mapt{\Gamma}}{\mapt{\Delta_1'}}{\map{P_1 \Par \bacc{a}{x} P_2}}{\wb}{\m
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\section{Extensions: Higher-Order Abstractions and Polyadicity}
+\section{Extensions: \HOp with Higher-Order Abstractions and Polyadicity}
 \label{sec:extension}
 %\input{HOp_extensions}
 
-Here we extend \HOp in two directions: %to define two more higher-order
+We now extend \HOp in two orthogonal ways: %to define two more higher-order
 %process calculi:
-(i)~\HOpp  extends   \HOp with higher-order applications/abstractions;
-(ii)~\PHOp   extends  \HOp
+\HOpp  extends   \HOp with higher-order applications/abstractions, while
+\PHOp   extends  \HOp
 with polyadicity.
 In both cases, we detail the
 required modifications in syntax and types.
-Using encoding composability (\propref{pro:composition}), 
-the two extensions may be combined into \PHOpp: the polyadic extension of \HOpp.
-
-
-\subsection{\HOp with Higher-Order Abstractions ($\HOpp$) and 
-with Polyadicity (\PHOp).
-}
-%\label{subsec:hop}
-We first introduce \HOpp, the  extension of \HOp with higher-order abstractions and applications.
-This is the calculus that we studied in~\cite{characteristic_bis}. The syntax of \HOpp is obtained 
-from  \figref{fig:syntax} by extending
-$\appl{V}{u}$ to $\appl{V}{W}$, where  $W$ is a higher-order value. 
-As for the reduction semantics, we keep the rules in \figref{fig:reduction}, except for 
- $\orule{App}$ which is replaced by 
-$$
-	\appl{(\abs{x}{P})}{V} \red P \subst{V}{x}
-$$
-The syntax of types is modified as follows: %changes to include: 
-$
-		L \bnfis \shot{U} \bnfbar \lhot{U}.
-$
-These types can be easily accommodated in the type system 
-%in \figref{fig:typerulesmy}: 
-in \secref{sec:types}:
-we replace $C$ by $U$ in \trule{Abs} and $C$ by $U'$ in \trule{App}. Subject
-reduction~(\thmref{t:sr}) holds for \HOpp (cf.~\cite{characteristic_bis})
-
-%\subsection{\HOp with Polyadic Communication: \PHOp}
-%
-%\noi Embeddings of polyadic name passing into monadic name passing are
-%well-studied. % in the literature. 
-%Using a linear typing, precise
-%encodings (including full abstraction) can be obtained~\cite{Yoshida96}.
-The calculus  
-$\PHOp$ 
-extends $\HOp$ 
-with polyadic name passing $\tilde{n}$ and $\abs{\tilde{x}}{Q}$ in the syntax 
-of values $V$. 
-The operational semantics is kept unchanged, with the expected use of the simultaneous substitution $\subst{\tilde{V}}{\tilde{x}}$.
-The type syntax is extended to: 
-%
-\begin{center}
-	\begin{tabular}{c}
-	$	L \bnfis \shot{\tilde{C}} \bnfbar \lhot{\tilde{C}}
-		\quad\quad
-		S \bnfis  \btout{\tilde{U}} S \bnfbar \btinp{\tilde{U}} S \bnfbar \cdots$
-	\end{tabular}
-\end{center}
-%
-As in \cite{tlca07,MostrousY15},
-the type system for \PHOp 
-disallows a shared name that directly carries polyadic
-shared names.
-
 By combining \HOpp and \PHOp into a single calculus we obtain \PHOpp:
 the extension of \HOp allows \emph{both} higher-order
 abstractions/aplications and polyadicity.
 
+We present precise encodings of \HOpp and \PHOp into \HOp.
+Using encoding composability (\propref{pro:composition}), 
+these two encodings may be combined to relate the super-calculus \PHOpp with the encodings into \HO and \sessp, given in the previous section.
+
+
+%\subsection{\HOp with Higher-Order Abstractions ($\HOpp$) and 
+%with Polyadicity (\PHOp).
+%}
+%%\label{subsec:hop}
+%We first introduce \HOpp, the  extension of \HOp with higher-order abstractions and applications.
+%This is the calculus that we studied in~\cite{characteristic_bis}. The syntax of \HOpp is obtained 
+%from  \figref{fig:syntax} by extending
+%$\appl{V}{u}$ to $\appl{V}{W}$, where  $W$ is a higher-order value. 
+%As for the reduction semantics, we keep the rules in \figref{fig:reduction}, except for 
+% $\orule{App}$ which is replaced by 
+%$$
+%	\appl{(\abs{x}{P})}{V} \red P \subst{V}{x}
+%$$
+%The syntax of types is modified as follows: %changes to include: 
+%$
+%		L \bnfis \shot{U} \bnfbar \lhot{U}.
+%$
+%These types can be easily accommodated in the type system 
+%%in \figref{fig:typerulesmy}: 
+%in \secref{sec:types}:
+%we replace $C$ by $U$ in \trule{Abs} and $C$ by $U'$ in \trule{App}. Subject
+%reduction~(\thmref{t:sr}) holds for \HOpp (cf.~\cite{characteristic_bis})
+%
+%%\subsection{\HOp with Polyadic Communication: \PHOp}
+%%
+%%\noi Embeddings of polyadic name passing into monadic name passing are
+%%well-studied. % in the literature. 
+%%Using a linear typing, precise
+%%encodings (including full abstraction) can be obtained~\cite{Yoshida96}.
+%The calculus  
+%$\PHOp$ 
+%extends $\HOp$ 
+%with polyadic name passing $\tilde{n}$ and $\abs{\tilde{x}}{Q}$ in the syntax 
+%of values $V$. 
+%The operational semantics is kept unchanged, with the expected use of the simultaneous substitution $\subst{\tilde{V}}{\tilde{x}}$.
+%The type syntax is extended to: 
+%%
+%\begin{center}
+%	\begin{tabular}{c}
+%	$	L \bnfis \shot{\tilde{C}} \bnfbar \lhot{\tilde{C}}
+%		\quad\quad
+%		S \bnfis  \btout{\tilde{U}} S \bnfbar \btinp{\tilde{U}} S \bnfbar \cdots$
+%	\end{tabular}
+%\end{center}
+%%
+%As in \cite{tlca07,MostrousY15},
+%the type system for \PHOp 
+%disallows a shared name that directly carries polyadic
+%shared names.
+%
+%By combining \HOpp and \PHOp into a single calculus we obtain \PHOpp:
+%the extension of \HOp allows \emph{both} higher-order
+%abstractions/aplications and polyadicity.
+
 
 %\input{extension}
 \subsection{Precise Encoding of $\HOpp$ into $\HOp$}
+We first introduce \HOpp, the  extension of \HOp with higher-order abstractions and applications.
+This is the calculus whose (typed) behavioral theory we studied in~\cite{characteristic_bis,KouzapasPY17}. The syntax of \HOpp is obtained 
+from  \figref{fig:syntax} by extending
+$\appl{V}{u}$ to $\appl{V}{W}$, where  $W$ is a higher-order value. 
+As for the reduction semantics, we keep the rules in \figref{fig:reduction}, except for 
+ Rule~$\orule{App}$ which is replaced by 
+$$
+	\appl{(\abs{x}{P})}{V} \red P \subst{V}{x}
+$$
+
+\begin{example}\label{ex:hopp}
+The following is a simple \HOpp process with its corresponding reductions:
+\begin{align*}
+\bout{s}{\abs{x}{Q}}\inact  \Par \binp{\dual{s}}{y}(\appl{\abs{z}{(\appl{z}{s_1}})}{y}) 
+& \red 
+\appl{(\abs{z}{(\appl{z}{s_1}}))}{(\abs{x}{Q})}
+\\
+& \red 
+\appl{(\abs{x}{Q})}{s_1}
+\\
+& \red Q\subst{s_1}{x}
+\end{align*}
+Above, the additional expressivity of \HOpp with respect to \HOp is in the ability of applying a function such as 
+$\abs{z}{(\appl{z}{s_1}})$ to an argument such as $\abs{x}{Q}$, which is not a name but another function.
+\end{example}
+
+The set of labels 
+$\mathcal{A}$
+for \HOpp includes 
+$\news{\tilde{m}} \bactout{n}{\abs{\AT{x}{L}}{P}}$
+and
+${\bactinp{n}{\abs{\AT{x}{L}}{P}}}$.
+		The syntax of types in \figref{f:types} is modified as follows: %changes to include: 
+$$
+		L \bnfis \shot{U} \bnfbar \lhot{U}.
+$$
+These types can be easily accommodated in the type system 
+%in \figref{fig:typerulesmy}: 
+in \secref{sec:types}:
+we replace $C$ by $U$ in Rule~\trule{Abs} and $C$ by $U'$ in Rule~\trule{App}. 
+With these extensions, subject
+reduction~(\thmref{t:sr}) holds for \HOpp (cf.~\cite{characteristic_bis})
+
 %\noi 
 We give  %two extensions of \HOp: 
-encodings of \HOpp into \HOp
-and into \PHOp, and show that they are precise. 
-We use encoding composition (\propref{pro:composition}) to encode
-\PHOpp into \HO and \sessp.
+an encoding of \HOpp into \HOp and show that it is precise. 
+We may then use encoding composition (\propref{pro:composition}) to encode
+\HOpp into \HO and \sessp.
 We consider the following 
-typed calculi (cf.~\defref{d:tcalculus}):
+typed calculus (cf.~\defref{d:tcalculus}):
 \begin{enumerate}[-]
 \item $\tyl{L}_{\HOpp}=\calc{\HOpp}{{\cal{T}}_4}{\hby{\ell}}{\hwb}{\proves}$,
 where 
@@ -3971,16 +4029,7 @@ where
 the typing $\proves$ is defined in 
 %\figref{fig:typerulesmy} 
 \secref{sec:types}
-with extended rules \trule{Abs} and \trule{App}.
-
-\item 
-	$\tyl{L}_{\PHOp}=\calc{\PHOp}{{\cal{T}}_5}{\hby{\ell}}{\hwb}{\proves}$,
-where 
-	${\cal{T}}_5$ is the set of types of $\PHOp$;  
-the typing $\proves$ is defined in
-%\figref{fig:typerulesmy} 
-in \secref{sec:types}
-with polyadic types.
+with Rules \trule{Abs} and \trule{App} modified as explained above.
 \end{enumerate}
 
 %\myparagraph{Syntax, Operational Semantics and Types.}
@@ -4012,10 +4061,35 @@ with polyadic types.
 %\smallskip 
 
 %\paragraph{Encoding \HOpp into \HOp} 
-First, the typed encoding
+The typed encoding
 $\enco{\map{\cdot}^{3}, \mapt{\cdot}^{3}}: \HOpp \to \HOp$ is defined
 in \figref{f:enc:hopip_to_hopi}.
-It satisfies the following properties:
+We consider mappings for terms and types (denoted $\map{\cdot}^{3}$ and $\mapt{\cdot}^{3}$, respectively), but also for (higher-order) values (denoted ($\auxmap{\cdot}{3}$). We illustrate the essence of these mappings by means of an example.
+
+\begin{example}
+We translate the simple process from \exref{ex:hopp}, underlining the parts of the translation which are expanded/modified from one line to the following:
+\begin{align*}
+& \map{\bout{s}{\abs{x}{Q}}\inact  \Par \binp{\dual{s}}{y}(\appl{\abs{z}{(\appl{z}{s_1}})}{y})}^{3} 
+\\
+=~ &
+\bout{s}{\underline{\auxmap{\abs{x}{Q}}{3}}}\underline{\map{\inact}^{3}}  \Par \binp{\dual{s}}{y}\underline{\map{(\appl{\abs{z}{(\appl{z}{s_1}})}{y})}^{3}} 
+\\
+=~ & \bout{s}{\abs{w}{\binp{w}{x} \pmap{Q}{3}}} \inact   \Par \binp{\dual{s}}{y}\newsp{s_0}{\binp{s_0}{z} \underline{\pmap{(\appl{z}{s_1})}{3}} \Par  \bout{\dual{s_0}}{\underline{\auxmap{y}{3}}} \inact}
+\\
+=~ & \bout{s}{\abs{w}{\binp{w}{x} \pmap{Q}{3}}}\inact  \Par \binp{\dual{s}}{y}\newsp{s_0}{\binp{s_0}{z} \newsp{s_2}{\appl{z}{s_2} \Par \bout{\dual{s_2}}{\underline{\auxmap{s_1}{3}}} \inact} \Par  \bout{\dual{s_0}}{y} \inact}
+\\
+=~ & \bout{s}{\abs{w}{\binp{w}{x} \pmap{Q}{3}}}\inact  \Par \binp{\dual{s}}{y}\newsp{s_0}{\binp{s_0}{z} \newsp{s_2}{\appl{z}{s_2} \Par \bout{\dual{s_2}}{s_1} \inact} \Par  \bout{\dual{s_0}}{y} \inact}
+\\
+\red~ & \inact  \Par \newsp{s_0}{\binp{s_0}{z} \newsp{s_2}{\appl{z}{s_2} \Par \bout{\dual{s_2}}{s_1} \inact} \Par  \bout{\dual{s_0}}{\abs{w}{\binp{w}{x} \pmap{Q}{3}}} \inact}
+\\
+\red~ & \inact  \Par \newsp{s_2}{\appl{(\abs{w}{\binp{w}{x} \pmap{Q}{3}})}{s_2} \Par \bout{\dual{s_2}}{s_1} \inact} \Par \inact
+\\
+\red~ & \inact  \Par \newsp{s_2}{\binp{s_2}{x} \pmap{Q}{3} \Par \bout{\dual{s_2}}{s_1} \inact} \Par \inact
+\\ 
+\red\scong~ & \pmap{Q}{3}\subst{s_1}{x}
+\end{align*}
+\end{example}
+This typed encoding satisfies the following properties:
 {
 \begin{proposition}[\HOpp into \HOp: Type Preservation]
 \label{prop:typepres_HOpp_to_HOp}
@@ -4094,7 +4168,7 @@ $\hby{\ell}$:
 		\mapa{\news{\tilde{m}} \bactout{n}{\abs{\AT{x}{L}}{P}}}^{3} 
 		& \defeq
 		\news{\tilde{m}} \bactout{n}{\abs{z}{\binp{z}{x} \pmap{P}{3}}}
-		&
+		\\
 		\mapa{\bactinp{n}{\abs{\AT{x}{L}}{P}}}^{3}
 		& \defeq \bactinp{n}{\abs{z}{\binp{z}{x} \pmap{P}{3}}}
 	\end{align*}
@@ -4274,6 +4348,56 @@ Semantics-preservation follows from
 %\label{subsec:pho}
 
 \subsection{Precise Encoding of $\PHOp$ into $\HOp$}
+The calculus  
+$\PHOp$ 
+extends $\HOp$ 
+with polyadic name passing $\tilde{n}$ and $\abs{\tilde{x}}{Q}$ in the syntax 
+of values $V$. 
+The operational semantics is kept unchanged, with the expected use of the simultaneous substitution $\subst{\tilde{V}}{\tilde{x}}$.
+The type syntax is extended to: 
+%
+\begin{center}
+	\begin{tabular}{c}
+	$	L \bnfis \shot{\tilde{C}} \bnfbar \lhot{\tilde{C}}
+		\quad\quad
+		S \bnfis  \btout{\tilde{U}} S \bnfbar \btinp{\tilde{U}} S \bnfbar \cdots$
+	\end{tabular}
+\end{center}
+%
+As in \cite{tlca07,MostrousY15},
+the type system for \PHOp 
+disallows a shared name that directly carries polyadic
+shared names.
+
+We give  %two extensions of \HOp: 
+encodings of \HOpp into \HOp
+and into \PHOp, and show that they are precise. 
+We use encoding composition (\propref{pro:composition}) to encode
+\PHOpp into \HO and \sessp.
+We consider the following 
+typed calculi (cf.~\defref{d:tcalculus}):
+
+
+\begin{enumerate}[-]
+%\item $\tyl{L}_{\HOpp}=\calc{\HOpp}{{\cal{T}}_4}{\hby{\ell}}{\hwb}{\proves}$,
+%where 
+%	${\cal{T}}_4$ is a set of types of $\HOpp$;  
+%the typing $\proves$ is defined in 
+%%\figref{fig:typerulesmy} 
+%\secref{sec:types}
+%with extended rules \trule{Abs} and \trule{App}.
+
+\item 
+	$\tyl{L}_{\PHOp}=\calc{\PHOp}{{\cal{T}}_5}{\hby{\ell}}{\hwb}{\proves}$,
+where 
+	${\cal{T}}_5$ is the set of types of $\PHOp$;  
+the typing $\proves$ is defined in
+%\figref{fig:typerulesmy} 
+in \secref{sec:types}
+with polyadic types.
+\end{enumerate}
+
+
 Second, we define the typed encoding
 	$\enco{\map{\cdot}^{4}, \mapt{\cdot}^{4}}: \PHOp \to \HOp$ 
 in \figref{f:enc:poltomon}.
