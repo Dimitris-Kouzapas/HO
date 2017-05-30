@@ -1230,7 +1230,7 @@ and
 \emph{higher-order bisimilarity}.
 %The definition of characteristic bisimilarity 
 Their definition 
-uses a \emph{typed}
+uses an early \emph{typed}
 labelled transition system (LTS) on processes, informed by session
 types. 
 The interaction of processes with their environment is defined using action labels $\ell$:
@@ -2948,7 +2948,7 @@ is type preserving.
 %define a mapping on action labels:
 %from $\mapa{\cdot}^{2}: \mathcal{A} \to \mathcal{A}$ 
 %where $\mathcal{A}$ is the set of labels of the relation $\hby{\ell}$:
-\begin{definition}\rm
+\begin{definition}%\rm
 The mapping on actions $\mapa{\cdot}^{2}: \mathcal{A}_{\HOp} \to \mathcal{A}_{\sessp}$ is defined as follows:
 	\begin{align*}
 		\mapa{(\nu \tilde{m})\bactout{n}{\abs{ x}{P}} }^{2} & \defeq \news{m} \bactout{n}{m}
@@ -3998,12 +3998,7 @@ Above, the additional expressivity of \HOpp with respect to \HOp is in the abili
 $\abs{z}{(\appl{z}{s_1}})$ to an argument such as $\abs{x}{Q}$, which is not a name but another function.
 \end{example}
 
-The set of labels 
-$\mathcal{A}$
-for \HOpp includes 
-$\news{\tilde{m}} \bactout{n}{\abs{\AT{x}{L}}{P}}$
-and
-${\bactinp{n}{\abs{\AT{x}{L}}{P}}}$.
+
 		The syntax of types in \figref{f:types} is modified as follows: %changes to include: 
 $$
 		L \bnfis \shot{U} \bnfbar \lhot{U}.
@@ -4022,15 +4017,19 @@ We may then use encoding composition (\propref{pro:composition}) to encode
 \HOpp into \HO and \sessp.
 We consider the following 
 typed calculus (cf.~\defref{d:tcalculus}):
-\begin{enumerate}[-]
-\item $\tyl{L}_{\HOpp}=\calc{\HOpp}{{\cal{T}}_4}{\hby{\ell}}{\hwb}{\proves}$,
+$$\tyl{L}_{\HOpp}=\calc{\HOpp}{{\cal{T}}_4}{\hby{\ell}}{\hwb}{\proves}$$
 where 
 	${\cal{T}}_4$ is a set of types of $\HOpp$;  
 the typing $\proves$ is defined in 
 %\figref{fig:typerulesmy} 
 \secref{sec:types}
 with Rules \trule{Abs} and \trule{App} modified as explained above.
-\end{enumerate}
+Also, the set of labels 
+$\mathcal{A}_\HOpp$
+includes output and input actions
+$\news{\tilde{m}} \bactout{n}{\abs{\AT{x}{L}}{P}}$
+and
+${\bactinp{n}{\abs{\AT{x}{L}}{P}}}$.
 
 %\myparagraph{Syntax, Operational Semantics and Types.}
 %\noi First, the syntax of \figref{fig:syntax} extends 
@@ -4061,10 +4060,17 @@ with Rules \trule{Abs} and \trule{App} modified as explained above.
 %\smallskip 
 
 %\paragraph{Encoding \HOpp into \HOp} 
+\begin{definition}
+[Typed Encoding of \HOpp into \HOp]
+\label{d:enc:hopptohop}
 The typed encoding
-$\enco{\map{\cdot}^{3}, \mapt{\cdot}^{3}}: \HOpp \to \HOp$ is defined
+$\enco{\map{\cdot}^{3}, \mapt{\cdot}^{3}}: \tyl{L}_\HOpp \to \tyl{L}_{\HOp}$ is defined
 in \figref{f:enc:hopip_to_hopi}.
-We consider mappings for terms and types (denoted $\map{\cdot}^{3}$ and $\mapt{\cdot}^{3}$, respectively), but also for (higher-order) values (denoted ($\auxmap{\cdot}{3}$). We illustrate the essence of these mappings by means of an example.
+\end{definition}
+
+We consider mappings for terms and types, denoted $\map{\cdot}^{3}$ and $\mapt{\cdot}^{3}$, respectively.
+Since now functions can be applied to (higher-order) values, we have also an auxiliary mapping on values, denoted $\auxmap{\cdot}{3}$. 
+We illustrate the essence of these mappings by means of an example.
 
 \begin{example}
 We translate the simple process from \exref{ex:hopp}, underlining the parts of the translation which are expanded/modified from one line to the following:
@@ -4158,12 +4164,10 @@ is type preserving.
 
 
 Before we prove operational correspondence we
-define mapping from $\mapa{\cdot}^{3}: \mathcal{A} \to \mathcal{A}$
-where $\mathcal{A}$ is the set of labels of the relation
-$\hby{\ell}$:
-\begin{definition}[$\mapa{\cdot}^{3}: \mathcal{A} \to \mathcal{A}$]\rm
-	Let $\mathcal{A}$ is the set of labels of the relation
-	$\hby{\ell}$ then we define:
+define a mapping on action labels:
+%from $\mapa{\cdot}^{3}: \mathcal{A} \to \mathcal{A}$ where $\mathcal{A}$ is the set of labels of the relation $\hby{\ell}$:
+\begin{definition}
+The mapping on actions $\mapa{\cdot}^{3}: \mathcal{A}_\HOpp \to \mathcal{A}_{\HOp}$  is defined as follows:
 	\begin{align*}
 		\mapa{\news{\tilde{m}} \bactout{n}{\abs{\AT{x}{L}}{P}}}^{3} 
 		& \defeq
@@ -4172,15 +4176,18 @@ $\hby{\ell}$:
 		\mapa{\bactinp{n}{\abs{\AT{x}{L}}{P}}}^{3}
 		& \defeq \bactinp{n}{\abs{z}{\binp{z}{x} \pmap{P}{3}}}
 	\end{align*}
-	and homomorphic for all other cases of $\ell \in \mathcal{A}$.
+	and as an homomorphism for all other actions $\ell \in \mathcal{A}_\HOpp$.
 \end{definition}
 
 %We now state and prove a detailed version of the operational corresponce %in \defref{app:def:opc_strong}.
 
-\begin{proposition}[Operational Correspondence. From \HOpp to \HOp]\myrm
+We may now state a labeled form of operational correspondence, as well as full abstraction:
+
+\begin{proposition}[Operational Correspondence. From \HOpp to \HOp]%\myrm
 	\label{prop:op_corr_HOpp_to_HOp}
+	Let $\Gamma; \es; \Delta \proves P$.
 	\begin{enumerate}
-		\item	Let $\Gamma; \es; \Delta \proves P$.
+		\item	
 			$\horel{\Gamma}{\Delta}{P}{\hby{\ell}}{\Delta'}{P'}$ implies
 %
 			\begin{enumerate}[a)]
@@ -4215,7 +4222,7 @@ $\hby{\ell}$:
 					{\tmap{\Delta'}{3}}{\pmap{P'}{3}}$.
 			\end{enumerate}
 
-		\item	Let $\Gamma; \es; \Delta \proves P$.
+		\item	%Let $\Gamma; \es; \Delta \proves P$.
 			$\horel{\tmap{\Gamma}{3}}{\tmap{\Delta}{3}}{\pmap{P}{3}}{\hby{\ell}}
 			{\tmap{\Delta''}{3}}{Q}$ implies
 %
@@ -4249,6 +4256,7 @@ $\hby{\ell}$:
 	\end{proof}
 
 
+We may now have:
 
 \begin{proposition}[Full Abstraction. From \HOpp to \HOp]%\myrm
 	\label{prop:fulla_HOpp_to_HOp}
@@ -4276,12 +4284,13 @@ we derive the following: % theorem:
 %\smallskip 
 
 \begin{theorem}[Encoding \HOpp into~\HOp]
-	\label{f:enc:hopiptohopi}
+	\label{f:enc:hoppptohop}
 	The encoding from $\tyl{L}_{\HOpp}$ into $\tyl{L}_{\HOp}$ (cf. \figref{f:enc:hopip_to_hopi})
-	is precise. Hence, the encodings 
-	from $\tyl{L}_{\HOpp}$ to $\tyl{L}_{\HO}$ 
-	and $\tyl{L}_{\sessp}$ 
-	are also precise. 
+	is precise. 
+%	Hence, the encodings 
+%	from $\tyl{L}_{\HOpp}$ to $\tyl{L}_{\HO}$ 
+%	and from $\tyl{L}_{\HOpp}$ to $\tyl{L}_{\sessp}$ 
+%	are also precise. 
 \end{theorem}
 
 \begin{proof}
@@ -4295,9 +4304,35 @@ Semantics-preservation follows from
  %\qed
 \end{proof}
 
-%\begin{proof}
-%See \appref{app:HOpp_to_HOp}.
-%\end{proof}
+The following corollary follows:
+
+\begin{corollary}[Encodability of \HOpp into \HOp and \sessp]
+Consider the typed encodings
+\begin{enumerate}[-]
+\item $\enco{\map{\cdot}^{1}_f, \mapt{\cdot}^{1} %, \mapa{\cdot}^{1}
+}: \tyl{L}_{\HOp} \to \tyl{L}_{\HO}$  (cf. \defref{d:enc:hopitoho})
+\item $\enco{\map{\cdot}^{2}, \mapt{\cdot}^{2} %, \mapa{\cdot}^{2}
+}: \tyl{L}_{\HOp} \to \tyl{L}_{\sessp}$ (cf. \defref{d:enc:hopitopi})
+\item $\enco{\map{\cdot}^{3}, \mapt{\cdot}^{3}}: \tyl{L}_{\HOpp} \to \tyl{L}_{\HOp}$ (cf. \defref{d:enc:hopptohop})
+\end{enumerate}
+Then the following typed encodings 	are precise:
+\begin{enumerate}[-]
+\item 
+$\enco{\pmap{\cdot}{1} \circ \pmap{\cdot}{3}, \tmap{\cdot}{1} \circ \tmap{\cdot}{3}}: \tyl{L}_\HOpp \to \tyl{L}_\HO$
+\item
+$\enco{\pmap{\cdot}{2} \circ \pmap{\cdot}{3}, \tmap{\cdot}{2} \circ \tmap{\cdot}{3}}: \tyl{L}_\HOpp \to \tyl{L}_\sessp$
+\end{enumerate}
+
+\end{corollary}
+
+\begin{proof}
+Directly from 
+\thmref{f:enc:hopitoho}, 
+\thmref{f:enc:hotopi}, 
+and 
+\thmref{f:enc:hoppptohop} (which give preciseness for all the encodings), using
+\propref{pro:composition}.
+\end{proof}
 
 %\smallskip 
 
@@ -4351,59 +4386,59 @@ Semantics-preservation follows from
 The calculus  
 $\PHOp$ 
 extends $\HOp$ 
-with polyadic name passing $\tilde{n}$ and $\abs{\tilde{x}}{Q}$ in the syntax 
-of values $V$. 
-The operational semantics is kept unchanged, with the expected use of the simultaneous substitution $\subst{\tilde{V}}{\tilde{x}}$.
-The type syntax is extended to: 
+with polyadicity.
+The syntax of $\PHOp$ thus enables the exchange of tuples of names $\widetilde{n}$ (with fixed length $k \geq 1$) in session communication (but not along shared names), 
+and extends the  syntax 
+of values $V$
+with polyadic first-order applications of the form
+ $\abs{x_1, \ldots, x_k}{Q}$, with $k \geq 1$.
+The operational semantics is kept unchanged, with the expected use of the simultaneous substitution $\subst{\widetilde{V}}{\widetilde{x}}$.
+The type syntax in \figref{f:types} is extended accordingly, as follows:
 %
-\begin{center}
-	\begin{tabular}{c}
-	$	L \bnfis \shot{\tilde{C}} \bnfbar \lhot{\tilde{C}}
-		\quad\quad
-		S \bnfis  \btout{\tilde{U}} S \bnfbar \btinp{\tilde{U}} S \bnfbar \cdots$
-	\end{tabular}
-\end{center}
-%
+\begin{align*}
+		L & \bnfis \shot{\widetilde{C}} \bnfbar \lhot{\widetilde{C}}
+		\\
+		S & \bnfis  \btout{\widetilde{U}} S \bnfbar \btinp{\widetilde{U}} S \bnfbar \cdots
+\end{align*}
 As in \cite{tlca07,MostrousY15},
 the type system for \PHOp 
-disallows a shared name that directly carries polyadic
+disallows a shared name that carries polyadic
 shared names.
 
-We give  %two extensions of \HOp: 
-encodings of \HOpp into \HOp
-and into \PHOp, and show that they are precise. 
-We use encoding composition (\propref{pro:composition}) to encode
-\PHOpp into \HO and \sessp.
-We consider the following 
-typed calculi (cf.~\defref{d:tcalculus}):
-
-
-\begin{enumerate}[-]
-%\item $\tyl{L}_{\HOpp}=\calc{\HOpp}{{\cal{T}}_4}{\hby{\ell}}{\hwb}{\proves}$,
-%where 
-%	${\cal{T}}_4$ is a set of types of $\HOpp$;  
-%the typing $\proves$ is defined in 
-%%\figref{fig:typerulesmy} 
-%\secref{sec:types}
-%with extended rules \trule{Abs} and \trule{App}.
-
-\item 
-	$\tyl{L}_{\PHOp}=\calc{\PHOp}{{\cal{T}}_5}{\hby{\ell}}{\hwb}{\proves}$,
+We consider the following typed calculus
+ (cf.~\defref{d:tcalculus}):
+	$$\tyl{L}_{\PHOp}=\calc{\PHOp}{{\cal{T}}_5}{\hby{\ell}}{\hwb}{\proves}$$
 where 
 	${\cal{T}}_5$ is the set of types of $\PHOp$;  
 the typing $\proves$ is defined in
 %\figref{fig:typerulesmy} 
 in \secref{sec:types}
-with polyadic types.
-\end{enumerate}
+with the polyadic types given above.
+Also, the set of labels 
+$\mathcal{A}_{\PHOp}$
+includes actions
+$\news{\tilde{m}} \bactout{n}{m_1, \ldots, m_k}$,
+$\bactout{n}{\abs{(x_1, \ldots, x_k)}{P}}$,
+$ \bactinp{n}{m_1, \ldots, m_k}$,
+and
+$\bactinp{n}{\abs{(x_1, \ldots, x_k)}{P}}$.
 
+We now define a typed encoding of 
+$\PHOp$ into $\HOp$. For simplicity, in definitions and statements we sometimes give the dyadic case (tuples of length 2);
+the general $k$-adic case is as expected.
 
-Second, we define the typed encoding
-	$\enco{\map{\cdot}^{4}, \mapt{\cdot}^{4}}: \PHOp \to \HOp$ 
+\begin{definition}[Typed Encoding of \PHOp into \HOp]
+\label{d:enc:phoptohop}
+The typed encoding
+	$\enco{\pmap{\cdot}{4}, \tmap{\cdot}{4}}: \tyl{L}_{\PHOp} \to \tyl{L}_{\HOp}$ 
 in \figref{f:enc:poltomon}.
-For simplicity, we give the dyadic case (tuples of length 2);
-the general case is as expected.
-The encoding of $\PHOp$  satisfies the following properties:
+\end{definition}
+
+The encoding is rather unsurprising: the polyadic communication of a tuple of length $k > 1$
+is translated as $k$ independent monadic communications, exploiting the already private communication medium given by the session name --- unlike classical encodings, there is no need for an additional fresh name for the monadic exchanges.
+Polyadic first-order abstraction and application appeal to an auxiliary fresh session along which   parameters are communicated one by one.
+
+The encoding satisfies the following properties:
 
 %HERE WE NEED TO ADD AN EXCERPT OF \propref{app:prop:op_corr_pHOp_to_HOp}, BUT WE NEED TO FIX MACROS FIRST.
 
@@ -4421,50 +4456,52 @@ is type preserving.
 	 %\qed
 	\end{proof}
 	
+In this case, the required mapping on actions 
+maps an action on $\mathcal{A}_{\PHOp}$ into a set of actions in $\mathcal{A}_{\HOp}$:
 
-Before we prove operational correspondence we
-define mapping from $\mapa{\cdot}^{4}: \mathcal{A} \to \mathcal{A}$
-where $\mathcal{A}$ is the set of labels of the relation
-$\hby{\ell}$:
-
-\begin{definition}[$\mapa{\cdot}^{4}: \mathcal{A} \to \mathcal{A}$]\rm
-	Let $\mathcal{A}$ is the set of labels of the relation
-	$\hby{\ell}$ then we define:
+\begin{definition}
+The mapping on actions 
+$\mapa{\cdot}^{4}: \mathcal{A}_{\PHOp} \to \mathcal{P}(\mathcal{A}_{\HOp})$
+is defined as follows:
 	\begin{align*}
 		\mapa{\news{\tilde{m}} \bactout{n}{m_1,  m_2}}^4 
-		& \defeq \ell_1, \ell_2 \quad
-		\textrm{ where }
-			(m_i \in \tilde{m} \Leftrightarrow \ell_i = \news{m_i}\bactout{n}{m_i} ) ~ \lor %\\
-			(m_i \not\in \tilde{m} \Leftrightarrow  \ell_i = \bactout{n}{m_i})
+		& \defeq \{\ell_1, \ell_2\} \quad
+		\textrm{ where 
+		$\begin{cases}
+			\ell_i = \news{m_i}\bactout{n}{m_i} \quad \text{if $m_i \in \tilde{m}$} 
+			\\
+			\ell_i = \bactout{n}{m_i} \quad \text{if $m_i \not\in \tilde{m}$}
+		\end{cases}$}
 		\\
 		\mapa{\news{\tilde{m}} \bactout{n}{\abs{(x_1, x_2)}{P}} }^4 
 		& \defeq
-		\news{\tilde{m}} \bactout{n}{\abs{z}\binp{z}{x_1} \binp{z}{x_2} \map{P}^{4}}
+		\{\news{\tilde{m}} \bactout{n}{\abs{z}\binp{z}{x_1} \binp{z}{x_2} \map{P}^{4}}\}
 	\end{align*}
-	and homomorphic for all other cases of $\ell \in \mathcal{A}$.
+	and as an homomorphism for all other cases of $\ell \in \mathcal{A}_{\PHOp}$.
+	TO BE COMPLETED.
 \end{definition}
 
 
 \begin{proposition}[Operational Correspondence. From \pHOp to \HOp]\myrm
 	\label{prop:op_corr_pHOp_to_HOp}
-%
+Let $\Gamma; \es; \Delta \proves P$.
 	\begin{enumerate}
-		\item	Let $\Gamma; \es; \Delta \proves P$. Then
+		\item	 Then
 			$\horel{\Gamma}{\Delta}{P}{\hby{\ell}}{\Delta'}{P'}$ implies
 %
 			\begin{enumerate}[a)]
 				\item	If $\ell = \news{\tilde{m}'} \bactout{n}{\tilde{m}}$ then
-					$\horel{\tmap{\Gamma}{4}}{\tmap{\Delta}{4}}{\pmap{P}{4}}{\hby{\ell_1} \dots \hby{\ell_n}}{\tmap{\Delta'}{4}}{\pmap{P}{4}}$
-					with $\mapa{\ell}^{4} = \ell_1 \dots \ell_n$.
+					$\horel{\tmap{\Gamma}{4}}{\tmap{\Delta}{4}}{\pmap{P}{4}}{\hby{\ell_1} \dots \hby{\ell_k}}{\tmap{\Delta'}{4}}{\pmap{P}{4}}$
+					with $\mapa{\ell}^{4} = \{\ell_1, \dots, \ell_n\}$.
 
 				\item	If $\ell = \bactinp{n}{\tilde{m}}$ then
-					$\horel{\tmap{\Gamma}{4}}{\tmap{\Delta}{4}}{\pmap{P}{4}}{\hby{\ell_1} \dots \hby{\ell_n}}{\tmap{\Delta'}{4}}{\pmap{P}{4}}$
-					with $\mapa{\ell}^{4} = \ell_1 \dots \ell_n$.
+					$\horel{\tmap{\Gamma}{4}}{\tmap{\Delta}{4}}{\pmap{P}{4}}{\hby{\ell_1} \dots \hby{\ell_k}}{\tmap{\Delta'}{4}}{\pmap{P}{4}}$
+					with $\mapa{\ell}^{4} = \{\ell_1, \dots, \ell_n\}$.
 
 				\item	If $\ell \in \set{\news{\tilde{m}} \bactout{n}{\abs{\tilde{x}}{R}}, \bactinp{n}{\abs{\tilde{x}}{R}}}$ then
 %					$\exists l' $ such that
 					$\horel{\tmap{\Gamma}{4}}{\tmap{\Delta}{4}}{\pmap{P}{4}}{\hby{\ell'}}
-					{\tmap{\Delta'}{4}}{\pmap{P'}{4}}$ with $\mapa{\ell}^{4} = \ell'$.
+					{\tmap{\Delta'}{4}}{\pmap{P'}{4}}$ with $\mapa{\ell}^{4} = \{\ell'\}$.
 
 				\item	If $\ell \in \set{\bactsel{n}{l}, \bactbra{n}{l}}$ then
 					$\horel{\tmap{\Gamma}{4}}{\tmap{\Delta}{4}}{\pmap{P}{4}}{\hby{\ell}}
@@ -4472,27 +4509,27 @@ $\hby{\ell}$:
 
 				\item	If $\ell = \btau$ then either
 					$\horel{\tmap{\Gamma}{4}}{\tmap{\Delta}{4}}{\pmap{P}{4}}{\hby{\btau} \hby{\stau} \dots \hby{\stau}}
-					{\tmap{\Delta'}{4}}{\pmap{P'}{4}}$ with $\mapa{\ell} = \btau, \stau \dots \stau$.
+					{\tmap{\Delta'}{4}}{\pmap{P'}{4}}$ with $\mapa{\ell} = \{\btau, \stau, \dots, \stau\}$.
 
 				\item	If $\ell = \tau$ then %and $\hby{\ell}$ is not a \betatran then
 					$\horel{\tmap{\Gamma}{4}}{\tmap{\Delta}{4}}{\pmap{P}{4}}{\hby{\tau} \dots \hby{\tau}}
-					{\tmap{\Delta'}{4}}{\pmap{P'}{4}}$ with $\mapa{\ell}^{4} = \tau \dots \tau$.
+					{\tmap{\Delta'}{4}}{\pmap{P'}{4}}$ with $\mapa{\ell}^{4} = \{\tau, \dots, \tau\}$.
 			\end{enumerate}
 
-		\item	Let $\Gamma; \es; \Delta \proves P$.
+		\item	%Let $\Gamma; \es; \Delta \proves P$.
 			$\horel{\tmap{\Gamma}{4}}{\tmap{\Delta}{4}}{\pmap{P}{4}}{\hby{\ell}}
 			{\tmap{\Delta_1}{4}}{P_1}$ implies
 %
 			\begin{enumerate}[a)]
 				\item	If $\ell \in \set{\bactinp{n}{m}, \bactout{n}{m}, \news{m} \bactout{n}{m}}$ then
 					$\horel{\Gamma}{\Delta}{P}{\hby{\ell}}{\Delta'}{P'}$ and\\
-					$\horel{\tmap{\Gamma}{4}}{\tmap{\Delta_1}{4}}{P_1}{\hby{\ell_2} \dots \hby{\ell_n}}
-					{\tmap{\Delta'}{4}}{\tmap{P'}{4}}$ with $\mapa{\ell}^{4} = \ell_1 \dots \ell_n$.
+					$\horel{\tmap{\Gamma}{4}}{\tmap{\Delta_1}{4}}{P_1}{\hby{\ell_2} \dots \hby{\ell_k}}
+					{\tmap{\Delta'}{4}}{\tmap{P'}{4}}$ with $\mapa{\ell}^{4} = \{\ell_1, \dots, \ell_k\}$.
 
 				\item	If $\ell \in \set{\news{\tilde{m}} \bactout{n}{\abs{x}{R}}, \bactinp{n}{\abs{x}{R}}}$
 					then
 					$\horel{\Gamma}{\Delta}{P}{\hby{\ell'}}{\Delta'}{P'}$
-					with $\mapa{\ell'}^{4} = \ell$ and $P_1 \scong \pmap{P'}{4}$.
+					with $\mapa{\ell'}^{4} = \{\ell\}$ and $P_1 \scong \pmap{P'}{4}$.
 
 				\item	If $\ell \in \set{\bactsel{n}{l}, \bactbra{n}{l}}$
 					then
@@ -4502,12 +4539,12 @@ $\hby{\ell}$:
 				\item	If $\ell = \btau$ then
 					$\horel{\Gamma}{\Delta}{P}{\hby{\btau}}{\Delta'}{P'}$ and
 					$\horel{\tmap{\Gamma}{4}}{\tmap{\Delta_1}{4}}{P_1}{\hby{\stau} \dots \hby{\stau}}
-					{\tmap{\Delta'}{4}}{\tmap{P'}{4}}$ with $\mapa{\ell}^{4} = \btau, \stau \dots \stau$.
+					{\tmap{\Delta'}{4}}{\tmap{P'}{4}}$ with $\mapa{\ell}^{4} = \{\btau, \stau, \dots, \stau\}$.
 
 				\item	If $\ell = \tau$ then
 					$\horel{\Gamma}{\Delta}{P}{\hby{\tau}}{\Delta'}{P'}$ and
 					$\horel{\tmap{\Gamma}{4}}{\tmap{\Delta_1}{4}}{P_1}{\hby{\tau} \dots \hby{\tau}}
-					{\tmap{\Delta'}{4}}{\tmap{P'}{4}}$ with $\mapa{\ell}^{4} = \tau \dots \tau$.
+					{\tmap{\Delta'}{4}}{\tmap{P'}{4}}$ with $\mapa{\ell}^{4} = \{\tau, \dots, \tau\}$.
 			\end{enumerate}
 	\end{enumerate}
 \end{proposition}
