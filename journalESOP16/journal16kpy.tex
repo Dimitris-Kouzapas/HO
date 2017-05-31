@@ -441,7 +441,7 @@ we show
 %are encodable 
 encodings of \HOpp and \PHOp 
 into \HOp
-(Thms.~\ref{f:enc:hopiptohopi} and \ref{f:enc:phopiptohopi}).
+(Thms.~\ref{f:enc:hoppptohop} and \ref{f:enc:phopiptohopi}).
 %This connects our work to the existing higher-order session calculus in~\cite{tlca07} (here denoted  $\PHOpp$).
 %\item 
 \secref{sec:relwork} reviews related works and 
@@ -1026,7 +1026,7 @@ we focus on \emph{balanced} session environments:
 
 %\smallskip
 
-\begin{definition}[Balanced]\label{d:wtenv}%\rm
+\begin{definition}[Balanced Environments]\label{d:wtenv}%\rm
 	%Let $\Delta$ be a session environment.
 	We say that a session environment $\Delta$ is {\em balanced} if whenever
 	$s: S_1, \dual{s}: S_2 \in \Delta$ then $S_1 \dualof S_2$.
@@ -1233,8 +1233,10 @@ Their definition
 uses an early \emph{typed}
 labelled transition system (LTS) on processes, informed by session
 types. 
-The interaction of processes with their environment is defined using action labels $\ell$:
+The interaction of processes with their environment is defined using action labels:
 %
+\begin{definition}[Action Labels]\label{d:labels}
+The set of action labels for \HOp, ranged over by $\ell, \ell', \ldots$, is defined as follows:
 \begin{center}
 	\begin{tabular}{l}
 		$\ell
@@ -1245,6 +1247,7 @@ The interaction of processes with their environment is defined using action labe
 			\bnfbar	\bactbra{n}{l}$
 	\end{tabular}
 \end{center}
+\end{definition}
 %
 \noi 
 Label $\tau$ defines internal actions.
@@ -1260,6 +1263,9 @@ Actions for select and branch on
 a label~$l$ are denoted $\bactsel{n}{l}$ and $\bactbra{n}{l}$, respectively.
 We write $\fn{\ell}$ and $\bn{\ell}$ to denote the
 sets of free/bound names in $\ell$, respectively.
+The sets of actions for \HO and \sessp is derived from the above syntax, in line with the syntax of values $V$ in \figref{fig:syntax}.
+This way, e.g., $\news{\widetilde{m}} \bactout{n}{\abs{x}{P}}$ is an action label for \HO but not for \sessp;
+similarly, $\bactinp{s}{n}$ is an action label for \sessp but not for \HO.
 
 %\end{document}
 
@@ -2253,12 +2259,23 @@ are sets of types of $\HOp$, $\HO$, and $\sessp$, respectively.
 The typing $\proves$ is defined in 
 %\figref{fig:typerulesmy}.
 \secref{sec:types}.
-The LTSs follow the intuitions given in \secref{ss:equiv}, with underlying sets of actions $\mathcal{A}_{\HOp}$, $\mathcal{A}_\HO$, and $\mathcal{A}_\sessp$ defined as expected.
+The LTSs follow the intuitions given in \secref{ss:equiv}.
+The set of actions $\mathcal{A}_{\HOp}$ is as in \defref{d:labels}; the sets of actions $\mathcal{A}_\HO$ and $\mathcal{A}_\sessp$ 
+are obtained from $\mathcal{A}_{\HOp}$ 
+as expected.
 %are as in \defref{def:rlts}, 
 Moreover, 
 $\hwb$ is as in \defref{d:hbw}, and 
 $\fwb$ is as in \defref{d:fwb}.
 
+\begin{remark}[Type Annotations]\label{r:types}
+In our encodings, we sometimes type-annotate
+bound variables in order to distinguish first- and higher-order values and processes.
+This way, e.g., 
+we may write $\binp{u}{\AT{x}{C}} P$
+and 
+$\binp{u}{\AT{x}{L}} P$ to denote first- and higher-order input prefixed processes, respectively.
+\end{remark}
 
 \begin{comment}
 \dk{
@@ -3911,8 +3928,10 @@ the extension of \HOp allows \emph{both} higher-order
 abstractions/aplications and polyadicity.
 
 We present precise encodings of \HOpp and \PHOp into \HOp.
-Using encoding composability (\propref{pro:composition}), 
-these two encodings may be combined to relate the super-calculus \PHOpp with the encodings into \HO and \sessp, given in the previous section.
+We then use the encodings of \HOp into \HO and \sessp, given in the previous section, 
+together with 
+encoding composability (\propref{pro:composition}) to relate \HO and \sessp with the super-calculus \PHOpp, which subsumes
+both \HOpp and \PHOp.
 
 
 %\subsection{\HOp with Higher-Order Abstractions ($\HOpp$) and 
@@ -3974,8 +3993,8 @@ these two encodings may be combined to relate the super-calculus \PHOpp with the
 \subsection{Precise Encoding of $\HOpp$ into $\HOp$}
 We first introduce \HOpp, the  extension of \HOp with higher-order abstractions and applications.
 This is the calculus whose (typed) behavioral theory we studied in~\cite{characteristic_bis,KouzapasPY17}. The syntax of \HOpp is obtained 
-from  \figref{fig:syntax} by extending
-$\appl{V}{u}$ to $\appl{V}{W}$, where  $W$ is a higher-order value. 
+from  \figref{fig:syntax} by letting 
+$\appl{V}{u}$ to $\appl{V}{W}$ in the syntax of processes, where  $W$ is a higher-order value. 
 As for the reduction semantics, we keep the rules in \figref{fig:reduction}, except for 
  Rule~$\orule{App}$ which is replaced by 
 $$
@@ -4024,12 +4043,17 @@ the typing $\proves$ is defined in
 %\figref{fig:typerulesmy} 
 \secref{sec:types}
 with Rules \trule{Abs} and \trule{App} modified as explained above.
-Also, the set of labels 
-$\mathcal{A}_\HOpp$
-includes output and input actions
+Formally, the set   
+$\mathcal{A}_\HOpp$ coincides with $\mathcal{A}_{\HOp}$, for the syntax of values $V$ is the same in both languages.
+However, by considering type-annotated values (cf. \remref{r:types}),
+we have that   $\mathcal{A}_\HOpp$
+includes output and input actions of the form
 $\news{\tilde{m}} \bactout{n}{\abs{\AT{x}{L}}{P}}$
 and
-${\bactinp{n}{\abs{\AT{x}{L}}{P}}}$.
+${\bactinp{n}{\abs{\AT{x}{L}}{P}}}$, whereas $\mathcal{A}_{\HOp}$ includes only labels of the form
+$\news{\tilde{m}} \bactout{n}{\abs{\AT{x}{C}}{P}}$
+and
+${\bactinp{n}{\abs{\AT{x}{C}}{P}}}$.
 
 %\myparagraph{Syntax, Operational Semantics and Types.}
 %\noi First, the syntax of \figref{fig:syntax} extends 
@@ -4163,11 +4187,14 @@ is type preserving.
 %\end{proposition}
 
 
-Before we prove operational correspondence we
+Before proving operational correspondence we
 define a mapping on action labels:
 %from $\mapa{\cdot}^{3}: \mathcal{A} \to \mathcal{A}$ where $\mathcal{A}$ is the set of labels of the relation $\hby{\ell}$:
 \begin{definition}
-The mapping on actions $\mapa{\cdot}^{3}: \mathcal{A}_\HOpp \to \mathcal{A}_{\HOp}$  is defined as follows:
+Given 
+the typed encoding
+$\enco{\map{\cdot}^{3}, \mapt{\cdot}^{3}}: \tyl{L}_\HOpp \to \tyl{L}_{\HOp}$ (cf. \defref{d:enc:hopptohop}),
+the mapping on actions $\mapa{\cdot}^{3}: \mathcal{A}_\HOpp \to \mathcal{A}_{\HOp}$  is defined as follows:
 	\begin{align*}
 		\mapa{\news{\tilde{m}} \bactout{n}{\abs{\AT{x}{L}}{P}}}^{3} 
 		& \defeq
@@ -4304,7 +4331,7 @@ Semantics-preservation follows from
  %\qed
 \end{proof}
 
-The following corollary follows:
+We then have the following corollary:
 
 \begin{corollary}[Encodability of \HOpp into \HOp and \sessp]
 Consider the typed encodings
@@ -4330,7 +4357,7 @@ Directly from
 \thmref{f:enc:hopitoho}, 
 \thmref{f:enc:hotopi}, 
 and 
-\thmref{f:enc:hoppptohop} (which give preciseness for all the encodings), using
+\thmref{f:enc:hoppptohop} (which give preciseness for all the involved encodings), using
 \propref{pro:composition}.
 \end{proof}
 
@@ -4387,12 +4414,23 @@ The calculus
 $\PHOp$ 
 extends $\HOp$ 
 with polyadicity.
-The syntax of $\PHOp$ thus enables the exchange of tuples of names $\widetilde{n}$ (with fixed length $k \geq 1$) in session communication (but not along shared names), 
-and extends the  syntax 
-of values $V$
-with polyadic first-order applications of the form
- $\abs{x_1, \ldots, x_k}{Q}$, with $k \geq 1$.
-The operational semantics is kept unchanged, with the expected use of the simultaneous substitution $\subst{\widetilde{V}}{\widetilde{x}}$.
+Thus, $\PHOp$  enables the exchange of tuples of names $\widetilde{n}$ (with fixed length $k \geq 1$) in both session communication (but not along shared names) and as arguments 
+to function applications.
+As such, the syntax of
+\figref{fig:syntax}  
+is modified by considering  
+polyadic first-order applications of the form
+ $\abs{x_1, \ldots, x_k}{Q}$ ($k \geq 1$)
+ in the syntax of values $V$;
+the syntax of processes includes polyadicity in input and output prefixes, 
+ as well as in function applications. 
+The operational semantics in \figref{fig:reduction} requires only minor modifications to accommodate simultaneous substitution $\subst{\widetilde{V}}{\widetilde{x}}$ (for equally sized $\widetilde{V}$ and $\widetilde{x}$)
+in Rules~\orule{App} and \orule{Pass}:
+	\begin{align*}
+		\appl{(\abs{\widetilde{x}}{P})}{\widetilde{u}}   & \red  P \subst{\widetilde{u}}{x} 
+		\\[1mm]
+		\bout{n}{\widetilde{V}} P \Par \binp{\dual{n}}{\widetilde{x}} Q & \red  P \Par Q \subst{\widetilde{V}}{\widetilde{x}} 
+	\end{align*}
 The type syntax in \figref{f:types} is extended accordingly, as follows:
 %
 \begin{align*}
@@ -4410,18 +4448,18 @@ We consider the following typed calculus
 	$$\tyl{L}_{\PHOp}=\calc{\PHOp}{{\cal{T}}_5}{\hby{\ell}}{\hwb}{\proves}$$
 where 
 	${\cal{T}}_5$ is the set of types of $\PHOp$;  
-the typing $\proves$ is defined in
+the typing $\proves$ is defined
 %\figref{fig:typerulesmy} 
 in \secref{sec:types}
-with the polyadic types given above.
+with  type syntax given above.
 Also, the set of labels 
-$\mathcal{A}_{\PHOp}$
-includes actions
+$\mathcal{A}_{\PHOp}$ extends that in \defref{d:labels} by 
+including actions
 $\news{\tilde{m}} \bactout{n}{m_1, \ldots, m_k}$,
-$\bactout{n}{\abs{(x_1, \ldots, x_k)}{P}}$,
+$\bactout{n}{\abs{x_1, \ldots, x_k}{P}}$,
 $ \bactinp{n}{m_1, \ldots, m_k}$,
 and
-$\bactinp{n}{\abs{(x_1, \ldots, x_k)}{P}}$.
+$\bactinp{n}{\abs{x_1, \ldots, x_k}{P}}$.
 
 We now define a typed encoding of 
 $\PHOp$ into $\HOp$. For simplicity, in definitions and statements we sometimes give the dyadic case (tuples of length 2);
@@ -4457,10 +4495,15 @@ is type preserving.
 	\end{proof}
 	
 In this case, the required mapping on actions 
-maps an action on $\mathcal{A}_{\PHOp}$ into a set of actions in $\mathcal{A}_{\HOp}$:
+maps an action on $\mathcal{A}_{\PHOp}$ into a set of actions in $\mathcal{A}_{\HOp}$.
+This is a natural consequence of dividing a $k$-adic name communication or application into 
+independent (monadic) communications:
 
 \begin{definition}
-The mapping on actions 
+
+Given the typed encoding
+	$\enco{\pmap{\cdot}{4}, \tmap{\cdot}{4}}: \tyl{L}_{\PHOp} \to \tyl{L}_{\HOp}$ (cf. \defref{d:enc:phoptohop}), 
+	the mapping on actions 
 $\mapa{\cdot}^{4}: \mathcal{A}_{\PHOp} \to \mathcal{P}(\mathcal{A}_{\HOp})$
 is defined as follows:
 	\begin{align*}
@@ -4473,14 +4516,21 @@ is defined as follows:
 			\ell_i = \bactout{n}{m_i} \quad \text{if $m_i \not\in \tilde{m}$}
 		\end{cases}$}
 		\\
-		\mapa{\news{\tilde{m}} \bactout{n}{\abs{(x_1, x_2)}{P}} }^4 
+		\mapa{\news{\tilde{m}} \bactout{n}{\abs{x_1, x_2}{P}} }^4 
 		& \defeq
 		\{\news{\tilde{m}} \bactout{n}{\abs{z}\binp{z}{x_1} \binp{z}{x_2} \map{P}^{4}}\}
+		\\
+		\mapa{\btau}^4 & \defeq \{\btau, \stau,  \stau\}
+		\\
+		\mapa{\tau}^{4}  & \defeq \{\tau,\tau\}
+		\\
+		\mapa{\bactsel{n}{l}}^{4}  & \defeq \{\bactsel{n}{l}\}
+		\\
+		\mapa{\bactbra{n}{l}}^{4}  & \defeq \{\bactbra{n}{l}\}
 	\end{align*}
-	and as an homomorphism for all other cases of $\ell \in \mathcal{A}_{\PHOp}$.
-	TO BE COMPLETED.
 \end{definition}
-
+\noi The above definition handles the dyadic case. Notice that we distinguish two kinds of internal actions: while  $\mapa{\tau}^{4}$ is associated to internal actions arising from the mapping of polyadic name synchronization, 
+ $\mapa{\btau}^4$ results from the translation of function applications. We may now state operational correspondence:
 
 \begin{proposition}[Operational Correspondence. From \pHOp to \HOp]\myrm
 	\label{prop:op_corr_pHOp_to_HOp}
@@ -4490,13 +4540,13 @@ Let $\Gamma; \es; \Delta \proves P$.
 			$\horel{\Gamma}{\Delta}{P}{\hby{\ell}}{\Delta'}{P'}$ implies
 %
 			\begin{enumerate}[a)]
-				\item	If $\ell = \news{\tilde{m}'} \bactout{n}{\tilde{m}}$ then
+				\item	If $\ell = \news{\tilde{m}'} \bactout{n}{\widetilde{m}}$ with $|\widetilde{m}| = k$ then
 					$\horel{\tmap{\Gamma}{4}}{\tmap{\Delta}{4}}{\pmap{P}{4}}{\hby{\ell_1} \dots \hby{\ell_k}}{\tmap{\Delta'}{4}}{\pmap{P}{4}}$
-					with $\mapa{\ell}^{4} = \{\ell_1, \dots, \ell_n\}$.
+					with $\mapa{\ell}^{4} = \{\ell_1, \dots, \ell_k\}$.
 
-				\item	If $\ell = \bactinp{n}{\tilde{m}}$ then
+				\item	If $\ell = \bactinp{n}{\widetilde{m}}$ with $|\widetilde{m}| = k$ then
 					$\horel{\tmap{\Gamma}{4}}{\tmap{\Delta}{4}}{\pmap{P}{4}}{\hby{\ell_1} \dots \hby{\ell_k}}{\tmap{\Delta'}{4}}{\pmap{P}{4}}$
-					with $\mapa{\ell}^{4} = \{\ell_1, \dots, \ell_n\}$.
+					with $\mapa{\ell}^{4} = \{\ell_1, \dots, \ell_k\}$.
 
 				\item	If $\ell \in \set{\news{\tilde{m}} \bactout{n}{\abs{\tilde{x}}{R}}, \bactinp{n}{\abs{\tilde{x}}{R}}}$ then
 %					$\exists l' $ such that
@@ -4507,7 +4557,7 @@ Let $\Gamma; \es; \Delta \proves P$.
 					$\horel{\tmap{\Gamma}{4}}{\tmap{\Delta}{4}}{\pmap{P}{4}}{\hby{\ell}}
 					{\tmap{\Delta'}{4}}{\pmap{P'}{4}}$.
 
-				\item	If $\ell = \btau$ then either
+				\item	If $\ell = \btau$ then %either
 					$\horel{\tmap{\Gamma}{4}}{\tmap{\Delta}{4}}{\pmap{P}{4}}{\hby{\btau} \hby{\stau} \dots \hby{\stau}}
 					{\tmap{\Delta'}{4}}{\pmap{P'}{4}}$ with $\mapa{\ell} = \{\btau, \stau, \dots, \stau\}$.
 
@@ -4523,7 +4573,7 @@ Let $\Gamma; \es; \Delta \proves P$.
 			\begin{enumerate}[a)]
 				\item	If $\ell \in \set{\bactinp{n}{m}, \bactout{n}{m}, \news{m} \bactout{n}{m}}$ then
 					$\horel{\Gamma}{\Delta}{P}{\hby{\ell}}{\Delta'}{P'}$ and\\
-					$\horel{\tmap{\Gamma}{4}}{\tmap{\Delta_1}{4}}{P_1}{\hby{\ell_2} \dots \hby{\ell_k}}
+					$\horel{\tmap{\Gamma}{4}}{\tmap{\Delta_1}{4}}{P_1}{\hby{\ell_1} \dots \hby{\ell_k}}
 					{\tmap{\Delta'}{4}}{\tmap{P'}{4}}$ with $\mapa{\ell}^{4} = \{\ell_1, \dots, \ell_k\}$.
 
 				\item	If $\ell \in \set{\news{\tilde{m}} \bactout{n}{\abs{x}{R}}, \bactinp{n}{\abs{x}{R}}}$
@@ -4646,11 +4696,11 @@ we derive the following:
 	The encoding from
 		$\tyl{L}_{\PHOp}$ into $\tyl{L}_{\HOp}$ (cf. \figref{f:enc:poltomon})
 	is precise. 
-	Hence, the encodings 
-	from
-	$\tyl{L}_{\PHOp}$ to $\tyl{L}_{\HO}$ 
-	and $\tyl{L}_{\sessp}$ 
-	are also precise. 
+%	Hence, the encodings 
+%	from
+%	$\tyl{L}_{\PHOp}$ to $\tyl{L}_{\HO}$ 
+%	and $\tyl{L}_{\sessp}$ 
+%	are also precise. 
 \end{theorem}
 
 \begin{proof}
@@ -4664,14 +4714,45 @@ Semantics-preservation follows from
  %\qed
 \end{proof}
 
+We then have the following corollary:
+
+\begin{corollary}[Encodability of \PHOp into \HOp and \sessp]
+Consider the typed encodings
+\begin{enumerate}[-]
+\item $\enco{\map{\cdot}^{1}_f, \mapt{\cdot}^{1} %, \mapa{\cdot}^{1}
+}: \tyl{L}_{\HOp} \to \tyl{L}_{\HO}$  (cf. \defref{d:enc:hopitoho})
+\item $\enco{\map{\cdot}^{2}, \mapt{\cdot}^{2} %, \mapa{\cdot}^{2}
+}: \tyl{L}_{\HOp} \to \tyl{L}_{\sessp}$ (cf. \defref{d:enc:hopitopi})
+\item $\enco{\map{\cdot}^{4}, \mapt{\cdot}^{4}}: \tyl{L}_{\PHOp} \to \tyl{L}_{\HOp}$ (cf. \defref{d:enc:phoptohop})
+\end{enumerate}
+Then the following typed encodings 	are precise:
+\begin{enumerate}[-]
+\item 
+$\enco{\pmap{\cdot}{1} \circ \pmap{\cdot}{4}, \tmap{\cdot}{1} \circ \tmap{\cdot}{4}}: \tyl{L}_{\PHOp} \to \tyl{L}_\HO$
+\item
+$\enco{\pmap{\cdot}{2} \circ \pmap{\cdot}{4}, \tmap{\cdot}{2} \circ \tmap{\cdot}{4}}: \tyl{L}_{\PHOp} \to \tyl{L}_\sessp$
+\end{enumerate}
+
+\end{corollary}
+
+\begin{proof}
+Directly from 
+\thmref{f:enc:hopitoho}, 
+\thmref{f:enc:hotopi}, 
+and 
+\thmref{f:enc:phopiptohopi} (which give preciseness for all the involved encodings), using
+\propref{pro:composition}.
+\end{proof}
+
+
 %\begin{proof}
 %See \appref{app:pHOp_to_HOp}.
 %\end{proof}
 
 
-By combining Thms.~\ref{f:enc:hopiptohopi} and~\ref{f:enc:phopiptohopi},
+By combining Thms.~\ref{f:enc:hoppptohop} and~\ref{f:enc:phopiptohopi},
 we can extend preciseness to the super-calculus
-$\PHOpp$.
+$\PHOpp$, which subsumes both \HOpp and \PHOp.
 % (denoted by   in Fig.~\ref{fig:express}) 
 
 
@@ -4865,7 +4946,7 @@ While~\cite{DemangeonH11}~gives an encoding of \sessp into a linear calculus
 the work~\cite{Dardha:2012:STR:2370776.2370794} 
 gives  operational correspondence (without full abstraction)
 for the first- and higher-order 
-$\pi$-calculi into \cite{LinearPi}. 
+$\pi$-calculi into~\cite{LinearPi}. 
 %They investigate an embeddability of two different typing systems;
 By the result of \cite{DemangeonH11}, 
 \HOpp is encodable  into the linearly typed $\pi$-calculi.     
@@ -4920,7 +5001,7 @@ session type information is critical to establish key properties for preciseness
 
 \paragraph{Acknowledgments}
 We have benefited from feedback from the users of the Moca mailing list, in particular Greg Meredith and Xu Xian.
-We are grateful to the anonymous reviewers for their useful remarks and suggestions.
+We are grateful to the ESOP'16 anonymous reviewers for their useful remarks and suggestions.
 This work has been partially sponsored by the Doctoral Prize Fellowship, EPSRC EP/K011715/1, EPSRC EP/K034413/1, and EPSRC EP/L00058X/1, EU project FP7-612985 UpScale, and EU COST Actions IC1201 (BETTY), IC1402 (ARVI), and IC1405 (Reversible Computation). P\'{e}rez is also affiliated to the NOVA Laboratory for Computer Science and Informatics (NOVA LINCS), Universidade Nova de Lisboa, Portugal.
  
 %\newpage
