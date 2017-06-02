@@ -1716,7 +1716,7 @@ We can finally state:
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\subsection{Example (Tentative)}
+\subsection{Example (Tentative)}\label{ss:hotel}
 We recall the case study that we gave in our previous paper.
 
 The scenario involves a $\Client$ process that wants to book
@@ -1866,7 +1866,7 @@ $.
 We define the formal notion of \emph{encoding} by 
 extending to a typed setting existing criteria for untyped processes, as put forward in, e.g.,
 \cite{Nestmann00,Palamidessi03,DBLP:conf/lics/PalamidessiSVV06,DBLP:journals/iandc/Gorla10,DBLP:conf/icalp/LanesePSS10,DBLP:journals/tcs/FuL10,DBLP:journals/corr/abs-1208-2750,DBLP:conf/esop/PetersNG13}. 
-We first define a typed calculus parametrised by a syntax, an operational semantics, and a type system.
+We first define a typed calculus parametrised by a process syntax, an operational semantics, and a type system.
 Based on this definition, in  
 \secref{sec:positive} and \secref{sec:extension}
 we define concrete instances of (higher-order) typed calculi.
@@ -2173,20 +2173,19 @@ we appeal to the weaker {\em minimal} encodings.
 
 \begin{definition}[Typed Encodings: Precise and Minimal]%\rm
 \label{def:goodenc}
-We say that 
+Let $\enco{\map{\cdot}, \mapt{\cdot}}: \tyl{L}_1 \to \tyl{L}_2$ be a typed encoding.
+\begin{enumerate}[-]
+\item We say that 
 	the typed encoding 
-	$\enco{\map{\cdot}, \mapt{\cdot} %, \mapa{\cdot}
-	}: \tyl{L}_1 \to \tyl{L}_2$ is 
-	%\begin{enumerate}[$\bullet$]
-	%\item 
+	 is 
 	\emph{precise}, if it is syntax, type, and semantic preserving (\defsref{def:sep}, \ref{def:tp}, \ref{def:ep}).
-	%\item 
-	We say that the encoding is
+	\item 
+	We say that the typed encoding is
 	\emph{minimal}, if it is syntax preserving 
 	(\defref{def:sep}),
 	barb preserving (\defref{def:ep}-2), 
 	and operationally complete (\defref{def:ep}-3(a)).
-%	\end{enumerate}
+	\end{enumerate}
 \end{definition}
 
 %\smallskip 
@@ -2202,7 +2201,7 @@ We say that
 
 The following property will come in handy in \secref{sec:extension}:
 
-\begin{proposition}%[Composability of Precise Encodings]%\rm
+\begin{proposition}[Composability]%\rm
 	\label{pro:composition}
 	Let %encodings 
 	$\enco{\map{\cdot}^{1}, \mapt{\cdot}^{1}%, \mapa{\cdot}^{1}
@@ -2236,7 +2235,7 @@ higher-order communication without name-passing nor recursion (\HO) (\secref{sub
 with recursion (\sessp) (\secref{subsec:HOp_to_sessp}).
 We then compare these  encodings (\secref{ss:compare}). 
 Moreover, in \secref{ss:negative} we state our impossibility result for shared/linear names.
-We consider the typed calculi (cf.~\defref{d:tcalculus}):
+We consider the typed calculi, which result as instances of~\defref{d:tcalculus}:
 %\begin{enumerate}[-]
 %	\item
 %	$\tyl{L}_{\HOp}=\calc{\HOp}{{\cal{T}}_1}{\hby{\tau}}{\hwb}{\proves}$,
@@ -2455,7 +2454,9 @@ provided that $\Delta_1 = \{n_i:S_i\}_{1\leq i\leq m}$.
 \input{figures/HOp_to_HO}
 
 %\noi 
-Note that $\Delta$ in $\varp{X}:\Delta$ is mapped to a non-tail
+Observe that the encoding of types $\tmap{\cdot}{1}$ depends on an auxiliary encoding 
+for value types, denoted $\vtmap{\cdot}{1}$.
+Notice also that $\Delta$ in $\varp{X}:\Delta$ is mapped to a non-tail
 recursive session type with variable $z_X$. % (see \figref{f:enc:hopi_to_ho}).
 Non-tail
 recursive session types {were} studied in~\cite{DBLP:journals/corr/abs-1202-2086,TGC14};
@@ -2464,8 +2465,8 @@ this is the first application in the
 context of higher-order session types.
 %which carries type variable as the last argument.  
 For convenience,  % of the presentation, %we use the polyadic name abstraction and passing.
-we use polyadic name abstractions.
-A precise encoding of polyadicity into \HO is given in~\secref{sec:extension}.
+we use polyadic name abstractions $\abs{x_1, \ldots, x_k}{P}$, with $k \geq 2$ (sometimes also denoted as $\abs{(x_1, \ldots, x_k)}{P}$).
+A precise encoding of polyadicity into \HOp is given in~\secref{ss:poly} (see also \cororef{coro:poly} to its extension to \HO).
 
 {Key elements in 
 \figref{f:enc:hopi_to_ho} are encodings of 
@@ -2562,6 +2563,17 @@ Next we illustrate the behaviour of $\pmapp{P}{1}{f}$; below $\ell$ stands for $
 \end{align*}
 \end{example}
 
+\begin{example}[Encoding the Hotel client]
+We encode the Hotel client described in 
+\secref{ss:hotel}.
+We have:
+\begin{align*}
+\pmap{\Client_2}{1}_f & = \pmap{\newsp{h}{\bout{s_1}{\abs{x}{Q_1 \subst{h}{y}}} \bout{s_2}{\abs{x}{Q_2 \subst{\dual{h}}{y}}} \inact}}{1}_f
+\\
+ & = \newsp{h}{\bout{s_1}{\abs{x}{\pmap{Q_1 \subst{h}{y}}{1}_f}} \bout{s_2}{\abs{x}{\pmap{Q_2 \subst{\dual{h}}{y}}{1}_f} }\inact}
+\end{align*}
+TO BE COMPLETED
+\end{example}
 
 We now describe the properties of the encoding. 
 {Directly from \figref{f:enc:hopi_to_ho} we may state:
@@ -2900,8 +2912,8 @@ $$
 	where  $\repl{} P$ stands for $\recp{X}{(P \Par \rvar{X})}$.
 	In the first case, if the abstraction body does not contain (linear) session names then it can be safely 
 	represented as a persistent server accessible via a (fresh) trigger name $a$, which is sent in place of the abstraction. The second case covers the case in which the abstraction to be passed around 
-	is linear: the server should be invoked exactly once, and cannot be persistent.
-	In this scheme, the encoding of abstraction reception simply expects the trigger name $a$:
+	is linear: the server on $a$ should be invoked exactly once---it cannot be persistent.
+	In this scheme, the encoding of abstraction reception simply expects a trigger name:
    $$
    \pmap{\binp{u}{x} P}{2} \defeq  \binp{u}{x} \pmap{P}{2}
    $$
@@ -2945,6 +2957,10 @@ in \figref{f:enc:ho_to_sessp}.
 
 %\smallskip 
 \input{figures/HOp_to_pi}
+
+\begin{example}[Encoding the Hotel client]
+TO DO.
+\end{example}
 
 We describe key properties of this encoding. First, type preservation and operational correspondence, which requires a mapping on action labels.
 
@@ -3021,7 +3037,7 @@ We now state operational correspondence, covering both internal and visible acti
 				\end{enumerate}
 
 			\item	If
-				$\ell_1 = \tau$ then either:
+				$\ell_1 = \tau$ then one of the following holds:
 
 				\begin{enumerate}[-]
 					\item	%$\exists R$ such that
@@ -3087,7 +3103,7 @@ We now state operational correspondence, covering both internal and visible acti
 					$\ell_2 = \news{m}\bactout{n}{m}$
 					%$\stytra{\mapt{\Gamma}^{2}}{\news{m}\bactout{n}{m}}{\mapt{\Delta}^{2}}{\map{P}^{2}}{\mapt{\Delta'}^{2}}{R}$
 					then 
-					either 
+					one of the following holds: 
 					\begin{enumerate}[-]
 					\item	$\exists P'$ such that $P \hby{\news{m} \bactout{n}{m}} P'$
 						and $R = \pmap{P'}{2}$.
@@ -3102,7 +3118,7 @@ We now state operational correspondence, covering both internal and visible acti
 				\item   %% sinput
 					If  $\ell_2 = \bactinp{n}{m}$ 
 					%$\stytra{\mapt{\Gamma}^{2}}{\bactinp{n}{m}}{\mapt{\Delta}^{2}}{\map{P}^{2}}{\mapt{\Delta'}^{2}}{R}$
-					then either
+					then one of the following holds: 
 					\begin{enumerate}[-]
 					\item	$\exists P'$ such that $P \hby{\bactinp{n}{m}} P'$
 						and $R = \pmap{P'}{2}$.
@@ -3297,17 +3313,17 @@ We argue, both empirically and formally, that when compared to \sessp, \HO   is 
 
 \paragraph{Empirical Comparison: Reduction Steps}
 We first contrast the way in which 
-%\begin{enumerate}[a)]
-%\item 
-(a)~the encoding from \HOp to \HO (\secref{subsec:HOpi_to_HO}) translates processes with name passing;
-%\item 
-(b)~the encoding from \HOp to \sessp (\secref{subsec:HOp_to_sessp}) translates processes with abstraction passing.
-%\end{enumerate}
+\begin{enumerate}[a)]
+\item 
+the encoding from \HOp to \HO, denoted $\pmap{\cdot}{1}_f$ (\secref{subsec:HOpi_to_HO}), translates processes with name passing;
+\item 
+the encoding from \HOp to \sessp, denoted $\pmap{\cdot}{2}$ (\secref{subsec:HOp_to_sessp}), translates processes with abstraction passing.
+\end{enumerate}
 Consider the \HOp processes:
 \begin{align*}
 P_1 & =  \bout{s}{a} \inact \Par \binp{\dual{s}}{x} (\bout{x}{s_1} \inact \Par \dots \Par \bout{x}{s_n} \inact) 
 \\
-P_2 & =  \bout{s}{\abs{x}{P}} \inact \Par \binp{\dual{s}}{x} (\appl{x}{s_1} \Par \dots \Par \appl{x}{s_n})
+P_2 & =  \bout{s}{\abs{x}{R}} \inact \Par \binp{\dual{s}}{x} (\appl{x}{s_1} \Par \dots \Par \appl{x}{s_n})
 \end{align*}
 
 %\begin{eqnarray*}
@@ -3323,11 +3339,11 @@ the intended communication on $s$ leads to $n$ usages of the communication objec
 Consider now the reduction steps from $P_1$ and $P_2$:
 \begin{eqnarray*}
 P_1 & \hby{\tau} & \bout{a}{s_1} \inact \Par \dots \Par \bout{a}{s_n} \inact \\
-P_2 & \hby{\tau}& \appl{(\abs{x}{P})}{s_1} \Par \dots \Par \appl{(\abs{x}{P})}{s_n} \quad 
+P_2 & \hby{\tau}& \appl{(\abs{x}{R})}{s_1} \Par \dots \Par \appl{(\abs{x}{R})}{s_n} \quad 
 \underbrace{\hby{\btau}\hby{\btau} \cdots \hby{\btau}}_{n} 
 %\hby{}}^{n}
 %\stackrel{\btau}{\longmapsto^n}
-\quad P \subst{s_1}{x} \Par \dots \Par P \subst{s_n}{x} 
+\quad R \subst{s_1}{x} \Par \dots \Par R \subst{s_n}{x} 
 \end{eqnarray*}
 
 %Let reduction on \sessp process:
@@ -3367,26 +3383,28 @@ we obtain:
 \end{eqnarray*}
 Now, we encode $P_2$ into \sessp (following \figref{f:enc:ho_to_sessp}):
 \begin{eqnarray*}
-\pmap{P_2}{2} & = & 	\newsp{b}{\bout{s}{b} \inact \Par \repl \binp{b}{y} \binp{y}{x} P} \Par \\
-& & \qquad \qquad \binp{\dual{s}}{x} (\newsp{s}{\bout{x}{s} \bout{\dual{s}}{s_1} \inact} \Par \dots \Par \newsp{s}{\bout{x}{s} \bout{\dual{s}}{s_n}\inact})
+\pmap{P_2}{2} & = & 	\newsp{b}{\bout{s}{b} \inact \Par \repl \binp{b}{y} \binp{y}{x} \pmap{R}{2}} \Par \\
+& & \qquad \qquad \binp{\dual{s}}{x} \big(\newsp{s_0}{\bout{x}{s_0} \bout{\dual{s_0}}{s_1} \inact} \Par \dots \Par \newsp{s_0}{\bout{x}{s_0} \bout{\dual{s_0}}{s_n}\inact}\big)
 	\\
-%	& \hby{\stau} & 
-%	\newsp{b}{\repl \binp{b}{y} \binp{y}{x} P \Par \newsp{s}{\bout{b}{s} \bout{\dual{s}}{s_1} \inact} \Par \dots \Par \newsp{s}{\bout{b}{s} \bout{\dual{s}}{s_n} \inact}}
-%	\\
-	& \hby{\stau}  \hby{\stau} \hby{\stau} & 
+	& \hby{\stau} \equiv & 
+	\newsp{b}{\repl \binp{b}{y} \binp{y}{x} P \Par \newsp{s_0}{\bout{b}{s_0} \bout{\dual{s_0}}{s_1} \inact} \Par \dots \Par \newsp{s_0}{\bout{b}{s_0} \bout{\dual{s_0}}{s_n} \inact}}
+	\\
+	& \hby{\stau}  \hby{\stau}   & 
 %	\newsp{b}{\repl \binp{b}{y} \binp{y}{x} P \Par \newsp{s}{\binp{s}{x} P \Par \bout{\dual{s}}{s_1} \inact} \Par \dots \Par \newsp{s}{\bout{b}{s} \bout{\dual{s}}{s_n} \inact}}
 %	\\
 %	& \hby{\stau} & 
-	\newsp{b}{\repl \binp{b}{y} \binp{y}{x} P \Par P\subst{s_1}{x} \Par \dots \Par \newsp{s}{\bout{b}{s} \bout{\dual{s}}{s_n} \inact}}
+	\newsp{b}{\repl \binp{b}{y} \binp{y}{x} \pmap{R}{2} \Par \pmap{R}{2}\subst{s_1}{x} \Par 
+	\\
+	&  & \qquad \qquad \newsp{s_0}{\bout{b}{s_0} \bout{\dual{s_0}}{s_2} \inact} \Par \dots \Par \newsp{s_0}{\bout{b}{s_0} \bout{\dual{s_0}}{s_n} \inact}}
 	\\
 	& \Hby{}_{2*(n - 1)} & 
-	\newsp{b}{\repl \binp{b}{y} \binp{y}{x} P \Par P\subst{s_1}{x} \Par \dots \Par P\subst{s_n}{x}}
+	\newsp{b}{\repl \binp{b}{y} \binp{y}{x} \pmap{R}{2} \Par \pmap{R}{2}\subst{s_1}{x} \Par \pmap{R}{2}\subst{s_2}{x} \Par \dots \Par \pmap{R}{2}\subst{s_n}{x}}
 %	\red
 %	\appl{V}{s_1} \Par \dots \Par \appl{V}{s_n}
 \end{eqnarray*}
 %\noi 
 Clearly, encoding $P_1$ into \HO is more economical than 
-encoding $P_2$ into \sessp. Not only moving to a pure higher-order setting requires less reduction steps than in the first-order concurrency of \sessp; in the presence of shared names, moving to a first-order setting brings the need of setting up and handling replicated processes which will eventually lead to garbage (stuck) processes (cf. $\repl \binp{b}{y} \binp{y}{x} P$ above). In contrast, the mechanism present in \HO works efficiently regardless of the linear or shared properties of the name that is ``packed'' into the abstraction. 
+encoding $P_2$ into \sessp. Not only moving to a pure higher-order setting requires less reduction steps than in the first-order concurrency of \sessp; in the presence of shared names, moving to a first-order setting brings the need of setting up and handling replicated processes which will eventually lead to garbage (stuck) processes (such as $\repl \binp{b}{y} \binp{y}{x} \pmap{R}{2}$ above). In contrast, the mechanism present in \HO works efficiently regardless of the linear or shared properties of the name that is ``packed'' into the abstraction. 
 The use of $\beta$-transitions guarantees local synchronizations, which are arguably more economical than point-to-point, session synchronizations.
 
 It is useful to move our comparison 
@@ -3395,17 +3413,19 @@ Consider processes $Q_1$ and $Q_2$:
 %In the case of linear values we have:
 \begin{align*}
 	Q_1  & =  \bout{s'}{s} \inact \Par \binp{\dual{s'}}{x} \bout{x}{a} \inact
-	\hby{\tau}
+	\\
+	& \hby{\tau}
 	\bout{s}{a} \inact 
 	\\
-	Q_2 & =  \bout{s}{\abs{x}{P}} \inact \Par \binp{\dual{s}}{x} \appl{x}{a}
-	\hby{\tau}
+	Q_2 & =  \bout{s}{\abs{x}{R}} \inact \Par \binp{\dual{s}}{x} \appl{x}{a}
+	\\
+	& \hby{\tau}
 %	\appl{(\abs{x}{P})}{a}
 	\hby{\tau}
-	P \subst{a}{x}
+	R \subst{a}{x}
 \end{align*}
 $Q_1$ is a \sessp process and $Q_2$ is an \HO processs.
-If we consider the encoding of $Q_1$ into \HO and of $Q_2$ into \sessp 
+If we consider the encoding of $Q_1$ into \HO and of $Q_2$ into \sessp, respectively, 
 we obtain:
 \begin{eqnarray*}
 	\map{Q_1}_f^{1} & = & \bout{s'}{\abs{z}{\binp{z}{y} \appl{y}{s}}} \inact \Par \binp{\dual{s'}}{x} \newsp{t}{\appl{x}{t} \Par \bout{\dual{t}}{\abs{x}{\bout{x}{\abs{z}{\binp{z}{y} \appl{y}{a}}} \inact}} \inact}\\
@@ -3414,24 +3434,25 @@ we obtain:
 %	& \hby{\btau} & 
 	\newsp{t}{\binp{t}{y} \appl{y}{s} \Par \bout{\dual{t}}{\abs{x}{\bout{x}{\abs{z}{\binp{z}{y} \appl{y}{a}}} \inact}} \inact}\\
 	& \hby{\stau} & 
-	\appl{\abs{x}{\bout{x}{\abs{z}{\binp{z}{y} \appl{y}{a}}} \inact}}{s}
-	~~\hby{\btau}~~
+	\appl{(\abs{x}{\bout{x}{\abs{z}{\binp{z}{y} \appl{y}{a}}} \inact})}{s}
+	\\
+	& \hby{\btau} & 
 	\bout{s}{\abs{z}{\binp{z}{y} \appl{y}{a}}} \inact \\
 %\end{eqnarray*}
 %\begin{eqnarray*}
-	\pmap{Q_2}{2} & = & \newsp{t}{\bout{s}{t} \inact \Par \binp{\dual{t}}{y} \binp{y}{x} P} \Par \binp{\dual{s}}{x} \newsp{s}{\bout{x}{s} \bout{\dual{s}}{a} \inact}
+	\pmap{Q_2}{2} & = & \newsp{t}{\bout{s}{t} \inact \Par \binp{\dual{t}}{y} \binp{y}{x} \pmap{R}{2}} \Par \binp{\dual{s}}{x} \newsp{s}{\bout{x}{s} \bout{\dual{s}}{a} \inact}
 	\\
 	& \hby{\stau} \hby{\stau} & 
 %	\newsp{t}{\binp{\dual{t}}{y} \binp{y}{x} P \Par \newsp{s}{\bout{t}{s} \bout{\dual{s}}{a} \inact}}
 %	\\
 %	& \hby{\stau} & 
-	\newsp{s}{\binp{s}{x} P \Par \bout{\dual{s}}{a} \inact}
-	~~
-	\hby{\stau} ~~
-	P\subst{a}{x}
+	\newsp{s}{\binp{s}{x} \pmap{R}{2} \Par \bout{\dual{s}}{a} \inact}
+	\\
+	& \hby{\stau} &
+	\pmap{R}{2}\subst{a}{x}
 \end{eqnarray*}
 %\noi 
-In this case, the encoding $\pmap{\cdot}{2}$ is more efficient: it induces less reduction steps.
+In this case, the encoding $\pmap{\cdot}{2}$ is more efficient because it induces less reduction steps.
 Therefore, considering a fragment of \HOp without shared communications (linearity only)
 has consequences in terms of reduction steps. 
 These apparent benefits of encoding  $\pmap{\cdot}{2}$ over 
@@ -3442,7 +3463,7 @@ Therefore, in the general case featuring linear and shared communication not onl
 but the drawbacks mentioned in the comparison between $\pmap{P_1}{1}$ and $\pmap{P_2}{2}$ (i.e., the garbage processes 
 generated by $\pmap{\cdot}{2}$) 
 could well be more prominent. This observation may be used to informally argue that $\pmap{\cdot}{1}$ is ``better than'' $\pmap{\cdot}{2}$ (or, alternatively, that \HOp is closer to \HO than to \sessp);
-next, we explore a formal argument to substantiate this claim.
+next, we develop a formal argument to substantiate this claim.
 
 \paragraph{Formal Comparison: Labelled Transition Correspondence}
 %In addition to preciseness we can develop one more encodability
@@ -3924,8 +3945,8 @@ with polyadicity.
 In both cases, we detail the
 required modifications in syntax and types.
 By combining \HOpp and \PHOp into a single calculus we obtain \PHOpp:
-the extension of \HOp allows \emph{both} higher-order
-abstractions/aplications and polyadicity.
+the extension of \HOp with \emph{both} higher-order
+abstractions/aplications and polyadicity (cf. \cororef{coro:ho} and \cororef{coro:poly})
 
 We present precise encodings of \HOpp and \PHOp into \HOp.
 We then use the encodings of \HOp into \HO and \sessp, given in the previous section, 
@@ -3993,8 +4014,8 @@ both \HOpp and \PHOp.
 \subsection{Precise Encoding of $\HOpp$ into $\HOp$}
 We first introduce \HOpp, the  extension of \HOp with higher-order abstractions and applications.
 This is the calculus whose (typed) behavioral theory we studied in~\cite{characteristic_bis,KouzapasPY17}. The syntax of \HOpp is obtained 
-from  \figref{fig:syntax} by letting 
-$\appl{V}{u}$ to $\appl{V}{W}$ in the syntax of processes, where  $W$ is a higher-order value. 
+from  \figref{fig:syntax} by replacing 
+$\appl{V}{u}$ with  $\appl{V}{W}$ in the syntax of processes, where  $W$ is a higher-order value. 
 As for the reduction semantics, we keep the rules in \figref{fig:reduction}, except for 
  Rule~$\orule{App}$ which is replaced by 
 $$
@@ -4045,7 +4066,7 @@ the typing $\proves$ is defined in
 with Rules \trule{Abs} and \trule{App} modified as explained above.
 Formally, the set   
 $\mathcal{A}_\HOpp$ coincides with $\mathcal{A}_{\HOp}$, for the syntax of values $V$ is the same in both languages.
-However, by considering type-annotated values (cf. \remref{r:types}),
+However, by considering the refined actions given by type-annotated values (cf. \remref{r:types}),
 we have that   $\mathcal{A}_\HOpp$
 includes output and input actions of the form
 $\news{\tilde{m}} \bactout{n}{\abs{\AT{x}{L}}{P}}$
@@ -4198,10 +4219,10 @@ the mapping on actions $\mapa{\cdot}^{3}: \mathcal{A}_\HOpp \to \mathcal{A}_{\HO
 	\begin{align*}
 		\mapa{\news{\tilde{m}} \bactout{n}{\abs{\AT{x}{L}}{P}}}^{3} 
 		& \defeq
-		\news{\tilde{m}} \bactout{n}{\abs{z}{\binp{z}{x} \pmap{P}{3}}}
+		\news{\tilde{m}} \bactout{n}{\abs{\AT{z}{\tmap{L}{3}}}{\binp{z}{x} \pmap{P}{3}}}
 		\\
 		\mapa{\bactinp{n}{\abs{\AT{x}{L}}{P}}}^{3}
-		& \defeq \bactinp{n}{\abs{z}{\binp{z}{x} \pmap{P}{3}}}
+		& \defeq \bactinp{n}{\abs{\AT{z}{\tmap{L}{3}}}{\binp{z}{x} \pmap{P}{3}}}
 	\end{align*}
 	and as an homomorphism for all other actions $\ell \in \mathcal{A}_\HOpp$.
 \end{definition}
@@ -4282,6 +4303,7 @@ We may now state a labeled form of operational correspondence, as well as full a
 %	\qed
 	\end{proof}
 
+DISCUSS OPERATIONAL CORRESPONDENCE
 
 We may now have:
 
@@ -4334,6 +4356,7 @@ Semantics-preservation follows from
 We then have the following corollary:
 
 \begin{corollary}[Encodability of \HOpp into \HOp and \sessp]
+\label{coro:ho} 
 Consider the typed encodings
 \begin{enumerate}[-]
 \item $\enco{\map{\cdot}^{1}_f, \mapt{\cdot}^{1} %, \mapa{\cdot}^{1}
@@ -4409,7 +4432,7 @@ and
 %\paragraph{Encoding $\PHOp$ into $\HOp$}
 %\label{subsec:pho}
 
-\subsection{Precise Encoding of $\PHOp$ into $\HOp$}
+\subsection{Precise Encoding of $\PHOp$ into $\HOp$}\label{ss:poly}
 The calculus  
 $\PHOp$ 
 extends $\HOp$ 
@@ -4424,7 +4447,7 @@ polyadic first-order applications of the form
  in the syntax of values $V$;
 the syntax of processes includes polyadicity in input and output prefixes, 
  as well as in function applications. 
-The operational semantics in \figref{fig:reduction} requires only minor modifications to accommodate simultaneous substitution $\subst{\widetilde{V}}{\widetilde{x}}$ (for equally sized $\widetilde{V}$ and $\widetilde{x}$)
+The operational semantics in \figref{fig:reduction} requires only minor modifications to accommodate simultaneous substitution $\subst{\widetilde{V}}{\widetilde{x}}$ (for equally sized $\widetilde{u}/\widetilde{V}$ and $\widetilde{x}$)
 in Rules~\orule{App} and \orule{Pass}:
 	\begin{align*}
 		\appl{(\abs{\widetilde{x}}{P})}{\widetilde{u}}   & \red  P \subst{\widetilde{u}}{x} 
@@ -4452,7 +4475,7 @@ the typing $\proves$ is defined
 %\figref{fig:typerulesmy} 
 in \secref{sec:types}
 with  type syntax given above.
-Also, the set of labels 
+Also, writing $k$ to denote the arity of $\PHOp$, the set of labels 
 $\mathcal{A}_{\PHOp}$ extends that in \defref{d:labels} by 
 including actions
 $\news{\tilde{m}} \bactout{n}{m_1, \ldots, m_k}$,
@@ -4472,8 +4495,8 @@ The typed encoding
 in \figref{f:enc:poltomon}.
 \end{definition}
 
-The encoding is rather unsurprising: the polyadic communication of a tuple of length $k > 1$
-is translated as $k$ independent monadic communications, exploiting the already private communication medium given by the session name --- unlike classical encodings, there is no need for an additional fresh name for the monadic exchanges.
+The encoding is unsurprising: a single polyadic communication of a tuple of length $k > 1$
+is translated as $k$ independent monadic communications, exploiting the already private communication medium given by the session name---unlike classical encodings, there is no need to create an additional fresh name for carrying out the monadic exchanges.
 Polyadic first-order abstraction and application appeal to an auxiliary fresh session along which   parameters are communicated one by one.
 
 The encoding satisfies the following properties:
@@ -4674,6 +4697,8 @@ Let $\Gamma; \es; \Delta \proves P$.
 %	\end{enumerate}
 %\end{proposition}
 
+DISCUSS OPERATIONAL CORRESPONDENCE
+
 We may now state:
 
 
@@ -4717,6 +4742,7 @@ Semantics-preservation follows from
 We then have the following corollary:
 
 \begin{corollary}[Encodability of \PHOp into \HOp and \sessp]
+\label{coro:poly}
 Consider the typed encodings
 \begin{enumerate}[-]
 \item $\enco{\map{\cdot}^{1}_f, \mapt{\cdot}^{1} %, \mapa{\cdot}^{1}
