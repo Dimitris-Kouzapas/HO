@@ -59,6 +59,7 @@
 
 \newcommand{\rtype}{\mathsf{room}}
 \newcommand{\Quote}{\mathsf{quote}}
+\newcommand{\Quotev}{\mathit{quote}}
 \newcommand{\accept}{\mathsf{accept}}
 \newcommand{\reject}{\mathsf{reject}}
 \newcommand{\creditc}{\mathsf{credit}}
@@ -1716,9 +1717,8 @@ We can finally state:
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\subsection{Example (Tentative)}\label{ss:hotel}
-We recall the case study that we gave in our previous paper.
-
+\subsection{A Running Example}\label{ss:hotel}
+We recall the case study that we developed in our previous paper~\cite{KouzapasPY17}, an abstraction of a \emph{hotel booking scenario}.
 The scenario involves a $\Client$ process that wants to book
 a hotel room. % for her holidays. % in a remote island
 %The Client 
@@ -1730,70 +1730,75 @@ taking quotes from the two hotels in not optimal, % (cf.~\cite{MostrousY15}),
 so the client sends mobile processes to both hotels
 to automatically negotiate and book a room. 
 
-We now present two \HOp implementations of this scenario.
-For convenience, we write $\If e\ \Then (P_1\ \Else \ P_2)$ 
-to denote a conditional process that executes $P_1$ or $P_2$ depending on boolean expression $e$ (encodable using labelled choice).
-The \emph{first implementation} is  as follows:
+
 %
-%\[
-	\begin{eqnarray*}%{rcl}
-		 \Client_1   & \defeq  &  \newsp{h_1, h_2}{\bout{s_1}{\abs{x}{P_{xy} \subst{h_1}{y}}} \bout{s_2}{\abs{x}{P_{xy} \subst{h_2}{y}}} \inact \Par  \\
-		& & 
-		\qquad \qquad\binp{\dual{h_1}}{x} \binp{\dual{h_2}}{y}  \If x \leq y\   \Then\\
-		& & \qquad\qquad \qquad \qquad (\bsel{\dual{h_1}}{\accept} \bsel{\dual{h_2}}{\reject} \inact \ \Else \ \bsel{\dual{h_1}}{\reject} \bsel{\dual{h_2}}{\accept} \inact )
-		}
+\begin{figure}[t!]
+	\begin{align*}%{rcl}
+		 \Client_1    \defeq  &  \newsp{h_1, h_2}{\bout{s_1}{\abs{x}{P_{xy} \subst{h_1}{y}}} \bout{s_2}{\abs{x}{P_{xy} \subst{h_2}{y}}} \inact \Par  \\
+		 & 
+		\qquad \qquad\binp{\dual{h_1}}{x} \binp{\dual{h_2}}{y}  \If x \leq y\   \Then
 		\\
-				 P_{xy}    & \defeq &    \bout{x}{\rtype} \binp{x}{\Quote} \bout{y}{\Quote}
+		 & \qquad\qquad \qquad \qquad (\bsel{\dual{h_1}}{\accept} \bsel{\dual{h_2}}{\reject} \inact \ \Else \ \bsel{\dual{h_1}}{\reject} \bsel{\dual{h_2}}{\accept} \inact )
+		}
+%		\\
+%		\text{with} & 
+		\\
+				 P_{xy}     \defeq &    \bout{x}{\rtype} \binp{x}{\Quotev} \bout{y}{\Quotev}
 		y \triangleright \left\{
 				\begin{array}{l}
 					\accept: \bsel{x}{\accept} \bout{x}{\creditc} \inact~,\\
 					\reject: \bsel{x}{\reject} \inact
 				\end{array}
 				\right\}
-	\end{eqnarray*}
-%\]
+				\\[3mm]
+						\Client_2 \defeq& \newsp{h}{\bout{s_1}{\abs{x}{Q_1 \subst{h}{y}}} \bout{s_2}{\abs{x}{Q_2 \subst{\dual{h}}{y}}} \inact}
+\\
+		Q_1 \defeq&	\bout{x}{\rtype} \binp{x}{\Quotev_1} \bout{y}{\Quotev_1} \binp{y}{\Quotev_2} R_x \\
+		Q_2 \defeq&	\bout{x}{\rtype} \binp{x}{\Quotev_1} \binp{y}{\Quotev_2} \bout{y}{\Quotev_1} R_x \\
+			    R_x  \defeq & \If\ \Quotev_1 \leq \Quotev_2 \, \Then  (\bsel{x}{\accept} \bout{x}{\creditc} \inact \  \Else \ \bsel{x}{\reject} \inact)
+	\end{align*}
+	\caption{Two implementations of the Hotel Booking scenario in \HOp~\cite{KouzapasPY17}.}\label{f:hotel}
+	\end{figure}
 %
-Process $\Client_1$ sends two abstractions with body $P_{xy}$, one to each hotel, 
+\figref{f:hotel} presents
+two possible \HOp implementations of this scenario.
+For convenience, we write 
+$\If e\ \Then (P_1\ \Else \ P_2)$
+to denote a conditional process that executes $P_1$ or $P_2$ depending on boolean expression $e$ (encodable using labelled choice).
+The {first implementation}, given by 
+process $\Client_1$, sends two abstractions with body $P_{xy}$, one to each hotel, 
 		using sessions $s_1$ and $s_2$.
-		That is, $P_{xy}$ is the mobile code with free names $x, y$:
+		In $P_{xy}$, % is the mobile code with free names $x, y$:
 	while
 		name $x$ is meant to be instantiated by the hotel as the negotiating
 		endpoint, name $y$ is used to interact with $\Client_1$.	
 		Intuitively, process $P_{xy}$:
-		\begin{enumerate}[(i)]
-		 \item sends the room requirements to the hotel;
-		\item  receives a quote from the hotel;
-		\item  sends the quote to  $\Client_1$;
-		\item expects a choice from   $\Client_1$ whether to accept or reject the offer;
-		\item if the choice is $\accept$ then it informs the hotel and performs the booking;
+		%\begin{enumerate}[(i)]
+		% \item 
+		(i)~sends the room requirements to the hotel;
+		%\item  
+		(ii)~receives a quote from the hotel;
+		%\item  
+		(iii)~sends the quote to  $\Client_1$;
+		%\item 
+		(iv)~expects a choice from   $\Client_1$ whether to accept or reject the offer;
+		%\item 
+		(v)~if the choice is $\accept$ then it informs the hotel and performs the booking;
 		otherwise, if the choice is $\reject$ then it informs the hotel and ends the session.
-		\end{enumerate}
+%		\end{enumerate}
 				$\Client_1$ instantiates two copies of  $P_{xy}$ as abstractions
-		on session $x$. It uses two
+		on session $x$. It uses 
 		fresh endpoints $h_1, h_2$ to substitute channel $y$
-		in $P_{xy}$. This enables communication with the mobile code(s).
-		In fact, 
+		in $P_{xy}$. This enables communication with the mobile code(s): 
 		$\Client_1$ uses the dual endpoints $\dual{h_1}$ and $\dual{h_2}$
 		to receive the negotiation
 		result from the two remote instances of $P$ and then inform the two
 		processes for the final booking decision.
 %Notice that	the above implementation does not affect the time needed for the whole protocol to execute, since the two remote processes are used to send/receive data to $\Client_1$.
 
-We present now a \emph{second  implementation}
-%of the same scenario, 
-in which the two mobile processes reach an agreement
-by interacting with each other (rather than with the client):
-%
-\[
-	\begin{array}{rcl}
-		\Client_2 &\defeq& \newsp{h}{\bout{s_1}{\abs{x}{Q_1 \subst{h}{y}}} \bout{s_2}{\abs{x}{Q_2 \subst{\dual{h}}{y}}} \inact}
-\\
-		Q_1 &\defeq&	\bout{x}{\rtype} \binp{x}{\Quote_1} \bout{y}{\Quote_1} \binp{y}{\Quote_2} R_x \\
-		Q_2 &\defeq&	\bout{x}{\rtype} \binp{x}{\Quote_1} \binp{y}{\Quote_2} \bout{y}{\Quote_1} R_x \\
-			    R_x & \defeq & \If\ \Quote_1 \leq \Quote_2 \, \Then  (\bsel{x}{\accept} \bout{x}{\creditc} \inact \  \Else \ \bsel{x}{\reject} \inact)
-	\end{array}
-\]
-%\end{example}
+In the second implementation, given by process $\Client_2$,  
+the two mobile processes reach an agreement
+by interacting with each other (rather than with the client).
 Processes $Q_1$ and $Q_2$  negotiate a quote from the
 		hotel in the same fashion as process $P_{xy}$ in $\Client_1$.
 		The key difference with respect to $P_{xy}$ is that $y$ is used for
@@ -1809,50 +1814,49 @@ Processes $Q_1$ and $Q_2$  negotiate a quote from the
 
 
 
-
-\begin{figure}
-\input{./figures/hoteldiag}
-\caption{Sequence diagrams for $\Client_1$ and $\Client_2$\label{fig:exam}.}
-\end{figure}
+%
+%\begin{figure}
+%\input{./figures/hoteldiag}
+%\caption{Sequence diagrams for $\Client_1$ and $\Client_2$\label{fig:exam}.}
+%\end{figure}
 
  
-The different protocols implemented by $\Client_1$ and $\Client_2$ can be represented by the sequence diagrams of \figref{fig:exam}. 
+%The different protocols implemented by $\Client_1$ and $\Client_2$ can be represented by the sequence diagrams of \figref{fig:exam}. 
 
 
-\begin{example}[The Hotel Booking Example, Revisited]\label{exam:type}
-We give types to the client
+%\begin{example}[The Hotel Booking Example, Revisited]\label{exam:type}
+To illustrate the type system of \HOp, we give types to the client
 processes. % of~\secref{exam:proc}.
 Assume 
 \begin{eqnarray*}
 S & = & \btout{\Quote} \btbra{\accept: \tinact, \reject: \tinact} \\
 U & = & \btout{\rtype} \btinp{\Quote} \btsel{\accept: \btout{\creditc} \tinact, \reject: \tinact }
 \end{eqnarray*}
-While the typing for $\abs{x}{P_{xy}}$ is $\es; \es; y: S \proves \abs{x}{P_{xy}} \hastype \lhot{U}$,
-the typing for $\Client_1$ is
-$~~
-	\es; \es; s_1: \btout{\lhot{U}} \tinact \cat s_2: \btout{\lhot{U}} \tinact \proves \Client_1 \hastype \Proc
-$.
+We then have:
+\begin{align*}
+\es; \es; y: S & \proves \abs{x}{P_{xy}} \hastype \lhot{U}
+\\
+	\es; \es; s_1: \btout{\lhot{U}} \tinact \cat s_2: \btout{\lhot{U}} \tinact & \proves \Client_1 \hastype \Proc
+\\
+	\es; \es; y: \btout{\Quote} \btinp{\Quote} \tinact &\proves \abs{x}{Q_i} \hastype \lhot{U}
+ \quad (i=1,2)
+ \\
+	\es; \es; s_1: \btout{\lhot{U}} \tinact \cat s_2: \btout{\lhot{U}} \tinact & \proves \Client_2 \hastype \Proc
+\end{align*}
+%\end{example}
 
+The two client implementations are behaviourally equivalent:
 
-The typings for $Q_1$ and $Q_2$ are
-$	\es; \es; y: \btout{\Quote} \btinp{\Quote} \tinact \proves \abs{x}{Q_i} \hastype \lhot{U}
-$ ($i=1,2$)
-and the type for $\Client_2$ is
-$~~
-	\es; \es; s_1: \btout{\lhot{U}} \tinact \cat s_2: \btout{\lhot{U}} \tinact \proves \Client_2 \hastype \Proc
-$.
-\end{example}
-
-
-\begin{proposition}\label{p:examp}
+\begin{proposition}[\cite{KouzapasPY17}]\label{p:examp}
 	Let
-	$S = \btout{\rtype} \btinp{\Quote} \btsel{\accept: \btout{\creditc} \tinact, \reject: \tinact}$
-	and
-	$\Delta = s_1: \btout{\lhot{S}} \tinact \cat s_2: \btout{\lhot{S}} \tinact$.
+%	$S = \btout{\rtype} \btinp{\Quote} \btsel{\accept: \btout{\creditc} \tinact, \reject: \tinact}$
+%	and
+	$\Delta = s_1: \btout{\lhot{U}} \tinact \cat s_2: \btout{\lhot{U}} \tinact$.
 %	\begin{eqnarray*}
 %		S &=& \btout{\rtype} \btinp{\Quote} \btsel{\accept: \btout{\creditc} \tinact, \reject: \tinact}\\
 %		\Delta &=& s_1: \btout{\lhot{S}} \tinact \cat s_2: \btout{\lhot{S}} \tinact
 %	\end{eqnarray*}
+\\
 	Then
 	$\horel{\es}{\Delta}{\Client_1}
 	{\fwb}
@@ -2503,7 +2507,8 @@ one copy is used to reconstitute the original recursion body $P$ (through
 the application of $\fn{P}$); another copy is used to re-invoke
 the duplicator when needed. % to simulate recursion unfolding.
 %An example of this typed encoding is detailed in~\cite{KouzapasPY15}.
-We illustrate the encoding by means of an example.}
+
+We illustrate the encoding by means of two examples: the first illustrates our strategy for encoding recursion, while the second illustrates the strategy for first-order session communication.}
 %\end{description}
 
 
@@ -2511,8 +2516,7 @@ We illustrate the encoding by means of an example.}
 
 
 %\input{encoding_example}
-\begin{example}[The Encoding 
-$\pmapp{\cdot}{1}{f}$ At Work]
+\begin{example}[Encoding Recursion]
 Let $P = \recp{X}{\bout{a}{m} \varp{X}}$ be an \HOp process.
 Its encoding into \HO is given next; notice that $f = \emptyset$ and $f' = \varp{X} \rightarrow x_ax_m$.
 \begin{eqnarray*}
@@ -2564,15 +2568,44 @@ Next we illustrate the behaviour of $\pmapp{P}{1}{f}$; below $\ell$ stands for $
 \end{example}
 
 \begin{example}[Encoding the Hotel client]
-We encode the Hotel client described in 
-\secref{ss:hotel}.
-We have:
+The Hotel client scenario is described in 
+\secref{ss:hotel} as the \HOp process $\Client_2$. Its encoding in \HO is as follows:
 \begin{align*}
 \pmap{\Client_2}{1}_f & = \pmap{\newsp{h}{\bout{s_1}{\abs{x}{Q_1 \subst{h}{y}}} \bout{s_2}{\abs{x}{Q_2 \subst{\dual{h}}{y}}} \inact}}{1}_f
 \\
  & = \newsp{h}{\bout{s_1}{\abs{x}{\pmap{Q_1 \subst{h}{y}}{1}_f}} \bout{s_2}{\abs{x}{\pmap{Q_2 \subst{\dual{h}}{y}}{1}_f} }\inact}
 \end{align*}
-TO BE COMPLETED
+where $\pmap{Q_1}{1}_f$ and $\pmap{Q_2}{1}_f$ are as follows:
+\begin{align*}
+ \pmap{Q_1}{1}_f & = \pmap{\bout{x}{\rtype} \binp{x}{\Quotev_1} \bout{y}{\Quotev_1} \binp{y}{\Quotev_2} R_x}{1}_f
+ \\
+ & = \bout{x}{ \abs{z_1}{\,\binp{z_1}{x_1} (\appl{x_1}{\rtype})} } \pmap{\binp{x}{\Quotev_1} \bout{y}{\Quotev_1} \binp{y}{\Quotev_2} R_x}{1}_f \\
+ & =  \bout{x}{ \abs{z_1}{\,\binp{z_1}{x_1} (\appl{x_1}{\rtype})} } \binp{x}{y_1} \newspb{s_1}{\appl{y_1}{s_1} \Par 
+ \\
+& \qquad  \bout{\dual{s_1}}{\abs{\Quotev_1}{\pmapp{\bout{y}{\Quotev_1} \binp{y}{\Quotev_2} R_x}{1}{f}}} \inact}
+\\
+ & =  \bout{x}{ \abs{z_1}{\,\binp{z_1}{x_1} (\appl{x_1}{\rtype})} } \binp{x}{y_1} \newspb{s_1}{\appl{y_1}{s_1} \Par 
+ \\
+& \qquad  \bout{\dual{s_1}}{\abs{\Quotev_1}{\bout{y}{ \abs{z_2}{\,\binp{z_2}{x_2} (\appl{x_2}{\Quotev_1})} }\pmapp{ \binp{y}{\Quotev_2} R_x}{1}{f}}} \inact}
+ \\
+ & =  \bout{x}{ \abs{z_1}{\,\binp{z_1}{x_1} (\appl{x_1}{\rtype})} } \binp{x}{y_1} \newspb{s_1}{\appl{y_1}{s_1} \Par 
+ \\
+& \qquad  \bout{\dual{s_1}}{\abs{\Quotev_1}{\bout{y}{ \abs{z_2}{\,\binp{z_2}{x_2} (\appl{x_2}{\Quotev_1})} }\binp{y}{u_1} \newsp{s_2}{\appl{u_1}{s_2} \Par \bout{\dual{s_2}}{\abs{\Quotev_2}{\pmapp{R_x}{1}{f}}} \inact}}} \inact}
+\\
+ \pmap{Q_2}{1}_f & = \pmap{\bout{x}{\rtype} \binp{x}{\Quotev_1}  \binp{y}{\Quotev_2} \bout{y}{\Quotev_1} R_x}{1}_f
+ \\
+& =  \bout{x}{ \abs{z_1}{\,\binp{z_1}{x_1} (\appl{x_1}{\rtype})} } \binp{x}{y_1} \newspb{s_1}{\appl{y_1}{s_1} \Par 
+ \\
+& \qquad  \bout{\dual{s_1}}{\abs{\Quotev_1}{\binp{y}{u_1} \newsp{s_2}{\appl{u_1}{s_2} \Par \bout{\dual{s_2}}{\abs{\Quotev_2}{\bout{y}{ \abs{z_2}{\,\binp{z_2}{x_2} (\appl{x_2}{\Quotev_1})} }\pmapp{R_x}{1}{f}}} \inact}}} \inact}
+\end{align*}
+with 
+\begin{align*}
+\pmapp{R_x}{1}{f} & =  \pmapp{\If\ \Quotev_1 \leq \Quotev_2 \, \Then  (\bsel{x}{\accept} \bout{x}{\creditc} \inact \  \Else \ \bsel{x}{\reject} \inact)}{1}{f}
+\\
+ & =  \If\ \Quotev_1 \leq \Quotev_2 \, \Then  \pmapp{(\bsel{x}{\accept} \bout{x}{\creditc} \inact \  \Else \ \bsel{x}{\reject} \inact)}{1}{f}
+\\
+ & =  \If\ \Quotev_1 \leq \Quotev_2 \, \Then  (\bsel{x}{\accept} \bout{x}{ \abs{z}{\,\binp{z}{x} (\appl{x}{\creditc})} }  \inact \  \Else \ \bsel{x}{\reject} \inact)
+\end{align*}
 \end{example}
 
 We now describe the properties of the encoding. 
@@ -2959,7 +2992,56 @@ in \figref{f:enc:ho_to_sessp}.
 \input{figures/HOp_to_pi}
 
 \begin{example}[Encoding the Hotel client]
-TO DO.
+The Hotel client scenario is described in 
+\secref{ss:hotel} as the \HOp process $\Client_1$. Its encoding in \sessp is as follows:
+
+	\begin{align*}%{rcl}
+		\pmap{\Client_1}{2}   & =  \pmap{\newsp{h_1, h_2}{\bout{s_1}{\abs{x}{P_{xy} \subst{h_1}{y}}} \bout{s_2}{\abs{x}{P_{xy} \subst{h_2}{y}}} \inact \Par  \\
+		 & 
+		\qquad \qquad\binp{\dual{h_1}}{x} \binp{\dual{h_2}}{y}  \If x \leq y\   \Then
+		\\
+		 & \qquad\qquad \qquad \qquad (\bsel{\dual{h_1}}{\accept} \bsel{\dual{h_2}}{\reject} \inact \ \Else \ \bsel{\dual{h_1}}{\reject} \bsel{\dual{h_2}}{\accept} \inact )
+		}}{2}
+		\\
+				   & =  \newsp{h_1, h_2}{\pmap{\bout{s_1}{\abs{x}{P_{xy} \subst{h_1}{y}}} \bout{s_2}{\abs{x}{P_{xy} \subst{h_2}{y}}} \inact }{2}\Par  \\
+		 & 
+		\qquad \qquad\binp{\dual{h_1}}{x} \binp{\dual{h_2}}{y}  \If x \leq y\   \Then
+		\\
+		 & \qquad\qquad \qquad \qquad (\bsel{\dual{h_1}}{\accept} \bsel{\dual{h_2}}{\reject} \inact \ \Else \ \bsel{\dual{h_1}}{\reject} \bsel{\dual{h_2}}{\accept} \inact )
+		}
+		\\
+		& =  \newspb{h_1, h_2}{\newsp{a_1}{\bout{s_1}{a_1} (\pmap{\bout{s_2}{\abs{x}{P_{xy} \subst{h_2}{y}}} \inact}{2} \Par \binp{a_1}{y} \binp{y}{x} \pmap{P_{xy} \subst{h_1}{y}}{2})} \Par  \\
+		 & 
+		\qquad \qquad\binp{\dual{h_1}}{x} \binp{\dual{h_2}}{y}  \If x \leq y\   \Then
+		\\
+		 & \qquad\qquad \qquad \qquad (\bsel{\dual{h_1}}{\accept} \bsel{\dual{h_2}}{\reject} \inact \ \Else \ \bsel{\dual{h_1}}{\reject} \bsel{\dual{h_2}}{\accept} \inact )
+		}
+		\\
+		& =  \newspb{h_1, h_2}{\newsp{a_1}{\bout{s_1}{a_1} \newsp{a_2}{\bout{s_1}{a_2} 
+		\\
+		&\qquad \qquad  (\inact \Par \binp{a_2}{y} \binp{y}{x} \pmap{P_{xy} \subst{h_2}{y}}{2})} \Par \binp{a_1}{y} \binp{y}{x} \pmap{P_{xy} \subst{h_1}{y}}{2}} \Par  \\
+		 & 
+		\qquad \qquad \quad \binp{\dual{h_1}}{x} \binp{\dual{h_2}}{y}  \If x \leq y\   \Then
+		\\
+		 & \qquad\qquad \qquad \qquad (\bsel{\dual{h_1}}{\accept} \bsel{\dual{h_2}}{\reject} \inact \ \Else \ \bsel{\dual{h_1}}{\reject} \bsel{\dual{h_2}}{\accept} \inact )
+		}
+		\end{align*}
+where $\pmap{P_{xy}}{2} =  P_{xy}$, for it does not involve higher-order communication.
+Similarly, the encoding of $\Client_2$ is as follows:
+\begin{align*}
+\pmap{\Client_2}{2} & = \pmap{\newsp{h}{\bout{s_1}{\abs{x}{Q_1 \subst{h}{y}}} \bout{s_2}{\abs{x}{Q_2 \subst{\dual{h}}{y}}} \inact}}{2}
+\\
+ & = \newspb{h}{
+ \newsp{a_1}{\bout{s_1}{a_1} (\pmap{\bout{s_2}{\abs{x}{Q_2 \subst{\dual{h}}{y}}} \inact}{2} \Par \binp{a_1}{y} \binp{y}{x} \pmap{Q_1 \subst{h}{y}}{2})\,}}
+\\
+ & = \newspb{h}{
+ \newsp{a_1}{\bout{s_1}{a_1}\newsp{a_2}{\bout{s_1}{a_2}\inact \Par 
+ \\
+& \qquad \qquad \binp{a_2}{y} \binp{y}{x} \pmap{Q_2 \subst{\dual{h}}{y}}{2}} \Par 
+   \binp{a_1}{y} \binp{y}{x} \pmap{Q_1 \subst{h}{y}}{2}}}
+\end{align*}
+where $\pmap{ Q_1}{2} =  Q_1$ and $\pmap{Q_2}{2} = Q_2$ for they do not involve higher-order communication.
+
 \end{example}
 
 We describe key properties of this encoding. First, type preservation and operational correspondence, which requires a mapping on action labels.
