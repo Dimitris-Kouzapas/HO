@@ -640,6 +640,7 @@ Then, a type system and behavioural equivalences for \HOp are recalled in
 \HOp features first-order abstractions and monadic communication; extensions 
 with higher-order abstractions and polyadicity (noted \HOpp and \PHOp, respectively) 
 are discussed in \secref{sec:extension}.
+In \secref{ss:hotel} we recall the \emph{Hotel Booking scenario}, a case study for \HOp that we developed in~\cite{characteristic_bis,KouzapasPY17}.
 
 
 %We also introduce two subcalculi of \HOp. In particular, we define the 
@@ -1717,8 +1718,8 @@ We can finally state:
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\subsection{A Running Example}\label{ss:hotel}
-We recall the case study that we developed in our previous paper~\cite{KouzapasPY17}, an abstraction of a \emph{hotel booking scenario}.
+\subsection{The Hotel Booking scenario}\label{ss:hotel}
+We recall the case study for \HOp that we developed in our previous work~\cite{characteristic_bis,KouzapasPY17}, an abstraction of a \emph{hotel booking scenario}.
 The scenario involves a $\Client$ process that wants to book
 a hotel room. % for her holidays. % in a remote island
 %The Client 
@@ -1750,7 +1751,9 @@ to automatically negotiate and book a room.
 					\reject: \bsel{x}{\reject} \inact
 				\end{array}
 				\right\}
-				\\[3mm]
+				\\[2mm]
+				\hline
+				\\
 						\Client_2 \defeq& \newsp{h}{\bout{s_1}{\abs{x}{Q_1 \subst{h}{y}}} \bout{s_2}{\abs{x}{Q_2 \subst{\dual{h}}{y}}} \inact}
 \\
 		Q_1 \defeq&	\bout{x}{\rtype} \binp{x}{\Quotev_1} \bout{y}{\Quotev_1} \binp{y}{\Quotev_2} R_x \\
@@ -1832,6 +1835,7 @@ Assume
 S & = & \btout{\Quote} \btbra{\accept: \tinact, \reject: \tinact} \\
 U & = & \btout{\rtype} \btinp{\Quote} \btsel{\accept: \btout{\creditc} \tinact, \reject: \tinact }
 \end{eqnarray*}
+where $\Quote$, $\rtype$, and $\creditc$ are (first-order) base types.
 We then have:
 \begin{align*}
 \es; \es; y: S & \proves \abs{x}{P_{xy}} \hastype \lhot{U}
@@ -1845,24 +1849,24 @@ We then have:
 \end{align*}
 %\end{example}
 
-The two client implementations are behaviourally equivalent:
-
-\begin{proposition}[\cite{KouzapasPY17}]\label{p:examp}
-	Let
-%	$S = \btout{\rtype} \btinp{\Quote} \btsel{\accept: \btout{\creditc} \tinact, \reject: \tinact}$
-%	and
-	$\Delta = s_1: \btout{\lhot{U}} \tinact \cat s_2: \btout{\lhot{U}} \tinact$.
-%	\begin{eqnarray*}
-%		S &=& \btout{\rtype} \btinp{\Quote} \btsel{\accept: \btout{\creditc} \tinact, \reject: \tinact}\\
-%		\Delta &=& s_1: \btout{\lhot{S}} \tinact \cat s_2: \btout{\lhot{S}} \tinact
-%	\end{eqnarray*}
-\\
-	Then
-	$\horel{\es}{\Delta}{\Client_1}
-	{\fwb}
-	{\Delta}{\Client_2}$, where $\Client_1$ and $\Client_2$ are as above.
-	%in \secref{exam:proc}. 
-\end{proposition}
+%The two client implementations are behaviourally equivalent:
+%
+%\begin{proposition}[\cite{KouzapasPY17}]\label{p:examp}
+%	Let
+%%	$S = \btout{\rtype} \btinp{\Quote} \btsel{\accept: \btout{\creditc} \tinact, \reject: \tinact}$
+%%	and
+%	$\Delta = s_1: \btout{\lhot{U}} \tinact \cat s_2: \btout{\lhot{U}} \tinact$.
+%%	\begin{eqnarray*}
+%%		S &=& \btout{\rtype} \btinp{\Quote} \btsel{\accept: \btout{\creditc} \tinact, \reject: \tinact}\\
+%%		\Delta &=& s_1: \btout{\lhot{S}} \tinact \cat s_2: \btout{\lhot{S}} \tinact
+%%	\end{eqnarray*}
+%\\
+%	Then
+%	$\horel{\es}{\Delta}{\Client_1}
+%	{\fwb}
+%	{\Delta}{\Client_2}$, where $\Client_1$ and $\Client_2$ are as above.
+%	%in \secref{exam:proc}. 
+%\end{proposition}
 
 \section{Correctness Criteria for Typed Encodings}
 \label{s:expr}
@@ -2265,11 +2269,13 @@ The typing $\proves$ is defined in
 The LTSs follow the intuitions given in \secref{ss:equiv}.
 The set of actions $\mathcal{A}_{\HOp}$ is as in \defref{d:labels}; the sets of actions $\mathcal{A}_\HO$ and $\mathcal{A}_\sessp$ 
 are obtained from $\mathcal{A}_{\HOp}$ 
-as expected.
+as expected, considering the differences in the syntax of values $V$.
 %are as in \defref{def:rlts}, 
-Moreover, 
-$\hwb$ is as in \defref{d:hbw}, and 
-$\fwb$ is as in \defref{d:fwb}.
+Moreover, higher-order and characteristic bisimilarities
+$\hwb$ 
+and 
+$\fwb$ are 
+as in \defref{d:hbw} and \defref{d:fwb}.
 
 \begin{remark}[Type Annotations]\label{r:types}
 In our encodings, we sometimes type-annotate
@@ -2628,8 +2634,11 @@ We now state a generalised form of operational correspondence, which includes $\
 %Before we prove operational correspondence we
 To this end, we define a mapping  on action labels: 
 %\mathcal{A} \to \mathcal{A}$, where $\mathcal{A}$ denotes the set of labels of the relation$\hby{~}$:
-\begin{definition}\rm
- The mapping on actions $\mapa{\cdot}^{1}: \mathcal{A}_{\HOp} \to \mathcal{A}_{\HO}$
+\begin{definition}
+Given the typed encoding 
+$\enco{\map{\cdot}^{1}_f, \mapt{\cdot}^{1} %, \mapa{\cdot}^{1}
+}: \tyl{L}_{\HOp} \to \tyl{L}_{\HO}$ (cf. \defref{d:enc:hopitoho}),
+the mapping on actions $\mapa{\cdot}^{1}: \mathcal{A}_{\HOp} \to \mathcal{A}_{\HO}$
 	is defined as follows:
 	\begin{align*}
 		\mapa{(\nu \tilde{m})\bactout{n}{m}}^{1}
@@ -2992,11 +3001,11 @@ in \figref{f:enc:ho_to_sessp}.
 %\smallskip 
 \input{figures/HOp_to_pi}
 
-\begin{example}[Encoding the Hotel client]
-The Hotel client scenario is described in 
-\secref{ss:hotel} as the \HOp process $\Client_1$. Its encoding in \sessp is as follows:
-
-	\begin{align*}%{rcl}
+\begin{example}[Encoding $\Client_1$ and $\Client_2$]
+The Hotel Booking scenario is described in 
+\secref{ss:hotel} (and \figref{f:hotel}) as the \HOp processes $\Client_1$ and $\Client_2$. 
+We first encode $\Client_1$ in \sessp is as follows:
+	\begin{align*}
 		\pmap{\Client_1}{2}   & =  \pmap{\newsp{h_1, h_2}{\bout{s_1}{\abs{x}{P_{xy} \subst{h_1}{y}}} \bout{s_2}{\abs{x}{P_{xy} \subst{h_2}{y}}} \inact \Par  \\
 		 & 
 		\qquad \qquad\binp{\dual{h_1}}{x} \binp{\dual{h_2}}{y}  \If x \leq y\   \Then
@@ -3065,7 +3074,10 @@ is type preserving.
 %from $\mapa{\cdot}^{2}: \mathcal{A} \to \mathcal{A}$ 
 %where $\mathcal{A}$ is the set of labels of the relation $\hby{\ell}$:
 \begin{definition}%\rm
-The mapping on actions $\mapa{\cdot}^{2}: \mathcal{A}_{\HOp} \to \mathcal{A}_{\sessp}$ is defined as follows:
+Given the typed encoding 
+$\enco{\map{\cdot}^{2}, \mapt{\cdot}^{2} %, \mapa{\cdot}^{2}
+}: \tyl{L}_{\HOp} \to \tyl{L}_{\sessp}$  (cf. \defref{d:enc:hopitopi}), 
+the mapping on actions $\mapa{\cdot}^{2}: \mathcal{A}_{\HOp} \to \mathcal{A}_{\sessp}$ is defined as follows:
 	\begin{align*}
 		\mapa{(\nu \tilde{m})\bactout{n}{\abs{ x}{P}} }^{2} & \defeq \news{m} \bactout{n}{m}
 		\\
@@ -3418,17 +3430,14 @@ P_2 & =  \bout{s}{\abs{x}{R}} \inact \Par \binp{\dual{s}}{x} (\appl{x}{s_1} \Par
 $P_2$ involves \emph{pure} abstraction passing (no name passing). Intuitively, 
 $P_1$ and $P_2$ have a similar purpose:
 in both cases, 
-the intended communication on $s$ leads to $n$ usages of the communication object (name $a$ in $P_1$, abstraction $\abs{x}{P}$ in $P_2$).
+the intended communication on $s$ leads to $n$ usages of the communication object (name $a$ in $P_1$, abstraction $\abs{x}{R}$ in $P_2$).
 Consider now the reduction steps from $P_1$ and $P_2$:
-\begin{eqnarray*}
-P_1 & \hby{\tau} & \bout{a}{s_1} \inact \Par \dots \Par \bout{a}{s_n} \inact \\
-P_2 & \hby{\tau}& \appl{(\abs{x}{R})}{s_1} \Par \dots \Par \appl{(\abs{x}{R})}{s_n} \quad 
+\begin{align*}
+P_1  \hby{\tau} ~& \bout{a}{s_1} \inact \Par \dots \Par \bout{a}{s_n} \inact \\
+P_2  \hby{\tau}~& \appl{(\abs{x}{R})}{s_1} \Par \dots \Par \appl{(\abs{x}{R})}{s_n} \quad 
 \underbrace{\hby{\btau}\hby{\btau} \cdots \hby{\btau}}_{n} 
-%\hby{}}^{n}
-%\stackrel{\btau}{\longmapsto^n}
 \quad R \subst{s_1}{x} \Par \dots \Par R \subst{s_n}{x} 
-\end{eqnarray*}
-
+\end{align*}
 %Let reduction on \sessp process:
 %\begin{eqnarray*}
 %	\bout{s}{a} \inact \Par \binp{\dual{s}}{x} (\bout{x}{s_1} \inact \Par \dots \Par \bout{x}{s_n} \inact)
@@ -3448,8 +3457,8 @@ P_2 & \hby{\tau}& \appl{(\abs{x}{R})}{s_1} \Par \dots \Par \appl{(\abs{x}{R})}{s
 %reduce on a message passing action, with the
 %message being substituted $n$ times on the receing side.
 %Both $P_1$ and $P_2$ are \HOp processes.
-We encode $P_1$ into \HO and $P_2$ into \sessp and contrast the results. 
-First, by considering the encoding of $P_1$ into \HO  (following \figref{f:enc:hopi_to_ho})
+We now encode $P_1$ into \HO and $P_2$ into \sessp and contrast the results. 
+First, by considering the encoding of $P_1$ into \HO  (following mapping $\pmap{\cdot}{1}_f$ in \figref{f:enc:hopi_to_ho})
 we obtain:
 \begin{eqnarray*}
 \map{P_1}^{1}_f & = &  	\bout{s}{\abs{z}{\binp{z}{y} \appl{y}{a}}} \inact \Par \\
@@ -3464,7 +3473,7 @@ we obtain:
 %	& \hby{\btau} & 
 	\bout{a}{\abs{z}{\binp{z}{y} \appl{y}{s_1}}} \inact \Par \dots \Par \bout{a}{\abs{z}{\binp{z}{y} \appl{y}{s_n}}} \inact
 \end{eqnarray*}
-Now, we encode $P_2$ into \sessp (following \figref{f:enc:ho_to_sessp}):
+Now, we encode $P_2$ into \sessp (following mapping $\pmap{\cdot}{2}$ in~\figref{f:enc:ho_to_sessp}):
 \begin{eqnarray*}
 \pmap{P_2}{2} & = & 	\newsp{b}{\bout{s}{b} \inact \Par \repl \binp{b}{y} \binp{y}{x} \pmap{R}{2}} \Par \\
 & & \qquad \qquad \binp{\dual{s}}{x} \big(\newsp{s_0}{\bout{x}{s_0} \bout{\dual{s_0}}{s_1} \inact} \Par \dots \Par \newsp{s_0}{\bout{x}{s_0} \bout{\dual{s_0}}{s_n}\inact}\big)
@@ -3555,8 +3564,11 @@ next, we develop a formal argument to substantiate this claim.
 %system. As we will show such a correspondence does not
 %hold for the \HOp to \sessp translation.
 To formally  distiguish between $\map{\cdot}_f^1$ and $\pmap{\cdot}{2}$
-we introduce an extra encodability criterion: a form of operational correspondence 
+we introduce an 
+additional notion of encoding (\emph{tight encodings}) which satisfies an 
+extra corrrectness criterion: a form of operational correspondence 
 for \emph{visible actions}. 
+
 As already motivated above, 
 we write $\ell_1, \ell_2$ to denote  
 actions different from $\tau$,
@@ -4316,7 +4328,7 @@ We may now state a labeled form of operational correspondence, as well as full a
 
 \begin{proposition}[Operational Correspondence. From \HOpp to \HOp]%\myrm
 	\label{prop:op_corr_HOpp_to_HOp}
-	Let $\Gamma; \es; \Delta \proves P$.
+	Let $\Gamma; \es; \Delta \proves P$ be an \HOpp process.
 	\begin{enumerate}
 		\item	
 			$\horel{\Gamma}{\Delta}{P}{\hby{\ell}}{\Delta'}{P'}$ implies
@@ -4386,8 +4398,8 @@ We may now state a labeled form of operational correspondence, as well as full a
 %	\qed
 	\end{proof}
 
-DISCUSS OPERATIONAL CORRESPONDENCE
-
+The correspondence is rather tight: in both completeness and soundness directions, the most interesting cases are due to input and output actions (whose label
+explicitly mentions a value) and to $\btau$ internal actions in the source process. 
 We may now have:
 
 \begin{proposition}[Full Abstraction. From \HOpp to \HOp]%\myrm
@@ -4530,7 +4542,7 @@ polyadic first-order applications of the form
  in the syntax of values $V$;
 the syntax of processes includes polyadicity in input and output prefixes, 
  as well as in function applications. 
-The operational semantics in \figref{fig:reduction} requires only minor modifications to accommodate simultaneous substitution $\subst{\widetilde{V}}{\widetilde{x}}$ (for equally sized $\widetilde{u}/\widetilde{V}$ and $\widetilde{x}$)
+The operational semantics in \figref{fig:reduction} requires only minor modifications to accommodate the simultaneous substitution $\subst{\widetilde{V}}{\widetilde{x}}$ (for equally sized $\widetilde{u}/\widetilde{V}$ and $\widetilde{x}$)
 in Rules~\orule{App} and \orule{Pass}:
 	\begin{align*}
 		\appl{(\abs{\widetilde{x}}{P})}{\widetilde{u}}   & \red  P \subst{\widetilde{u}}{x} 
@@ -4602,7 +4614,7 @@ is type preserving.
 	
 In this case, the required mapping on actions 
 maps an action on $\mathcal{A}_{\PHOp}$ into a set of actions in $\mathcal{A}_{\HOp}$.
-This is a natural consequence of dividing a $k$-adic name communication or application into 
+This is a natural consequence of dividing a $k$-adic name communication or application into several
 independent (monadic) communications:
 
 \begin{definition}
@@ -4638,9 +4650,9 @@ is defined as follows:
 \noi The above definition handles the dyadic case. Notice that we distinguish two kinds of internal actions: while  $\mapa{\tau}^{4}$ is associated to internal actions arising from the mapping of polyadic name synchronization, 
  $\mapa{\btau}^4$ results from the translation of function applications. We may now state operational correspondence:
 
-\begin{proposition}[Operational Correspondence. From \pHOp to \HOp]\myrm
+\begin{proposition}[Operational Correspondence. From \PHOp to \HOp]\myrm
 	\label{prop:op_corr_pHOp_to_HOp}
-Let $\Gamma; \es; \Delta \proves P$.
+Let $\Gamma; \es; \Delta \proves P$ be an \PHOp process.
 	\begin{enumerate}
 		\item	 Then
 			$\horel{\Gamma}{\Delta}{P}{\hby{\ell}}{\Delta'}{P'}$ implies
@@ -4780,8 +4792,16 @@ Let $\Gamma; \es; \Delta \proves P$.
 %	\end{enumerate}
 %\end{proposition}
 
-DISCUSS OPERATIONAL CORRESPONDENCE
-
+As expected, the above correspondence is most interesting in the cases of input and output actions and 
+of $\btau$/$\tau$ reductions in the source process. The case of first-order input and output (Items 1(a) and 1(b))
+a single source action is reflected as $k$ independent actions from the corresponding target process.
+In contrast, when the source action is a single $\btau$ (Item 1(e)) then we have $k+1$ independent actions:
+the first is a $\btau$ synchronisation as it corresponds to the application of a fresh session name; the other $k$ actions 
+are $\stau$ synchronisations, as they
+correspond to the communication of the 
+$k$ arguments to the function, which are passed around using the session established thanks to the first $\btau$ action.
+When the source action is a single regular synchronisation (Item 1(f)) then we have $k$ synchronisations in the target side.
+The correspondences in the soundness direction follow similar intuitions.
 We may now state:
 
 
@@ -5024,7 +5044,7 @@ by studying the expressivity %of second-order abstractions.
 %The work \cite{DBLP:conf/wsfm/XuYL13} focuses  
 %%name and process abstractions are distinguished and contrasted, also 
 %on expressiveness of the hirarchy of polyadic abstraction parameters. 
-%(the same kind of polyadicity present in \pHOp)
+%(the same kind of polyadicity present in \PHOp)
 %By adapting the encodings in~\cite{DBLP:conf/icalp/LanesePSS10} 
 %Polyadicity 
 of 
@@ -5111,6 +5131,7 @@ session type information is critical to establish key properties for preciseness
 \paragraph{Acknowledgments}
 We have benefited from feedback from the users of the Moca mailing list, in particular Greg Meredith and Xu Xian.
 We are grateful to the ESOP'16 anonymous reviewers for their useful remarks and suggestions.
+
 This work has been partially sponsored by the Doctoral Prize Fellowship, EPSRC EP/K011715/1, EPSRC EP/K034413/1, and EPSRC EP/L00058X/1, EU project FP7-612985 UpScale, and EU COST Actions IC1201 (BETTY), IC1402 (ARVI), and IC1405 (Reversible Computation). P\'{e}rez is also affiliated to the NOVA Laboratory for Computer Science and Informatics (NOVA LINCS), Universidade Nova de Lisboa, Portugal.
  
 %\newpage
