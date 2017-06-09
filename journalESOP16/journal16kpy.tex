@@ -1323,9 +1323,75 @@ A characteristic value
 is the {simplest} process that  inhabits a type (here, the
 type $U$ carried by the input prefix). The above rule is used to limit
 the input actions that can be observed from a session input prefix.
-For more details on the typed LTS and the characteristic process definition
-see% \appref{app:behavioural} and
-~\cite{characteristic_bis,KouzapasPY17}.
+The definition of characteristic processes and values is given in \figref{fig:char};
+further details on the typed LTS are given in \appref{app:behavioural} and~\cite{KouzapasPY17}.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%% Characteristic Process Figure %%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{figure}[t!]
+\[
+	\begin{array}{rclcrcl}
+		\mapchar{\btinp{U} S}{u}
+		&\defeq&
+		\binp{u}{x} (\bout{t}{u} \inact \Par \mapchar{U}{x})
+		&\qquad &
+		\omapchar{S}  & \defeq &  s ~~ (s \textrm{ fresh})
+		\\
+		\mapchar{\btout{U} S}{u}
+		&\defeq&
+		\bout{u}{\omapchar{U}} \bout{t}{u} \inact
+		&&
+		\omapchar{\chtype{S}} &\defeq& a ~~ (a \textrm{ fresh})
+		\\
+		\mapchar{\btsel{l : S}}{u}
+		& \defeq &
+		\bsel{u}{l} \bout{t}{u} \inact
+		&&
+		\omapchar{\chtype{L}} &\defeq&a ~~ (a \textrm{ fresh})
+		\\
+		\mapchar{\btbra{l_i: S_i}_{i \in I}}{u}
+		& \defeq &
+		\bbra{u}{l_i: \bout{t_i}{u} \inact}_{i \in I}		 
+		&&
+		\omapchar{\shot{U}} &\defeq& \abs{x}{\mapchar{U}{x}}
+		\\
+		 
+%		\\
+%		\mapchar{\tvar{t}}{u}
+%		&\defeq&
+%		\varp{X}_{\vart{t}}
+%		\\
+%
+		\mapchar{ \trec{t}{S} }{u} &\defeq& \mapchar{S \subst{\tinact}{\vart{t}} }{u}
+
+		&&
+		\omapchar{\lhot{U}} & \defeq &  \abs{x}{\mapchar{U}{x}}
+		\\
+		\mapchar{\tinact}{u}
+		& \defeq &
+		\inact
+		\\
+		\mapchar{\chtype{S}}{u} 
+		&\defeq&
+		\bout{u}{\omapchar{S}} \bout{t}{u} \inact		 
+		\\
+		\mapchar{\chtype{L}}{u}
+		&\defeq&
+		 \bout{u}{\omapchar{L}} \bout{t}{u} \inact 
+		\\
+		\mapchar{\shot{U}}{u}
+		&\defeq& 
+		\appl{u}{\omapchar{U}}
+		\\
+		\mapchar{\lhot{U}}{u}
+		&\defeq &
+		\appl{u}{\omapchar{U}}
+	\end{array}
+	\]
+\caption{Characteristic Processes (left) and Characteristic Values (right).\label{fig:char}}
+%
+\end{figure}
+
 
 \paragraph{Characterising $\cong$}
 We now recall the definition of \emph{higher-order bisimilarity} and 
@@ -1766,8 +1832,8 @@ to automatically negotiate and book a room.
 \figref{f:hotel} presents
 two possible \HOp implementations of this scenario.
 For convenience, we write 
-$\If e\ \Then (P_1\ \Else \ P_2)$
-to denote a conditional process that executes $P_1$ or $P_2$ depending on boolean expression $e$ (encodable using labelled choice).
+$\If e\ \Then P_1\ \Else  P_2$
+to denote a conditional process that executes $P_1$ or $P_2$ depending on boolean expression $e$ (this process is encodable using labelled choice).
 The {first implementation}, given by 
 process $\Client_1$, sends two abstractions with body $P_{xy}$, one to each hotel, 
 		using sessions $s_1$ and $s_2$.
