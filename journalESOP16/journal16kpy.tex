@@ -716,11 +716,14 @@ Recursion   $\recp{X}{P}$ binds the recursive variable $\varp{X}$ in   $P$.
 Constructs for 
 inaction $\inact$,  parallel composition $P_1 \Par P_2$, and 
 name restriction $\news{n} P$ are standard.
+We sometimes write $\repl{} P$ to mean $\recp{X}{(P \Par \rvar{X})}$. 
+
 Session name restriction $\news{s} P$ simultaneously binds endpoints $s$ and $\dual{s}$ in $P$.
 %A well-formed process relies on assumptions for
 %guarded recursive processes.
 Functions $\fv{P}$, $\fn{P}$, and $\fs{P}$ denote, respectively, the sets of free 
-%\jpc{recursion}
+%\jpc{recurs
+ion}
 variables, names, and session names in $P$, and are defined as expected.
 We assume $V$ in $\bout{u}{V}{P}$ does not include free recursive 
 variables $\rvar{X}$.
@@ -1944,7 +1947,7 @@ We first define a typed calculus parametrised by a process syntax, an operationa
 Based on this definition, in  
 \secref{sec:positive} and \secref{sec:extension}
 we define concrete instances of (higher-order) typed calculi.
-
+\subsection{Basic Definitions}
 %\smallskip 
 
 \begin{definition}[Typed Calculus]\label{d:tcalculus}%\rm
@@ -2236,13 +2239,16 @@ stronger encodability results.
 %\qed
 %\end{proof}
 
+
+\subsection{Precise, Minimal, and Tight Encodings}
 We may now introduce 
-\emph{precise} and \emph{minimal}
+\emph{precise}, \emph{minimal}, and \emph{tight}
  encodings.
 While we state strong positive encodability results % in \secref{sec:positive}, 
 in terms of {\em precise} encodings,
 to prove the non-encodability result in \secref{ss:negative}, 
 we appeal to the weaker {\em minimal} encodings.  
+Also, to compare two precise encodings in \secref{ss:compare} here we introduce the notion of \emph{tight} encodings.
 %Building upon precise encodings in \defref{def:lopco} we define \emph{tight} encodings.
 
 \begin{definition}[Typed Encodings: Precise and Minimal]%\rm
@@ -2294,6 +2300,51 @@ The following property will come in handy in \secref{sec:extension}:
 \begin{proof}
 This follows directly from the definitions.
 \end{proof}
+
+We now introduce the notion of \emph{tight encodings}, which refine precise encodings with 
+extra correctness criterion: a form of operational correspondence 
+for \emph{visible actions}. 
+As already motivated above, 
+we write $\ell_1, \ell_2$ to denote  
+actions different from $\tau$,
+and  $\hby{\ell}$ (resp. $\Hby{\ell}$) to denote a (weak) visible transition;
+%with both visible and observable actions, denoted. % and $\hby{}_2$.
+recall that $\mapa{\cdot}$ stands for a mapping 
+on action labels.
+
+\begin{definition}[Labelled Correspondence / Tight Encodings]%\rm
+\label{def:lopco}
+       Consider typed calculi $\tyl{L}_1$ and  $\tyl{L}_2$, defined as 
+        $\tyl{L}_1=\calc{\CAL_1}{{\cal{T}}_1}{\hby{{~}}_1}{\wb_1}{\proves_1}$
+       and $\tyl{L}_2=\calc{\CAL_2}{{\cal{T}}_2}{\hby{{~}}_2}{\wb_2}{\proves_2}$.
+%       ($i=1,2$) be typed calculi. 
+The encoding $\enco{\map{\cdot}, \mapt{\cdot}}: \tyl{L}_1 \to \tyl{L}_2$ satisfies
+\emph{labelled operational correspondence}
+if it satisfies:
+	\begin{enumerate}[1.]
+			\item
+					If		$\stytraargi{\Gamma}{\ell_1}{\Delta}{P}{\Delta'}{P'}{1}{1}$
+					then	$\exists Q$, $\Delta''$, $\ell_2$ s.t. 
+							(i)~$\wtytraargi{\mapt{\Gamma}}{\ell_2}{\mapt{\Delta}}{\map{P}}{\mapt{\Delta''}}{Q}{2}{2}$;  \\
+							(ii)~$\ell_2 = \mapa{\ell_1}$; 
+							(iii)~${\mapt{\Gamma}};{\mapt{\Delta''}}\proves_2 {Q}{\wb_2}{\mapt{\Delta'}}\proves_2 {\map{P'}}$.
+				
+			\item
+					If		$\wtytraargi{\mapt{\Gamma}}{\ell_2}{\mapt{\Delta}}{\map{P}}{\mapt{\Delta'}}{Q}{2}{2}$
+					then	$\exists P'$, $\Delta''$, $\ell_1$ s.t. 
+							(i)~$\stytraargi{\Gamma}{\ell_1}{\Delta}{P}{\Delta''}{P'}{1}{1}$;
+							(ii)~$\ell_2 = \mapa{\ell_1}$;
+							(iii)~${\mapt{\Gamma}};{\mapt{\Delta''}}\proves_2 {\map{P'}}{\wb_2}{\mapt{\Delta'}}\proves_2 {Q}$.
+	\end{enumerate}
+A \emph{tight encoding} is a typed 
+encoding 
+which is precise (\defref{def:goodenc}) and that also satisfies 
+labelled operational correspondence as above.
+\end{definition}
+
+This way, 
+the notion of labelled correspondence complements/generalizes the notion of operational soundness and completeness 
+given in \defref{def:ep}, which restricts to $\tau$-labelled transitions.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -3466,7 +3517,7 @@ Semantics-preservation follows from
 
 %\input{HO_Vs_p}
 
-\subsection{Comparing Precise Encodings}\label{ss:compare}
+\subsection{Comparing Two Precise Encodings}\label{ss:compare}
 The precise encodings  in  \secref{subsec:HOpi_to_HO} and \secref{subsec:HOp_to_sessp}
 confirm that \HO and \sessp constitute two important sources of expressiveness in \HOp.
 This naturally begs the question: which of the two sub-calculi is more tightly related to \HOp?
@@ -3629,55 +3680,60 @@ next, we develop a formal argument to substantiate this claim.
 %the correspondence of the labelled transition reduction
 %system. As we will show such a correspondence does not
 %hold for the \HOp to \sessp translation.
-To formally  distiguish between $\map{\cdot}_f^1$ and $\pmap{\cdot}{2}$
-we introduce an 
-additional notion of encoding (\emph{tight encodings}) which satisfies an 
-extra corrrectness criterion: a form of operational correspondence 
-for \emph{visible actions}. 
 
-As already motivated above, 
-we write $\ell_1, \ell_2$ to denote  
-actions different from $\tau$,
-and  $\hby{\ell}$ (resp. $\Hby{\ell}$) to denote a (weak) visible transition;
-%with both visible and observable actions, denoted. % and $\hby{}_2$.
-recall that $\mapa{\cdot}$ stands for a mapping 
-on action labels.
+%we introduce an 
+%additional notion of encoding (\emph{tight encodings}) which satisfies an 
+%extra correctness criterion: a form of operational correspondence 
+%for \emph{visible actions}. 
+%
+%As already motivated above, 
+%we write $\ell_1, \ell_2$ to denote  
+%actions different from $\tau$,
+%and  $\hby{\ell}$ (resp. $\Hby{\ell}$) to denote a (weak) visible transition;
+%%with both visible and observable actions, denoted. % and $\hby{}_2$.
+%recall that $\mapa{\cdot}$ stands for a mapping 
+%on action labels.
+%
+%\begin{definition}[Labelled Correspondence / Tight Encodings]%\rm
+%\label{def:lopco}
+%       Consider typed calculi $\tyl{L}_1$ and  $\tyl{L}_2$, defined as 
+%        $\tyl{L}_1=\calc{\CAL_1}{{\cal{T}}_1}{\hby{{~}}_1}{\wb_1}{\proves_1}$
+%       and $\tyl{L}_2=\calc{\CAL_2}{{\cal{T}}_2}{\hby{{~}}_2}{\wb_2}{\proves_2}$.
+%%       ($i=1,2$) be typed calculi. 
+%The encoding $\enco{\map{\cdot}, \mapt{\cdot}}: \tyl{L}_1 \to \tyl{L}_2$ satisfies
+%\emph{labelled operational correspondence}
+%if it satisfies:
+%	\begin{enumerate}[1.]
+%			\item
+%					If		$\stytraargi{\Gamma}{\ell_1}{\Delta}{P}{\Delta'}{P'}{1}{1}$
+%					then	$\exists Q$, $\Delta''$, $\ell_2$ s.t. 
+%							(i)~$\wtytraargi{\mapt{\Gamma}}{\ell_2}{\mapt{\Delta}}{\map{P}}{\mapt{\Delta''}}{Q}{2}{2}$;  \\
+%							(ii)~$\ell_2 = \mapa{\ell_1}$; 
+%							(iii)~${\mapt{\Gamma}};{\mapt{\Delta''}}\proves_2 {Q}{\wb_2}{\mapt{\Delta'}}\proves_2 {\map{P'}}$.
+%				
+%			\item
+%					If		$\wtytraargi{\mapt{\Gamma}}{\ell_2}{\mapt{\Delta}}{\map{P}}{\mapt{\Delta'}}{Q}{2}{2}$
+%					then	$\exists P'$, $\Delta''$, $\ell_1$ s.t. 
+%							(i)~$\stytraargi{\Gamma}{\ell_1}{\Delta}{P}{\Delta''}{P'}{1}{1}$;
+%							(ii)~$\ell_2 = \mapa{\ell_1}$;
+%							(iii)~${\mapt{\Gamma}};{\mapt{\Delta''}}\proves_2 {\map{P'}}{\wb_2}{\mapt{\Delta'}}\proves_2 {Q}$.
+%	\end{enumerate}
+%A \emph{tight encoding} is a typed 
+%encoding 
+%which is precise (\defref{def:goodenc}) and that also satisfies 
+%labelled operational correspondence as above.
+%\end{definition}
+%
+%This way, 
+%the notion of labelled correspondence complements/generalizes the notion of operational soundness and completeness 
+%given in \defref{def:ep}, which restricts to $\tau$-labelled transitions.
 
-\begin{definition}[Labelled Correspondence / Tight Encodings]%\rm
-\label{def:lopco}
-       Consider typed calculi $\tyl{L}_1$ and  $\tyl{L}_2$, defined as 
-        $\tyl{L}_1=\calc{\CAL_1}{{\cal{T}}_1}{\hby{{~}}_1}{\wb_1}{\proves_1}$
-       and $\tyl{L}_2=\calc{\CAL_2}{{\cal{T}}_2}{\hby{{~}}_2}{\wb_2}{\proves_2}$.
-%       ($i=1,2$) be typed calculi. 
-The encoding $\enco{\map{\cdot}, \mapt{\cdot}}: \tyl{L}_1 \to \tyl{L}_2$ satisfies
-\emph{labelled operational correspondence}
-if it satisfies:
-	\begin{enumerate}[1.]
-			\item
-					If		$\stytraargi{\Gamma}{\ell_1}{\Delta}{P}{\Delta'}{P'}{1}{1}$
-					then	$\exists Q$, $\Delta''$, $\ell_2$ s.t. 
-							(i)~$\wtytraargi{\mapt{\Gamma}}{\ell_2}{\mapt{\Delta}}{\map{P}}{\mapt{\Delta''}}{Q}{2}{2}$;  \\
-							(ii)~$\ell_2 = \mapa{\ell_1}$; 
-							(iii)~${\mapt{\Gamma}};{\mapt{\Delta''}}\proves_2 {Q}{\wb_2}{\mapt{\Delta'}}\proves_2 {\map{P'}}$.
-				
-			\item
-					If		$\wtytraargi{\mapt{\Gamma}}{\ell_2}{\mapt{\Delta}}{\map{P}}{\mapt{\Delta'}}{Q}{2}{2}$
-					then	$\exists P'$, $\Delta''$, $\ell_1$ s.t. 
-							(i)~$\stytraargi{\Gamma}{\ell_1}{\Delta}{P}{\Delta''}{P'}{1}{1}$;
-							(ii)~$\ell_2 = \mapa{\ell_1}$;
-							(iii)~${\mapt{\Gamma}};{\mapt{\Delta''}}\proves_2 {\map{P'}}{\wb_2}{\mapt{\Delta'}}\proves_2 {Q}$.
-	\end{enumerate}
-A \emph{tight encoding} is a typed 
-encoding 
-which is precise (\defref{def:goodenc}) and that also satisfies 
-labelled operational correspondence as above.
-\end{definition}
+%To formally distinguish between $\map{\cdot}_f^1$ and $\pmap{\cdot}{2}$
+To  formally state that 
+\HOp and \HO are more closely related than \HOp and~\sessp,
+we may 
+distinguish the precise encodings $\map{\cdot}_f^1$ and $\pmap{\cdot}{2}$ depending on whether they are also tight encodings or not (cf. \defref{def:lopco}):
 
-This way, 
-the notion of labelled correspondence complements/generalizes the notion of operational soundness and completeness 
-given in \defref{def:ep}, which restricts to $\tau$-labelled transitions.
-We may formally state that 
-\HOp and \HO are more closely related than \HOp and~\sessp:
 \begin{theorem}[\HO Tightly Encodes \HOp]\label{t:tight}
 While the encoding of \HOp into \HO (\defref{d:enc:hopitoho}) is tight, the encoding of \HOp into \sessp (\defref{d:enc:hopitopi}) is not tight.
 \end{theorem}
