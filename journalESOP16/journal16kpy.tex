@@ -388,9 +388,9 @@ Concerning (ii), we develop extensions of our encodings to
 %our encodability results. 
 %From a global standpoint, our 
 
-\newj{\figref{fig:express} summarises our encodability results: they}
+\newj{\figref{fig:express} summarises our encodability results.}
 %These encodability results 
-connect \HOp with existing higher-order process calculi~\cite{tlca07}, and  
+These results connect \HOp with existing higher-order process calculi~\cite{tlca07}, and  
  highlight the status of \HO as the core calculus for session concurrency.
 Finally, %although (iii) may be somewhat expected, 
 to our knowledge we are the first to prove 
@@ -472,7 +472,7 @@ our encoding of \HOp into \HO (\secref{subsec:HOpi_to_HO}) should
 (a)~enable the communication of arbitrary names, as required to represent delegation,
 and 
 %Second, it should 
-(b)~address the fact that linearity as enforced by session types limits the 
+(b)~address the fact that the linear communication discipline, enforced by session types, limits the 
 possibilities for representing infinite behaviour. 
 
 To illustrate our encoding of name passing into \HO, we informally introduce some process syntax; formal definitions are given in \secref{subsec:syntax}.
@@ -679,7 +679,7 @@ $\dual{\dual{s}} = s$ and $\dual{a} = a$.
 %Intuitively, names $s$ and $\dual{s}$ are dual (two) \emph{endpoints} while 
 %shared names represent shared (non-deterministic) points. 
 Variables are denoted with $x, y, z, \dots$, 
-and recursive variables are denoted with $\varp{X}, \varp{Y} \dots$.
+and recursive variables are denoted with $\varp{X}, \varp{Y}, \dots$.
 An abstraction %(or higher-order value) 
 $\abs{x}{P}$ is a process $P$ with name parameter $x$.
 %Symbols $u, v, \dots$ range over identifiers; and  $V, W, \dots$ to denote values. 
@@ -816,7 +816,8 @@ We state key definitions and properties for the session type system for \HOp.
 The considered type system,
 introduced in~\cite{KouzapasPY17},
  distills the key features of~\cite{tlca07,MostrousY15} and so it is simpler.
- Below we provide essential definitions; see \appref{app:types} for definitions of type equivalence and type duality, and 
+ Below we provide essential definitions; see \appref{app:types} 
+ %for definitions of type equivalence and type duality, and 
 for a complete account of the typing rules.
 
 
@@ -885,13 +886,70 @@ From each $\CAL \in \{\HOp, \HO, \pi \}$, $\CAL^{-\mathsf{sh}}$
 excludes shared name types ($\chtype{S}$ and $\chtype{L}$), 
 from name type $C$.
 
-\newj{We write $S \dualof S'$ if $S$ is the \emph{dual} of $S'$.   
-Intuitively, session type duality is  obtained by 
+We now give definitions of session type duality~\cite{TGC14}, which builds upon type equivalence.
+%\newj{We write $S \dualof S'$ if $S$ is the \emph{dual} of $S'$.   
+Intuitively, duality is  obtained by 
 dualising $!$ by $?$, $?$ by $!$, $\oplus$ by $\&$, and $\&$ by $\oplus$,  
 including the fixed point construction.
-We use the \emph{co-inductive} definition of duality given in \cite{TGC14};}
-%(see \defref{def:dual} in the Appendix). 
-see~\appref{app:duality} for details.
+%We use the \emph{co-inductive} definition of duality given in \cite{TGC14};}
+%%(see \defref{def:dual} in the Appendix). 
+%see~\appref{app:duality} for details.
+More formally, we have:
+
+\begin{definition}[Type Equivalence]
+\label{def:iso}
+Let $\mathsf{ST}$ a set of closed session types. 
+Two types $S$ and $S'$ are said to be {\em isomorphic} if a pair $(S,S')$ is 
+in the largest fixed point of the monotone function
+$F:\mathcal{P}(\mathsf{ST}\times \mathsf{ST}) \to 
+\mathcal{P}(\mathsf{ST}\times \mathsf{ST})$ defined by:
+
+\hspace{-0.5cm}\begin{tabular}{rcl}
+$F(\Re)$ &$\!\!=\!\!$&	$\set{(\tinact, \tinact)}$\\
+         &$\!\!\cup\!\!$&	$\set{(\btout{U_1} S_1, \btout{U_2} S_2)
+\bnfbar (S_1, S_2),(U_1, U_2)\in \Re}$\\ 
+       &$\!\!\cup\!\!$&	$\set{(\btinp{U_1} S_1, \btinp{U_2} S_2)
+\bnfbar(S_1, S_2),(U_1, U_2)\in \Re}$\\ 
+	&$\!\!\cup\!\!$&	$\set{(\btbra{l_i: S_i}_{i \in I} \,,\, \btbra{l_i: S_i'}_{i \in I}) \bnfbar \forall i\in I. (S_i, S_i')\in \Re}$\\
+	&$\!\!\cup\!\!$&	$\set{(\btsel{l_i: S_i}_{i \in I}\,,\, \btsel{l_i: S_i'}_{i \in I}) \bnfbar \forall i\in I. (S_i, S_i')\in \Re}$\\
+	&$\!\!\cup\!\!$&	$\set{(\trec{t}{S}, S')
+\bnfbar (S\subst{\trec{t}{S}}{\vart{t}},S')\in \Re}$\\
+	&$\!\!\cup\!\!$&	$\set{(S,\trec{t}{S'})
+\bnfbar (S,S'\subst{\trec{t}{S'}}{\vart{t}})\in \Re}$
+\end{tabular}
+	
+\noindent
+Standard arguments ensure that $F$ is monotone, thus the greatest fixed point
+of $F$ exists. We write $S_1 \sim S_2$ if  $(S_1,S_2)\in \Re$. 
+\end{definition}
+
+\smallskip 
+
+\begin{definition}[Duality]
+\label{def:dual}
+Let $\mathsf{ST}$ a set of closed session types. 
+Two types $S$ and $S'$ are said to be {\em dual} if a pair $(S,S')$ is 
+in the largest fixed point of the monotone function
+$F:\mathcal{P}(\mathsf{ST}\times \mathsf{ST}) \to 
+\mathcal{P}(\mathsf{ST}\times \mathsf{ST})$ defined by:\\[1mm]
+\begin{tabular}{rcl}
+$F(\Re)$ &$\!\!=\!\!$&	$\set{(\tinact, \tinact)}$\\
+         &$\!\!\cup\!\!$&	$\set{(\btout{U_1} S_1, \btinp{U_2} S_2)
+\bnfbar(S_1, S_2)\in \Re, \  U_1 \sim U_2 }$\\ 
+       &$\!\!\cup\!\!$&	$\set{(\btinp{U_1} S_1, \btout{U_2} S_2)
+\bnfbar(S_1, S_2)\in \Re, \ U_1 \sim U_2}$\\ 
+	&$\!\!\cup\!\!$&	$\set{(\btsel{l_i: S_i}_{i \in I} \,,\, \btbra{l_i: S_i'}_{i \in I}) \bnfbar \forall i\in I. (S_i, S_i')\in \Re}$\\
+	&$\!\!\cup\!\!$&	$\set{(\btbra{l_i: S_i}_{i \in I}\,,\, \btsel{l_i: S_i'}_{i \in I}) \bnfbar \forall i\in I. (S_i, S_i')\in \Re}$\\
+	&$\!\!\cup\!\!$&	$\set{(\trec{t}{S}, S')
+\bnfbar (S\subst{\trec{t}{S}}{\vart{t}},S')\in \Re}$\\
+	&$\!\!\cup\!\!$&	$\set{(S,\trec{t}{S'})
+\bnfbar (S,S'\subst{\trec{t}{S'}}{\vart{t}})\in \Re}$\\[1mm]
+\end{tabular}
+\noindent
+%where $U_1 \sim U_2$ means $U_1$ is type equivalent to $U_2$ \cite{yoshida.vasconcelos:language-primitives}.
+Standard arguments ensure that $F$ is monotone, thus the greatest fixed point
+of $F$ exists. We write $S_1 \dualof S_2$ if  $(S_1,S_2)\in \Re$. 
+\end{definition}
 
 
 %\smallskip 
@@ -1237,7 +1295,7 @@ and
 Their definition 
 uses an early \emph{typed}
 labelled transition system (LTS) on processes, informed by session
-types. 
+types~\cite{KY2015}. 
 The interaction of processes with their environment is defined using action labels:
 %
 \begin{definition}[Action Labels]\label{d:labels}
@@ -1788,7 +1846,7 @@ We can finally state:
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \subsection{The Hotel Booking scenario}\label{ss:hotel}
-We recall the case study for \HOp that we developed in our previous work~\cite{characteristic_bis,KouzapasPY17}, an abstraction of a \emph{hotel booking scenario}.
+We recall the case study for \HOp that we developed in our previous work~\cite{characteristic_bis,KouzapasPY17}, a specification of a \emph{hotel booking scenario}.
 The scenario involves a $\Client$ process that wants to book
 a hotel room. % for her holidays. % in a remote island
 %The Client 
@@ -2012,13 +2070,13 @@ and types; these are denoted $\map{\cdot}$ and $\mapt{\cdot}$, respectively: %, 
 %	$\enco{\map{\cdot}, \mapt{\cdot}, \mapa{\cdot}} : 
 		$\enco{\map{\cdot}, \mapt{\cdot}} : 
 	\tyl{L}_1 \to \tyl{L}_2$ to denote the \emph{typed encoding} of $\tyl{L}_1$ (the \emph{source calculus}) into $\tyl{L}_2$ (the \emph{target  calculus}).
+Mapping $\mapt{\cdot}$ on types extends to typing
+environments in the expected way. %; for instance, $\mapt{\Delta \cat u:S} = \mapt{\Delta} \cat u:\mapt{S}$.
 \end{definition}
 
 %\smallskip 
 
 %\noi 
-Mapping $\mapt{\cdot}$ extends to typing
-environments in the expected way; for instance, $\mapt{\Delta \cat u:S} = \mapt{\Delta} \cat u:\mapt{S}$.
 When considering forms of operational correspondence with visible actions, 
 our notion of typed encoding shall include mappings $\map{\cdot}$ and $\mapt{\cdot}$, but also
 a  mapping  $\mapa{\cdot}:\mathcal{A}_1 \to \mathcal{A}_2$ 
