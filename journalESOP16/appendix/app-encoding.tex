@@ -1786,7 +1786,7 @@ version of the operational correspondence:
 	The interesting case is the output case. The rest of the cases follow
 	the bisimulation game that is implied by the labelled correspondence Proposition~\ref{app:prop:op_corr_HOp_to_p}.
 
-	\noi $P = \bout{n}{\abs{x}{R}} P'$
+	\noi $P = \bout{n}{\abs{x}{R_1}} P'$
 
 	\noi We then observe transition
 %
@@ -1811,11 +1811,11 @@ version of the operational correspondence:
 
 	\mhorel	{\mapt{\Gamma}}
 		{\mapt{\Delta_1'}}
-		{\newsp{a_1}{\pmap{P'}{2} \Par \repl \bout{a_1}{y} \binp{y}{x} \pmap{R_1}{2} \Par \binp{t}{x} \newsp{s}{ \binp{s}{y} \mapchar{U}{y} \Par \bout{s}{a_1} \inact }}}
+		{\newsp{a_1}{\pmap{P'}{2} \Par \repl \binp{a_1}{y} \binp{y}{x} \pmap{R_1}{2} \Par \binp{t}{x} \newsp{s}{ \binp{s}{y} \mapchar{U}{y} \Par \bout{s}{a_1} \inact }}}
 		{\fwb}
 		{\mapt{\Delta_2'}}
 		{}
-		{\newsp{a_2}{\pmap{Q'}{2} \Par \repl \bout{a_2}{y} \binp{y}{x} \pmap{R_2}{2} \Par \binp{t}{x} \newsp{s}{ \binp{s}{y} \mapchar{U}{y} \Par \bout{s}{a_2} \inact } }}
+		{\newsp{a_2}{\pmap{Q'}{2} \Par \repl \binp{a_2}{y} \binp{y}{x} \pmap{R_2}{2} \Par \binp{t}{x} \newsp{s}{ \binp{s}{y} \mapchar{U}{y} \Par \bout{s}{a_2} \inact } }}
 
 	\noi From~\ref{prop:fa_ho_sessp_1} and Proposition~\ref{app:prop:op_corr_HOp_to_p} (Part 1), we get that
 	$\exists Q', R_2$ such that
@@ -1850,13 +1850,80 @@ version of the operational correspondence:
 
 	\noi Consider relation
 	\[
-		\mathcal{R} = \set{ \horel{\mapt{\Gamma}^{2}}{\mapt{\Delta_1}^2}{\pmap{P}{2}}{\fwb}{\mapt{\Delta_2}^2}{\pmap{Q}{2}} \setbar  \horel{\Gamma}{\Delta_1}{P}{,}{\Delta_2}{Q}}
+		\mathcal{R} = \set{ \horel{\mapt{\Gamma}^{2}}{\mapt{\Delta_1}^2}{\pmap{P}{2}}{,}{\mapt{\Delta_2}^2}{\pmap{Q}{2}} \setbar \horel{\Gamma}{\Delta_1}{P}{\fwb}{\Delta_2}{Q}}
 	\]
 %
 	The interesting case is the output case. The rest of the cases follow
-	the bisimulation game that is implied by the labelled correspondence Proposition~\ref{app:prop:op_corr_HOp_to_p}.
+	the bisimulation game that is implied by the labelled correspondence
+	Proposition~\ref{app:prop:op_corr_HOp_to_p}.
 
-	\dk{continue from here}
+	\noi $P = \bout{n}{\abs{x}{R_1}} P'$
+
+	\noi then we observe
+
+	We observe
+%
+	\begin{eqnarray*}
+		\Gamma; \Delta_1 \proves \bout{n}{\abs{x}{R_1}} P'
+		\hby{\bactout{n}{\abs{x}{R_1}}}
+		\Delta_1' \proves P'
+	\end{eqnarray*}
+%
+	to get from Proposition~\ref{app:prop:op_corr_HOp_to_p} (Part 2),
+
+	\mhorel	{\mapt{\Gamma}}
+		{\mapt{\Delta_1}}
+		{\bout{n}{a_1} \pmap{P'}{2} \Par \repl \binp{a_1}{y} \binp{y}{x} \pmap{R_1}{2}}
+		{\hby{\bactout{n}{a_1}}}
+		{\mapt{\Delta_1'}}
+		{}
+		{\pmap{P'}{2} \Par \repl \binp{a_1}{y} \binp{y}{x} \pmap{R_1}{2}}
+
+	\noi
+	and from $\mathcal{R}$ that
+	%
+	\begin{eqnarray*}
+		\Gamma; \Delta_2 \proves Q
+		\Hby{\bactout{n}{\abs{x}{R_2}}}
+		\Delta_2' \proves Q'
+	\end{eqnarray*}
+	%
+	and furthermore
+
+	\mhorel
+		{\Gamma}
+		{\Delta_1'}
+		{P' \Par \binp{t}{x} \newsp{s}{ \binp{s}{y} \mapchar{U}{y} \Par \bout{s}{R_1} \inact }}
+		{\fwb}
+		{\Delta_2'} 
+		{}
+		{Q' \Par \binp{t}{x} \newsp{s}{ \binp{s}{y} \mapchar{U}{y} \Par \bout{s}{R_2} \inact }}
+
+	\noi
+	Also from Proposition~\ref{app:prop:op_corr_HOp_to_p} (Part 2) we get that,
+
+	\mhorel	{\mapt{\Gamma}}
+		{\mapt{\Delta_2}}
+		{\pmap{Q}{2} \Par \repl \binp{a_2}{y} \binp{y}{x} \pmap{R_2}{2}}
+		{\Hby{\bactout{n}{a_2}}}
+		{\mapt{\Delta_2'}}
+		{}
+		{\pmap{Q'}{2} \Par \repl \binp{a_2}{y} \binp{y}{x} \pmap{R_2}{2}}
+
+	\noi
+	and also from the definition of $\mathcal{R}$ and the fact that the pair
+	of mapped processes can observe only determinate transitions we get
+
+	\mhorel	{\mapt{\Gamma}}
+		{\mapt{\Delta_1'}}
+		{\pmap{P'}{2} \Par \repl \binp{a_1}{y} \binp{y}{x} \pmap{R_1}{2} \Par \binp{t}{x} \newsp{s}{\binp{s}{y} \mapchar{U}{y}} \Par \bout{s}{a_1} \inact }
+		{\mathcal{R}}
+		{\mapt{\Delta_2'}}
+		{}
+		{\pmap{Q'}{2} \Par \repl \binp{a_2}{y} \binp{y}{x} \pmap{R_2}{2} \Par \binp{t}{x} \newsp{s}{\binp{s}{y} \mapchar{U}{y}} \Par \bout{s}{a_2} \inact  }
+
+	\noi as required.
+
 \end{proof}
 
 
