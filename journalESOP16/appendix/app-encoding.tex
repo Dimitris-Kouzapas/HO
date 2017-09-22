@@ -1774,11 +1774,11 @@ the soundness direction of operational correspondence (cf.~\propref{app:prop:op_
 %
 	and
 
-	\mhorel	{\mapt{\Gamma}}
-		{\mapt{\Delta_1'}}
+	\mhorel	{\tmap{\Gamma}{2}}
+		{\tmap{\Delta_1'}{2}}
 		{\newsp{a_1}{\pmap{P'}{2} \Par \repl \binp{a_1}{y} \binp{y}{x} \pmap{R_1}{2} \Par \binp{t}{x} \newsp{s}{ \binp{s}{y} \mapchar{U}{y} \Par \bout{s}{a_1} \inact }}}
 		{\fwb}
-		{\mapt{\Delta_2'}}
+		{\tmap{\Delta_2'}{2}}
 		{}
 		{\newsp{a_2}{\pmap{Q'}{2} \Par \repl \binp{a_2}{y} \binp{y}{x} \pmap{R_2}{2} \Par \binp{t}{x} \newsp{s}{ \binp{s}{y} \mapchar{U}{y} \Par \bout{s}{a_2} \inact } }}
 
@@ -1827,30 +1827,42 @@ the soundness direction of operational correspondence (cf.~\propref{app:prop:op_
 %
 	 is a characteristic bisimulation.
 Suppose %$\horel{\Gamma}{\Delta_1}{P_1}{\hby{\ell}}{\Delta_1'}{P_2}$; 
-$\stytra{\mapt{\Gamma}^{2}}{\ell_2}{\mapt{\Delta_1}^{2}}{\map{P}^{2}}{\mapt{\Delta_1'}^{2}}{R}$;
-we perform a case analysis on the shape of ${\ell}$, using 
+$\stytra{\mapt{\Gamma}^{2}}{\ell}{\mapt{\Delta_1}^{2}}{\map{P}^{2}}{\mapt{\Delta_1'}^{2}}{R}$;
+we need to exhibit a corresponding move from $\map{Q}^{2}$.
+To this end, we perform a case analysis on the shape of ${\ell}$, using 
 \propref{app:prop:op_corr_HOp_to_p} (Part 2).
-		The  most interesting case is when $\ell = \bactout{n}{\abs{x}{R_1}}$, with  {$\fs{R_1} = \emptyset$}; the other cases are similar or simpler. 
 
-	\noi Given $P = \bout{n}{\abs{x}{R_1}} P'$, we may then observe:
-	\begin{eqnarray*}
-		\Gamma; \Delta_1 \proves \bout{n}{\abs{x}{R_1}} P'
-		\hby{\bactout{n}{\abs{x}{R_1}}}
-		\Delta_1' \proves P'
-	\end{eqnarray*}
+\smallskip
+
+One interesting case is when $\ell = \news{a_1}\bactout{n}{a_1}$ and 
+$P = \bout{n}{\abs{x}{R_1}} P'$ with {$\fs{R_1} = \emptyset$}, for some $R_1, P'$; the other cases are similar or simpler. 
+Given these assumptions, and considering \figref{f:enc:ho_to_sessp}, the transition from $\map{P}^{2}$ is as follows:
+%	\noi Given $P = \bout{n}{\abs{x}{R_1}} P'$, we may then observe:
+%	\begin{eqnarray*}
+%		\Gamma; \Delta_1 \proves \bout{n}{\abs{x}{R_1}} P'
+%		\hby{\bactout{n}{\abs{x}{R_1}}}
+%		\Delta_1' \proves P'
+%	\end{eqnarray*}
+%%
+%	so as to obtain the following from \propref{app:prop:op_corr_HOp_to_p} (Part 2):
 %
-	so as to obtain the following from \propref{app:prop:op_corr_HOp_to_p} (Part 2):
-
-	\mhorel	{\mapt{\Gamma}}
-		{\mapt{\Delta_1}}
-		{\bout{n}{a_1} \pmap{P'}{2} \Par \repl \binp{a_1}{y} \binp{y}{x} \pmap{R_1}{2}}
-		{\hby{\bactout{n}{a_1}}}
-		{\mapt{\Delta_1'}}
+$$
+	\mhorel	{\tmap{\Gamma}{2}}
+		{\tmap{\Delta_1}{2}}
+		{\news{a_1}(\bout{n}{a_1} \pmap{P'}{2} \Par \repl \binp{a_1}{y} \binp{y}{x} \pmap{R_1}{2})}
+		{\hby{\news{a}\bactout{n}{a_1}}}
+		{\tmap{\Delta_1'}{2}}
 		{}
 		{\pmap{P'}{2} \Par \repl \binp{a_1}{y} \binp{y}{x} \pmap{R_1}{2}}
-
-	\noi
-	Also, from $\Re$ we infer that both:
+$$
+Then, using 
+\propref{app:prop:op_corr_HOp_to_p} (Part 2(a)), 
+we may infer a transition from $P$:
+$$\Gamma; \Delta_1 \proves \bout{n}{\abs{x}{R_1}} P'
+		\hby{\bactout{n}{\abs{x}{R_1}}}
+		\Delta_1' \proves P'$$
+In turn, this transition, together with the definition of 
+$\Re$, enable us to infer both:
 	%
 	\begin{eqnarray*}
 		\Gamma; \Delta_2 \proves Q
@@ -1859,6 +1871,7 @@ we perform a case analysis on the shape of ${\ell}$, using
 	\end{eqnarray*}
 	%
 	and
+	$$
 	\mhorel
 		{\Gamma}
 		{\Delta_1'}
@@ -1867,39 +1880,42 @@ we perform a case analysis on the shape of ${\ell}$, using
 		{\Delta_2'} 
 		{}
 		{Q' \Par \binp{t}{x} \newsp{s}{ \binp{s}{y} \mapchar{U}{y} \Par \bout{s}{R_2} \inact }}
+$$
+for some $R_2$.
+	Now, using this transition from $Q$ in combination with \propref{app:prop:op_corr_HOp_to_p} (Part 1(a)) we obtain:
+%	
+%	\mhorel	{\tmap{\Gamma}{2}}
+%		{\tmap{\Delta_2}{2}}
+%		{\pmap{Q}{2} \Par \repl \binp{a_2}{y} \binp{y}{x} \pmap{R_2}{2}}
+%		{\Hby{\bactout{n}{a_2}}}
+%		{\mapt{\Delta_2'}}
+%		{}
+%		{\pmap{Q'}{2} \Par \repl \binp{a_2}{y} \binp{y}{x} \pmap{R_2}{2}}
+	\begin{eqnarray*}
+		\tmap{\Gamma}{2}; \emptyset; \tmap{\Delta_2}{2} \proves \pmap{Q}{2}
+		\Hby{\news{a_2}\bactout{n}{a_2}}
+		\Delta_2' \proves \pmap{Q'}{2} \Par \repl \binp{a_2}{y} \binp{y}{x} \pmap{R_2}{2}
+	\end{eqnarray*}
+From the definition of $\Re$ (and the fact that the pair
+	of mapped processes can observe only deterministic transitions) we may finally obtain:
 
-	\noi
-	Now, from \propref{app:prop:op_corr_HOp_to_p} (Part 2) we obtain:
-	
-	\mhorel	{\mapt{\Gamma}}
-		{\mapt{\Delta_2}}
-		{\pmap{Q}{2} \Par \repl \binp{a_2}{y} \binp{y}{x} \pmap{R_2}{2}}
-		{\Hby{\bactout{n}{a_2}}}
-		{\mapt{\Delta_2'}}
-		{}
-		{\pmap{Q'}{2} \Par \repl \binp{a_2}{y} \binp{y}{x} \pmap{R_2}{2}}
-
-	\noi
-	and also from the definition of $\Re$ (and the fact that the pair
-	of mapped processes can observe only determinate transitions) we finally obtain:
-
-	\mhorel	{\mapt{\Gamma}}
-		{\mapt{\Delta_1'}}
+	\mhorel	{\tmap{\Gamma}{2}}
+		{\tmap{\Delta_1'}{2}}
 		{\pmap{P'}{2} \Par \repl \binp{a_1}{y} \binp{y}{x} \pmap{R_1}{2} \Par \binp{t}{x} \newsp{s}{\binp{s}{y} \mapchar{U}{y} \Par \bout{s}{a_1} \inact }}
 		{\Re}
-		{\mapt{\Delta_2'}}
+		{\tmap{\Delta_2'}{2}}
 		{}
 		{\pmap{Q'}{2} \Par \repl \binp{a_2}{y} \binp{y}{x} \pmap{R_2}{2} \Par \binp{t}{x} \newsp{s}{\binp{s}{y} \mapchar{U}{y} \Par \bout{s}{a_2} \inact  }}
 
 	\noi as required.
-	This is because
+	This suffices, because
 	\begin{eqnarray*}
-		&& \pmap{P' \Par \binp{t}{x} \newsp{s}{ \binp{s}{y} \mapchar{U}{y} \Par \bout{s}{R_1} \inact}}{2} = \\
-		&&\pmap{P'}{2} \Par \repl \binp{a_2}{y} \binp{y}{x} \pmap{R_2}{2} \Par \binp{t}{x} \newsp{s}{ \binp{s}{y} \mapchar{U}{y} \Par \bout{s}{a_2}} \inact
+		 \pmap{P' \Par \binp{t}{x} \newsp{s}{ \binp{s}{y} \mapchar{U}{y} \Par \bout{s}{R_1} \inact}}{2} & = &
+		\pmap{P'}{2} \Par \repl \binp{a_2}{y} \binp{y}{x} \pmap{R_2}{2} \\
+		&  & \Par \binp{t}{x} \newsp{s}{ \binp{s}{y} \mapchar{U}{y} \Par \bout{s}{a_2} \inact}
 	\end{eqnarray*}
-	Similarly for $Q'$.
+	(and similarly for $Q'$.)
 %	\jpc{Why is the above pair sufficient to complete the proof - don't you need to get rid of the replicated server?}
-
 \end{proof}
 
 
@@ -2201,7 +2217,7 @@ A precise encoding requires to prove three independent results:
 					$\horel{\Gamma}{\Delta}{P}{\hby{\ell}}{\Delta'}{P'}$ and $Q \scong \pmap{P'}{3}$.
 %					and $\horel{\tmap{\Gamma}{3}}{\tmap{\Delta''}{3}}{Q}{\hby{\hat{\ell}}}{\tmap{\Delta'}{3}}{\pmap{P'}{3}}$.
 
-				\item	If $\ell = \tau$ then
+				\item	If $\ell = \tau$ then \jpc{Check if this can be split}
 					either
 					$\horel{\Gamma}{\Delta}{P}{\hby{\tau}}{\Delta'}{P'}$ with $Q \scong \pmap{P'}{3}$\\
 					or
@@ -2213,10 +2229,13 @@ A precise encoding requires to prove three independent results:
 \end{proposition}
 
 \begin{proof}
+We consider both parts separately,
+considering the mapping in \figref{f:enc:hopip_to_hopi}.
+
 \begin{enumerate}
-	\item The proof of Part 1 does a transition induction and
-	considers the mapping as defined in \figref{f:enc:hopip_to_hopi}.
-	We give the most interesting cases; other cases are similar. 
+	\item The proof of Part 1 proceeds by transition induction. We 
+		content ourselves by showing two interesting cases; other cases are similar.  \jpc{Here}.
+		Suppose $\horel{\Gamma}{\Delta}{P}{\hby{\ell}}{\Delta'}{P'}$
 
 	\begin{enumerate}[a)]
 		\item	Case: $P = \appl{(\abs{x}{Q_1})}{\abs{x}{Q_2}}$.
