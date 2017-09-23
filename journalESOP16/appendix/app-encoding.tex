@@ -2161,6 +2161,8 @@ A precise encoding requires to prove three independent results:
 
 %We now state and prove a detailed version of the operational corresponce in \defref{app:def:opc_strong}.
 
+In the following proposition, recall that we use the mapping on actions $\mapa{\cdot}^{3}$ given in \defref{d:actmap3}.
+
 \begin{proposition}[Operational Correspondence. From \HOpp to \HOp]\myrm
 	\label{app:prop:op_corr_HOpp_to_HOp}
 	Let $\Gamma; \es; \Delta \proves P$.
@@ -2234,53 +2236,76 @@ considering the mapping in \figref{f:enc:hopip_to_hopi}.
 
 \begin{enumerate}
 	\item The proof of Part 1 proceeds by transition induction. We 
-		content ourselves by showing two interesting cases; other cases are similar.  \jpc{Here}.
-		Suppose $\horel{\Gamma}{\Delta}{P}{\hby{\ell}}{\Delta'}{P'}$
+		content ourselves by showing two interesting cases; other cases are similar.  
+		Suppose $\horel{\Gamma}{\Delta}{P}{\hby{\ell}}{\Delta'}{P'}$.
 
 	\begin{enumerate}[a)]
-		\item	Case: $P = \appl{(\abs{x}{Q_1})}{\abs{x}{Q_2}}$.
+	
+			\item	\jpc{This was different, please check} Case 1(a): 
+			%Case: $P = \bout{n}{\abs{\underline{x}} Q} P$
+			Then 
+			$\horel{\Gamma}{\Delta}{\bout{n}{\abs{\underline{x}} Q} P}{\hby{ \bactout{n}{\abs{x}{Q}}}}{\Delta}{P'}$.
+By following the encoding in \figref{f:enc:hopip_to_hopi}, we have 
+that 
+\begin{align*}
+\pmap{P}{3} & = \bout{n}{\auxmap{\abs{x}{Q}}{3}} \pmap{P'}{3} \\
+& = \bout{n}{\abs{z} \binp{z}{x} \pmap{Q}{3}} \pmap{P'}{3}
+\end{align*}
+and therefore
+ 			$\horel{\tmap{\Gamma}{3}}{\tmap{\Delta}{3}}{\bout{n}{\abs{z} \binp{z}{x} \pmap{Q}{3}} \pmap{P}{3}}{\hby{ \bactout{n}{\abs{z}{\binp{z}{x} \pmap{Q}{3}} } }}{\Delta}{\pmap{P'}{3}}$,
+			as required.
 
-			$\horel{\Gamma}{\Delta}{\appl{(\abs{x}{Q_1})}{\abs{x}{Q_2}}}{\hby{\btau}}{\Delta}{Q_1 \subst{\abs{x}{Q_2}}{x}}$ implies
+		\item	\jpc{This was different, please check} Case 1(c): Then 
+		%$P = \appl{(\abs{x}{Q_1})}{\abs{x}{Q_2}}$, $\ell =  \btau$, and $P' = Q_1 \subst{\abs{x}{Q_2}}{x}$:
+$\horel{\Gamma}{\Delta}{\appl{(\abs{x}{Q_1})}{\abs{y}{Q_2}}}{\hby{\btau}}{\Delta}{Q_1 \subst{\abs{y}{Q_2}}{x}}$.
+By following the encoding in \figref{f:enc:hopip_to_hopi}, we have the following: 
+\begin{align*}
+\pmap{P}{3} & = \newsp{s}{\binp{s}{x} \pmap{Q_1}{3} \Par \bout{\dual{s}}{\auxmap{\abs{y}{Q_2}}{3}}\inact} \\
+& = \newsp{s}{\binp{s}{x} \pmap{Q_1}{3} \Par \bout{\dual{s}}{\abs{z}{\binp{z}{y}\pmap{Q_2}{3}}}\inact} 
+\end{align*}
+and therefore
 \[
-			\horel{\tmap{\Gamma}{3}}{\tmap{\Delta}{3}}{\newsp{s}{\binp{s}{x} \pmap{Q_1}{3} \Par \bout{\dual{s}}{\abs{x}{\pmap{Q_2}{3}}} \inact}}{\hby{\stau}}
-			{\tmap{\Delta'}{3}}{\pmap{Q_1}{3} \subst{\abs{x}{\pmap{Q_2}{3}}}{x}}
+			\horel{\tmap{\Gamma}{3}}{\tmap{\Delta}{3}}{\newsp{s}{\binp{s}{x} \pmap{Q_1}{3} \Par \bout{\dual{s}}{\abs{z}{\binp{z}{y}\pmap{Q_2}{3}}} \inact}}{\hby{\stau}}
+			{\tmap{\Delta'}{3}}{\pmap{Q_1}{3} \subst{\abs{z}{\binp{z}{y}\pmap{Q_2}{3}}}{x}}
 \]
+We are left to show that $\pmap{Q_1 \subst{\abs{y}{Q_2}}{x}}{3}$ 
+and $\pmap{Q_1}{3} \subst{\abs{z}{\binp{z}{y}\pmap{Q_2}{3}}}{x}$ are related by $\hwb$.
+This follows easily from the structure of the encoding $\pmap{\cdot}{3}$, 
+which mimics higher-order applications using deterministic transitions only.
 
-		\item	Case: $P = \bout{n}{\abs{\underline{x}} Q} P$
-
-			$\horel{\Gamma}{\Delta}{\bout{n}{\abs{\underline{x}} Q} P}{\hby{ \bactout{n}{\abs{x}{Q}}}}{\Delta}{P}$ implies
-
-			$\horel{\tmap{\Gamma}{3}}{\tmap{\Delta}{3}}{\bout{n}{\abs{z} \binp{z}{x} \pmap{Q}{3}} \pmap{P}{3}}{\hby{ \bactout{n}{\abs{z}{\binp{z}{x} \pmap{Q}{3}} } }}{\Delta}{\pmap{P}{3}}$
 
 	\end{enumerate}
 
-	\item The proof of Part 2 also does a transition induction and
-	considers the mapping as defined in \figref{f:enc:hopip_to_hopi}.
-	We give the most interesting cases; other cases are similar. 
-
-	\begin{enumerate}[a)]
-		\item	Case: $P = \appl{(\abs{x}{Q_1})}{\abs{x}{Q_2}}$.
+	\item The proof of Part 2 also proceeds by transition induction.
+	All cases are easy: they 
+	are similar to those described for Part 1
+	or
+	follow directly from the 
+encoding in \figref{f:enc:hopip_to_hopi}.
+%	We give the most interesting cases; other cases are similar. 
+%	\begin{enumerate}[a)]
+%		\item	Case: $P = \appl{(\abs{x}{Q_1})}{\abs{x}{Q_2}}$.
+%%
+%		\[
+%			\mhorel{\tmap{\Gamma}{3}}{\tmap{\Delta}{3}}{\newsp{s}{ \appl{(\abs{z}\binp{z}{x} \pmap{Q}{3})}{s}  \Par \bout{\dual{s}}{\abs{x}{Q_2}} \inact}}{\hby{\btau}}
+%			{\tmap{\Delta'}{3}}{}{\newsp{s}{\binp{s}{x} \pmap{Q}{3}  \Par \bout{\dual{s}}{\abs{x}{Q_2}} \inact}}
+%		\]
+%%
+%			\noi implies
+%			$\horel{\Gamma}{\Delta}{\appl{(\abs{x}{Q_1})}{\abs{x}{Q_2}}}{\hby{\btau}}{\Delta}{Q_1 \subst{\abs{x}{Q_2}}{x}}$ and
+%%
+%		\[
+%			\mhorel{\tmap{\Gamma}{3}}{\tmap{\Delta}{3}}{\newsp{s}{\binp{s}{x} \pmap{Q}{3}  \Par \bout{\dual{s}}{\abs{x}{Q_2}} \inact}}{\hby{\stau}}
+%			{\tmap{\Delta'}{3}}{}{\pmap{Q_1}{3} \subst{\abs{x}{\pmap{Q_2}{3}}}{x}}
+%		\]
 %
-		\[
-			\mhorel{\tmap{\Gamma}{3}}{\tmap{\Delta}{3}}{\newsp{s}{ \appl{(\abs{z}\binp{z}{x} \pmap{Q}{3})}{s}  \Par \bout{\dual{s}}{\abs{x}{Q_2}} \inact}}{\hby{\btau}}
-			{\tmap{\Delta'}{3}}{}{\newsp{s}{\binp{s}{x} \pmap{Q}{3}  \Par \bout{\dual{s}}{\abs{x}{Q_2}} \inact}}
-		\]
+%		\item	Case: $P = \bout{n}{\abs{\underline{x}} Q} P$
 %
-			\noi implies
-			$\horel{\Gamma}{\Delta}{\appl{(\abs{x}{Q_1})}{\abs{x}{Q_2}}}{\hby{\btau}}{\Delta}{Q_1 \subst{\abs{x}{Q_2}}{x}}$ and
+%			$\horel{\tmap{\Gamma}{3}}{\tmap{\Delta}{3}}{\bout{n}{\abs{z} \binp{z}{x} \pmap{Q}{3}} \pmap{P}{3}}{\hby{ \bactout{n}{\abs{z}{\binp{z}{x} \pmap{Q}{3}} } }}{\Delta}{\pmap{P}{3}}$ and
 %
-		\[
-			\mhorel{\tmap{\Gamma}{3}}{\tmap{\Delta}{3}}{\newsp{s}{\binp{s}{x} \pmap{Q}{3}  \Par \bout{\dual{s}}{\abs{x}{Q_2}} \inact}}{\hby{\stau}}
-			{\tmap{\Delta'}{3}}{}{\pmap{Q_1}{3} \subst{\abs{x}{\pmap{Q_2}{3}}}{x}}
-		\]
-
-		\item	Case: $P = \bout{n}{\abs{\underline{x}} Q} P$
-
-			$\horel{\tmap{\Gamma}{3}}{\tmap{\Delta}{3}}{\bout{n}{\abs{z} \binp{z}{x} \pmap{Q}{3}} \pmap{P}{3}}{\hby{ \bactout{n}{\abs{z}{\binp{z}{x} \pmap{Q}{3}} } }}{\Delta}{\pmap{P}{3}}$ and
-
-			$\horel{\Gamma}{\Delta}{\bout{n}{\abs{\underline{x}} Q} P}{\hby{ \bactout{n}{\abs{\underline{x}}{Q}}}}{\Delta}{P}$
-%			\dk{this case is incomplete}
-	\end{enumerate}
+%			$\horel{\Gamma}{\Delta}{\bout{n}{\abs{\underline{x}} Q} P}{\hby{ \bactout{n}{\abs{\underline{x}}{Q}}}}{\Delta}{P}$
+%%			\dk{this case is incomplete}
+%	\end{enumerate}
 \end{enumerate}
 %\qed
 \end{proof}
@@ -2293,27 +2318,28 @@ considering the mapping in \figref{f:enc:hopip_to_hopi}.
 	$\horel{\Gamma}{\Delta_1}{P}{\wb}{\Delta_2}{Q}$ if and only if $\horel{\tmap{\Gamma}{3}}{\tmap{\Delta_1}{3}}{\pmap{P}{3}}{\wb}{\tmap{\Delta_2}{3}}{\pmap{Q}{3}}$
 \end{proposition}
 
-\begin{proof}
-	\noi {\bf Soundness Direction.} We define the relation:
+\begin{proof}[Proof (Sketch)] The right-to-left direction is proven by 
+	%\noi {\bf Soundness Direction.} We define 
+	showing that
+	the relation
 %
 	\[
-		\Re = \set{(\horel{\Gamma}{\Delta_1}{P}{\ ,\ }{\Delta_2}{Q}) \setbar \horel{\tmap{\Gamma}{3}}{\tmap{\Delta_1}{3}}{\pmap{P}{3}}{\wb}{\tmap{\Delta_2}{3}}{\pmap{Q}{3}}}
+		\Re_1 = \set{(\horel{\Gamma}{\Delta_1}{P}{\ ,\ }{\Delta_2}{Q}) \setbar \horel{\tmap{\Gamma}{3}}{\tmap{\Delta_1}{3}}{\pmap{P}{3}}{\hwb}{\tmap{\Delta_2}{3}}{\pmap{Q}{3}}}
 	\]
 %
-	\noi	It is straightforward to show that $\Re$ is a bisimulation by following Part 2 of
+	  is a higher-order bisimulation, following Part 2 of
 		\propref{app:prop:op_corr_HOpp_to_HOp} for subcases (a) and (b).
-		In subcase (c) we make use of \propref{lem:tau_inert}.
-
-	\noi {\bf Completeness Direction.} We define the relation:
+		In subcase (c) we  use \propref{lem:tau_inert}.
+		Similarly, the left-to-right direction is proven by showing that 
+the relation:
 %
 	\[
-		\Re = \set{(\horel{\tmap{\Gamma}{3}}{\tmap{\Delta_1}{3}}{\pmap{P}{3}}{\ ,\ }{\tmap{\Delta_2}{3}}{\pmap{Q}{3}}) \setbar \horel{\Gamma}{\Delta_1}{P}{\wb}{\Delta_2}{Q}}
+		\Re_2 = \set{(\horel{\tmap{\Gamma}{3}}{\tmap{\Delta_1}{3}}{\pmap{P}{3}}{\ ,\ }{\tmap{\Delta_2}{3}}{\pmap{Q}{3}}) \setbar \horel{\Gamma}{\Delta_1}{P}{\hwb}{\Delta_2}{Q}}
 	\]
-%
-	\noi	We show that $\Re$ is a bisimulation up to deterministic transitions
+ is a higher-order bisimulation up to deterministic transitions
 		by following Part 1 of \propref{app:prop:op_corr_HOpp_to_HOp}.
-		The proof is straightforward for subcases (a), (b) and (d).
-		In subcase c) we make use of \lemref{lem:up_to_deterministic_transition}.
+		The proof is straightforward for subcases (a), (b), and (d).
+		In subcase (c) we  use  \lemref{lem:up_to_deterministic_transition}.
 	%\qed
 \end{proof}
 
@@ -2511,14 +2537,14 @@ A precise encoding requires to prove three independent results:
 %	and homomorphic for all other cases of $\ell \in \mathcal{A}$.
 %\end{definition}
 
+In the following proposition, recall that we use the mapping on actions $\mapa{\cdot}^{4}$ given in \defref{d:actmap4}.
 
 \begin{proposition}[Operational Correspondence. From \pHOp to \HOp]\myrm
 	\label{app:prop:op_corr_pHOp_to_HOp}
 %
 Let $\Gamma; \es; \Delta \proves P$.
 	\begin{enumerate}
-		\item	 Then
-			$\horel{\Gamma}{\Delta}{P}{\hby{\ell}}{\Delta'}{P'}$ implies
+		\item $\horel{\Gamma}{\Delta}{P}{\hby{\ell}}{\Delta'}{P'}$ implies
 %
 			\begin{enumerate}[a)]
 				\item	If $\ell = \news{\tilde{m}'} \bactout{n}{\tilde{m}}$ then
@@ -2607,7 +2633,7 @@ The encoding of the source judgment for $P$ is as follows:
 $$
 \mapt{\Gamma}^{4}; \emptyset; \mapt{\Delta_0 \cat m_1{:}S_1 \cat m_2{:}S_2 \cat n:\btout{S_1,S_2}S}^{4} \proves \map{\bout{n}{m_1, m_2} P'}^{4} \hastype \Proc
 $$
-which, using  \figref{f:enc:poltomon} , can be expressed as: 
+which, using  \figref{f:enc:poltomon}s, can be expressed as: 
 $$
 \mapt{\Gamma}^{4}; \emptyset; \mapt{\Delta_0} 
 \cat m_1{:}\mapt{S_1}^{4} \cat m_2{:}\mapt{S_2}^{4} 
@@ -2776,30 +2802,28 @@ which concludes the proof for this case.
 \begin{proposition}[Full Abstraction. From \pHOp to \HOp]\myrm
 	\label{app:prop:fulla_pHOp_to_HOp}
 	Let $P, Q$ be \HOpp process with $\Gamma; \es; \Delta_1 \proves P \hastype \Proc$ and 
-	$\Gamma; \es; \Delta_2 \proves Q \hastype \Proc$.
+	$\Gamma; \es; \Delta_2 \proves Q \hastype \Proc$. \\
+	Then
 	$\horel{\Gamma}{\Delta_1}{P}{\hwb}{\Delta_2}{Q}$ if and only if $\horel{\tmap{\Gamma}{4}}{\tmap{\Delta_1}{4}}{\pmap{P}{4}}{\hwb}{\tmap{\Delta_2}{4}}{\pmap{Q}{4}}$.
 \end{proposition}
 
 \begin{proof}
-	The proof for both direction is a consequence of Operational Correspondence,
-	\propref{app:prop:op_corr_pHOp_to_HOp}.
+	The proof is coinductive, and follows as a consequence of \propref{app:prop:op_corr_pHOp_to_HOp}.
 
 \bigskip
-
-	\noi \textbf{Soundness Direction.} We define the relation: 
+\noi The right-to-left direction follows by showing that the relation
 %
 	\[
 		\Re = \set{(\horel{\Gamma}{\Delta_1}{P}{\ ,\ }{\Delta_2}{Q}) \setbar \horel{\tmap{\Gamma}{4}}{\tmap{\Delta_1}{4}}{\pmap{P}{4}}{\hwb}{\tmap{\Delta_2}{4}}{\pmap{Q}{4}}}
 	\]
-%
-	\noi	It is straightforward to show that $\Re$ is a bisimulation if we follow Part 2 of \propref{app:prop:op_corr_pHOp_to_HOp}. 
-	Suppose $P$ makes a transition with label $\ell$; we
-	present four cases:
+is a higher-order bisimulation, by following Part 2 of \propref{app:prop:op_corr_pHOp_to_HOp}. 
+	Suppose $P$ makes a transition with label $\ell$; we must exhibit a matching move from $Q$.
+	We illustrate four representative cases:
 	\begin{enumerate}
 		\item	If $\ell \in \set{\bactinp{n}{m}, \bactout{n}{m}, \news{m} \bactout{n}{m}}$ then
-		\[
+		$
 		\horel{\tmap{\Gamma}{4}}{\tmap{\Delta_1}{4}}{\pmap{P}{4}}{\hby{\ell}}{\tmap{\Delta_1'}{4}}{P_1}
-		\]
+		$
 		implies
 		\[
 		\horel{\tmap{\Gamma}{4}}{\tmap{\Delta_2}{4}}{\pmap{Q}{4}}{\Hby{\ell}}{\tmap{\Delta_2'}{4}}{Q_1}
@@ -2813,11 +2837,11 @@ which concludes the proof for this case.
 		\horel{\tmap{\Gamma}{4}}{\tmap{\Delta_1'}{4}}{P_1}{\hby{\ell_2} \dots \hby{\ell_n}}
 		{\tmap{\Delta_1''}{4}}{\pmap{P'}{4}}
 		\]
-		with $\mapa{\ell}^{4} = \ell_1 \dots \ell_n$.
-				Moreover:
-		\[
+		with $\mapa{\ell}^{4} = \{\ell_1, \dots, \ell_n\}$.
+				Moreover,
+		$
 			\horel{\Gamma}{\Delta_2}{Q}{\hby{\ell}}{\Delta_2''}{Q'}
-		\]
+		$
 		and
 		\[
 		\horel{\tmap{\Gamma}{4}}{\tmap{\Delta_2'}{4}}{Q_1}{\Hby{\ell_2} \dots \Hby{\ell_n}}
@@ -2832,12 +2856,13 @@ which concludes the proof for this case.
 		\[
 		\horel{\Gamma}{\Delta_1''}{P'}{\ \Re\ }{\Delta_2''}{Q'}
 		\]
+		as required.
 		\item	If $\ell \in \set{\news{\tilde{m}} \bactout{n}{\abs{x}{R}}, \bactinp{n}{\abs{x}{R}}}$
 				then
-				\[
+				$
 				\horel{\tmap{\Gamma}{4}}{\tmap{\Delta_1}{4}}{\pmap{P}{4}}{\hby{\ell}}{\tmap{\Delta_1'}{4}}{P_1}
-				\]
-				implies
+				$
+				implies both 
 				\[
 				\horel{\tmap{\Gamma}{4}}{\tmap{\Delta_2}{4}}{\pmap{Q}{4}}{\Hby{\ell}}{\tmap{\Delta_2'}{4}}{Q_1}
 				\]
@@ -2847,7 +2872,7 @@ which concludes the proof for this case.
 				\]
 				with $C$ corresponding to the characteristic process if $\ell$ is an output action and $C = \inact$ otherwise.
 				From Part 2(b) of \propref{app:prop:op_corr_pHOp_to_HOp} we conclude that
-				$\horel{\Gamma}{\Delta_1}{P}{\hby{\ell'}}{\Delta_1'}{P'}$
+				$$\horel{\Gamma}{\Delta_1}{P}{\hby{\ell'}}{\Delta_1'}{P'}$$
 				with $\mapa{\ell'}^{4} = \ell$ and $P_1 \scong \pmap{P'}{4}$
 				and
 				$\horel{\Gamma}{\Delta_2}{Q}{\hby{\ell'}}{\Delta_2'}{Q'}$
@@ -2861,9 +2886,9 @@ which concludes the proof for this case.
 				
 		\item	If $\ell \in \set{\bactsel{n}{l}, \bactbra{n}{l}}$
 				then
-				\[
+				$
 				\horel{\tmap{\Gamma}{4}}{\tmap{\Delta_1}{4}}{\pmap{P}{4}}{\hby{\ell}}{\tmap{\Delta_1'}{4}}{P_1}
-				\]
+				$
 				implies
 				\[
 				\horel{\tmap{\Gamma}{4}}{\tmap{\Delta_2}{4}}{\pmap{Q}{4}}{\Hby{\ell}}{\tmap{\Delta_2'}{4}}{Q_1}
@@ -2877,11 +2902,11 @@ which concludes the proof for this case.
 				\[	
 				\horel{\Gamma}{\Delta_2}{Q}{\hby{\ell}}{\Delta_2'}{Q'}
 				\]
-				with $Q_1 \scong \pmap{Q'}{4}$
+				with $Q_1 \scong \pmap{Q'}{4}$,
 				which concludes the case.
 
 		\item	The cases for $\ell = \tau$ are similar
-				and correspond to Part 2(d, e) of \propref{app:prop:op_corr_pHOp_to_HOp} 
+				and correspond to Parts 2(d), 2(e) of \propref{app:prop:op_corr_pHOp_to_HOp}.
 	\end{enumerate}
 			
 			
@@ -2890,21 +2915,21 @@ which concludes the proof for this case.
 
 \bigskip
 
-	\noi\textbf{Completeness Direction.} We define the relation: %create the closure
+\noi	The left-to-right direction follows by showing that relation: %create the closure
 %
 	\[
 		\Re = \set{(\horel{\tmap{\Gamma}{4}}{\tmap{\Delta_1}{4}}{\pmap{P}{4}}{\ ,\ }{\tmap{\Delta_2}{4}}{\pmap{Q}{4}}) \setbar \horel{\Gamma}{\Delta_1}{P}{\hwb}{\Delta_2}{Q}}
 	\]
-%
-%	\dk{Is the proof easy? do the proof}
-	\noi	We show that $\Re$ is a bisimulation up to deterministic transitions by following Part 1 of \propref{app:prop:op_corr_pHOp_to_HOp}.
-	Suppose $\pmap{P}{4}$ makes a transition with label $\ell$; we consider six cases:
+is a higher-order bisimulation up to deterministic transitions, by following Part 1 of \propref{app:prop:op_corr_pHOp_to_HOp}.
+	Suppose $\pmap{P}{4}$ makes a transition with label $\ell$; we should exhibit a matching move from 
+	$\pmap{Q}{4}$. 
+	We consider six cases:
 	\begin{enumerate}
 		\item
 		If $\ell = \news{\tilde{m}'} \bactout{n}{\tilde{m}}$ then
-		\[
+		$
 		\horel{\Gamma}{\Delta_1}{P}{\hby{\ell}}{\Delta_1'}{P'}
-		\]
+		$
 		implies
 		\[
 		\horel{\Gamma}{\Delta_2}{Q}{\Hby{\ell}}{\Delta_2'}{Q'}
@@ -2915,8 +2940,8 @@ which concludes the proof for this case.
 		\]
 		with $C$ corresponding to the trigger process.
 		Furthermore, from Part 1 (a) of \propref{app:prop:op_corr_pHOp_to_HOp} we have that
-		$\horel{\tmap{\Gamma}{4}}{\tmap{\Delta_1}{4}}{\pmap{P}{4}}{\hby{\ell_1} \dots \hby{\ell_n}}{\tmap{\Delta_1'}{4}}{\pmap{P'}{4}}$
-		with $\mapa{\ell}^{4} = \ell_1 \dots \ell_n$
+		$$\horel{\tmap{\Gamma}{4}}{\tmap{\Delta_1}{4}}{\pmap{P}{4}}{\hby{\ell_1} \dots \hby{\ell_n}}{\tmap{\Delta_1'}{4}}{\pmap{P'}{4}}$$
+		with $\mapa{\ell}^{4} = \{\ell_1, \dots, \ell_n\}$
 		and
 		$\horel{\tmap{\Gamma}{4}}{\tmap{\Delta_2}{4}}{\pmap{Q}{4}}{\Hby{\ell_1} \dots \Hby{\ell_n}}{\tmap{\Delta_2'}{4}}{\pmap{Q'}{4}}$
 		and
@@ -2927,10 +2952,10 @@ which concludes the proof for this case.
 %		\dk{we need an auxiliary result}.
 						
 		\item	If $\ell = \bactinp{n}{\tilde{m}}$ then
-				If $\ell = \news{\tilde{m}'} \bactout{n}{\tilde{m}}$ then
-				\[
+				%If $\ell = \news{\tilde{m}'} \bactout{n}{\tilde{m}}$ then
+				$
 				\horel{\Gamma}{\Delta_1}{P}{\hby{\ell}}{\Delta_1'}{P'}
-				\]
+				$
 				implies
 				\[
 				\horel{\Gamma}{\Delta_2}{Q}{\Hby{\ell}}{\Delta_2'}{Q'}
@@ -2940,10 +2965,10 @@ which concludes the proof for this case.
 				\horel{\Gamma}{\Delta_1'}{P'}{\hwb}{\Delta_2'}{Q'}
 				\]
 				Furthermore, from Part 1 (b) of \propref{app:prop:op_corr_pHOp_to_HOp} we have that
-				$\horel{\tmap{\Gamma}{4}}{\tmap{\Delta_1}{4}}{\pmap{P}{4}}{\hby{\ell_1} \dots \hby{\ell_n}}{\tmap{\Delta_1'}{4}}{\pmap{P'}{4}}$
-				with $\mapa{\ell}^{4} = \ell_1 \dots \ell_n$
+				$$\horel{\tmap{\Gamma}{4}}{\tmap{\Delta_1}{4}}{\pmap{P}{4}}{\hby{\ell_1} \dots \hby{\ell_n}}{\tmap{\Delta_1'}{4}}{\pmap{P'}{4}}$$
+				with $\mapa{\ell}^{4} = \{\ell_1, \dots, \ell_n\}$
 				and
-				$\horel{\tmap{\Gamma}{4}}{\tmap{\Delta_2}{4}}{\pmap{Q}{4}}{\Hby{\ell_1} \dots \Hby{\ell_n}}{\tmap{\Delta_2'}{4}}{\pmap{Q'}{4}}$
+				$\horel{\tmap{\Gamma}{4}}{\tmap{\Delta_2}{4}}{\pmap{Q}{4}}{\Hby{\ell_1} \dots \Hby{\ell_n}}{\tmap{\Delta_2'}{4}}{\pmap{Q'}{4}}$,
 				as required.
 		\item	The case for $\ell = \news{\tilde{m}} \bactout{n}{\abs{\tilde{x}}{R}}$
 		is similar to the first case.
