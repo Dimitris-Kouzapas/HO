@@ -3,12 +3,13 @@
 \section{Additional Details on the Type System}
 \label{app:types}
 
-In this appendix we formally 
+In this appendix we  
 %define 
 %\emph{type equivalence} and 
 %\emph{duality}. 
 %We also 
-present and describe our typing rules, given in~\figref{fig:typerulesmy}.
+present and describe our typing rules, taken from~\cite{KouzapasPY17}. %, given in~\figref{fig:typerulesmy}.
+Recall that type soundness has been given in the main text as \thmref{t:sr} (Page \pageref{t:sr}).
 
 %\smallskip
 %
@@ -74,7 +75,7 @@ present and describe our typing rules, given in~\figref{fig:typerulesmy}.
 
 %\input{type_system}
 
-\subsection{Typing Rules}\label{app:typrules}
+%\subsection{Typing Rules}\label{app:typrules}
 \input{figures/type_system}
 The typing system is defined in \figref{fig:typerulesmy}.
 %Types for session names/variables $u$ and
@@ -102,7 +103,7 @@ of the application variable $x$.
 %A process prefixed with a session send operator $\bout{k}{V} P$
 %is typed using rule $\trule{Send}$.
 
-In rule $\trule{Send}$, 
+In Rule $\trule{Send}$, 
 the type $U$ of a send value $V$ should appear as a prefix
 on the session type $\btout{U} S$ of $u$.
 Rule $\trule{Rcv}$ is its dual.  
@@ -112,7 +113,7 @@ Rule $\trule{Rcv}$ is its dual.
 %appear as a prefix on the session type $\btinp{U} S$ of $u$.
 We use a similar approach with session prefixes
 to type interaction between shared names as defined 
-in rules $\trule{Req}$ and $\trule{Acc}$,
+in Rules $\trule{Req}$ and $\trule{Acc}$,
 where the type of the sent/received object 
 ($S$ and $L$, respectively) should
 match the type of the sent/received subject
@@ -128,14 +129,14 @@ $\trule{Sel}$ and $\trule{Bra}$, are standard.
 A
 shared name creation $a$ creates and restricts
 $a$ in environment $\Gamma$ as defined in 
-rule~\trule{Res}. 
+Rule~\trule{Res}. 
 Creation of a session name $s$
 creates and restricts two endpoints with dual types 
 %and restricts
 %them by removing them from the session environment
 %$\Delta$ as defined 
-in rule \trule{ResS}. 
-Rule \trule{Par} 
+in Rule \trule{ResS}. 
+Rule~\trule{Par} 
 combines the environments
 $\Lambda$ and $\Delta$ of
 the components of a parallel process;
@@ -145,28 +146,28 @@ is implied. Rule \trule{End} adds
 the names with type $\tinact$ in $\Delta$.  
 The recursion requires that the body process 
 matches the type of the recursive
-variable as in rule \trule{Rec}.
+variable as in Rule \trule{Rec}.
 The recursive variable is typed
 directly from the shared environment $\Gamma$ as
 in rule \trule{RVar}.
 The inactive process $\inact$ is typed with no
-linear environments as in rule~\trule{Nil}. 
+linear environments (Rule~\trule{Nil}). 
 
 
-\begin{definition}[Session Environments:  Reduction]\label{d:wtenvred}%\rm
-	Let $\Delta$ be a session environment.
-%	\begin{enumerate}[$\bullet$]
-%	\item  $\Delta$ is {\em balanced} if whenever
-%	$s: S_1, \dual{s}: S_2 \in \Delta$ then $S_1 \dualof S_2$.
-%	\item 
-	We define the reduction relation $\red$ on session environments as: %\\ %[-2mm]
-\begin{eqnarray*}
-	\Delta \cat s: \btout{U} S_1 \cat \dual{s}: \btinp{U} S_2  & \red & 
-	\Delta \cat s: S_1 \cat \dual{s}: S_2  \\
-	\Delta \cat s: \btsel{l_i: S_i}_{i \in I} \cat \dual{s}: \btbra{l_i: S_i'}_{i \in I} &\red& \Delta \cat s: S_k \cat \dual{s}: S_k' \ (k \in I)
-\end{eqnarray*}
-%\end{enumerate}
-\end{definition}
+%\begin{definition}[Session Environments:  Reduction]\label{d:wtenvred}%\rm
+%	Let $\Delta$ be a session environment.
+%%	\begin{enumerate}[$\bullet$]
+%%	\item  $\Delta$ is {\em balanced} if whenever
+%%	$s: S_1, \dual{s}: S_2 \in \Delta$ then $S_1 \dualof S_2$.
+%%	\item 
+%	We define the reduction relation $\red$ on session environments as: %\\ %[-2mm]
+%\begin{eqnarray*}
+%	\Delta \cat s: \btout{U} S_1 \cat \dual{s}: \btinp{U} S_2  & \red & 
+%	\Delta \cat s: S_1 \cat \dual{s}: S_2  \\
+%	\Delta \cat s: \btsel{l_i: S_i}_{i \in I} \cat \dual{s}: \btbra{l_i: S_i'}_{i \in I} &\red& \Delta \cat s: S_k \cat \dual{s}: S_k' \ (k \in I)
+%\end{eqnarray*}
+%%\end{enumerate}
+%\end{definition}
 
 
 %We are ready to present the typing system for the \HOp,

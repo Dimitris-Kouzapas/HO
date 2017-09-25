@@ -178,7 +178,7 @@ and $\ltsrule{Alpha}$
 \label{ss:elts}
 Our typed LTS is obtained by coupling the untyped LTS given before with a labelled transition relation 
 on typing environments, given in \figref{fig:envLTS}. 
-Building upon the reduction relation for session environments in \defref{d:wtenvred},
+Building upon the reduction relation for session environments in \defref{def:ses_red},
 such a relation
 is defined on triples of environments by 
 extending the LTSs
@@ -200,6 +200,7 @@ $
 $.}
 %
 \paragraph{Input Actions} 
+These actions
 are defined by 
 Rules~$\eltsrule{SRv}$ and $\eltsrule{ShRv}$.
 In Rule~$\eltsrule{SRv}$
@@ -216,7 +217,9 @@ between the two endpoints (cf. Rule~$\eltsrule{Tau}$).
 Following similar principles, 
 Rule~$\eltsrule{ShRv}$ defines input actions for shared names.
 
-\paragraph{Output Actions} are defined by Rules~$\eltsrule{SSnd}$
+\paragraph{Output Actions} 
+These actions
+are defined by Rules~$\eltsrule{SSnd}$
 and $\eltsrule{ShSnd}$.  
 Rule~$\eltsrule{SSnd}$ states the conditions for observing action
 $\news{\widetilde{m}} \bactout{s}{V}$ on a type tuple 
@@ -247,7 +250,7 @@ select and branch.
 %environment.%, and the presence of the action labels in the type.
 Rule~$\eltsrule{Tau}$ defines
 internal transitions: 
-it reduces the session environment (cf. \defref{d:wtenvred}) or keeps it 
+it reduces the session environment (cf. \defref{def:ses_red}) or keeps it 
 unchanged.
 
 \smallskip
@@ -280,12 +283,19 @@ Observe how the protocol along $s$ is partially consumed; also, the resulting se
 \end{example}
 
 
-\begin{notation}
-Given a value $V$ of type $U$, we sometimes annotate the output action 
+%\begin{notation}
+%Given a value $V$ of type $U$, 
+Recall that 
+we sometimes annotate the output action 
 $\news{\widetilde{m}} \bactout{n}{V}$
-with the type of $V$ 
-as $\news{\widetilde{m}} \bactout{n}{\AT{V}{U}}$.
-\end{notation}
+with the type of $V$; this is written
+as $\news{\widetilde{m}} \bactout{n}{\AT{V}{U}}$
+(cf. Remark~\ref{r:types}).
+
+\smallskip
+
+
+%\end{notation}
 
 
 %\smallskip
@@ -559,11 +569,12 @@ the (refined) transition
 $\horel{\Gamma}{\Delta_1}{P_1}{\hby{\ell}}{\Delta_2}{P_2}$  implies  
 the (ordinary) transition
 $\horel{\Gamma}{\Delta_1}{P_1}{\by{\,\ell\,}}{\Delta_2}{P_2}$.
-\begin{notation}\label{not:outtype}
-We sometimes write  
-$\hby{\news{\widetilde{m}} \bactout{n}{\AT{V}{U}}}$
-when the type of $V$ is~$U$.
-\end{notation}
+
+%\begin{notation}\label{not:outtype}
+%We sometimes write  
+%$\hby{\news{\widetilde{m}} \bactout{n}{\AT{V}{U}}}$
+%when the type of $V$ is~$U$.
+%\end{notation}
 
 
 \subsection{More on Deterministic Transitions and Up-to Techniques}
@@ -616,6 +627,10 @@ $\beta$-reductions are deterministic.  To define an auxiliary proof technique th
 
 
 Using the above properties, we can state the following up-to technique.
+Recall that the higher-order trigger 
+$\htrigger{t}{V}$
+has been defined in 
+\eqref{eqb:4} (Page~\pageref{eqb:4}).
 %We write $\Hby{\dtau}$ to denote a (possibly empty) sequence of deterministic steps $\hby{\dtau}$.
 
 \begin{lemma}[Up-to Deterministic Transition]
@@ -668,12 +683,14 @@ Using the above properties, we can state the following up-to technique.
 \end{lemma}
 
 \begin{proof}[Proof (Sketch)]
-	The proof proceeds by considering the relation
+	The proof proceeds by showing that the relation
 	\[
-		\Re^{\Hby{\dtau}} = \set{ \horel{\Gamma}{\Delta_1'}{P_2}{,}{\Delta_2'}{Q_1} \setbar \horel{\Gamma}{\Delta_1}{P_1}{\ \Re\ }{\Delta_2'}{Q_1},
+		\Re^{\Hby{\dtau}} = \set{ (P_2,Q_1) \setbar \horel{\Gamma}{\Delta_1}{P_1}{\ \Re\ }{\Delta_2'}{Q_1},~~
 		\horel{\Gamma}{\Delta_1}{P_1}{\Hby{\dtau}}{\Delta_1'}{P_2} }
+%		\Re^{\Hby{\dtau}} = \set{ \horel{\Gamma}{\Delta_1'}{P_2}{,}{\Delta_2'}{Q_1} \setbar \horel{\Gamma}{\Delta_1}{P_1}{\ \Re\ }{\Delta_2'}{Q_1},~~
+%		\horel{\Gamma}{\Delta_1}{P_1}{\Hby{\dtau}}{\Delta_1'}{P_2} }
 	\]
-	We may verify that $\Re^{\Hby{\dtau}}$ is a higher-order bisimulation by using \propref{lem:tau_inert}.
+	 is a higher-order bisimulation, which requires the use of \propref{lem:tau_inert}.
 %	\qed
 \end{proof}
 
