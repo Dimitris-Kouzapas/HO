@@ -4,6 +4,30 @@
 
 In this section we give the proofs for the expressiveness
 results stated in~\secref{sec:positive} and~\secref{sec:extension}.
+Proving precise encodings entails proving type preservation, operational correspondence, and 
+full abstraction (cf.\,\defref{def:goodenc}). For operational correspondence, 
+recall that we prove a stronger statement than that in \defref{def:ep}(2),
+		as we follow 
+		\defref{def:lopco}.
+For full abstraction, we rely on the following notational convention:
+
+\begin{notation}[Typed Relations]
+For the sake of readability, when describing typed relations we shall omit typing information, which is usually clear from the context. This way, e.g., in the proof of
+\propref{app:prop:fulla_HOp_to_HO}  we write
+	\[
+		\Re = \set{(P_1, Q_1) \setbar \horel{\mapt{\Gamma}^{1}}{\mapt{\Delta_1}^{1}}{\pmapp{P_1}{1}{f}}{\hwb}{\mapt{\Delta_2}^{1}}{\pmapp{Q_1}{1}{f}}}
+	\]
+	instead of 
+		\begin{align*}
+		\Re = \set{(P_1, Q_1) & \setbar 
+		\Gamma; \emptyset; \Delta_1 \proves P_1 \hastype \Proc
+		~~\land~~ 
+		\Gamma; \emptyset; \Delta_2 \proves Q_1 \hastype \Proc
+		 \\ & \land~~
+		\horel{\mapt{\Gamma}^{1}}{\mapt{\Delta_1}^{1}}{\pmapp{P_1}{1}{f}}{\hwb}{\mapt{\Delta_2}^{1}}{\pmapp{Q_1}{1}{f}}}
+	\end{align*}
+	\end{notation}
+
 
 %For the purpose of proving Operational Correspondence
 %in this section we prove a stronger result than the result
@@ -81,10 +105,6 @@ A precise encoding requires to prove three independent results:
 	\item	Operational Correspondence, 
 	stated as \propref{prop:op_corr_HOp_to_HO} and proven here as
 	  \propref{app:prop:op_corr_HOp_to_HO}.
-		Recall that we prove a stronger statement than that in \defref{def:ep}(2),
-		as we follow 
-		%\defref{app:def:opc_strong},
-		\defref{def:lopco}.
 	\item	Full Abstraction, stated as \propref{prop:fulla_HOp_to_HO} and proven here as \propref{app:prop:fulla_HOp_to_HO}.
 \end{itemize}
 
@@ -473,7 +493,10 @@ A precise encoding requires to prove three independent results:
 
 %We now state and prove a detailed version of the operational corresponce in \defref{app:def:opc_strong}.
 
-In the following proposition, recall that we use the mapping on actions $\mapa{\cdot}^{1}$ given in \defref{d:actmap1}.
+
+
+We repeat the statement in Page~\pageref{prop:op_corr_HOp_to_HO}.
+Recall that we use the mapping on actions $\mapa{\cdot}^{1}$ given in \defref{d:actmap1}.
 
 \begin{proposition}[Operational Correspondence, \HOp into \HO]\rm
 	\label{app:prop:op_corr_HOp_to_HO}
@@ -875,10 +898,13 @@ The most interesting cases are the output cases, where the analyses should be do
 
 
 \begin{proof}
-	\noi {\bf Proof of Soundness Direction.} We show that the following relation $\Re$:
+	\noi For the right-to-left direction we show that the following relation $\Re$:
 %
 	\[
-		\Re = \set{(\horel{\Gamma}{\Delta_1}{P_1}{,}{\Delta_2}{Q_1}) \setbar \horel{\mapt{\Gamma}^{1}}{\mapt{\Delta_1}^{1}}{\pmapp{P_1}{1}{f}}{\hwb}{\mapt{\Delta_2}^{1}}{\pmapp{Q_1}{1}{f}}}
+		\Re = \set{
+		%(\horel{\Gamma}{\Delta_1}{P_1}{,}{\Delta_2}{Q_1}) 
+		(P_1, Q_1) 
+		\setbar \horel{\mapt{\Gamma}^{1}}{\mapt{\Delta_1}^{1}}{\pmapp{P_1}{1}{f}}{\hwb}{\mapt{\Delta_2}^{1}}{\pmapp{Q_1}{1}{f}}}
 	\]
 	is a higher-order bisimulation (\defref{d:hbw}).
 %
@@ -932,10 +958,13 @@ $$
 This concludes the proof.
 \bigskip
 
-	\noi {\bf Proof of Completeness Direction.} Let
+	\noi For the left-to-right direction, we consider the following relation:
 %
 	\[
-		\Re = \set{(\horel{\mapt{\Gamma}^{1}}{\mapt{\Delta_1}^{1}}{\pmapp{P_1}{1}{f}}{,}{\mapt{\Delta_2}^{1}}{\pmapp{Q_1}{1}{f}}) \setbar \horel{\Gamma}{\Delta_1}{P_1}{\wb}{\Delta_2}{Q_1}}
+		\Re = \set{
+		%(\horel{\mapt{\Gamma}^{1}}{\mapt{\Delta_1}^{1}}{\pmapp{P_1}{1}{f}}{,}{\mapt{\Delta_2}^{1}}{\pmapp{Q_1}{1}{f}}) 
+		(\pmapp{P_1}{1}{f}, \pmapp{Q_1}{1}{f})
+		\setbar \horel{\Gamma}{\Delta_1}{P_1}{\wb}{\Delta_2}{Q_1}}
 	\]
 %
 	We show that $\Re \subset \hwb$.
@@ -1115,9 +1144,6 @@ A precise encoding requires to prove three independent results:
 	\propref{app:prop:typepres_HOp_to_p}.
 	\item	Operational Correspondence, stated as \propref{prop:op_corr_HOp_to_p} 
 	and proven here as \propref{app:prop:op_corr_HOp_to_p}.
-		Recall that we prove a stronger statement than that in \defref{def:ep}(2),
-		as we follow 
-		\defref{def:lopco}.
 	\item	Full Abstraction, stated as \propref{prop:fulla_HOp_to_p} and proven here 
 	as \propref{app:prop:fulla_HOp_to_p}.
 \end{itemize}
@@ -1435,7 +1461,8 @@ We consider three representative cases:
 %We now state and prove a detailed and extended version of the operational correspondence:
 %in \defref{app:def:opc_strong}.
 
-In the following proposition, recall that we use the mapping on actions $\mapa{\cdot}^{2}$ given in \defref{d:actmap2}.
+We repeat the statement in Page~\pageref{prop:op_corr_HOp_to_p}. 
+Recall that we use the mapping on actions $\mapa{\cdot}^{2}$ given in \defref{d:actmap2}.
 
 \begin{proposition}[Operational Correspondence, \HOp into \sessp]\myrm
 	\label{app:prop:op_corr_HOp_to_p}
@@ -1740,17 +1767,20 @@ The most interesting case is when $P' = \appl{x}{m}$. We then have:
 %
 	The proof follows directly from operational correspondence (\propref{app:prop:op_corr_HOp_to_p}).
 	The different cases of the proposition are used to define
-	bisimulation relation to prove the the soundness direction, and
+	bisimulation relation to prove the the right-to-left direction, and
 	a bisimulation up-to determinate transition
 	(\lemref{lem:up_to_deterministic_transition})
 	to prove the
-	completeness direction.
+	left-to-right direction.
 
 \bigskip
 
-	\noi {\bf Part 1: Soundness}. We show that the following relation:
+	\noi For the right-to-left direction, we show that the following relation:
 	\[
-		\Re = \set{(\horel{\Gamma}{\Delta_1}{P}{,}{\Delta_2}{Q}) \setbar \horel{\mapt{\Gamma}^{2}}{\mapt{\Delta_1}^2}{\pmap{P}{2}}{\fwb}{\mapt{\Delta_2}^2}{\pmap{Q}{2}}}
+		\Re = \set{
+		%(\horel{\Gamma}{\Delta_1}{P}{,}{\Delta_2}{Q}) 
+		(P,Q)
+		\setbar \horel{\mapt{\Gamma}^{2}}{\mapt{\Delta_1}^2}{\pmap{P}{2}}{\fwb}{\mapt{\Delta_2}^2}{\pmap{Q}{2}}}
 	\]
 %
 is a characteristic bisimilarity (\defref{d:fwb}).
@@ -1823,9 +1853,12 @@ the soundness direction of operational correspondence (cf.~\propref{app:prop:op_
 
 \bigskip
 
-	\noi {\bf Part 2. Completeness}. \jpc{This was wrong, please check} We show that the relation
+	\noi For the left-to-right direction, we show that the relation:
 	\[
-		\Re = \set{ (\horel{\mapt{\Gamma}^{2}}{\mapt{\Delta_1}^2}{\pmap{P}{2}}{,}{\mapt{\Delta_2}^2}{\pmap{Q}{2}}) \setbar \horel{\Gamma}{\Delta_1}{P}{\fwb}{\Delta_2}{Q}}
+		\Re = \set{ 
+		%(\horel{\mapt{\Gamma}^{2}}{\mapt{\Delta_1}^2}{\pmap{P}{2}}{,}{\mapt{\Delta_2}^2}{\pmap{Q}{2}}) 
+		(\pmap{P}{2}, \pmap{Q}{2})
+		\setbar \horel{\Gamma}{\Delta_1}{P}{\fwb}{\Delta_2}{Q}}
 	\]
 %
 	 is a characteristic bisimulation.
@@ -1968,9 +2001,6 @@ A precise encoding requires to prove three independent results:
 	\item	Type preservation, stated as \propref{prop:typepres_HOpp_to_HOp}
 	and proven here as \propref{app:prop:typepres_HOpp_to_HOp}.
 	\item	Operational Correspondence, stated as \propref{prop:op_corr_HOpp_to_HOp} and proven here as \propref{app:prop:op_corr_HOpp_to_HOp}.
-Recall that we prove a stronger statement than that in \defref{def:ep}(2),
-		as we follow 
-		\defref{def:lopco}.
 	\item	Full Abstraction, stated as \propref{prop:fulla_HOpp_to_HOp}
 	and proven here as \propref{app:prop:fulla_HOpp_to_HOp}.
 \end{itemize}
@@ -2161,8 +2191,8 @@ Recall that we prove a stronger statement than that in \defref{def:ep}(2),
 %\end{definition}
 
 %We now state and prove a detailed version of the operational corresponce in \defref{app:def:opc_strong}.
-
-In the following proposition, recall that we use the mapping on actions $\mapa{\cdot}^{3}$ given in \defref{d:actmap3}.
+We repeat the statement in Page~\pageref{prop:op_corr_HOpp_to_HOp}.
+Recall that we use the mapping on actions $\mapa{\cdot}^{3}$ given in \defref{d:actmap3}.
 
 \begin{proposition}[Operational Correspondence. From \HOpp to \HOp]\myrm
 	\label{app:prop:op_corr_HOpp_to_HOp}
@@ -2220,7 +2250,7 @@ In the following proposition, recall that we use the mapping on actions $\mapa{\
 					$\horel{\Gamma}{\Delta}{P}{\hby{\ell}}{\Delta'}{P'}$ and $Q \scong \pmap{P'}{3}$.
 %					and $\horel{\tmap{\Gamma}{3}}{\tmap{\Delta''}{3}}{Q}{\hby{\hat{\ell}}}{\tmap{\Delta'}{3}}{\pmap{P'}{3}}$.
 
-				\item	If $\ell = \tau$ then \jpc{Check if this can be split}
+				\item	If $\ell = \tau$ then %\jpc{Check if this can be split}
 					either
 					$\horel{\Gamma}{\Delta}{P}{\hby{\tau}}{\Delta'}{P'}$ with $Q \scong \pmap{P'}{3}$\\
 					or
@@ -2242,7 +2272,8 @@ considering the mapping in \figref{f:enc:hopip_to_hopi}.
 
 	\begin{enumerate}[a)]
 	
-			\item	\jpc{This was different, please check} Case 1(a): 
+			\item	%\jpc{This was different, please check} 
+			Case 1(a): 
 			%Case: $P = \bout{n}{\abs{\underline{x}} Q} P$
 			Then 
 			$\horel{\Gamma}{\Delta}{\bout{n}{\abs{\underline{x}} Q} P}{\hby{ \bactout{n}{\abs{x}{Q}}}}{\Delta}{P'}$.
@@ -2256,7 +2287,8 @@ and therefore
  			$\horel{\tmap{\Gamma}{3}}{\tmap{\Delta}{3}}{\bout{n}{\abs{z} \binp{z}{x} \pmap{Q}{3}} \pmap{P}{3}}{\hby{ \bactout{n}{\abs{z}{\binp{z}{x} \pmap{Q}{3}} } }}{\Delta}{\pmap{P'}{3}}$,
 			as required.
 
-		\item	\jpc{This was different, please check} Case 1(c): Then 
+		\item	%\jpc{This was different, please check} 
+		Case 1(c): Then 
 		%$P = \appl{(\abs{x}{Q_1})}{\abs{x}{Q_2}}$, $\ell =  \btau$, and $P' = Q_1 \subst{\abs{x}{Q_2}}{x}$:
 $\horel{\Gamma}{\Delta}{\appl{(\abs{x}{Q_1})}{\abs{y}{Q_2}}}{\hby{\btau}}{\Delta}{Q_1 \subst{\abs{y}{Q_2}}{x}}$.
 By following the encoding in \figref{f:enc:hopip_to_hopi}, we have the following: 
@@ -2325,7 +2357,10 @@ encoding in \figref{f:enc:hopip_to_hopi}.
 	the relation
 %
 	\[
-		\Re_1 = \set{(\horel{\Gamma}{\Delta_1}{P}{\ ,\ }{\Delta_2}{Q}) \setbar \horel{\tmap{\Gamma}{3}}{\tmap{\Delta_1}{3}}{\pmap{P}{3}}{\hwb}{\tmap{\Delta_2}{3}}{\pmap{Q}{3}}}
+		\Re_1 = \set{
+		%(\horel{\Gamma}{\Delta_1}{P}{\ ,\ }{\Delta_2}{Q}) 
+		(P,Q)
+		\setbar \horel{\tmap{\Gamma}{3}}{\tmap{\Delta_1}{3}}{\pmap{P}{3}}{\hwb}{\tmap{\Delta_2}{3}}{\pmap{Q}{3}}}
 	\]
 %
 	  is a higher-order bisimulation, following Part 2 of
@@ -2335,7 +2370,10 @@ encoding in \figref{f:enc:hopip_to_hopi}.
 the relation:
 %
 	\[
-		\Re_2 = \set{(\horel{\tmap{\Gamma}{3}}{\tmap{\Delta_1}{3}}{\pmap{P}{3}}{\ ,\ }{\tmap{\Delta_2}{3}}{\pmap{Q}{3}}) \setbar \horel{\Gamma}{\Delta_1}{P}{\hwb}{\Delta_2}{Q}}
+		\Re_2 = \set{
+		%(\horel{\tmap{\Gamma}{3}}{\tmap{\Delta_1}{3}}{\pmap{P}{3}}{\ ,\ }{\tmap{\Delta_2}{3}}{\pmap{Q}{3}}) 
+		(\pmap{P}{3}, \pmap{Q}{3})
+		\setbar \horel{\Gamma}{\Delta_1}{P}{\hwb}{\Delta_2}{Q}}
 	\]
  is a higher-order bisimulation up to deterministic transitions
 		by following Part 1 of \propref{app:prop:op_corr_HOpp_to_HOp}.
@@ -2367,9 +2405,6 @@ A precise encoding requires to prove three independent results:
 \begin{itemize}
 	\item	Type preservation, stated as \propref{prop:typepres_pHOp_to_HOp} and proven here as \propref{app:prop:typepres_pHOp_to_HOp}.
 	\item	Operational Correspondence, stated as \propref{prop:op_corr_pHOp_to_HOp} and proven here as \propref{app:prop:op_corr_pHOp_to_HOp}.
-Recall that we prove a stronger statement than that in \defref{def:ep}(2),
-		as we follow 
-		\defref{def:lopco}.
 	\item	Full Abstraction, stated as \propref{prop:fulla_pHOp_to_HOp} and proven here  as \propref{app:prop:fulla_pHOp_to_HOp}.
 \end{itemize}
 
@@ -2534,7 +2569,8 @@ Recall that we prove a stronger statement than that in \defref{def:ep}(2),
 %	and homomorphic for all other cases of $\ell \in \mathcal{A}$.
 %\end{definition}
 
-In the following proposition, recall that we use the mapping on actions $\mapa{\cdot}^{4}$ given in \defref{d:actmap4}.
+We repeat the statement in Page~\pageref{prop:op_corr_pHOp_to_HOp}. 
+Recall that we use the mapping on actions $\mapa{\cdot}^{4}$ given in \defref{d:actmap4}.
 
 \begin{proposition}[Operational Correspondence. From \pHOp to \HOp]\myrm
 	\label{app:prop:op_corr_pHOp_to_HOp}
@@ -2546,16 +2582,16 @@ Let $\Gamma; \es; \Delta \proves P$.
 			\begin{enumerate}[a)]
 				\item	If $\ell = \news{\tilde{m}'} \bactout{n}{\tilde{m}}$ then
 					$\horel{\tmap{\Gamma}{4}}{\tmap{\Delta}{4}}{\pmap{P}{4}}{\hby{\ell_1} \dots \hby{\ell_n}}{\tmap{\Delta'}{4}}{\pmap{P'}{4}}$
-					with $\mapa{\ell}^{4} = \ell_1 \dots \ell_n$.
+					with $\mapa{\ell}^{4} = \{\ell_1, \cdots, \ell_n\}$.
 
 				\item	If $\ell = \bactinp{n}{\tilde{m}}$ then
 					$\horel{\tmap{\Gamma}{4}}{\tmap{\Delta}{4}}{\pmap{P}{4}}{\hby{\ell_1} \dots \hby{\ell_n}}{\tmap{\Delta'}{4}}{\pmap{P'}{4}}$
-					with $\mapa{\ell}^{4} = \ell_1 \dots \ell_n$.
+					with $\mapa{\ell}^{4} = \{\ell_1, \cdots, \ell_n\}$.
 
 				\item	If $\ell \in \set{\news{\tilde{m}} \bactout{n}{\abs{\tilde{x}}{R}}, \bactinp{n}{\abs{\tilde{x}}{R}}}$ then
 %					$\exists l' $ such that
 					$\horel{\tmap{\Gamma}{4}}{\tmap{\Delta}{4}}{\pmap{P}{4}}{\hby{\ell'}}
-					{\tmap{\Delta'}{4}}{\pmap{P'}{4}}$ with $\mapa{\ell}^{4} = \ell'$.
+					{\tmap{\Delta'}{4}}{\pmap{P'}{4}}$ with $\mapa{\ell}^{4} = \{\ell'\}$.
 
 				\item	If $\ell \in \set{\bactsel{n}{l}, \bactbra{n}{l}}$ then
 					$\horel{\tmap{\Gamma}{4}}{\tmap{\Delta}{4}}{\pmap{P}{4}}{\hby{\ell}}
@@ -2563,11 +2599,11 @@ Let $\Gamma; \es; \Delta \proves P$.
 
 				\item	If $\ell = \btau$ then either
 					$\horel{\tmap{\Gamma}{4}}{\tmap{\Delta}{4}}{\pmap{P}{4}}{\hby{\btau} \hby{\stau} \dots \hby{\stau}}
-					{\tmap{\Delta'}{4}}{\pmap{P'}{4}}$ with $\mapa{\ell} = \btau, \stau \dots \stau$.
+					{\tmap{\Delta'}{4}}{\pmap{P'}{4}}$ with $\mapa{\ell} = \{\btau, \stau, \cdots, \stau\}$.
 
 				\item	If $\ell = \tau$ then %and $\hby{\ell}$ is not a \betatran then
 					$\horel{\tmap{\Gamma}{4}}{\tmap{\Delta}{4}}{\pmap{P}{4}}{\hby{\tau} \dots \hby{\tau}}
-					{\tmap{\Delta'}{4}}{\pmap{P'}{4}}$ with $\mapa{\ell}^{4} = \tau \dots \tau$.
+					{\tmap{\Delta'}{4}}{\pmap{P'}{4}}$ with $\mapa{\ell}^{4} = \{\tau, \cdots, \tau\}$.
 			\end{enumerate}
 
 		\item	%Let $\Gamma; \es; \Delta \proves P$. Then
@@ -2578,12 +2614,12 @@ Let $\Gamma; \es; \Delta \proves P$.
 				\item	If $\ell \in \set{\bactinp{n}{m}, \bactout{n}{m}, \news{m} \bactout{n}{m}}$ then
 					$\horel{\Gamma}{\Delta}{P}{\hby{\ell}}{\Delta'}{P'}$ and\\
 					$\horel{\tmap{\Gamma}{4}}{\tmap{\Delta_1}{4}}{P_1}{\hby{\ell_2} \dots \hby{\ell_n}}
-					{\tmap{\Delta'}{4}}{\pmap{P'}{4}}$ with $\mapa{\ell}^{4} = \ell_1 \dots \ell_n$.
+					{\tmap{\Delta'}{4}}{\pmap{P'}{4}}$ with $\mapa{\ell}^{4} = \{\ell_1, \cdots, \ell_n\}$.
 
 				\item	If $\ell \in \set{\news{\tilde{m}} \bactout{n}{\abs{x}{R}}, \bactinp{n}{\abs{x}{R}}}$
 					then
 					$\horel{\Gamma}{\Delta}{P}{\hby{\ell'}}{\Delta'}{P'}$
-					with $\mapa{\ell'}^{4} = \ell$ and $P_1 \scong \pmap{P'}{4}$.
+					with $\mapa{\ell'}^{4} = \{\ell\}$ and $P_1 \scong \pmap{P'}{4}$.
 
 				\item	If $\ell \in \set{\bactsel{n}{l}, \bactbra{n}{l}}$
 					then
@@ -2593,12 +2629,12 @@ Let $\Gamma; \es; \Delta \proves P$.
 				\item	If $\ell = \btau$ then
 					$\horel{\Gamma}{\Delta}{P}{\hby{\btau}}{\Delta'}{P'}$ and
 					$\horel{\tmap{\Gamma}{4}}{\tmap{\Delta_1}{4}}{P_1}{\hby{\stau} \dots \hby{\stau}}
-					{\tmap{\Delta'}{4}}{\tmap{P'}{4}}$ with $\mapa{\ell}^{4} = \btau, \stau \dots \stau$.
+					{\tmap{\Delta'}{4}}{\tmap{P'}{4}}$ with $\mapa{\ell}^{4} = \{\btau, \stau, \cdots, \stau\}$.
 
 				\item	If $\ell = \tau$ then
 					$\horel{\Gamma}{\Delta}{P}{\hby{\tau}}{\Delta'}{P'}$ and
 					$\horel{\tmap{\Gamma}{4}}{\tmap{\Delta_1}{4}}{P_1}{\hby{\tau} \dots \hby{\tau}}
-					{\tmap{\Delta'}{4}}{\tmap{P'}{4}}$ with $\mapa{\ell}^{4} = \tau \dots \tau$.
+					{\tmap{\Delta'}{4}}{\tmap{P'}{4}}$ with $\mapa{\ell}^{4} = \{\tau, \cdots, \tau\}$.
 			\end{enumerate}
 	\end{enumerate}
 \end{proposition}
@@ -2811,7 +2847,10 @@ which concludes the proof for this case.
 \noi The right-to-left direction follows by showing that the relation
 %
 	\[
-		\Re = \set{(\horel{\Gamma}{\Delta_1}{P}{\ ,\ }{\Delta_2}{Q}) \setbar \horel{\tmap{\Gamma}{4}}{\tmap{\Delta_1}{4}}{\pmap{P}{4}}{\hwb}{\tmap{\Delta_2}{4}}{\pmap{Q}{4}}}
+		\Re = \set{
+		%(\horel{\Gamma}{\Delta_1}{P}{\ ,\ }{\Delta_2}{Q}) 
+		(P, Q) 
+		\setbar \horel{\tmap{\Gamma}{4}}{\tmap{\Delta_1}{4}}{\pmap{P}{4}}{\hwb}{\tmap{\Delta_2}{4}}{\pmap{Q}{4}}}
 	\]
 is a higher-order bisimulation, by following Part 2 of \propref{app:prop:op_corr_pHOp_to_HOp}. 
 	Suppose $P$ makes a transition with label $\ell$; we must exhibit a matching move from $Q$.
@@ -2912,10 +2951,13 @@ is a higher-order bisimulation, by following Part 2 of \propref{app:prop:op_corr
 
 \bigskip
 
-\noi	The left-to-right direction follows by showing that relation: %create the closure
+\noi	The left-to-right direction follows by showing that the relation: %create the closure
 %
 	\[
-		\Re = \set{(\horel{\tmap{\Gamma}{4}}{\tmap{\Delta_1}{4}}{\pmap{P}{4}}{\ ,\ }{\tmap{\Delta_2}{4}}{\pmap{Q}{4}}) \setbar \horel{\Gamma}{\Delta_1}{P}{\hwb}{\Delta_2}{Q}}
+		\Re = \set{
+		%(\horel{\tmap{\Gamma}{4}}{\tmap{\Delta_1}{4}}{\pmap{P}{4}}{\ ,\ }{\tmap{\Delta_2}{4}}{\pmap{Q}{4}}) 
+		(\pmap{P}{4}, \pmap{Q}{4})
+		\setbar \horel{\Gamma}{\Delta_1}{P}{\hwb}{\Delta_2}{Q}}
 	\]
 is a higher-order bisimulation up to deterministic transitions, by following Part 1 of \propref{app:prop:op_corr_pHOp_to_HOp}.
 	Suppose $\pmap{P}{4}$ makes a transition with label $\ell$; we should exhibit a matching move from 
