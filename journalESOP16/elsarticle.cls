@@ -752,10 +752,12 @@
   \gdef\thefigure{\@Alph\c@section.\arabic{figure}}%
   \gdef\thetable{\@Alph\c@section.\arabic{table}}%
   \gdef\thesection{\appendixname\@Alph\c@section}%
+%  \gdef\thesection{\@Alph\c@section}%
   \@addtoreset{equation}{section}%
   \gdef\theequation{\@Alph\c@section.\arabic{equation}}%
 }
 \def\appendixname{Appendix }
+%\def\appendixname{}
 
 %% Added for work with amsrefs.sty
 
