@@ -15,7 +15,7 @@
 		}{
 			\Gamma \cat x:\shot{C}; \Lambda; \Delta \proves P \hastype \Proc
 		}
-		\quad
+		\\[1mm] \\
 		\inferrule[(Abs)]{
 			\Gamma; \Lambda; \Delta_1 \proves P \hastype \Proc
 			\quad
@@ -23,7 +23,7 @@
 		}{
 			\Gamma\backslash x; \Lambda; \Delta_1 \backslash \Delta_2 \proves \abs{{x}}{P} \hastype \lhot{{C}}
 		}
-		\\[1mm] \\
+		\quad
 		\inferrule[(App)]{
 			\begin{array}{c}
 				U = \lhot{C} \lor \shot{C}
@@ -34,10 +34,11 @@
 		}{
 			\Gamma; \Lambda; \Delta_1 \cat \Delta_2 \proves \appl{V}{u} \hastype \Proc
 		} 
-		~~
+		\\[1mm] \\
 		\inferrule[(Send)]{
 					\begin{array}{c}
-					u:S \in \Delta_1 \cat \Delta_2 \\
+					u:S \in \Delta_1 \cat \Delta_2 %\\
+					~~
 			\Gamma; \Lambda_1; \Delta_1 \proves P \hastype \Proc
 			\quad
 			\Gamma; \Lambda_2; \Delta_2 \proves V \hastype U
@@ -45,23 +46,14 @@
 		}{
 			\Gamma; \Lambda_1 \cat \Lambda_2; ((\Delta_1 \cat \Delta_2) \setminus u:S) \cat u:\btout{U} S \proves \bout{u}{V} P \hastype \Proc
 		}
-		\\[2mm] \\
-		\inferrule*[left=(Rcv)]{
-		\begin{array}{c}
-			\Gamma; \Lambda_1; \Delta_1 \cat u: S \proves P \hastype \Proc
-			\quad
-			\Gamma; \Lambda_2; \Delta_2 \proves {x} \hastype {U}
-			\end{array}
-		}{
-			\Gamma \backslash x; \Lambda_1\cat \Lambda_2; \Delta_1\backslash \Delta_2 \cat u: \btinp{U} S \vdash \binp{u}{{x}} P \hastype \Proc
-		}
-		\\[2mm] \\
+		\\[1mm] \\
 		\inferrule[(Req)]{
 			\begin{array}{c}
 				\Gamma; \es; \es \proves u \hastype U_1
 				\quad
 				\Gamma; \Lambda; \Delta_1 \proves P \hastype \Proc
-				\\
+				%\\
+				~~
 				\Gamma; \es; \Delta_2 \proves V \hastype U_2
 				\\
 				(U_1 = \chtype{S} 
@@ -75,6 +67,17 @@
 			\end{array}
 		}{
 			\Gamma; \Lambda; \Delta_1 \cat \Delta_2 \proves \bout{u}{V} P \hastype \Proc
+		}
+		~~
+		\\[2mm] \\
+				\inferrule[(Rcv)]{
+		\begin{array}{c}
+			\Gamma; \Lambda_1; \Delta_1 \cat u: S \proves P \hastype \Proc
+			\\
+			\Gamma; \Lambda_2; \Delta_2 \proves {x} \hastype {U}
+			\end{array}
+		}{
+			\Gamma \backslash x; \Lambda_1\cat \Lambda_2; \Delta_1\backslash \Delta_2 \cat u: \btinp{U} S \vdash \binp{u}{{x}} P \hastype \Proc
 		}
 		~~
 		\inferrule[(Acc)]{
