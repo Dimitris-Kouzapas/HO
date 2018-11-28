@@ -735,6 +735,7 @@ variables, names, and session names in $P$, and are defined as expected.
 We assume $V$ in $\bout{u}{V}{P}$ does not include free recursive 
 variables $\rvar{X}$.
 If $\fv{P} = \emptyset$, we call $P$ {\em closed}.
+In a statement, a name (resp. variable) is \emph{fresh} if it is not among the names (resp. variables) of the objects (processes, actions, etc.) of the statement.
 We shall follow Barendregt's convention:
 all (session) names and variables in binding occurrences, in any mathematical context, are pairwise distinct but also distinct from  free (session) names and variables.
 
@@ -996,8 +997,8 @@ Both $\Lambda$ and $\Delta$
 %behave linearly: they 
 are
 only subject to exchange.  
-Domains of $\Gamma,
-\Lambda$ and $\Delta$ are assumed pairwise distinct. 
+The domains of $\Gamma,
+\Lambda$, and $\Delta$ are assumed pairwise distinct. 
 $\Delta_1\cdot \Delta_2$ is the disjoint union of $\Delta_1$ and $\Delta_2$.  
 
 Given the above intuitions for environments, 
@@ -2228,22 +2229,33 @@ if it satisfies the properties below.
 			\item	\NY{Completeness: 
 			   If  
 $\stytraargi{\Gamma}{\tau}{\Delta}{P}{\Delta'}{P'}{1}{1}$
-			   then  $\exists Q, \Delta''$ s.t. \\
+			   then  $\exists Q, \Delta''$ such that \\
  (i)~$\wtytraargi{\mapt{\Gamma}}{}{\mapt{\Delta}}{\map{P}}{\mapt{\Delta''}}{Q}{2}{2}$
 			    %(ii)~$\ell_2 = \mapa{\ell_1}$, 
 			    and 
 				(ii)~${\mapt{\Gamma}};{\mapt{\Delta'}}\proves_2 {\map{P'}}{\,\wb_2\,}
 {\mapt{\Delta''}}\proves_2 {{Q}}$.}
 				
-			\item	Soundness:   
+%			\item	Soundness:   %% OLD
+%				If  $\wtytraargi{\mapt{\Gamma}}{}{\mapt{\Delta}}{\map{P}}{\mapt{\Delta'}}{Q}{2}{2}$
+%				then  $\exists P', \Delta''$ s.t.  \\
+%				(i)~$\stytraargi{\Gamma}{\tau}{\Delta}{P}{\Delta''}{P'}{1}{1}$
+%				%(ii)~$\ell_2 = \mapa{\ell_1}$, 
+%				and 
+%				(ii)~
+%${\mapt{\Gamma}};{\mapt{\Delta''}}\proves_2 {\map{P'}}{\,\wb_2\,}
+%{\mapt{\Delta'}}\proves_2 {Q}$.
+
+			\item	Soundness:   %% Revised
 				If  $\wtytraargi{\mapt{\Gamma}}{}{\mapt{\Delta}}{\map{P}}{\mapt{\Delta'}}{Q}{2}{2}$
-				then  $\exists P', \Delta''$ s.t.  \\
-				(i)~$\stytraargi{\Gamma}{\tau}{\Delta}{P}{\Delta''}{P'}{1}{1}$
+				then  $\exists P', Q', \Delta'', \Delta'''$ such that  \\
+				(i)~$\stytraargi{\Gamma}{\tau}{\Delta}{P}{\Delta''}{P'}{1}{1}$,
 				%(ii)~$\ell_2 = \mapa{\ell_1}$, 
-				and 
-				(ii)~
+				(ii)~$\wtytraargi{\mapt{\Gamma}}{}{\mapt{\Delta'}}{Q}{\mapt{\Delta'''}}{Q'}{2}{2}$
+				and \\
+				(iii)~
 ${\mapt{\Gamma}};{\mapt{\Delta''}}\proves_2 {\map{P'}}{\,\wb_2\,}
-{\mapt{\Delta'}}\proves_2 {Q}$.
+{\mapt{\Delta'''}}\proves_2 {Q'}$.
 
 		\end{enumerate}
 		
@@ -2273,7 +2285,8 @@ it relies on
 %labelled transitions rather than on 
 $\tau$-transitions (reductions).
 Completeness ensures that a step of the source process is mimicked
-by a step of its associated encoding; soundness is its converse.
+by a step of its associated encoding.
+Soundness is the converse of completeness; the formulation given above is called \emph{weak soundness} in~\cite{DBLP:journals/corr/PetersG15}.
 %Soundness ensures that the source process is mimicked 
 %by its associated encoding; completeness is its converse.
 %Completeness and soundness rely on 
@@ -2287,9 +2300,9 @@ the operational correspondence statements
 for our encodings 
  are tailored to the specifics of each encoding, and so they
  are actually stronger than the criteria given above
- {(see \propsref{prop:op_corr_HOp_to_HO}, \ref{prop:op_corr_HOp_to_p}, \ref{prop:op_corr_HOpp_to_HOp}, \ref{prop:op_corr_pHOp_to_HOp}.}
+ {(see \propsref{prop:op_corr_HOp_to_HO}, \ref{prop:op_corr_HOp_to_p}, \ref{prop:op_corr_HOpp_to_HOp}, and \ref{prop:op_corr_pHOp_to_HOp}).}
  In particular, we will consider forms of operational correspondence that account also for visible actions, relying on 
- a mapping $\mapa{\cdot}$ on actions, as already explained.
+ a mapping $\mapa{\cdot}$ on actions, as already explained (cf. \defref{def:lopco} below).
 Finally, following~\cite{SangiorgiD:expmpa,DBLP:conf/lics/PalamidessiSVV06,Yoshida96},
 we consider full abstraction as an encodability criterion: this leads to 
 stronger encodability results. 
@@ -2359,10 +2372,13 @@ Let $\enco{\map{\cdot}, \mapt{\cdot}}: \tyl{L}_1 \to \tyl{L}_2$ be a typed encod
 
 %\smallskip 
 
-The following property will come in handy in \secref{sec:extension}:
+The following property, concerning composabilty of precise encodings, will come in handy in~\secref{sec:extension}.
+It follows closely a similar property established in~\cite{DBLP:journals/dc/Gorla10} for (untyped) valid encodings between languages with equivalences which are \emph{reduction closed}.
 
 \begin{proposition}[Composability]%\rm
 	\label{pro:composition}
+	Assume typed calculi $\tyl{L}_1$, $\tyl{L}_2$, and $\tyl{L}_3$ whose typed equivalences 
+	($\wb_1$, $\wb_2$, and $\wb_3$, respectively) are reduction closed. 
 	Let %encodings 
 	$\enco{\map{\cdot}^{1}, \mapt{\cdot}^{1}%, \mapa{\cdot}^{1}
 	}: \tyl{L}_1 \to \tyl{L}_2$
@@ -2378,7 +2394,7 @@ The following property will come in handy in \secref{sec:extension}:
 \end{proposition}
 
 \begin{proof}
-This follows directly from the definitions.
+The proof follows directly from the definitions, and is very similar to the proof of Proposition~10 in~\cite{DBLP:journals/dc/Gorla10}.
 \end{proof}
 
 We now introduce the notion of \emph{tight encodings}, which refine precise encodings with 
@@ -2404,17 +2420,18 @@ if it satisfies:
 	\begin{enumerate}[1.]
 			\item
 					If		$\stytraargi{\Gamma}{\ell_1}{\Delta}{P}{\Delta'}{P'}{1}{1}$
-					then	$\exists Q$, $\Delta''$, $\ell_2$ s.t. 
-							(i)~$\wtytraargi{\mapt{\Gamma}}{\ell_2}{\mapt{\Delta}}{\map{P}}{\mapt{\Delta''}}{Q}{2}{2}$;  \\
-							(ii)~$\ell_2 = \mapa{\ell_1}$; 
+					then	$\exists Q$, $\Delta''$, $\ell_2$ such that: \\ 
+							(i)~$\wtytraargi{\mapt{\Gamma}}{\ell_2}{\mapt{\Delta}}{\map{P}}{\mapt{\Delta''}}{Q}{2}{2}$; 
+							(ii)~$\ell_2 = \mapa{\ell_1}$;  and \\
 							(iii)~${\mapt{\Gamma}};{\mapt{\Delta''}}\proves_2 {Q}{\wb_2}{\mapt{\Delta'}}\proves_2 {\map{P'}}$.
 				
 			\item
 					If		$\wtytraargi{\mapt{\Gamma}}{\ell_2}{\mapt{\Delta}}{\map{P}}{\mapt{\Delta'}}{Q}{2}{2}$
-					then	$\exists P'$, $\Delta''$, $\ell_1$ s.t. 
+					then	$\exists P'$, $Q'$, $\Delta''$, $\Delta'''$, $\ell_1$ such that: \\ 
 							(i)~$\stytraargi{\Gamma}{\ell_1}{\Delta}{P}{\Delta''}{P'}{1}{1}$;
 							(ii)~$\ell_2 = \mapa{\ell_1}$;
-							(iii)~${\mapt{\Gamma}};{\mapt{\Delta''}}\proves_2 {\map{P'}}{\wb_2}{\mapt{\Delta'}}\proves_2 {Q}$.
+							(iii)~$\wtytraargi{\mapt{\Gamma}}{}{\mapt{\Delta'}}{Q}{\mapt{\Delta'''}}{Q'}{2}{2}$
+							(iv)~${\mapt{\Gamma}};{\mapt{\Delta''}}\proves_2 {\map{P'}}{\wb_2}{\mapt{\Delta'''}}\proves_2 {Q'}$.
 	\end{enumerate}
 A \emph{tight encoding} is a typed 
 encoding 
@@ -2423,8 +2440,8 @@ labelled operational correspondence as above.
 \end{definition}
 
 This way, 
-the notion of labelled correspondence complements/generalizes the notion of operational soundness and completeness 
-given in \defref{def:ep}, which restricts to $\tau$-labelled transitions.
+the notion of labelled correspondence complements/generalizes the notions of operational soundness and completeness 
+given in \defref{def:ep}, which is restricted to $\tau$-labelled transitions.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -2547,11 +2564,13 @@ copy a process upon reception; passing around linear abstractions
 is \NY{delicate} 
 because 
 they cannot be copied.
-To handle linearity, we define the following auxiliary 
+To handle linearity, we define the  auxiliary 
 %a preliminary tool which is a mapping from
- mapping 
-$\auxmapp{\cdot}{{}}{\sigma}$
-from processes with free names to processes without free
+ mappings 
+ $\vmap{\cdot}$ and 
+$\auxmapp{\cdot}{{}}{\sigma}$:
+the former maps sequences of session names into sequences of variables; the second 
+maps processes with free names to processes without free
 names (but with free variables instead):
 %from processes \jpc{with free names} to processes without free names (but with free variables) (\defref{d:auxmap}). 
 %We require two auxiliary definitions.
@@ -2577,20 +2596,24 @@ names (but with free variables instead):
 
 
 
-\begin{definition}[Auxiliary Mapping] \label{d:trabs}\label{d:auxmap}
-	Let $\vmap{\cdot}: 2^{\mathcal{N}} \longrightarrow \mathcal{V}^\omega$
-	denote a map of sequences of lexicographically ordered names to sequences of variables, defined
+\begin{definition}[Auxiliary Mappings] \label{d:trabs}\label{d:auxmap}
+We define mappings $\vmap{\cdot}$ and $\auxmapp{\cdot}{{}}{\sigma}$ as follows:
+\begin{itemize}
+\item  $\vmap{\cdot}: 2^{\mathcal{N}} \longrightarrow \mathcal{V}^\omega$
+	is a map of sequences of lexicographically ordered names to sequences of variables, defined
 	inductively 
 	as: 
 	\begin{align*}
 	\vmap{\epsilon} & = \epsilon 
 	\\
-	\vmap{n \cat \tilde{m}} & = x_n \cat \vmap{\tilde{m}}
+	\vmap{n \cat \tilde{m}} & = x_n \cat \vmap{\tilde{m}} \quad \text{($x$ fresh)}
 	\end{align*}
-	Also, let $\sigma$ be a set of session names.
-	Then, the auxiliary mapping
+
+\item Given a set of session names and variables $\sigma$, 
+	 the   map
 	$\auxmapp{\cdot}{{}}{\sigma}: \HO \to \HO$
 	is as in \figref{f:auxmap}.
+	\end{itemize}
 \end{definition}
 \input{figures/aux_map}
 %
@@ -2607,7 +2630,7 @@ exploits
   the %\HO 
  abstraction
 %defined as
-$\abs{x_1,\cdots, x_k}{\auxmapp{\pmapp{P}{1}{f}}{{}}{\emptyset} }$, where $\vmap{n_j} = x_j$, for all $j \in \{1, \ldots, k\}$: }
+$\abs{x_1,\cdots, x_k}{\auxmapp{\pmapp{P}{1}{f}}{{}}{\emptyset} }$, where $x_j = \vmap{n_j}$, for all $j \in \{1, \ldots, k\}$: }
 %In the following we make this intuition precise.
 
 %This transformation from processes into abstractions can be reverted by
@@ -2694,7 +2717,7 @@ iii)~uses the dual endpoint $\dual{s}$ to send the continuation $P$ as an abstra
 %$\abs{x}{P}$. 
 Thus, name substitution is achieved via name application.
 As for recursion, to encode $\recp{X}{P}$ we
-first record a mapping from recursive variable $X$ to process variable $z_X$.
+first record a mapping from recursive variable $X$ to process variable $z_X$; here, we assume that for each recursive variable $X_i$ there is a fresh variable $z_{X_i}$.
 Then, using the auxiliary mapping
 $\auxmapp{\cdot}{{}}{\sigma}$ in 
 \defref{d:auxmap}, we encode the recursion body $P$ as a name abstraction
@@ -2722,8 +2745,63 @@ We illustrate the encoding by means of two examples: the first illustrates our s
 
  
 
-
+\newpage
 %\input{encoding_example}
+\begin{example}[Encoding Recursion, Revised]
+Let $P = \recp{X}{\bout{a}{m} \varp{X}}$ be an \HOp process.
+Its encoding into \HO is given next; notice that $f = \emptyset$ and $f' = \varp{X} \rightarrow x_ax_m$.
+\begin{eqnarray*}
+	\pmapp{\recp{X}{\bout{a}{m} \varp{X}}}{1}{f} &=&
+	\newsp{s_1}{ 
+	\bout{\dual{s_1}}{ \abs{(x_a, x_m, y_1)} \binp{y_1}{z_X} \auxmapp{\pmapp{\bout{a}{m} \varp{X}}{1}{{f'}}}{{}}{\es} } \inact 
+	\Par
+	\binp{s_1}{z_X} \pmapp{\bout{a}{m} \varp{X}}{1}{{f'}} 
+	}
+	\\
+\pmapp{\bout{a}{m} \varp{X}}{1}{{ f'}} &=&
+	\bout{a}{\abs{z_1}{\binp{z_1}{x} (\appl{x}{m})}} \\
+	& &  
+	\qquad \qquad 
+	\newsp{s_2}{\appl{z_X}{(a, m, s_2)}  
+	\Par 
+	\bout{\dual{s_2}}{\abs{(x_a, x_m, y_2)}{\appl{z_X}{(x_a, x_m, y_2)}}} \inact} 
+	\\
+	\auxmapp{\pmapp{\bout{a}{m} \varp{X}}{1}{{f'}}}{{}}{\es}
+	  & = & 
+	\bout{x_a}{\abs{z_1}{\binp{z_1}{x} (\appl{x}{x_m})}} \\
+	& & 
+	\qquad \qquad  \newsp{s_2}{\appl{z_X}{(x_a,x_m, s_2)}  
+	\Par 
+	\bout{\dual{s_2}}{\abs{(x_a, x_m, y_2)}{\appl{z_X}{(x_a, x_m, y_2)}}} \inact}
+\end{eqnarray*}
+
+That is, by writing $V$ to denote the process
+$$
+\abs{(x_a, x_m, z)} \binp{z}{x} \bout{x_a}{\abs{z}{\binp{z}{x} (\appl{x}{x_m})}} \newsp{s_2}{\appl{x}{(x_a,x_m, s_2)}  \!\Par\! \bout{\dual{s_2}}{\abs{(x_a, x_m, z)}{\appl{x}{(x_a, x_m, z)}}} \inact}
+$$
+we would have %that $P = \recp{X}{\bout{a}{m} \varp{X}}$ is mapped into the \HO process
+\begin{align*}
+\pmapp{P}{1}{f} & =  \newsp{s_1}{\binp{s_1}{x}  \bout{a}{\abs{z}{\binp{z}{x} (\appl{x}{m})}} \newsp{s_2}{\appl{x}{(a,m, s_2)}  \Par \\
+ & \qquad \qquad \qquad \bout{\dual{s_2}}{\abs{(x_a, x_m, z)}{\appl{x}{(x_a, x_m, z)}}} \inact}\Par \bout{\dual{s_1}}{V} \inact}
+\end{align*}
+Next we illustrate the behaviour of $\pmapp{P}{1}{f}$; below $\ell$ stands for $\bactout{a}{\abs{z}{\binp{z}{x} (\appl{x}{m})}}$.
+\begin{align*}
+\pmapp{P}{1}{f} & \scong  \newsp{s_1}{\bout{\dual{s_1}}{V} \inact \Par \binp{s_1}{x} \bout{a}{\abs{z}{\binp{z}{x} (\appl{x}{m})}} \newsp{s_2}{\bout{\dual{s_2}}{\abs{(x_a, x_m, z)}{\\
+&  \qquad \qquad \qquad \qquad \quad \quad  \appl{x}{(x_a, x_m, z)}}} \inact} 
+\Par \appl{x}{(a,m, s_2)}} \\
+& \hby{\tau}  \bout{a}{\abs{z}{\binp{z}{x} (\appl{x}{m})}} \newsp{s_2}{\bout{\dual{s_2}}{V} \inact \Par \binp{s_2}{x} \bout{a}{\abs{z}{\binp{z}{x} (\appl{x}{m})}} \\
+&  \qquad \qquad \quad \qquad \qquad \quad \newsp{s_3}{\bout{\dual{s_3}}{\abs{(x_a, x_m, z)}{\appl{x}{(x_a, x_m, z)}}} \inact} \Par \appl{x}{(a,m, s_3)}} \\
+& \scong_{\alpha}  \bout{a}{\abs{z}{\binp{z}{x} (\appl{x}{m})}} \newsp{s_1}{\bout{\dual{s_1}}{V} \inact \Par \binp{s_1}{x} \bout{a}{\abs{z}{\binp{z}{x} (\appl{x}{m})}} \\
+&  \qquad \qquad \qquad \qquad \quad \quad \newsp{s_2}{\bout{\dual{s_2}}{\abs{(x_a, x_m, z)}{\appl{x}{(x_a, x_m, z)}}} \inact} \Par \appl{x}{(a,m, s_2)}} \\
+& \scong  
+		\bout{a}{\abs{z}{\binp{z}{x} (\appl{x}{m})}} \pmapp{\recp{X}{\bout{a}{m} \varp{X}}}{1}{f} \hby{\ell} 
+		\pmapp{\recp{X}{\bout{a}{m} \varp{X}}}{1}{f}.
+%& \by{\lambda} & 
+%		\pmapp{\recp{X}{\bout{a}{m} \varp{X}}}{1}{f}
+\end{align*}
+\end{example}
+
+
 \begin{example}[Encoding Recursion]
 Let $P = \recp{X}{\bout{a}{m} \varp{X}}$ be an \HOp process.
 Its encoding into \HO is given next; notice that $f = \emptyset$ and $f' = \varp{X} \rightarrow x_ax_m$.
@@ -2774,6 +2852,7 @@ Next we illustrate the behaviour of $\pmapp{P}{1}{f}$; below $\ell$ stands for $
 %		\pmapp{\recp{X}{\bout{a}{m} \varp{X}}}{1}{f}
 \end{align*}
 \end{example}
+
 
 \begin{example}[Encoding a hotel booking client]
 The \HOp process $\Client_2$ (cf. \figref{f:hotel}) is one possible implementation for the 
