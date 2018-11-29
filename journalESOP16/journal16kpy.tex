@@ -766,7 +766,9 @@ Rule $\orule{Sel}$ is the standard rule for labelled choice/selection. %:
 Other rules are standard $\pi$-calculus rules.
 Reduction is closed under \emph{structural congruence}, 
 noted $\scong$ and given in \figref{fig:reduction}~(bottom). 
-We assume the expected extension of $\scong$ to values $V$.
+We 
+write $\scong_\alpha$ to denote $\alpha$-conversion and 
+assume the expected extension of $\scong$ to values $V$.
 We write $\red^\ast$ for a multi-step reduction.
 
 \input{figures/semantics}
@@ -2747,9 +2749,9 @@ We illustrate the encoding by means of two examples: the first illustrates our s
 
 \newpage
 %\input{encoding_example}
-\begin{example}[Encoding Recursion, Revised]
-Let $P = \recp{X}{\bout{a}{m} \varp{X}}$ be an \HOp process.
-Its encoding into \HO is given next; notice that $f = \emptyset$ and $f' = \varp{X} \rightarrow x_ax_m$.
+\begin{example}[Encoding Recursion]
+Let $\recp{X}{\bout{a}{m} \varp{X}}$ be an \HOp process.
+Its encoding into \HO is given next; notice that $f = \emptyset$ and $f' = \varp{X} \rightarrow a\,m$.
 \begin{eqnarray*}
 	\pmapp{\recp{X}{\bout{a}{m} \varp{X}}}{1}{f} &=&
 	\newsp{s_1}{ 
@@ -2759,102 +2761,105 @@ Its encoding into \HO is given next; notice that $f = \emptyset$ and $f' = \varp
 	}
 	\\
 \pmapp{\bout{a}{m} \varp{X}}{1}{{ f'}} &=&
-	\bout{a}{\abs{z_1}{\binp{z_1}{x} (\appl{x}{m})}} \\
-	& &  
-	\qquad \qquad 
+	\bout{a}{\abs{z_1}{\binp{z_1}{x} (\appl{x}{m})}} 
 	\newsp{s_2}{\appl{z_X}{(a, m, s_2)}  
 	\Par 
-	\bout{\dual{s_2}}{\abs{(x_a, x_m, y_2)}{\appl{z_X}{(x_a, x_m, y_2)}}} \inact} 
+	\bout{\dual{s_2}}{ z_X} \inact} 
 	\\
 	\auxmapp{\pmapp{\bout{a}{m} \varp{X}}{1}{{f'}}}{{}}{\es}
 	  & = & 
-	\bout{x_a}{\abs{z_1}{\binp{z_1}{x} (\appl{x}{x_m})}} \\
-	& & 
-	\qquad \qquad  \newsp{s_2}{\appl{z_X}{(x_a,x_m, s_2)}  
+	\bout{x_a}{\abs{z_1}{\binp{z_1}{x} (\appl{x}{x_m})}} 
+	\newsp{s_2}{\appl{z_X}{(x_a, x_m, s_2)}  
 	\Par 
-	\bout{\dual{s_2}}{\abs{(x_a, x_m, y_2)}{\appl{z_X}{(x_a, x_m, y_2)}}} \inact}
+	\bout{\dual{s_2}}{ z_X} \inact} 
 \end{eqnarray*}
-
-That is, by writing $V$ to denote the process
+This way, by writing $V$ to denote the abstraction
 $$
-\abs{(x_a, x_m, z)} \binp{z}{x} \bout{x_a}{\abs{z}{\binp{z}{x} (\appl{x}{x_m})}} \newsp{s_2}{\appl{x}{(x_a,x_m, s_2)}  \!\Par\! \bout{\dual{s_2}}{\abs{(x_a, x_m, z)}{\appl{x}{(x_a, x_m, z)}}} \inact}
+\abs{(x_a, x_m, y_1)} \binp{y_1}{z_X} \bout{x_a}{\abs{z_1}{\binp{z_1}{x} (\appl{x}{x_m})}} \newsp{s_2}{\appl{z_X}{(x_a,x_m, s_2)}   \Par  \bout{\dual{s_2}}{z_X} \inact}
 $$
 we would have %that $P = \recp{X}{\bout{a}{m} \varp{X}}$ is mapped into the \HO process
 \begin{align*}
-\pmapp{P}{1}{f} & =  \newsp{s_1}{\binp{s_1}{x}  \bout{a}{\abs{z}{\binp{z}{x} (\appl{x}{m})}} \newsp{s_2}{\appl{x}{(a,m, s_2)}  \Par \\
- & \qquad \qquad \qquad \bout{\dual{s_2}}{\abs{(x_a, x_m, z)}{\appl{x}{(x_a, x_m, z)}}} \inact}\Par \bout{\dual{s_1}}{V} \inact}
+\pmapp{\recp{X}{\bout{a}{m} \varp{X}}}{1}{f} & =  \newsp{s_1}{ 
+	\bout{\dual{s_1}}{ V} \inact 
+	\Par
+	\binp{s_1}{z_X} 
+	\bout{a}{\abs{z_1}{\binp{z_1}{x} (\appl{x}{m})}} 
+	\newsp{s_2}{\appl{z_X}{(a, m, s_2)}  
+	\Par 
+	\bout{\dual{s_2}}{ z_X} \inact} 
+	}
 \end{align*}
-Next we illustrate the behaviour of $\pmapp{P}{1}{f}$; below $\ell$ stands for $\bactout{a}{\abs{z}{\binp{z}{x} (\appl{x}{m})}}$.
+Next we illustrate the behaviour of $\pmapp{\recp{X}{\bout{a}{m} \varp{X}}}{1}{f}$; below $\ell$ stands for $\bactout{a}{\abs{z}{\binp{z}{x} (\appl{x}{m})}}$.
 \begin{align*}
-\pmapp{P}{1}{f} & \scong  \newsp{s_1}{\bout{\dual{s_1}}{V} \inact \Par \binp{s_1}{x} \bout{a}{\abs{z}{\binp{z}{x} (\appl{x}{m})}} \newsp{s_2}{\bout{\dual{s_2}}{\abs{(x_a, x_m, z)}{\\
-&  \qquad \qquad \qquad \qquad \quad \quad  \appl{x}{(x_a, x_m, z)}}} \inact} 
-\Par \appl{x}{(a,m, s_2)}} \\
-& \hby{\tau}  \bout{a}{\abs{z}{\binp{z}{x} (\appl{x}{m})}} \newsp{s_2}{\bout{\dual{s_2}}{V} \inact \Par \binp{s_2}{x} \bout{a}{\abs{z}{\binp{z}{x} (\appl{x}{m})}} \\
-&  \qquad \qquad \quad \qquad \qquad \quad \newsp{s_3}{\bout{\dual{s_3}}{\abs{(x_a, x_m, z)}{\appl{x}{(x_a, x_m, z)}}} \inact} \Par \appl{x}{(a,m, s_3)}} \\
-& \scong_{\alpha}  \bout{a}{\abs{z}{\binp{z}{x} (\appl{x}{m})}} \newsp{s_1}{\bout{\dual{s_1}}{V} \inact \Par \binp{s_1}{x} \bout{a}{\abs{z}{\binp{z}{x} (\appl{x}{m})}} \\
-&  \qquad \qquad \qquad \qquad \quad \quad \newsp{s_2}{\bout{\dual{s_2}}{\abs{(x_a, x_m, z)}{\appl{x}{(x_a, x_m, z)}}} \inact} \Par \appl{x}{(a,m, s_2)}} \\
-& \scong  
-		\bout{a}{\abs{z}{\binp{z}{x} (\appl{x}{m})}} \pmapp{\recp{X}{\bout{a}{m} \varp{X}}}{1}{f} \hby{\ell} 
-		\pmapp{\recp{X}{\bout{a}{m} \varp{X}}}{1}{f}.
-%& \by{\lambda} & 
-%		\pmapp{\recp{X}{\bout{a}{m} \varp{X}}}{1}{f}
+\pmapp{\recp{X}{\bout{a}{m} \varp{X}}}{1}{f} 
+& \hby{\tau}   
+\bout{a}{\abs{z_1}{\binp{z_1}{x} (\appl{x}{m})}} 
+	\newsp{s_2}{\appl{V}{(a, m, s_2)}  
+	\Par 
+	\bout{\dual{s_2}}{V} \inact}
+	\\
+	& \hby{\ell}
+	\newsp{s_2}{\appl{V}{(a, m, s_2)}  	\Par 	\bout{\dual{s_2}}{V} \inact}
+\\
+& \hby{\tau} 
+\newsp{s_2}{
+	\binp{s_2}{z_X} \bout{a}{\abs{z_1}{\binp{z_1}{x} (\appl{x}{m})}} \newsp{s_3}{\appl{z_X}{(a,m, s_3)}   \Par  \bout{\dual{s_3}}{z_X} \inact}  	
+	\Par 	
+	\bout{\dual{s_2}}{V} \inact}
+\\
+& \scong
+\newsp{s_2}{
+\bout{\dual{s_2}}{V} \inact
+	\Par
+	\binp{s_2}{z_X} \bout{a}{\abs{z_1}{\binp{z_1}{x} (\appl{x}{m})}} \newsp{s_3}{\appl{z_X}{(a,m, s_3)}   \Par  \bout{\dual{s_3}}{z_X} \inact}  	
+	}
+	\\
+	& \scong_\alpha 
+	\pmapp{\recp{X}{\bout{a}{m} \varp{X}}}{1}{f} 
 \end{align*}
 \end{example}
 
 
-\begin{example}[Encoding Recursion]
-Let $P = \recp{X}{\bout{a}{m} \varp{X}}$ be an \HOp process.
-Its encoding into \HO is given next; notice that $f = \emptyset$ and $f' = \varp{X} \rightarrow x_ax_m$.
-\begin{eqnarray*}
-	\pmapp{P}{1}{f} &=&
-	\newsp{s_1}{ \binp{s_1}{x} \pmapp{\bout{a}{m} \varp{X}}{1}{{f'}} \Par \bout{\dual{s_1}}{ \abs{(x_a, x_m, z)} \binp{z}{x} \auxmapp{\pmapp{\bout{a}{m} \varp{X}}{1}{{f'}}}{{}}{\es} } \inact} \\
-%	&&\bout{\dual{s_1}}{ \abs{(x_a, x_m, z)} \binp{z}{x} \auxmapp{\pmapp{\bout{a}{m} \varp{X}}{1}{{\varp{X} \rightarrow x_ax_m}}}{{}}{\es} } \inact}
+%\begin{example}[Encoding Recursion, OLD]
+%Let $P = \recp{X}{\bout{a}{m} \varp{X}}$ be an \HOp process.
+%Its encoding into \HO is given next; notice that $f = \emptyset$ and $f' = \varp{X} \rightarrow x_ax_m$.
+%\begin{eqnarray*}
+%	\pmapp{P}{1}{f} &=&
+%	\newsp{s_1}{ \binp{s_1}{x} \pmapp{\bout{a}{m} \varp{X}}{1}{{f'}} \Par \bout{\dual{s_1}}{ \abs{(x_a, x_m, z)} \binp{z}{x} \auxmapp{\pmapp{\bout{a}{m} \varp{X}}{1}{{f'}}}{{}}{\es} } \inact} \\
+%\pmapp{\bout{a}{m} \varp{X}}{1}{{ f'}} &=&
+%	\bout{a}{\abs{z}{\binp{z}{x} (\appl{x}{m})}} \newsp{s_2}{\appl{x}{(a,m, s_2)}  \Par \bout{\dual{s_2}}{\abs{(x_a, x_m, z)}{\appl{x}{(x_a, x_m, z)}}} \inact} \\
+%	\auxmapp{\pmapp{\bout{a}{m} \varp{X}}{1}{{f'}}}{{}}{\es}
+%	  & = & 
+%	\bout{x_a}{\abs{z}{\binp{z}{x} (\appl{x}{x_m})}} \newsp{s_2}{\appl{x}{(x_a,x_m, s_2)}  \Par \\
+%	& & \qquad \qquad \qquad \qquad \qquad \qquad \qquad \bout{\dual{s_2}}{\abs{(x_a, x_m, z)}{\appl{x}{(x_a, x_m, z)}}} \inact}
 %\end{eqnarray*}
-%\begin{eqnarray*}	
-\pmapp{\bout{a}{m} \varp{X}}{1}{{ f'}} &=&
-%	\bout{a}{\abs{z}{\binp{z}{x} (\appl{x}{m})}} \pmapp{\varp{X}}{1}{{f'}}
-%	\\
-%	&=& 
-	\bout{a}{\abs{z}{\binp{z}{x} (\appl{x}{m})}} \newsp{s_2}{\appl{x}{(a,m, s_2)}  \Par \bout{\dual{s_2}}{\abs{(x_a, x_m, z)}{\appl{x}{(x_a, x_m, z)}}} \inact} \\
-	\auxmapp{\pmapp{\bout{a}{m} \varp{X}}{1}{{f'}}}{{}}{\es}
-	  & = & 
-%	  \auxmapp{\bout{a}{\abs{z}{\binp{z}{x} (\appl{x}{m})}} \newsp{s_2}{\appl{x}{(a,m, s_2)}  \Par \bout{\dual{s_2}}{\abs{(x_a, x_m, z)}{\appl{x}{(x_a, x_m, z)}}} \inact}}{{}}{\es}
-%	\\
-%	 & = & 
-%	 \bout{x_a}{\abs{z}{\binp{z}{x} (\appl{x}{x_m})}} \auxmapp{\newsp{s_2}{\appl{x}{(a,m, s_2)}  \Par \bout{\dual{s_2}}{\abs{(x_a, x_m, z)}{\appl{x}{(x_a, x_m, z)}}} \inact}}{{}}{\es}
-%	\\
-%	& = & 
-	\bout{x_a}{\abs{z}{\binp{z}{x} (\appl{x}{x_m})}} \newsp{s_2}{\appl{x}{(x_a,x_m, s_2)}  \Par \\
-	& & \qquad \qquad \qquad \qquad \qquad \qquad \qquad \bout{\dual{s_2}}{\abs{(x_a, x_m, z)}{\appl{x}{(x_a, x_m, z)}}} \inact}
-\end{eqnarray*}
-That is, by writing $V$ to denote the process
-$$
-\abs{(x_a, x_m, z)} \binp{z}{x} \bout{x_a}{\abs{z}{\binp{z}{x} (\appl{x}{x_m})}} \newsp{s_2}{\appl{x}{(x_a,x_m, s_2)}  \!\Par\! \bout{\dual{s_2}}{\abs{(x_a, x_m, z)}{\appl{x}{(x_a, x_m, z)}}} \inact}
-$$
-we would have %that $P = \recp{X}{\bout{a}{m} \varp{X}}$ is mapped into the \HO process
-\begin{align*}
-\pmapp{P}{1}{f} & =  \newsp{s_1}{\binp{s_1}{x}  \bout{a}{\abs{z}{\binp{z}{x} (\appl{x}{m})}} \newsp{s_2}{\appl{x}{(a,m, s_2)}  \Par \\
- & \qquad \qquad \qquad \bout{\dual{s_2}}{\abs{(x_a, x_m, z)}{\appl{x}{(x_a, x_m, z)}}} \inact}\Par \bout{\dual{s_1}}{V} \inact}
-\end{align*}
-Next we illustrate the behaviour of $\pmapp{P}{1}{f}$; below $\ell$ stands for $\bactout{a}{\abs{z}{\binp{z}{x} (\appl{x}{m})}}$.
-\begin{align*}
-\pmapp{P}{1}{f} & \scong  \newsp{s_1}{\bout{\dual{s_1}}{V} \inact \Par \binp{s_1}{x} \bout{a}{\abs{z}{\binp{z}{x} (\appl{x}{m})}} \newsp{s_2}{\bout{\dual{s_2}}{\abs{(x_a, x_m, z)}{\\
-&  \qquad \qquad \qquad \qquad \quad \quad  \appl{x}{(x_a, x_m, z)}}} \inact} 
-\Par \appl{x}{(a,m, s_2)}} \\
-& \hby{\tau}  \bout{a}{\abs{z}{\binp{z}{x} (\appl{x}{m})}} \newsp{s_2}{\bout{\dual{s_2}}{V} \inact \Par \binp{s_2}{x} \bout{a}{\abs{z}{\binp{z}{x} (\appl{x}{m})}} \\
-&  \qquad \qquad \quad \qquad \qquad \quad \newsp{s_3}{\bout{\dual{s_3}}{\abs{(x_a, x_m, z)}{\appl{x}{(x_a, x_m, z)}}} \inact} \Par \appl{x}{(a,m, s_3)}} \\
-& \scong_{\alpha}  \bout{a}{\abs{z}{\binp{z}{x} (\appl{x}{m})}} \newsp{s_1}{\bout{\dual{s_1}}{V} \inact \Par \binp{s_1}{x} \bout{a}{\abs{z}{\binp{z}{x} (\appl{x}{m})}} \\
-&  \qquad \qquad \qquad \qquad \quad \quad \newsp{s_2}{\bout{\dual{s_2}}{\abs{(x_a, x_m, z)}{\appl{x}{(x_a, x_m, z)}}} \inact} \Par \appl{x}{(a,m, s_2)}} \\
-& \scong  
-		\bout{a}{\abs{z}{\binp{z}{x} (\appl{x}{m})}} \pmapp{\recp{X}{\bout{a}{m} \varp{X}}}{1}{f} \hby{\ell} 
-		\pmapp{\recp{X}{\bout{a}{m} \varp{X}}}{1}{f}.
-%& \by{\lambda} & 
-%		\pmapp{\recp{X}{\bout{a}{m} \varp{X}}}{1}{f}
-\end{align*}
-\end{example}
+%That is, by writing $V$ to denote the process
+%$$
+%\abs{(x_a, x_m, z)} \binp{z}{x} \bout{x_a}{\abs{z}{\binp{z}{x} (\appl{x}{x_m})}} \newsp{s_2}{\appl{x}{(x_a,x_m, s_2)}  \!\Par\! \bout{\dual{s_2}}{\abs{(x_a, x_m, z)}{\appl{x}{(x_a, x_m, z)}}} \inact}
+%$$
+%we would have %that $P = \recp{X}{\bout{a}{m} \varp{X}}$ is mapped into the \HO process
+%\begin{align*}
+%\pmapp{P}{1}{f} & =  \newsp{s_1}{\binp{s_1}{x}  \bout{a}{\abs{z}{\binp{z}{x} (\appl{x}{m})}} \newsp{s_2}{\appl{x}{(a,m, s_2)}  \Par \\
+% & \qquad \qquad \qquad \bout{\dual{s_2}}{\abs{(x_a, x_m, z)}{\appl{x}{(x_a, x_m, z)}}} \inact}\Par \bout{\dual{s_1}}{V} \inact}
+%\end{align*}
+%Next we illustrate the behaviour of $\pmapp{P}{1}{f}$; below $\ell$ stands for $\bactout{a}{\abs{z}{\binp{z}{x} (\appl{x}{m})}}$.
+%\begin{align*}
+%\pmapp{P}{1}{f} & \scong  \newsp{s_1}{\bout{\dual{s_1}}{V} \inact \Par \binp{s_1}{x} \bout{a}{\abs{z}{\binp{z}{x} (\appl{x}{m})}} \newsp{s_2}{\bout{\dual{s_2}}{\abs{(x_a, x_m, z)}{\\
+%&  \qquad \qquad \qquad \qquad \quad \quad  \appl{x}{(x_a, x_m, z)}}} \inact} 
+%\Par \appl{x}{(a,m, s_2)}} \\
+%& \hby{\tau}  \bout{a}{\abs{z}{\binp{z}{x} (\appl{x}{m})}} \newsp{s_2}{\bout{\dual{s_2}}{V} \inact \Par \binp{s_2}{x} \bout{a}{\abs{z}{\binp{z}{x} (\appl{x}{m})}} \\
+%&  \qquad \qquad \quad \qquad \qquad \quad \newsp{s_3}{\bout{\dual{s_3}}{\abs{(x_a, x_m, z)}{\appl{x}{(x_a, x_m, z)}}} \inact} \Par \appl{x}{(a,m, s_3)}} \\
+%& \scong_{\alpha}  \bout{a}{\abs{z}{\binp{z}{x} (\appl{x}{m})}} \newsp{s_1}{\bout{\dual{s_1}}{V} \inact \Par \binp{s_1}{x} \bout{a}{\abs{z}{\binp{z}{x} (\appl{x}{m})}} \\
+%&  \qquad \qquad \qquad \qquad \quad \quad \newsp{s_2}{\bout{\dual{s_2}}{\abs{(x_a, x_m, z)}{\appl{x}{(x_a, x_m, z)}}} \inact} \Par \appl{x}{(a,m, s_2)}} \\
+%& \scong  
+%		\bout{a}{\abs{z}{\binp{z}{x} (\appl{x}{m})}} \pmapp{\recp{X}{\bout{a}{m} \varp{X}}}{1}{f} \hby{\ell} 
+%		\pmapp{\recp{X}{\bout{a}{m} \varp{X}}}{1}{f}.
+%\end{align*}
+%\end{example}
 
 
 \begin{example}[Encoding a hotel booking client]
+\label{ex:hotel}
 The \HOp process $\Client_2$ (cf. \figref{f:hotel}) is one possible implementation for the 
 hotel booking scenario described in 
 \secref{ss:hotel}. Its encoding in \HO is as follows:
@@ -2863,7 +2868,10 @@ hotel booking scenario described in
 \\
  & = \newsp{h}{\bout{s_1}{\abs{x}{\pmap{Q_1 \subst{h}{y}}{1}_f}} \bout{s_2}{\abs{x}{\pmap{Q_2 \subst{\dual{h}}{y}}{1}_f} }\inact}
 \end{align*}
-where $\pmap{Q_1}{1}_f$ and $\pmap{Q_2}{1}_f$ are as follows:
+where $\pmap{Q_1}{1}_f$ and $\pmap{Q_2}{1}_f$ are given in \figref{ex:hotel}.
+\end{example}
+
+\begin{figure}[!t]
 \begin{align*}
  \pmap{Q_1}{1}_f & = \pmap{\bout{x}{\rtype} \binp{x}{\Quotev_1} \bout{y}{\Quotev_1} \binp{y}{\Quotev_2} R_x}{1}_f
  \\
@@ -2894,19 +2902,24 @@ with
 \\
  & =  \If\ \Quotev_1 \leq \Quotev_2 \, \Then  (\bsel{x}{\accept} \bout{x}{ \abs{z}{\,\binp{z}{x} (\appl{x}{\creditc})} }  \inact \  \Else \ \bsel{x}{\reject} \inact)
 \end{align*}
-\end{example}
+\caption{Encodings of the hotel booking clients (Example~\ref{fig:hotel}). \label{ex:hotel}}
+\label{fig:hotel}
+\end{figure}
+
 
 We now describe the properties of the encoding. 
-{Directly from \figref{f:enc:hopi_to_ho} we may state:
+We start with 
+type preservation  and type soundness:
 
-\begin{proposition}[\HOp into \HO: Type Preservation]
+\begin{proposition}[\HOp into \HO: Type Preservation and Type Soundness]
 \label{prop:typepres_HOp_to_HO}
 The encoding from $\tyl{L}_{\HOp}$ into $\tyl{L}_{\HO}$ (cf.~\defref{d:enc:hopitoho})
-is type preserving.
+is type preserving (cf.~\defref{def:tp}) and type sound (cf.~\defref{def:ep}(1)).
 \end{proposition}}
 
 \begin{proof}
-By induction on the inference of $\Gamma; \emptyset; \Delta \proves P \hastype \Proc$.
+Type preservation follows directly from \figref{f:enc:hopi_to_ho}.
+Type soundness is shown by induction on the inference of $\Gamma; \emptyset; \Delta \proves P \hastype \Proc$.
 See \propref{app:prop:typepres_HOp_to_HO} in \appref{app:enc_HOp_to_HO}.
 \end{proof}
 
@@ -3222,16 +3235,18 @@ where $\pmap{ Q_1}{2} =  Q_1$ and $\pmap{Q_2}{2} = Q_2$ for they do not involve 
 
 \end{example}
 
-We describe key properties of this encoding. First, type preservation and operational correspondence, which requires a mapping on action labels.
+We describe key properties of this encoding. First, type preservation, type soundness, and operational correspondence, which requires a mapping on action labels.
 
-\begin{proposition}[\HOp into \sessp: Type Preservation]
+\begin{proposition}[\HOp into \sessp: Type Preservation and Type Soundness]
 \label{prop:typepres_HOp_to_p}
 The encoding from $\tyl{L}_{\HOp}$ into $\tyl{L}_{\sessp}$ (cf.~\defref{d:enc:hopitopi})
-is type preserving.
+%is type preserving.
+is type preserving (cf.~\defref{def:tp}) and type sound (cf.~\defref{def:ep}(1)).
 \end{proposition}
 
 \begin{proof}
-	By induction on the inference $\Gamma; \emptyset; \Delta \proves P \hastype \Proc$.
+Type preservation follows directly from \figref{f:enc:ho_to_sessp}.
+Type soundness is proven	by induction on the inference $\Gamma; \emptyset; \Delta \proves P \hastype \Proc$.
 	See \propref{app:prop:typepres_HOp_to_p} in 
 	\appref{app:enc:HOp_to_sessp}.
 	 %\qed
@@ -4260,14 +4275,16 @@ We translate the simple process from \exref{ex:hopp}, underlining the parts of t
 \end{example}
 This typed encoding satisfies the following properties:
 {
-\begin{proposition}[\HOpp into \HOp: Type Preservation]
+\begin{proposition}[\HOpp into \HOp: Type Preservation and Type Soundness]
 \label{prop:typepres_HOpp_to_HOp}
 The encoding from $\tyl{L}_{\HOpp}$ into $\tyl{L}_{\HOp}$ (cf. \figref{f:enc:hopip_to_hopi})
-is type preserving.
+%is type preserving.
+is type preserving (cf.~\defref{def:tp}) and type sound (cf.~\defref{def:ep}(1)).
 \end{proposition}}
 
 \begin{proof}
-	By induction on the inference of 
+Type preservation follows directly from \figref{f:enc:hopip_to_hopi}.
+Type soundness is shown by  induction on the inference of 
 	$\Gamma; \emptyset; \Delta \proves P \hastype \Proc$.
 	See \propref{app:prop:typepres_HOpp_to_HOp} in \appref{app:HOpp_to_HOp}.
 	 %\qed
@@ -4562,15 +4579,17 @@ The encoding satisfies the following properties:
 %HERE WE NEED TO ADD AN EXCERPT OF \propref{app:prop:op_corr_pHOp_to_HOp}, BUT WE NEED TO FIX MACROS FIRST.
 
 {
-\begin{proposition}[\PHOp into \HOp: Type Preservation]
+\begin{proposition}[\PHOp into \HOp: Type Preservation and Type Soundness]
 \label{prop:typepres_pHOp_to_HOp}
 The encoding from
 		$\tyl{L}_{\PHOp}$ into $\tyl{L}_{\HOp}$ (cf. \figref{f:enc:poltomon})
-is type preserving.
+%is type preserving.
+is type preserving (cf.~\defref{def:tp}) and type sound (cf.~\defref{def:ep}(1)).
 \end{proposition}}
 
 \begin{proof}
-	By induction on the inference $\Gamma; \emptyset; \Delta \proves P \hastype \Proc$.
+Type preservation follows directly from \figref{f:enc:poltomon}.
+Type soundness is shown by  induction on the inference $\Gamma; \emptyset; \Delta \proves P \hastype \Proc$.
 	See \propref{app:prop:typepres_pHOp_to_HOp} in \appref{app:pHOp_to_HOp}.
 	 %\qed
 	\end{proof}
