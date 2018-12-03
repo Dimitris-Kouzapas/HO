@@ -1217,7 +1217,7 @@ are balanced  and \emph{confluent}:
 
 %\noi Next we define  {\em barbs}with respect to types. 
 %\noi 
-As usual, a \emph{barb} $\barb{n}$ is an observable on an output prefix with subject $n$~\cite{MiSa92}.
+A \emph{barb} $\barb{n}$ is an observable on an output or selection prefix with subject $n$~\cite{MiSa92}.
 Notice that observing output barbs is enough to (indirectly) observe input actions.
 A \emph{weak barb} $\Barb{n}$ is a barb after zero or more reduction steps.
 Typed barbs $\barb{n}$ (resp.\ $\Barb{n}$)
@@ -1230,7 +1230,9 @@ in the session environment $\Delta$:
 	Let $P$ be a closed process. We define:
 	\begin{enumerate}[1.]
 		\item	
-		$P \barb{n}$ if $P \scong \newsp{\tilde{m}}{\bout{n}{V} P_2 \Par P_3}, n \notin \tilde{m}$. %; $P \Barb{n}$ if $P \red^* \barb{n}$.
+		$P \barb{n}$ if $P \scong \newsp{\tilde{m}}{\bout{n}{V} P_2 \Par P_3}$
+		or $P \scong \newsp{\tilde{m}}{\bsel{n}{l} P_2 \Par P_3}$, 
+		with $n \notin \tilde{m}$. %; $P \Barb{n}$ if $P \red^* \barb{n}$.
 
 		\item	$\Gamma; \Delta \proves P \barb{n}$ if
 			$\Gamma; \emptyset; \Delta \proves P \hastype \Proc$ with $P \barb{n}$ and $\dual{n} \notin \dom{\Delta}$.
@@ -1736,7 +1738,7 @@ We have the following determinacy property:
 				If $P$ is an $\HOp^{-\mathsf{sh}}$ process, and 
 %				Assume $\Gamma; \emptyset; \Delta \proves P \hastype \Proc$. Then 
 				$P \red^\ast P'$ then 
-				$\Gamma; \Delta \proves P \cong \Delta'\proves P'$, with $\Delta \red^\ast \Delta'$. 
+				$\Gamma; \Delta \proves P \hwb \Delta'\proves P'$, with $\Delta \red^\ast \Delta'$. 
 	\end{enumerate}
 \end{lemma}
 
@@ -3208,7 +3210,7 @@ We first encode $\Client_1$ in \sessp is as follows:
 		 & \qquad\qquad \qquad \qquad (\bsel{\dual{h_1}}{\accept} \bsel{\dual{h_2}}{\reject} \inact \ \Else \ \bsel{\dual{h_1}}{\reject} \bsel{\dual{h_2}}{\accept} \inact )
 		}
 		\\
-		& =  \newspb{h_1, h_2}{\newsp{a_1}{\bout{s_1}{a_1} \newsp{a_2}{\bout{s_1}{a_2} 
+		& =  \newspb{h_1, h_2}{\newsp{a_1}{\bout{s_1}{a_1} \newsp{a_2}{\bout{s_2}{a_2} 
 		\\
 		&\qquad \qquad  (\inact \Par \binp{a_2}{y} \binp{y}{x} \pmap{P_{xy} \subst{h_2}{y}}{2})} \Par \binp{a_1}{y} \binp{y}{x} \pmap{P_{xy} \subst{h_1}{y}}{2}} \Par  \\
 		 & 
@@ -3226,7 +3228,7 @@ Similarly, the encoding of $\Client_2$ is as follows:
  \newsp{a_1}{\bout{s_1}{a_1} (\pmap{\bout{s_2}{\abs{x}{Q_2 \subst{\dual{h}}{y}}} \inact}{2} \Par \binp{a_1}{y} \binp{y}{x} \pmap{Q_1 \subst{h}{y}}{2})\,}}
 \\
  & = \newspb{h}{
- \newsp{a_1}{\bout{s_1}{a_1}\newsp{a_2}{\bout{s_1}{a_2}\inact \Par 
+ \newsp{a_1}{\bout{s_1}{a_1}\newsp{a_2}{\bout{s_2}{a_2}\inact \Par 
  \\
 & \qquad \qquad \binp{a_2}{y} \binp{y}{x} \pmap{Q_2 \subst{\dual{h}}{y}}{2}} \Par 
    \binp{a_1}{y} \binp{y}{x} \pmap{Q_1 \subst{h}{y}}{2}}}
@@ -3494,42 +3496,34 @@ We now encode $P_1$ into \HO and $P_2$ into \sessp and contrast the results.
 First, by considering the encoding of $P_1$ into \HO  (following mapping $\pmap{\cdot}{1}_f$ in \figref{f:enc:hopi_to_ho})
 we obtain:
 \begin{eqnarray*}
-\map{P_1}^{1}_f & = &  	\bout{s}{\abs{z}{\binp{z}{y} \appl{y}{a}}} \inact \Par \\
-& & \quad  \binp{\dual{s}}{x} \newsp{t}{\appl{x}{t} \Par \bout{\dual{t}}{\abs{x}{(\bout{x}{\abs{z}{\binp{z}{y} \appl{y}{s_1}}} \inact \Par \dots \Par \bout{x}{\abs{z}{\binp{z}{y} \appl{y}{s_n}}} \inact)}} \inact}\\
+\map{P_1}^{1}_f & = &  	\bout{s}{\abs{z}{\binp{z}{x} \appl{x}{a}}} \inact \Par \\
+& &  \quad \binp{\dual{s}}{y} \newsp{s_0}{\appl{y}{s_0} \Par \bbout{\dual{s_0}}{\abs{x}{(\bout{x}{\abs{z}{\binp{z}{x_1} \appl{x_1}{s_1}}} \inact \Par \dots \Par \bout{x}{\abs{z}{\binp{z}{x_n} \appl{x_n}{s_n}}} \inact)}} \inact}\\
 	& \hby{\stau} \hby{\btau} & 
-%	\newsp{t}{\appl{(\abs{z}{\binp{z}{y} \appl{y}{a}})}{t} \Par \bout{\dual{t}}{\abs{x}{(\bout{x}{\abs{z}{\binp{z}{y} \appl{y}{s_1}}} \inact \Par \dots \Par \bout{x}{\abs{z}{\binp{z}{y} \appl{y}{s_n}}} \inact)}} \inact}\\
-%	& \hby{\btau} & 
-	\newsp{t}{\binp{t}{y} \appl{y}{a} \Par \bout{\dual{t}}{\abs{x}{(\bout{x}{\abs{z}{\binp{z}{y} \appl{y}{s_1}}} \inact \Par \dots \Par \bout{x}{\abs{z}{\binp{z}{y} \appl{y}{s_n}}} \inact)}} \inact}\\
+	\newsp{s_0}{\binp{s_0}{x} \appl{x}{a} \Par \bbout{\dual{s_0}}{\abs{x}{(\bout{x}{\abs{z}{\binp{z}{x_1} \appl{x_1}{s_1}}} \inact \Par \dots \Par \bout{x}{\abs{z}{\binp{z}{x_n} \appl{x_n}{s_n}}} \inact)}} \inact}\\
 	& \hby{\stau}\hby{\btau}  & 
-%	\appl{\abs{x}{(\bout{x}{\abs{z}{\binp{z}{y} \appl{y}{s_1}}} \inact \Par \dots \Par \bout{x}{\abs{z}{\binp{z}{y} \appl{y}{s_n}}} \inact)}}{a}
-%	\\
-%	& \hby{\btau} & 
-	\bout{a}{\abs{z}{\binp{z}{y} \appl{y}{s_1}}} \inact \Par \dots \Par \bout{a}{\abs{z}{\binp{z}{y} \appl{y}{s_n}}} \inact
+	\bout{a}{\abs{z}{\binp{z}{x_1} \appl{x_1}{s_1}}} \inact \Par \dots \Par \bout{a}{\abs{z}{\binp{z}{x_n} \appl{x_n}{s_n}}} \inact
 \end{eqnarray*}
 Now, we encode $P_2$ into \sessp (following mapping $\pmap{\cdot}{2}$ in~\figref{f:enc:ho_to_sessp}):
 \begin{eqnarray*}
-\pmap{P_2}{2} & = & 	\newsp{b}{\bout{s}{b} \inact \Par \repl \binp{b}{y} \binp{y}{x} \pmap{R}{2}} \Par \\
-& & \qquad \qquad \binp{\dual{s}}{x} \big(\newsp{s_0}{\bout{x}{s_0} \bout{\dual{s_0}}{s_1} \inact} \Par \dots \Par \newsp{s_0}{\bout{x}{s_0} \bout{\dual{s_0}}{s_n}\inact}\big)
+\pmap{P_2}{2} & = & 	\newsp{a}{\bout{s}{a} (\inact \Par \repl \binp{a}{y} \binp{y}{x} \pmap{R}{2})} \Par \\
+& & \quad \binp{\dual{s}}{x} \big(\newsp{s_0}{\bout{x}{s_0} \bout{\dual{s_0}}{s_1} \inact} \Par \dots \Par \newsp{s_0}{\bout{x}{s_0} \bout{\dual{s_0}}{s_n}\inact}\big)
 	\\
 	& \hby{\stau} \equiv & 
-	\newsp{b}{\repl \binp{b}{y} \binp{y}{x} P \Par \newsp{s_0}{\bout{b}{s_0} \bout{\dual{s_0}}{s_1} \inact} \Par \dots \Par \newsp{s_0}{\bout{b}{s_0} \bout{\dual{s_0}}{s_n} \inact}}
+	\newsp{a}{\repl \binp{a}{y} \binp{y}{x} \pmap{R}{2} \Par \newsp{s_0}{\bout{a}{s_0} \bout{\dual{s_0}}{s_1} \inact} \Par \dots \Par \newsp{s_0}{\bout{a}{s_0} \bout{\dual{s_0}}{s_n} \inact}}
 	\\
 	& \hby{\stau}  \hby{\stau}   & 
-%	\newsp{b}{\repl \binp{b}{y} \binp{y}{x} P \Par \newsp{s}{\binp{s}{x} P \Par \bout{\dual{s}}{s_1} \inact} \Par \dots \Par \newsp{s}{\bout{b}{s} \bout{\dual{s}}{s_n} \inact}}
-%	\\
-%	& \hby{\stau} & 
-	\newsp{b}{\repl \binp{b}{y} \binp{y}{x} \pmap{R}{2} \Par \pmap{R}{2}\subst{s_1}{x} \Par 
+	\newsp{a}{\repl \binp{a}{y} \binp{y}{x} \pmap{R}{2} \Par \pmap{R}{2}\subst{s_1}{x} \Par 
 	\\
-	&  & \qquad \qquad \newsp{s_0}{\bout{b}{s_0} \bout{\dual{s_0}}{s_2} \inact} \Par \dots \Par \newsp{s_0}{\bout{b}{s_0} \bout{\dual{s_0}}{s_n} \inact}}
+	&  & \qquad \qquad \newsp{s_0}{\bout{a}{s_0} \bout{\dual{s_0}}{s_2} \inact} \Par \dots \Par \newsp{s_0}{\bout{a}{s_0} \bout{\dual{s_0}}{s_n} \inact}}
 	\\
 	& \Hby{}_{2*(n - 1)} & 
-	\newsp{b}{\repl \binp{b}{y} \binp{y}{x} \pmap{R}{2} \Par \pmap{R}{2}\subst{s_1}{x} \Par \pmap{R}{2}\subst{s_2}{x} \Par \dots \Par \pmap{R}{2}\subst{s_n}{x}}
+	\newsp{a}{\repl \binp{a}{y} \binp{y}{x} \pmap{R}{2} \Par \pmap{R}{2}\subst{s_1}{x} \Par \pmap{R}{2}\subst{s_2}{x} \Par \dots \Par \pmap{R}{2}\subst{s_n}{x}}
 %	\red
 %	\appl{V}{s_1} \Par \dots \Par \appl{V}{s_n}
 \end{eqnarray*}
 %\noi 
 Clearly, encoding $P_1$ into \HO is more economical than 
-encoding $P_2$ into \sessp. Not only moving to a pure higher-order setting requires less reduction steps than in the first-order concurrency of \sessp; in the presence of shared names, moving to a first-order setting brings the need of setting up and handling replicated processes which will eventually lead to garbage (stuck) processes (such as $\repl \binp{b}{y} \binp{y}{x} \pmap{R}{2}$ above). In contrast, the mechanism present in \HO works efficiently regardless of the linear or shared properties of the name that is ``packed'' into the abstraction. 
+encoding $P_2$ into \sessp. Not only moving to a pure higher-order setting requires less reduction steps than in the first-order concurrency of \sessp; in the presence of shared names, moving to a first-order setting brings the need of setting up and handling replicated processes which will eventually lead to garbage (stuck) processes (such as $\repl \binp{a}{y} \binp{y}{x} \pmap{R}{2}$ above). In contrast, the mechanism present in \HO works efficiently regardless of the linear or shared properties of the name that is ``packed'' into the abstraction. 
 The use of $\beta$-transitions guarantees local synchronizations, which are arguably more economical than point-to-point, session synchronizations.
 
 It is useful to move our comparison 
@@ -3553,11 +3547,10 @@ $Q_1$ is a \sessp process and $Q_2$ is an \HO processs.
 If we consider the encoding of $Q_1$ into \HO and of $Q_2$ into \sessp, respectively, 
 we obtain:
 \begin{eqnarray*}
-	\map{Q_1}_f^{1} & = & \bout{s'}{\abs{z}{\binp{z}{y} \appl{y}{s}}} \inact \Par \binp{\dual{s'}}{x} \newsp{t}{\appl{x}{t} \Par \bout{\dual{t}}{\abs{x}{\bout{x}{\abs{z}{\binp{z}{y} \appl{y}{a}}} \inact}} \inact}\\
+	\map{Q_1}_f^{1} & = & \bout{s'}{\abs{z}{\binp{z}{x} \appl{x}{s}}} \inact \Par 
+	\binp{\dual{s'}}{y} \newsp{s_0}{\appl{y}{s_0} \Par \bbout{\dual{s_0}}{\abs{x}{\bout{x}{\abs{z}{\binp{z}{y} \appl{y}{a}}} \inact}} \inact}\\
 	& \hby{\stau} \hby{\btau}& 
-%	\newsp{t}{\appl{(\abs{z}{\binp{z}{y} \appl{y}{s}})}{t} \Par \bout{\dual{t}}{\abs{x}{\bout{x}{\abs{z}{\binp{z}{y} \appl{y}{a}}} \inact)}} \inact}\\
-%	& \hby{\btau} & 
-	\newsp{t}{\binp{t}{y} \appl{y}{s} \Par \bout{\dual{t}}{\abs{x}{\bout{x}{\abs{z}{\binp{z}{y} \appl{y}{a}}} \inact}} \inact}\\
+	\newsp{s_0}{\binp{s_0}{x} \appl{x}{s} \Par \bbout{\dual{s_0}}{\abs{x}{\bout{x}{\abs{z}{\binp{z}{y} \appl{y}{a}}} \inact}} \inact}\\
 	& \hby{\stau} & 
 	\appl{(\abs{x}{\bout{x}{\abs{z}{\binp{z}{y} \appl{y}{a}}} \inact})}{s}
 	\\
@@ -3565,13 +3558,10 @@ we obtain:
 	\bout{s}{\abs{z}{\binp{z}{y} \appl{y}{a}}} \inact \\
 %\end{eqnarray*}
 %\begin{eqnarray*}
-	\pmap{Q_2}{2} & = & \newsp{t}{\bout{s}{t} \inact \Par \binp{\dual{t}}{y} \binp{y}{x} \pmap{R}{2}} \Par \binp{\dual{s}}{x} \newsp{s}{\bout{x}{s} \bout{\dual{s}}{a} \inact}
+	\pmap{Q_2}{2} & = & \newsp{a_1}{\bout{s}{a_1} (\inact \Par \binp{\dual{a_1}}{y} \binp{y}{x} \pmap{R}{2})} \Par \binp{\dual{s}}{x} \newsp{s_0}{\bout{x}{s_0} \bout{\dual{s_0}}{a} \inact}
 	\\
 	& \hby{\stau} \hby{\stau} & 
-%	\newsp{t}{\binp{\dual{t}}{y} \binp{y}{x} P \Par \newsp{s}{\bout{t}{s} \bout{\dual{s}}{a} \inact}}
-%	\\
-%	& \hby{\stau} & 
-	\newsp{s}{\binp{s}{x} \pmap{R}{2} \Par \bout{\dual{s}}{a} \inact}
+	\newsp{s_0}{\binp{s_0}{x} \pmap{R}{2} \Par \bout{\dual{s_0}}{a} \inact}
 	\\
 	& \hby{\stau} &
 	\pmap{R}{2}\subst{a}{x}
@@ -3661,15 +3651,15 @@ Recall that a labeled operational correspondence for  $\pmap{\cdot}{1}$  has bee
 already 
 stated in 
 \propref{prop:op_corr_HOp_to_HO}.
-The analog of \propref{prop:op_corr_HOp_to_HO} does not hold for the encoding  $\pmap{\cdot}{1}$  of \HOp into \sessp.
+The analog of \propref{prop:op_corr_HOp_to_HO} does not hold for the encoding  $\pmap{\cdot}{2}$  of \HOp into \sessp.
 Consider the \HOp process:
 \[
 	\Gamma; \es; \Delta \proves \bout{s}{\abs{x}{P}} \inact \hastype \Proc \hby{\bactout{s}{\abs{x} P}} \es \proves \inact \not \hby{}
 \]
 with $\abs{x}{P}$ being a linear value.
 We translate it into a \sessp process:
-\[\tmap{\Gamma}{2}; \es; \tmap{\Delta}{2} \proves \newsp{a}{\bout{s}{a} \inact \Par \binp{a}{y} \binp{y}{x} P} \hastype \Proc
-	 \hby{\bactout{s}{a}} \Delta' \proves \binp{a}{y} \binp{y}{x} P \hastype \Proc
+\[\tmap{\Gamma}{2}; \es; \tmap{\Delta}{2} \proves \newsp{a}{\bout{s}{a} (\inact \Par \binp{a}{y} \binp{y}{x} \pmap{P}{2})}~ \hastype \Proc
+	 \hby{\bactout{s}{a}} \Delta' \proves \binp{a}{y} \binp{y}{x}  \pmap{P}{2} \hastype \Proc
 \hby{\bactinp{a}{V}} \dots
 \]
 The resulting processes have a mismatch both in the typing
@@ -3931,14 +3921,14 @@ using linear names. % (see \appref{app:neg} for details of the proof).
 	% = 
 	% \map{\breq{a}{s} \inact} \Par \map{\bacc{a}{x} \bsel{n}{l_1} \inact} \Par \map{\bacc{a}{x} \bsel{m}{l_2}}$.
 	By our assumption of operational completeness 
-	(\defref{def:ep}-2(a)), 
+	(\defref{def:ep}-3(a)), 
 	from \eqref{eq:nn3} with \eqref{eq:nn4}
 	we infer that
 	there exist $\HOp^{\minussh}$ processes $S_1$ and $S_2$ such that:
 	%we have both:
 	\begin{eqnarray}
-		& & \horel{\mapt{\Gamma}}{\mapt{\Delta}}{\map{P}}{\Hby{\stau}}{\mapt{\Delta'}}{S_1 \WB \map{P_1}} \label{eq:n1} \\
-		& & \horel{\mapt{\Gamma}}{\mapt{\Delta}}{\map{P}}{\Hby{\stau}}{\mapt{\Delta'}}{S_2 \WB \map{P_2}} \label{eq:n2}
+		& & \horel{\mapt{\Gamma}}{\mapt{\Delta}}{\map{P}}{\Hby{\stau}}{\mapt{\Delta'}}{S_1 \hwb \map{P_1}} \label{eq:n1} \\
+		& & \horel{\mapt{\Gamma}}{\mapt{\Delta}}{\map{P}}{\Hby{\stau}}{\mapt{\Delta'}}{S_2 \hwb \map{P_2}} \label{eq:n2}
 		%\map{P} & \Hby{} &  S_1 \WB \map{P_1} \\
 		%s\map{P} & \Hby{} & S_2 \WB \map{P_2}
 	\end{eqnarray}
@@ -3965,15 +3955,15 @@ using linear names. % (see \appref{app:neg} for details of the proof).
 	That is, $S_1$ and $\map{P_1}$ 
 	(resp. $S_2$ and $\map{P_2}$)
 	have the same barbs.
-	Now, by $\tau$-inertness (\propref{lem:tau_inert}), we have both 
+	Now, by $\tau$-inertness (\lemref{lem:tau_inert}), we have both 
 	\begin{eqnarray}
-		& & \horel{\mapt{\Gamma}}{\mapt{\Delta'}}{S_1}{\WB}{\mapt{\Delta}}{\map{P}} \label{eq:n7} \\
-		& & \horel{\mapt{\Gamma}}{\mapt{\Delta'}}{S_2}{\WB}{\mapt{\Delta}}{\map{P}} \label{eq:n8}
+		& & \horel{\mapt{\Gamma}}{\mapt{\Delta'}}{S_1}{\hwb}{\mapt{\Delta}}{\map{P}} \label{eq:n7} \\
+		& & \horel{\mapt{\Gamma}}{\mapt{\Delta'}}{S_2}{\hwb}{\mapt{\Delta}}{\map{P}} \label{eq:n8}
 	\end{eqnarray}
-	Combining~\eqref{eq:n7} with~\eqref{eq:n8}, by transitivity of $\WB$,
+	Combining~\eqref{eq:n7} with~\eqref{eq:n8}, by transitivity of $\hwb$,
 	we infer
 	\begin{equation}
-		\horel{\mapt{\Gamma}}{\mapt{\Delta'}}{S_1}{\WB}{\mapt{\Delta'}}{S_2} \label{eq:n9}
+		\horel{\mapt{\Gamma}}{\mapt{\Delta'}}{S_1}{\hwb}{\mapt{\Delta'}}{S_2} \label{eq:n9}
 	\end{equation}
 	In turn, from~\eqref{eq:n9}
 	we infer that 
