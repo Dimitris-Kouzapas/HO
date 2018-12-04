@@ -1352,9 +1352,14 @@ similarly, $\bactinp{s}{n}$ is an action label for \sessp but not for \HO.
 %\end{document}
 
 \paragraph{A Typed Labelled Transition System}
-\newjb{Given a label $\ell$, % (a visible action or $\tau$),
+A typed transition requires type judgements with an empty $\Lambda$, i.e., an empty environment 
+for linear higher-order types.
+%Notice that for open process terms (i.e., with free variables),  we can always apply Rule~$\trule{EProm}$ (cf. \figref{fig:typerulesmy}) and obtain an empty $\Lambda$. 
+Indeed, we will be working with closed processes, i.e., processes without free  variables.
+Since $\Lambda$ is empty, 
+\newjb{ % (a visible action or $\tau$),
 we write $\Gamma; \Delta \proves P \hby{\ell} \Delta' \proves P'$ to denote 
-a (strong) transition. % in this LTS. 
+a (strong) transition with label $\ell$. % in this LTS. 
 Weak transitions are as expected: we write $\Hby{}$ for the reflexive,
 transitive closure of $\hby{\tau}$,
 $\Hby{\ell}$ for %transitions
@@ -4000,11 +4005,12 @@ in $\tyl{L}_{\CAL_2^{-\mathsf{sh}}}$.
 \begin{proof}
 Part (a) is immediate from~\thmref{t:negative}.
 Part (b) follows from the definitions of the 
-typed encodings of \HOp into \HO and into \sessp
-	(cf. \defref{d:enc:hopitoho} and~\ref{d:enc:hopitopi}) 
-	and 
+typed encodings of \HOp into \HO (cf.~\defref{d:enc:hopitoho}) and of 
+\HO into \sessp
+	(cf.~\defref{d:enc:hopitopi}), which work uniformly for linear and shared names, 
+	as well as 
 	from the preciseness results for such encodings
-	(cf. \propref{f:enc:hopitoho} and~\ref{f:enc:hotopi}).
+	(cf. \propref{f:enc:hopitoho} and~\propref{f:enc:hotopi}).
 \end{proof}
 }
 
@@ -4501,9 +4507,10 @@ and
 The calculus  
 $\PHOp$ 
 extends $\HOp$ 
-with polyadicity.
-Thus, $\PHOp$  enables the exchange of tuples of names $\widetilde{n}$ (with fixed length $k \geq 1$) in both session communication (but not along shared names) and as arguments 
+with polyadicity so as to 
+enable the exchange of tuples of names $\widetilde{n}$ (with fixed length $k \geq 1$) in both session communication  and as arguments 
 to function applications.
+ Communication along shared names remains monadic.
 As such, the syntax of
 \figref{fig:syntax}  
 is modified by considering  
@@ -4528,9 +4535,8 @@ The type syntax in \figref{f:types} is extended accordingly, as follows:
 \end{align*}
 As in \cite{tlca07,MostrousY15},
 the type system for \PHOp 
-disallows a shared name that carries polyadic
+disallows polyadicity along
 shared names.
-
 We consider the following typed calculus
  (cf.~\defref{d:tcalculus}):
 	$$\tyl{L}_{\PHOp}=\calc{\PHOp}{{\cal{T}}_5}{\hby{\ell}}{\hwb}{\proves}$$
@@ -4585,7 +4591,9 @@ Type soundness is shown by  induction on the inference $\Gamma; \emptyset; \Delt
 	\end{proof}
 	
 In this case, the required mapping on actions 
-maps an action on $\mathcal{A}_{\PHOp}$ into a set of actions in $\mathcal{A}_{\HOp}$.
+maps an action on $\mathcal{A}_{\PHOp}$ into a 
+\emph{sequence} 
+of actions in $\mathcal{A}_{\HOp}$.
 This is a natural consequence of dividing a polyadic name communication or application into several
 independent (monadic) communications:
 
@@ -4594,33 +4602,39 @@ independent (monadic) communications:
 Given the typed encoding
 	$\enco{\pmap{\cdot}{4}, \tmap{\cdot}{4}}: \tyl{L}_{\PHOp} \to \tyl{L}_{\HOp}$ (cf. \defref{d:enc:phoptohop}), 
 	the mapping on actions 
-$\mapa{\cdot}^{4}: \mathcal{A}_{\PHOp} \to \mathcal{P}(\mathcal{A}_{\HOp})$
+%$\mapa{\cdot}^{4}: \mathcal{A}_{\PHOp} \to \mathcal{P}(\mathcal{A}_{\HOp})$
+$\mapa{\cdot}^{4}: \mathcal{A}_{\PHOp} \to  {\mathcal{A}_{\HOp}}^*$
 is defined as follows:
 	\begin{align*}
 		\mapa{\news{\tilde{m}} \bactout{n}{m_1,  m_2}}^4 
-		& \defeq \{\ell_1, \ell_2\} \quad
-		\textrm{ where 
-		$\begin{cases}
-			\ell_i = \news{m_i}\bactout{n}{m_i} \quad \text{if $m_i \in \tilde{m}$} 
+		& \defeq  \ell_1, \ell_2  \quad
+		\text{where} 
+		\begin{cases}
+			\ell_i = \news{m_i}\bactout{n}{m_i} & \text{if $m_i \in \tilde{m}$} 
 			\\
-			\ell_i = \bactout{n}{m_i} \quad \text{if $m_i \not\in \tilde{m}$}
-		\end{cases}$}
+			\ell_i = \bactout{n}{m_i} & \text{if $m_i \not\in \tilde{m}$}
+		\end{cases}
 		\\
 		\mapa{\news{\tilde{m}} \bactout{n}{\abs{x_1, x_2}{P}} }^4 
 		& \defeq
-		\{\news{\tilde{m}} \bactout{n}{\abs{z}\binp{z}{x_1} \binp{z}{x_2} \map{P}^{4}}\}
+		 \news{\tilde{m}} \bactout{n}{\abs{z}\binp{z}{x_1} \binp{z}{x_2} \map{P}^{4}} 
 		\\
-		\mapa{\btau}^4 & \defeq \{\btau, \stau,  \stau\}
+		\mapa{\tau}^{4}  & \defeq 
+		\begin{cases}
+		\btau, \stau,  \stau & \text{if $\tau = \btau$} 
 		\\
-		\mapa{\tau}^{4}  & \defeq \{\tau,\tau\}
+		\tau,\tau & \text{otherwise}
+		\end{cases}
 		\\
-		\mapa{\bactsel{n}{l}}^{4}  & \defeq \{\bactsel{n}{l}\}
-		\\
-		\mapa{\bactbra{n}{l}}^{4}  & \defeq \{\bactbra{n}{l}\}
+		\mapa{\bactsel{n}{l}}^{4}  & \defeq  \bactsel{n}{l} 
+				\\
+		\mapa{\bactbra{n}{l}}^{4}  & \defeq  \bactbra{n}{l}
 	\end{align*}
 \end{definition}
-\noi The above definition handles the dyadic case. Notice that we distinguish two kinds of internal actions: while  $\mapa{\tau}^{4}$ is associated to internal actions arising from the mapping of polyadic name synchronization, 
- $\mapa{\btau}^4$ results from the translation of function applications. We may now state operational correspondence:
+\noi The above definition handles the dyadic case. Notice that we distinguish two kinds of internal actions: 
+the first case above results from the translation of function applications; the second case 
+ is associated to internal actions arising from the mapping of polyadic name synchronization. 
+ We may now state operational correspondence:
 
 \begin{proposition}[Operational Correspondence. From \PHOp to \HOp]\myrm
 	\label{prop:op_corr_pHOp_to_HOp}
