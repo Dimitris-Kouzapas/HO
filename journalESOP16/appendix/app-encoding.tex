@@ -123,7 +123,7 @@ A precise encoding requires to prove three independent results:
 	We consider four interesting cases: 	
 	\begin{enumerate}[1.]
 		%%%% Output of (linear) channel
-		\item	Case $P = \bout{k}{n}P'$. There are two sub-cases.
+		\item	Case $P = \bout{k}{n}P'$. There are two sub-cases, depending on whether $n$ is a linear or a shared name.
 			In the first sub-case $n = k'$ (output of a linear channel). Then  
 			we have the following typing in the source language:
 			{
@@ -144,7 +144,7 @@ A precise encoding requires to prove three independent results:
 				\label{prop:sesspnr_to_HO_t1}
 				\tree{
 					\tree{
-					\tree{
+		%			\tree{
 						\tree{
 							\tree{
 								\tmap{\Gamma}{1} ; \set{x : \lhot{\tmap{S_1}{1}}} ; \emptyset \proves x  \hastype \lhot{\tmap{S_1}{1}}
@@ -154,10 +154,11 @@ A precise encoding requires to prove three independent results:
 								\tmap{\Gamma}{1} ; \set{x : \lhot{\tmap{S_1}{1}}} ; k' : \tmap{S_1}{1} \proves \appl{x}{k'} \hastype \Proc
 							}
 						}{
-							u\tmap{\Gamma}{1} ; \{x : \lhot{\tmap{S_1}{1}}\} ; k' : \tmap{S_1}{1} \cat z:\tinact \proves \appl{x}{k'} \hastype \Proc
-						}}{
-						\tmap{\Gamma}{1} \cat x : \lhot{\tmap{S_1}{1}} ; \emptyset ; k' : \tmap{S_1}{1} \cat z:\tinact \proves \appl{x}{k'} \hastype \Proc
+							\tmap{\Gamma}{1} ; \{x : \lhot{\tmap{S_1}{1}}\} ; k' : \tmap{S_1}{1} \cat z:\tinact \proves \appl{x}{k'} \hastype \Proc
 						}
+%						}{
+%						\tmap{\Gamma}{1} \cat x : \lhot{\tmap{S_1}{1}} ; \emptyset ; k' : \tmap{S_1}{1} \cat z:\tinact \proves \appl{x}{k'} \hastype \Proc
+%						}
 					}{
 						\tmap{\Gamma}{1} ; \emptyset; k' : \tmap{S_1}{1} \cat z:\btinp{\lhot{\tmap{S_1}{1}}}\tinact \proves \binp{z}{x} (\appl{x}{k'}) \hastype \Proc
 					}
@@ -182,7 +183,7 @@ A precise encoding requires to prove three independent results:
 			\[
 				\tree{
 					\Gamma \cat a:\chtype{S_1}; \emptyset; \Delta \cat k:S  \proves
-					P' \hastype \Proc \quad \Gamma \cat a:\chtype{S_1} ; \emptyset ; \emptyset \proves  a \hastype S_1
+					P' \hastype \Proc \quad \Gamma \cat a:\chtype{S_1} ; \emptyset ; \emptyset \proves  a \hastype \chtype{S_1}
 				}{
 					\Gamma \cat a:\chtype{S_1} ; \emptyset; \Delta  \cat k:\bbtout{\chtype{S_1}}S \proves  \bout{k}{a} P' \hastype \Proc
 				}
@@ -191,8 +192,8 @@ A precise encoding requires to prove three independent results:
 			The typing in the target language is derived similarly as in the first sub-case. \\
 	
 		%%%% Input of (linear) channel 
-		\item	Case $P = \binp{k}{x}Q$. We have two sub-cases, depending on the type of $x$.
-			In the first case, $x$ stands for a linear channel.
+		\item	Case $P = \binp{k}{x}Q$. We have two sub-cases, depending on the type of $x$ (linear or shared name).
+			In the first case, $x$ stands for a linear name.
 			Then we have the following typing in the source language:
 			{
 			\[
@@ -214,11 +215,11 @@ A precise encoding requires to prove three independent results:
 			\begin{eqnarray}
 				\label{prop:sesspnr_to_HO_t2}
 				\tree{
-					\tmap{\Gamma}{1}; \{X: U_1\};   \emptyset \proves X \hastype U_1
+					\tmap{\Gamma}{1}; \{x: U_1\};   \emptyset \proves x \hastype U_1
 					\qquad
-					\tmap{\Gamma}{1}; \emptyset;   \cat s: \btinp{\lhot{\tmap{S_1}{1}}}\tinact \ \proves s \, \hastype  \btinp{\lhot{\tmap{S_1}{1}}} \tinact 
+					\tmap{\Gamma}{1}; \emptyset;   s: \btinp{\lhot{\tmap{S_1}{1}}}\tinact \ \proves s \, \hastype  \btinp{\lhot{\tmap{S_1}{1}}} \tinact 
 				}{
-					\tmap{\Gamma}{1}; \{X: U_1\};   \cat s: \btinp{\lhot{\tmap{S_1}{1}}}\tinact \ \proves \appl{x}{s}  \hastype \Proc
+					\tmap{\Gamma}{1}; \{x: U_1\};    s: \btinp{\lhot{\tmap{S_1}{1}}}\tinact \ \proves \appl{x}{s}  \hastype \Proc
 				}
 			\end{eqnarray}
 %
@@ -232,7 +233,7 @@ A precise encoding requires to prove three independent results:
 					}
 					\quad 
 					\tree{
-						\tmap{\Gamma}{1}; \emptyset;  \tmap{\Delta}{1} \cat k:\tmap{S}{1}  x:\tmap{S_1}{1} \proves \pmapp{Q}{1}{f}   \hastype \Proc
+						\tmap{\Gamma}{1}; \emptyset;  \tmap{\Delta}{1} \cat k:\tmap{S}{1} \cat  x:\tmap{S_1}{1} \proves \pmapp{Q}{1}{f}   \hastype \Proc
 					}{
 						\tmap{\Gamma}{1}; \emptyset;  \tmap{\Delta}{1} \cat k:\tmap{S}{1}   \proves \abs{x} \pmapp{Q}{1}{f}   \hastype \lhot{\tmap{S_1}{1}}
 					}
@@ -245,7 +246,7 @@ A precise encoding requires to prove three independent results:
 				\label{prop:sesspnr_to_HO_t4}
 		 		\tree{
 					\begin{array}{cl}
-						\tmap{\Gamma}{1}; \{X: U_1\}; \cat s: \btinp{\lhot{\tmap{S_1}{1}}}\tinact \ \proves \appl{x}{s}  \hastype \Proc
+						\tmap{\Gamma}{1}; \{x: U_1\};   s: \btinp{\lhot{\tmap{S_1}{1}}}\tinact \ \proves \appl{x}{s}  \hastype \Proc
 						& \eqref{prop:sesspnr_to_HO_t2}
 						\\
 						\tmap{\Gamma}{1}; \emptyset; \tmap{\Delta}{1} \cat k:\tmap{S}{1} \cat \dual{s}: \btout{\lhot{\tmap{S_1}{1}}}\tinact \proves
@@ -253,7 +254,7 @@ A precise encoding requires to prove three independent results:
 						& \eqref{prop:sesspnr_to_HO_t3}
 					\end{array}
 				}{
-					\tmap{\Gamma}{1}; \{X: U_1\};  \tmap{\Delta}{1} \cat k:\tmap{S}{1} \cat s: \btinp{\lhot{\tmap{S_1}{1}}}\tinact \cat \dual{s}: \btout{\lhot{\tmap{S_1}{1}}}\tinact\proves \appl{x}{s} \Par \bbout{\dual{s}}{\abs{x}{\pmapp{Q}{1}{f}}} \inact  \hastype \Proc
+					\tmap{\Gamma}{1}; \{x: U_1\};  \tmap{\Delta}{1} \cat k:\tmap{S}{1} \cat s: \btinp{\lhot{\tmap{S_1}{1}}}\tinact \cat \dual{s}: \btout{\lhot{\tmap{S_1}{1}}}\tinact\proves \appl{x}{s} \Par \bbout{\dual{s}}{\abs{x}{\pmapp{Q}{1}{f}}} \inact  \hastype \Proc
 			}
 			\end{eqnarray}
 %
@@ -261,9 +262,9 @@ A precise encoding requires to prove three independent results:
 			\\
 			 \tree{
 				 \tree{
-					\tmap{\Gamma}{1}; \{X: U_1\};  \tmap{\Delta}{1} \cat k:\tmap{S}{1} \cat s: \btinp{\lhot{\tmap{S_1}{1}}}\tinact \cat \dual{s}: \btout{\lhot{\tmap{S_1}{1}}}\tinact\proves \appl{x}{s} \Par \bbout{\dual{s}}{\abs{x}{\pmapp{Q}{1}{f}}} \inact  \hastype \Proc \quad \eqref{prop:sesspnr_to_HO_t4}
+					\tmap{\Gamma}{1}; \{x: U_1\};  \tmap{\Delta}{1} \cat k:\tmap{S}{1} \cat s: \btinp{\lhot{\tmap{S_1}{1}}}\tinact \cat \dual{s}: \btout{\lhot{\tmap{S_1}{1}}}\tinact\proves \appl{x}{s} \Par \bbout{\dual{s}}{\abs{x}{\pmapp{Q}{1}{f}}} \inact  \hastype \Proc \quad \eqref{prop:sesspnr_to_HO_t4}
 				}{
-					\tmap{\Gamma}{1}; \{X: U_1\};  \tmap{\Delta}{1} \cat k:\tmap{S}{1} \proves \newsp{s}{\appl{x}{s} \Par \bbout{\dual{s}}{\abs{x}{\pmapp{Q}{1}{f}}} \inact}  \hastype \Proc
+					\tmap{\Gamma}{1}; \{x: U_1\};  \tmap{\Delta}{1} \cat k:\tmap{S}{1} \proves \newsp{s}{\appl{x}{s} \Par \bbout{\dual{s}}{\abs{x}{\pmapp{Q}{1}{f}}} \inact}  \hastype \Proc
 				}
 			}{
 				\tmap{\Gamma}{1}; \emptyset; \tmap{\Delta}{1}  \cat k:\btinp{U_1}\tmap{S}{1} \proves  \binp{k}{x} \newsp{s}{\appl{x}{s} \Par \bbout{\dual{s}}{\abs{x}{\pmapp{Q}{1}{f}}} \inact}  \hastype \Proc
@@ -700,7 +701,7 @@ By transition induction. We consider parts (1) and (2) separately:
 		%%%%%%%%%%%
 		%% Input
 		%%%%%%%%%%%
-	\item	Subcase 2(c): $P = \binp{n}{x} P'$ and $\ell_2 = \bactinp{n}{\abs{y}\binp{y}{x} (\appl{x}{m})}$.
+	\item	Subcase 2(b): $P = \binp{n}{x} P'$ and $\ell_2 = \bactinp{n}{\abs{y}\binp{y}{x} (\appl{x}{m})}$.
 		Then we have:
 %
 		\[
