@@ -208,8 +208,8 @@ A precise encoding requires to prove three independent results:
 			 $$
 			 \tmap{\Gamma}{1}; \emptyset;  \tmap{\Delta}{1} \cat k:\tmap{S}{1}  \cat x:\tmap{S_1}{1} \proves  \pmapp{Q}{1}{f}   \hastype \Proc
 			 $$
-			 Let us write $U_1$ to stand for $\lhot{\btinp{\lhot{\tmap{S_1}{1}}}\tinact}$.
-			 The corresponding typing in the target language is as follows:
+			 Let us write $U_1$ to stand for $\lhot{(\btinp{\lhot{\tmap{S_1}{1}}}\tinact)}$.
+			 The corresponding typing in the target language is as follows---we have three auxiliary derivations:
 			{\small
 %
 			\begin{eqnarray}
@@ -257,9 +257,11 @@ A precise encoding requires to prove three independent results:
 					\tmap{\Gamma}{1}; \{x: U_1\};  \tmap{\Delta}{1} \cat k:\tmap{S}{1} \cat s: \btinp{\lhot{\tmap{S_1}{1}}}\tinact \cat \dual{s}: \btout{\lhot{\tmap{S_1}{1}}}\tinact\proves \appl{x}{s} \Par \bbout{\dual{s}}{\abs{x}{\pmapp{Q}{1}{f}}} \inact  \hastype \Proc
 			}
 			\end{eqnarray}
+			}
 %
+Finally we have:
+{\small
 			\begin{eqnarray*}
-			\\
 			 \tree{
 				 \tree{
 					\tmap{\Gamma}{1}; \{x: U_1\};  \tmap{\Delta}{1} \cat k:\tmap{S}{1} \cat s: \btinp{\lhot{\tmap{S_1}{1}}}\tinact \cat \dual{s}: \btout{\lhot{\tmap{S_1}{1}}}\tinact\proves \appl{x}{s} \Par \bbout{\dual{s}}{\abs{x}{\pmapp{Q}{1}{f}}} \inact  \hastype \Proc \quad \eqref{prop:sesspnr_to_HO_t4}
@@ -281,58 +283,67 @@ A precise encoding requires to prove three independent results:
 			 \]
 			 The typing in the target language is derived similarly as in the first sub-case.	
 
+
+%%% RECURSIVE VARIABLE 
 		\item	Case $P_0 = \varp{X}$.
 			Then we have the following typing in the source language:
 %
 			\[
-				\Gamma \cat \varp{X}: \Delta ;\, \es ;\, \es \proves \varp{X} \hastype \Proc
+				\underbrace{\,\Gamma' \cat \varp{X}: \Delta\,}_{\Gamma} \,;\, \es \,;\, \Delta\proves \varp{X} \hastype \Proc
 			\]
+			Let $\Delta = n_1: S_1, \ldots, n_m: S_m$, with $\dom{\Delta} = \tilde{n}$. 
+			By \defref{d:enc:hopitoho}, we have that 
+			$$
+			 \tmap{\Gamma}{1} 
+			=
+\tmap{\Gamma' \cat \varp{X}:\{n_i:S_i\}_{1\leq i\leq m}}{1}  
+=  
+\tmap{\Gamma'}{1} \cat z_X:\shot{(\,\underbrace{\tmap{S_1}{1},\ldots,\tmap{S_m}{1}}_{\widetilde{T}},S^*)}
+$$
+where 
+$S^* = \trec{t}{\btinp{\shot{(\widetilde{T},\vart{t})}} \tinact}$,
+which is equivalent to 
+$\btinp{\shot{(\widetilde{T},S^*)}} \tinact$.
 %
-			Then the typing of $\pmapp{\varp{X}}{1}{f}$ is as follows,
-			assuming $f(\varp{X}) = \tilde{n}$ and $\tilde{x} = \vmap{\tilde{n}}$.
-			Also, we write $\Delta_{\tilde{n}}$ 
-			and $\Delta_{\tilde{x}}$ 
-			to stand for 
-			$n_1: S_1, \ldots, n_m: S_m$ and
-			$x_1: S_1, \ldots, x_m: S_m$, respectively. 
-			Below, we assume that $\Gamma = \Gamma' \cat X:\shot{\tilde{T}}$, 
-			where:
-			%$$\tilde{T} =  \trec{t}{\big(\tilde{S}, \btinp{\vart{t}}\tinact\big)}$$.
-			\[
-				\tilde{T} = \big(\tilde{S}, S^*\big) \qquad \quad
-				S^* = \bbtinp{A}\tinact \qquad \quad
-				A = \trec{t}{(\tilde{S}, \btinp{\vart{t}}\tinact)}
-			\]
-%
+By \figref{f:enc:hopi_to_ho}, 
+$$\pmapp{\varp{X}}{1}{f} = 
+\newsp{s}{\appl{z_X}{(\tilde{n}, s)} \Par \bout{\dual{s}}{z_X} \inact}$$ with $\tilde{n} = f(\rvar{X})$.
+We shall show that 
+$$
+	\tmap{\Gamma'}{1}  \cat z_X:\shot{(\widetilde{T},S^*)} ;\, \es ;\, \tmap{\Delta}{1}
+				\proves 
+				\pmapp{\varp{X}}{1}{f} \hastype \Proc
+$$
+We first have two auxiliary derivations:
 			\begin{eqnarray}
 				\label{prop:sessp_to_HO_t1}
 				\tree{
 					\tree{
 					}{
-						\Gamma ;\, \es ;\, \es \proves z_X \hastype \shot{\tilde{T}}
+						\tmap{\Gamma}{1} ;\, \es ;\, \es \proves z_X \hastype \shot{(\widetilde{T},S^*)}
 					}
-					\quad 
+					~~ 
 					\begin{array}{c}
-						\Gamma ;\, \es ;\, \{n_i: S_i \} \proves n_i \hastype S_i \\
-						\Gamma ;\, \es ;\, \{s: S^* \} \proves s\hastype S^*  \\
+						\tmap{\Gamma}{1} ;\, \es ;\, \{n_i: \tmap{S_i}{1} \} \proves n_i \hastype \tmap{S_i}{1} \\
+						\tmap{\Gamma}{1}  ;\, \es ;\, \{s: S^* \} \proves s~ \hastype \btinp{\shot{(\widetilde{T},S^*)}} \tinact \\
 					\end{array}
 				}{
-					\Gamma  ;\, \es ;\, \Delta_{\tilde{n}}, s:\btinp{\shot{\tilde{T}}}\tinact
+					\tmap{\Gamma}{1} ;\, \es ;\, \tmap{\Delta}{1} \cat s:\btinp{\shot{(\widetilde{T},S^*)}} \tinact
 					\proves  
 					\appl{z_X}{(\tilde{n}, s)} \hastype \Proc
 				} 
 			\end{eqnarray}
-%
+			and
 			\begin{eqnarray}
 				\label{prop:sessp_to_HO_t2}
 				\tree{
 					\tree{
-						\Gamma  ;\, \es ;\,   \es \proves \inact \hastype \Proc
+						\tmap{\Gamma}{1}   ;\, \es ;\,   \es \proves \inact \hastype \Proc
 					}{
-						\Gamma  ;\, \es ;\,   \dual{s}: \tinact \proves \inact \hastype \Proc
+						\tmap{\Gamma}{1}  ;\, \es ;\,   \dual{s}: \tinact \proves \inact \hastype \Proc
 					} 
 					\quad
-					\Gamma ;\, \es ;\, \es \proves z_X \hastype \shot{\tilde{T}}
+					\tmap{\Gamma}{1}  ;\, \es ;\, \es \proves z_X \hastype \shot{(\widetilde{T},S^*)}
 					%\quad 
 %					\tree{
 %						\tree{
@@ -352,42 +363,44 @@ A precise encoding requires to prove three independent results:
 %						 \abs{(\tilde{x},z)}\,\,{\appl{z_X}{( \tilde{x}, z)}} \hastype \shot{\tilde{T}}
 %					} 	
 				}{
-					\Gamma  ;\, \es ;\,   \dual{s}: \btout{\shot{\tilde{T}}}\tinact
+					\tmap{\Gamma}{1}   ;\, \es ;\,   \dual{s}: \btout{\shot{(\widetilde{T}, S^*)}}\tinact
 					\proves 
 					\bout{\dual{s}}{ z_X} \inact \hastype \Proc
 				}
 			\end{eqnarray}
-%
+We may now derive:
 			\[
 			\tree{
 				\tree{
-					\begin{array}{cc}
-						\Gamma  ;\, \es ;\, \Delta_{\tilde{n}}, s:\btinp{\shot{\tilde{T}}}\tinact
-						\proves  
-						\appl{z_X}{(\tilde{n}, s)} \hastype \Proc
+					\begin{array}{rclc}
+						\tmap{\Gamma}{1}  ;\, \es ;\, \tmap{\Delta}{1} \cat s:\btinp{\shot{(\widetilde{T},S^*)}} \tinact
+					& \proves  & 
+					\appl{z_X}{(\tilde{n}, s)} \hastype \Proc
 						& \eqref{prop:sessp_to_HO_t1}
 						\\ 
-						\Gamma  ;\, \es ;\,   \dual{s}: \btout{\shot{\tilde{T}}}\tinact
-						\proves 
-						\bout{\dual{s}}{ z_X} \inact \hastype \Proc
+						\tmap{\Gamma}{1}   ;\, \es ;\,   \dual{s}: \btout{\shot{(\widetilde{T}, S^*)}}\tinact
+					& \proves &
+					\bout{\dual{s}}{ z_X} \inact \hastype \Proc
 						& \eqref{prop:sessp_to_HO_t2}
 					\end{array}
 				}{
-					\Gamma  ;\, \es ;\, \Delta_{\tilde{n}}, s:\btinp{\shot{\tilde{T}}}\tinact, \, \dual{s}: \btout{\shot{\tilde{T}}}\tinact
+					\tmap{\Gamma}{1}  ;\, \es ;\, 
+					\tmap{\Delta}{1} \cat s:\btinp{\shot{(\widetilde{T},S^*)}} \tinact, \, 
+					\dual{s}: \btout{\shot{(\widetilde{T}, S^*)}}\tinact
 					\proves 
 					\appl{z_X}{(\tilde{n}, s)} 
 					\Par 
 					\bout{\dual{s}}{z_X} \inact \hastype \Proc
 				}
 			}{
-				\Gamma  ;\, \es ;\, \Delta_{\tilde{n}}
+				\tmap{\Gamma}{1}  ;\, \es ;\, \tmap{\Delta}{1}
 				\proves 
 				\newsp{s}{\appl{z_X}{(\tilde{n}, s)} \Par 
 				\bout{\dual{s}}{z_X} 
 				\inact} \hastype \Proc
 			}
 			\]
-%	
+%	RECURSION
 		\item	Case $P_0 = \recp{X}{P}$. Then we have the following typing in the source language:
 %
 			\[
@@ -397,31 +410,25 @@ A precise encoding requires to prove three independent results:
 					\Gamma  ;\, \es ;\,  \Delta \proves \recp{X}{P} \hastype \Proc
 				}
 			\]
-%	
-			Then we have the following typing in the target language ---we write $R$
+			
+			By \figref{f:enc:hopi_to_ho}, we have:
+$$\pmapp{\recp{X}{P}}{1}{f} = 
+\newsp{s}{\bbout{\dual{s}}{\abs{(\vmap{\tilde{n}}, y)} \,{\binp{y}{z_\X} \auxmapp{\pmapp{P}{1}{{f,\{\rvar{X}\to \tilde{n}\}}}}{{}}{\es}}} \inact 
+		 \Par  \binp{s}{z_\X} \pmapp{P}{1}{{f,\{\rvar{X}\to \tilde{n}\}}}}
+$$
+We shall show that 
+$$
+\tmap{\Gamma}{1};\, \es;\, \tmap{\Delta}{1} 
+				\proves \pmapp{\recp{X}{P}}{1}{f} \hastype \Proc
+$$
+Below we write $R$
 			to stand for $\pmapp{P}{1}{{f,\{\varp{X}\to \tilde{n}\}} }$
-			and $\tilde{x}$ to stand for $\vmap{\ofn{P}}$.
+			and $\tilde{x} = \vmap{\fn{P}}$ (cf. \defref{d:auxmap}).
+			Moreover, we write $\Delta_{\tilde{x}}$ to denote $\Delta$ after a renaming with names $\tilde{x}$.
 %
-			\begin{eqnarray}
-				\label{prop:sessp_to_HO_t4}
-				\tree{
-					\tree{
-						\tmap{\Gamma}{1}\cat z_X:\shot{\tilde{T}};\, \es;\, \tmap{\Delta_{\tilde{n}}}{1}
-						\proves
-						 R  \hastype \Proc
-					}{
-						\tmap{\Gamma}{1}\cat z_X:\shot{\tilde{T}};\, \es;\, \tmap{\Delta_{\tilde{n}}}{1}, s:\tinact 
-						\proves
-						 R  \hastype \Proc
-					}
-				}{
-					\tmap{\Gamma}{1};\, \es;\, \tmap{\Delta_{\tilde{n}}}{1}, s:\btinp{\shot{\tilde{T}}}\tinact 
-					\proves
-					\binp{s}{z_X} R  \hastype \Proc
-				}
-			\end{eqnarray}
-%
-			\begin{eqnarray}
+
+We have two auxiliary derivations:
+		\begin{eqnarray}
 				\label{prop:sessp_to_HO_t5}
 				\tree{
 					\tree{
@@ -437,54 +444,85 @@ A precise encoding requires to prove three independent results:
 					\tree{
 						\tree{
 							\tree{
-								\tmap{\Gamma}{1} \cat z_X: \shot{\tilde{T}};\, \es;\, \tmap{\Delta_{\tilde{x}}}{1}
+								\tmap{\Gamma}{1} \cat z_X: \shot{(\widetilde{T},S^*)};\, \es;\, \tmap{\Delta_{\tilde{x}}}{1}
 								\proves
 								{{\auxmapp{R}{{}}{\es}}}  \hastype \Proc
 							}{
-								\tmap{\Gamma}{1} \cat z_X: \shot{\tilde{T}};\, \es;\, \tmap{\Delta_{\tilde{x}}}{1},
+								\tmap{\Gamma}{1} \cat z_X: \shot{(\widetilde{T},S^*)};\, \es;\, \tmap{\Delta_{\tilde{x}}}{1}
+								\cat
 								y: \tinact
 								\proves
 								{{\auxmapp{R}{{}}{\es}}}  \hastype \Proc
 							}
 						}{
-							\tmap{\Gamma}{1};\, \es;\, \tmap{\Delta_{\tilde{x}}}{1}, \, y: \btinp{A}\tinact
+							\tmap{\Gamma}{1};\, \es;\, \tmap{\Delta_{\tilde{x}}}{1} \cat  y: \btinp{\shot{(\widetilde{T},S^*)}}\tinact
 							\proves
 							{{\binp{y}{z_X} \auxmapp{R}{{}}{\es}}}  \hastype \Proc
 						}
 					}{
 						\tmap{\Gamma}{1};\, \es;\, \es
 						\proves
-						{\abs{(\tilde{x}, y) } \,{\binp{y}{z_X} \auxmapp{R}{{}}{\es}}}  \hastype \shot{\tilde{T}}
+						{\abs{(\tilde{x}, y) } \,{\binp{y}{z_X} \auxmapp{R}{{}}{\es}}}  \hastype \shot{(\widetilde{T},S^*)}
 					}
 				}{
-					\tmap{\Gamma}{1};\, \es;\, \dual{s}:\btout{\shot{\tilde{T}}}\tinact
+					\tmap{\Gamma}{1};\, \es;\, \dual{s}:\btout{\shot{(\widetilde{T},S^*)}}\tinact
 					\proves
 					\bbout{\dual{s}}{\abs{(\tilde{x}, y) } \,{\binp{y}{z_X} \auxmapp{R}{{}}{\es}}} \inact \hastype \Proc
 				}
 			\end{eqnarray}
+		and
+			\begin{eqnarray}
+				\label{prop:sessp_to_HO_t4}
+				\tree{
+					\tree{
+						\tmap{\Gamma}{1}\cat z_X:\shot{(\widetilde{T},S^*)};\, \es;\, \tmap{\Delta_{\tilde{n}}}{1}
+						\proves
+						 R  \hastype \Proc
+					}{
+						\tmap{\Gamma}{1}\cat z_X:\shot{(\widetilde{T},S^*)};\, \es;\, \tmap{\Delta_{\tilde{n}}}{1}
+						\cat s:\tinact 
+						\proves
+						 R  \hastype \Proc
+					}
+				}{
+					\tmap{\Gamma}{1};\, \es;\, \tmap{\Delta}{1} \cat s:\btinp{\shot{(\widetilde{T},S^*)}}\tinact 
+					\proves
+					\binp{s}{z_X} R  \hastype \Proc
+				}
+			\end{eqnarray}
+%
+We then have:	
 %
 			\[
 			\tree{
 				\tree{
-					\begin{array}{cc}
-						\tmap{\Gamma}{1};\, \es;\, \tmap{\Delta_{\tilde{n}}}{1}, s:\btinp{\shot{\tilde{T}}}\tinact 
-						\proves
-						\binp{s}{z_X} R  \hastype \Proc
-						& \eqref{prop:sessp_to_HO_t4}
-						\\
-						\tmap{\Gamma}{1};\, \es;\, \dual{s}:\btout{\shot{\tilde{T}}}\tinact
-						\proves
-						\bbout{\dual{s}}{\abs{(\tilde{x}, y) } \,{\binp{y}{z_X} \auxmapp{R}{{}}{\es}}} \inact \hastype \Proc
+					\begin{array}{rclc}
+\tmap{\Gamma}{1};\, \es;\, \dual{s}:\btout{\shot{(\widetilde{T},S^*)}}\tinact
+				&	\proves &
+					\bbout{\dual{s}}{\abs{(\tilde{x}, y) } \,{\binp{y}{z_X} \auxmapp{R}{{}}{\es}}} \inact \hastype \Proc
 						& \eqref{prop:sessp_to_HO_t5}
+												\\
+						\tmap{\Gamma}{1};\, \es;\, \tmap{\Delta}{1}
+						\cat s:\btinp{\shot{(\widetilde{T},S^*)}}\tinact 
+					& \proves &
+					\binp{s}{z_X} R  \hastype \Proc
+						& \eqref{prop:sessp_to_HO_t4}
 					\end{array}
 				}{
-					\tmap{\Gamma}{1};\, \es;\, \tmap{\Delta_{\tilde{n}}}{1}, s:\btinp{\shot{\tilde{T}}}\tinact , \dual{s}:\btout{\shot{\tilde{T}}}\tinact
+				\begin{array}{c}
+					\tmap{\Gamma}{1};\, \es;\, \tmap{\Delta}{1}
+					\cat s:\btinp{\shot{(\widetilde{T},S^*)}}\tinact , \dual{s}:\btout{\shot{(\widetilde{T},S^*)}}\tinact
 					\proves
-					\binp{s}{z_X} R \Par 
-					\bbout{\dual{s}}{\abs{(\tilde{x}, y )} \,{\binp{y}{z_X} \auxmapp{R}{{}}{\es}}} \inact \hastype \Proc
+					\\
+					%\qquad \qquad
+					\bbout{\dual{s}}{\abs{(\tilde{x}, y )} \,{\binp{y}{z_X} \auxmapp{R}{{}}{\es}}} \inact 
+					\Par 
+					\binp{s}{z_X} R 
+					\hastype \Proc
+					\end{array}
 				}
 			}{
-				\tmap{\Gamma}{1};\, \es;\, \tmap{\Delta_{\tilde{n}}}{1} 
+				\tmap{\Gamma}{1};\, \es;\, \tmap{\Delta}{1} 
 				\proves
 				\newsp{s}{\binp{s}{z_X} R \Par 
 				\bbout{\dual{s}}{\abs{(\tilde{x},y) } \,{\binp{y}{z_X} \auxmapp{R}{{}}{\es}}} \inact} \hastype \Proc
@@ -506,7 +544,7 @@ A precise encoding requires to prove three independent results:
 
 
 We repeat the statement in Page~\pageref{prop:op_corr_HOp_to_HO}.
-Recall that we use the mapping on actions $\mapa{\cdot}^{1}$ given in \defref{d:actmap1}.
+We use the mapping on actions $\mapa{\cdot}^{1}$ given in \defref{d:actmap1}.
 
 \begin{proposition}[Operational Correspondence, \HOp into \HO]\rm
 	\label{app:prop:op_corr_HOp_to_HO}
@@ -741,9 +779,20 @@ By transition induction. We consider parts (1) and (2) separately:
 			\cat n:\tmap{S_1}{1}
 			\cat m:\tmap{S}{1}
 			\proves
+			\newsp{s}{\appl{(\abs{z}\binp{z}{x}\appl{x}{m})}{s}
+				\Par 
+				\bbout{\dual{s}}{\abs{x}{\pmapp{P'}{1}{f}}} \inact}  
+				\\
+			& \hby{\btau} & 
+			\mapt{\Gamma}^{1};\, %\emptyset;\, 
+			\mapt{\Delta_0}^{1} 
+			\cat n:\tmap{S_1}{1}
+			\cat m:\tmap{S}{1}
+			\proves
 			\newsp{s}{\binp{s}{x}(\appl{x}{m}) 
 				\Par 
-				\bbout{\dual{s}}{\abs{x}{\pmapp{P'}{1}{f}}} \inact}  \\
+				\bbout{\dual{s}}{\abs{x}{\pmapp{P'}{1}{f}}} \inact}  
+				\\
 			& \hby{\stau} & 
 			\mapt{\Gamma}^{1};\, %\emptyset;\, 
 			\mapt{\Delta_0}^{1} 
