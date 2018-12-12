@@ -7,7 +7,7 @@ In this section we give the proofs for the expressiveness
 results stated in~\secref{sec:positive} and~\secref{sec:extension}.
 Proving precise encodings entails proving type preservation, operational correspondence, and 
 full abstraction (cf.\,\defref{def:goodenc}). For operational correspondence, 
-recall that we prove a stronger statement than that in \defref{def:ep}(2),
+recall that we prove a stronger statement than \defref{def:ep}(3),
 		as we %follow \defref{def:lopco}.
 		consider both visible and internal actions.
 For full abstraction, we rely on a notational convention:
@@ -189,7 +189,7 @@ A precise encoding requires to prove three independent results:
 				}
 			\]
 			}
-			The typing in the target language is derived similarly as in the first sub-case. \\
+			The typing in the target language is derived similarly as in the first sub-case. 
 	
 		%%%% Input of (linear) channel 
 		\item	Case $P = \binp{k}{x}Q$. We have two sub-cases, depending on the type of $x$ (linear or shared name).
@@ -209,8 +209,8 @@ A precise encoding requires to prove three independent results:
 			 \tmap{\Gamma}{1}; \emptyset;  \tmap{\Delta}{1} \cat k:\tmap{S}{1}  \cat x:\tmap{S_1}{1} \proves  \pmapp{Q}{1}{f}   \hastype \Proc
 			 $$
 			 Let us write $U_1$ to stand for $\lhot{(\btinp{\lhot{\tmap{S_1}{1}}}\tinact)}$.
-			 The corresponding typing in the target language is as follows---we have three auxiliary derivations:
-			{\small
+			 The corresponding typing in the target language is as follows; we have three auxiliary derivations:
+			{%\small
 %
 			\begin{eqnarray}
 				\label{prop:sesspnr_to_HO_t2}
@@ -254,17 +254,23 @@ A precise encoding requires to prove three independent results:
 						& \eqref{prop:sesspnr_to_HO_t3}
 					\end{array}
 				}{
-					\tmap{\Gamma}{1}; \{x: U_1\};  \tmap{\Delta}{1} \cat k:\tmap{S}{1} \cat s: \btinp{\lhot{\tmap{S_1}{1}}}\tinact \cat \dual{s}: \btout{\lhot{\tmap{S_1}{1}}}\tinact\proves \appl{x}{s} \Par \bbout{\dual{s}}{\abs{x}{\pmapp{Q}{1}{f}}} \inact  \hastype \Proc
+				\begin{array}{r}
+					\tmap{\Gamma}{1}; \{x: U_1\};  \tmap{\Delta}{1} \cat k:\tmap{S}{1} \cat s: \btinp{\lhot{\tmap{S_1}{1}}}\tinact \cat \dual{s}: \btout{\lhot{\tmap{S_1}{1}}}\tinact \qquad \\
+					\proves \appl{x}{s} \Par \bbout{\dual{s}}{\abs{x}{\pmapp{Q}{1}{f}}} \inact  \hastype \Proc
+			\end{array}
 			}
 			\end{eqnarray}
 			}
 %
 Finally we have:
-{\small
+{%\small
 			\begin{eqnarray*}
 			 \tree{
 				 \tree{
-					\tmap{\Gamma}{1}; \{x: U_1\};  \tmap{\Delta}{1} \cat k:\tmap{S}{1} \cat s: \btinp{\lhot{\tmap{S_1}{1}}}\tinact \cat \dual{s}: \btout{\lhot{\tmap{S_1}{1}}}\tinact\proves \appl{x}{s} \Par \bbout{\dual{s}}{\abs{x}{\pmapp{Q}{1}{f}}} \inact  \hastype \Proc \quad \eqref{prop:sesspnr_to_HO_t4}
+					\begin{array}{r}
+					\tmap{\Gamma}{1}; \{x: U_1\};  \tmap{\Delta}{1} \cat k:\tmap{S}{1} \cat s: \btinp{\lhot{\tmap{S_1}{1}}}\tinact \cat \dual{s}: \btout{\lhot{\tmap{S_1}{1}}}\tinact \qquad \\
+					\proves \appl{x}{s} \Par \bbout{\dual{s}}{\abs{x}{\pmapp{Q}{1}{f}}} \inact  \hastype \Proc
+			\end{array} \quad \eqref{prop:sesspnr_to_HO_t4}
 				}{
 					\tmap{\Gamma}{1}; \{x: U_1\};  \tmap{\Delta}{1} \cat k:\tmap{S}{1} \proves \newsp{s}{\appl{x}{s} \Par \bbout{\dual{s}}{\abs{x}{\pmapp{Q}{1}{f}}} \inact}  \hastype \Proc
 				}
@@ -584,7 +590,7 @@ By transition induction. We consider parts (1) and (2) separately:
 			\mapt{\Gamma}^{1}; \emptyset; \mapt{\Delta_0 \cat n{:}S \cat s:\btout{S}S_1}^{1} \proves \pmapp{\bout{s}{n} P'}{1}{f} \hastype \Proc
 		\]
 %
-		\noi which, using \defref{d:enc:hopitoho} can be expressed as:
+		\noi which, using \defref{d:enc:hopitoho}, can be expressed as:
 %
 		\[
 			\mapt{\Gamma}^{1}; \emptyset; \mapt{\Delta_0} 
@@ -910,7 +916,7 @@ This concludes the proof.
 		\Re = \set{
 		%(\horel{\mapt{\Gamma}^{1}}{\mapt{\Delta_1}^{1}}{\pmapp{P_1}{1}{f}}{,}{\mapt{\Delta_2}^{1}}{\pmapp{Q_1}{1}{f}}) 
 		(\pmapp{P_1}{1}{f}, \pmapp{Q_1}{1}{f})
-		\setbar \horel{\Gamma}{\Delta_1}{P_1}{\wb}{\Delta_2}{Q_1}}
+		\setbar \horel{\Gamma}{\Delta_1}{P_1}{\hwb}{\Delta_2}{Q_1}}
 	\]
 %
 	We show that $\Re \subset \hwb$.
@@ -1119,8 +1125,8 @@ We consider three representative cases:
 
 	%%%% Output of (linear) channel
 		\item	Case $P = \bbout{k}{\abs{x}{Q}}P$. Then we have two possibilities, depending on the typing for $\abs{x}Q$.
-			The first case concerns a linear typing, and  
-			we have the following typing in the source language:
+			The first case concerns a linear typing, and so  
+			we have  in the source language:
 %
 			\[
 				\tree{
@@ -1135,64 +1141,165 @@ We consider three representative cases:
 					\Gamma; \emptyset; \Delta_1 \cat \Delta_2 \cat k:\btout{\lhot{S_1}}S \proves  \bbout{k}{\abs{x}{Q}} P \hastype \Proc
 				}
 			\]
+			
+%			\[
+%				\tree{
+%					\Gamma; \emptyset; \Delta_1 \cat k:S  \proves  P \hastype \Proc
+%					\quad
+%					\tree{
+%						\Gamma ; \emptyset ; \Delta_2\cat x:S_1 \proves  Q \hastype \Proc
+%					}{
+%						\Gamma ; \emptyset ; \Delta_2 \proves  \abs{x}Q \hastype \lhot{S_1}
+%					}
+%				}{
+%					\Gamma; \emptyset; \Delta_1 \cat \Delta_2 \cat k:\btout{\lhot{S_1}}S \proves  \bbout{k}{\abs{x}{Q}} P \hastype \Proc
+%				}
+%			\]
 %			
-			This way, by IH we have:
-			$$
-			\tmap{\Gamma}{2}; \es ; \tmap{\Delta_2}{2}, x:\tmap{S_1}{2}
+Following \figref{f:enc:ho_to_sessp},
+we have 
+$\pmap{\bbout{k}{\abs{x}{Q}} P}{2} = \newsp{a}{\bout{u}{a} (\pmap{P}{2} \Par \binp{a}{y} \binp{y}{x} \pmap{Q}{2})}$.
+By IH we have:
+			\begin{eqnarray*}
+			\tmap{\Gamma}{2}; \es ; \tmap{\Delta_2}{2} \cat x:\tmap{S_1}{2}
 									\proves 
 									\pmap{Q}{2} \hastype \Proc
-			$$
-			Let us write 
-			 $U_1$ to stand for 
-			$\chtype{\btinp{\tmap{S_1}{2}}\tinact}$.
-			The corresponding typing in the target language is as follows: 
-%
-			\begin{eqnarray*}
-				\tmap{\Gamma_1}{2} & = & \tmap{\Gamma}{2} \cup a:\chtype{\btinp{\tmap{S_1}{2}}\tinact} \\
-				\tmap{\Gamma_2}{2} & = & \tmap{\Gamma_1}{2} \cup \varp{X}:\tmap{\Delta_2}{2}
+									\\
+									\tmap{\Gamma_}{2}; \es ; \tmap{\Delta_1}{2}\cat k:\tmap{S}{2} 
+						  \proves  
+						\pmap{P}{2}  \hastype \Proc
 			\end{eqnarray*}
-%
-			Also $(*)$ stands for $\tmap{\Gamma_1}{2}; \es ; \es \proves a \hastype U_1$; 
-			$(**)$ stands for $\tmap{\Gamma_2}{2}; \es ; \es \proves a \hastype U_1$; and
-			$(***)$ stands for $\tmap{\Gamma_2}{2}; \es ; \es \proves \varp{X} \hastype \Proc$.
-			\begin{eqnarray}
-				\label{prop:HO_to_sessp_t1}
-				\tree{
-					\tree{
-						\tree{
-						}{
-							(***)
-						} 
-						\quad 
+			We now have:
+						\begin{eqnarray}
+						\label{prop:HO_to_sessp_t00}
 						\tree{
 							\tree{
 								\tree{
 									\tree{
 									}{
-										\tmap{\Gamma_2}{2}; \es ; \tmap{\Delta_2}{2},  x:\tmap{S_1}{2}
+										\tmap{\Gamma}{2}; \es ; \tmap{\Delta_2}{2} \cat  x:\tmap{S_1}{2}
 										\proves 
 										\pmap{Q}{2} \hastype \Proc
 									}
 								}{
-									\tmap{\Gamma_2}{2}; \es ; \tmap{\Delta_2}{2}, y:\tinact, x:\tmap{S_1}{2}
+									\tmap{\Gamma}{2}; \es ; \tmap{\Delta_2}{2}\cat y:\tinact \cat a:\tinact \cat x:\tmap{S_1}{2}
 									\proves 
 									\pmap{Q}{2} \hastype \Proc
 								}
 							}{
-								\tmap{\Gamma_2}{2}; \es ; \tmap{\Delta_2}{2}, y: \btinp{\tmap{S_1}{2}}\tinact
+								\tmap{\Gamma}{2}; \es ; \tmap{\Delta_2}{2}\cat y: \btinp{\tmap{S_1}{2}}\tinact \cat a:\tinact 
+								\proves 
+								\binp{y}{x}\pmap{Q}{2} \hastype \Proc
+							} 
+						}{
+							\tmap{\Gamma}{2}; \es ; \tmap{\Delta_2}{2} \cat a:\btinp{\btinp{\tmap{S_1}{2}}\tinact}\tinact
+							\proves 
+							\binp{a}{y}\binp{y}{x}\pmap{Q}{2} \hastype \Proc
+						} 
+			\end{eqnarray}
+			Let $U_1 = \btinp{\btinp{\tmap{S_1}{2}}\tinact}\tinact$ stand for the type of $a$.
+			We then have:
+			\begin{eqnarray}
+				\label{prop:HO_to_sessp_t01}
+				\tree{
+				\tree{
+					\begin{array}{rcl}
+						\tmap{\Gamma}{2}; \es ; \tmap{\Delta_1}{2}\cat k:\tmap{S}{2} 
+						& \proves &
+						\pmap{P}{2}  \hastype \Proc
+						\\
+					\tmap{\Gamma}{2}; \es ; \tmap{\Delta_2}{2} 
+					%\cat a:\btinp{\btinp{\tmap{S_1}{2}}\tinact}\tinact
+					\cat a:U_1
+							& \proves &
+							\binp{a}{y}\binp{y}{x}\pmap{Q}{2} \hastype \Proc
+						\qquad \eqref{prop:HO_to_sessp_t00}
+					\end{array}
+				}{
+				%\begin{array}{r}
+					\tmap{\Gamma}{2}; \es ; 
+					\tmap{\Delta_1}{2}
+					\cat \tmap{\Delta_2}{2}
+					\cat k:\tmap{S}{2} 
+					%\cat a:\btinp{\btinp{\tmap{S_1}{2}}\tinact}\tinact
+					\cat a: U_1
+					\proves % \qquad \qquad \\
+					\pmap{P}{2} \Par 
+					\binp{a}{y}\binp{y}{x}\pmap{Q}{2}\hastype \Proc
+					%\end{array}
+				}
+				}
+				{
+					%			\begin{array}{r}
+						\tmap{\Gamma}{2}; \es ; 
+					\tmap{\Delta_1}{2}
+					\cat \tmap{\Delta_2}{2}
+					\cat k:\btout{U_1}\tmap{S}{2} 
+					%\cat a:\btinp{\btinp{\tmap{S_1}{2}}\tinact}\tinact
+					\cat a:U_1
+					\proves %\qquad \qquad \\ 
+					\bout{k}{a}(
+					\pmap{P}{2} \Par 
+					\binp{a}{y}\binp{y}{x}\pmap{Q}{2}) \hastype \Proc
+					%	\end{array}
+				}
+			\end{eqnarray}
+			
+			
+			%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+			
+			FIX ABOVE: $a$ 	SHOULD BE A SHARED NAME
+			===
+			
+			the corresponding typing in the target language is as follows: 
+%
+			\begin{eqnarray*}
+				\tmap{\Gamma_1}{2} & = & \tmap{\Gamma}{2} \cup \{a:\chtype{\btinp{\tmap{S_1}{2}}\tinact}\} \\
+				\tmap{\Gamma_2}{2} & = & \tmap{\Gamma_1}{2} \cup \{\varp{X}:\tmap{\Delta_2}{2}\}
+			\end{eqnarray*}
+%
+			Let  
+			 $U_1 = \chtype{\btinp{\tmap{S_1}{2}}\tinact}$. Also, 
+			let $(*)$ and $(**)$ stand for $\tmap{\Gamma_2}{2}; \es ; \es \proves a \hastype U_1$ and
+			  $\tmap{\Gamma_2}{2}; \es ; \es \proves \varp{X} \hastype \Proc$, respectively. We first have two auxiliary derivations:
+			\begin{eqnarray}
+				\label{prop:HO_to_sessp_t1}
+				\tree{
+					\tree{
+						\tree{
+							\tree{
+								\tree{
+									\tree{
+									}{
+										\tmap{\Gamma_2}{2}; \es ; \tmap{\Delta_2}{2} \cat  x:\tmap{S_1}{2}
+										\proves 
+										\pmap{Q}{2} \hastype \Proc
+									}
+								}{
+									\tmap{\Gamma_2}{2}; \es ; \tmap{\Delta_2}{2}\cat y:\tinact\cat x:\tmap{S_1}{2}
+									\proves 
+									\pmap{Q}{2} \hastype \Proc
+								}
+							}{
+								\tmap{\Gamma_2}{2}; \es ; \tmap{\Delta_2}{2}\cat y: \btinp{\tmap{S_1}{2}}\tinact
 								\proves 
 								\binp{y}{x}\pmap{Q}{2} \hastype \Proc
 							} 
 							\quad 
 							\tree{
 							}{
-								(**)
+								(*)
 							}
 						}{
 							\tmap{\Gamma_2}{2}; \es ; \tmap{\Delta_2}{2} 
 							\proves 
 							\binp{a}{y}\binp{y}{x}\pmap{Q}{2} \hastype \Proc
 						} 
+						\qquad \tree{
+						}{
+							(**)
+						} 
+						\quad
 					}{
 						\tmap{\Gamma_2}{2}; \es ; \tmap{\Delta_2}{2} 
 						\proves 
@@ -1204,48 +1311,48 @@ We consider three representative cases:
 					\recp{X}{(\binp{a}{y}\binp{y}{x}\pmap{Q}{2} \Par \varp{X})} \hastype \Proc
 				}
 			\end{eqnarray}
-%
+and
 			\begin{eqnarray}
 				\label{prop:HO_to_sessp_t2}
 				\tree{
-					\begin{array}{c}
-						\tmap{\Gamma_1}{2}; \es ; \tmap{\Delta_1}{2}, k:\tmap{S}{2} 
-						\proves 
+					\begin{array}{rcl}
+						\tmap{\Gamma_1}{2}; \es ; \tmap{\Delta_1}{2}\cat k:\tmap{S}{2} 
+						& \proves &
 						\pmap{P}{2}  \hastype \Proc
 						\\
 						\tmap{\Gamma_1}{2}; \es ; \tmap{\Delta_2}{2} 
-						\proves 
+						& \proves &
 						\recp{X}{(\binp{a}{y}\binp{y}{x}\pmap{Q}{2} \Par \varp{X})} \hastype \Proc
-						\quad \eqref{prop:HO_to_sessp_t1}
+						\qquad \eqref{prop:HO_to_sessp_t1}
 					\end{array}
 				}{
-					\tmap{\Gamma_1}{2}; \es ; \tmap{\Delta_1, \Delta_2}{2}, k:\tmap{S}{2} 
+					\tmap{\Gamma_1}{2}; \es ; \tmap{\Delta_1\cat \Delta_2}{2}\cat k:\tmap{S}{2} 
 					\proves 
 					\pmap{P}{2} \Par 
 					\recp{X}{(\binp{a}{y}\binp{y}{x}\pmap{Q}{2} \Par \varp{X})} \hastype \Proc
 				}
 			\end{eqnarray}
-%
+We now have:
 			\[
 				\tree{
 					\tree{
-						\begin{array}{c}
-							\tmap{\Gamma_1}{2}; \es ; \es \proves a \hastype U_1
+						\begin{array}{rcl}
+							\tmap{\Gamma_1}{2}; \es ; \es & \proves & a \hastype U_1
 							\\
-							\tmap{\Gamma_1}{2}; \es ; \tmap{\Delta_1, \Delta_2}{2}, k:\tmap{S}{2} 
-							\proves 
+							\tmap{\Gamma_1}{2}; \es ; \tmap{\Delta_1\cat \Delta_2}{2}\cat k:\tmap{S}{2} 
+							& \proves & 
 							\pmap{P}{2} \Par 
 							\recp{X}{(\binp{a}{y}\binp{y}{x}\pmap{Q}{2} \Par \varp{X})} \hastype \Proc
 							\quad \eqref{prop:HO_to_sessp_t2}
 						\end{array}
 					}{
-						\tmap{\Gamma_1}{2}; \es ; \tmap{\Delta_1, \Delta_2}{2}, k:\bbtout{U_1}\tmap{S}{2} 
+						\tmap{\Gamma_1}{2}; \es ; \tmap{\Delta_1\cat \Delta_2}{2}\cat k:\bbtout{U_1}\tmap{S}{2} 
 						\proves 
 						\bout{k}{a}(\pmap{P}{2} \Par 
 						\recp{X}{(\binp{a}{y}\binp{y}{x}\pmap{Q}{2} \Par \varp{X}))} \hastype \Proc
 					}
 				}{
-					\tmap{\Gamma}{2}; \es ; \tmap{\Delta_1, \Delta_2}{2}, k:\bbtout{U_1}\tmap{S}{2} 
+					\tmap{\Gamma}{2}; \es ; \tmap{\Delta_1\cat \Delta_2}{2}\cat k:\bbtout{U_1}\tmap{S}{2} 
 					\proves 
 					\newsp{a}{\bout{k}{a}( 
 					\pmap{P}{2} \Par 
@@ -1275,7 +1382,7 @@ We consider three representative cases:
 %
 			The corresponding typing in the target language can be derived similarly as in the first case.
 	
-		\item	Case $P = \binp{k}{x} P$. Then there are two cases, depending on the type of $X$. 
+		\item	Case $P = \binp{k}{x} P$. Then there are two cases, depending on the type of $x$ (i.e., $\shot{S_1}$ or $\lhot{S_1}$). 
 			In the first case,
 			we have the following typing in the source language:
 %
@@ -1286,7 +1393,8 @@ We consider three representative cases:
 					\Gamma;\, \emptyset;\, \Delta\cat k:\btinp{\shot{S_1}}S \proves  \binp{k}{x} P \hastype \Proc
 				}
 			\]
-			The corresponding typing in the target language is as follows:
+			Following \figref{f:enc:ho_to_sessp},
+			the corresponding typing in the target language is as follows:
 			% --- we write $\Gamma_0$ to stand for $\Gamma \setminus \{X: \lhot{S_1}\}$.
 %
 			\[
@@ -1303,7 +1411,7 @@ We consider three representative cases:
 %
 			\[
 				\tree{
-					\Gamma;\, \{x : \lhot{S_1}\};\, \emptyset ;\, \Delta \cat k:S \proves  P \hastype \Proc
+					\Gamma;\, \{x : \lhot{S_1}\};\,   \Delta \cat k:S \proves  P \hastype \Proc
 				}{
 					\Gamma;\, \emptyset;\, \Delta\cat k:\btinp{\lhot{S_1}}S \proves  \binp{k}{x} P \hastype \Proc
 				}
@@ -1346,7 +1454,7 @@ We consider three representative cases:
 					\quad 
 						\tmap{\Gamma_1}{2};\, \es;\, \{k:\tmap{S_1}{2}\} \proves  k \hastype \tmap{S_1}{2} 
 				}{
-					\tmap{\Gamma_1}{2};\, \es;\,\, k:\tmap{S_1}{2},\,  \dual{s}:\btout{\tmap{S_1}{2}}\tinact \proves  \bout{\dual{s}}{k}\inact \hastype \Proc
+					\tmap{\Gamma_1}{2};\, \es;\,\, k:\tmap{S_1}{2} \cat  \dual{s}:\btout{\tmap{S_1}{2}}\tinact \proves  \bout{\dual{s}}{k}\inact \hastype \Proc
 				}
 			\end{eqnarray}
 %
@@ -1354,14 +1462,14 @@ We consider three representative cases:
 				\tree{
 					\tree{
 						\begin{array}{c}
-							\tmap{\Gamma_1}{2};\, \es;\,\, k:\tmap{S_1}{2},\,  \dual{s}:\btout{\tmap{S_1}{2}}\tinact \proves
+							\tmap{\Gamma_1}{2};\, \es;  k:\tmap{S_1}{2} \cat  \dual{s}:\btout{\tmap{S_1}{2}}\tinact \proves
 							\bout{\dual{s}}{k}\inact \hastype \Proc
 							\quad \eqref{prop:HO_to_sessp_t11}
 							\\
 							\tmap{\Gamma_1}{2} ;\, \es ;\, \es \proves x \hastype \chtype{\btout{\tmap{S_1}{2}}\tinact}
 						\end{array}
 					}{
-						\tmap{\Gamma_1}{2};\, \es;\, k:\tmap{S_1}{2}, s:\btinp{\tmap{S_1}{2}}\tinact , \dual{s}:\btout{\tmap{S_1}{2}}\tinact
+						\tmap{\Gamma_1}{2};\, \es;\, k:\tmap{S_1}{2} \cat s:\btinp{\tmap{S_1}{2}}\tinact \cat \dual{s}:\btout{\tmap{S_1}{2}}\tinact
 						\proves
 						\bout{x}{s}\bout{\dual{s}}{k}\inact \hastype \Proc
 					}
@@ -1889,7 +1997,7 @@ A precise encoding requires to prove three independent results:
 			\quad
 			\tree{
 			\tree{}{
-			\Gamma; \es;  \Delta_2, y:C \proves  Q \hastype \Proc}
+			\Gamma; \es;  \Delta_2\cat y:C \proves  Q \hastype \Proc}
 			}{
 			\Gamma; \es;  \Delta_2 \proves \abs{y} Q \hastype \lhot{C}
 			}
@@ -1902,7 +2010,7 @@ A precise encoding requires to prove three independent results:
 			\begin{eqnarray}
 			\tmap{\Gamma}{3} \cat x:\tmap{\shot{C}}{3}; \tmap{\Lambda}{3}; \tmap{\Delta_1}{3}   & \proves &  \pmap{P}{3} \hastype \Proc
 			\label{eq:hopppre4} \\
-			\tmap{\Gamma}{3}  ; \es; \tmap{\Delta_1}{3}, y:\tmap{C}{3}   & \proves &  \pmap{Q}{3} \hastype \Proc
+			\tmap{\Gamma}{3}  ; \es; \tmap{\Delta_1}{3} \cat y:\tmap{C}{3}   & \proves &  \pmap{Q}{3} \hastype \Proc
 			\label{eq:hopppre5} 
 			\end{eqnarray}
 
