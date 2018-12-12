@@ -1125,7 +1125,7 @@ We consider three representative cases:
 
 	%%%% Output of (linear) channel
 		\item	Case $P = \bbout{k}{\abs{x}{Q}}P$. Then we have two possibilities, depending on the typing for $\abs{x}Q$.
-			The first case concerns a linear typing, and so  
+			The first sub-case concerns a linear typing, and so  
 			we have  in the source language:
 %
 			\[
@@ -1169,10 +1169,15 @@ By IH we have:
 						  \proves  
 						\pmap{P}{2}  \hastype \Proc
 			\end{eqnarray*}
-			We now have:
+			Let $U_1 = \btinp{\tmap{S_1}{2}}\tinact $.
+			We first have:
 						\begin{eqnarray}
 						\label{prop:HO_to_sessp_t00}
 						\tree{
+						\tmap{\Gamma}{2}; \es ; \es
+										\proves 
+										a \hastype \chtype{U_1}
+						\qquad 
 							\tree{
 								\tree{
 									\tree{
@@ -1182,26 +1187,30 @@ By IH we have:
 										\pmap{Q}{2} \hastype \Proc
 									}
 								}{
-									\tmap{\Gamma}{2}; \es ; \tmap{\Delta_2}{2}\cat y:\tinact \cat a:\tinact \cat x:\tmap{S_1}{2}
+									\tmap{\Gamma}{2}; \es ; \tmap{\Delta_2}{2}\cat y:\tinact   \cat x:\tmap{S_1}{2}
 									\proves 
 									\pmap{Q}{2} \hastype \Proc
 								}
 							}{
-								\tmap{\Gamma}{2}; \es ; \tmap{\Delta_2}{2}\cat y: \btinp{\tmap{S_1}{2}}\tinact \cat a:\tinact 
-								\proves 
+								\tmap{\Gamma}{2}; \es ; \tmap{\Delta_2}{2}\cat y: U_1 								\proves 
 								\binp{y}{x}\pmap{Q}{2} \hastype \Proc
-							} 
+							} 			
 						}{
-							\tmap{\Gamma}{2}; \es ; \tmap{\Delta_2}{2} \cat a:\btinp{\btinp{\tmap{S_1}{2}}\tinact}\tinact
+							\tmap{\Gamma}{2}; \es ; \tmap{\Delta_2}{2}  
 							\proves 
 							\binp{a}{y}\binp{y}{x}\pmap{Q}{2} \hastype \Proc
 						} 
 			\end{eqnarray}
-			Let $U_1 = \btinp{\btinp{\tmap{S_1}{2}}\tinact}\tinact$ stand for the type of $a$.
+			
 			We then have:
 			\begin{eqnarray}
 				\label{prop:HO_to_sessp_t01}
 				\tree{
+				\tree{
+							\tmap{\Gamma}{2}; \es ; \es
+										\proves 
+										a \hastype \chtype{U_1}
+						~~ 
 				\tree{
 					\begin{array}{rcl}
 						\tmap{\Gamma}{2}; \es ; \tmap{\Delta_1}{2}\cat k:\tmap{S}{2} 
@@ -1210,23 +1219,23 @@ By IH we have:
 						\\
 					\tmap{\Gamma}{2}; \es ; \tmap{\Delta_2}{2} 
 					%\cat a:\btinp{\btinp{\tmap{S_1}{2}}\tinact}\tinact
-					\cat a:U_1
+					%\cat a:U_1
 							& \proves &
 							\binp{a}{y}\binp{y}{x}\pmap{Q}{2} \hastype \Proc
-						\qquad \eqref{prop:HO_to_sessp_t00}
+						~~~ \eqref{prop:HO_to_sessp_t00}
 					\end{array}
 				}{
-				%\begin{array}{r}
+				\begin{array}{rl}
 					\tmap{\Gamma}{2}; \es ; 
 					\tmap{\Delta_1}{2}
 					\cat \tmap{\Delta_2}{2}
 					\cat k:\tmap{S}{2} 
 					%\cat a:\btinp{\btinp{\tmap{S_1}{2}}\tinact}\tinact
-					\cat a: U_1
-					\proves % \qquad \qquad \\
+					%\cat a: U_1
+					\proves  \qquad \qquad \\
 					\pmap{P}{2} \Par 
 					\binp{a}{y}\binp{y}{x}\pmap{Q}{2}\hastype \Proc
-					%\end{array}
+					\end{array}
 				}
 				}
 				{
@@ -1234,22 +1243,54 @@ By IH we have:
 						\tmap{\Gamma}{2}; \es ; 
 					\tmap{\Delta_1}{2}
 					\cat \tmap{\Delta_2}{2}
-					\cat k:\btout{U_1}\tmap{S}{2} 
+					\cat k:\btout{\chtype{U_1}}\tmap{S}{2} 
 					%\cat a:\btinp{\btinp{\tmap{S_1}{2}}\tinact}\tinact
-					\cat a:U_1
+					%\cat a:U_1
 					\proves %\qquad \qquad \\ 
 					\bout{k}{a}(
 					\pmap{P}{2} \Par 
 					\binp{a}{y}\binp{y}{x}\pmap{Q}{2}) \hastype \Proc
 					%	\end{array}
 				}
+				}{
+				\begin{array}{rl}
+				\tmap{\Gamma}{2}\backslash a; \es ; 
+					\tmap{\Delta_1}{2}
+					\cat \tmap{\Delta_2}{2}
+					\cat k:\btout{\chtype{U_1}}\tmap{S}{2} 
+					%\cat a:\btinp{\btinp{\tmap{S_1}{2}}\tinact}\tinact
+					%\cat a:U_1
+					\proves \qquad \qquad \\ 
+					\news{a}{(\bout{k}{a}(
+					\pmap{P}{2} \Par 
+					\binp{a}{y}\binp{y}{x}\pmap{Q}{2}))} \hastype \Proc
+					\end{array}
+				}
 			\end{eqnarray}
+			which concludes the proof for this sub-case. 
 			
 			
-			%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-			
-			FIX ABOVE: $a$ 	SHOULD BE A SHARED NAME
 			===
+			TO CHECK!
+						In the second sub-case, $\abs{x}Q$ has a shared type. We have the following typing in the source language:
+%
+			\[
+				\tree{
+					\Gamma; \emptyset; \Delta \cat k:S  \proves  P \hastype \Proc
+					\quad 
+					\tree{
+						\tree{
+							\Gamma ; \emptyset ; \cat x:S_1 \proves  Q \hastype \Proc
+						}{
+							\Gamma ; \emptyset ; \es \proves  \abs{x}Q \hastype \lhot{S_1}
+						}
+					}{
+						\Gamma ; \emptyset ; \es \proves  \abs{x}Q \hastype \shot{S_1}
+					}
+				}{
+					\Gamma; \emptyset; \Delta  \cat k:\btout{\shot{S_1}}S \proves  \bbout{k}{\abs{x}{Q}} P \hastype \Proc
+				}
+			\]
 			
 			the corresponding typing in the target language is as follows: 
 %
@@ -1360,27 +1401,8 @@ We now have:
 				}
 			\]
 %
-			In the second case, $\abs{x}Q$ has a shared type. We have the following typing in the source language:
-%
-			\[
-				\tree{
-					\Gamma; \emptyset; \Delta \cat k:S  \proves  P \hastype \Proc
-					\quad 
-					\tree{
-						\tree{
-							\Gamma ; \emptyset ; \cat x:S_1 \proves  Q \hastype \Proc
-						}{
-							\Gamma ; \emptyset ; \es \proves  \abs{x}Q \hastype \lhot{S_1}
-						}
-					}{
-						\Gamma ; \emptyset ; \es \proves  \abs{x}Q \hastype \shot{S_1}
-					}
-				}{
-					\Gamma; \emptyset; \Delta  \cat k:\btout{\shot{S_1}}S \proves  \bbout{k}{\abs{x}{Q}} P \hastype \Proc
-				}
-			\]
-%
-			The corresponding typing in the target language can be derived similarly as in the first case.
+
+ 
 	
 		\item	Case $P = \binp{k}{x} P$. Then there are two cases, depending on the type of $x$ (i.e., $\shot{S_1}$ or $\lhot{S_1}$). 
 			In the first case,
