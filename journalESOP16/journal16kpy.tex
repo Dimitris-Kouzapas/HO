@@ -723,8 +723,8 @@ Constructs for
 inaction $\inact$,  parallel composition $P_1 \Par P_2$, and 
 name restriction $\news{n} P$ are standard.
 
-\begin{notation}
-We shall write $\repl{} P$ to denote a replicated process $P$, representable as $\recp{X}{(P \Par \rvar{X})}$. 
+\begin{notation}\label{not:repl}
+We shall write $\repl{P}$ to denote a replicated process $P$, representable as $\recp{X}{(P \Par \rvar{X})}$. 
 \end{notation}
 
 Session name restriction $\news{s} P$ simultaneously binds endpoints $s$ and $\dual{s}$ in $P$.
@@ -3137,14 +3137,14 @@ for linear resources. The encoding of abstraction sending therefore distinguishe
 $$
 	\pmap{\bout{u}{\abs{x}{Q}} P}{2}  \defeq  
 	\begin{cases}
-		\newsp{a}{\bout{u}{a} (\pmap{P}{2} \Par \repl{} \binp{a}{y} \binp{y}{x} \pmap{Q}{2})\,}\quad
+		\newsp{a}{\bout{u}{a} (\pmap{P}{2} \Par \repl{\binp{a}{y} \binp{y}{x} \pmap{Q}{2})}\,}\quad
 		& \text{if $\fs{Q} = \emptyset$}
 		\\
 		\newsp{a}{\bout{u}{a} (\pmap{P}{2} \Par \binp{a}{y} \binp{y}{x} \pmap{Q}{2})\,}\quad
 		& \text{otherwise} %\dk{Q \textrm{ linear}} \\
 	\end{cases}
 	$$
-	where  $\repl{} P$ stands for $\recp{X}{(P \Par \rvar{X})}$.
+	where  $\repl{P}$ stands for $\recp{X}{(P \Par \rvar{X})}$ (\notref{not:repl}).
 	In the first case, if the abstraction body does not contain (linear) session names then it can be safely 
 	represented as a persistent server accessible via a (fresh) trigger name $a$, which is sent in place of the abstraction. The second case covers the case in which the abstraction to be passed around 
 	is linear: the server on $a$ should be invoked exactly once---it cannot be persistent.
@@ -3302,7 +3302,7 @@ As discussed above, the encoding of output
 sets up a potentially persistent server to represent the body of the abstraction being exchanged. 
 The statement in 1(a) formalises the fact that 
 after an output transition in the source process this server has not been yet invoked/used on the target side, and so it appears as a
-residual context ($\repl{} \binp{a}{y} \binp{y}{x} \pmap{Q}{2}$ or $\binp{s}{y} \binp{y}{x} \pmap{Q}{2}$)
+residual context ($\repl{\binp{a}{y} \binp{y}{x} \pmap{Q}{2}}$ or $\binp{s}{y} \binp{y}{x} \pmap{Q}{2}$)
 in parallel to the encoding of the continuation of the output ($\pmap{P'}{2}$).
 Similarly, the statement in 1(b) formalises the fact that after an input transition the resulting process $R$ should be 
 placed in an appropriate context containing the server representing the abstraction body. 
@@ -3514,25 +3514,25 @@ we obtain:
 \end{eqnarray*}
 Now, we encode $P_2$ into \sessp (following mapping $\pmap{\cdot}{2}$ in~\figref{f:enc:ho_to_sessp}):
 \begin{eqnarray*}
-\pmap{P_2}{2} & = & 	\newsp{a}{\bout{s}{a} (\inact \Par \repl \binp{a}{y} \binp{y}{x} \pmap{R}{2})} \Par \\
+\pmap{P_2}{2} & = & 	\newsp{a}{\bout{s}{a} (\inact \Par \repl{\binp{a}{y} \binp{y}{x} \pmap{R}{2}})} \Par \\
 & & \quad \binp{\dual{s}}{x} \big(\newsp{s_0}{\bout{x}{s_0} \bout{\dual{s_0}}{s_1} \inact} \Par \dots \Par \newsp{s_0}{\bout{x}{s_0} \bout{\dual{s_0}}{s_n}\inact}\big)
 	\\
 	& \hby{\stau} \equiv & 
-	\newsp{a}{\repl \binp{a}{y} \binp{y}{x} \pmap{R}{2} \Par \newsp{s_0}{\bout{a}{s_0} \bout{\dual{s_0}}{s_1} \inact} \Par \dots \Par \newsp{s_0}{\bout{a}{s_0} \bout{\dual{s_0}}{s_n} \inact}}
+	\newsp{a}{\repl{\binp{a}{y} \binp{y}{x} \pmap{R}{2}} \Par \newsp{s_0}{\bout{a}{s_0} \bout{\dual{s_0}}{s_1} \inact} \Par \dots \Par \newsp{s_0}{\bout{a}{s_0} \bout{\dual{s_0}}{s_n} \inact}}
 	\\
 	& \hby{\stau}  \hby{\stau}   & 
-	\newsp{a}{\repl \binp{a}{y} \binp{y}{x} \pmap{R}{2} \Par \pmap{R}{2}\subst{s_1}{x} \Par 
+	\newsp{a}{\repl{\binp{a}{y} \binp{y}{x} \pmap{R}{2}} \Par \pmap{R}{2}\subst{s_1}{x} \Par 
 	\\
 	&  & \qquad \qquad \newsp{s_0}{\bout{a}{s_0} \bout{\dual{s_0}}{s_2} \inact} \Par \dots \Par \newsp{s_0}{\bout{a}{s_0} \bout{\dual{s_0}}{s_n} \inact}}
 	\\
 	& \Hby{}_{2*(n - 1)} & 
-	\newsp{a}{\repl \binp{a}{y} \binp{y}{x} \pmap{R}{2} \Par \pmap{R}{2}\subst{s_1}{x} \Par \pmap{R}{2}\subst{s_2}{x} \Par \dots \Par \pmap{R}{2}\subst{s_n}{x}}
+	\newsp{a}{\repl{\binp{a}{y} \binp{y}{x} \pmap{R}{2}} \Par \pmap{R}{2}\subst{s_1}{x} \Par \pmap{R}{2}\subst{s_2}{x} \Par \dots \Par \pmap{R}{2}\subst{s_n}{x}}
 %	\red
 %	\appl{V}{s_1} \Par \dots \Par \appl{V}{s_n}
 \end{eqnarray*}
 %\noi 
 Clearly, encoding $P_1$ into \HO is more economical than 
-encoding $P_2$ into \sessp. Not only moving to a pure higher-order setting requires less reduction steps than in the first-order concurrency of \sessp; in the presence of shared names, moving to a first-order setting brings the need of setting up and handling replicated processes which will eventually lead to garbage (stuck) processes (such as $\repl \binp{a}{y} \binp{y}{x} \pmap{R}{2}$ above). In contrast, the mechanism present in \HO works efficiently regardless of the linear or shared properties of the name that is ``packed'' into the abstraction. 
+encoding $P_2$ into \sessp. Not only moving to a pure higher-order setting requires less reduction steps than in the first-order concurrency of \sessp; in the presence of shared names, moving to a first-order setting brings the need of setting up and handling replicated processes which will eventually lead to garbage (stuck) processes (such as $\repl{\binp{a}{y} \binp{y}{x} \pmap{R}{2}}$ above). In contrast, the mechanism present in \HO works efficiently regardless of the linear or shared properties of the name that is ``packed'' into the abstraction. 
 The use of $\beta$-transitions guarantees local synchronizations, which are arguably more economical than point-to-point, session synchronizations.
 
 It is useful to move our comparison 

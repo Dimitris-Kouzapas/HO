@@ -1124,8 +1124,12 @@ We consider three representative cases:
 	\begin{enumerate}[1.]
 
 	%%%% Output of (linear) channel
-		\item	Case $P = \bbout{k}{\abs{x}{Q}}P$. Then we have two possibilities, depending on the typing for $\abs{x}Q$.
-			The first sub-case concerns a linear typing, and so  
+		\item	Case $P = \bbout{k}{\abs{x}{Q}}P$. Then 
+		there are several sub-cases, depending on whether $k$ and $x$ have linear types.
+		We content ourselves by checking the case in which $k$ is a session (linear) name.
+		We then have two possibilities, depending on the typing for $\abs{x}Q$.
+		\begin{enumerate}[(a)]
+			\item The first sub-case concerns a linear typing, and so  
 			we have  in the source language:
 %
 			\[
@@ -1165,16 +1169,16 @@ By IH we have:
 									\proves 
 									\pmap{Q}{2} \hastype \Proc
 									\\
-									\tmap{\Gamma_}{2}; \es ; \tmap{\Delta_1}{2}\cat k:\tmap{S}{2} 
+									\tmap{\Gamma}{2}; \es ; \tmap{\Delta_1}{2}\cat k:\tmap{S}{2} 
 						  \proves  
 						\pmap{P}{2}  \hastype \Proc
 			\end{eqnarray*}
-			Let $U_1 = \btinp{\tmap{S_1}{2}}\tinact $.
+			Let $U_1 = \btinp{\tmap{S_1}{2}}\tinact $. Also, we write $\tmap{\Gamma'}{2}$ to stand for $\tmap{\Gamma}{2} \cat  a: \chtype{U_1}$.
 			We first have:
 						\begin{eqnarray}
 						\label{prop:HO_to_sessp_t00}
 						\tree{
-						\tmap{\Gamma}{2}; \es ; \es
+						\tmap{\Gamma'}{2} ; \es ; \es
 										\proves 
 										a \hastype \chtype{U_1}
 						\qquad 
@@ -1182,21 +1186,21 @@ By IH we have:
 								\tree{
 									\tree{
 									}{
-										\tmap{\Gamma}{2}; \es ; \tmap{\Delta_2}{2} \cat  x:\tmap{S_1}{2}
+										\tmap{\Gamma'}{2}; \es ; \tmap{\Delta_2}{2} \cat  x:\tmap{S_1}{2}
 										\proves 
 										\pmap{Q}{2} \hastype \Proc
 									}
 								}{
-									\tmap{\Gamma}{2}; \es ; \tmap{\Delta_2}{2}\cat y:\tinact   \cat x:\tmap{S_1}{2}
+									\tmap{\Gamma'}{2}; \es ; \tmap{\Delta_2}{2}\cat y:\tinact   \cat x:\tmap{S_1}{2}
 									\proves 
 									\pmap{Q}{2} \hastype \Proc
 								}
 							}{
-								\tmap{\Gamma}{2}; \es ; \tmap{\Delta_2}{2}\cat y: U_1 								\proves 
+								\tmap{\Gamma'}{2}; \es ; \tmap{\Delta_2}{2}\cat y: U_1 								\proves 
 								\binp{y}{x}\pmap{Q}{2} \hastype \Proc
 							} 			
 						}{
-							\tmap{\Gamma}{2}; \es ; \tmap{\Delta_2}{2}  
+							\tmap{\Gamma'}{2}; \es ; \tmap{\Delta_2}{2}  
 							\proves 
 							\binp{a}{y}\binp{y}{x}\pmap{Q}{2} \hastype \Proc
 						} 
@@ -1207,17 +1211,17 @@ By IH we have:
 				\label{prop:HO_to_sessp_t01}
 				\tree{
 				\tree{
-							\tmap{\Gamma}{2}; \es ; \es
+							\tmap{\Gamma'}{2}; \es ; \es
 										\proves 
 										a \hastype \chtype{U_1}
 						~~ 
 				\tree{
 					\begin{array}{rcl}
-						\tmap{\Gamma}{2}; \es ; \tmap{\Delta_1}{2}\cat k:\tmap{S}{2} 
+						\tmap{\Gamma'}{2}; \es ; \tmap{\Delta_1}{2}\cat k:\tmap{S}{2} 
 						& \proves &
 						\pmap{P}{2}  \hastype \Proc
 						\\
-					\tmap{\Gamma}{2}; \es ; \tmap{\Delta_2}{2} 
+					\tmap{\Gamma'}{2}; \es ; \tmap{\Delta_2}{2} 
 					%\cat a:\btinp{\btinp{\tmap{S_1}{2}}\tinact}\tinact
 					%\cat a:U_1
 							& \proves &
@@ -1226,7 +1230,7 @@ By IH we have:
 					\end{array}
 				}{
 				\begin{array}{rl}
-					\tmap{\Gamma}{2}; \es ; 
+					\tmap{\Gamma'}{2}; \es ; 
 					\tmap{\Delta_1}{2}
 					\cat \tmap{\Delta_2}{2}
 					\cat k:\tmap{S}{2} 
@@ -1240,7 +1244,7 @@ By IH we have:
 				}
 				{
 					%			\begin{array}{r}
-						\tmap{\Gamma}{2}; \es ; 
+						\tmap{\Gamma'}{2}; \es ; 
 					\tmap{\Delta_1}{2}
 					\cat \tmap{\Delta_2}{2}
 					\cat k:\btout{\chtype{U_1}}\tmap{S}{2} 
@@ -1254,7 +1258,7 @@ By IH we have:
 				}
 				}{
 				\begin{array}{rl}
-				\tmap{\Gamma}{2}\backslash a; \es ; 
+				\tmap{\Gamma}{2}; \es ; 
 					\tmap{\Delta_1}{2}
 					\cat \tmap{\Delta_2}{2}
 					\cat k:\btout{\chtype{U_1}}\tmap{S}{2} 
@@ -1270,9 +1274,8 @@ By IH we have:
 			which concludes the proof for this sub-case. 
 			
 			
-			===
-			TO CHECK!
-						In the second sub-case, $\abs{x}Q$ has a shared type. We have the following typing in the source language:
+			\item
+						In the second sub-case, $\abs{x}Q$ has a shared type, and so $\fs{Q} = \emptyset$. We have the following typing in the source language:
 %
 			\[
 				\tree{
@@ -1291,17 +1294,29 @@ By IH we have:
 					\Gamma; \emptyset; \Delta  \cat k:\btout{\shot{S_1}}S \proves  \bbout{k}{\abs{x}{Q}} P \hastype \Proc
 				}
 			\]
-			
-			the corresponding typing in the target language is as follows: 
-%
+			Following \figref{f:enc:ho_to_sessp},
+we have 
+$\pmap{\bbout{k}{\abs{x}{Q}} P}{2} = \newsp{a}{\bout{u}{a} (\pmap{P}{2} \Par \repl{\binp{a}{y} \binp{y}{x} \pmap{Q}{2}} )}$.
+Recall that by \notref{not:repl}, $\repl{P}$ is a shorthand notation for 
+$\recp{X}{(P \Par \rvar{X})}$.
+By IH we have:
 			\begin{eqnarray*}
-				\tmap{\Gamma_1}{2} & = & \tmap{\Gamma}{2} \cup \{a:\chtype{\btinp{\tmap{S_1}{2}}\tinact}\} \\
-				\tmap{\Gamma_2}{2} & = & \tmap{\Gamma_1}{2} \cup \{\varp{X}:\tmap{\Delta_2}{2}\}
+			\tmap{\Gamma}{2}; \es ;   x:\tmap{S_1}{2}
+									\proves 
+									\pmap{Q}{2} \hastype \Proc
+									\\
+									\tmap{\Gamma}{2}; \es ; \tmap{\Delta}{2}\cat k:\tmap{S}{2} 
+						  \proves  
+						\pmap{P}{2}  \hastype \Proc
 			\end{eqnarray*}
-%
 			Let  
-			 $U_1 = \chtype{\btinp{\tmap{S_1}{2}}\tinact}$. Also, 
-			let $(*)$ and $(**)$ stand for $\tmap{\Gamma_2}{2}; \es ; \es \proves a \hastype U_1$ and
+			 $U_1 = {\btinp{\tmap{S_1}{2}}\tinact}$. We also have:
+			\begin{eqnarray*}
+				\tmap{\Gamma_1}{2} & = & \tmap{\Gamma}{2} \cat a:\chtype{U_1} \\
+				\tmap{\Gamma_2}{2} & = & \tmap{\Gamma_1}{2} \cat \varp{X}:\es
+			\end{eqnarray*}
+ Also, 
+			let $(*)$ and $(**)$ stand for $\tmap{\Gamma_2}{2}; \es ; \es \proves a \hastype \chtype{U_1}$ and
 			  $\tmap{\Gamma_2}{2}; \es ; \es \proves \varp{X} \hastype \Proc$, respectively. We first have two auxiliary derivations:
 			\begin{eqnarray}
 				\label{prop:HO_to_sessp_t1}
@@ -1312,17 +1327,17 @@ By IH we have:
 								\tree{
 									\tree{
 									}{
-										\tmap{\Gamma_2}{2}; \es ; \tmap{\Delta_2}{2} \cat  x:\tmap{S_1}{2}
+										\tmap{\Gamma_2}{2}\,;\, \es \,;\,    x:\tmap{S_1}{2}
 										\proves 
 										\pmap{Q}{2} \hastype \Proc
 									}
 								}{
-									\tmap{\Gamma_2}{2}; \es ; \tmap{\Delta_2}{2}\cat y:\tinact\cat x:\tmap{S_1}{2}
+									\tmap{\Gamma_2}{2}\,;\, \es \,;\,  y:\tinact\cat x:\tmap{S_1}{2}
 									\proves 
 									\pmap{Q}{2} \hastype \Proc
 								}
 							}{
-								\tmap{\Gamma_2}{2}; \es ; \tmap{\Delta_2}{2}\cat y: \btinp{\tmap{S_1}{2}}\tinact
+								\tmap{\Gamma_2}{2}\,;\, \es \,;\, y: \btinp{\tmap{S_1}{2}}\tinact
 								\proves 
 								\binp{y}{x}\pmap{Q}{2} \hastype \Proc
 							} 
@@ -1332,7 +1347,7 @@ By IH we have:
 								(*)
 							}
 						}{
-							\tmap{\Gamma_2}{2}; \es ; \tmap{\Delta_2}{2} 
+							\tmap{\Gamma_2}{2}\,;\, \es \,;\, \es
 							\proves 
 							\binp{a}{y}\binp{y}{x}\pmap{Q}{2} \hastype \Proc
 						} 
@@ -1342,12 +1357,12 @@ By IH we have:
 						} 
 						\quad
 					}{
-						\tmap{\Gamma_2}{2}; \es ; \tmap{\Delta_2}{2} 
+						\tmap{\Gamma_2}{2}\,;\, \es \,;\, \es 
 						\proves 
 						\binp{a}{y}\binp{y}{x}\pmap{Q}{2} \Par \varp{X} \hastype \Proc
 					}
 				}{
-					\tmap{\Gamma_1}{2}; \es ; \tmap{\Delta_2}{2} 
+					\tmap{\Gamma_1}{2}\,;\, \es \,;\, \es 
 					\proves 
 					\recp{X}{(\binp{a}{y}\binp{y}{x}\pmap{Q}{2} \Par \varp{X})} \hastype \Proc
 				}
@@ -1357,43 +1372,43 @@ and
 				\label{prop:HO_to_sessp_t2}
 				\tree{
 					\begin{array}{rcl}
-						\tmap{\Gamma_1}{2}; \es ; \tmap{\Delta_1}{2}\cat k:\tmap{S}{2} 
+						\tmap{\Gamma_1}{2}\,;\, \es \,;\,\tmap{\Delta}{2}\cat k:\tmap{S}{2} 
 						& \proves &
 						\pmap{P}{2}  \hastype \Proc
 						\\
-						\tmap{\Gamma_1}{2}; \es ; \tmap{\Delta_2}{2} 
+						\tmap{\Gamma_1}{2}\,;\, \es \,;\, \es
 						& \proves &
 						\recp{X}{(\binp{a}{y}\binp{y}{x}\pmap{Q}{2} \Par \varp{X})} \hastype \Proc
 						\qquad \eqref{prop:HO_to_sessp_t1}
 					\end{array}
 				}{
-					\tmap{\Gamma_1}{2}; \es ; \tmap{\Delta_1\cat \Delta_2}{2}\cat k:\tmap{S}{2} 
+					\tmap{\Gamma_1}{2} \,;\, \es \,;\, \tmap{\Delta}{2}\cat k:\tmap{S}{2} 
 					\proves 
 					\pmap{P}{2} \Par 
 					\recp{X}{(\binp{a}{y}\binp{y}{x}\pmap{Q}{2} \Par \varp{X})} \hastype \Proc
 				}
 			\end{eqnarray}
-We now have:
+We now finally have:
 			\[
 				\tree{
 					\tree{
 						\begin{array}{rcl}
-							\tmap{\Gamma_1}{2}; \es ; \es & \proves & a \hastype U_1
+							\tmap{\Gamma_1}{2}\,;\, \es \,;\, \es & \proves & a \hastype \chtype{U_1}
 							\\
-							\tmap{\Gamma_1}{2}; \es ; \tmap{\Delta_1\cat \Delta_2}{2}\cat k:\tmap{S}{2} 
+							\tmap{\Gamma_1}{2}\,;\, \es \,;\, \tmap{\Delta}{2}\cat k:\tmap{S}{2} 
 							& \proves & 
 							\pmap{P}{2} \Par 
 							\recp{X}{(\binp{a}{y}\binp{y}{x}\pmap{Q}{2} \Par \varp{X})} \hastype \Proc
 							\quad \eqref{prop:HO_to_sessp_t2}
 						\end{array}
 					}{
-						\tmap{\Gamma_1}{2}; \es ; \tmap{\Delta_1\cat \Delta_2}{2}\cat k:\bbtout{U_1}\tmap{S}{2} 
+						\tmap{\Gamma_1}{2}\,;\, \es \,;\, \tmap{\Delta}{2}\cat k:\bbtout{\chtype{U_1}}\tmap{S}{2} 
 						\proves 
 						\bout{k}{a}(\pmap{P}{2} \Par 
 						\recp{X}{(\binp{a}{y}\binp{y}{x}\pmap{Q}{2} \Par \varp{X}))} \hastype \Proc
 					}
 				}{
-					\tmap{\Gamma}{2}; \es ; \tmap{\Delta_1\cat \Delta_2}{2}\cat k:\bbtout{U_1}\tmap{S}{2} 
+					\tmap{\Gamma}{2}\,;\, \es \,;\, \tmap{\Delta}{2}\cat k:\bbtout{\chtype{U_1}}\tmap{S}{2} 
 					\proves 
 					\newsp{a}{\bout{k}{a}( 
 					\pmap{P}{2} \Par 
@@ -1401,10 +1416,14 @@ We now have:
 				}
 			\]
 %
-
- 
+\end{enumerate}
+ This completes the proof for this case.
 	
-		\item	Case $P = \binp{k}{x} P$. Then there are two cases, depending on the type of $x$ (i.e., $\shot{S_1}$ or $\lhot{S_1}$). 
+		\item	Case $P = \binp{k}{x} P$. 
+		Here again  
+		there are several sub-cases, depending on whether $k$ and $x$ have linear types.
+		We content ourselves by checking the case in which $k$ is a session (linear) name.
+		Then there are two cases: $x: \shot{S_1}$ and $x:\lhot{S_1}$. 
 			In the first case,
 			we have the following typing in the source language:
 %
@@ -1451,19 +1470,27 @@ We now have:
 				}
 			\]
 %
-		\item	Case $P = \appl{x}{k}$. Also here we have two cases, depending on whether $X$ has linear or shared type.
-			In the first case, $x$ is linear and
-			we have the following typing in the source language:
+		\item	Case $P = \appl{x}{k}$. Also here we have two sub-cases, depending on whether $x$ has linear or shared type.
+			In the first one, $x$ is linear and so we have the following source typing:
 %
 			\[
 				\tree{
-					\Gamma ;\, \{x : \lhot{S_1}\};\,  \es \proves  X \hastype \lhot{S_1} \quad \Gamma; \es ; \{k:S_1\} \proves k \hastype S_1
+					\Gamma ;\, \{x : \lhot{S_1}\};\,  \es \proves  x \hastype \lhot{S_1} \quad \Gamma; \es ; \{k:S_1\} \proves k \hastype S_1
 				}{
 					\Gamma;\, \{x : \lhot{S_1}\};\, k:S_1 \proves  \appl{x}{k} \hastype \Proc}
 			\]
+			Notice that by Rule [EProm] we have:
+					\[
+				\tree{
+					\Gamma;\, \{x : \lhot{S_1}\};\, k:S_1 \proves \appl{x}{k} \hastype \Proc
+				}{
+					\Gamma \cat x : \shot{S_1} \,;\, \es \,;\, k:S_1 \proves  \appl{x}{k} \hastype \Proc}
+			\]
+			
+			Following \figref{f:enc:ho_to_sessp}, we have that $\pmap{\appl{x}{k}}{2} = \newsp{s}{\bout{x}{s} \bout{\dual{s}}{k} \inact}$.
 			Let us write
-			$\tmap{\Gamma_1}{2}$ to stand for $\tmap{\Gamma}{2} \cat x:\chtype{\btout{\tmap{S_1}{2}}\tinact}$.
-			The corresponding typing in the target language is as follows:
+			$\tmap{\Gamma_1}{2}$ to stand for $\tmap{\Gamma}{2} \cat x:\chtype{\btinp{\tmap{S_1}{2}}\tinact}$.
+			To derive the corresponding typing in the target language we first need an auxiliary derivation:
 %
 			\begin{eqnarray}
 				\label{prop:HO_to_sessp_t11}
@@ -1479,16 +1506,19 @@ We now have:
 					\tmap{\Gamma_1}{2};\, \es;\,\, k:\tmap{S_1}{2} \cat  \dual{s}:\btout{\tmap{S_1}{2}}\tinact \proves  \bout{\dual{s}}{k}\inact \hastype \Proc
 				}
 			\end{eqnarray}
-%
+We then have:
 			\[
 				\tree{
 					\tree{
-						\begin{array}{c}
-							\tmap{\Gamma_1}{2};\, \es;  k:\tmap{S_1}{2} \cat  \dual{s}:\btout{\tmap{S_1}{2}}\tinact \proves
+						\begin{array}{rcl}
+													\tmap{\Gamma_1}{2} ;\, \es ;\, \es & \proves &  x \hastype \chtype{\btinp{\tmap{S_1}{2}}\tinact}
+\\
+							\tmap{\Gamma_1}{2};\, \es;  k:\tmap{S_1}{2} \cat  \dual{s}:\btout{\tmap{S_1}{2}}\tinact 							& \proves & 
 							\bout{\dual{s}}{k}\inact \hastype \Proc
 							\quad \eqref{prop:HO_to_sessp_t11}
 							\\
-							\tmap{\Gamma_1}{2} ;\, \es ;\, \es \proves x \hastype \chtype{\btout{\tmap{S_1}{2}}\tinact}
+							\tmap{\Gamma_1}{2} ;\, \es ;\, \{s: \btinp{\tmap{S_1}{2}}\tinact\} & \proves &  
+							s~ \hastype \btinp{\tmap{S_1}{2}}\tinact
 						\end{array}
 					}{
 						\tmap{\Gamma_1}{2};\, \es;\, k:\tmap{S_1}{2} \cat s:\btinp{\tmap{S_1}{2}}\tinact \cat \dual{s}:\btout{\tmap{S_1}{2}}\tinact
@@ -1499,8 +1529,9 @@ We now have:
 					\tmap{\Gamma_1}{2};\, \es;\, k:\tmap{S_1}{2} \proves  \news{s}{(\bout{x}{s}\bout{\dual{s}}{k}\inact)} \hastype \Proc
 				}
 	\]
+	which completes the proof for this sub-case.
 %
-			In the second case, $x$ is shared, and
+			In the second sub-case, $x$ is shared, and
 			we have the following typing in the source language:
 %
 			\[
@@ -1563,7 +1594,7 @@ Then
 		$\Gamma; \es; \Delta \proves P \hby{\bactout{n}{\abs{x}{Q}}}  \Delta' \proves P'$, 
 		and so we infer
 					\begin{eqnarray*}
-		\tmap{\Gamma}{2};  \tmap{\Delta}{2} \proves \pmap{P}{2} &\hby{\news{a} \bactout{n}{a}}& \tmap{\Delta}{2} \proves \pmap{P'}{2} \Par \repl{} \binp{a}{y} \binp{y}{x} \pmap{Q}{2}
+		\tmap{\Gamma}{2};  \tmap{\Delta}{2} \proves \pmap{P}{2} &\hby{\news{a} \bactout{n}{a}}& \tmap{\Delta}{2} \proves \pmap{P'}{2} \Par \repl{ \binp{a}{y} \binp{y}{x} \pmap{Q}{2}}
 	\end{eqnarray*}
 %
 	\noi and from \defref{d:enc:hopitopi} we have 		$\mapa{\bactout{n}{\abs{x}{Q}}} = \news{a} \bactout{n}{a}$, 
@@ -1593,22 +1624,22 @@ and
 %
 	\begin{eqnarray*}
 		\tmap{\Gamma}{2};  \tmap{\Delta'}{2} \proves \pmap{P' \subst{\abs{x}{Q}}{x}}{2} \fwb
-		\tmap{\Delta''}{2} \proves \newsp{a}{R \subst{a}{x} \Par \repl{} \binp{a}{y} \binp{y}{x} \pmap{Q}{2}}
+		\tmap{\Delta''}{2} \proves \newsp{a}{R \subst{a}{x} \Par \repl{\binp{a}{y} \binp{y}{x} \pmap{Q}{2}}}
 	\end{eqnarray*}
 which can be proven by structural induction on $P'$.
 The most interesting case is when $P' = \appl{x}{m}$. We then have:
 %
 	\begin{eqnarray*}
 		\pmap{\appl{x}{m} \subst{\abs{x}{Q}}{x}}{2} &=& \pmap{Q \subst{m}{x}}{2}\\
-		\newsp{a}{R \subst{a}{x} \Par \repl{} \binp{a}{y} \binp{y}{x} \pmap{Q}{2}} &=& \newsp{a}{\newsp{s}{ \bout{x}{s} \bout{\dual{s}}{m} \inact} \subst{a}{x} \Par \repl{} \binp{a}{y} \binp{y}{x} \pmap{Q}{2}}
+		\newsp{a}{R \subst{a}{x} \Par \repl{\binp{a}{y} \binp{y}{x} \pmap{Q}{2}}} &=& \newsp{a}{\newsp{s}{ \bout{x}{s} \bout{\dual{s}}{m} \inact} \subst{a}{x} \Par \repl{\binp{a}{y} \binp{y}{x} \pmap{Q}{2}}}
 	\end{eqnarray*}
 %
 	\noi The right-hand side process can evolve as follows:
 %
 	\begin{eqnarray*}
-		\mhorel{\tmap{\Gamma}{2}}{\tmap{\Delta''}{2}}{\newsp{a}{\newsp{s}{ \bout{x}{s} \bout{\dual{s}}{m} \inact} \subst{a}{x} \Par \repl{} \binp{a}{y} \binp{y}{x} \pmap{Q}{2}}}
+		\mhorel{\tmap{\Gamma}{2}}{\tmap{\Delta''}{2}}{\newsp{a}{\newsp{s}{ \bout{x}{s} \bout{\dual{s}}{m} \inact} \subst{a}{x} \Par \repl{\binp{a}{y} \binp{y}{x} \pmap{Q}{2}}}}
 		{\hby{\tau} \hby{\stau}}
-		{\tmap{\Delta''}{2}}{}{\newsp{a}{\pmap{Q \subst{m}{x}}{2} \Par \repl{} \binp{a}{y} \binp{y}{x} \pmap{Q}{2}}}
+		{\tmap{\Delta''}{2}}{}{\newsp{a}{\pmap{Q \subst{m}{x}}{2} \Par \repl{\binp{a}{y} \binp{y}{x} \pmap{Q}{2}}}}
 	\end{eqnarray*}
 %
 	\noi which is bisimilar with		$\pmap{Q \subst{m}{x}}{2}$ because $a$ is fresh.
@@ -1617,16 +1648,16 @@ The most interesting case is when $P' = \appl{x}{m}$. We then have:
 %
 	\begin{eqnarray*}
 		&& \tmap{\Gamma}{2};   \tmap{\Delta'}{2} \proves \pmap{(P_1 \Par P_2) \subst{\abs{x}{Q}}{x}}{2} \fwb
-		\tmap{\Delta''}{2} \proves \newsp{a}{\pmap{P_1 \Par P_2}{2} \subst{a}{x} \Par \repl{} \binp{a}{y} \binp{y}{x} \pmap{Q}{2}}
+		\tmap{\Delta''}{2} \proves \newsp{a}{\pmap{P_1 \Par P_2}{2} \subst{a}{x} \Par \repl{\binp{a}{y} \binp{y}{x} \pmap{Q}{2}}}
 	\end{eqnarray*}
 %
 	\noi We know that
 %
 	\begin{eqnarray*}
 		\horel{\tmap{\Gamma}{2}}{\tmap{\Delta_1}{2}}{\pmap{P_1\subst{\abs{x}{Q}}{x}}{2}}{&\fwb&}
-		{\tmap{\Delta_1''}{2}}{\newsp{a}{\pmap{P_1}{2} \subst{a}{x} \Par \repl{} \binp{a}{y} \binp{y}{x} \pmap{Q}{2}}}\\
+		{\tmap{\Delta_1''}{2}}{\newsp{a}{\pmap{P_1}{2} \subst{a}{x} \Par \repl{\binp{a}{y} \binp{y}{x} \pmap{Q}{2}}}}\\
 		\horel{\tmap{\Gamma}{2}}{\tmap{\Delta_2}{2}}{\pmap{P_2\subst{\abs{x}{Q}}{x}}{2}}{&\fwb&}
-		{\tmap{\Delta_1''}{2}}{\newsp{a}{\pmap{P_2}{2} \subst{a}{x} \Par \repl{} \binp{a}{y} \binp{y}{x} \pmap{Q}{2}}}
+		{\tmap{\Delta_1''}{2}}{\newsp{a}{\pmap{P_2}{2} \subst{a}{x} \Par \repl{\binp{a}{y} \binp{y}{x} \pmap{Q}{2}}}}
 	\end{eqnarray*}
 %
 	\noi and so we conclude immediately exploiting the fact that $\fwb$ is a congruence.
@@ -1717,25 +1748,25 @@ the soundness direction of operational correspondence (cf.~\propref{app:prop:op_
 \propref{app:prop:op_corr_HOp_to_p} (Part 1), we  infer that:
 %
 	\begin{eqnarray*}
-		\mapt{\Gamma}^{2}; \mapt{\Delta_1}^{2} \proves \pmap{P}{2} \hby{\news{a} \bactout{n}{a_1: U}} \mapt{\Delta_1'}^{2} \proves \pmap{P'}{2} \Par \repl \bout{a_1}{y} \binp{y}{x} \pmap{R_1}{2}
+		\mapt{\Gamma}^{2}; \mapt{\Delta_1}^{2} \proves \pmap{P}{2} \hby{\news{a} \bactout{n}{a_1: U}} \mapt{\Delta_1'}^{2} \proves \pmap{P'}{2} \Par \repl{\bout{a_1}{y} \binp{y}{x} \pmap{R_1}{2}}
 	\end{eqnarray*}
 %
 	which implies, from the requirements of $\fwb$, both 
 %
 	\begin{eqnarray}
 		\label{prop:fa_ho_sessp_1}
-		\mapt{\Gamma}^{2}; \mapt{\Delta_2}^{2} \proves \pmap{Q}{2} \Hby{\news{a} \bactout{n}{a_2: U}} \mapt{\Delta_2'}^{2} \proves \pmap{Q'}{2} \Par \repl \bout{a_2}{y} \binp{y}{x} \pmap{R_2}{2}
+		\mapt{\Gamma}^{2}; \mapt{\Delta_2}^{2} \proves \pmap{Q}{2} \Hby{\news{a} \bactout{n}{a_2: U}} \mapt{\Delta_2'}^{2} \proves \pmap{Q'}{2} \Par \repl{\bout{a_2}{y} \binp{y}{x} \pmap{R_2}{2}}
 	\end{eqnarray}
 %
 	and
 
 	\mhorel	{\tmap{\Gamma}{2}}
 		{\tmap{\Delta_1'}{2}}
-		{\newsp{a_1}{\pmap{P'}{2} \Par \repl \binp{a_1}{y} \binp{y}{x} \pmap{R_1}{2} \Par \binp{t}{x} \newsp{s}{ \binp{s}{y} \mapchar{U}{y} \Par \bout{s}{a_1} \inact }}}
+		{\newsp{a_1}{\pmap{P'}{2} \Par \repl{\binp{a_1}{y} \binp{y}{x} \pmap{R_1}{2}} \Par \binp{t}{x} \newsp{s}{ \binp{s}{y} \mapchar{U}{y} \Par \bout{s}{a_1} \inact }}}
 		{\fwb}
 		{\tmap{\Delta_2'}{2}}
 		{}
-		{\newsp{a_2}{\pmap{Q'}{2} \Par \repl \binp{a_2}{y} \binp{y}{x} \pmap{R_2}{2} \Par \binp{t}{x} \newsp{s}{ \binp{s}{y} \mapchar{U}{y} \Par \bout{s}{a_2} \inact } }}
+		{\newsp{a_2}{\pmap{Q'}{2} \Par \repl{\binp{a_2}{y} \binp{y}{x} \pmap{R_2}{2}} \Par \binp{t}{x} \newsp{s}{ \binp{s}{y} \mapchar{U}{y} \Par \bout{s}{a_2} \inact } }}
 
 	\noi Now, from~\eqref{prop:fa_ho_sessp_1} and  \propref{app:prop:op_corr_HOp_to_p} (Part 2), we infer that
 	there exist $Q', R_2$ such that:
@@ -1768,7 +1799,7 @@ the soundness direction of operational correspondence (cf.~\propref{app:prop:op_
 	This suffices to conclude, because from the definition of $\pmap{\cdot}{2}$ (cf. \figref{f:enc:ho_to_sessp}) we have:
 	\begin{eqnarray*}
 		\pmap{P' \Par \binp{t}{x} \newsp{s}{ \binp{s}{y} \mapchar{U}{y} \Par \bout{s}{R_1} \inact}}{2}  & = &
-		\pmap{P'}{2} \Par \repl \binp{a_2}{y} \binp{y}{x} \pmap{R_2}{2} \\ & & \Par \binp{t}{x} \newsp{s}{ \binp{s}{y} \mapchar{U}{y} \Par \bout{s}{a_2}} \inact
+		\pmap{P'}{2} \Par \repl{\binp{a_2}{y} \binp{y}{x} \pmap{R_2}{2}} \\ & & \Par \binp{t}{x} \newsp{s}{ \binp{s}{y} \mapchar{U}{y} \Par \bout{s}{a_2}} \inact
 	\end{eqnarray*}
 	(and similarly for $Q' \Par \binp{t}{x} \newsp{s}{ \binp{s}{y} \mapchar{U}{y} \Par \bout{s}{R_2} \inact } $).
 %\jpc{I didn't understand this step: rather than $R_1$, $R_2$ above you obtain some $R_3, R_4$ such that $R_3 =  \pmap{R_1}{2}$ and $R_4 =  \pmap{R_2}{2}$, right?}
@@ -1807,11 +1838,11 @@ Given these assumptions, and considering \figref{f:enc:ho_to_sessp}, the transit
 $$
 	\mhorel	{\tmap{\Gamma}{2}}
 		{\tmap{\Delta_1}{2}}
-		{\news{a_1}(\bout{n}{a_1} \pmap{P'}{2} \Par \repl \binp{a_1}{y} \binp{y}{x} \pmap{R_1}{2})}
+		{\news{a_1}(\bout{n}{a_1} \pmap{P'}{2} \Par \repl{\binp{a_1}{y} \binp{y}{x} \pmap{R_1}{2}})}
 		{\hby{\news{a}\bactout{n}{a_1}}}
 		{\tmap{\Delta_1'}{2}}
 		{}
-		{\pmap{P'}{2} \Par \repl \binp{a_1}{y} \binp{y}{x} \pmap{R_1}{2}}
+		{\pmap{P'}{2} \Par \repl{\binp{a_1}{y} \binp{y}{x} \pmap{R_1}{2}}}
 $$
 Then, using 
 \propref{app:prop:op_corr_HOp_to_p} (Part 2(a)), 
@@ -1852,24 +1883,24 @@ for some $R_2$.
 	\begin{eqnarray*}
 		\tmap{\Gamma}{2};   \tmap{\Delta_2}{2} \proves \pmap{Q}{2}
 		\Hby{\news{a_2}\bactout{n}{a_2}}
-		\Delta_2' \proves \pmap{Q'}{2} \Par \repl \binp{a_2}{y} \binp{y}{x} \pmap{R_2}{2}
+		\Delta_2' \proves \pmap{Q'}{2} \Par \repl{\binp{a_2}{y} \binp{y}{x} \pmap{R_2}{2}}
 	\end{eqnarray*}
 From the definition of $\Re$ (and the fact that the pair
 	of mapped processes can observe only deterministic transitions) we may finally obtain:
 
 	\mhorel	{\tmap{\Gamma}{2}}
 		{\tmap{\Delta_1'}{2}}
-		{\pmap{P'}{2} \Par \repl \binp{a_1}{y} \binp{y}{x} \pmap{R_1}{2} \Par \binp{t}{x} \newsp{s}{\binp{s}{y} \mapchar{U}{y} \Par \bout{s}{a_1} \inact }}
+		{\pmap{P'}{2} \Par \repl{\binp{a_1}{y} \binp{y}{x} \pmap{R_1}{2}} \Par \binp{t}{x} \newsp{s}{\binp{s}{y} \mapchar{U}{y} \Par \bout{s}{a_1} \inact }}
 		{\Re}
 		{\tmap{\Delta_2'}{2}}
 		{}
-		{\pmap{Q'}{2} \Par \repl \binp{a_2}{y} \binp{y}{x} \pmap{R_2}{2} \Par \binp{t}{x} \newsp{s}{\binp{s}{y} \mapchar{U}{y} \Par \bout{s}{a_2} \inact  }}
+		{\pmap{Q'}{2} \Par \repl{\binp{a_2}{y} \binp{y}{x} \pmap{R_2}{2}} \Par \binp{t}{x} \newsp{s}{\binp{s}{y} \mapchar{U}{y} \Par \bout{s}{a_2} \inact  }}
 
 	\noi as required.
 	This suffices, because
 	\begin{eqnarray*}
 		 \pmap{P' \Par \binp{t}{x} \newsp{s}{ \binp{s}{y} \mapchar{U}{y} \Par \bout{s}{R_1} \inact}}{2} & = &
-		\pmap{P'}{2} \Par \repl \binp{a_2}{y} \binp{y}{x} \pmap{R_2}{2} \\
+		\pmap{P'}{2} \Par \repl{\binp{a_2}{y} \binp{y}{x} \pmap{R_2}{2}} \\
 		&  & \Par \binp{t}{x} \newsp{s}{ \binp{s}{y} \mapchar{U}{y} \Par \bout{s}{a_2} \inact}
 	\end{eqnarray*}
 	(and similarly for $Q'$.)
