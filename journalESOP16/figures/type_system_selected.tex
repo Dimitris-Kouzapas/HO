@@ -1,27 +1,15 @@
 % !TEX root = ../journal16kpy.tex
-\begin{figure}[t]
+\begin{figure}[h!]
 \[
 	\begin{array}{c}
-		\inferrule[(Prom)]{
-			\Gamma; \emptyset; \emptyset \proves V \hastype 
-                         \lhot{C}
-		}{
-			\Gamma; \emptyset; \emptyset \proves V \hastype 
-                         \shot{C}
-		} 
+	\inferrule[(Sess)]{}{\Gamma; \emptyset; \set{u:S} \proves u \hastype S} 
 		\qquad
-		\inferrule[(EProm)]{
-		\Gamma; \Lambda \cat x : \lhot{C}; \Delta \proves P \hastype \Proc
-		}{
-			\Gamma \cat x:\shot{C}; \Lambda; \Delta \proves P \hastype \Proc
-		}
-		\qquad
-			\inferrule[(Par)]{
-			\Gamma; \Lambda_{i}; \Delta_{i} \proves P_{i} \hastype \Proc \quad i=1,2
-		}{
-			\Gamma; \Lambda_{1} \cat \Lambda_2; \Delta_{1} \cat \Delta_2 \proves P_1 \Par P_2 \hastype \Proc
-		}
-		\\[1mm] \\
+		\inferrule[(Sh)]{}{\Gamma \cat u : U; \emptyset; \emptyset \proves u \hastype U}
+		\\ \\ 
+		\inferrule[(LVar)]{}{\Gamma; \set{x: \lhot{C}}; \emptyset \proves x \hastype \lhot{C}}
+						\qquad
+		\inferrule[(RVar)]{}{\Gamma \cat \rvar{X}: \Delta; \emptyset; \Delta  \proves \rvar{X} \hastype \Proc}
+				\\  \\
 		\inferrule[(Abs)]{
 			\Gamma; \Lambda; \Delta_1 \proves P \hastype \Proc
 			\quad
@@ -31,20 +19,56 @@
 		}
 		\quad
 		\inferrule[(App)]{
-			\begin{array}{c}
-				U = \lhot{C} \lor \shot{C}
-				\\
-				\Gamma; \Lambda; \Delta_1 \proves V \hastype U \quad
+			%\begin{array}{c}
+				%U = \hot{C} \lor \shot{C}
+				%\\
+				\Gamma; \Lambda; \Delta_1 \proves V \hastype \ghot{C} ~~
+				\leadsto\, \in \{\lollipop, \sharedop\} \quad
 				\Gamma; \es; \Delta_2 \proves u \hastype C
-			\end{array}
+		%	\end{array}
 		}{
 			\Gamma; \Lambda; \Delta_1 \cat \Delta_2 \proves \appl{V}{u} \hastype \Proc
 		} 
-		\\[1mm] \\
+
+		\\  \\
+		\inferrule[(Prom)]{
+			\Gamma; \emptyset; \emptyset \proves V \hastype 
+                         \lhot{C}
+		}{
+			\Gamma; \emptyset; \emptyset \proves V \hastype 
+                         \shot{C}
+		} 
+		\quad
+		\inferrule[(EProm)]{
+		\Gamma; \Lambda \cat x : \lhot{C}; \Delta \proves P \hastype \Proc
+		}{
+			\Gamma \cat x:\shot{C}; \Lambda; \Delta \proves P \hastype \Proc
+		}
+				\quad
+		\inferrule[(End)]{
+			\Gamma; \Lambda; \Delta  \proves P \hastype T \quad u \not\in \dom{\Gamma, \Lambda,\Delta}
+		}{
+			\Gamma; \Lambda; \Delta \cat u: \tinact  \proves P \hastype \Proc
+		}
+		\\  \\
+		\inferrule[(Rec)]{
+			\Gamma \cat \rvar{X}: \Delta; \emptyset; \Delta  \proves P \hastype \Proc
+		}{
+			\Gamma ; \emptyset; \Delta  \proves \recp{X}{P} \hastype \Proc
+		}
+		\qquad
+			\inferrule[(Par)]{
+			\Gamma; \Lambda_{i}; \Delta_{i} \proves P_{i} \hastype \Proc \quad i=1,2
+		}{
+			\Gamma; \Lambda_{1} \cat \Lambda_2; \Delta_{1} \cat \Delta_2 \proves P_1 \Par P_2 \hastype \Proc
+		}
+		\qquad
+				\inferrule[(Nil)]{ }{\Gamma; \emptyset; \emptyset \proves \inact \hastype \Proc}
+		\\  \\
 		\inferrule[(Send)]{
 					\begin{array}{c}
 					u:S \in \Delta_1 \cat \Delta_2 %\\
-					~~
+					\quad
 			\Gamma; \Lambda_1; \Delta_1 \proves P \hastype \Proc
 			\quad
 			\Gamma; \Lambda_2; \Delta_2 \proves V \hastype U
@@ -52,7 +76,7 @@
 		}{
 			\Gamma; \Lambda_1 \cat \Lambda_2; ((\Delta_1 \cat \Delta_2) \setminus u:S) \cat u:\btout{U} S \proves \bout{u}{V} P \hastype \Proc
 		}
-		\\[1mm] \\
+		\\  \\
 		\inferrule[(Req)]{
 			\begin{array}{c}
 				\Gamma; \es; \es \proves u \hastype U_1
@@ -75,7 +99,7 @@
 			\Gamma; \Lambda; \Delta_1 \cat \Delta_2 \proves \bout{u}{V} P \hastype \Proc
 		}
 		~~
-		\\[2mm] \\
+		\\ \\
 				\inferrule[(Rcv)]{
 		\begin{array}{c}
 			\Gamma; \Lambda_1; \Delta_1 \cat u: S \proves P \hastype \Proc
@@ -83,7 +107,7 @@
 			\Gamma; \Lambda_2; \Delta_2 \proves {x} \hastype {U}
 			\end{array}
 		}{
-			\Gamma \backslash x; \Lambda_1\cat \Lambda_2; \Delta_1\backslash \Delta_2 \cat u: \btinp{U} S \vdash \binp{u}{{x}} P \hastype \Proc
+			\Gamma \backslash x; \Lambda_1\backslash \Lambda_2; \Delta_1\backslash \Delta_2 \cat u: \btinp{U} S \vdash \binp{u}{{x}} P \hastype \Proc
 		}
 		~~
 		\inferrule[(Acc)]{
@@ -105,11 +129,35 @@
 		}{
 			\Gamma\backslash x; \Lambda_1 \backslash \Lambda_2; \Delta_1 \backslash \Delta_2 \proves \binp{u}{x} P \hastype \Proc
 		}	
+		\\  \\
+				\inferrule[(Bra)]{
+			 \forall i \in I \quad \Gamma; \Lambda; \Delta \cat u:S_i \proves P_i \hastype \Proc
+		}{
+			\Gamma; \Lambda; \Delta \cat u: \btbra{l_i:S_i}_{i \in I} \proves \bbra{u}{l_i:P_i}_{i \in I}\hastype \Proc
+		}
+		\qquad
+	 	\inferrule[(Sel)]{
+			\Gamma; \Lambda; \Delta \cat u: S_j  \proves P \hastype \Proc \quad j \in I
+		}{
+			\Gamma; \Lambda; \Delta \cat u:\btsel{l_i:S_i}_{i \in I} \proves \bsel{u}{l_j} P \hastype \Proc
+		}
+		\\  \\
+		\inferrule[(ResS)]{
+			\Gamma; \Lambda; \Delta \cat s:S_1 \cat \dual{s}: S_2 \proves P \hastype \Proc \quad S_1 \dualof S_2
+		}{
+			\Gamma; \Lambda; \Delta \proves \news{s} P \hastype \Proc
+		}
+		\qquad
+		\inferrule[(Res)]{
+			\Gamma\cat a:\chtype{S} ; \Lambda; \Delta \proves P \hastype \Proc
+		}{
+			\Gamma; \Lambda; \Delta \proves \news{a} P \hastype \Proc
+		}
 		\end{array}
 \]
 %\vspace{-3mm}
-\caption{Selected Typing Rules for $\HOp$.
-See \appref{app:types} for a full account.
+\caption{Typing Rules for $\HOp$.
+%See \appref{app:types} for a full account.
 \label{fig:typerulesmys}}
 %\Hline
 %\vspace{-1mm}
