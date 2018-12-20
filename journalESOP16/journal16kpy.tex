@@ -830,9 +830,9 @@ We state key definitions and properties for the session type system for \HOp.
 The considered type system,
 introduced in~\cite{KouzapasPY17},
  distills the key features of~\cite{tlca07,MostrousY15} and so it is simpler.
- Below we provide essential definitions; see \appref{app:types} 
- %for definitions of type equivalence and type duality, and 
-for a complete account of the typing rules.
+% Below we provide essential definitions; see \appref{app:types} 
+% %for definitions of type equivalence and type duality, and 
+%for a complete account of the typing rules.
 
 
 %The system almost identical with the system developed in~\cite{characteristic_bis}
@@ -1317,10 +1317,43 @@ and
 \emph{higher-order bisimilarity}.
 %The definition of characteristic bisimilarity 
 Their definition 
-uses an early \emph{typed}
+uses a  \emph{typed}
 labelled transition system (LTS) on processes, informed by session
-types~\cite{KY2015}. 
-The interaction of processes with their environment is defined using action labels:
+types~\cite{KY2015}, whose key notions are summarized next.
+We will be working with closed process terms, i.e., processes without free  variables.
+
+\jp{
+\paragraph{A Typed Labelled Transition System}
+The typed LTS describes the interaction of well-typed processes with their environment. 
+We shall focus on well-typed processes whose type judgements have an empty $\Lambda$, i.e., an empty environment 
+for linear higher-order types.
+Given this, we write $$\Gamma; \Delta \proves P \by{~\ell~} \Delta' \proves P'$$ to denote 
+a (strong) transition with action label $\ell$ (cf. \defref{d:labels} below). % in this LTS. 
+
+Formally, the typed LTS is obtained by coupling an untyped LTS on processes, whose transitions are denoted 
+$P \by{\ell} P'$ with a labelled transition relation 
+on typing environments, whose transitions are denoted 
+$(\Gamma, \Delta) \by{\ell} (\Gamma, \Delta')$ (see \defref{d:tlts}).
+These auxiliary LTSs are given in 
+\figref{fig:untyped_LTS}
+and 
+\figref{fig:envLTS}, respectively.
+The key idea is that the transitions 
+of a typed process should be enabled by its associated typing: % environment:
+$$
+\text{if } 
+P \by{\ell} P' 
+\text{ and } 
+(\Gamma, \Delta) \by{\ell} (\Gamma, \Delta') 
+\text{ then }
+\Gamma;  \Delta \proves P \by{\ell} \Delta' \proves P'.
+$$
+%
+%\noi
+
+The LTS on untyped processes, the LTS on typing environments, and the typed LTS share the same set of 
+%The interaction of processes with their environment is defined using 
+action labels:
 %
 \begin{definition}[Action Labels]\label{d:labels}
 The set of action labels for \HOp, ranged over by $\ell, \ell', \ldots$, is defined as follows:
@@ -1344,53 +1377,29 @@ denotes the sending of value $V$
 over channel $n$ with a possible empty set of restricted names
 $\widetilde{m}$ 
 (we may write $\bactout{n}{V}$ when $\widetilde{m}$ is empty).
-Dually, the action for value reception is 
+The action for value reception is 
 $\bactinp{n}{V}$.
 Actions for select and branch on
 a label~$l$ are denoted $\bactsel{n}{l}$ and $\bactbra{n}{l}$, respectively.
 We write $\fn{\ell}$ and $\bn{\ell}$ to denote the
 sets of free/bound names in $\ell$, respectively.
+
+\begin{remark}[Type Annotations (1)]\label{r:anntypes}
+We sometimes annotate process actions with their type. In particular, 
+given a value $V$ of type $U$, we may write label
+$\news{\widetilde{m}} \bactout{n}{V}$
+%with the type of $V$ 
+as $\news{\widetilde{m}} \bactout{n}{\AT{V}{U}}$.
+\end{remark}
+
+
 The sets of actions for \HO and \sessp is derived from the above syntax, in line with the syntax of values $V$ in \figref{fig:syntax}.
 This way, e.g., $\news{\widetilde{m}} \bactout{n}{\abs{x}{P}}$ is an action label for \HO but not for \sessp;
 similarly, $\bactinp{s}{n}$ is an action label for \sessp but not for \HO.
 
-%\end{document}
-
-\paragraph{A Typed Labelled Transition System}
-A typed transition requires type judgements with an empty $\Lambda$, i.e., an empty environment 
-for linear higher-order types.
-%Notice that for open process terms (i.e., with free variables),  we can always apply Rule~$\trule{EProm}$ (cf. \figref{fig:typerulesmy}) and obtain an empty $\Lambda$. 
-Indeed, we will be working with closed processes, i.e., processes without free  variables.
-Since $\Lambda$ is empty, 
-\newjb{ % (a visible action or $\tau$),
-we write $\Gamma; \Delta \proves P \hby{\ell} \Delta' \proves P'$ to denote 
-a (strong) transition with label $\ell$. % in this LTS. 
-Weak transitions are as expected: we write $\Hby{}$ for the reflexive,
-transitive closure of $\hby{\tau}$,
-$\Hby{\ell}$ for %transitions
-$\Hby{}\hby{\ell}\Hby{}$, and 
-$\Hby{\hat{\ell}}$ for $\Hby{\ell}$ if
-$\ell\not = \tau$ and $\Hby{}$ otherwise.
-%We thus write $\Gamma; \es; \Delta \proves P \Hby{\hat{\ell}} \Delta' \proves P'$.
-}
-%The main intuition %for its definition  
-Intuitively, the transitions 
-of a typed process should be enabled by its associated typing: % environment:
-%
-%\[
-%	\tree {
-%		P \hby{\ell} P' \qquad (\Gamma, \Delta) \hby{\ell} (\Gamma, \Delta')
-%	}{
-%		\Gamma; \es; \Delta \proves P \hby{\ell} \Delta' \proves P' \hastype \Delta'
-%	}
-%\]
-$$
-\text{if } P \hby{\ell} P' \text{ and } (\Gamma, \Delta) \hby{\ell} (\Gamma, \Delta') \text{ then }
-\Gamma; \es; \Delta \proves P \hby{\ell} \Delta' \proves P'.
-$$
-%
-%\noi 
-As an example of how types enable transitions, consider the rule for input:
+\paragraph{A Refined Typed LTS}
+The characterisation of barbed congruence relies on a \emph{refined} typed LTS  on typing environments. Intuitively, 
+the objective is to have a more stringent rule for input transitions, given as follows:
 %
 \[
 	\tree{
@@ -1413,9 +1422,19 @@ A characteristic value
 is the {simplest} process that  inhabits a type (here, the
 type $U$ carried by the input prefix). The above rule is used to limit
 the input actions that can be observed from a session input prefix.
-The definition of characteristic processes and values is given in \figref{fig:char};
-further details on the typed LTS are given in \appref{app:behavioural} and~\cite{KouzapasPY17}.
+The definition of characteristic processes and values is given in \figref{fig:char}.
 
+This refined LTS on typing environments in turn gives rise to a different, refined LTS on processes
+(cf. \defref{def:rlts}).
+Note the different notation for standard and refined transitions: $ \by{\bactinp{s}{V}}$ and $ \hby{\bactinp{s}{V}}$.
+ In the refined LTS, weak transitions are as expected: we write $\Hby{}$ for the reflexive,
+transitive closure of $\hby{\tau}$,
+$\Hby{~\ell~}$ for %transitions
+$\Hby{}\hby{~\ell~}\Hby{}$, and 
+$\Hby{\hat{~\ell~}}$ for $\Hby{\ell}$ if
+$\ell\not = \tau$ and $\Hby{}$ otherwise.
+Further details on the typed LTSs are given in \appref{app:behavioural} and~\cite{KouzapasPY17}.
+}
 
 %%%%%%%%%%%%%%%%%%%%%%%% Characteristic Process Figure %%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{figure}[t!]
@@ -1485,13 +1504,6 @@ further details on the typed LTS are given in \appref{app:behavioural} and~\cite
 \end{figure}
 
 
-\begin{remark}[Type Annotations (1)]\label{r:anntypes}
-We sometimes annotate process actions with their type. In particular, 
-given a value $V$ of type $U$, we may write label
-$\news{\widetilde{m}} \bactout{n}{V}$
-%with the type of $V$ 
-as $\news{\widetilde{m}} \bactout{n}{\AT{V}{U}}$.
-\end{remark}
 
 \paragraph{Characterising $\cong$}
 We now recall the definition of \emph{higher-order bisimilarity} and 
@@ -2117,7 +2129,7 @@ environments in the expected way. %; for instance, $\mapt{\Delta \cat u:S} = \ma
 %\noi 
 When considering forms of operational correspondence with visible actions, 
 our notion of typed encoding shall include mappings $\map{\cdot}$ and $\mapt{\cdot}$, but also
-a  mapping  $\mapa{\cdot}:\mathcal{A}_1 \to \mathcal{A}_2$ 
+a  mapping  $\mapa{\cdot}{}:\mathcal{A}_1 \to \mathcal{A}_2$ 
 describing how visible actions in the source calculus $\tyl{L}_1$ are mapped in the target typed calculus $\tyl{L}_2$.
 
 
@@ -2316,7 +2328,7 @@ for our encodings
  are actually stronger than the criteria given above
  {(see \propsref{prop:op_corr_HOp_to_HO}, \ref{prop:op_corr_HOp_to_p}, \ref{prop:op_corr_HOpp_to_HOp}, and \ref{prop:op_corr_pHOp_to_HOp}).}
  In particular, we will consider forms of operational correspondence that account also for visible actions, relying on 
- a mapping $\mapa{\cdot}$ on actions, as already explained (cf. \defref{def:lopco} below).
+ a mapping $\mapa{\cdot}{}$ on actions, as already explained (cf. \defref{def:lopco} below).
 Finally, following~\cite{SangiorgiD:expmpa,DBLP:conf/lics/PalamidessiSVV06,Yoshida96},
 we consider full abstraction as an encodability criterion: this leads to 
 stronger encodability results. 
@@ -2387,12 +2399,12 @@ Let $\enco{\map{\cdot}, \mapt{\cdot}}: \tyl{L}_1 \to \tyl{L}_2$ be a typed encod
 %\smallskip 
 
 The following property, concerning composabilty of precise encodings, will come in handy in~\secref{sec:extension}.
-It follows closely a similar property established in~\cite{DBLP:journals/dc/Gorla10} for (untyped) valid encodings between languages with equivalences which are \emph{reduction closed}.
+It follows closely a similar property established in~\cite{DBLP:journals/dc/Gorla10} for (untyped) valid encodings between languages with equivalences which are {reduction-closed}.
 
 \begin{proposition}[Composability]%\rm
 	\label{pro:composition}
 	Assume typed calculi $\tyl{L}_1$, $\tyl{L}_2$, and $\tyl{L}_3$ whose typed equivalences 
-	($\wb_1$, $\wb_2$, and $\wb_3$, respectively) are reduction closed. 
+	($\wb_1$, $\wb_2$, and $\wb_3$, respectively) are reduction-closed. 
 	Let %encodings 
 	$\enco{\pmap{\cdot}{1}, \tmap{\cdot}{1}%, \mapa{\cdot}^{1}
 	}: \tyl{L}_1 \to \tyl{L}_2$
@@ -2419,7 +2431,7 @@ we write $\ell_1, \ell_2$ to denote
 actions different from $\tau$,
 and  $\hby{\ell}$ (resp. $\Hby{\ell}$) to denote a (weak) visible transition;
 %with both visible and observable actions, denoted. % and $\hby{}_2$.
-recall that $\mapa{\cdot}$ stands for a mapping 
+recall that $\mapa{\cdot}{}$ stands for a mapping 
 on action labels.
 
 \begin{definition}[Labelled Correspondence / Tight Encodings]%\rm
@@ -2436,14 +2448,14 @@ if it satisfies:
 					If		$\stytraargi{\Gamma}{\ell_1}{\Delta}{P}{\Delta'}{P'}{1}{1}$
 					then	$\exists Q$, $\Delta''$, $\ell_2$ such that: \\ 
 							(i)~$\wtytraargi{\mapt{\Gamma}}{\ell_2}{\mapt{\Delta}}{\map{P}}{\mapt{\Delta''}}{Q}{2}{2}$; 
-							(ii)~$\ell_2 = \mapa{\ell_1}$;  and \\
+							(ii)~$\ell_2 = \mapa{\ell_1}{}$;  and \\
 							(iii)~${\mapt{\Gamma}};{\mapt{\Delta''}}\proves_2 {Q}{\wb_2}{\mapt{\Delta'}}\proves_2 {\map{P'}}$.
 				
 			\item
 					If		$\wtytraargi{\mapt{\Gamma}}{\ell_2}{\mapt{\Delta}}{\map{P}}{\mapt{\Delta'}}{Q}{2}{2}$
 					then	$\exists P'$, $Q'$, $\Delta''$, $\Delta'''$, $\ell_1$ such that: \\ 
 							(i)~$\stytraargi{\Gamma}{\ell_1}{\Delta}{P}{\Delta''}{P'}{1}{1}$;
-							(ii)~$\ell_2 = \mapa{\ell_1}$;
+							(ii)~$\ell_2 = \mapa{\ell_1}{}$;
 							(iii)~$\wtytraargi{\mapt{\Gamma}}{}{\mapt{\Delta'}}{Q}{\mapt{\Delta'''}}{Q'}{2}{2}$
 							(iv)~${\mapt{\Gamma}};{\mapt{\Delta''}}\proves_2 {\map{P'}}{\wb_2}{\mapt{\Delta'''}}\proves_2 {Q'}$.
 	\end{enumerate}
@@ -2762,7 +2774,7 @@ We illustrate the encoding by means of two examples: the first illustrates our s
 
  
 
-\newpage
+%\newpage
 %\input{encoding_example}
 \begin{example}[Encoding Recursion]
 Let $\recp{X}{\bout{a}{m} \varp{X}}$ be an \HOp process.
@@ -2947,22 +2959,22 @@ To this end, we define a mapping  on action labels:
 Given the typed encoding 
 $\enco{\pmapp{\cdot}{1}{f}, \mapt{\cdot}^{1} %, \mapa{\cdot}^{1}
 }: \tyl{L}_{\HOp} \to \tyl{L}_{\HO}$ (cf. \defref{d:enc:hopitoho}),
-the mapping on actions $\mapa{\cdot}^{1}: \mathcal{A}_{\HOp} \to \mathcal{A}_{\HO}$
+the mapping on actions $\mapa{\cdot}{1}: \mathcal{A}_{\HOp} \to \mathcal{A}_{\HO}$
 	is defined as follows:
 	\begin{align*}
-		\mapa{(\nu \tilde{m})\bactout{n}{m}}^{1}
+		\mapa{(\nu \tilde{m})\bactout{n}{m}}{1}
 		& \defeq
 		(\nu \tilde{m})\bactout{n}{\abs{z}{\,\binp{z}{x} (\appl{x}{m})} }
 		\\
-		\mapa{\bactinp{n}{m}}^{1}
+		\mapa{\bactinp{n}{m}}{1}
 		& \defeq
 		\bactinp{n}{\abs{z}{\,\binp{z}{x} (\appl{x}{m})} }
 		\\
-		\mapa{(\nu \tilde{m})\bactout{n}{\abs{{x}}{P}}}^{1}
+		\mapa{(\nu \tilde{m})\bactout{n}{\abs{{x}}{P}}}{1}
 		& \defeq
 		(\nu \tilde{m})\bactout{n}{\abs{{x}}{\pmapp{P}{1}{\es}}}
 		\\ 
-		\mapa{\bactinp{n}{\abs{{x}}{P}}}^{1}
+		\mapa{\bactinp{n}{\abs{{x}}{P}}}{1}
 		& \defeq
 		\bactinp{n}{\abs{{x}}{\pmapp{P}{1}{\es}}}
 %		\\
@@ -3274,13 +3286,13 @@ Type soundness is proven	by induction on the inference $\Gamma; \emptyset; \Delt
 \begin{definition}%\rm
 \label{d:actmap2}
 Given the typed encoding 
-$\enco{\map{\cdot}^{2}, \mapt{\cdot}^{2} %, \mapa{\cdot}^{2}
+$\enco{\pmap{\cdot}{2}, \tmap{\cdot}{2} %, \mapa{\cdot}^{2}
 }: \tyl{L}_{\HOp} \to \tyl{L}_{\sessp}$  (cf. \defref{d:enc:hopitopi}), 
-the mapping on actions $\mapa{\cdot}^{2}: \mathcal{A}_{\HOp} \to \mathcal{A}_{\sessp}$ is defined as follows:
+the mapping on actions $\mapa{\cdot}{2}: \mathcal{A}_{\HOp} \to \mathcal{A}_{\sessp}$ is defined as follows:
 	\begin{align*}
-		\mapa{(\nu \tilde{m})\bactout{n}{\abs{ x}{P}} }^{2} & \defeq \news{m} \bactout{n}{m}
+		\mapa{(\nu \tilde{m})\bactout{n}{\abs{ x}{P}} }{2} & \defeq \news{m} \bactout{n}{m}
 		\\
-		\mapa{\bactinp{n}{\abs{ x}{P}} }^{2} & \defeq \bactinp{n}{m} \quad \quad m \text{ fresh}
+		\mapa{\bactinp{n}{\abs{ x}{P}} }{2} & \defeq \bactinp{n}{m} \quad \quad m \text{ fresh}
 	\end{align*}
 	and as an homomorphism for other actions $\ell \in \mathcal{A}_{\HOp}$.
 \end{definition}
@@ -4354,14 +4366,14 @@ define a mapping on action labels:
 \label{d:actmap3}
 Given 
 the typed encoding
-$\enco{\map{\cdot}^{3}, \mapt{\cdot}^{3}}: \tyl{L}_\HOpp \to \tyl{L}_{\HOp}$ (cf. \defref{d:enc:hopptohop}),
-the mapping on actions $\mapa{\cdot}^{3}: \mathcal{A}_\HOpp \to \mathcal{A}_{\HOp}$  is defined as follows:
+$\enco{\pmap{\cdot}{3}, \tmap{\cdot}{3}}: \tyl{L}_\HOpp \to \tyl{L}_{\HOp}$ (cf. \defref{d:enc:hopptohop}),
+the mapping on actions $\mapa{\cdot}{3}: \mathcal{A}_\HOpp \to \mathcal{A}_{\HOp}$  is defined as follows:
 	\begin{align*}
-		\mapa{\news{\tilde{m}} \bactout{n}{\abs{\AT{x}{L}}{P}}}^{3} 
+		\mapa{\news{\tilde{m}} \bactout{n}{\abs{\AT{x}{L}}{P}}}{3} 
 		& \defeq
 		\news{\tilde{m}} \bactout{n}{\abs{\AT{z}{\tmap{L}{3}}}{\binp{z}{x} \pmap{P}{3}}}
 		\\
-		\mapa{\bactinp{n}{\abs{\AT{x}{L}}{P}}}^{3}
+		\mapa{\bactinp{n}{\abs{\AT{x}{L}}{P}}}{3}
 		& \defeq \bactinp{n}{\abs{\AT{z}{\tmap{L}{3}}}{\binp{z}{x} \pmap{P}{3}}}
 	\end{align*}
 	and as an homomorphism for all other actions $\ell \in \mathcal{A}_\HOpp$.
@@ -4611,10 +4623,10 @@ Given the typed encoding
 	$\enco{\pmap{\cdot}{4}, \tmap{\cdot}{4}}: \tyl{L}_{\PHOp} \to \tyl{L}_{\HOp}$ (cf. \defref{d:enc:phoptohop}), 
 	the mapping on actions 
 %$\mapa{\cdot}^{4}: \mathcal{A}_{\PHOp} \to \mathcal{P}(\mathcal{A}_{\HOp})$
-$\mapa{\cdot}^{4}: \mathcal{A}_{\PHOp} \to  {\mathcal{A}_{\HOp}}^*$
+$\mapa{\cdot}{4}: \mathcal{A}_{\PHOp} \to  {\mathcal{A}_{\HOp}}^*$
 is defined as follows:
 	\begin{align*}
-		\mapa{\news{\tilde{m}} \bactout{n}{m_1,  m_2}}^4 
+		\mapa{\news{\tilde{m}} \bactout{n}{m_1,  m_2}}{4} 
 		& \defeq  \ell_1, \ell_2  \quad
 		\text{where} 
 		\begin{cases}
@@ -4623,20 +4635,20 @@ is defined as follows:
 			\ell_i = \bactout{n}{m_i} & \text{if $m_i \not\in \tilde{m}$}
 		\end{cases}
 		\\
-		\mapa{\news{\tilde{m}} \bactout{n}{\abs{x_1, x_2}{P}} }^4 
+		\mapa{\news{\tilde{m}} \bactout{n}{\abs{x_1, x_2}{P}} }{4} 
 		& \defeq
-		 \news{\tilde{m}} \bactout{n}{\abs{z}\binp{z}{x_1} \binp{z}{x_2} \map{P}^{4}} 
+		 \news{\tilde{m}} \bactout{n}{\abs{z}\binp{z}{x_1} \binp{z}{x_2} \pmap{P}{4}} 
 		\\
-		\mapa{\tau}^{4}  & \defeq 
+		\mapa{\tau}{4}  & \defeq 
 		\begin{cases}
 		\btau, \stau,  \stau & \text{if $\tau = \btau$} 
 		\\
 		\tau,\tau & \text{otherwise}
 		\end{cases}
 		\\
-		\mapa{\bactsel{n}{l}}^{4}  & \defeq  \bactsel{n}{l} 
+		\mapa{\bactsel{n}{l}}{4}  & \defeq  \bactsel{n}{l} 
 				\\
-		\mapa{\bactbra{n}{l}}^{4}  & \defeq  \bactbra{n}{l}
+		\mapa{\bactbra{n}{l}}{4}  & \defeq  \bactbra{n}{l}
 	\end{align*}
 \end{definition}
 \noi The above definition handles the dyadic case. Notice that we distinguish two kinds of internal actions: 
@@ -4780,11 +4792,11 @@ We then have the following corollary:
 \label{coro:poly}
 Consider the typed encodings
 \begin{enumerate}[-]
-\item $\enco{\map{\cdot}^{1}_f, \mapt{\cdot}^{1} %, \mapa{\cdot}^{1}
+\item $\enco{\pmapp{\cdot}{1}{f}, \tmap{\cdot}{1} %, \mapa{\cdot}^{1}
 }: \tyl{L}_{\HOp} \to \tyl{L}_{\HO}$  (cf. \defref{d:enc:hopitoho})
-\item $\enco{\map{\cdot}^{2}, \mapt{\cdot}^{2} %, \mapa{\cdot}^{2}
+\item $\enco{\pmap{\cdot}{2}, \tmap{\cdot}{2} %, \mapa{\cdot}^{2}
 }: \tyl{L}_{\HOp} \to \tyl{L}_{\sessp}$ (cf. \defref{d:enc:hopitopi})
-\item $\enco{\map{\cdot}^{4}, \mapt{\cdot}^{4}}: \tyl{L}_{\PHOp} \to \tyl{L}_{\HOp}$ (cf. \defref{d:enc:phoptohop})
+\item $\enco{\pmap{\cdot}{4}, \tmap{\cdot}{4}}: \tyl{L}_{\PHOp} \to \tyl{L}_{\HOp}$ (cf. \defref{d:enc:phoptohop})
 \end{enumerate}
 Then the following typed encodings 	are precise:
 \begin{enumerate}[-]

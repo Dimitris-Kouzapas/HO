@@ -22,9 +22,9 @@
 			%\begin{array}{c}
 				%U = \hot{C} \lor \shot{C}
 				%\\
-				\Gamma; \Lambda; \Delta_1 \proves V \hastype \ghot{C} ~~
+				\jp{\Gamma; \Lambda; \Delta_1 \proves V \hastype \ghot{C} ~~
 				\leadsto\, \in \{\lollipop, \sharedop\} \quad
-				\Gamma; \es; \Delta_2 \proves u \hastype C
+				\Gamma; \es; \Delta_2 \proves u \hastype C}
 		%	\end{array}
 		}{
 			\Gamma; \Lambda; \Delta_1 \cat \Delta_2 \proves \appl{V}{u} \hastype \Proc
@@ -66,65 +66,79 @@
 				\inferrule[(Nil)]{ }{\Gamma; \emptyset; \emptyset \proves \inact \hastype \Proc}
 		\\  \\
 		\inferrule[(Send)]{
-					\begin{array}{c}
+					%\begin{array}{c}
 					u:S \in \Delta_1 \cat \Delta_2 %\\
 					\quad
 			\Gamma; \Lambda_1; \Delta_1 \proves P \hastype \Proc
 			\quad
 			\Gamma; \Lambda_2; \Delta_2 \proves V \hastype U
-			\end{array}
+			%\end{array}
 		}{
 			\Gamma; \Lambda_1 \cat \Lambda_2; ((\Delta_1 \cat \Delta_2) \setminus u:S) \cat u:\btout{U} S \proves \bout{u}{V} P \hastype \Proc
 		}
 		\\  \\
 		\inferrule[(Req)]{
-			\begin{array}{c}
-				\Gamma; \es; \es \proves u \hastype U_1
+			%\begin{array}{c}
+%				\Gamma; \es; \es \proves u \hastype U_1
+%				\qquad
+%				\Gamma; \Lambda; \Delta_1 \proves P \hastype \Proc
+%				%\\
+%				\qquad
+%				\Gamma; \es; \Delta_2 \proves V \hastype U_2
+%				\\
+%				(U_1 = \chtype{S} 
+%                                \land  
+%                                U_2 = S)
+%				\lor
+%				 (U_1 = \chtype{L} 
+%                                \land  
+%                                 U_2 = L)
+%                                 \\
+                                 				\jp{\Gamma; \Lambda; \Delta_1 \proves P \hastype \Proc
 				\quad
-				\Gamma; \Lambda; \Delta_1 \proves P \hastype \Proc
-				%\\
-				~~
-				\Gamma; \es; \Delta_2 \proves V \hastype U_2
-				\\
-				(U_1 = \chtype{S} 
-                                \land %\Leftrightarrow 
-                                U_2 = S)
-				\lor
-				 (U_1 = \chtype{L} 
-                                \land %\Leftrightarrow 
-                                %\Leftrightarrow 
-                                 U_2 = L)
-			\end{array}
+                                 \Gamma; \es; \es \proves u \hastype \chtype{\mathcal{U}}
+				\quad
+				\Gamma; \es; \Delta_2 \proves V \hastype \mathcal{U}
+				\quad \mathcal{U} \in \{S, L\}}
+			%\end{array}
 		}{
 			\Gamma; \Lambda; \Delta_1 \cat \Delta_2 \proves \bout{u}{V} P \hastype \Proc
 		}
 		~~
 		\\ \\
 				\inferrule[(Rcv)]{
-		\begin{array}{c}
+		%\begin{array}{c}
 			\Gamma; \Lambda_1; \Delta_1 \cat u: S \proves P \hastype \Proc
-			\\
+			\quad
 			\Gamma; \Lambda_2; \Delta_2 \proves {x} \hastype {U}
-			\end{array}
+		%	\end{array}
 		}{
 			\Gamma \backslash x; \Lambda_1\backslash \Lambda_2; \Delta_1\backslash \Delta_2 \cat u: \btinp{U} S \vdash \binp{u}{{x}} P \hastype \Proc
 		}
 		~~
 		\inferrule[(Acc)]{
 			\begin{array}{c}
-				\Gamma; \emptyset; \emptyset \proves u \hastype U_1 
+%				\Gamma; \emptyset; \emptyset \proves u \hastype U_1 
+%				\quad
+%				\Gamma; \Lambda_1; \Delta_1 \proves P \hastype \Proc
+%				\\
+%				\Gamma; \Lambda_2; \Delta_2 \proves x \hastype U_2\\
+%				(U_1 = \chtype{S} 
+%                                \land
+%                                U_2 = S)
+%				\lor
+%				 (U_1 = \chtype{L} 
+%                                \land 
+%                                 U_2 = L)
+%                                 \\
+                                 \jp{
+                                 				\Gamma; \Lambda_1; \Delta_1 \proves P \hastype \Proc
 				\quad
-				\Gamma; \Lambda_1; \Delta_1 \proves P \hastype \Proc
+                                 	\Gamma; \emptyset; \emptyset \proves u \hastype \chtype{\mathcal{U}} 
+				}
 				\\
-				\Gamma; \Lambda_2; \Delta_2 \proves x \hastype U_2\\
-				(U_1 = \chtype{S} 
-                                \land %\Leftrightarrow 
-                                U_2 = S)
-				\lor
-				 (U_1 = \chtype{L} 
-                                \land %\Leftrightarrow 
-                                %\Leftrightarrow 
-                                 U_2 = L)
+				\jp{\Gamma; \Lambda_2; \Delta_2 \proves x \hastype \mathcal{U}
+				\quad \mathcal{U} \in \{S, T\}}
 	               \end{array}
 		}{
 			\Gamma\backslash x; \Lambda_1 \backslash \Lambda_2; \Delta_1 \backslash \Delta_2 \proves \binp{u}{x} P \hastype \Proc
