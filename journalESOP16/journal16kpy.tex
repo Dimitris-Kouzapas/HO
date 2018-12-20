@@ -162,7 +162,7 @@ they are used to transfer reasoning techniques
 across calculi,
 and to 
 %identify constructs which may be implemented using simpler ones. 
-implement programming abstractions using simple process constructs.
+implement complex programming abstractions using simpler process constructs.
 %To a large extent, however, this kind of \emph{expressiveness studies} concern only \emph{untyped process languages}.
 
 In this work, we study 
@@ -187,7 +187,7 @@ We develop a full hierarchy of variants of \HOp based on
 precise encodings: % (see \figref{fig:express}):
 our encodings are
 type-preserving and fully abstract up to typed
-behavioural equalities. 
+behavioural equivalences. 
 \newj{\figref{fig:express} illustrates this hierarchy; the variants of \HOp are explained next.}
 
 \begin{figure}[t]
@@ -223,7 +223,7 @@ $\tinact$ specify recursive and completed protocols, respectively.
 %(resp. ) 
 %Type $\tinact$ denotes the completed protocol.
 By distinguishing between \emph{linear} and \emph{shared names},
-session types fpr the %(first-order) 
+session types for the %(first-order) 
 $\pi$-calculus describe the intended interactive behaviour of the names %/channels 
 in a process~\cite{honda.vasconcelos.kubo:language-primitives}.
 %names/channels are endowed with session types (such as $T_1$) representing their intended interactive behavior.
@@ -329,7 +329,7 @@ extends encodability criteria for untyped processes with
 \emph{full abstraction}.
 {Full abstraction results are stated
 up to two
-behavioural equalities that characterise barbed congruence:
+behavioural equivalences that characterise barbed congruence:
 \emph{characteristic bisimilarity} ($\fwb$, introduced in~\cite{characteristic_bis})
 and 
 \emph{higher-order bisimilarity} ($\hwb$, introduced in~\cite{DBLP:conf/esop/KouzapasPY16} and  developed in~\cite{KouzapasPY17}).
@@ -399,7 +399,7 @@ They connect \HOp with existing higher-order process calculi~\cite{tlca07}, and
 Finally, %although (iii) may be somewhat expected, 
 to our knowledge we are the first to prove 
 %this separation result, 
-the non encodability result (iii),
+the non encodability result (ii),
 exploiting session determinacy and typed equivalences.
 
 
@@ -452,7 +452,7 @@ into \HOp
 \secref{sec:relwork} reviews related works and 
 \secref{sec:concl} concludes.
 %The paper is self-contained. 
-{Omitted definitions and  proofs are in the Appendices (\ref{app:types}, \ref{app:behavioural}, and \ref{app:proofs}).
+{Omitted definitions and  proofs are in the Appendices (\ref{app:behavioural} and \ref{app:proofs}).
 % and  in~\cite{KouzapasPY15}.
 } 
 
@@ -481,13 +481,13 @@ possibilities for representing infinite behaviour.
 
 To illustrate our encoding of name passing into \HO, we informally introduce some process syntax; formal definitions are given in \secref{subsec:syntax}.
 Below, 
-$a,b$ are names and $s$ and $\dual{s}$ are 
-linear session names (\emph{endpoints}).
+$a,b$ are names and $s$ is  
+a linear session name; name $\dual{s}$ is the dual of $s$---they are \emph{endpoints} of the same session.
 %$\lambda x.P$ is a name abstraction of $P$; $\appl{x}{a}$ is a name application; 
 Processes $\bout{a}{V} P$ and 
 $\binp{a}{x} P$ denote output and input at~$a$, respectively;   
 abstractions and applications are denoted
-$\lambda x.P$ and $(\lambda x.P)a$, respectively. 
+$\lambda x.P$ and $\appl{(\lambda x.P)}{a}$, respectively. 
 Processes %, respectively;
 $\newsp{s}P$, $P \Par Q$, and $\inact$ represent usual forms of name restriction/hiding, parallel composition, and inaction. 
 
@@ -498,7 +498,7 @@ the name to be sent (denoted $b$) into an abstraction;
 upon reception, the receiver ``unpacks'' this object following a precise protocol on a fresh  session (denoted $s$):
 %More precisely, our encoding \jpc{of name passing} in \HO is given as:
 \begin{align*}
-  \map{\bout{a}{b} P}	&= \bout{a}{ \abs{z}{\,\binp{z}{x} (\appl{x}{b})} } \map{P} \\
+  \map{\bout{a}{b} P}	&= \bbout{a}{ \abs{z}{\,\binp{z}{x} (\appl{x}{b})} } \map{P} \\
   \map{\binp{a}{x} Q}	&=	 \binp{a}{y} \newsp{s}{\appl{y}{s} \Par \bout{\dual{s}}{\abs{x}{\map{Q}}} \inact}
 \end{align*}
 %and as a homomorphism for the other operators.
@@ -609,7 +609,7 @@ consider the  following \newjb{alternative} encoding of %$\sessp$
 name-passing 
 into $\HO$:\footnote{This encoding was suggested by a reviewer of a previous version of this paper.} %defined as
 \begin{align*}
-   \umap{\binp{a}{x} Q} & = \bout{a}{\abs{x}{\umap{Q}}} \inact \\
+   \umap{\binp{a}{x} Q} & = \bbout{a}{\abs{x}{\umap{Q}}} \inact \\
      \umap{\bout{a}{b} P} 	&= \binp{a}{x}( \appl{x}{b} \Par \umap{P})
 \end{align*}
 %and as a homomorphism for the other operators.
@@ -705,13 +705,12 @@ prefixes for sending and receiving values $V$.
 %that 
 %will substitute variable $x$ in continuation $P$. 
 Processes $\bsel{u}{l} P$ and $\bbra{u}{l_i: P_i}_{i \in I}$ are the
-usual session processes for selecting and branching~\cite{honda.vasconcelos.kubo:language-primitives}.
+usual constructs for selection and branching, used to specify labeled deterministic choices within sessions~\cite{honda.vasconcelos.kubo:language-primitives}.
 Process 
 %ny
 %$\appl{x}{u}$ 
 $\appl{V}{u}$ 
-is the application
-which substitutes name $u$ on the abstraction~$V$. 
+denotes application; it substitutes name $u$ on the abstraction~$V$. 
 Typing  ensures that $V$ is not a name.
 Recursion   $\recp{X}{P}$ binds the recursive variable $\varp{X}$ in   $P$.
 %Prefix $\bsel{u}{l} P$ selects label $l$ on name $u$ and then behaves as $P$.
@@ -736,6 +735,7 @@ variables, names, and session names in $P$, and are defined as expected.
 We assume $V$ in $\bout{u}{V}{P}$ does not include free recursive 
 variables $\rvar{X}$.
 If $\fv{P} = \emptyset$, we call $P$ {\em closed}.
+
 In a statement, a name (resp. variable) is \emph{fresh} if it is not among the names (resp. variables) of the objects (processes, actions, etc.) of the statement.
 We shall follow Barendregt's convention:
 all (session) names and variables in binding occurrences, in any mathematical context, are pairwise distinct but also distinct from  free (session) names and variables.
@@ -894,10 +894,13 @@ Shared channel types are denoted $\chtype{S}$ and $\chtype{L}$.
 %%$\btinp{U} S$ can contain free type variables, which is crucial
 %%to encode $\HOp$ into $\HO$.
 %Type $\tinact$ is the termination type. 
+
 \newjb{The type syntax of \HO exclude $\nonhosyntax{C}$ from 
 value types $U$; the types of \sessp excludes $\nonpisyntax{L}$ and $\nonpisyntax{\chtype{L}}$.}
-From each $\CAL \in \{\HOp, \HO, \pi \}$, $\CAL^{-\mathsf{sh}}$ 
-excludes shared name types ($\chtype{S}$ and $\chtype{L}$), 
+Given $\CAL \in \{\HOp, \HO, \pi \}$, 
+the sub-calculus 
+$\CAL^{-\mathsf{sh}}$ is obtained by 
+excluding shared name types ($\chtype{S}$ and $\chtype{L}$), 
 from name type $C$.
 
 We now  define session type duality~\cite{TGC14}, which builds upon \emph{type equivalence}.
@@ -2783,6 +2786,8 @@ Its encoding into \HO is given next; notice that $f = \emptyset$ and $f' = \varp
 	\pmapp{\recp{X}{\bout{a}{m} \varp{X}}}{1}{f} &=&
 	\newsp{s_1}{ 
 	\bout{\dual{s_1}}{ \abs{(x_a, x_m, y_1)} \binp{y_1}{z_X} \auxmapp{\pmapp{\bout{a}{m} \varp{X}}{1}{{f'}}}{{}}{\es} } \inact 
+	\\
+	& & \qquad 
 	\Par
 	\binp{s_1}{z_X} \pmapp{\bout{a}{m} \varp{X}}{1}{{f'}} 
 	}
@@ -2806,11 +2811,13 @@ $$
 $$
 we would have %that $P = \recp{X}{\bout{a}{m} \varp{X}}$ is mapped into the \HO process
 \begin{align*}
-\pmapp{\recp{X}{\bout{a}{m} \varp{X}}}{1}{f} & =  \newsp{s_1}{ 
+\pmapp{\recp{X}{\bout{a}{m} \varp{X}}}{1}{f} & =  \newspb{s_1}{ 
 	\bout{\dual{s_1}}{ V} \inact 
 	\Par
 	\binp{s_1}{z_X} 
-	\bout{a}{\abs{z_1}{\binp{z_1}{x} (\appl{x}{m})}} 
+	\bbout{a}{\abs{z_1}{\binp{z_1}{x} (\appl{x}{m})}} 
+	\\
+	& \qquad \qquad \qquad \qquad \qquad
 	\newsp{s_2}{\appl{z_X}{(a, m, s_2)}  
 	\Par 
 	\bout{\dual{s_2}}{ z_X} \inact} 
@@ -2829,16 +2836,22 @@ Next we illustrate the behaviour of $\pmapp{\recp{X}{\bout{a}{m} \varp{X}}}{1}{f
 	\newsp{s_2}{\appl{V}{(a, m, s_2)}  	\Par 	\bout{\dual{s_2}}{V} \inact}
 \\
 & \hby{\tau} 
-\newsp{s_2}{
-	\binp{s_2}{z_X} \bout{a}{\abs{z_1}{\binp{z_1}{x} (\appl{x}{m})}} \newsp{s_3}{\appl{z_X}{(a,m, s_3)}   \Par  \bout{\dual{s_3}}{z_X} \inact}  	
+\newspb{s_2}{
+	\binp{s_2}{z_X} \bbout{a}{\abs{z_1}{\binp{z_1}{x} (\appl{x}{m})}} 
+	\\
+	& \qquad \qquad \qquad 
+	 \newsp{s_3}{\appl{z_X}{(a,m, s_3)}   \Par  \bout{\dual{s_3}}{z_X} \inact}  	
 	\Par 	
 	\bout{\dual{s_2}}{V} \inact}
 \\
 & \scong
-\newsp{s_2}{
+\newspb{s_2}{
 \bout{\dual{s_2}}{V} \inact
 	\Par
-	\binp{s_2}{z_X} \bout{a}{\abs{z_1}{\binp{z_1}{x} (\appl{x}{m})}} \newsp{s_3}{\appl{z_X}{(a,m, s_3)}   \Par  \bout{\dual{s_3}}{z_X} \inact}  	
+	\binp{s_2}{z_X} \bbout{a}{\abs{z_1}{\binp{z_1}{x} (\appl{x}{m})}} 
+		\\
+	& \qquad \qquad \qquad 
+	\newsp{s_3}{\appl{z_X}{(a,m, s_3)}   \Par  \bout{\dual{s_3}}{z_X} \inact}  	
 	}
 	\\
 	& \scong_\alpha 
@@ -3521,28 +3534,32 @@ We now encode $P_1$ into \HO and $P_2$ into \sessp and contrast the results.
 First, by considering the encoding of $P_1$ into \HO  (following mapping $\pmap{\cdot}{1}_f$ in \figref{f:enc:hopi_to_ho})
 we obtain:
 \begin{eqnarray*}
-\map{P_1}^{1}_f & = &  	\bout{s}{\abs{z}{\binp{z}{x} \appl{x}{a}}} \inact \Par \\
-& &  \quad \binp{\dual{s}}{y} \newsp{s_0}{\appl{y}{s_0} \Par \bbout{\dual{s_0}}{\abs{x}{(\bout{x}{\abs{z}{\binp{z}{x_1} \appl{x_1}{s_1}}} \inact \Par \dots \Par \bout{x}{\abs{z}{\binp{z}{x_n} \appl{x_n}{s_n}}} \inact)}} \inact}\\
+\map{P_1}^{1}_f & = &  	\bbout{s}{\abs{z}{\binp{z}{x} \appl{x}{a}}} \inact \Par \\
+& &  \binp{\dual{s}}{y} \newspb{s_0}{\appl{y}{s_0} \Par \bbout{\dual{s_0}}{\abs{x}{(\bout{x}{V_1} \inact \Par \dots \Par \bout{x}{V_n} \inact)}} \inact}\\
 	& \hby{\stau} \hby{\btau} & 
-	\newsp{s_0}{\binp{s_0}{x} \appl{x}{a} \Par \bbout{\dual{s_0}}{\abs{x}{(\bout{x}{\abs{z}{\binp{z}{x_1} \appl{x_1}{s_1}}} \inact \Par \dots \Par \bout{x}{\abs{z}{\binp{z}{x_n} \appl{x_n}{s_n}}} \inact)}} \inact}\\
+	\newsp{s_0}{\binp{s_0}{x} \appl{x}{a} \Par \bbout{\dual{s_0}}{\abs{x}{(\bout{x}{V_1} \inact \Par \dots \Par \bout{x}{V_n} \inact)}} \inact}\\
 	& \hby{\stau}\hby{\btau}  & 
-	\bout{a}{\abs{z}{\binp{z}{x_1} \appl{x_1}{s_1}}} \inact \Par \dots \Par \bout{a}{\abs{z}{\binp{z}{x_n} \appl{x_n}{s_n}}} \inact
+	\bout{a}{V_1} \inact \Par \dots \Par \bout{a}{V_n} \inact
 \end{eqnarray*}
+where we write $V_i$ to stand for $\abs{z}{\binp{z}{x_i} \appl{x_i}{s_i}}$.
 Now, we encode $P_2$ into \sessp (following mapping $\pmap{\cdot}{2}$ in~\figref{f:enc:ho_to_sessp}):
 \begin{eqnarray*}
 \pmap{P_2}{2} & = & 	\newsp{a}{\bout{s}{a} (\inact \Par \repl{\binp{a}{y} \binp{y}{x} \pmap{R}{2}})} \Par \\
 & & \quad \binp{\dual{s}}{x} \big(\newsp{s_0}{\bout{x}{s_0} \bout{\dual{s_0}}{s_1} \inact} \Par \dots \Par \newsp{s_0}{\bout{x}{s_0} \bout{\dual{s_0}}{s_n}\inact}\big)
 	\\
 	& \hby{\stau} \equiv & 
-	\newsp{a}{\repl{\binp{a}{y} \binp{y}{x} \pmap{R}{2}} \Par \newsp{s_0}{\bout{a}{s_0} \bout{\dual{s_0}}{s_1} \inact} \Par \dots \Par \newsp{s_0}{\bout{a}{s_0} \bout{\dual{s_0}}{s_n} \inact}}
+	\newspb{a}{\repl{\binp{a}{y} \binp{y}{x} \pmap{R}{2}} \Par 
+	\\
+	& & \qquad \qquad 
+	\newsp{s_0}{\bout{a}{s_0} \bout{\dual{s_0}}{s_1} \inact} \Par \dots \Par \newsp{s_0}{\bout{a}{s_0} \bout{\dual{s_0}}{s_n} \inact}}
 	\\
 	& \hby{\stau}  \hby{\stau}   & 
-	\newsp{a}{\repl{\binp{a}{y} \binp{y}{x} \pmap{R}{2}} \Par \pmap{R}{2}\subst{s_1}{x} \Par 
+	\newspb{a}{\repl{\binp{a}{y} \binp{y}{x} \pmap{R}{2}} \Par \pmap{R}{2}\subst{s_1}{x} \Par 
 	\\
 	&  & \qquad \qquad \newsp{s_0}{\bout{a}{s_0} \bout{\dual{s_0}}{s_2} \inact} \Par \dots \Par \newsp{s_0}{\bout{a}{s_0} \bout{\dual{s_0}}{s_n} \inact}}
 	\\
 	& \Hby{}_{2*(n - 1)} & 
-	\newsp{a}{\repl{\binp{a}{y} \binp{y}{x} \pmap{R}{2}} \Par \pmap{R}{2}\subst{s_1}{x} \Par \pmap{R}{2}\subst{s_2}{x} \Par \dots \Par \pmap{R}{2}\subst{s_n}{x}}
+	\newspb{a}{\repl{\binp{a}{y} \binp{y}{x} \pmap{R}{2}} \Par \pmap{R}{2}\subst{s_1}{x} \Par \pmap{R}{2}\subst{s_2}{x} \Par \dots \Par \pmap{R}{2}\subst{s_n}{x}}
 %	\red
 %	\appl{V}{s_1} \Par \dots \Par \appl{V}{s_n}
 \end{eqnarray*}
@@ -4098,9 +4115,9 @@ the extension of \HOp with \emph{both} higher-order
 abstractions/aplications and polyadicity (cf. \cororef{coro:ho} and \cororef{coro:poly})
 
 We present precise encodings of \HOpp and \PHOp into \HOp.
-We then use the encodings of \HOp into \HO and \sessp, given in the previous section, 
+We then use the encodings of \HOp into \HO and \sessp in the previous section, 
 together with 
-encoding composability (\propref{pro:composition}) to relate \HO and \sessp with the super-calculus \PHOpp, which subsumes
+encoding composability (\propref{pro:composition}), to relate \HO and \sessp with the super-calculus \PHOpp, which subsumes
 both \HOpp and \PHOp.
 
 
@@ -4193,9 +4210,9 @@ $$
 		L \bnfis \shot{U} \bnfbar \lhot{U}.
 $$
 These types can be easily accommodated in the type system 
-%in \figref{fig:typerulesmy}: 
 in \secref{sec:types}:
-we replace $C$ by $U$ in Rule~\trule{Abs} and $C$ by $U'$ in Rule~\trule{App}. 
+in \figref{fig:typerulesmys}, 
+we replace $C$ by $U$ in Rule~\textsc{(Abs)} and $C$ by $U'$ in Rule~\textsc{(App)}. 
 With these extensions, subject
 reduction~(\thmref{t:sr}) holds for \HOpp (cf.~\cite{characteristic_bis})
 
@@ -4212,7 +4229,7 @@ where
 the typing $\proves$ is defined in 
 %\figref{fig:typerulesmy} 
 \secref{sec:types}
-with Rules \trule{Abs} and \trule{App} modified as explained above.
+with Rules \textsc{(Abs)} and \textsc{(App)} modified as explained above.
 Formally, the set   
 $\mathcal{A}_\HOpp$ coincides with $\mathcal{A}_{\HOp}$, for the syntax of values $V$ is the same in both languages.
 However, by considering the refined actions given by type-annotated values (cf. \remref{r:types}),
@@ -4567,8 +4584,8 @@ the typing $\proves$ is defined
 in \secref{sec:types}
 with  type syntax given above.
 Also, writing $k$ to denote the arity of $\PHOp$, the set of labels 
-$\mathcal{A}_{\PHOp}$ extends that in \defref{d:labels} by 
-including actions
+$\mathcal{A}_{\PHOp}$ extends that in \defref{d:labels} 
+with actions
 $\news{\tilde{m}} \bactout{n}{m_1, \ldots, m_k}$,
 $\bactout{n}{\abs{x_1, \ldots, x_k}{P}}$,
 $ \bactinp{n}{m_1, \ldots, m_k}$,
@@ -4919,7 +4936,7 @@ encodings of (variants of) the $\lambda$-calculus into the $\pi$-calculus (see, 
 Sangiorgi's encoding of the higher-order $\pi$-calculus
 into the  $\pi$-calculus~\cite{SangiorgiD:expmpa} 
 is fully abstract with respect to reduction-closed, barbed congruence. 
-We have shown in \secref{subsec:HOp_to_sessp} that the analogue of Sangiorgi's encoding for the session typed setting also satisfies full abstraction (up to $\hwb$/$\fwb$, cf. \propref{prop:op_corr_HOp_to_p}).
+We have shown in \secref{subsec:HOp_to_sessp} that the analogue of Sangiorgi's encoding for the session-typed setting also enjoys full abstraction (up to $\hwb$/$\fwb$, cf. \propref{prop:op_corr_HOp_to_p}).
 A basic form of input/output types is used in~\cite{DBLP:journals/tcs/Sangiorgi01}, where the encoding in~\cite{SangiorgiD:expmpa} is casted in the asynchronous setting, with output and applications coalesced in a single construct. Building upon~\cite{DBLP:journals/tcs/Sangiorgi01}, 
 a simply typed encoding for synchronous processes is given in~\cite{SaWabook}; the reverse encoding (i.e.,  first-order communication into higher-order processes) is also studied  for an asynchronous, localised $\pi$-calculus (only the output capability of names can be sent around).
 The work~\cite{San96int} studies hierarchies for calculi with \emph{internal} first-order mobility and 
@@ -5073,8 +5090,9 @@ session types turns out to be fundamental to show that all these languages are e
 session type information is critical to establish key properties for preciseness, in particular full abstraction.
 
 \paragraph{Acknowledgments}
-We have benefited from feedback from the users of the Moca mailing list, in particular Greg Meredith and Xu Xian.
-We are grateful to the ESOP'16 anonymous reviewers for their useful remarks and suggestions.
+%We have benefited from feedback from the users of the Moca mailing list, in particular Greg Meredith and Xu Xian.
+We are grateful to the %ESOP'16 
+anonymous reviewers for their useful remarks and suggestions.
 
 This work has been partially sponsored by the Doctoral Prize Fellowship, EPSRC EP/K011715/1, EPSRC EP/K034413/1, and EPSRC EP/L00058X/1, EU project FP7-612985 UpScale, and EU COST Actions IC1201 (BETTY), IC1402 (ARVI), and IC1405 (Reversible Computation). P\'{e}rez is also affiliated to the NOVA Laboratory for Computer Science and Informatics (NOVA LINCS), Universidade Nova de Lisboa, Portugal.
  
