@@ -621,7 +621,7 @@ Hence, this mapping entails  a
 ``role inversion'': outputs are translated into inputs, and inputs are translated into outputs. 
 Although fairly reasonable, we will see that the encoding $\umap{\cdot}$  
 %is far from desirable in a session typed setting: 
-is \emph{not type preserving}. Consequently, it is also not \emph{precise}.
+is \emph{not type preserving} (cf. \exref{ex:plaus}). Consequently, it is also not \emph{precise}.
 %Type preservation is intended to preserve the overall semantics of session types:
 Since individual prefixes (input, output, branching, select) 
 represent actions in a structured communication sequence (i.e., a protocol abstracted by a session type),
@@ -1217,7 +1217,7 @@ are balanced  and \emph{confluent}:
 	is a {\em typed relation} whenever
 	$P$ and $Q$ are closed;
 	$\Delta_1$ and $\Delta_2$ are balanced; and 
-	$\Delta_1 \bistyp \Delta_2$.
+	$\Delta_1 \bistyp \Delta_2$. \\
 	We write $\horel{\Gamma}{\Delta_1}{P}{\ \Re \ }{\Delta_2}{Q}$
 	for the typed relation $\Gamma; \emptyset; \Delta_1 \proves P \hastype \Proc\ \Re \ \Gamma; \emptyset; \Delta_2 \proves Q \hastype \Proc$.
 \end{definition}
@@ -1694,7 +1694,7 @@ two dual endpoints), while
   $\hby{\btau}$ results from an application. 
  We write  $\horel{\Gamma}{\Delta}{P}{\hby{\dtau}}{\Delta'}{P'}$ to denote
 	 a session transition or a $\beta$-transition.
-	See~\appref{app:behavioural} and \cite{KouzapasPY17} for formal definitions of $\hby{\btau}$  and $\hby{\stau}$. % rely on an LTS for \HOp;  for details.
+	See~\secref{ss:deter} and \cite{KouzapasPY17} for formal definitions of $\hby{\btau}$  and $\hby{\stau}$. % rely on an LTS for \HOp;  for details.
  \end{notation}
  
 %The auxiliary definition below allows us to distinguish two kinds of  internal transitions:
@@ -1901,7 +1901,7 @@ We can finally state:
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \subsection{The Hotel Booking scenario}\label{ss:hotel}
-We recall the case study for \HOp that we developed in our previous works~\cite{characteristic_bis,KouzapasPY17}, a specification of a \emph{hotel booking scenario}.
+We recall the case study for \HOp that we developed in our previous works~\cite{characteristic_bis,KouzapasPY17}: a specification of a \emph{hotel booking scenario}.
 The scenario involves a $\Client$ process that wants to book
 a hotel room. % for her holidays. % in a remote island
 %The Client 
@@ -2055,10 +2055,10 @@ We then have:
 We define the formal notion of \emph{encoding} by 
 extending to a typed setting existing encodability criteria for untyped processes, as put forward in, e.g.,
 \cite{Nestmann00,Palamidessi03,DBLP:conf/lics/PalamidessiSVV06,DBLP:journals/iandc/Gorla10,DBLP:conf/icalp/LanesePSS10,DBLP:journals/tcs/FuL10,DBLP:journals/corr/abs-1208-2750,DBLP:conf/esop/PetersNG13}. 
-We first define a typed calculus parametrised by a process syntax, an operational semantics, and a type system.
+We first define a \emph{typed calculus} parametrised by a process syntax, an operational semantics, and a type system.
 Based on this definition, in  
 \secref{sec:positive} and \secref{sec:extension}
-we define concrete instances of (higher-order) typed calculi.
+we will define concrete instances of (higher-order) typed calculi.
 \subsection{Basic Definitions}
 %\smallskip 
 
@@ -2134,7 +2134,7 @@ environments in the expected way. %; for instance, $\mapt{\Delta \cat u:S} = \ma
 When considering forms of operational correspondence with visible actions, 
 our notion of typed encoding shall include mappings $\map{\cdot}$ and $\mapt{\cdot}$, but also
 a  mapping  $\mapa{\cdot}{}:\mathcal{A}_1 \to \mathcal{A}_2$ 
-describing how visible actions in the source calculus $\tyl{L}_1$ are mapped in the target typed calculus $\tyl{L}_2$.
+describing how visible actions in the source calculus $\tyl{L}_1$ are mapped in the target calculus $\tyl{L}_2$.
 
 
 We now introduce syntactic criteria for typed encodings.
@@ -2209,6 +2209,7 @@ across translations.}
 
 
 \begin{example}
+\label{ex:plaus}
 \newj{
 Following the discussion in \secref{sec:overview}, let 
 $\mapt{\cdot}_u$ 
@@ -2223,11 +2224,15 @@ and other type operators are translated homomorphically.
 Since 
 $\mapt{\cdot}_u$  translates the output type operator into an input type operator (and viceversa), 
 %exchanges (inverts) input and output session type operators. % in \defref{def:tp}.
-we conclude that $\mapt{\cdot}_u$ does not satisfy  type preservation. 
+%we conclude that $\mapt{\cdot}_u$ 
+it 
+does not satisfy  type preservation. 
 }
 \end{example}
 
-Next we define semantic criteria for typed encodings:
+Next we define semantic criteria for typed encodings.
+Recall that (un)typed barbs have been defined in \defref{d:barb}.
+
 
 %\smallskip 
 
@@ -2323,6 +2328,7 @@ Soundness is the converse of completeness; the formulation given above is called
 %the typed LTS of \defref{def:rlts}, 
 %rather than on reductions;
 %Labels are considered up to  mapping $\mapa{\cdot}$, which offers flexibility when comparing different calculi. We require that $\mapa{\cdot}$ preserves  subjects, in accordance with the criteria in~\cite{DBLP:conf/icalp/LanesePSS10}.
+
 {Above, operational correspondence is stated in generic terms.}
 It is worth stressing that 
 the operational correspondence statements 
@@ -2479,7 +2485,7 @@ given in \defref{def:ep}, which is restricted to $\tau$-labelled transitions.
 \section{Expressiveness Results for \HOp, \HO, and \sessp}
 \label{sec:positive}
 %\input{positive}
- We first present two %encodability results:
+In this section,  we  present two %encodability results:
  precise encodings: 
 (1)~higher-order communication with recursion and name-passing   (\HOp) into 
 higher-order communication without name-passing nor recursion (\HO) (\secref{subsec:HOpi_to_HO}); and 
@@ -2503,13 +2509,11 @@ We consider the following typed calculi, which result as three instances of~\def
 	\\
 	\tyl{L}_{\sessp} & =\calc{\sessp}{{\cal{T}}_3}{\hby{~}}{\fwb}{\proves}
 \end{align*}
-where: 
+where
 ${\cal{T}}_1$, ${\cal{T}}_2$, 
 and ${\cal{T}}_3$
 are sets of types of $\HOp$, $\HO$, and $\sessp$, respectively. 
-The typing $\proves$ is defined in 
-%\figref{fig:typerulesmy}.
-\secref{sec:types}.
+The typing $\proves$ is defined in~\secref{sec:types}.
 The LTSs follow the intuitions given in \secref{ss:equiv}.
 The set of actions $\mathcal{A}_{\HOp}$ is as in \defref{d:labels}; the sets of actions $\mathcal{A}_\HO$ and $\mathcal{A}_\sessp$ 
 are obtained from $\mathcal{A}_{\HOp}$ 
@@ -2767,7 +2771,7 @@ That is, upon reception, the \HO abstraction encoding
 $P$
 %containing $\auxmapp{P}{{}}{\sigma}$ 
 is duplicated: 
-one copy is used to reconstitute the original recursion body $P$ (through
+one copy is used to recover the original recursion body $P$ (through
 the application of $\fn{P}$); another copy is used to re-invoke
 the duplicator when needed. % to simulate recursion unfolding.
 %An example of this typed encoding is detailed in~\cite{KouzapasPY15}.
@@ -2948,7 +2952,7 @@ with
 \end{figure}
 
 
-We now describe the properties of the encoding. 
+We now state the properties of the encoding. 
 We start with 
 type preservation  and type soundness:
 
@@ -3079,7 +3083,7 @@ By transition induction. See \propref{app:prop:op_corr_HOp_to_HO} in \appref{app
 %\noi 
 In the above proposition, it is worth
 observing how we can explicitly distinguish the role of finite, deterministic reductions 
-($\hby{\stau}$ and $\hby{\btau}$, cf. \notref{not:dettrans}) in both soundness and completeness statements.
+($\hby{\stau}$ and $\hby{\btau}$, cf. \notref{not:dettrans}) in soundness and completeness statements.
 
 %Using operational correspondence, we can show \emph{full abstraction}:
 \newj{The typed operational correspondence given above is an important component in the 
@@ -3121,7 +3125,7 @@ Semantics-preservation follows from 	\propref{prop:op_corr_HOp_to_HO} and \propr
 \newj{We now discuss the precise encodability of  $\HOp$ into $\sessp$;
 the only non trivial issue is encoding higher-order communication, which is present in $\HOp$ but not in 
 $\sessp$.}
-We closely follow Sangiorgi's encoding~\cite{San92,SaWabook}, which represents 
+We closely follow Sangiorgi's encoding~\cite{SangiorgiD:expmpa,SaWabook}, which represents 
 %Intuitively, such an encoding  represents 
 the exchange of a process/abstraction by passing around a fresh \emph{trigger name}. 
 Trigger names may then be used to activate copies of the abstraction, which becomes a persistent resource represented by an input-guarded replication.
@@ -3276,7 +3280,7 @@ where $\pmap{ Q_1}{2} =  Q_1$ and $\pmap{Q_2}{2} = Q_2$ for they do not involve 
 
 \end{example}
 
-We describe key properties of this encoding. First, type preservation, type soundness, and operational correspondence, which requires a mapping on action labels.
+We state the properties of this encoding. First, type preservation, type soundness, and operational correspondence, which requires a mapping on action labels.
 
 \begin{proposition}[\HOp into \sessp: Type Preservation and Type Soundness]
 \label{prop:typepres_HOp_to_p}
@@ -3484,7 +3488,7 @@ We argue, both empirically and formally, that when compared to \sessp, \HO   is 
 We first contrast the way in which 
 \begin{enumerate}[a)]
 \item 
-the encoding from \HOp to \HO, denoted $\pmap{\cdot}{1}_f$ (\secref{subsec:HOpi_to_HO}), translates processes with name passing;
+the encoding from \HOp to \HO, denoted $\pmapp{\cdot}{1}{f}$ (\secref{subsec:HOpi_to_HO}), translates processes with name passing;
 \item 
 the encoding from \HOp to \sessp, denoted $\pmap{\cdot}{2}$ (\secref{subsec:HOp_to_sessp}), translates processes with abstraction passing.
 \end{enumerate}
@@ -3532,7 +3536,7 @@ P_2  \hby{\tau}~& \appl{(\abs{x}{R})}{s_1} \Par \dots \Par \appl{(\abs{x}{R})}{s
 %message being substituted $n$ times on the receing side.
 %Both $P_1$ and $P_2$ are \HOp processes.
 We now encode $P_1$ into \HO and $P_2$ into \sessp and contrast the results. 
-First, by considering the encoding of $P_1$ into \HO  (following mapping $\pmap{\cdot}{1}_f$ in \figref{f:enc:hopi_to_ho})
+First, by considering the encoding of $P_1$ into \HO  (following mapping $\pmapp{\cdot}{1}{f}$ in \figref{f:enc:hopi_to_ho})
 we obtain:
 \begin{eqnarray*}
 \map{P_1}^{1}_f & = &  	\bbout{s}{\abs{z}{\binp{z}{x} \appl{x}{a}}} \inact \Par \\
@@ -3590,7 +3594,7 @@ $Q_1$ is a \sessp process and $Q_2$ is an \HO processs.
 If we consider the encoding of $Q_1$ into \HO and of $Q_2$ into \sessp, respectively, 
 we obtain:
 \begin{eqnarray*}
-	\map{Q_1}_f^{1} & = & \bout{s'}{\abs{z}{\binp{z}{x} \appl{x}{s}}} \inact \Par 
+	\pmapp{Q_1}{1}{f} & = & \bout{s'}{\abs{z}{\binp{z}{x} \appl{x}{s}}} \inact \Par 
 	\binp{\dual{s'}}{y} \newsp{s_0}{\appl{y}{s_0} \Par \bbout{\dual{s_0}}{\abs{x}{\bout{x}{\abs{z}{\binp{z}{y} \appl{y}{a}}} \inact}} \inact}\\
 	& \hby{\stau} \hby{\btau}& 
 	\newsp{s_0}{\binp{s_0}{x} \appl{x}{s} \Par \bbout{\dual{s_0}}{\abs{x}{\bout{x}{\abs{z}{\binp{z}{y} \appl{y}{a}}} \inact}} \inact}\\
@@ -3614,13 +3618,13 @@ In this case, the encoding $\pmap{\cdot}{2}$ is more efficient because it induce
 Therefore, considering a fragment of \HOp without shared communications (linearity only)
 has consequences in terms of reduction steps. 
 These apparent benefits of encoding  $\pmap{\cdot}{2}$ over 
-encoding  $\pmap{\cdot}{1}$ in the presence of linearity should, however, be considered in a broader setting, for 
+encoding  $\pmapp{\cdot}{1}{f}$ in the presence of linearity should, however, be considered in a broader setting, for 
 in \secref{ss:negative} we prove that linear resources do 
 not suffice to encode shared communications.
-Therefore, in the general case featuring linear and shared communication not only the benefits of  $\pmap{\cdot}{2}$ over  $\pmap{\cdot}{1}$ could not be obtained,
-but the drawbacks mentioned in the comparison between $\pmap{P_1}{1}$ and $\pmap{P_2}{2}$ (i.e., the garbage processes 
+Therefore, in the general case featuring linear and shared communication not only the benefits of  $\pmap{\cdot}{2}$ over  $\pmapp{\cdot}{1}{f}$ could not be obtained,
+but the drawbacks mentioned in the comparison between $\pmapp{P_1}{1}{f}$ and $\pmap{P_2}{2}$ (i.e., the garbage processes 
 generated by $\pmap{\cdot}{2}$) 
-could well be more prominent. This observation may be used to informally argue that $\pmap{\cdot}{1}$ is ``better than'' $\pmap{\cdot}{2}$ (or, alternatively, that \HOp is closer to \HO than to \sessp);
+could well be more prominent. This observation may be used to informally argue that $\pmapp{\cdot}{1}{f}$ is ``better than'' $\pmap{\cdot}{2}$ (or, alternatively, that \HOp is closer to \HO than to \sessp);
 next, we develop a formal argument to substantiate this claim.
 
 \paragraph{Formal Comparison: Labelled Transition Correspondence}
@@ -3681,16 +3685,16 @@ next, we develop a formal argument to substantiate this claim.
 To  formally state that 
 \HOp and \HO are more closely related than \HOp and~\sessp,
 we may 
-distinguish the precise encodings $\map{\cdot}_f^1$ and $\pmap{\cdot}{2}$ depending on whether they are also tight encodings or not (cf. \defref{def:lopco}):
+distinguish the precise encodings $\pmapp{\cdot}{1}{f}$ and $\pmap{\cdot}{2}$ depending on whether they are also tight encodings or not (cf. \defref{def:lopco}):
 
 \begin{theorem}[\HO Tightly Encodes \HOp]\label{t:tight}
 While the encoding of \HOp into \HO (\defref{d:enc:hopitoho}) is tight, the encoding of \HOp into \sessp (\defref{d:enc:hopitopi}) is not tight.
 \end{theorem}
 
 \begin{proof}[Proof (Sketch)]
-The proof proceeds by showing that the encoding $\map{\cdot}^1_f$ enjoys 
+The proof proceeds by showing that the encoding $\pmapp{\cdot}{1}{f}$ enjoys 
 labelled operational correspondence, whereas $\pmap{\cdot}{2}$ does not. 
-Recall that a labeled operational correspondence for  $\pmap{\cdot}{1}$  has been
+Recall that a labeled operational correspondence for  $\pmapp{\cdot}{1}{f}$  has been
 already 
 stated in 
 \propref{prop:op_corr_HOp_to_HO}.
@@ -4276,11 +4280,11 @@ ${\bactinp{n}{\abs{\AT{x}{C}}{P}}}$.
 [Typed Encoding of \HOpp into \HOp]
 \label{d:enc:hopptohop}
 The typed encoding
-$\enco{\map{\cdot}^{3}, \mapt{\cdot}^{3}}: \tyl{L}_\HOpp \to \tyl{L}_{\HOp}$ is defined
+$\enco{\pmap{\cdot}{3}, \tmap{\cdot}{3}}: \tyl{L}_\HOpp \to \tyl{L}_{\HOp}$ is defined
 in \figref{f:enc:hopip_to_hopi}.
 \end{definition}
 
-We consider mappings for terms and types, denoted $\map{\cdot}^{3}$ and $\mapt{\cdot}^{3}$, respectively.
+We consider mappings for terms and types, denoted $\pmap{\cdot}{3}$ and $\tmap{\cdot}{3}$, respectively.
 Since now functions can be applied to (higher-order) values, we have also an auxiliary mapping on values, denoted $\auxmap{\cdot}{3}$. 
 We illustrate the essence of these mappings by means of an example.
 
@@ -4468,11 +4472,11 @@ We then have the following corollary:
 \label{coro:ho} 
 Consider the typed encodings
 \begin{enumerate}[-]
-\item $\enco{\map{\cdot}^{1}_f, \mapt{\cdot}^{1} %, \mapa{\cdot}^{1}
+\item $\enco{\pmap{\cdot}{1}_f, \tmap{\cdot}{1} %, \mapa{\cdot}^{1}
 }: \tyl{L}_{\HOp} \to \tyl{L}_{\HO}$  (cf. \defref{d:enc:hopitoho})
-\item $\enco{\map{\cdot}^{2}, \mapt{\cdot}^{2} %, \mapa{\cdot}^{2}
+\item $\enco{\pmap{\cdot}{2}, \tmap{\cdot}{2} %, \mapa{\cdot}^{2}
 }: \tyl{L}_{\HOp} \to \tyl{L}_{\sessp}$ (cf. \defref{d:enc:hopitopi})
-\item $\enco{\map{\cdot}^{3}, \mapt{\cdot}^{3}}: \tyl{L}_{\HOpp} \to \tyl{L}_{\HOp}$ (cf. \defref{d:enc:hopptohop})
+\item $\enco{\pmap{\cdot}{3}, \tmap{\cdot}{3}}: \tyl{L}_{\HOpp} \to \tyl{L}_{\HOp}$ (cf. \defref{d:enc:hopptohop})
 \end{enumerate}
 Then the following typed encodings 	are precise:
 \begin{enumerate}[-]
@@ -4882,8 +4886,10 @@ and \cite[\S\,2.3]{PerezPhD10} for surveys.
 %In the untyped setting, the relative expressiveness of name-passing calculi with respect to 
 %higher-order languages %(process- and abstraction-passing) 
 %is well-known. 
-Our study casts known results~\cite{SangiorgiD:expmpa} into a session typed setting, and
-offers new encodability results.
+Our study 
+offers new encodability results
+and
+casts known results~\cite{SangiorgiD:expmpa} into a session typed setting.
 Our work stresses the 
 view of ``encodings as protocols'', namely session protocols which
 enforce linear and shared disciplines for names, a distinction
@@ -4912,13 +4918,13 @@ higher-order applications ($\HOpp$).
 Thus, %using session types
 all these  calculi are equally expressive with fully
 abstract encodings (up to $\hwb$/$\fwb$).  
-These appear to be the first results of this kind.
+To our knowledge, these are the first results of this kind.
 
 Early works on (relative) expressiveness appealed to different notions of encoding.
 Later on, 
 proposals of abstract 
-frameworks which formalise the notion of encoding 
-and state associated syntactic/semantic criteria 
+frameworks, which formalise the notion of encoding 
+and state associated syntactic/semantic criteria, 
 were put forward; 
 recent proposals include~\cite{DBLP:journals/iandc/Gorla10,DBLP:journals/tcs/FuL10,DBLP:journals/corr/abs-1208-2750,DBLP:conf/esop/PetersNG13,DBLP:journals/corr/PetersG15}. 
 %These frameworks %are applicable to different calculi, and 
@@ -4938,11 +4944,10 @@ Sangiorgi's encoding of the higher-order $\pi$-calculus
 into the  $\pi$-calculus~\cite{SangiorgiD:expmpa} 
 is fully abstract with respect to reduction-closed, barbed congruence. 
 We have shown in \secref{subsec:HOp_to_sessp} that the analogue of Sangiorgi's encoding for the session-typed setting also enjoys full abstraction (up to $\hwb$/$\fwb$, cf. \propref{prop:op_corr_HOp_to_p}).
-A basic form of input/output types is used in~\cite{DBLP:journals/tcs/Sangiorgi01}, where the encoding in~\cite{SangiorgiD:expmpa} is casted in the asynchronous setting, with output and applications coalesced in a single construct. Building upon~\cite{DBLP:journals/tcs/Sangiorgi01}, 
-a simply typed encoding for synchronous processes is given in~\cite{SaWabook}; the reverse encoding (i.e.,  first-order communication into higher-order processes) is also studied  for an asynchronous, localised $\pi$-calculus (only the output capability of names can be sent around).
+A basic form of input/output types is used in~\cite{DBLP:journals/tcs/Sangiorgi01}, where the encoding in~\cite{SangiorgiD:expmpa} is cast in the asynchronous setting, with output and applications coalesced in a single construct. Building upon~\cite{DBLP:journals/tcs/Sangiorgi01}, 
+a simply typed encoding for synchronous processes is given in~\cite{SaWabook}; the reverse encoding (i.e.,  first-order communication into higher-order processes) is also studied  for an asynchronous, localised $\pi$-calculus (where only the output capability of names can be sent around).
 The work~\cite{San96int} studies hierarchies for calculi with \emph{internal} first-order mobility and 
-with higher-order mobility without name-passing (similarly as the subcalculus \HO). 
-The hierarchies are
+with higher-order mobility without name-passing (similarly as in \HO); these hierarchies are
 defined according to the order of types needed in typing.
 Via fully abstract encodings, it is shown that that name- and process-passing calculi with equal order of types have the same expressiveness.
 
@@ -5063,7 +5068,7 @@ Our results show that
 the calculus in~\cite{tlca07} is not only expressed but 
 also reasoned in 
 $\HO$ via precise encodings (with a limited form of arrow types: $\shot{C}$ and $\lhot{C}$). 
-\newj{The recent work \cite{OY2016} studies two encodings:
+\newj{The work \cite{OY2016} studies two encodings:
 from PCF with an effect system into a session-typed $\pi$-calculus, 
 and its reverse. The reverse encoding is used to implement session channel passing in Concurrent Haskell. 
 In future work we plan to use the core calculi 
@@ -5077,11 +5082,13 @@ to implement higher-order communication efficiently into Concurrent Haskell with
 
 We have thoroughly studied the expressivity of the higher-order $\pi$-calculus with sessions,
 here denoted $\HOp$.
-Unlike most previous works, 
+To this end, we developed a new abstract notion of (precise) encoding that accounts for (session) types in both source and target calculi.
+Indeed, unlike most previous works, 
 %on the expressivity of (higher-order) process calculi, 
-we have carried out our study in the setting of \emph{session types}. % for structured communications.
+we have carried out our expressiveness study in the setting of \emph{session types}. % for structured communications.
 Types not only delineate and enable encodings; they 
-inform the techniques required to reason about such encodings.
+inform the techniques required to reason about their correctness properties.
+
 Our results cover a wide spectrum of features intrinsic to higher-order concurrency:
 pure process-passing (first- and higher-order abstractions), name-passing, polyadicity, 
 linear/shared communication (cf.~\figref{fig:express}). 
@@ -5092,7 +5099,9 @@ session type information is critical to establish key properties for preciseness
 
 \paragraph{Acknowledgments}
 %We have benefited from feedback from the users of the Moca mailing list, in particular Greg Meredith and Xu Xian.
-We are grateful to the %ESOP'16 
+We are grateful to %ESOP'16 \
+Alen Arslanagi\'{c}
+and to the
 anonymous reviewers for their useful remarks and suggestions.
 
 This work has been partially sponsored by the Doctoral Prize Fellowship, EPSRC EP/K011715/1, EPSRC EP/K034413/1, and EPSRC EP/L00058X/1, EU project FP7-612985 UpScale, and EU COST Actions IC1201 (BETTY), IC1402 (ARVI), and IC1405 (Reversible Computation). P\'{e}rez is also affiliated to the NOVA Laboratory for Computer Science and Informatics (NOVA LINCS), Universidade Nova de Lisboa, Portugal.
